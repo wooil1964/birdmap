@@ -1,0 +1,2847 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
+</head>
+<body>
+    
+    
+<div style="position:fixed;top:10px;left:50px;z-index:9999;background:white;
+padding:10px 14px;border:2px solid #555;border-radius:6px;
+font-family:Arial,'Malgun Gothic',sans-serif;">
+<b>대한민국 주요 조류 출현·탐조 권역·대중교통 지도</b><br>
+<span style="font-size:12px">56개 권역 · 최신 대중교통 자료 반영</span>
+</div>
+    
+<div style="position:fixed;bottom:20px;left:20px;z-index:9999;background:white;
+padding:8px 12px;border:1px solid #777;border-radius:5px;
+font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;">
+<b>사용법</b><br>
+쌍안경 아이콘을 누르면 탐조정보와 대중교통 접근방법이 표시됩니다.
+</div>
+    
+            <div class="folium-map" id="map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c = L.map(
+                "map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c",
+                {
+                    center: [36.25, 127.75],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 7,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+
+            
+
+        
+    
+            var tile_layer_818baa4f86c87ecd5524e090c62b21ec = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 6,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_818baa4f86c87ecd5524e090c62b21ec.addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c.fitBounds(
+                [[32.8, 124.0], [39.2, 132.2]],
+                {}
+            );
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topright",
+  "title": "Full Screen",
+  "titleCancel": "Exit Full Screen",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var tile_layer_7fb502639e91b2ff260ed3295f9e76af = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+            var mini_map_691a108747cec310c5a2ca54fa2df6b8 = new L.Control.MiniMap(
+                tile_layer_7fb502639e91b2ff260ed3295f9e76af,
+                {
+  "position": "bottomright",
+  "width": 150,
+  "height": 150,
+  "collapsedWidth": 25,
+  "collapsedHeight": 25,
+  "zoomLevelOffset": -5,
+  "centerFixed": false,
+  "zoomAnimation": false,
+  "toggleDisplay": true,
+  "autoToggleDisplay": false,
+  "minimized": false,
+}
+            );
+            map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c.addControl(mini_map_691a108747cec310c5a2ca54fa2df6b8);
+        
+    
+            var marker_16140b82bc28ffb6aadf04bf24f92be4 = L.marker(
+                [37.535, 126.925],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_584da9cb01894a889ff96d6a72fec006 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c620a03436be9ac3790452ba3f3b95d5 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_3e0beeef939cbf5bf235ade8ffe717ff = $(`<div id="html_3e0beeef939cbf5bf235ade8ffe717ff" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">한강 밤섬·난지권역</h4>           <b>지역:</b> 서울<br>           <b>환경:</b> 도심하천·섬<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 오리류·가마우지류·도요류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 지하철 6호선 월드컵경기장역 또는 마포구청역<br>         <b>현지 이동:</b> 난지한강공원·월드컵공원 방면 시내버스 또는 도보<br>         <b>마지막 접근:</b> 공원·한강변 탐조로 이동<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 밤섬은 출입금지 보호구역이므로 강변 관찰지에서 망원경으로 관찰<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_c620a03436be9ac3790452ba3f3b95d5.setContent(html_3e0beeef939cbf5bf235ade8ffe717ff);
+            
+        
+
+        marker_16140b82bc28ffb6aadf04bf24f92be4.bindPopup(popup_c620a03436be9ac3790452ba3f3b95d5)
+        ;
+
+        
+    
+    
+            marker_16140b82bc28ffb6aadf04bf24f92be4.bindTooltip(
+                `<div>
+                     한강 밤섬·난지권역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_16140b82bc28ffb6aadf04bf24f92be4.setIcon(icon_584da9cb01894a889ff96d6a72fec006);
+            
+    
+            var marker_2774b0a6aa5b81ce2f9a2b1a5f223305 = L.marker(
+                [37.675, 126.735],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_7f97fc5717c5446039041b3de646d397 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4070651bda45932480d89e396d469cf5 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_d72410f5c57e4d8e636d6da214ae739e = $(`<div id="html_d72410f5c57e4d8e636d6da214ae739e" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">한강 하구·장항습지</h4>           <b>지역:</b> 경기 고양·김포<br>           <b>환경:</b> 하구·습지<br>           <b>추천 시기:</b> 연중, 특히 겨울<br>           <b>대표 조류군:</b> 기러기류·맹금류·수면성오리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 경의중앙선 행신역·능곡역 또는 3호선 대화역<br>         <b>현지 이동:</b> 고양 시내버스로 장항습지·행주대교 인근 이동<br>         <b>마지막 접근:</b> 정류장에서 도보, 일부 구간은 예약 탐방 또는 택시<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 습지 내부 출입 가능 여부와 탐방 예약을 먼저 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_4070651bda45932480d89e396d469cf5.setContent(html_d72410f5c57e4d8e636d6da214ae739e);
+            
+        
+
+        marker_2774b0a6aa5b81ce2f9a2b1a5f223305.bindPopup(popup_4070651bda45932480d89e396d469cf5)
+        ;
+
+        
+    
+    
+            marker_2774b0a6aa5b81ce2f9a2b1a5f223305.bindTooltip(
+                `<div>
+                     한강 하구·장항습지
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2774b0a6aa5b81ce2f9a2b1a5f223305.setIcon(icon_7f97fc5717c5446039041b3de646d397);
+            
+    
+            var marker_95851399dfe4258582444adae65bb028 = L.marker(
+                [37.765, 126.735],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_ba28e448beafbd5205ca2f167a72d5a4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ec8c160df9fa073d4ef249f720b73487 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_9aeb223b9e562b28f15e9c7cdacf72e0 = $(`<div id="html_9aeb223b9e562b28f15e9c7cdacf72e0" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">공릉천 하구</h4>           <b>지역:</b> 경기 파주<br>           <b>환경:</b> 하구·농경지<br>           <b>추천 시기:</b> 겨울·봄가을<br>           <b>대표 조류군:</b> 기러기류·오리류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 경의중앙선 운정역·금촌역<br>         <b>현지 이동:</b> 파주 시내버스로 교하·송촌동·공릉천 하류 방향<br>         <b>마지막 접근:</b> 배차가 드문 구간은 택시 병행<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 농로와 제방은 보행 안전에 주의<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_ec8c160df9fa073d4ef249f720b73487.setContent(html_9aeb223b9e562b28f15e9c7cdacf72e0);
+            
+        
+
+        marker_95851399dfe4258582444adae65bb028.bindPopup(popup_ec8c160df9fa073d4ef249f720b73487)
+        ;
+
+        
+    
+    
+            marker_95851399dfe4258582444adae65bb028.bindTooltip(
+                `<div>
+                     공릉천 하구
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_95851399dfe4258582444adae65bb028.setIcon(icon_ba28e448beafbd5205ca2f167a72d5a4);
+            
+    
+            var marker_a213ebe75d8f633d14ffa967930e0d27 = L.marker(
+                [38.035, 127.01],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_ef936993f90680b5248af7797864a9aa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_38ecfacfad7d46fc844bcaf49b1b08a7 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_0a9bb9b3d610faf0beca5343e751060b = $(`<div id="html_0a9bb9b3d610faf0beca5343e751060b" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">임진강·연천권역</h4>           <b>지역:</b> 경기 연천<br>           <b>환경:</b> 하천·농경지<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 두루미류·기러기류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 1호선·경원선 연천역 또는 전곡역<br>         <b>현지 이동:</b> 연천군 농어촌버스로 임진강·군남·백학 방향<br>         <b>마지막 접근:</b> 정류장에서 도보 또는 택시<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 군사시설·민통선·사유지 출입 제한 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_38ecfacfad7d46fc844bcaf49b1b08a7.setContent(html_0a9bb9b3d610faf0beca5343e751060b);
+            
+        
+
+        marker_a213ebe75d8f633d14ffa967930e0d27.bindPopup(popup_38ecfacfad7d46fc844bcaf49b1b08a7)
+        ;
+
+        
+    
+    
+            marker_a213ebe75d8f633d14ffa967930e0d27.bindTooltip(
+                `<div>
+                     임진강·연천권역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a213ebe75d8f633d14ffa967930e0d27.setIcon(icon_ef936993f90680b5248af7797864a9aa);
+            
+    
+            var marker_d74f637f58a5b6d457ecb7e72b166d35 = L.marker(
+                [38.23, 127.255],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_3261d091abb3f1218141cf4bd09a40c2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_58e7da849edeeea4df1647d28cdb0b59 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_1baeea446557f983ec268a57440b1f0f = $(`<div id="html_1baeea446557f983ec268a57440b1f0f" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">철원평야</h4>           <b>지역:</b> 강원 철원<br>           <b>환경:</b> 농경지·하천<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 두루미류·기러기류·독수리류<br>           <b>좌표 성격:</b> 넓은 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 동서울터미널에서 철원 동송·신철원행 시외버스<br>         <b>현지 이동:</b> 동송·신철원에서 농어촌버스 또는 두루미 탐조 프로그램 차량<br>         <b>마지막 접근:</b> 넓은 농경지는 택시가 현실적<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 겨울 탐조는 공식 탐조 프로그램이나 현지 안내 이용 권장<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_58e7da849edeeea4df1647d28cdb0b59.setContent(html_1baeea446557f983ec268a57440b1f0f);
+            
+        
+
+        marker_d74f637f58a5b6d457ecb7e72b166d35.bindPopup(popup_58e7da849edeeea4df1647d28cdb0b59)
+        ;
+
+        
+    
+    
+            marker_d74f637f58a5b6d457ecb7e72b166d35.bindTooltip(
+                `<div>
+                     철원평야
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d74f637f58a5b6d457ecb7e72b166d35.setIcon(icon_3261d091abb3f1218141cf4bd09a40c2);
+            
+    
+            var marker_920711059442c860bc00a14cf23e92f5 = L.marker(
+                [37.27, 126.61],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_f22ee6483ab9c7130fb93558e55e91b3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_01e2465a2f8014a154484510d7aa67a8 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_081cc742b7814ec783e7286fae131760 = $(`<div id="html_081cc742b7814ec783e7286fae131760" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">시화호·대부도</h4>           <b>지역:</b> 경기 안산·화성<br>           <b>환경:</b> 간척호·갯벌<br>           <b>추천 시기:</b> 연중<br>           <b>대표 조류군:</b> 오리류·도요물떼새류·갈매기류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 4호선·수인분당선 안산역 또는 오이도역<br>         <b>현지 이동:</b> 대부도행 광역·좌석버스로 방아머리·대부동 방면<br>         <b>마지막 접근:</b> 시화방조제와 습지 구간은 정류장 간 거리가 길어 도보 부담<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 지역이 넓어 목표 지점을 먼저 정해야 함<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_01e2465a2f8014a154484510d7aa67a8.setContent(html_081cc742b7814ec783e7286fae131760);
+            
+        
+
+        marker_920711059442c860bc00a14cf23e92f5.bindPopup(popup_01e2465a2f8014a154484510d7aa67a8)
+        ;
+
+        
+    
+    
+            marker_920711059442c860bc00a14cf23e92f5.bindTooltip(
+                `<div>
+                     시화호·대부도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_920711059442c860bc00a14cf23e92f5.setIcon(icon_f22ee6483ab9c7130fb93558e55e91b3);
+            
+    
+            var marker_b06fc8f1b8d5955da725e86fe39d2e2a = L.marker(
+                [37.08, 126.73],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_d1d811817db8b2546f194fe5364f0b78 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_31e9f8fdd1fe938a4bf38c28c4aaccbd = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_795b85009b251893a172b3eda61f22ed = $(`<div id="html_795b85009b251893a172b3eda61f22ed" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">화성호·매향리</h4>           <b>지역:</b> 경기 화성<br>           <b>환경:</b> 간척호·갯벌<br>           <b>추천 시기:</b> 봄가을·겨울<br>           <b>대표 조류군:</b> 도요물떼새류·오리류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 수원역 또는 향남환승터미널<br>         <b>현지 이동:</b> 화성 시내버스로 우정읍·매향리·화성방조제 방향<br>         <b>마지막 접근:</b> 막차와 배차를 확인하고 필요 시 택시<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 방조제·간척지 내부는 대중교통 접근성이 낮음<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_31e9f8fdd1fe938a4bf38c28c4aaccbd.setContent(html_795b85009b251893a172b3eda61f22ed);
+            
+        
+
+        marker_b06fc8f1b8d5955da725e86fe39d2e2a.bindPopup(popup_31e9f8fdd1fe938a4bf38c28c4aaccbd)
+        ;
+
+        
+    
+    
+            marker_b06fc8f1b8d5955da725e86fe39d2e2a.bindTooltip(
+                `<div>
+                     화성호·매향리
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b06fc8f1b8d5955da725e86fe39d2e2a.setIcon(icon_d1d811817db8b2546f194fe5364f0b78);
+            
+    
+            var marker_dee2d8422cb915bb52c7fcb7ee581a35 = L.marker(
+                [37.79, 128.905],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_eec2e9454f9354894cf0ea5dd6391712 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_242d9fb2658426e5cce8103293476c37 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_1d67b6e4891d373fa3b60500bcab911d = $(`<div id="html_1d67b6e4891d373fa3b60500bcab911d" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">강릉 남대천·경포호</h4>           <b>지역:</b> 강원 강릉<br>           <b>환경:</b> 하구·석호<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 오리류·갈매기류·해오라기류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 강릉역 또는 강릉시외버스터미널<br>         <b>현지 이동:</b> 남대천은 도심버스·도보, 경포호는 경포 방면 시내버스<br>         <b>마지막 접근:</b> 정류장에서 호수 산책로 이용<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 두 지역은 하루에 연계 가능<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_242d9fb2658426e5cce8103293476c37.setContent(html_1d67b6e4891d373fa3b60500bcab911d);
+            
+        
+
+        marker_dee2d8422cb915bb52c7fcb7ee581a35.bindPopup(popup_242d9fb2658426e5cce8103293476c37)
+        ;
+
+        
+    
+    
+            marker_dee2d8422cb915bb52c7fcb7ee581a35.bindTooltip(
+                `<div>
+                     강릉 남대천·경포호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_dee2d8422cb915bb52c7fcb7ee581a35.setIcon(icon_eec2e9454f9354894cf0ea5dd6391712);
+            
+    
+            var marker_a84f0c0389874c230c8966f93cb15cad = L.marker(
+                [38.205, 128.585],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_b9b1e097780f5d65885058801d54f686 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d68be2ece541fe95461a4889086e09ed = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_96858a933f302069958f94f4ab8dbd63 = $(`<div id="html_96858a933f302069958f94f4ab8dbd63" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">속초 영랑호·청초호</h4>           <b>지역:</b> 강원 속초<br>           <b>환경:</b> 석호·하구<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 잠수성오리류·갈매기류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 속초고속·시외버스터미널<br>         <b>현지 이동:</b> 영랑호·청초호 방면 시내버스 또는 도보<br>         <b>마지막 접근:</b> 호수 둘레길에서 관찰<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 도심권이라 택시 이용도 편리<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_d68be2ece541fe95461a4889086e09ed.setContent(html_96858a933f302069958f94f4ab8dbd63);
+            
+        
+
+        marker_a84f0c0389874c230c8966f93cb15cad.bindPopup(popup_d68be2ece541fe95461a4889086e09ed)
+        ;
+
+        
+    
+    
+            marker_a84f0c0389874c230c8966f93cb15cad.bindTooltip(
+                `<div>
+                     속초 영랑호·청초호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a84f0c0389874c230c8966f93cb15cad.setIcon(icon_b9b1e097780f5d65885058801d54f686);
+            
+    
+            var marker_1af914a53afe2abc19bf8c9085c1c3fd = L.marker(
+                [38.365, 128.505],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_2e1028dbd6be5cf4c14fab06f9e161aa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f7717f249323e7941c820cea9ea7999f = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_7eb61a2920403dc6f005c0d488899598 = $(`<div id="html_7eb61a2920403dc6f005c0d488899598" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">고성 화진포·송지호</h4>           <b>지역:</b> 강원 고성<br>           <b>환경:</b> 석호·해안<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 고니류·오리류·해양성조류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 속초시외버스터미널<br>         <b>현지 이동:</b> 간성·거진·대진 방면 농어촌버스로 송지호·화진포 정류장<br>         <b>마지막 접근:</b> 정류장에서 탐방로까지 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 농어촌버스 배차가 길어 왕복 시간표 확인 필수<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_f7717f249323e7941c820cea9ea7999f.setContent(html_7eb61a2920403dc6f005c0d488899598);
+            
+        
+
+        marker_1af914a53afe2abc19bf8c9085c1c3fd.bindPopup(popup_f7717f249323e7941c820cea9ea7999f)
+        ;
+
+        
+    
+    
+            marker_1af914a53afe2abc19bf8c9085c1c3fd.bindTooltip(
+                `<div>
+                     고성 화진포·송지호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1af914a53afe2abc19bf8c9085c1c3fd.setIcon(icon_2e1028dbd6be5cf4c14fab06f9e161aa);
+            
+    
+            var marker_59824e0959c8551e6fd39e609ac0b63e = L.marker(
+                [38.5, 128.465],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_c8f638025944775f8d052d81ef3c015c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6f7d7ce9642afc5ae434679161d37c3c = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_8a9f2f9dcc14bae3d4cac125568d0e47 = $(`<div id="html_8a9f2f9dcc14bae3d4cac125568d0e47" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">대진항 선상탐조권역</h4>           <b>지역:</b> 강원 고성<br>           <b>환경:</b> 외해·선상<br>           <b>추천 시기:</b> 겨울·봄<br>           <b>대표 조류군:</b> 바다오리류·아비류·갈매기류<br>           <b>좌표 성격:</b> 항구 출항권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 속초시외버스터미널<br>         <b>현지 이동:</b> 대진·현내면 방면 농어촌버스<br>         <b>마지막 접근:</b> 대진항 선착장까지 도보 또는 택시<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 선상탐조선은 정기 대중교통이 아니므로 주최자 예약과 출항 확인 필수<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_6f7d7ce9642afc5ae434679161d37c3c.setContent(html_8a9f2f9dcc14bae3d4cac125568d0e47);
+            
+        
+
+        marker_59824e0959c8551e6fd39e609ac0b63e.bindPopup(popup_6f7d7ce9642afc5ae434679161d37c3c)
+        ;
+
+        
+    
+    
+            marker_59824e0959c8551e6fd39e609ac0b63e.bindTooltip(
+                `<div>
+                     대진항 선상탐조권역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_59824e0959c8551e6fd39e609ac0b63e.setIcon(icon_c8f638025944775f8d052d81ef3c015c);
+            
+    
+            var marker_267648507520864f22ff09e8bd672df8 = L.marker(
+                [37.735, 128.59],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_d50ebf57492aced5c95c207da6b5e5da = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkgreen",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d96ca88bb9a2c9f16f0dbea2e5706888 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_ac43327a66dcac1c486a2490261298c1 = $(`<div id="html_ac43327a66dcac1c486a2490261298c1" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">오대산·월정사권역</h4>           <b>지역:</b> 강원 평창<br>           <b>환경:</b> 산림<br>           <b>추천 시기:</b> 연중, 특히 봄<br>           <b>대표 조류군:</b> 산림성조류·딱따구리류·나무발발이류<br>           <b>좌표 성격:</b> 국립공원 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 진부역<br>         <b>현지 이동:</b> 진부역·진부시외버스터미널에서 월정사행 버스<br>         <b>마지막 접근:</b> 월정사·전나무숲길부터 도보 탐조<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 상원사까지 갈 경우 막차 시간 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_d96ca88bb9a2c9f16f0dbea2e5706888.setContent(html_ac43327a66dcac1c486a2490261298c1);
+            
+        
+
+        marker_267648507520864f22ff09e8bd672df8.bindPopup(popup_d96ca88bb9a2c9f16f0dbea2e5706888)
+        ;
+
+        
+    
+    
+            marker_267648507520864f22ff09e8bd672df8.bindTooltip(
+                `<div>
+                     오대산·월정사권역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_267648507520864f22ff09e8bd672df8.setIcon(icon_d50ebf57492aced5c95c207da6b5e5da);
+            
+    
+            var marker_0981da8dc2cc6d6c015010738bc99445 = L.marker(
+                [37.965, 124.665],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_20d9dfa8300d486b6dec224a311e819d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_02c48e36d092a2a6f8431e721d987225 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_d72d8ef7410c382a1d5b1e4f92517d3c = $(`<div id="html_d72d8ef7410c382a1d5b1e4f92517d3c" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">백령도</h4>           <b>지역:</b> 인천 옹진<br>           <b>환경:</b> 서해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 통과철새·미조·맹금류<br>           <b>좌표 성격:</b> 섬 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 수도권 전철로 인천역 후 버스·택시로 인천항 연안여객터미널<br>         <b>현지 이동:</b> 인천항에서 백령도행 여객선<br>         <b>마지막 접근:</b> 섬에서는 공영버스·택시·도보<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 기상과 군사 상황에 따라 결항 가능, 신분증 필수<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_02c48e36d092a2a6f8431e721d987225.setContent(html_d72d8ef7410c382a1d5b1e4f92517d3c);
+            
+        
+
+        marker_0981da8dc2cc6d6c015010738bc99445.bindPopup(popup_02c48e36d092a2a6f8431e721d987225)
+        ;
+
+        
+    
+    
+            marker_0981da8dc2cc6d6c015010738bc99445.bindTooltip(
+                `<div>
+                     백령도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0981da8dc2cc6d6c015010738bc99445.setIcon(icon_20d9dfa8300d486b6dec224a311e819d);
+            
+    
+            var marker_3e27d4a89ef40ea7588ab8631c8c5c32 = L.marker(
+                [37.825, 124.71],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_8e2f3919f77f31c1bce1e9559d874f79 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0823351ad0a5101862b3e63f395bee0e = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_5afba6a3f42eaa991502723072db71bc = $(`<div id="html_5afba6a3f42eaa991502723072db71bc" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">대청도·소청도</h4>           <b>지역:</b> 인천 옹진<br>           <b>환경:</b> 서해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 통과철새·미조·바닷새<br>           <b>좌표 성격:</b> 도서 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 인천항 연안여객터미널<br>         <b>현지 이동:</b> 백령도 항로 여객선의 대청도·소청도 기항편 이용<br>         <b>마지막 접근:</b> 섬 공영버스 또는 도보<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 기항 여부와 귀항편을 반드시 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_0823351ad0a5101862b3e63f395bee0e.setContent(html_5afba6a3f42eaa991502723072db71bc);
+            
+        
+
+        marker_3e27d4a89ef40ea7588ab8631c8c5c32.bindPopup(popup_0823351ad0a5101862b3e63f395bee0e)
+        ;
+
+        
+    
+    
+            marker_3e27d4a89ef40ea7588ab8631c8c5c32.bindTooltip(
+                `<div>
+                     대청도·소청도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3e27d4a89ef40ea7588ab8631c8c5c32.setIcon(icon_8e2f3919f77f31c1bce1e9559d874f79);
+            
+    
+            var marker_553763b041f70a36af1f84f4b25f8e9c = L.marker(
+                [37.19, 125.98],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_471e1d84cccf8bd9d979eefb95bb7987 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_675755f44ef576bd46da3bbb64b7d545 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_5c984511341b054c96f07d564c85df81 = $(`<div id="html_5c984511341b054c96f07d564c85df81" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">굴업도·덕적군도</h4>           <b>지역:</b> 인천 옹진<br>           <b>환경:</b> 서해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 소형참새목·맹금류·해안조류<br>           <b>좌표 성격:</b> 도서 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 인천항 연안여객터미널<br>         <b>현지 이동:</b> 인천항→덕적도, 덕적도에서 굴업도행 배 환승<br>         <b>마지막 접근:</b> 섬에서는 도보 중심<br>         <b>접근 난이도:</b> 매우 어려움<br>         <b>주의:</b> 환승편이 매일 같지 않고 풍랑 시 체류 가능성 큼<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_675755f44ef576bd46da3bbb64b7d545.setContent(html_5c984511341b054c96f07d564c85df81);
+            
+        
+
+        marker_553763b041f70a36af1f84f4b25f8e9c.bindPopup(popup_675755f44ef576bd46da3bbb64b7d545)
+        ;
+
+        
+    
+    
+            marker_553763b041f70a36af1f84f4b25f8e9c.bindTooltip(
+                `<div>
+                     굴업도·덕적군도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_553763b041f70a36af1f84f4b25f8e9c.setIcon(icon_471e1d84cccf8bd9d979eefb95bb7987);
+            
+    
+            var marker_0f12b00504cf86ebcf14e6c97c02ef22 = L.marker(
+                [36.66, 126.44],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_72faecceb5f3d58dc7431ee84a3f776e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7c360b8944f8ea7eea4c90f164c70195 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_9c31f93598ab6abbd3d43890080d4894 = $(`<div id="html_9c31f93598ab6abbd3d43890080d4894" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">천수만·간월호</h4>           <b>지역:</b> 충남 서산<br>           <b>환경:</b> 간척호·농경지<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 기러기류·오리류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 서울남부터미널 등에서 서산버스터미널<br>         <b>현지 이동:</b> 서산 시내버스로 부석·간월도·버드랜드 방향<br>         <b>마지막 접근:</b> 버드랜드 이후 넓은 간척지는 택시 병행<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 버드랜드를 거점으로 잡는 것이 편리<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_7c360b8944f8ea7eea4c90f164c70195.setContent(html_9c31f93598ab6abbd3d43890080d4894);
+            
+        
+
+        marker_0f12b00504cf86ebcf14e6c97c02ef22.bindPopup(popup_7c360b8944f8ea7eea4c90f164c70195)
+        ;
+
+        
+    
+    
+            marker_0f12b00504cf86ebcf14e6c97c02ef22.bindTooltip(
+                `<div>
+                     천수만·간월호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0f12b00504cf86ebcf14e6c97c02ef22.setIcon(icon_72faecceb5f3d58dc7431ee84a3f776e);
+            
+    
+            var marker_c8280e09338495dba59957fe7e7742e3 = L.marker(
+                [36.635, 126.365],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_9f112b55c86856b6a92ca81576877640 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_91972b966e972486ff7a7b0e7d4e1688 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_42fb29e870943b0c0511e020c14471a8 = $(`<div id="html_42fb29e870943b0c0511e020c14471a8" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">부남호</h4>           <b>지역:</b> 충남 서산·태안<br>           <b>환경:</b> 간척호<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 기러기류·오리류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 서산버스터미널 또는 태안버스터미널<br>         <b>현지 이동:</b> 부석·남면 방면 농어촌버스<br>         <b>마지막 접근:</b> 호수 주변 세부 관찰지는 택시가 현실적<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 도로변 탐조가 많아 보행 안전 주의<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_91972b966e972486ff7a7b0e7d4e1688.setContent(html_42fb29e870943b0c0511e020c14471a8);
+            
+        
+
+        marker_c8280e09338495dba59957fe7e7742e3.bindPopup(popup_91972b966e972486ff7a7b0e7d4e1688)
+        ;
+
+        
+    
+    
+            marker_c8280e09338495dba59957fe7e7742e3.bindTooltip(
+                `<div>
+                     부남호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c8280e09338495dba59957fe7e7742e3.setIcon(icon_9f112b55c86856b6a92ca81576877640);
+            
+    
+            var marker_1c06ec2847854b1bbef7c5f794dfdaeb = L.marker(
+                [36.9, 126.82],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_970e66fed4f6c011eb9bc4dd5acb3fa4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e03f9effe70830694b71f786f67ace2d = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_4a5f9021b3ede7ceb41e95367ff48263 = $(`<div id="html_4a5f9021b3ede7ceb41e95367ff48263" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">아산만·삽교호</h4>           <b>지역:</b> 충남 아산·당진<br>           <b>환경:</b> 하구·간척호<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 도요물떼새류·기러기류·오리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 천안아산역·평택역 또는 당진버스터미널<br>         <b>현지 이동:</b> 삽교호관광지·인주·평택호 방면 버스<br>         <b>마지막 접근:</b> 갯벌과 방조제 구간은 택시 병행<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 권역이 넓으므로 아산만 또는 삽교호 한 곳을 선택<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_e03f9effe70830694b71f786f67ace2d.setContent(html_4a5f9021b3ede7ceb41e95367ff48263);
+            
+        
+
+        marker_1c06ec2847854b1bbef7c5f794dfdaeb.bindPopup(popup_e03f9effe70830694b71f786f67ace2d)
+        ;
+
+        
+    
+    
+            marker_1c06ec2847854b1bbef7c5f794dfdaeb.bindTooltip(
+                `<div>
+                     아산만·삽교호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1c06ec2847854b1bbef7c5f794dfdaeb.setIcon(icon_970e66fed4f6c011eb9bc4dd5acb3fa4);
+            
+    
+            var marker_2809d5c814779d77134522efbd087ce7 = L.marker(
+                [36.01, 126.615],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_d2eac7e25fa11d471d1f9c32693ae6c8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_22d883efb5262c192342e4366c5832d0 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_5905f120a3c8376707f91ca040925101 = $(`<div id="html_5905f120a3c8376707f91ca040925101" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">유부도·금강하구 갯벌</h4>           <b>지역:</b> 충남 서천<br>           <b>환경:</b> 갯벌·하구<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 도요물떼새류·저어새류<br>           <b>좌표 성격:</b> 민감지역 세부좌표 제외<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 장항역 또는 서천버스터미널<br>         <b>현지 이동:</b> 장항·송림·금강하구둑 방면 버스<br>         <b>마지막 접근:</b> 유부도는 일반 관광선이 없어 허가된 조사·탐방 프로그램이 아니면 접근 곤란<br>         <b>접근 난이도:</b> 매우 어려움<br>         <b>주의:</b> 민감한 갯벌이며 임의 진입 금지<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_22d883efb5262c192342e4366c5832d0.setContent(html_5905f120a3c8376707f91ca040925101);
+            
+        
+
+        marker_2809d5c814779d77134522efbd087ce7.bindPopup(popup_22d883efb5262c192342e4366c5832d0)
+        ;
+
+        
+    
+    
+            marker_2809d5c814779d77134522efbd087ce7.bindTooltip(
+                `<div>
+                     유부도·금강하구 갯벌
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2809d5c814779d77134522efbd087ce7.setIcon(icon_d2eac7e25fa11d471d1f9c32693ae6c8);
+            
+    
+            var marker_4266962d6a14cedc1343032fb0d6e510 = L.marker(
+                [36.005, 126.755],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_edef0481f1ef36abd478cc7c288ae230 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_80247538ab811792f0b2d0c8e4c73d27 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_6de54662a765f985ffddcde5e538ecbe = $(`<div id="html_6de54662a765f985ffddcde5e538ecbe" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">금강호·금강하구</h4>           <b>지역:</b> 전북 군산·충남 서천<br>           <b>환경:</b> 하구·호수<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 가창오리·기러기류·오리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 군산역·장항역 또는 군산·서천터미널<br>         <b>현지 이동:</b> 금강하구둑·금강철새조망대 방면 시내버스<br>         <b>마지막 접근:</b> 조망대와 제방 주변 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 군산 쪽과 서천 쪽 관찰 지점이 다름<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_80247538ab811792f0b2d0c8e4c73d27.setContent(html_6de54662a765f985ffddcde5e538ecbe);
+            
+        
+
+        marker_4266962d6a14cedc1343032fb0d6e510.bindPopup(popup_80247538ab811792f0b2d0c8e4c73d27)
+        ;
+
+        
+    
+    
+            marker_4266962d6a14cedc1343032fb0d6e510.bindTooltip(
+                `<div>
+                     금강호·금강하구
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4266962d6a14cedc1343032fb0d6e510.setIcon(icon_edef0481f1ef36abd478cc7c288ae230);
+            
+    
+            var marker_c869df92f99dce537524c4cb91c050c6 = L.marker(
+                [36.115, 125.98],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_eba80b05be9d18ce37347ef85f4cfc77 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fa67f1ae6339fe3db6e31067ba3d5c84 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_6b0577e78417d1f44368def7f907a88a = $(`<div id="html_6b0577e78417d1f44368def7f907a88a" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">어청도</h4>           <b>지역:</b> 전북 군산<br>           <b>환경:</b> 서해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 소형참새목·미조·맹금류<br>           <b>좌표 성격:</b> 섬 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 군산역·군산버스터미널에서 군산연안여객터미널 이동<br>         <b>현지 이동:</b> 군산항에서 어청도행 여객선<br>         <b>마지막 접근:</b> 섬에서는 대부분 도보<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 계절별 운항 횟수와 풍랑 결항을 전날·당일 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_fa67f1ae6339fe3db6e31067ba3d5c84.setContent(html_6b0577e78417d1f44368def7f907a88a);
+            
+        
+
+        marker_c869df92f99dce537524c4cb91c050c6.bindPopup(popup_fa67f1ae6339fe3db6e31067ba3d5c84)
+        ;
+
+        
+    
+    
+            marker_c869df92f99dce537524c4cb91c050c6.bindTooltip(
+                `<div>
+                     어청도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c869df92f99dce537524c4cb91c050c6.setIcon(icon_eba80b05be9d18ce37347ef85f4cfc77);
+            
+    
+            var marker_8e7e0e6a0fd5cff83d5ab61271cce7b3 = L.marker(
+                [36.225, 126.08],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_92440cfb326ebd57c8a05e8f1957841e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_496675b013202cae4c107e1a32761077 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_4a91d1dcf0ce20474792b467ce2b67aa = $(`<div id="html_4a91d1dcf0ce20474792b467ce2b67aa" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">외연도</h4>           <b>지역:</b> 충남 보령<br>           <b>환경:</b> 서해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 소형참새목·미조·바닷새<br>           <b>좌표 성격:</b> 섬 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 장항선 대천역 또는 보령종합터미널<br>         <b>현지 이동:</b> 대천항 여객선터미널로 시내버스·택시<br>         <b>마지막 접근:</b> 대천항에서 외연도행 여객선, 섬에서는 도보<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 섬 체류시간과 귀항편 확인 필수<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_496675b013202cae4c107e1a32761077.setContent(html_4a91d1dcf0ce20474792b467ce2b67aa);
+            
+        
+
+        marker_8e7e0e6a0fd5cff83d5ab61271cce7b3.bindPopup(popup_496675b013202cae4c107e1a32761077)
+        ;
+
+        
+    
+    
+            marker_8e7e0e6a0fd5cff83d5ab61271cce7b3.bindTooltip(
+                `<div>
+                     외연도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8e7e0e6a0fd5cff83d5ab61271cce7b3.setIcon(icon_92440cfb326ebd57c8a05e8f1957841e);
+            
+    
+            var marker_9fc8b0075af608e7d9f10315da2fa56a = L.marker(
+                [35.82, 126.59],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_af5750aa0f0f8a27f96876223c5f4fc7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_583374496174e6823bbf0d2efdea7114 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_bc3f6ed2312e4bafc3c4bad91a7f3d80 = $(`<div id="html_bc3f6ed2312e4bafc3c4bad91a7f3d80" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">새만금</h4>           <b>지역:</b> 전북 군산·김제·부안<br>           <b>환경:</b> 간척지·갯벌<br>           <b>추천 시기:</b> 연중, 특히 이동기·겨울<br>           <b>대표 조류군:</b> 도요물떼새류·오리류·기러기류<br>           <b>좌표 성격:</b> 광역권<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 군산역·익산역·부안버스터미널<br>         <b>현지 이동:</b> 군산 비응항·야미도·부안 변산 방향 버스<br>         <b>마지막 접근:</b> 방조제가 매우 길어 세부 탐조지는 택시 병행<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 대중교통으로 전 구간 탐조는 불가능에 가까움<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_583374496174e6823bbf0d2efdea7114.setContent(html_bc3f6ed2312e4bafc3c4bad91a7f3d80);
+            
+        
+
+        marker_9fc8b0075af608e7d9f10315da2fa56a.bindPopup(popup_583374496174e6823bbf0d2efdea7114)
+        ;
+
+        
+    
+    
+            marker_9fc8b0075af608e7d9f10315da2fa56a.bindTooltip(
+                `<div>
+                     새만금
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9fc8b0075af608e7d9f10315da2fa56a.setIcon(icon_af5750aa0f0f8a27f96876223c5f4fc7);
+            
+    
+            var marker_d052af55e46c7ae21b6af81aaeb19e66 = L.marker(
+                [35.835, 126.72],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_09db20f585deb3615b7450fe0f66cf55 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b95a24477a3f69baa9c0b8734f60cc1d = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_ebcb0fc07ecad384931b0e3f15582fcb = $(`<div id="html_ebcb0fc07ecad384931b0e3f15582fcb" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">동진강·만경강 하구권역</h4>           <b>지역:</b> 전북 김제<br>           <b>환경:</b> 하구·농경지<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 기러기류·오리류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 김제역 또는 익산역<br>         <b>현지 이동:</b> 김제·만경·죽산·진봉 방면 농어촌버스<br>         <b>마지막 접근:</b> 제방과 농경지는 택시 병행<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 농어촌버스 배차가 드물고 탐조지가 분산됨<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_b95a24477a3f69baa9c0b8734f60cc1d.setContent(html_ebcb0fc07ecad384931b0e3f15582fcb);
+            
+        
+
+        marker_d052af55e46c7ae21b6af81aaeb19e66.bindPopup(popup_b95a24477a3f69baa9c0b8734f60cc1d)
+        ;
+
+        
+    
+    
+            marker_d052af55e46c7ae21b6af81aaeb19e66.bindTooltip(
+                `<div>
+                     동진강·만경강 하구권역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d052af55e46c7ae21b6af81aaeb19e66.setIcon(icon_09db20f585deb3615b7450fe0f66cf55);
+            
+    
+            var marker_be27ee5df94210f48266ec20e44ecda0 = L.marker(
+                [35.475, 126.48],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_220a4010d261590f6b15588f00750052 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6b57408c146e8dcb7190f00070c9107e = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_2d2841736c7601e3c2919813ebb22c7c = $(`<div id="html_2d2841736c7601e3c2919813ebb22c7c" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">고창갯벌</h4>           <b>지역:</b> 전북 고창<br>           <b>환경:</b> 갯벌<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 도요물떼새류·저어새류<br>           <b>좌표 성격:</b> 광역권<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 고창공용버스터미널<br>         <b>현지 이동:</b> 심원·만돌·선운산·동호 방면 농어촌버스<br>         <b>마지막 접근:</b> 정류장에서 갯벌 탐방지까지 도보 또는 택시<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 조석표를 먼저 확인해야 탐조 효율이 높음<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_6b57408c146e8dcb7190f00070c9107e.setContent(html_2d2841736c7601e3c2919813ebb22c7c);
+            
+        
+
+        marker_be27ee5df94210f48266ec20e44ecda0.bindPopup(popup_6b57408c146e8dcb7190f00070c9107e)
+        ;
+
+        
+    
+    
+            marker_be27ee5df94210f48266ec20e44ecda0.bindTooltip(
+                `<div>
+                     고창갯벌
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_be27ee5df94210f48266ec20e44ecda0.setIcon(icon_220a4010d261590f6b15588f00750052);
+            
+    
+            var marker_47bf86a04d7793c45791934a7de479eb = L.marker(
+                [34.7, 126.43],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_0a5ae1a1ad3b99707cb7b355b38d1a84 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1f63e907757bd2d30ac749604b839ef0 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_9531484ffdd47c9d39053d7a2cbf35b5 = $(`<div id="html_9531484ffdd47c9d39053d7a2cbf35b5" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">영암호·금호호</h4>           <b>지역:</b> 전남 영암·해남<br>           <b>환경:</b> 간척호<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 가창오리·기러기류·오리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 목포역·목포종합버스터미널 또는 해남터미널<br>         <b>현지 이동:</b> 삼호·산이·화원 방면 농어촌버스<br>         <b>마지막 접근:</b> 호수 제방과 간척지는 택시 필수에 가까움<br>         <b>접근 난이도:</b> 매우 어려움<br>         <b>주의:</b> 광역 간척지라 대중교통 단독 탐조에 부적합<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_1f63e907757bd2d30ac749604b839ef0.setContent(html_9531484ffdd47c9d39053d7a2cbf35b5);
+            
+        
+
+        marker_47bf86a04d7793c45791934a7de479eb.bindPopup(popup_1f63e907757bd2d30ac749604b839ef0)
+        ;
+
+        
+    
+    
+            marker_47bf86a04d7793c45791934a7de479eb.bindTooltip(
+                `<div>
+                     영암호·금호호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_47bf86a04d7793c45791934a7de479eb.setIcon(icon_0a5ae1a1ad3b99707cb7b355b38d1a84);
+            
+    
+            var marker_0dc7740224ddc122e0355d88610318e3 = L.marker(
+                [34.555, 126.455],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_752c3336068c623ca815ff6388a4617b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5624a438f28ba2ce95296ad75ac56475 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_4f3e298242d9d443deb95e2b290e0653 = $(`<div id="html_4f3e298242d9d443deb95e2b290e0653" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">고천암호</h4>           <b>지역:</b> 전남 해남<br>           <b>환경:</b> 간척호·농경지<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 오리류·기러기류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 해남종합버스터미널<br>         <b>현지 이동:</b> 황산·문내·화산 방면 농어촌버스<br>         <b>마지막 접근:</b> 고천암 자연생태공원·제방까지 택시 병행<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 일출·일몰 탐조 시간에는 버스가 없을 수 있음<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_5624a438f28ba2ce95296ad75ac56475.setContent(html_4f3e298242d9d443deb95e2b290e0653);
+            
+        
+
+        marker_0dc7740224ddc122e0355d88610318e3.bindPopup(popup_5624a438f28ba2ce95296ad75ac56475)
+        ;
+
+        
+    
+    
+            marker_0dc7740224ddc122e0355d88610318e3.bindTooltip(
+                `<div>
+                     고천암호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0dc7740224ddc122e0355d88610318e3.setIcon(icon_752c3336068c623ca815ff6388a4617b);
+            
+    
+            var marker_c0c3b1212de3672f35f4be9d3e428991 = L.marker(
+                [34.885, 127.51],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_c76968c2f5868636dae59a42bd7b55da = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2041d868d830110c4c21e75e06b9c1cc = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_89dfd8080f4a25aedcfbcac93b119380 = $(`<div id="html_89dfd8080f4a25aedcfbcac93b119380" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">순천만</h4>           <b>지역:</b> 전남 순천<br>           <b>환경:</b> 갈대습지·갯벌<br>           <b>추천 시기:</b> 연중, 특히 겨울<br>           <b>대표 조류군:</b> 두루미류·오리류·맹금류<br>           <b>좌표 성격:</b> 보호구역 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 순천역 또는 순천종합버스터미널<br>         <b>현지 이동:</b> 순천만습지행 시내버스<br>         <b>마지막 접근:</b> 정류장에서 탐방로 이용<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 대중교통 접근성이 가장 좋은 대표 습지 중 하나<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_2041d868d830110c4c21e75e06b9c1cc.setContent(html_89dfd8080f4a25aedcfbcac93b119380);
+            
+        
+
+        marker_c0c3b1212de3672f35f4be9d3e428991.bindPopup(popup_2041d868d830110c4c21e75e06b9c1cc)
+        ;
+
+        
+    
+    
+            marker_c0c3b1212de3672f35f4be9d3e428991.bindTooltip(
+                `<div>
+                     순천만
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c0c3b1212de3672f35f4be9d3e428991.setIcon(icon_c76968c2f5868636dae59a42bd7b55da);
+            
+    
+            var marker_c7cb3ae1f907be8fcbc45c4bb3c26a63 = L.marker(
+                [34.69, 127.4],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_d0f4c95adb7ef4f8a618e19b3beee86f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3f51ea2396410f3392f6e2fe3b098384 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_44d4a4dd1617b4e14796a18636501236 = $(`<div id="html_44d4a4dd1617b4e14796a18636501236" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">여자만</h4>           <b>지역:</b> 전남 여수·고흥·보성<br>           <b>환경:</b> 갯벌·내만<br>           <b>추천 시기:</b> 봄가을·겨울<br>           <b>대표 조류군:</b> 도요물떼새류·저어새류·오리류<br>           <b>좌표 성격:</b> 광역권<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 순천역·여수엑스포역 또는 고흥터미널<br>         <b>현지 이동:</b> 별량·벌교·과역·소라면 등 목표 지역 방면 버스<br>         <b>마지막 접근:</b> 갯벌 세부 지점은 택시 병행<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 여자만 전체가 넓어 한 지역만 정해 이동<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_3f51ea2396410f3392f6e2fe3b098384.setContent(html_44d4a4dd1617b4e14796a18636501236);
+            
+        
+
+        marker_c7cb3ae1f907be8fcbc45c4bb3c26a63.bindPopup(popup_3f51ea2396410f3392f6e2fe3b098384)
+        ;
+
+        
+    
+    
+            marker_c7cb3ae1f907be8fcbc45c4bb3c26a63.bindTooltip(
+                `<div>
+                     여자만
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c7cb3ae1f907be8fcbc45c4bb3c26a63.setIcon(icon_d0f4c95adb7ef4f8a618e19b3beee86f);
+            
+    
+            var marker_c66fdd5fd33df60862e0b239be5d2eec = L.marker(
+                [34.68, 125.43],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_b245adc7951b632926ba760fa1a99020 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1f5760a9432a85c7f3a796aecf72dcb9 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_92085dd9a324c3373b22534605978458 = $(`<div id="html_92085dd9a324c3373b22534605978458" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">흑산도</h4>           <b>지역:</b> 전남 신안<br>           <b>환경:</b> 서남해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 통과철새·미조·바닷새<br>           <b>좌표 성격:</b> 섬 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 목포역에서 목포연안여객선터미널 이동<br>         <b>현지 이동:</b> 목포항에서 흑산도행 쾌속선<br>         <b>마지막 접근:</b> 섬 공영버스·택시·도보<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 기상 결항 가능성이 높아 여유 일정 필요<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_1f5760a9432a85c7f3a796aecf72dcb9.setContent(html_92085dd9a324c3373b22534605978458);
+            
+        
+
+        marker_c66fdd5fd33df60862e0b239be5d2eec.bindPopup(popup_1f5760a9432a85c7f3a796aecf72dcb9)
+        ;
+
+        
+    
+    
+            marker_c66fdd5fd33df60862e0b239be5d2eec.bindTooltip(
+                `<div>
+                     흑산도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c66fdd5fd33df60862e0b239be5d2eec.setIcon(icon_b245adc7951b632926ba760fa1a99020);
+            
+    
+            var marker_2603d74a8c664952d6d41124ceb623ab = L.marker(
+                [34.05, 125.125],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_618698669c89a0e55bc833c6dbef1e12 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_43780a1cbca687441407e6bbe2590b9f = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_40c1b86e7ce6850d674bb7f8a8e118fe = $(`<div id="html_40c1b86e7ce6850d674bb7f8a8e118fe" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">가거도</h4>           <b>지역:</b> 전남 신안<br>           <b>환경:</b> 서남해 도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 통과철새·미조·바닷새<br>           <b>좌표 성격:</b> 섬 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 목포연안여객선터미널<br>         <b>현지 이동:</b> 목포항에서 가거도행 여객선<br>         <b>마지막 접근:</b> 섬에서는 도보·마을 차량<br>         <b>접근 난이도:</b> 매우 어려움<br>         <b>주의:</b> 항해시간이 길고 결항 시 일정 변경 폭이 큼<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_43780a1cbca687441407e6bbe2590b9f.setContent(html_40c1b86e7ce6850d674bb7f8a8e118fe);
+            
+        
+
+        marker_2603d74a8c664952d6d41124ceb623ab.bindPopup(popup_43780a1cbca687441407e6bbe2590b9f)
+        ;
+
+        
+    
+    
+            marker_2603d74a8c664952d6d41124ceb623ab.bindTooltip(
+                `<div>
+                     가거도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2603d74a8c664952d6d41124ceb623ab.setIcon(icon_618698669c89a0e55bc833c6dbef1e12);
+            
+    
+            var marker_c85df91fbf6d57fee97c9e9ba1846a28 = L.marker(
+                [35.005, 126.15],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_ba543147ed9fe30994cebb56e035ded8 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2a5e2a8e07ca27176b399cdc3b8bf9e2 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_a0afe472b74c9a811cecaab764014944 = $(`<div id="html_a0afe472b74c9a811cecaab764014944" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">증도·지도 갯벌권역</h4>           <b>지역:</b> 전남 신안<br>           <b>환경:</b> 갯벌·염전<br>           <b>추천 시기:</b> 봄가을·겨울<br>           <b>대표 조류군:</b> 도요물떼새류·저어새류·오리류<br>           <b>좌표 성격:</b> 광역권<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 목포역·목포종합버스터미널<br>         <b>현지 이동:</b> 지도·증도 방면 시외·농어촌버스<br>         <b>마지막 접근:</b> 증도 내 공영버스 또는 택시<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 염전·갯벌 지점 사이 거리가 길다<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_2a5e2a8e07ca27176b399cdc3b8bf9e2.setContent(html_a0afe472b74c9a811cecaab764014944);
+            
+        
+
+        marker_c85df91fbf6d57fee97c9e9ba1846a28.bindPopup(popup_2a5e2a8e07ca27176b399cdc3b8bf9e2)
+        ;
+
+        
+    
+    
+            marker_c85df91fbf6d57fee97c9e9ba1846a28.bindTooltip(
+                `<div>
+                     증도·지도 갯벌권역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c85df91fbf6d57fee97c9e9ba1846a28.setIcon(icon_ba543147ed9fe30994cebb56e035ded8);
+            
+    
+            var marker_4f36d38a3f932e5364b66144b660970d = L.marker(
+                [35.31, 128.68],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_53b110442efcbfa7a02a421677898934 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_19f053c2963d34b679e8b8cf21034622 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_1f5532ef251ac0d81f92abb9c8d512b2 = $(`<div id="html_1f5532ef251ac0d81f92abb9c8d512b2" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">주남저수지</h4>           <b>지역:</b> 경남 창원<br>           <b>환경:</b> 저수지·농경지<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 오리류·기러기류·맹금류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 창원중앙역 또는 창원종합버스터미널<br>         <b>현지 이동:</b> 동읍·주남저수지 방면 시내버스<br>         <b>마지막 접근:</b> 주남저수지 생태학습관부터 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 일부 제방은 버스 정류장에서 거리가 있음<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_19f053c2963d34b679e8b8cf21034622.setContent(html_1f5532ef251ac0d81f92abb9c8d512b2);
+            
+        
+
+        marker_4f36d38a3f932e5364b66144b660970d.bindPopup(popup_19f053c2963d34b679e8b8cf21034622)
+        ;
+
+        
+    
+    
+            marker_4f36d38a3f932e5364b66144b660970d.bindTooltip(
+                `<div>
+                     주남저수지
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4f36d38a3f932e5364b66144b660970d.setIcon(icon_53b110442efcbfa7a02a421677898934);
+            
+    
+            var marker_0a06fb8c7515fd52add25231060257bb = L.marker(
+                [35.08, 128.92],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_44634eae389f7208e4a648cb34942eed = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9e400d613a8a5a5e956f45768dc7928a = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_1c05db620f3761498d1d09f6d0f694bf = $(`<div id="html_1c05db620f3761498d1d09f6d0f694bf" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">낙동강 하구</h4>           <b>지역:</b> 부산<br>           <b>환경:</b> 하구·사주·갯벌<br>           <b>추천 시기:</b> 연중, 특히 겨울·이동기<br>           <b>대표 조류군:</b> 오리류·도요물떼새류·갈매기류<br>           <b>좌표 성격:</b> 광역권<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 부산도시철도 1호선 하단역<br>         <b>현지 이동:</b> 을숙도·명지·다대포 방면 시내버스<br>         <b>마지막 접근:</b> 낙동강하구에코센터와 탐방로 도보<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 을숙도는 대중교통 탐조에 적합<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_9e400d613a8a5a5e956f45768dc7928a.setContent(html_1c05db620f3761498d1d09f6d0f694bf);
+            
+        
+
+        marker_0a06fb8c7515fd52add25231060257bb.bindPopup(popup_9e400d613a8a5a5e956f45768dc7928a)
+        ;
+
+        
+    
+    
+            marker_0a06fb8c7515fd52add25231060257bb.bindTooltip(
+                `<div>
+                     낙동강 하구
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0a06fb8c7515fd52add25231060257bb.setIcon(icon_44634eae389f7208e4a648cb34942eed);
+            
+    
+            var marker_27e5e43ccee1ffb338bc55abddb03b37 = L.marker(
+                [35.55, 128.42],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_faf6b911b7d09d44a36efd8c408eff26 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8f0e5856fb29cd6c318644e7754cd85a = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_208e71dd50099e218be777fcc58161fd = $(`<div id="html_208e71dd50099e218be777fcc58161fd" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">우포늪</h4>           <b>지역:</b> 경남 창녕<br>           <b>환경:</b> 내륙습지<br>           <b>추천 시기:</b> 연중, 특히 겨울<br>           <b>대표 조류군:</b> 오리류·백로류·맹금류<br>           <b>좌표 성격:</b> 보호구역 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 창녕시외버스터미널<br>         <b>현지 이동:</b> 유어·우포늪 방면 농어촌버스<br>         <b>마지막 접근:</b> 우포늪 생태관부터 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 막차가 이르므로 왕복 시간 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_8f0e5856fb29cd6c318644e7754cd85a.setContent(html_208e71dd50099e218be777fcc58161fd);
+            
+        
+
+        marker_27e5e43ccee1ffb338bc55abddb03b37.bindPopup(popup_8f0e5856fb29cd6c318644e7754cd85a)
+        ;
+
+        
+    
+    
+            marker_27e5e43ccee1ffb338bc55abddb03b37.bindTooltip(
+                `<div>
+                     우포늪
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_27e5e43ccee1ffb338bc55abddb03b37.setIcon(icon_faf6b911b7d09d44a36efd8c408eff26);
+            
+    
+            var marker_278aab3cca0b1263aa6e840038bc1cd6 = L.marker(
+                [35.305, 128.815],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_c1cf141c40ba01e916885c070568dc32 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1a38265d54d0dc80bc056410acde66c8 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_3a7946e092e72cdb2da4bd1fa1e7ed20 = $(`<div id="html_3a7946e092e72cdb2da4bd1fa1e7ed20" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">화포천습지</h4>           <b>지역:</b> 경남 김해<br>           <b>환경:</b> 하천습지·농경지<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 기러기류·오리류·독수리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 부산김해경전철 봉황역·김해시외버스터미널<br>         <b>현지 이동:</b> 한림·진영 방면 시내버스<br>         <b>마지막 접근:</b> 화포천습지생태공원 정류장에서 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 정류장과 관찰지의 실제 거리를 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_1a38265d54d0dc80bc056410acde66c8.setContent(html_3a7946e092e72cdb2da4bd1fa1e7ed20);
+            
+        
+
+        marker_278aab3cca0b1263aa6e840038bc1cd6.bindPopup(popup_1a38265d54d0dc80bc056410acde66c8)
+        ;
+
+        
+    
+    
+            marker_278aab3cca0b1263aa6e840038bc1cd6.bindTooltip(
+                `<div>
+                     화포천습지
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_278aab3cca0b1263aa6e840038bc1cd6.setIcon(icon_c1cf141c40ba01e916885c070568dc32);
+            
+    
+            var marker_b727238daa8fd4a9de2dd82e44add083 = L.marker(
+                [35.545, 129.355],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_2fca215cb15a2c03e692128474b70308 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bc007696aa41c0958491f725bf462b66 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_c290f8b6a33d8caea9ae23ebcd33c05e = $(`<div id="html_c290f8b6a33d8caea9ae23ebcd33c05e" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">태화강 하구</h4>           <b>지역:</b> 울산<br>           <b>환경:</b> 하구·도심하천<br>           <b>추천 시기:</b> 겨울·여름<br>           <b>대표 조류군:</b> 떼까마귀·백로류·오리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 울산역 또는 태화강역<br>         <b>현지 이동:</b> 태화강 국가정원·삼호대숲·명촌교 방면 시내버스<br>         <b>마지막 접근:</b> 하천 산책로에서 도보 탐조<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 도심권이라 여러 지점을 버스로 연계 가능<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_bc007696aa41c0958491f725bf462b66.setContent(html_c290f8b6a33d8caea9ae23ebcd33c05e);
+            
+        
+
+        marker_b727238daa8fd4a9de2dd82e44add083.bindPopup(popup_bc007696aa41c0958491f725bf462b66)
+        ;
+
+        
+    
+    
+            marker_b727238daa8fd4a9de2dd82e44add083.bindTooltip(
+                `<div>
+                     태화강 하구
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b727238daa8fd4a9de2dd82e44add083.setIcon(icon_2fca215cb15a2c03e692128474b70308);
+            
+    
+            var marker_f609010e5ebf5735a8bb621004b166e1 = L.marker(
+                [36.06, 129.52],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_d546d44ebd1a150f737872585f1b86ba = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c5d60155e27f0fbb5450f65f5c6482ed = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_176704bec512122b9b5f6740a91658d9 = $(`<div id="html_176704bec512122b9b5f6740a91658d9" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">영일만·호미곶</h4>           <b>지역:</b> 경북 포항<br>           <b>환경:</b> 해안·외해<br>           <b>추천 시기:</b> 연중, 특히 이동기<br>           <b>대표 조류군:</b> 슴새류·갈매기류·아비류<br>           <b>좌표 성격:</b> 해안 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 포항역 또는 포항고속·시외버스터미널<br>         <b>현지 이동:</b> 구룡포·호미곶 방면 좌석·시내버스<br>         <b>마지막 접근:</b> 해안 관찰지에서 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 영일만과 호미곶은 거리가 멀어 한 권역을 선택<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_c5d60155e27f0fbb5450f65f5c6482ed.setContent(html_176704bec512122b9b5f6740a91658d9);
+            
+        
+
+        marker_f609010e5ebf5735a8bb621004b166e1.bindPopup(popup_c5d60155e27f0fbb5450f65f5c6482ed)
+        ;
+
+        
+    
+    
+            marker_f609010e5ebf5735a8bb621004b166e1.bindTooltip(
+                `<div>
+                     영일만·호미곶
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f609010e5ebf5735a8bb621004b166e1.setIcon(icon_d546d44ebd1a150f737872585f1b86ba);
+            
+    
+            var marker_3550e71ff13db4b10b7b52e2a42d93c4 = L.marker(
+                [37.5, 130.865],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_35a1eb72b9b4a7b0ee9c595d94ea3bba = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c85f548d343cbb146c6dbd27cd35580f = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_b999640d92f34399cb120ab2f3120dd8 = $(`<div id="html_b999640d92f34399cb120ab2f3120dd8" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">울릉도</h4>           <b>지역:</b> 경북 울릉<br>           <b>환경:</b> 동해 도서·산림<br>           <b>추천 시기:</b> 연중·이동기<br>           <b>대표 조류군:</b> 흑비둘기·통과철새·바닷새<br>           <b>좌표 성격:</b> 섬 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> KTX 포항역·강릉역·동해역 등에서 출항항구 이동<br>         <b>현지 이동:</b> 포항·묵호·강릉 등 운항 항구에서 울릉도행 여객선<br>         <b>마지막 접근:</b> 섬 일주버스·택시·도보<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 출항항구와 계절 운항편이 달라 예약 시 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_c85f548d343cbb146c6dbd27cd35580f.setContent(html_b999640d92f34399cb120ab2f3120dd8);
+            
+        
+
+        marker_3550e71ff13db4b10b7b52e2a42d93c4.bindPopup(popup_c85f548d343cbb146c6dbd27cd35580f)
+        ;
+
+        
+    
+    
+            marker_3550e71ff13db4b10b7b52e2a42d93c4.bindTooltip(
+                `<div>
+                     울릉도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3550e71ff13db4b10b7b52e2a42d93c4.setIcon(icon_35a1eb72b9b4a7b0ee9c595d94ea3bba);
+            
+    
+            var marker_10f3d8dd62f44b713a5816f9389fc538 = L.marker(
+                [37.24, 131.87],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_a7e508aa3e7f9dd8063a52ebc28784c9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_515bce60afc71c51a66dd652e02de017 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_070f16fa333121cd06baa7c0bee81c30 = $(`<div id="html_070f16fa333121cd06baa7c0bee81c30" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">독도 주변 해역</h4>           <b>지역:</b> 경북 울릉<br>           <b>환경:</b> 외해·도서<br>           <b>추천 시기:</b> 이동기<br>           <b>대표 조류군:</b> 바닷새·통과철새<br>           <b>좌표 성격:</b> 세부 번식지 제외<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 먼저 울릉도 도착<br>         <b>현지 이동:</b> 울릉도 저동·도동항 등에서 독도행 여객선<br>         <b>마지막 접근:</b> 접안 불가 시 선회 관광만 가능<br>         <b>접근 난이도:</b> 매우 어려움<br>         <b>주의:</b> 독도 접안은 파도와 바람에 크게 좌우됨<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_515bce60afc71c51a66dd652e02de017.setContent(html_070f16fa333121cd06baa7c0bee81c30);
+            
+        
+
+        marker_10f3d8dd62f44b713a5816f9389fc538.bindPopup(popup_515bce60afc71c51a66dd652e02de017)
+        ;
+
+        
+    
+    
+            marker_10f3d8dd62f44b713a5816f9389fc538.bindTooltip(
+                `<div>
+                     독도 주변 해역
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_10f3d8dd62f44b713a5816f9389fc538.setIcon(icon_a7e508aa3e7f9dd8063a52ebc28784c9);
+            
+    
+            var marker_4425feec16b1014ddbb215bdd0a8d714 = L.marker(
+                [33.51, 126.9],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_6be56a9301cd1c1902a186bd07dce1b6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d5da68ce02cf5ece0d8aa8ae9658ff8f = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_1eaa411ad6831ce20bef42204bfc0caa = $(`<div id="html_1eaa411ad6831ce20bef42204bfc0caa" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">제주 하도리·성산포</h4>           <b>지역:</b> 제주 동부<br>           <b>환경:</b> 연안습지·양식장<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 오리류·도요물떼새류·저어새류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 제주공항·제주시버스터미널<br>         <b>현지 이동:</b> 동부 급행버스로 성산·세화 방면 이동 후 읍면지선 환승<br>         <b>마지막 접근:</b> 하도리 철새도래지·성산포는 정류장에서 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 제주버스정보시스템에서 실시간 환승 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_d5da68ce02cf5ece0d8aa8ae9658ff8f.setContent(html_1eaa411ad6831ce20bef42204bfc0caa);
+            
+        
+
+        marker_4425feec16b1014ddbb215bdd0a8d714.bindPopup(popup_d5da68ce02cf5ece0d8aa8ae9658ff8f)
+        ;
+
+        
+    
+    
+            marker_4425feec16b1014ddbb215bdd0a8d714.bindTooltip(
+                `<div>
+                     제주 하도리·성산포
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4425feec16b1014ddbb215bdd0a8d714.setIcon(icon_6be56a9301cd1c1902a186bd07dce1b6);
+            
+    
+            var marker_050f09514e8b0720defd1da19776e26a = L.marker(
+                [33.325, 126.18],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_5eec2c3c03536e3371dcf7a7f920097a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_822b2faa1c9c156ef93cf3e7608cce81 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_938641ae020f7cda24440d41b5d9741e = $(`<div id="html_938641ae020f7cda24440d41b5d9741e" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">제주 용수저수지·서부 해안</h4>           <b>지역:</b> 제주 서부<br>           <b>환경:</b> 저수지·해안<br>           <b>추천 시기:</b> 겨울·이동기<br>           <b>대표 조류군:</b> 오리류·도요물떼새류·갈매기류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 제주공항·제주시버스터미널<br>         <b>현지 이동:</b> 서부 급행버스로 한림·고산·모슬포 방면 후 지선 환승<br>         <b>마지막 접근:</b> 용수리·신창 해안 정류장에서 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 저수지와 해안 관찰점을 한 번에 연결하기는 어려움<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_822b2faa1c9c156ef93cf3e7608cce81.setContent(html_938641ae020f7cda24440d41b5d9741e);
+            
+        
+
+        marker_050f09514e8b0720defd1da19776e26a.bindPopup(popup_822b2faa1c9c156ef93cf3e7608cce81)
+        ;
+
+        
+    
+    
+            marker_050f09514e8b0720defd1da19776e26a.bindTooltip(
+                `<div>
+                     제주 용수저수지·서부 해안
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_050f09514e8b0720defd1da19776e26a.setIcon(icon_5eec2c3c03536e3371dcf7a7f920097a);
+            
+    
+            var marker_f49bf5833b6455d184623c33089b1c48 = L.marker(
+                [33.515, 126.715],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_bdc2a30498ddad113e99a8287e047aa2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkgreen",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8f019fe586c25bc8d542c9e8f4b5ab00 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_281d362a9e0e421a0e8958f367e5fd27 = $(`<div id="html_281d362a9e0e421a0e8958f367e5fd27" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">동백동산·선흘곶자왈</h4>           <b>지역:</b> 제주 조천<br>           <b>환경:</b> 곶자왈·습지·산림<br>           <b>추천 시기:</b> 연중<br>           <b>대표 조류군:</b> 산림성조류·팔색조류·딱따구리류<br>           <b>좌표 성격:</b> 보호구역 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 제주공항·제주시버스터미널<br>         <b>현지 이동:</b> 조천·함덕 방면 버스 후 선흘리 지선버스 환승<br>         <b>마지막 접근:</b> 동백동산 탐방안내소부터 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 탐방로 운영시간과 습지 보호수칙 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_8f019fe586c25bc8d542c9e8f4b5ab00.setContent(html_281d362a9e0e421a0e8958f367e5fd27);
+            
+        
+
+        marker_f49bf5833b6455d184623c33089b1c48.bindPopup(popup_8f019fe586c25bc8d542c9e8f4b5ab00)
+        ;
+
+        
+    
+    
+            marker_f49bf5833b6455d184623c33089b1c48.bindTooltip(
+                `<div>
+                     동백동산·선흘곶자왈
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f49bf5833b6455d184623c33089b1c48.setIcon(icon_bdc2a30498ddad113e99a8287e047aa2);
+            
+    
+            var marker_54c32c3db7d748a710a7bd8cb9bb40df = L.marker(
+                [33.365, 126.535],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_8deef4f9ad73231eabbe489396f67324 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkgreen",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e62496d0203659df8d9bc604e29f82f0 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_33466d84bb8ecd9622370efbc7a68ab9 = $(`<div id="html_33466d84bb8ecd9622370efbc7a68ab9" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">한라산 중산간</h4>           <b>지역:</b> 제주<br>           <b>환경:</b> 산림·고산<br>           <b>추천 시기:</b> 연중<br>           <b>대표 조류군:</b> 산림성조류·고산성조류<br>           <b>좌표 성격:</b> 광역권<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 제주시 또는 서귀포시<br>         <b>현지 이동:</b> 한라산 성판악·어리목·영실 방면 버스<br>         <b>마지막 접근:</b> 각 탐방안내소부터 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 탐방 예약 대상 코스와 입산 통제 여부 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_e62496d0203659df8d9bc604e29f82f0.setContent(html_33466d84bb8ecd9622370efbc7a68ab9);
+            
+        
+
+        marker_54c32c3db7d748a710a7bd8cb9bb40df.bindPopup(popup_e62496d0203659df8d9bc604e29f82f0)
+        ;
+
+        
+    
+    
+            marker_54c32c3db7d748a710a7bd8cb9bb40df.bindTooltip(
+                `<div>
+                     한라산 중산간
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_54c32c3db7d748a710a7bd8cb9bb40df.setIcon(icon_8deef4f9ad73231eabbe489396f67324);
+            
+    
+            var marker_a3ae6fc2683f1219defd52883f991b79 = L.marker(
+                [33.125, 126.275],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_7c657eccc1a044497d1fc3cfbb85edc3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "purple",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_16dc1282add66ac0ab23b34727270125 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_21993b13615a71c953946a4237d4aae1 = $(`<div id="html_21993b13615a71c953946a4237d4aae1" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">마라도·가파도</h4>           <b>지역:</b> 제주 서귀포<br>           <b>환경:</b> 해양도서<br>           <b>추천 시기:</b> 봄가을 이동기<br>           <b>대표 조류군:</b> 통과철새·미조·바닷새<br>           <b>좌표 성격:</b> 도서 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 제주공항에서 서부 급행버스로 모슬포·운진항 방면<br>         <b>현지 이동:</b> 운진항에서 가파도·마라도 여객선<br>         <b>마지막 접근:</b> 섬에서는 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 강풍·파고에 따른 결항과 마지막 배 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_16dc1282add66ac0ab23b34727270125.setContent(html_21993b13615a71c953946a4237d4aae1);
+            
+        
+
+        marker_a3ae6fc2683f1219defd52883f991b79.bindPopup(popup_16dc1282add66ac0ab23b34727270125)
+        ;
+
+        
+    
+    
+            marker_a3ae6fc2683f1219defd52883f991b79.bindTooltip(
+                `<div>
+                     마라도·가파도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a3ae6fc2683f1219defd52883f991b79.setIcon(icon_7c657eccc1a044497d1fc3cfbb85edc3);
+            
+    
+            var marker_cf23f3b7dea293ea0edd3882d03f2d11 = L.marker(
+                [37.79707222222222, 126.26347222222222],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_7304602052071a9f3212883c30909c04 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b08608a94857cdaff852ea188a99f050 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_c6fa242839cc048356c305e11bc75138 = $(`<div id="html_c6fa242839cc048356c305e11bc75138" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">교동도</h4>           <b>지역:</b> 강화도<br>           <b>환경:</b> 간척.농경지<br>           <b>추천 시기:</b> 겨울.월동<br>           <b>대표 조류군:</b> 맹금류.기러기류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 김포골드라인 구래역 또는 강화버스터미널<br>         <b>현지 이동:</b> 강화버스터미널에서 교동도 방면 군내버스<br>         <b>마지막 접근:</b> 교동면 주요 정류장에서 농경지·제방까지 도보 또는 택시<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 민통선 인접 지역이므로 신분증과 출입 제한을 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_b08608a94857cdaff852ea188a99f050.setContent(html_c6fa242839cc048356c305e11bc75138);
+            
+        
+
+        marker_cf23f3b7dea293ea0edd3882d03f2d11.bindPopup(popup_b08608a94857cdaff852ea188a99f050)
+        ;
+
+        
+    
+    
+            marker_cf23f3b7dea293ea0edd3882d03f2d11.bindTooltip(
+                `<div>
+                     교동도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_cf23f3b7dea293ea0edd3882d03f2d11.setIcon(icon_7304602052071a9f3212883c30909c04);
+            
+    
+            var marker_6ffe21b2e150367ffa61d36f531c12c9 = L.marker(
+                [37.68179722222222, 126.19049444444445],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_80f1690a57da873997b2a2e9a61a65ca = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6d4628760e7b62d468883f3d708d5712 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_288ee640dec5617167f8937f61791eb1 = $(`<div id="html_288ee640dec5617167f8937f61791eb1" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">석모도</h4>           <b>지역:</b> 강화도<br>           <b>환경:</b> 간척.농경지<br>           <b>추천 시기:</b> 겨울.월동<br>           <b>대표 조류군:</b> 기러기류.미조<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 강화버스터미널<br>         <b>현지 이동:</b> 석모도행 군내버스로 석모대교·외포리·보문사 방향<br>         <b>마지막 접근:</b> 정류장에서 농경지·해안 관찰지까지 도보 또는 택시<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 섬 내부 배차 간격이 길어 귀가편 확인 필요<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_6d4628760e7b62d468883f3d708d5712.setContent(html_288ee640dec5617167f8937f61791eb1);
+            
+        
+
+        marker_6ffe21b2e150367ffa61d36f531c12c9.bindPopup(popup_6d4628760e7b62d468883f3d708d5712)
+        ;
+
+        
+    
+    
+            marker_6ffe21b2e150367ffa61d36f531c12c9.bindTooltip(
+                `<div>
+                     석모도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6ffe21b2e150367ffa61d36f531c12c9.setIcon(icon_80f1690a57da873997b2a2e9a61a65ca);
+            
+    
+            var marker_f2bf30f7f600426366100fb93d85b01f = L.marker(
+                [37.53751666666666, 127.26004166666667],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_6e920b689a77d956138abc4990bfadcf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b0c46767bd4ee23d19884f94182545e8 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_c04a49f4b37417838bf95075bda218e1 = $(`<div id="html_c04a49f4b37417838bf95075bda218e1" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">팔당</h4>           <b>지역:</b> 하남<br>           <b>환경:</b> 강<br>           <b>추천 시기:</b> 겨울.월동<br>           <b>대표 조류군:</b> 참수리.오리류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 경의중앙선 팔당역 또는 5호선 하남검단산역<br>         <b>현지 이동:</b> 팔당댐·팔당대교·한강변 방면 시내버스 또는 택시<br>         <b>마지막 접근:</b> 관찰 지점에 따라 강변까지 도보<br>         <b>접근 난이도:</b> 쉬움~보통<br>         <b>주의:</b> 강변 도로와 자전거도로 통행에 주의<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_b0c46767bd4ee23d19884f94182545e8.setContent(html_c04a49f4b37417838bf95075bda218e1);
+            
+        
+
+        marker_f2bf30f7f600426366100fb93d85b01f.bindPopup(popup_b0c46767bd4ee23d19884f94182545e8)
+        ;
+
+        
+    
+    
+            marker_f2bf30f7f600426366100fb93d85b01f.bindTooltip(
+                `<div>
+                     팔당
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f2bf30f7f600426366100fb93d85b01f.setIcon(icon_6e920b689a77d956138abc4990bfadcf);
+            
+    
+            var marker_8394383cd22cbd386a182096d885bdc3 = L.marker(
+                [37.46000277777778, 127.30280555555555],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_3a5ca89989f9471ffa51afbb1658817e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3985dbc6d7bc9171f79df759af61f4ff = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_6af8bb47ce7f8e5b62f97bd143c1c1d4 = $(`<div id="html_6af8bb47ce7f8e5b62f97bd143c1c1d4" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">경안천</h4>           <b>지역:</b> 하남<br>           <b>환경:</b> 습지생태고원<br>           <b>추천 시기:</b> 월동<br>           <b>대표 조류군:</b> 오리.기러기류.고니류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 경강선 경기광주역 또는 광주종합버스터미널<br>         <b>현지 이동:</b> 경안천습지생태공원 방면 광주시 시내버스<br>         <b>마지막 접근:</b> 정류장에서 습지 탐방로까지 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 버스 배차와 막차 시간을 미리 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_3985dbc6d7bc9171f79df759af61f4ff.setContent(html_6af8bb47ce7f8e5b62f97bd143c1c1d4);
+            
+        
+
+        marker_8394383cd22cbd386a182096d885bdc3.bindPopup(popup_3985dbc6d7bc9171f79df759af61f4ff)
+        ;
+
+        
+    
+    
+            marker_8394383cd22cbd386a182096d885bdc3.bindTooltip(
+                `<div>
+                     경안천
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8394383cd22cbd386a182096d885bdc3.setIcon(icon_3a5ca89989f9471ffa51afbb1658817e);
+            
+    
+            var marker_1197e8d83fb6af794ad07807909580d9 = L.marker(
+                [37.59091666666667, 126.52099444444444],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_2f364fc540f3a1759f8c0a3ee1c3aba3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8aef9000fd45aa2b6bf0cb8e1fc30f1e = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_9344a6f19045647be772f637287715d6 = $(`<div id="html_9344a6f19045647be772f637287715d6" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">동검도</h4>           <b>지역:</b> 강화도<br>           <b>환경:</b> 갯벌<br>           <b>추천 시기:</b> 월동<br>           <b>대표 조류군:</b> 두루미<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 강화버스터미널 또는 김포골드라인 구래역<br>         <b>현지 이동:</b> 강화터미널에서 길상면·동검도 방면 군내버스<br>         <b>마지막 접근:</b> 동검도 입구 또는 인근 정류장에서 갯벌 관찰지까지 도보·택시<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 배차가 드물고 갯벌 관찰은 조석과 출입 가능 구간을 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_8aef9000fd45aa2b6bf0cb8e1fc30f1e.setContent(html_9344a6f19045647be772f637287715d6);
+            
+        
+
+        marker_1197e8d83fb6af794ad07807909580d9.bindPopup(popup_8aef9000fd45aa2b6bf0cb8e1fc30f1e)
+        ;
+
+        
+    
+    
+            marker_1197e8d83fb6af794ad07807909580d9.bindTooltip(
+                `<div>
+                     동검도
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1197e8d83fb6af794ad07807909580d9.setIcon(icon_2f364fc540f3a1759f8c0a3ee1c3aba3);
+            
+    
+            var marker_86dfb8179f2b134b6b70ab076774c3e8 = L.marker(
+                [37.739047222222226, 126.67084444444446],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_b4ba96bc4ffd54c95593e815c805f175 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_94f760ebe1fa5b099ec6828daf7146f5 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_e552d59de16ebfeb7dc21c4e8bc7b4cf = $(`<div id="html_e552d59de16ebfeb7dc21c4e8bc7b4cf" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">석탄리철새조망지</h4>           <b>지역:</b> 김포<br>           <b>환경:</b> 농경지·하천<br>           <b>추천 시기:</b> 겨울.월동<br>           <b>대표 조류군:</b> 기러기류<br>           <b>좌표 성격:</b> 보호구역 권역<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 김포골드라인 구래역 또는 김포공항역<br>         <b>현지 이동:</b> 하성면·석탄리 방면 김포 시내버스<br>         <b>마지막 접근:</b> 석탄리 인근 정류장에서 조망지까지 도보 또는 택시<br>         <b>접근 난이도:</b> 어려움<br>         <b>주의:</b> 한강하구 민감지역으로 군사·보호구역 출입 제한과 버스 배차 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_94f760ebe1fa5b099ec6828daf7146f5.setContent(html_e552d59de16ebfeb7dc21c4e8bc7b4cf);
+            
+        
+
+        marker_86dfb8179f2b134b6b70ab076774c3e8.bindPopup(popup_94f760ebe1fa5b099ec6828daf7146f5)
+        ;
+
+        
+    
+    
+            marker_86dfb8179f2b134b6b70ab076774c3e8.bindTooltip(
+                `<div>
+                     석탄리철새조망지
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_86dfb8179f2b134b6b70ab076774c3e8.setIcon(icon_b4ba96bc4ffd54c95593e815c805f175);
+            
+    
+            var marker_05b4eb4b10cf424d633a50f0856d4941 = L.marker(
+                [37.56527222222222, 126.7691],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_60bb6cc540a6b51b5dd801a856c99387 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dddebaf583b3f91853c96c684f9bac4a = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_d375985cf480bd1fb6e9659b7716c331 = $(`<div id="html_d375985cf480bd1fb6e9659b7716c331" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">굴포천</h4>           <b>지역:</b> 인천 <br>           <b>환경:</b> 하천<br>           <b>추천 시기:</b> 월동<br>           <b>대표 조류군:</b> 기러기류<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 수도권 전철 7호선 굴포천역 또는 부평구청역<br>         <b>현지 이동:</b> 역에서 굴포천 산책로 방향으로 도보 또는 시내버스<br>         <b>마지막 접근:</b> 하천 산책로에서 도보 탐조<br>         <b>접근 난이도:</b> 쉬움<br>         <b>주의:</b> 복원·정비 구간에 따라 일부 산책로가 통제될 수 있음<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_dddebaf583b3f91853c96c684f9bac4a.setContent(html_d375985cf480bd1fb6e9659b7716c331);
+            
+        
+
+        marker_05b4eb4b10cf424d633a50f0856d4941.bindPopup(popup_dddebaf583b3f91853c96c684f9bac4a)
+        ;
+
+        
+    
+    
+            marker_05b4eb4b10cf424d633a50f0856d4941.bindTooltip(
+                `<div>
+                     굴포천
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_05b4eb4b10cf424d633a50f0856d4941.setIcon(icon_60bb6cc540a6b51b5dd801a856c99387);
+            
+    
+            var marker_552940718c24631ff54836d46303d247 = L.marker(
+                [37.54584722222222, 127.23445833333334],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_47a49bd3c80101d06e26bef8377949ee = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5ce1a9680fd2b4d539ef47387307e09d = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_05ac2587f2d03713c1ef9e390823e746 = $(`<div id="html_05ac2587f2d03713c1ef9e390823e746" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">팔당고니</h4>           <b>지역:</b> 서울<br>           <b>환경:</b> 강<br>           <b>추천 시기:</b> 월동<br>           <b>대표 조류군:</b> 고니류·오리류·<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 경의중앙선 팔당역 또는 5호선 하남검단산역<br>         <b>현지 이동:</b> 팔당대교·미사리·한강변 방면 시내버스 또는 택시<br>         <b>마지막 접근:</b> 강변 관찰지까지 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 강변 도로와 자전거도로가 가까우므로 장비 설치 시 통행 방해 주의<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_5ce1a9680fd2b4d539ef47387307e09d.setContent(html_05ac2587f2d03713c1ef9e390823e746);
+            
+        
+
+        marker_552940718c24631ff54836d46303d247.bindPopup(popup_5ce1a9680fd2b4d539ef47387307e09d)
+        ;
+
+        
+    
+    
+            marker_552940718c24631ff54836d46303d247.bindTooltip(
+                `<div>
+                     팔당고니
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_552940718c24631ff54836d46303d247.setIcon(icon_47a49bd3c80101d06e26bef8377949ee);
+            
+    
+            var marker_08ce648abb85e49d73a6b4774f77b650 = L.marker(
+                [37.893208333333334, 127.70733333333334],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_1092955f049729e28e271d7eedd3de11 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_541bdbe08e328f77150fb1a6c8d29069 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_a1d7b76c29d62807962a9fa06c206c38 = $(`<div id="html_a1d7b76c29d62807962a9fa06c206c38" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">의암호</h4>           <b>지역:</b> 춘천<br>           <b>환경:</b> 호수<br>           <b>추천 시기:</b> 연중<br>           <b>대표 조류군:</b> 오리.기러기류.번식<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> ITX-청춘·경춘선 춘천역 또는 남춘천역<br>         <b>현지 이동:</b> 춘천 시내버스 16번·6번 등 의암호·삼악산 호수케이블카 방향<br>         <b>마지막 접근:</b> 의암호 수변 산책로와 조망지까지 도보<br>         <b>접근 난이도:</b> 쉬움~보통<br>         <b>주의:</b> 호수 권역이 넓어 목표 관찰지에 따라 하차 정류장이 달라짐<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_541bdbe08e328f77150fb1a6c8d29069.setContent(html_a1d7b76c29d62807962a9fa06c206c38);
+            
+        
+
+        marker_08ce648abb85e49d73a6b4774f77b650.bindPopup(popup_541bdbe08e328f77150fb1a6c8d29069)
+        ;
+
+        
+    
+    
+            marker_08ce648abb85e49d73a6b4774f77b650.bindTooltip(
+                `<div>
+                     의암호
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_08ce648abb85e49d73a6b4774f77b650.setIcon(icon_1092955f049729e28e271d7eedd3de11);
+            
+    
+            var marker_a844554fc0135b419226f0dcf5773db9 = L.marker(
+                [38.10416388888889, 128.64380277777778],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_8eaaa791904c45c8f4d6c3941d308c9b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "cadetblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_964095706285983902fda52cae2eed53 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_309027409bfdfff2f3fc4d83ade9fe8f = $(`<div id="html_309027409bfdfff2f3fc4d83ade9fe8f" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">양양남대천</h4>           <b>지역:</b> 강원도<br>           <b>환경:</b> 강<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 오리.기러기류.물수리<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 양양종합여객터미널<br>         <b>현지 이동:</b> 양양 시내·농어촌버스로 남대천 하구·낙산 방면<br>         <b>마지막 접근:</b> 남대천 제방과 하구 관찰지까지 도보 또는 택시<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 농어촌버스 배차와 하구 접근로를 출발 전에 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_964095706285983902fda52cae2eed53.setContent(html_309027409bfdfff2f3fc4d83ade9fe8f);
+            
+        
+
+        marker_a844554fc0135b419226f0dcf5773db9.bindPopup(popup_964095706285983902fda52cae2eed53)
+        ;
+
+        
+    
+    
+            marker_a844554fc0135b419226f0dcf5773db9.bindTooltip(
+                `<div>
+                     양양남대천
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a844554fc0135b419226f0dcf5773db9.setIcon(icon_8eaaa791904c45c8f4d6c3941d308c9b);
+            
+    
+            var marker_2176aa09d75773f418fd84a58f085481 = L.marker(
+                [38.266305555555554, 128.56071111111112],
+                {
+}
+            ).addTo(map_cd5c5a8c9b55c7d8adca2e52ae7f4c7c);
+        
+    
+            var icon_8bfd19b842ec89557617d33dfc7e02e5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "binoculars",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8384381bc731edf767900dbe309c7858 = L.popup({
+  "maxWidth": 470,
+});
+
+        
+            
+                var html_f812318d6fc6427713f24c45afb103d9 = $(`<div id="html_f812318d6fc6427713f24c45afb103d9" style="width: 100.0%; height: 100.0%;">         <div style="width:400px;font-family:Arial,'Malgun Gothic',sans-serif">           <h4 style="margin:0 0 6px">아야진문암해변</h4>           <b>지역:</b> 강원도<br>           <b>환경:</b> 해변<br>           <b>추천 시기:</b> 겨울<br>           <b>대표 조류군:</b> 갈매기류.흰줄박이오리<br>           <b>좌표 성격:</b> 권역 중심<br>                    <hr style="margin:8px 0">         <b>대중교통 관문:</b> 속초고속버스터미널 또는 속초시외버스터미널<br>         <b>현지 이동:</b> 고성 방면 1번·1-1번 계열 버스로 아야진해변 또는 문암리 정류장<br>         <b>마지막 접근:</b> 아야진해변은 정류장에서 약 200m 도보, 문암해변은 정류장에서 해안까지 도보<br>         <b>접근 난이도:</b> 보통<br>         <b>주의:</b> 아야진과 문암은 서로 떨어져 있어 한 곳씩 계획하고 막차를 확인<br>         <span style="font-size:11px;color:#7a0000">         ※ 노선·시간표·선박 운항 여부는 출발 전 다시 확인하세요.         </span>                    <br>           <span style="font-size:11px;color:#666">           ※ 표시점은 희귀종·번식지의 정확한 위치가 아닌 탐조 권역 중심입니다.           </span>         </div>         </div>`)[0];
+                popup_8384381bc731edf767900dbe309c7858.setContent(html_f812318d6fc6427713f24c45afb103d9);
+            
+        
+
+        marker_2176aa09d75773f418fd84a58f085481.bindPopup(popup_8384381bc731edf767900dbe309c7858)
+        ;
+
+        
+    
+    
+            marker_2176aa09d75773f418fd84a58f085481.bindTooltip(
+                `<div>
+                     아야진문암해변
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2176aa09d75773f418fd84a58f085481.setIcon(icon_8bfd19b842ec89557617d33dfc7e02e5);
+            
+</script>
+</html>
