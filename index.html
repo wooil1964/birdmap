@@ -129,7 +129,9 @@ function selectedSeasons() {
 }
 function sitePasses(site) {
   var seasons = selectedSeasons();
-  var seasonMatch = site.seasons.some(function(s) { return seasons.includes(s); });
+  var siteSeasons = Array.isArray(site.seasons) ? site.seasons : [];
+  // 계절값이 비어 있거나 형식이 다른 탐조지도 기본 화면에서는 보이게 처리
+  var seasonMatch = (siteSeasons.length === 0) || siteSeasons.some(function(s) { return seasons.includes(s); });
   if (!seasonMatch) return false;
   if (document.getElementById('rareOnly').checked && !site.rare) return false;
   if (document.getElementById('mijoOnly').checked && !site.mijo) return false;
