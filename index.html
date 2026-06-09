@@ -30,8 +30,30 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 #fallbackInfo{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;background:#fff;border:1px solid #777;
  border-radius:7px;padding:8px;font-size:12px;display:none;max-height:34%;overflow:auto}
 @media(max-width:700px){
- #title{left:8px;right:105px;top:8px;padding:6px 9px}
- #panel{left:8px;right:8px;top:65px;width:auto;max-height:52vh;overflow:auto;display:none}
+ #title{left:8px;right:8px;top:8px;padding:6px 9px}
+ #toggle{
+   display:block!important;
+   position:fixed!important;
+   right:14px!important;
+   bottom:18px!important;
+   top:auto!important;
+   z-index:5000!important;
+   padding:11px 15px!important;
+   border-radius:24px!important;
+   font-size:14px!important;
+   box-shadow:0 3px 10px rgba(0,0,0,.38)!important;
+ }
+ #panel{
+   left:8px;
+   right:8px;
+   top:65px;
+   bottom:72px;
+   width:auto;
+   max-height:none;
+   overflow:auto;
+   display:none;
+   z-index:4500;
+ }
  #panel.open{display:block}
  #panel input[type=text]{width:calc(100% - 65px)}
  .leaflet-control-zoom{margin-top:68px!important}
@@ -92,7 +114,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 
  if(mobileMode){
    panel.classList.remove('open');
-   toggleButton.textContent='검색·필터 보기';
+   toggleButton.textContent='필터 보기';
  }else{
    panel.classList.remove('panel-hidden');
    toggleButton.textContent='필터 숨기기';
@@ -101,7 +123,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
  toggleButton.onclick=function(){
    if(window.matchMedia('(max-width:700px)').matches){
      panel.classList.toggle('open');
-     this.textContent=panel.classList.contains('open')?'필터 닫기':'검색·필터 보기';
+     this.textContent=panel.classList.contains('open')?'필터 숨기기':'필터 보기';
    }else{
      panel.classList.toggle('panel-hidden');
      this.textContent=panel.classList.contains('panel-hidden')?'필터 보이기':'필터 숨기기';
@@ -210,7 +232,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
      const box=document.getElementById('fallbackInfo'); box.innerHTML=details(f.s);box.style.display='block';
    }
    document.getElementById('count').textContent='검색 결과: '+found.length+'개';
-   if(innerWidth<701){panel.classList.remove('open');document.getElementById('toggle').textContent='검색·필터 보기';}
+   if(innerWidth<701){panel.classList.remove('open');document.getElementById('toggle').textContent='필터 보기';}
  }
  searchBtn.onclick=search;
  resetBtn.onclick=function(){
