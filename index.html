@@ -18,8 +18,9 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 .section{border-top:1px solid #ddd;margin-top:8px;padding-top:7px}
 .section label{display:inline-block;margin-right:7px;line-height:1.8;white-space:nowrap}
 #count{font-weight:bold;color:#790000;margin-top:6px}
-#toggle{display:none;position:fixed;top:8px;right:8px;z-index:1300;border:0;border-radius:18px;
- background:#173c24;color:white;padding:8px 12px;font-weight:bold}
+#toggle{display:block;position:fixed;top:8px;right:8px;z-index:1300;border:0;border-radius:18px;
+ background:#173c24;color:white;padding:8px 12px;font-weight:bold;box-shadow:0 2px 6px #0004}
+#panel.panel-hidden{display:none!important}
 .popup{width:390px;max-width:72vw;line-height:1.5}
 .popup h3{margin:0 0 6px}
 .binoIcon{background:transparent;border:0}
@@ -29,8 +30,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 #fallbackInfo{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;background:#fff;border:1px solid #777;
  border-radius:7px;padding:8px;font-size:12px;display:none;max-height:34%;overflow:auto}
 @media(max-width:700px){
- #title{left:8px;right:74px;top:8px;padding:6px 9px}
- #toggle{display:block}
+ #title{left:8px;right:105px;top:8px;padding:6px 9px}
  #panel{left:8px;right:8px;top:65px;width:auto;max-height:52vh;overflow:auto;display:none}
  #panel.open{display:block}
  #panel input[type=text]{width:calc(100% - 65px)}
@@ -41,7 +41,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 </head>
 <body>
 <div id="title"><b>대한민국 전국 조류탐조지도</b><br><span>115개 권역</span></div>
-<button id="toggle" type="button">검색·필터</button>
+<button id="toggle" type="button">필터 숨기기</button>
 
 <div id="panel">
  <b>🔍 탐조지·종 검색</b><br>
@@ -87,9 +87,25 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 (function(){
  const sites=window.SITES||[];
  const panel=document.getElementById('panel');
- document.getElementById('toggle').onclick=function(){
-   panel.classList.toggle('open');
-   this.textContent=panel.classList.contains('open')?'닫기':'검색·필터';
+ const toggleButton=document.getElementById('toggle');
+ const mobileMode=window.matchMedia('(max-width:700px)').matches;
+
+ if(mobileMode){
+   panel.classList.remove('open');
+   toggleButton.textContent='검색·필터 보기';
+ }else{
+   panel.classList.remove('panel-hidden');
+   toggleButton.textContent='필터 숨기기';
+ }
+
+ toggleButton.onclick=function(){
+   if(window.matchMedia('(max-width:700px)').matches){
+     panel.classList.toggle('open');
+     this.textContent=panel.classList.contains('open')?'필터 닫기':'검색·필터 보기';
+   }else{
+     panel.classList.toggle('panel-hidden');
+     this.textContent=panel.classList.contains('panel-hidden')?'필터 보이기':'필터 숨기기';
+   }
  };
 
  function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
@@ -120,10 +136,12 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 
  let map=null, layer=null, markerItems=[];
  function binoSvg(){
-   return '<svg width="38" height="30" viewBox="0 0 38 30" xmlns="http://www.w3.org/2000/svg">'+
-   '<path d="M12 4h5v7h-5zM21 4h5v7h-5z" fill="#274e34"/><path d="M14 7h10" stroke="#274e34" stroke-width="5" stroke-linecap="round"/>'+
-   '<circle cx="10" cy="19" r="8" fill="#fff" stroke="#183923" stroke-width="4"/><circle cx="28" cy="19" r="8" fill="#fff" stroke="#183923" stroke-width="4"/>'+
-   '<circle cx="10" cy="19" r="3.5" fill="#7fb3d5"/><circle cx="28" cy="19" r="3.5" fill="#7fb3d5"/></svg>';
+   return '<svg width="38" height="48" viewBox="0 0 38 48" xmlns="http://www.w3.org/2000/svg">'+
+   '<path d="M19 47C16 40 4 31 4 19C4 8.5 10.7 2 19 2s15 6.5 15 17c0 12-12 21-15 28z" fill="#2f78b7" stroke="#174b75" stroke-width="2"/>'+
+   '<g transform="translate(7,11)" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'+
+   '<circle cx="6" cy="10" r="5"/><circle cx="18" cy="10" r="5"/>'+
+   '<path d="M10.5 8h3M7 4V1h4v5M17 4V1h4v5"/>'+
+   '</g></svg>';
  }
 
  function initLeaflet(){
@@ -131,7 +149,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
    map=L.map('map',{center:[36.25,127.75],zoom:7,minZoom:5});
    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
    layer=L.layerGroup().addTo(map);
-   const icon=L.divIcon({className:'binoIcon',html:binoSvg(),iconSize:[38,30],iconAnchor:[19,15],popupAnchor:[0,-14]});
+   const icon=L.divIcon({className:'binoIcon',html:binoSvg(),iconSize:[38,48],iconAnchor:[19,47],popupAnchor:[0,-43]});
    markerItems=sites.map(s=>{
      const m=L.marker([s.lat,s.lon],{icon}).bindPopup(details(s),{maxWidth:460}).bindTooltip(s.name,{sticky:true});
      m.addTo(layer); return {site:s,marker:m};
@@ -154,10 +172,11 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
      const group=document.createElementNS('http://www.w3.org/2000/svg','g');
      group.setAttribute('class','svg-marker');
      group.setAttribute('data-index',i);
-     group.setAttribute('transform','translate('+(p.x-10)+','+(p.y-8)+')');
-     group.innerHTML='<circle cx="4" cy="10" r="7" fill="white" stroke="#173c24" stroke-width="3"/>'+
-                     '<circle cx="16" cy="10" r="7" fill="white" stroke="#173c24" stroke-width="3"/>'+
-                     '<path d="M6 3 L14 3" stroke="#173c24" stroke-width="4"/>';
+     group.setAttribute('transform','translate('+(p.x-12)+','+(p.y-25)+') scale(.72)');
+     group.innerHTML='<path d="M19 47C16 40 4 31 4 19C4 8.5 10.7 2 19 2s15 6.5 15 17c0 12-12 21-15 28z" fill="#2f78b7" stroke="#174b75" stroke-width="2"/>'+
+                     '<g transform="translate(7,11)" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'+
+                     '<circle cx="6" cy="10" r="5"/><circle cx="18" cy="10" r="5"/>'+
+                     '<path d="M10.5 8h3M7 4V1h4v5M17 4V1h4v5"/></g>';
      group.onclick=function(){
        const box=document.getElementById('fallbackInfo');
        box.innerHTML=details(s); box.style.display='block';
@@ -191,7 +210,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
      const box=document.getElementById('fallbackInfo'); box.innerHTML=details(f.s);box.style.display='block';
    }
    document.getElementById('count').textContent='검색 결과: '+found.length+'개';
-   if(innerWidth<701){panel.classList.remove('open');document.getElementById('toggle').textContent='검색·필터';}
+   if(innerWidth<701){panel.classList.remove('open');document.getElementById('toggle').textContent='검색·필터 보기';}
  }
  searchBtn.onclick=search;
  resetBtn.onclick=function(){
