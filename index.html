@@ -21,8 +21,21 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
 #toggle{display:block;position:fixed;top:8px;right:8px;z-index:1300;border:0;border-radius:18px;
  background:#173c24;color:white;padding:8px 12px;font-weight:bold;box-shadow:0 2px 6px #0004}
 #panel.panel-hidden{display:none!important}
-.popup{width:390px;max-width:72vw;line-height:1.5}
+.popup{width:390px;max-width:72vw;max-height:56vh;overflow-y:auto;line-height:1.5;padding-right:3px}
 .popup h3{margin:0 0 6px}
+.naver-btn{
+ display:block;
+ margin-top:9px;
+ padding:9px 12px;
+ border-radius:6px;
+ background:#03c75a;
+ color:#fff!important;
+ text-decoration:none;
+ text-align:center;
+ font-weight:bold;
+ font-size:14px;
+}
+.naver-btn:active{background:#029e48}
 .binoIcon{background:transparent;border:0}
 #svgMap{width:100%;height:100%;touch-action:manipulation}
 .svg-label{font-size:11px;fill:#173c24;font-weight:bold}
@@ -57,7 +70,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
  #panel.open{display:block}
  #panel input[type=text]{width:calc(100% - 65px)}
  .leaflet-control-zoom{margin-top:68px!important}
- .popup{width:255px;max-width:68vw}
+ .popup{width:255px;max-width:68vw;max-height:50vh;overflow-y:auto}
 }
 </style>
 </head>
@@ -145,7 +158,8 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
    return true;
  }
  function details(s){
-   const url='https://map.naver.com/v5/search/'+encodeURIComponent(s.naverQuery);
+   const query=encodeURIComponent(s.naverQuery||s.name);
+   const url='https://map.naver.com/p/search/'+query;
    return '<div class="popup"><h3>'+esc(s.name)+'</h3>'+
    '<b>지역:</b> '+esc(s.province)+' '+esc(s.district)+'<br>'+
    '<b>환경:</b> '+esc(s.env)+'<br><b>추천계절:</b> '+esc(s.recommendedSeason)+'<br>'+
@@ -153,7 +167,7 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Arial,'Mal
    '<b>주차:</b> '+esc(s.parking)+' · <b>화장실:</b> '+esc(s.toilet)+'<br>'+
    '<b>숙박:</b> '+esc(s.lodging)+'<br><b>선박:</b> '+esc(s.ship)+'<br>'+
    '<b>추천도:</b> '+esc(s.rating)+'<br><b>주의:</b> '+esc(s.caution)+'<br>'+
-   '<a href="'+url+'" target="_blank">네이버지도에서 보기</a></div>';
+   '<a class="naver-btn" href="'+url+'" target="_blank" rel="noopener">네이버지도 열기</a></div>';
  }
 
  let map=null, layer=null, markerItems=[];
