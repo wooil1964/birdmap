@@ -88,6 +88,15 @@
 .noticeDate { font-size:11px;color:#777;margin-bottom:5px; }
 .noticeContent { line-height:1.55;white-space:pre-line;color:#222; }
 .noticeLink { display:inline-block;margin-top:7px;padding:5px 8px;background:#5b2c83;color:white;border-radius:5px;text-decoration:none;font-weight:bold; }
+
+#helpToggleBtn { position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25); }
+#helpPanel { display:none;position:fixed;top:166px;right:52px;z-index:10000;width:370px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55; }
+.helpTitle { font-size:14px;font-weight:bold;color:#174d6f;margin-bottom:7px; }
+.helpList { margin:7px 0 9px 18px;padding:0; }
+.helpList li { margin-bottom:4px; }
+.helpLink { display:inline-block;margin-top:8px;padding:7px 10px;background:#174d6f;color:white;border-radius:5px;text-decoration:none;font-weight:bold; }
+.helpNote { margin-top:8px;padding-top:8px;border-top:1px solid #ddd;color:#5b1c1c;font-size:12px; }
+
 #jinhoSeal { position:fixed;bottom:10px;left:10px;z-index:8000;width:30px;height:38px;border:2px solid #b40000;color:#b40000;background:rgba(255,255,255,0.72);font-family:'Noto Serif CJK KR','Malgun Gothic',serif;font-weight:bold;font-size:15px;line-height:1.05;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);opacity:0.9;pointer-events:none; }
 @media(max-width:700px) {
   #mapTitleBox { left:8px;right:8px;top:8px;padding:8px 10px; }
@@ -96,6 +105,8 @@
   #birdmapPanel input[type="text"] { width:180px; }
   #noticeToggleBtn { top:72px;right:8px;font-size:12px;padding:6px 9px; }
   #noticePanel { top:108px;left:8px;right:8px;width:auto;max-height:68vh; }
+  #helpToggleBtn { top:108px;right:8px;font-size:12px;padding:6px 9px; }
+  #helpPanel { top:144px;left:8px;right:8px;width:auto;max-height:68vh; }
 }
 </style>
 
@@ -133,6 +144,29 @@
 <div id="noticeList">현재 게시 중인 기획글이 없습니다.</div>
 </div>
 
+
+<button id="helpToggleBtn" onclick="toggleHelpPanel()">📘 지도 사용법</button>
+<div id="helpPanel">
+  <div style="display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px">
+    <strong>📘 전국 탐조지도 사용법</strong>
+    <button onclick="toggleHelpPanel(false)">닫기</button>
+  </div>
+  <div style="padding-top:8px">
+    <div class="helpTitle">기본 사용법</div>
+    <ol class="helpList">
+      <li>검색창에 탐조지명, 지역명, 국가명, 종명을 입력합니다.</li>
+      <li>봄·여름·가을·겨울 계절 필터로 탐조지를 좁혀 봅니다.</li>
+      <li>희귀조권역, 미조핫스팟, 섬탐조, 선상탐조 필터를 활용합니다.</li>
+      <li>마커를 누르면 대표종, 접근정보, 지도링크가 나옵니다.</li>
+      <li>네이버지도는 장소명 검색, 카카오맵은 좌표 이동용입니다.</li>
+      <li>eBird, Windy, KSA 여객선, 들뫼 탐조 보기를 함께 활용합니다.</li>
+    </ol>
+    <a class="helpLink" href="https://naver.me/FLERU0Gk" target="_blank">자세한 사용법 보기</a>
+    <div class="helpNote">민감종, 번식지, 휴식지는 과도한 접근과 세부 위치 공유를 자제해 주십시오.</div>
+  </div>
+</div>
+
+
 <div id="jinhoSeal">眞<br>井</div>
 
 <script>
@@ -149,7 +183,8 @@ function fitToSites(sites){if(!sites.length)return;if(sites.length===1){map_d1ab
 function applyFilters(fitAfter){rebuildMarkerRegistry();var count=0;var visible=[];siteData.forEach(function(site){var marker=markerRegistry[markerKey(site)];if(!marker)return;if(sitePasses(site)){if(!map_d1aba051686ac9b1a8401cb876f4bfb2.hasLayer(marker))marker.addTo(map_d1aba051686ac9b1a8401cb876f4bfb2);count++;visible.push(site);}else if(map_d1aba051686ac9b1a8401cb876f4bfb2.hasLayer(marker)){map_d1aba051686ac9b1a8401cb876f4bfb2.removeLayer(marker);}});document.getElementById('resultCount').innerText=(activeSearch?'검색 결과: '+activeSearch+' · ':'표시 중: ')+count+' / '+siteData.length+'개 권역';if(fitAfter)fitToSites(visible);}
 function searchSite(){var q=normalizeQuery(document.getElementById('searchBox').value);if(!q)return;activeSearch=q;applyFilters(true);if(!siteData.filter(sitePasses).length)alert('검색 결과가 없습니다.');}
 function resetFilters(){document.querySelectorAll('.seasonFilter').forEach(function(box){box.checked=true;});['overseasOnly','rareOnly','mijoOnly','islandOnly','pelagicOnly','transitOnly','recommendOnly'].forEach(function(id){document.getElementById(id).checked=false;});document.getElementById('searchBox').value='';activeSearch='';applyFilters(false);map_d1aba051686ac9b1a8401cb876f4bfb2.fitBounds([[32.8,124.0],[39.2,132.2]]);}
-function toggleNoticePanel(force){var panel=document.getElementById('noticePanel');var open=typeof force==='boolean'?force:panel.style.display!=='block';panel.style.display=open?'block':'none';}
+function toggleHelpPanel(force){var panel=document.getElementById('helpPanel');var notice=document.getElementById('noticePanel');var open=typeof force==='boolean'?force:panel.style.display!=='block';panel.style.display=open?'block':'none';if(open&&notice)notice.style.display='none';}
+function toggleNoticePanel(force){var panel=document.getElementById('noticePanel');var help=document.getElementById('helpPanel');var open=typeof force==='boolean'?force:panel.style.display!=='block';panel.style.display=open?'block':'none';if(open&&help)help.style.display='none';}
 function todayString(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function activeNotice(item){var t=todayString();return item.published!==false&&(item.start||'0000-01-01')<=t&&t<=(item.end||'9999-12-31');}
 function noticeCard(item){var card=document.createElement('div');card.className='noticeCard';var title=document.createElement('div');title.className='noticeTitle';title.textContent=item.title||'탐조 기획';card.appendChild(title);var date=document.createElement('div');date.className='noticeDate';date.textContent=(item.start||'')+((item.start&&item.end)?' ~ ':'')+(item.end||'');card.appendChild(date);var content=document.createElement('div');content.className='noticeContent';content.textContent=item.content||'';card.appendChild(content);if(item.link){var a=document.createElement('a');a.className='noticeLink';a.href=item.link;a.target='_blank';a.textContent=item.linkText||'자세히 보기';card.appendChild(a);}return card;}
