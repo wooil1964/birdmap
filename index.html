@@ -61,7 +61,7 @@
             <div class="folium-map" id="map_d3290759e1c4c7917e70977decb589bd" ></div>
         
 
-<div id="mapTitleBox"><b>대한민국·해외 조류탐조지도</b><br><span>최종 업데이트: 2026.06.24 · 탐조권역 154곳 · 해외 2곳</span></div>
+<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.06.24 · 154개 권역</span></div>
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()">필터 숨기기</button>
 <div id="birdmapPanel">
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
@@ -77,11 +77,11 @@
   <div class="section"><b>🐦 권역 필터</b><br>
     <label><input type="checkbox" id="overseasOnly" onchange="applyFilters(true)"> 🌏 해외탐조만</label><br>
     <label><input type="checkbox" id="rareOnly" onchange="applyFilters()"> 희귀조권역</label>
-    <label><input type="checkbox" id="mijoOnly" onchange="applyFilters()"> 미조핫스팟</label><br>
+    <label><input type="checkbox" id="mijoOnly" onchange="applyFilters()"> 미기록·희귀 가능성</label><br>
     <label><input type="checkbox" id="islandOnly" onchange="applyFilters()"> 섬탐조</label>
     <label><input type="checkbox" id="pelagicOnly" onchange="applyFilters()"> 선상탐조</label><br>
-    <label><input type="checkbox" id="transitOnly" onchange="applyFilters()"> 대중교통 상</label>
-    <label><input type="checkbox" id="recommendOnly" onchange="applyFilters()"> 들뫼 ★★★★★</label><br>
+    <label><input type="checkbox" id="transitOnly" onchange="applyFilters()"> 대중교통 좋은 곳</label>
+    <label><input type="checkbox" id="recommendOnly" onchange="applyFilters()"> 들뫼 추천</label><br>
     <button onclick="resetFilters()" style="margin-top:6px">전체 보기</button>
   </div>
   <div id="resultCount"></div>
@@ -90,7 +90,7 @@
     <div id="searchResults">검색하면 결과가 여기에 표시됩니다.</div>
   </div>
 </div>
-<button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 탐조 기획 <span id="noticeBadge">0</span></button>
+<button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
 <div id="noticePanel">
   <div class="panelHeader"><strong>📢 이달의 탐조 기획</strong><button onclick="toggleNoticePanel(false)">닫기</button></div>
   <div id="noticeList">현재 게시 중인 기획글이 없습니다.</div>
@@ -167,7 +167,7 @@ function rebuildMarkerRegistry(){markerRegistry={};siteData.forEach(function(s){
 function selectedSeasons(){var a=[];document.querySelectorAll('.seasonFilter:checked').forEach(function(b){a.push(b.value);});return a;}
 function sitePasses(s){var ss=selectedSeasons();if(!(s.seasons.length===0||s.seasons.some(function(x){return ss.includes(x);})))return false;if(document.getElementById('overseasOnly').checked&&!s.overseas)return false;if(document.getElementById('rareOnly').checked&&!s.rare)return false;if(document.getElementById('mijoOnly').checked&&!s.mijo)return false;if(document.getElementById('islandOnly').checked&&!s.island)return false;if(document.getElementById('pelagicOnly').checked&&!s.pelagic)return false;if(document.getElementById('transitOnly').checked&&!s.publicTransitHigh)return false;if(document.getElementById('recommendOnly').checked&&!s.recommend5)return false;if(activeSearch){var q=activeSearch;var ok=normalizeQuery(s.id).includes(q)||normalizeQuery(s.name).includes(q)||normalizeQuery(s.country).includes(q)||normalizeQuery(s.region).includes(q)||normalizeQuery(s.sido).includes(q)||normalizeQuery(s.sigungu).includes(q)||normalizeQuery(s.env).includes(q)||normalizeQuery(s.birds).includes(q)||s.searchText.includes(q);if(!ok)return false;}return true;}
 function moveToSite(site){map_d3290759e1c4c7917e70977decb589bd.setView([site.lat,site.lon],11);var mk=markerRegistry[markerKey(site)];if(mk){mk.addTo(map_d3290759e1c4c7917e70977decb589bd);mk.openPopup();}}
-function renderResults(sites){var box=document.getElementById('searchResults');if(!box)return;box.innerHTML='';if(!sites.length){box.textContent='표시할 결과가 없습니다.';return;}var list=sites.slice(0,80);list.forEach(function(s,i){var b=document.createElement('button');b.className='resultItem';b.onclick=function(){moveToSite(s);};var name=document.createElement('div');name.className='resultName';name.textContent=(i+1)+'. '+s.name;var meta=document.createElement('div');meta.className='resultMeta';meta.textContent=s.country+' · '+s.region+' · '+s.env;b.appendChild(name);b.appendChild(meta);box.appendChild(b);});if(sites.length>80){var more=document.createElement('div');more.className='resultMeta';more.textContent='상위 80개만 표시합니다.';box.appendChild(more);}}
+function renderResults(sites){var box=document.getElementById('searchResults');if(!box)return;box.innerHTML='';if(!sites.length){box.textContent='표시할 결과가 없습니다.';return;}var list=sites.slice(0,80);list.forEach(function(s,i){var b=document.createElement('button');b.className='resultItem';b.onclick=function(){moveToSite(s);};var name=document.createElement('div');name.className='resultName';name.textContent=(i+1)+'. '+s.name;var meta=document.createElement('div');meta.className='resultMeta';var birds=shortBirds(s.birds);meta.textContent=s.country+' · '+s.region+' · '+s.env+(birds?' · '+birds:'');b.appendChild(name);b.appendChild(meta);box.appendChild(b);});if(sites.length>80){var more=document.createElement('div');more.className='resultMeta';more.textContent='상위 80개만 표시합니다.';box.appendChild(more);}}
 function fitToSites(sites){if(!sites.length)return;if(sites.length===1){moveToSite(sites[0]);}else{map_d3290759e1c4c7917e70977decb589bd.fitBounds(sites.map(function(s){return[s.lat,s.lon];}),{padding:[30,30]});}}
 function applyFilters(fitAfter){rebuildMarkerRegistry();var c=0,v=[];siteData.forEach(function(s){var mk=markerRegistry[markerKey(s)];if(!mk)return;if(sitePasses(s)){if(!map_d3290759e1c4c7917e70977decb589bd.hasLayer(mk))mk.addTo(map_d3290759e1c4c7917e70977decb589bd);c++;v.push(s);}else if(map_d3290759e1c4c7917e70977decb589bd.hasLayer(mk)){map_d3290759e1c4c7917e70977decb589bd.removeLayer(mk);}});document.getElementById('resultCount').innerText=(activeSearch?'검색 결과: '+activeSearch+' · ':'표시 중: ')+c+' / '+siteData.length+'개 권역';renderResults(v);if(fitAfter)fitToSites(v);}
 function searchSite(){var q=normalizeQuery(document.getElementById('searchBox').value);if(!q)return;activeSearch=q;applyFilters(true);if(!siteData.filter(sitePasses).length)alert('검색 결과가 없습니다.');}
