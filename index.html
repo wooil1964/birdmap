@@ -194,6 +194,13 @@
   .resultBirds{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#777}
   #routeTools>b{display:inline-block;margin-bottom:2px}
   #routeToggleBtn{margin-top:5px!important}
+  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 72px)}
+  .mobileBirdPopup{width:min(280px,calc(100vw - 76px));font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;line-height:1.4}
+  .mobileBirdPopup h4{margin:0 0 7px;font-size:16px;color:#222}
+  .mobilePopupRow{margin:3px 0;color:#333;overflow-wrap:anywhere}
+  .mobilePopupRow b{color:#111}
+  .mobilePopupButtons{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid #ddd}
+  .mobilePopupButtons .btn{padding:5px 7px;font-size:11px}
   #noticeToggleBtn{top:72px;right:8px;font-size:12px;padding:6px 9px}
   #noticePanel{top:146px;left:8px;right:8px;width:auto;max-height:calc(100vh - 154px)}
   #helpToggleBtn{top:108px;right:8px;font-size:12px;padding:6px 9px}
@@ -299,6 +306,92 @@ function hideBirdmapPanelOnMobile(){
 function rebuildMarkerRegistry(){
   markerRegistry={};
   siteData.forEach(function(s){if(window[s.markerVar])markerRegistry[markerKey(s)]=window[s.markerVar];});
+}
+
+function popupContentElement(content){
+  if(content instanceof HTMLElement)return content.cloneNode(true);
+  var box=document.createElement('div');
+  box.innerHTML=String(content||'');
+  return box;
+}
+
+function popupField(source,label){
+  var labels=source.querySelectorAll('b');
+  for(var i=0;i<labels.length;i++){
+    if(labels[i].textContent.trim()!==label+':')continue;
+    var value='',node=labels[i].nextSibling;
+    while(node){
+      if(node.nodeType===1&&/^(B|BR|HR)$/.test(node.tagName))break;
+      value+=node.textContent||'';
+      node=node.nextSibling;
+    }
+    return value.trim().replace(/\s*\/\s*$/,'');
+  }
+  return '';
+}
+
+function mobilePopupRow(label,value){
+  var row=document.createElement('div');
+  row.className='mobilePopupRow';
+  var title=document.createElement('b');
+  title.textContent=label+': ';
+  row.appendChild(title);
+  row.appendChild(document.createTextNode(value||'정보 없음'));
+  return row;
+}
+
+function mobilePopupContent(site,desktopContent){
+  var source=popupContentElement(desktopContent);
+  var root=document.createElement('section');
+  root.className='mobileBirdPopup';
+  var name=document.createElement('h4');
+  name.textContent=site.name;
+  root.appendChild(name);
+  ['대표종','주차','화장실','숙박','선박정보','주의사항'].forEach(function(label){
+    root.appendChild(mobilePopupRow(label,popupField(source,label)));
+  });
+  var buttons=document.createElement('div');
+  buttons.className='mobilePopupButtons';
+  [
+    {selector:'a.naver',className:'btn naver',text:'🧭 네이버지도',href:'https://map.naver.com/v5/search/'+encodeURIComponent(site.name)},
+    {selector:'a.kakao',className:'btn kakao',text:'🟡 카카오맵',href:'https://map.kakao.com/link/map/'+encodeURIComponent(site.name)+','+site.lat+','+site.lon},
+    {selector:'a.ebird'},
+    {selector:'a.windy',className:'btn windy',text:'🌬️ Windy',href:'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10'}
+  ].forEach(function(def){
+    var link=source.querySelector(def.selector);
+    if(link)link=link.cloneNode(true);
+    else if(def.href){
+      link=document.createElement('a');
+      link.className=def.className;
+      link.textContent=def.text;
+      link.href=def.href;
+      link.target='_blank';
+    }
+    if(link)buttons.appendChild(link);
+  });
+  root.appendChild(buttons);
+  return root;
+}
+
+function setupResponsivePopups(){
+  var map=map_7010a44f6ac2025090f0fe07508ed485;
+  map.on('popupopen',function(e){
+    if(!window.matchMedia('(max-width: 700px)').matches)return;
+    var popup=e.popup,marker=popup._source;
+    var site=siteData.find(function(s){return window[s.markerVar]===marker;});
+    if(!site)return;
+    if(!popup._birdmapDesktopContent)popup._birdmapDesktopContent=popup.getContent();
+    popup.setContent(mobilePopupContent(site,popup._birdmapDesktopContent));
+    popup._birdmapMobileActive=true;
+    popup.update();
+  });
+  map.on('popupclose',function(e){
+    var popup=e.popup;
+    if(popup._birdmapMobileActive&&popup._birdmapDesktopContent){
+      popup.setContent(popup._birdmapDesktopContent);
+      popup._birdmapMobileActive=false;
+    }
+  });
 }
 
 function selectedSeasons(){
@@ -551,7 +644,7 @@ function loadNotices(){
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
 window.addEventListener('load',function(){
   hideBirdmapPanelOnMobile();
-  setTimeout(function(){rebuildMarkerRegistry();applyFilters(false);loadNotices();},300);
+  setTimeout(function(){rebuildMarkerRegistry();setupResponsivePopups();applyFilters(false);loadNotices();},300);
 });
 </script>
 
