@@ -62,12 +62,14 @@
             <div class="folium-map" id="map_7010a44f6ac2025090f0fe07508ed485" ></div>
         
 <div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.06.25 · 155개 권역</span></div>
-<button id="togglePanelBtn" onclick="toggleBirdmapPanel()">필터 숨기기</button>
+<button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <div id="birdmapPanel">
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
   <input id="searchBox" type="text" placeholder="예: 호미곶 대왕암공원 / 호미곶, 대왕암공원">
   <button onclick="searchSite()">검색</button>
   <div class="smallText">엑셀 위도·경도 좌표 그대로 반영</div>
+  <button id="filterToggleBtn" class="mobileSectionToggle" type="button" aria-expanded="false" aria-controls="filterOptions" onclick="toggleMobileSection('filterOptions','filterToggleBtn','필터 열기','필터 숨기기')">필터 열기</button>
+  <div id="filterOptions" class="mobileCollapsible">
   <div class="section"><b>🗓 계절 필터</b><br>
     <label><input type="checkbox" class="seasonFilter" value="봄" checked onchange="applyFilters()"> 봄</label>
     <label><input type="checkbox" class="seasonFilter" value="여름" checked onchange="applyFilters()"> 여름</label>
@@ -84,6 +86,7 @@
     <label><input type="checkbox" id="recommendOnly" onchange="applyFilters()"> 들뫼 추천</label><br>
     <button onclick="resetFilters()" style="margin-top:6px">전체 보기</button>
   </div>
+  </div>
   <div id="resultCount"></div>
   <div id="searchResultsWrap" class="section">
     <b>📋 검색 결과 목록</b>
@@ -91,8 +94,11 @@
   </div>
   <div id="routeTools" class="section">
     <b>🚗 복수 탐조지 루트</b>
-    <div id="routeSummary" class="routeSummary">두 곳 이상 함께 검색하면 루트가 표시됩니다.</div>
-    <div id="routeButtons"></div>
+    <button id="routeToggleBtn" class="mobileSectionToggle" type="button" aria-expanded="false" aria-controls="routeContent" onclick="toggleMobileSection('routeContent','routeToggleBtn','루트 보기','루트 숨기기')">루트 보기</button>
+    <div id="routeContent" class="mobileCollapsible">
+      <div id="routeSummary" class="routeSummary">두 곳 이상 함께 검색하면 루트가 표시됩니다.</div>
+      <div id="routeButtons"></div>
+    </div>
   </div>
 </div>
 <button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
@@ -151,11 +157,13 @@
 #mapTitleBox{position:fixed;top:10px;left:50px;z-index:9999;background:white;padding:10px 14px;border:2px solid #555;border-radius:6px;font-family:Arial,'Malgun Gothic',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 #mapTitleBox span{font-size:12px}
 #togglePanelBtn{position:fixed;top:86px;left:50px;z-index:10000;padding:7px 10px;background:white;border:2px solid #555;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.mobileToggleLabel{display:none}
 #birdmapPanel{position:fixed;top:124px;left:50px;z-index:9999;width:322px;max-height:74vh;overflow-y:auto;background:white;border:2px solid #555;border-radius:8px;padding:10px 12px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #birdmapPanel input[type=text]{width:205px;padding:5px;border:1px solid #999;border-radius:4px}
 #birdmapPanel button{padding:5px 8px;border:1px solid #777;border-radius:4px;background:#f5f5f5;cursor:pointer}
 #birdmapPanel .section{margin-top:8px;padding-top:8px;border-top:1px solid #ddd}
 #birdmapPanel label{margin-right:8px;white-space:nowrap;line-height:1.85}
+.mobileSectionToggle{display:none}
 .smallText{font-size:11px;color:#555;margin-top:4px}#resultCount{margin-top:7px;font-weight:bold;color:#7a0000}
 #searchResults{margin-top:6px;max-height:190px;overflow-y:auto;font-size:12px}
 .resultItem{display:block;width:100%;text-align:left;margin:3px 0;padding:6px 7px;border:1px solid #ddd;border-radius:5px;background:#fafafa;cursor:pointer;line-height:1.3}
@@ -174,8 +182,23 @@
 @media(max-width:700px){
   #mapTitleBox{left:8px;right:8px;top:8px;padding:8px 10px}
   #togglePanelBtn{top:72px;left:8px;font-size:12px;padding:6px 9px}
+<<<<<<< HEAD
+  .desktopToggleLabel{display:none}.mobileToggleLabel{display:inline}
+  #birdmapPanel{display:none;top:108px;left:8px;width:min(300px,calc(100vw - 16px));max-height:min(52vh,420px);overflow-y:auto;padding:9px 10px;font-size:12px}
+  #birdmapPanel input[type=text]{width:calc(100% - 58px);min-width:0}
+  #birdmapPanel .mobileSectionToggle{display:block;width:100%;margin-top:7px;font-weight:bold}
+  #birdmapPanel .mobileCollapsible{display:none}
+  #birdmapPanel .mobileCollapsible.mobileOpen{display:block}
+  #searchResults{max-height:min(24vh,150px);overscroll-behavior:contain}
+  .resultItem{padding:5px 6px}
+  .resultMeta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .resultBirds{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#777}
+  #routeTools>b{display:inline-block;margin-bottom:2px}
+  #routeToggleBtn{margin-top:5px!important}
+=======
   #birdmapPanel{top:146px;left:8px;width:288px;max-height:calc(100vh - 154px);font-size:12px}
   #birdmapPanel input[type=text]{width:180px}
+>>>>>>> e6d8c6b81814aeb48f6648a12ce521d5b628045f
   #noticeToggleBtn{top:72px;right:8px;font-size:12px;padding:6px 9px}
   #noticePanel{top:146px;left:8px;right:8px;width:auto;max-height:calc(100vh - 154px)}
   #helpToggleBtn{top:108px;right:8px;font-size:12px;padding:6px 9px}
@@ -250,8 +273,25 @@ function orderSitesByTerms(sites){
 
 function toggleBirdmapPanel(){
   var p=document.getElementById('birdmapPanel'),b=document.getElementById('togglePanelBtn');
-  if(p.style.display==='none'){p.style.display='block';b.innerText='필터 숨기기';}
-  else{p.style.display='none';b.innerText='필터 보이기';}
+  var mobile=window.innerWidth<=700;
+  if(window.getComputedStyle(p).display==='none'){p.style.display='block';b.innerText=mobile?'검색 닫기':'필터 숨기기';}
+  else{p.style.display='none';b.innerText=mobile?'검색 열기':'필터 보이기';}
+}
+
+function toggleMobileSection(contentId,buttonId,closedText,openText){
+  var content=document.getElementById(contentId),button=document.getElementById(buttonId);
+  if(!content||!button)return;
+  var opening=!content.classList.contains('mobileOpen');
+  content.classList.toggle('mobileOpen',opening);
+  button.setAttribute('aria-expanded',opening?'true':'false');
+  button.innerText=opening?openText:closedText;
+}
+
+function hideBirdmapPanelOnMobile(){
+  if(window.innerWidth>700)return;
+  var p=document.getElementById('birdmapPanel'),b=document.getElementById('togglePanelBtn');
+  if(p)p.style.display='none';
+  if(b)b.innerText='검색 열기';
 }
 
 function hideBirdmapPanelOnMobile(){
@@ -365,10 +405,16 @@ function renderResults(sites){
     name.textContent=(i+1)+'. '+s.name;
     var meta=document.createElement('div');
     meta.className='resultMeta';
+    meta.textContent=s.country+' · '+s.region+' · '+s.env;
     var birds=shortBirds(s.birds);
-    meta.textContent=s.country+' · '+s.region+' · '+s.env+(birds?' · '+birds:'');
     b.appendChild(name);
     b.appendChild(meta);
+    if(birds){
+      var birdInfo=document.createElement('span');
+      birdInfo.className='resultBirds';
+      birdInfo.textContent='대표종 · '+birds;
+      b.appendChild(birdInfo);
+    }
     box.appendChild(b);
   });
   if(sites.length>80){
@@ -508,7 +554,10 @@ function loadNotices(){
 
 
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
-window.addEventListener('load',function(){setTimeout(function(){rebuildMarkerRegistry();applyFilters(false);loadNotices();},300);});
+window.addEventListener('load',function(){
+  hideBirdmapPanelOnMobile();
+  setTimeout(function(){rebuildMarkerRegistry();applyFilters(false);loadNotices();},300);
+});
 </script>
 
 
