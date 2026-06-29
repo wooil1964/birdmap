@@ -289,6 +289,13 @@ function hideBirdmapPanelOnMobile(){
   if(b)b.innerText='검색 열기';
 }
 
+function hideBirdmapPanelOnMobile(){
+  if(window.innerWidth>700)return;
+  var p=document.getElementById('birdmapPanel'),b=document.getElementById('togglePanelBtn');
+  if(p)p.style.display='none';
+  if(b)b.innerText='필터 보이기';
+}
+
 function rebuildMarkerRegistry(){
   markerRegistry={};
   siteData.forEach(function(s){if(window[s.markerVar])markerRegistry[markerKey(s)]=window[s.markerVar];});
