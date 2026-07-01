@@ -198,6 +198,14 @@
 .v23TodayBox{margin:7px 0;padding:8px;border:1px solid #e1c46a;background:#fffbea;border-radius:7px;line-height:1.55}
 .v23TodayBox .v23Title{font-weight:bold;color:#765600;margin-bottom:4px}
 .v23TodayScore{font-size:15px;font-weight:bold;color:#704d00}
+.v23WeatherDetails{margin-top:6px}
+.v23WeatherCheck{position:absolute;opacity:0;pointer-events:none}
+.v23WeatherToggle{display:flex;align-items:center;width:100%;min-height:34px;padding:2px 0;color:#654b00;font-weight:bold;text-align:left;cursor:pointer;user-select:none}
+.v23WeatherHideLabel{display:none}
+.v23WeatherDetailsContent{display:none;padding-top:5px;border-top:1px solid rgba(118,86,0,.2)}
+.v23WeatherCheck:checked+.v23WeatherToggle .v23WeatherShowLabel{display:none}
+.v23WeatherCheck:checked+.v23WeatherToggle .v23WeatherHideLabel{display:inline}
+.v23WeatherCheck:checked~.v23WeatherDetailsContent{display:block}
 .resultFeature{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#406020;font-size:11px}
 #jinhoSeal{position:fixed;bottom:10px;left:10px;z-index:8000;width:30px;height:38px;border:2px solid #b40000;color:#b40000;background:rgba(255,255,255,.72);font-family:'Noto Serif CJK KR','Malgun Gothic',serif;font-weight:bold;font-size:15px;line-height:1.05;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);opacity:.9;pointer-events:none}
 @media(max-width:700px){
@@ -215,13 +223,14 @@
   .resultBirds{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#777}
   #routeTools>b{display:inline-block;margin-bottom:2px}
   #routeToggleBtn{margin-top:5px!important}
-  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 72px)}
+  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 72px);max-height:60vh;overflow-y:auto;overscroll-behavior:contain}
   .mobileBirdPopup{width:min(280px,calc(100vw - 76px));font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;line-height:1.4}
   .mobileBirdPopup h4{margin:0 0 7px;font-size:16px;color:#222}
   .mobilePopupRow{margin:3px 0;color:#333;overflow-wrap:anywhere}
   .mobilePopupRow b{color:#111}
   .mobilePopupButtons{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid #ddd}
-  .mobilePopupButtons .btn{padding:5px 7px;font-size:11px}
+  .mobilePopupButtons .btn,.leaflet-popup-content .btn{display:inline-flex;align-items:center;min-height:36px;box-sizing:border-box;padding:6px 8px;font-size:11px}
+  .v23WeatherToggle{min-height:40px;padding:4px 2px}
   #noticeToggleBtn{top:72px;right:8px;font-size:12px;padding:6px 9px}
   #noticePanel{top:146px;left:8px;right:8px;width:auto;max-height:calc(100vh - 154px)}
   #helpToggleBtn{top:108px;right:8px;font-size:12px;padding:6px 9px}
@@ -468,13 +477,17 @@ function weatherTodayForSite(site){
 function v23TodayWeatherHtml(site){
   var today=weatherTodayForSite(site);
   if(!today)return '';
+  var expanded=!window.matchMedia('(max-width: 700px)').matches;
+  var detailsId='v23WeatherDetails-'+escapeHtml(site.id);
   return '<div class="v23TodayBox"><div class="v23Title">오늘의 탐조 적합도</div>'+
-    '<div class="v23TodayScore">'+escapeHtml(v23Value(today.score,''))+'점 · '+escapeHtml(v23Value(today.grade,''))+'</div>'+
-    '<b>탐조 기상 해석:</b> '+escapeHtml(v23Value(today.summary,''))+'<br>'+
+    '<div class="v23TodayScore">'+escapeHtml(v23Value(today.grade,''))+' '+escapeHtml(v23Value(today.score,''))+'점</div>'+
+    '<div class="v23WeatherDetails"><input type="checkbox" class="v23WeatherCheck" id="'+detailsId+'"'+(expanded?' checked':'')+'>'+
+    '<label class="v23WeatherToggle" for="'+detailsId+'"><span class="v23WeatherShowLabel">▼ 탐조 기상해석 보기</span><span class="v23WeatherHideLabel">▲ 탐조 기상해석 숨기기</span></label>'+
+    '<div class="v23WeatherDetailsContent"><b>탐조 기상 해석:</b> '+escapeHtml(v23Value(today.summary,''))+'<br>'+
     '<b>추천 탐조군:</b> '+escapeHtml(v23Value(today.targetGroup,''))+'<br>'+
     '<b>바람:</b> '+escapeHtml(v23Value(today.wind,''))+' / <b>강수:</b> '+escapeHtml(v23Value(today.rain,''))+
     (today.wave?'<br><b>파고:</b> '+escapeHtml(today.wave):'')+
-    (today.forecastTime?'<br><span class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</span>':'')+'</div>';
+    (today.forecastTime?'<br><span class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</span>':'')+'</div></div></div>';
 }
 function v23ButtonsFromLegacy(source,site){
   function link(selector,cls,text,href,show){
