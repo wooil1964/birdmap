@@ -379,8 +379,10 @@ function mobilePopupContent(site,desktopContent){
     {selector:'a.naver',className:'btn naver',text:'🧭 네이버지도',href:'https://map.naver.com/v5/search/'+encodeURIComponent(site.name)},
     {selector:'a.kakao',className:'btn kakao',text:'🟡 카카오맵',href:'https://map.kakao.com/link/map/'+encodeURIComponent(site.name)+','+site.lat+','+site.lon},
     {selector:'a.ebird'},
-    {selector:'a.windy',className:'btn windy',text:'🌬️ Windy',href:'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10'}
+    {selector:'a.windy',className:'btn windy',text:'🌬️ Windy',href:'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10'},
+    {selector:'a.ksa',islandOnly:true}
   ].forEach(function(def){
+    if(def.islandOnly&&!site.island)return;
     var link=source.querySelector(def.selector);
     if(link)link=link.cloneNode(true);
     else if(def.href){
