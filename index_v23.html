@@ -195,6 +195,9 @@
 .v23Chip{display:inline-block;padding:2px 6px;border-radius:12px;background:#eef5ff;border:1px solid #b8cdea;font-size:11px;color:#214f75}
 .v23WeatherBox{margin:7px 0;padding:7px;border:1px solid #bee1e5;background:#f0fcff;border-radius:7px;line-height:1.55}
 .v23WeatherBox .v23Title{font-weight:bold;color:#006064;margin-bottom:4px}
+.v23TodayBox{margin:7px 0;padding:8px;border:1px solid #e1c46a;background:#fffbea;border-radius:7px;line-height:1.55}
+.v23TodayBox .v23Title{font-weight:bold;color:#765600;margin-bottom:4px}
+.v23TodayScore{font-size:15px;font-weight:bold;color:#704d00}
 .resultFeature{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#406020;font-size:11px}
 #jinhoSeal{position:fixed;bottom:10px;left:10px;z-index:8000;width:30px;height:38px;border:2px solid #b40000;color:#b40000;background:rgba(255,255,255,.72);font-family:'Noto Serif CJK KR','Malgun Gothic',serif;font-weight:bold;font-size:15px;line-height:1.05;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);opacity:.9;pointer-events:none}
 @media(max-width:700px){
@@ -231,6 +234,7 @@ var markerRegistry={};
 var activeSearch='';
 var activeTerms=[];
 var routeLine=null;
+var weatherToday={updated:'',source:'',sites:{}};
 
 function markerKey(site){return site.id+'|'+site.lat+'|'+site.lon;}
 
@@ -456,6 +460,22 @@ function v23WeatherTip(site){
 }
 function v23ChipHtml(list){return list.map(function(x){return '<span class="v23Chip">'+escapeHtml(x)+'</span>';}).join('');}
 function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function weatherTodayForSite(site){
+  var sites=weatherToday&&weatherToday.sites;
+  if(!sites)return null;
+  return sites[String(site.id)]||sites[site.name]||null;
+}
+function v23TodayWeatherHtml(site){
+  var today=weatherTodayForSite(site);
+  if(!today)return '';
+  return '<div class="v23TodayBox"><div class="v23Title">오늘의 탐조 적합도</div>'+
+    '<div class="v23TodayScore">'+escapeHtml(v23Value(today.score,''))+'점 · '+escapeHtml(v23Value(today.grade,''))+'</div>'+
+    '<b>탐조 기상 해석:</b> '+escapeHtml(v23Value(today.summary,''))+'<br>'+
+    '<b>추천 탐조군:</b> '+escapeHtml(v23Value(today.targetGroup,''))+'<br>'+
+    '<b>바람:</b> '+escapeHtml(v23Value(today.wind,''))+' / <b>강수:</b> '+escapeHtml(v23Value(today.rain,''))+
+    (today.wave?'<br><b>파고:</b> '+escapeHtml(today.wave):'')+
+    (today.forecastTime?'<br><span class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</span>':'')+'</div>';
+}
 function v23ButtonsFromLegacy(source,site){
   function link(selector,cls,text,href,show){
     if(show===false)return '';
@@ -484,7 +504,7 @@ function v23PopupContent(site,desktopContent){
     '<b>탐조환경:</b> '+escapeHtml(v23Value(site.habitatType,site.env))+'<br>'+
     '<b>추천계절:</b> '+escapeHtml(v23Value(site.bestSeason,site.seasons&&site.seasons.join("·")))+' / <b>추천월:</b> '+escapeHtml(v23Value(site.bestMonth,'정보 없음'))+'<br>'+
     '<b>대표조류군:</b> '+escapeHtml(v23Value(site.mainBirdGroup,site.birds.split(/[ ,]/)[0]))+'<br>'+
-    '<b>대표종:</b> '+escapeHtml(site.birds||'정보 없음')+
+    '<b>대표종:</b> '+escapeHtml(site.birds||'정보 없음')+v23TodayWeatherHtml(site)+
     '<div class="v23InfoBox"><div class="v23Title">v23 탐조지 프로필</div>'+
     '<b>등급:</b> '+escapeHtml(v23Value(site.siteGrade,site.recommend5?'★★★★★':'정보 없음'))+'<br>'+
     '<b>한 줄 소개:</b> '+escapeHtml(v23Value(site.oneLineIntro,''))+'<br>'+
@@ -762,11 +782,23 @@ function loadNotices(){
   });
 }
 
+function loadWeatherToday(){
+  return fetch('./weather_today.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
+    if(!r.ok)throw new Error();
+    return r.json();
+  }).then(function(data){
+    if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
+    weatherToday=data;
+  }).catch(function(){
+    weatherToday={updated:'',source:'',sites:{}};
+  });
+}
+
 
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
 window.addEventListener('load',function(){
   hideBirdmapPanelOnMobile();
-  setTimeout(function(){rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);loadNotices();},300);
+  setTimeout(function(){rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);loadNotices();loadWeatherToday();},300);
 });
 window.addEventListener('resize',function(){
   rebuildMarkerRegistry();

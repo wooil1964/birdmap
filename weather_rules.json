@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "description": "전국 탐조지도 v23 오늘의 탐조 적합도 규칙",
+  "aliases": {
+    "pelagic": "pelagic_seabird",
+    "raptor": "raptor_migration"
+  },
+  "default": {
+    "label": "일반 탐조",
+    "targetGroup": "현지에서 관찰 가능한 조류",
+    "baseScore": 92,
+    "windIdealMax": 5,
+    "windMax": 11,
+    "gustMax": 15,
+    "precip3hMax": 1.5,
+    "visibilityMinKm": 5,
+    "cloudMaxPct": 95,
+    "waveMaxM": 2.5
+  },
+  "rules": {
+    "general_birding": {
+      "label": "일반 탐조",
+      "targetGroup": "현지에서 관찰 가능한 조류"
+    },
+    "island_migrant": {
+      "label": "섬·이동성 산새",
+      "targetGroup": "솔새류·딱새류·멧새류",
+      "windIdealMax": 7,
+      "windMax": 13,
+      "gustMax": 17,
+      "precip3hMax": 2,
+      "preferredWindFrom": [225, 337.5]
+    },
+    "mudflat_shorebird": {
+      "label": "갯벌·도요물떼새",
+      "targetGroup": "도요류·물떼새류·저어새류",
+      "windIdealMax": 6,
+      "windMax": 12,
+      "gustMax": 16,
+      "precip3hMax": 1.5,
+      "visibilityMinKm": 7
+    },
+    "pelagic_seabird": {
+      "label": "선상탐조·바다새",
+      "targetGroup": "바다오리류·슴새류·갈매기류",
+      "windIdealMax": 5,
+      "windMax": 9,
+      "gustMax": 13,
+      "precip3hMax": 1,
+      "visibilityMinKm": 8,
+      "waveMaxM": 1.5
+    },
+    "winter_waterfowl": {
+      "label": "겨울철새",
+      "targetGroup": "오리류·기러기류·고니류",
+      "windIdealMax": 7,
+      "windMax": 14,
+      "gustMax": 18,
+      "precip3hMax": 2,
+      "visibilityMinKm": 4
+    },
+    "raptor_migration": {
+      "label": "맹금",
+      "targetGroup": "수리류·매류·말똥가리류",
+      "windIdealMax": 6,
+      "windMax": 12,
+      "gustMax": 16,
+      "precip3hMax": 0.8,
+      "visibilityMinKm": 8,
+      "cloudMaxPct": 80
+    },
+    "forest_songbird": {
+      "label": "산림성 조류",
+      "targetGroup": "솔새류·딱새류·지빠귀류",
+      "windIdealMax": 4,
+      "windMax": 9,
+      "gustMax": 13,
+      "precip3hMax": 1,
+      "visibilityMinKm": 3
+    },
+    "coastal_seabird": {
+      "label": "해안·바다새",
+      "targetGroup": "갈매기류·바다오리류·아비류",
+      "windIdealMax": 7,
+      "windMax": 14,
+      "gustMax": 19,
+      "precip3hMax": 2,
+      "visibilityMinKm": 6,
+      "waveMaxM": 2
+    }
+  }
+}

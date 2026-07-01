@@ -1,0 +1,47 @@
+name: Update daily birding weather
+
+on:
+  schedule:
+    # GitHub Actions cron uses UTC. 20:00 UTC is 05:00 KST the following day.
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-daily-birding-weather
+  cancel-in-progress: false
+
+jobs:
+  update-weather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check updater syntax
+        run: python -m py_compile .github/scripts/update_weather.py
+
+      - name: Build weather_today.json
+        env:
+          WINDY_API_KEY: ${{ secrets.WINDY_API_KEY }}
+        run: python .github/scripts/update_weather.py
+
+      - name: Commit updated weather
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add weather_today.json
+          if git diff --cached --quiet; then
+            echo "No weather changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update daily birding weather"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
