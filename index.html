@@ -296,16 +296,39 @@ function hideBirdmapPanelOnMobile(){
   if(b)b.innerText='검색 열기';
 }
 
-function hideBirdmapPanelOnMobile(){
-  if(window.innerWidth>700)return;
-  var p=document.getElementById('birdmapPanel'),b=document.getElementById('togglePanelBtn');
-  if(p)p.style.display='none';
-  if(b)b.innerText='필터 보이기';
-}
-
 function rebuildMarkerRegistry(){
   markerRegistry={};
   siteData.forEach(function(s){if(window[s.markerVar])markerRegistry[markerKey(s)]=window[s.markerVar];});
+}
+
+function markerPoint(point){
+  return point?L.point(point):null;
+}
+
+function scaledMarkerPoint(point,scale){
+  var original=markerPoint(point);
+  if(!original)return null;
+  return L.point(Math.round(original.x*scale),Math.round(original.y*scale));
+}
+
+function applyResponsiveMarkerSizes(){
+  var mobile=window.matchMedia('(max-width: 700px)').matches;
+  siteData.forEach(function(site){
+    var marker=markerRegistry[markerKey(site)],icon=marker&&marker.options.icon;
+    if(!icon)return;
+    if(!icon._birdmapDesktopMetrics){
+      icon._birdmapDesktopMetrics={
+        iconSize:markerPoint(icon.options.iconSize),
+        iconAnchor:markerPoint(icon.options.iconAnchor),
+        popupAnchor:markerPoint(icon.options.popupAnchor)
+      };
+    }
+    var original=icon._birdmapDesktopMetrics;
+    icon.options.iconSize=mobile?scaledMarkerPoint(original.iconSize,.74):markerPoint(original.iconSize);
+    icon.options.iconAnchor=mobile?scaledMarkerPoint(original.iconAnchor,.74):markerPoint(original.iconAnchor);
+    icon.options.popupAnchor=mobile?scaledMarkerPoint(original.popupAnchor,.74):markerPoint(original.popupAnchor);
+    marker.setIcon(icon);
+  });
 }
 
 function popupContentElement(content){
@@ -644,7 +667,11 @@ function loadNotices(){
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
 window.addEventListener('load',function(){
   hideBirdmapPanelOnMobile();
-  setTimeout(function(){rebuildMarkerRegistry();setupResponsivePopups();applyFilters(false);loadNotices();},300);
+  setTimeout(function(){rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);loadNotices();},300);
+});
+window.addEventListener('resize',function(){
+  rebuildMarkerRegistry();
+  applyResponsiveMarkerSizes();
 });
 </script>
 
