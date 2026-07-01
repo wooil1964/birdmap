@@ -31,7 +31,6 @@ ATMOSPHERIC_PARAMETERS = [
     "lclouds",
     "mclouds",
     "hclouds",
-    "visibility",
 ]
 
 
