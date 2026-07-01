@@ -7,19 +7,21 @@ import json
 import math
 import os
 import re
-import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
-HTML_PATH = ROOT / "index_v23.html"
+HTML_PATH = ROOT / "index.html"
 RULES_PATH = ROOT / "weather_rules.json"
 OUTPUT_PATH = ROOT / "weather_today.json"
 API_URL = "https://api.windy.com/api/point-forecast/v2"
+REQUEST_TIMEOUT_SECONDS = 10
+MAX_WORKERS = 10
 KST = timezone(timedelta(hours=9))
 ATMOSPHERIC_PARAMETERS = [
     "wind",
@@ -37,7 +39,7 @@ def load_site_data() -> list[dict[str, Any]]:
     html = HTML_PATH.read_text(encoding="utf-8")
     match = re.search(r"var siteData=(\[.*?\]);\s*var markerRegistry=", html, re.S)
     if not match:
-        raise RuntimeError("index_v23.html에서 siteData를 찾지 못했습니다.")
+        raise RuntimeError("index.html에서 siteData를 찾지 못했습니다.")
     sites = json.loads(match.group(1))
     if len(sites) != 155:
         raise RuntimeError(f"siteData 개수가 155개가 아닙니다: {len(sites)}")
@@ -54,7 +56,6 @@ def request_forecast(
     lon: float,
     parameters: list[str],
     model: str,
-    retries: int = 3,
 ) -> dict[str, Any]:
     payload = json.dumps(
         {
@@ -72,17 +73,19 @@ def request_forecast(
         headers={"Content-Type": "application/json", "User-Agent": "birdmap-weather/1.0"},
         method="POST",
     )
-    for attempt in range(1, retries + 1):
-        try:
-            with urllib.request.urlopen(request, timeout=45) as response:
-                if response.status != 200:
-                    raise RuntimeError(f"Windy API HTTP {response.status}")
-                return json.loads(response.read().decode("utf-8"))
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError) as exc:
-            if attempt == retries:
-                raise RuntimeError(f"Windy API 요청 실패: {exc}") from exc
-            time.sleep(attempt * 2)
-    raise RuntimeError("Windy API 요청 재시도 실패")
+    try:
+        with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            if response.status != 200:
+                raise RuntimeError(f"HTTP {response.status}")
+            return json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        raise RuntimeError(f"HTTP {exc.code}") from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(f"{type(exc.reason).__name__}: {exc.reason}") from exc
+    except TimeoutError as exc:
+        raise RuntimeError(f"Timeout after {REQUEST_TIMEOUT_SECONDS}s") from exc
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Invalid JSON: {exc}") from exc
 
 
 def nearest_index(timestamps: list[float], target: datetime) -> int:
@@ -271,6 +274,43 @@ def build_site_result(
     }
 
 
+def load_previous_sites() -> dict[str, Any]:
+    if not OUTPUT_PATH.exists():
+        return {}
+    try:
+        previous = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"Previous weather data unavailable: {exc}", flush=True)
+        return {}
+    sites = previous.get("sites", {})
+    return sites if isinstance(sites, dict) else {}
+
+
+def process_site(
+    api_key: str,
+    site: dict[str, Any],
+    rules: dict[str, Any],
+    target: datetime,
+) -> dict[str, Any]:
+    atmospheric = request_forecast(
+        api_key,
+        float(site["lat"]),
+        float(site["lon"]),
+        ATMOSPHERIC_PARAMETERS,
+        "gfs",
+    )
+    wave = None
+    if site.get("weatherRuleKey") == "pelagic_seabird":
+        wave = request_forecast(
+            api_key,
+            float(site["lat"]),
+            float(site["lon"]),
+            ["waves"],
+            "gfsWave",
+        )
+    return build_site_result(site, rules, atmospheric, wave, target)
+
+
 def main() -> None:
     api_key = os.environ.get("WINDY_API_KEY", "").strip()
     if not api_key:
@@ -278,55 +318,89 @@ def main() -> None:
 
     sites = load_site_data()
     rules = load_rules()
+    previous_sites = load_previous_sites()
     now = datetime.now(KST)
     target = now.replace(hour=9, minute=0, second=0, microsecond=0)
     if now > target:
         target = now
 
-    results: dict[str, Any] = {}
-    errors: list[str] = []
-    for position, site in enumerate(sites, start=1):
-        try:
-            atmospheric = request_forecast(
-                api_key,
-                float(site["lat"]),
-                float(site["lon"]),
-                ATMOSPHERIC_PARAMETERS,
-                "gfs",
-            )
-            wave = None
-            if site.get("weatherRuleKey") == "pelagic_seabird":
-                try:
-                    wave = request_forecast(
-                        api_key,
-                        float(site["lat"]),
-                        float(site["lon"]),
-                        ["waves"],
-                        "gfsWave",
-                    )
-                except RuntimeError as exc:
-                    print(f"warning: {site['name']} 파고 예보 생략: {exc}")
-            results[str(site["id"])] = build_site_result(site, rules, atmospheric, wave, target)
-            print(f"[{position:03d}/{len(sites)}] {site['name']} 완료")
-            time.sleep(0.15)
-        except RuntimeError as exc:
-            errors.append(f"{site['id']} {site['name']}: {exc}")
+    total = len(sites)
+    print(f"Loading {total} sites", flush=True)
+    print(f"Using up to {MAX_WORKERS} concurrent requests", flush=True)
 
-    if errors:
-        raise RuntimeError("일부 탐조지 예보 생성 실패:\n" + "\n".join(errors))
+    results: dict[str, Any] = {}
+    success_count = 0
+    failed_count = 0
+    reused_count = 0
+    completed_count = 0
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(process_site, api_key, site, rules, target): (position, site)
+            for position, site in enumerate(sites, start=1)
+        }
+        for future in as_completed(futures):
+            position, site = futures[future]
+            site_id = str(site["id"])
+            completed_count += 1
+            try:
+                result = future.result()
+            except Exception as exc:
+                failed_count += 1
+                error_message = str(exc) or type(exc).__name__
+                previous = previous_sites.get(site_id)
+                if isinstance(previous, dict):
+                    reused = dict(previous)
+                    reused["stale"] = True
+                    reused["error"] = error_message
+                    results[site_id] = reused
+                    reused_count += 1
+                    print(
+                        f"Site {position}/{total} ({completed_count} completed) "
+                        f"{site['name']}: {error_message} - REUSED",
+                        flush=True,
+                    )
+                else:
+                    print(
+                        f"Site {position}/{total} ({completed_count} completed) "
+                        f"{site['name']}: {error_message}",
+                        flush=True,
+                    )
+            else:
+                result["stale"] = False
+                result.pop("error", None)
+                results[site_id] = result
+                success_count += 1
+                print(
+                    f"Site {position}/{total} ({completed_count} completed) "
+                    f"{site['name']}: OK",
+                    flush=True,
+                )
+
+    print(f"Success: {success_count}", flush=True)
+    print(f"Failed: {failed_count}", flush=True)
+    print(f"Reused: {reused_count}", flush=True)
+
+    if success_count == 0:
+        raise RuntimeError("No successful Windy API responses; existing weather_today.json preserved")
 
     output = {
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "source": "Windy Point Forecast API",
-        "status": "ok",
+        "status": "ok" if failed_count == 0 else "partial",
         "siteCount": len(results),
+        "successCount": success_count,
+        "failedCount": failed_count,
+        "reusedCount": reused_count,
         "sites": results,
     }
-    OUTPUT_PATH.write_text(
+    temporary_path = OUTPUT_PATH.with_suffix(".json.tmp")
+    temporary_path.write_text(
         json.dumps(output, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"{OUTPUT_PATH.name}: {len(results)}개 탐조지 저장")
+    temporary_path.replace(OUTPUT_PATH)
+    print(f"{OUTPUT_PATH.name}: {len(results)} sites saved", flush=True)
 
 
 if __name__ == "__main__":
