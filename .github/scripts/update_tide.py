@@ -132,9 +132,11 @@ def resolve_tide_sites(
             resolved.append(site)
             continue
         mapped = mapping_sites.get(site["id"])
-        if not isinstance(mapped, dict) or mapped.get("needsReview") is True:
+        if not isinstance(mapped, dict):
             review_count += 1
             continue
+        if mapped.get("needsReview") is True:
+            review_count += 1
         station_code = str(mapped.get("tideStationCode") or "").strip()
         station_name = str(mapped.get("tideStationName") or "").strip()
         if not station_code or not station_name:
@@ -221,8 +223,24 @@ def request_prediction(
 
 
 def find_prediction_rows(payload: Any) -> list[dict[str, Any]]:
+    if isinstance(payload, dict):
+        response = payload.get("response")
+        body = response.get("body") if isinstance(response, dict) else None
+        items = body.get("items") if isinstance(body, dict) else None
+        item = items.get("item") if isinstance(items, dict) else None
+        if isinstance(item, dict):
+            item = [item]
+        if isinstance(item, list) and all(isinstance(row, dict) for row in item):
+            return item
     if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
-        if any("tph_time" in item or "hl_code" in item for item in payload):
+        if any(
+            "predcDt" in item
+            or "predcTdlvl" in item
+            or "extrSe" in item
+            or "tph_time" in item
+            or "hl_code" in item
+            for item in payload
+        ):
             return payload
     if isinstance(payload, dict):
         for value in payload.values():
@@ -238,7 +256,7 @@ def find_prediction_rows(payload: Any) -> list[dict[str, Any]]:
 
 
 def event_time(row: dict[str, Any]) -> str:
-    raw = str(row.get("tph_time") or row.get("time") or "").strip()
+    raw = str(row.get("predcDt") or row.get("tph_time") or row.get("time") or "").strip()
     match = re.search(r"(?:T|\s)(\d{2}:\d{2})(?::\d{2})?", raw)
     if match:
         return match.group(1)
@@ -247,12 +265,16 @@ def event_time(row: dict[str, Any]) -> str:
 
 
 def classify_event(row: dict[str, Any]) -> str:
-    code = str(row.get("hl_code") or row.get("type") or "").strip().lower()
+    code = str(row.get("extrSe") or row.get("hl_code") or row.get("type") or "").strip().lower()
     if code in {"저조", "low", "l", "0"} or "저" in code or "low" in code:
         return "low"
     if code in {"고조", "high", "h", "1"} or "고" in code or "high" in code:
         return "high"
     return ""
+
+
+def event_level(row: dict[str, Any]) -> str:
+    return str(row.get("predcTdlvl") or row.get("tph_level") or "").strip()
 
 
 def summary_for(rule_key: str) -> str:
@@ -269,6 +291,8 @@ def build_site_result(site: dict[str, str], payload: dict[str, Any], now: dateti
         raise RuntimeError("KHOA response contains no tide predictions")
     lows = [event_time(row) for row in rows if classify_event(row) == "low" and event_time(row)]
     highs = [event_time(row) for row in rows if classify_event(row) == "high" and event_time(row)]
+    low_levels = [event_level(row) for row in rows if classify_event(row) == "low" and event_level(row)]
+    high_levels = [event_level(row) for row in rows if classify_event(row) == "high" and event_level(row)]
     if not lows and not highs:
         raise RuntimeError("KHOA response contains no high/low tide events")
     return {
@@ -276,6 +300,8 @@ def build_site_result(site: dict[str, str], payload: dict[str, Any], now: dateti
         "stationName": site["stationName"],
         "lowTide": ", ".join(lows) if lows else "정보 없음",
         "highTide": ", ".join(highs) if highs else "정보 없음",
+        "lowTideLevel": ", ".join(low_levels) if low_levels else "정보 없음",
+        "highTideLevel": ", ".join(high_levels) if high_levels else "정보 없음",
         "summary": summary_for(site["ruleKey"]),
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "stale": False,
