@@ -20,6 +20,7 @@ from xml.etree import ElementTree as ET
 ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
 OUTPUT_PATH = ROOT / "tide_today.json"
+MAPPING_PATH = ROOT / "tide_station_mapping.json"
 API_URL = "https://www.khoa.go.kr/api/oceangrid/tideObsPreTab/search.do"
 REQUEST_TIMEOUT_SECONDS = 10
 MAX_WORKERS = 8
@@ -87,22 +88,63 @@ def load_tide_sites() -> list[dict[str, str]]:
     if missing:
         raise RuntimeError(f"Missing MasterDB columns: {', '.join(missing)}")
 
-    eligible: list[dict[str, str]] = []
+    targets: list[dict[str, str]] = []
     for row in rows[1:]:
         tide_use = row.get(columns["tideUse"], "").strip().upper()
-        station_code = row.get(columns["tideStationCode"], "").strip()
-        if tide_use not in {"Y", "YES", "예"} or not station_code:
+        if tide_use not in {"Y", "YES", "예"}:
             continue
-        eligible.append(
+        targets.append(
             {
                 "id": row.get(columns["ID"], "").strip(),
                 "name": row.get(columns["탐조권역"], "").strip(),
-                "stationName": row.get(columns["tideStationName"], "").strip(),
-                "stationCode": station_code,
+                "dbStationName": row.get(columns["tideStationName"], "").strip(),
+                "dbStationCode": row.get(columns["tideStationCode"], "").strip(),
                 "ruleKey": row.get(columns["tideRuleKey"], "").strip(),
             }
         )
-    return eligible
+    return targets
+
+
+def load_station_mapping() -> dict[str, Any]:
+    if not MAPPING_PATH.exists():
+        raise RuntimeError(f"Tide station mapping not found: {MAPPING_PATH}")
+    try:
+        mapping = json.loads(MAPPING_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Invalid tide station mapping: {exc}") from exc
+    sites = mapping.get("sites")
+    if not isinstance(sites, dict):
+        raise RuntimeError("tide_station_mapping.json sites must be an object")
+    return sites
+
+
+def resolve_tide_sites(
+    targets: list[dict[str, str]], mapping_sites: dict[str, Any]
+) -> tuple[list[dict[str, str]], int]:
+    resolved: list[dict[str, str]] = []
+    review_count = 0
+    for target in targets:
+        site = dict(target)
+        if site["dbStationCode"]:
+            site["stationCode"] = site["dbStationCode"]
+            site["stationName"] = site["dbStationName"]
+            site["mappingMethod"] = "master_db"
+            resolved.append(site)
+            continue
+        mapped = mapping_sites.get(site["id"])
+        if not isinstance(mapped, dict) or mapped.get("needsReview") is True:
+            review_count += 1
+            continue
+        station_code = str(mapped.get("tideStationCode") or "").strip()
+        station_name = str(mapped.get("tideStationName") or "").strip()
+        if not station_code or not station_name:
+            review_count += 1
+            continue
+        site["stationCode"] = station_code
+        site["stationName"] = station_name
+        site["mappingMethod"] = str(mapped.get("method") or "auto_mapping")
+        resolved.append(site)
+    return resolved, review_count
 
 
 def request_prediction(api_key: str, station_code: str, date_text: str) -> dict[str, Any]:
@@ -208,11 +250,14 @@ def load_previous_sites() -> dict[str, Any]:
 
 
 def main() -> None:
-    sites = load_tide_sites()
-    print(f"Loading {len(sites)} tide-enabled sites with verified station codes", flush=True)
+    targets = load_tide_sites()
+    mapping_sites = load_station_mapping()
+    sites, review_count = resolve_tide_sites(targets, mapping_sites)
+    print(f"Loading {len(targets)} tide-enabled sites", flush=True)
+    print(f"Verified mappings: {len(sites)}", flush=True)
+    print(f"Review/excluded mappings: {review_count}", flush=True)
     if not sites:
-        print("No verified tideStationCode values; existing tide_today.json preserved", flush=True)
-        return
+        raise RuntimeError("No verified tide station mappings; existing tide_today.json preserved")
     api_key = os.environ.get("KHOA_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("GitHub Secret KHOA_API_KEY is not configured")
