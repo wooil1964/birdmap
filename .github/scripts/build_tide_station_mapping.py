@@ -201,8 +201,33 @@ def choose_station(site: dict[str, Any], stations: list[dict[str, Any]]) -> dict
     }
 
 
+def reuse_existing_mapping(reason: Exception) -> bool:
+    if not OUTPUT_PATH.exists():
+        return False
+    try:
+        existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    sites = existing.get("sites")
+    if (
+        existing.get("source") != "KHOA official tide station list"
+        or existing.get("siteCount") != 88
+        or not isinstance(sites, dict)
+        or len(sites) != 88
+    ):
+        return False
+    print(f"Official station refresh failed: {reason}", flush=True)
+    print("Reusing validated tide_station_mapping.json", flush=True)
+    return True
+
+
 def main() -> None:
-    stations, attachment_id = load_official_stations()
+    try:
+        stations, attachment_id = load_official_stations()
+    except Exception as exc:
+        if reuse_existing_mapping(exc):
+            return
+        raise
     site_data = load_site_data()
     targets = update_tide.load_tide_sites()
     if len(targets) != 88:
