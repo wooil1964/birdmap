@@ -61,7 +61,7 @@
     
             <div class="folium-map" id="map_7010a44f6ac2025090f0fe07508ed485" ></div>
         
-<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.02 · v24.3 팝업·추천 장비 개선 · 155개 권역</span></div>
+<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.02 · v24.4 유부도 지역별 탐조 팁 · 155개 권역</span></div>
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <div id="birdmapPanel">
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
@@ -203,6 +203,7 @@
 .v24TideHeading{font-weight:bold;margin-top:3px}
 .v24TideEvent{padding-left:5px}
 .v24BriefingInterpretation{margin-top:5px;padding-top:5px;border-top:1px solid rgba(118,86,0,.2)}
+.v24LocalBirdingTip{margin-top:5px;padding-top:5px;border-top:1px solid rgba(118,86,0,.2)}
 .v24FerryNote{margin-top:3px;font-size:11px;color:#6b4d00}
 .v24ProfileGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 10px}
 .v24ProfileWide{grid-column:1/-1}
@@ -579,6 +580,10 @@ function v24BriefingInterpretation(site,today,tide,type){
   }
   return sentences.slice(0,3).join(' ');
 }
+function v24LocalBirdingTipHtml(site){
+  if(String(site.id)!=='19'||site.name!=='유부도')return '';
+  return '<div class="v24LocalBirdingTip"><b>출항지</b><br>군산시 소룡동 1-10<br><br><b>탐조 팁</b><br>만조 물높이 700cm 이상이면<br>갯벌 노출 범위가 좁아져<br>도요·물떼새 탐조에 유리합니다.</div>';
+}
 function v23TodayWeatherHtml(site){
   var today=weatherTodayForSite(site);
   var tide=tideTodayForSite(site);
@@ -606,6 +611,7 @@ function v23TodayWeatherHtml(site){
     '<div class="v24BriefingItem"><b>강수:</b> '+escapeHtml(v23Value(today&&today.rain,''))+'</div>'+typeItems+'</div>'+
     ((type==='island'||type==='pelagic')?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
     '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today,tide,type))+'</div>'+
+    v24LocalBirdingTipHtml(site)+
     (today&&today.forecastTime?'<div class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</div>':'')+'</div></div></div>';
 }
 function v23ButtonsFromLegacy(source,site){
