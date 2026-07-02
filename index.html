@@ -560,6 +560,69 @@ function v25SpeciesText(site){
   var birds=String(site.birds||'').trim(), group=String(site.mainBirdGroup||'').trim();
   return group&&birds.indexOf(group)===0?birds.slice(group.length).trim():birds;
 }
+function v252ProfileEnvironmentSentence(site){
+  var environment=v25EnvironmentLabel(site);
+  var sentences={
+    '갯벌탐조':'갯벌과 얕은 수역이 이어지는 탐조 환경입니다.',
+    '습지탐조':'습지와 수변 식생이 이어지는 탐조 환경입니다.',
+    '하천탐조':'흐르는 물과 하천 가장자리를 함께 살피는 환경입니다.',
+    '산림탐조':'숲 가장자리와 수관을 중심으로 관찰하는 환경입니다.',
+    '저수지탐조':'저수지 수면과 주변 식생을 함께 살피는 환경입니다.',
+    '호수탐조':'넓은 수면과 호안부를 함께 살피는 환경입니다.',
+    '농경지탐조':'경작지와 개방된 들판을 함께 살피는 환경입니다.',
+    '해안탐조':'해안선과 연안 수역을 함께 살피는 환경입니다.',
+    '섬탐조':'섬의 숲·해안·개방지를 함께 살피는 환경입니다.',
+    '선상탐조':'선박에서 외해와 수면을 관찰하는 환경입니다.',
+    '공원탐조':'녹지와 수목 가장자리를 중심으로 살피는 환경입니다.'
+  };
+  return sentences[environment]||'서식지 경계를 중심으로 살피는 탐조 환경입니다.';
+}
+function v252ProfileBirdSentence(site){
+  var environment=v25EnvironmentLabel(site);
+  if(environment==='갯벌탐조')return '도요·물떼새와 수변 조류를 중심으로 관찰하는 곳입니다.';
+  if(environment==='산림탐조')return '산림성 조류와 번식조류를 중심으로 관찰하는 곳입니다.';
+  if(/저수지탐조|호수탐조|습지탐조/.test(environment))return '물새와 수변 번식조류를 중심으로 관찰하는 곳입니다.';
+  if(environment==='하천탐조')return '하천성 물새와 물가를 이용하는 조류를 관찰하는 곳입니다.';
+  if(environment==='농경지탐조')return '들새와 맹금류를 중심으로 관찰하는 곳입니다.';
+  if(environment==='섬탐조')return '섬을 거쳐 이동하거나 번식하는 조류를 관찰하는 곳입니다.';
+  if(environment==='해안탐조')return '갈매기류와 해안성 조류를 중심으로 관찰하는 곳입니다.';
+  if(environment==='선상탐조'||site.pelagic)return '외해 바다새를 중심으로 관찰하는 곳입니다.';
+  return '현지 서식지에서 활동하는 조류를 관찰하는 곳입니다.';
+}
+function v252ProfileFeatureSentence(site){
+  if(site.pelagic)return '해상 이동과 넓은 시야가 필요한 탐조권역입니다.';
+  if(site.island)return '섬의 여러 서식지를 이동하며 살피는 탐조권역입니다.';
+  if(site.rare||site.mijo)return '드물게 기록되는 조류의 출현 가능성도 함께 살피는 탐조권역입니다.';
+  return '서식지 경계와 조류의 이동 동선을 천천히 살피기 좋은 탐조권역입니다.';
+}
+function v252CurrentTargetSentence(site,month){
+  var environment=v25EnvironmentLabel(site), season=v25CurrentSeason(month);
+  var prefix=month+'월 '+season+'철에는 ';
+  if(environment==='갯벌탐조')return prefix+'갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요.';
+  if(environment==='산림탐조')return prefix+'번식조류와 산림성 조류의 울음과 움직임을 중심으로 살펴보세요.';
+  if(/저수지탐조|호수탐조|습지탐조/.test(environment))return prefix+'물새와 수변에서 번식하는 조류를 중심으로 살펴보세요.';
+  if(environment==='하천탐조')return prefix+'하천성 물새와 물가를 이용하는 조류를 중심으로 살펴보세요.';
+  if(environment==='농경지탐조')return prefix+'들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요.';
+  if(environment==='섬탐조')return prefix+(season==='봄'||season==='가을'?'이동 중 섬에 머무는 조류를 중심으로 살펴보세요.':'섬에서 번식하거나 머무는 조류를 중심으로 살펴보세요.');
+  if(environment==='해안탐조')return prefix+'갈매기류와 해안성 조류를 중심으로 살펴보세요.';
+  if(environment==='선상탐조'||site.pelagic)return prefix+'외해에서 활동하는 바다새를 중심으로 살펴보세요.';
+  return prefix+'현지에서 활동하는 텃새와 번식조류를 중심으로 살펴보세요.';
+}
+function v252WeatherSentence(site,today,tide){
+  if(!today)return '최신 기상 정보가 없어 출발 전에 현장 예보를 확인하세요.';
+  var wind=v24WindParts(today.wind), parts=[];
+  if(today.temperature)parts.push('기온 '+today.temperature);
+  if(wind.speed&&wind.speed!=='정보 없음')parts.push('풍속 '+wind.speed);
+  if(today.rain)parts.push(today.rain);
+  if(today.visibility)parts.push('시정 '+today.visibility);
+  if(site.showWave&&today.wave)parts.push('파고 '+today.wave);
+  if(site.showTide&&tide&&!tide.unavailable){
+    var high=v24TideParts(tide.highTide)[0], low=v24TideParts(tide.lowTide)[0];
+    if(high)parts.push('만조 '+high);
+    if(low)parts.push('간조 '+low);
+  }
+  return parts.length?'현재 '+parts.join(', ')+'입니다.':'최신 기상 세부값을 확인하세요.';
+}
 function v25HasLowTideException(site){
   return /간조/.test(String(site.localBirdingTip||''));
 }
@@ -657,14 +720,17 @@ function v24TideHtml(tide){
   if(tide.unavailable)return '<div class="v24BriefingItem v24ProfileWide"><b>조석:</b> 관측소 없음</div>';
   return '<div class="v24BriefingItem v24ProfileWide v24TideHeading">조석</div>'+v24TideEventHtml('만조','▲',tide.highTide,tide.highTideLevel)+v24TideEventHtml('간조','▼',tide.lowTide,tide.lowTideLevel);
 }
-function v24BriefingInterpretation(site,today){
+function v24BriefingInterpretation(site,today,tide){
   var month=new Date().getMonth()+1;
-  return [v25EnvironmentLabel(site)+' 환경입니다.',v25SeasonSentence(month),v25BirdGroupSentence(site,month),v25WeatherSentence(today),v251ScoreSentence(today),v251EnvironmentWeatherSentence(site),v25TideSentence(site),v25FeatureSentence(site)].filter(Boolean).join(' ');
+  return [v252CurrentTargetSentence(site,month),v252WeatherSentence(site,today,tide),v251ScoreSentence(today),v251EnvironmentWeatherSentence(site),v25TideSentence(site)].filter(Boolean).join(' ');
 }
 function v24LocalBirdingTipHtml(site){
   if(!site.localTipUse||!site.localBirdingTip)return '';
   var departure=site.localDeparturePoint?'<b>출항지</b><br>'+escapeHtml(site.localDeparturePoint)+'<br><br>':'';
-  return '<div class="v24LocalBirdingTip">'+departure+'<b>탐조 팁</b><br>'+escapeHtml(site.localBirdingTip)+'</div>';
+  var tip=site.localBirdingTip;
+  if(site.localTipSiteKey==='yubudo')tip='만조 물높이 700cm 이상이면 새들이 해안 가까이 밀집하여 도요·물떼새 탐조에 유리합니다.';
+  if(site.localTipSiteKey==='gukhwado')tip='국화도에서 도지섬은 간조 시 물길이 열리면 도보 이동 가능합니다.';
+  return '<div class="v24LocalBirdingTip">'+departure+'<b>탐조 팁</b><br>'+escapeHtml(tip)+'</div>';
 }
 function v23TodayWeatherHtml(site){
   var today=weatherTodayForSite(site);
@@ -689,7 +755,7 @@ function v23TodayWeatherHtml(site){
     '<div class="v24BriefingItem"><b>강수:</b> '+escapeHtml(v23Value(today&&today.rain,''))+'</div>'+
     (today&&today.visibility?'<div class="v24BriefingItem"><b>시정:</b> '+escapeHtml(today.visibility)+'</div>':'')+typeItems+'</div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
-    '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today))+'</div>'+
+    '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</div>'+
     v24LocalBirdingTipHtml(site)+
     (today&&today.forecastTime?'<div class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</div>':'')+'</div></div></div>';
 }
@@ -720,17 +786,14 @@ function v23PopupContent(site,desktopContent){
   var gear=v24RecommendedGear(site);
   var root=document.createElement('div');
   root.style.cssText="width:min(450px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
-  var currentMonth=new Date().getMonth()+1;
   root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
     '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
     '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
-    '<b>탐조환경:</b> '+escapeHtml(v25EnvironmentLabel(site))+'<br>'+
-    '<b>현재 탐조 시기:</b> '+currentMonth+'월 · '+escapeHtml(v25CurrentSeason(currentMonth))+' 탐조<br>'+
     '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site)||'정보 없음')+v23TodayWeatherHtml(site)+
     '<div class="v23InfoBox"><div class="v23Title">탐조지 프로필</div><div class="v24ProfileGrid">'+
-    '<div class="v24ProfileWide"><b>계절 안내:</b> '+escapeHtml(v25SeasonSentence(currentMonth))+'</div>'+
-    '<div class="v24ProfileWide"><b>관찰 포인트:</b> '+escapeHtml(v25BirdGroupSentence(site,currentMonth))+'</div>'+
-    '<div class="v24ProfileWide"><b>현장 특징:</b> '+escapeHtml(v25FeatureSentence(site))+'</div>'+
+    '<div class="v24ProfileWide"><b>환경 안내:</b> '+escapeHtml(v252ProfileEnvironmentSentence(site))+'</div>'+
+    '<div class="v24ProfileWide"><b>대표 탐조:</b> '+escapeHtml(v252ProfileBirdSentence(site))+'</div>'+
+    '<div class="v24ProfileWide"><b>탐조 특성:</b> '+escapeHtml(v252ProfileFeatureSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 시간:</b> '+escapeHtml(v25DisplayBestTime(site))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 장비:</b> '+escapeHtml(gear.lens)+(gear.reason?'<br><span class="smallText">'+escapeHtml(gear.reason)+'</span>':'')+'</div>'+
     '<div><b>난이도:</b> '+escapeHtml(v23Value(site.difficulty,''))+'</div>'+
@@ -1000,6 +1063,21 @@ function loadNotices(){
   });
 }
 
+function refreshOpenBirdPopup(){
+  var map=map_7010a44f6ac2025090f0fe07508ed485, popup=map&&map._popup;
+  if(!popup||!popup._source||!popup._birdmapDesktopContent)return;
+  var marker=popup._source;
+  var site=siteData.find(function(item){return window[item.markerVar]===marker;});
+  if(!site)return;
+  popup.setContent(v23PopupContent(site,popup._birdmapDesktopContent));
+  popup._birdmapV23Active=true;
+  popup.update();
+}
+function kstDateText(){
+  var parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  var values={};parts.forEach(function(part){values[part.type]=part.value;});
+  return values.year+'-'+values.month+'-'+values.day;
+}
 function loadWeatherToday(){
   return fetch('./weather_today.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
     if(!r.ok)throw new Error();
@@ -1007,6 +1085,7 @@ function loadWeatherToday(){
   }).then(function(data){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
     weatherToday=data;
+    refreshOpenBirdPopup();
   }).catch(function(){
     weatherToday={updated:'',source:'',sites:{}};
   });
@@ -1017,7 +1096,9 @@ function loadTideToday(){
     return r.json();
   }).then(function(data){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
+    if(data.date!==kstDateText())throw new Error();
     tideToday=data;
+    refreshOpenBirdPopup();
   }).catch(function(){
     tideToday={updated:'',source:'',sites:{}};
   });

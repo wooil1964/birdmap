@@ -23,9 +23,9 @@ RULES_PATH = ROOT / "weather_rules.json"
 OUTPUT_PATH = ROOT / "weather_today.json"
 API_URL = "https://api.windy.com/api/point-forecast/v2"
 REQUEST_TIMEOUT_SECONDS = 10
-MAX_WORKERS = 4
-MIN_REQUEST_INTERVAL_SECONDS = 0.7
-MAX_REQUEST_ATTEMPTS = 5
+MAX_WORKERS = 3
+MIN_REQUEST_INTERVAL_SECONDS = 1.2
+MAX_REQUEST_ATTEMPTS = 2
 KST = timezone(timedelta(hours=9))
 REQUEST_RATE_LOCK = threading.Lock()
 LAST_REQUEST_AT = 0.0
@@ -105,7 +105,7 @@ def request_forecast(
             if attempt < MAX_REQUEST_ATTEMPTS and (exc.code == 429 or exc.code >= 500):
                 retry_after = exc.headers.get("Retry-After")
                 delay = float(retry_after) if retry_after and retry_after.isdigit() else 2**attempt
-                time.sleep(min(60.0, delay))
+                time.sleep(min(10.0, delay))
                 continue
             raise RuntimeError(f"HTTP {exc.code}") from exc
         except urllib.error.URLError as exc:

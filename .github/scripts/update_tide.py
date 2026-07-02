@@ -315,7 +315,7 @@ def summary_for(rule_key: str) -> str:
         return "조석은 참고하고 여객선 운항 여부를 함께 확인하세요."
     if rule_key == "pelagic_wave_tide":
         return "조석과 파고, 출항 공지를 함께 확인하세요."
-    return "간조 전후 2시간 추천"
+    return "만조 전후 2시간 추천"
 
 
 def build_site_result(site: dict[str, str], payload: dict[str, Any], now: datetime) -> dict[str, Any]:
@@ -341,13 +341,16 @@ def build_site_result(site: dict[str, str], payload: dict[str, Any], now: dateti
     }
 
 
-def load_previous_sites() -> dict[str, Any]:
+def load_previous_sites(expected_date: str) -> dict[str, Any]:
     if not OUTPUT_PATH.exists():
         return {}
     try:
         data = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         print(f"Previous tide data unavailable: {exc}", flush=True)
+        return {}
+    if data.get("date") != expected_date:
+        print("Previous tide data belongs to a different KST date; reuse disabled", flush=True)
         return {}
     sites = data.get("sites", {})
     return sites if isinstance(sites, dict) else {}
@@ -368,9 +371,10 @@ def main() -> None:
         raise RuntimeError("GitHub Secret KHOA_API_KEY is not configured")
     print("KHOA_API_KEY: *** (configured)", flush=True)
 
-    previous_sites = load_previous_sites()
     now = datetime.now(KST)
     date_text = now.strftime("%Y%m%d")
+    date_iso = now.strftime("%Y-%m-%d")
+    previous_sites = load_previous_sites(date_iso)
     results: dict[str, Any] = {}
     success_count = 0
     resolved_ids = {site["id"] for site in sites}
@@ -501,6 +505,7 @@ def main() -> None:
         raise RuntimeError("No successful KHOA API responses; existing tide_today.json preserved")
 
     output = {
+        "date": date_iso,
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "source": "KHOA Tide Forecast OpenAPI",
         "status": "ok" if failed_count == 0 else "partial",

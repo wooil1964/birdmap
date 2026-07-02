@@ -10,8 +10,8 @@ on:
       - ".github/workflows/update-tide.yml"
       - "data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
   schedule:
-    # GitHub Actions cron uses UTC. 20:15 UTC is 05:15 KST the following day.
-    - cron: "15 20 * * *"
+    # GitHub Actions cron uses UTC. 15:05 UTC is 00:05 KST the following day.
+    - cron: "5 15 * * *"
   workflow_dispatch:
 
 permissions:
