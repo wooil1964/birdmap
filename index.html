@@ -61,7 +61,7 @@
     
             <div class="folium-map" id="map_7010a44f6ac2025090f0fe07508ed485" ></div>
         
-<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.02 · v24.2 조석·파고 개선 · 155개 권역</span></div>
+<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.02 · v24.3 팝업·추천 장비 개선 · 155개 권역</span></div>
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <div id="birdmapPanel">
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
@@ -463,6 +463,18 @@ function setupResponsivePopups(){
 
 function v23Value(v,fallback){return (v===undefined||v===null||String(v).trim()==='')?(fallback||'정보 없음'):String(v).trim();}
 function v23FeatureList(site){return v23Value(site.birdingFeature,'').split(/[;,·]/).map(function(x){return x.trim();}).filter(Boolean);}
+function v24FeatureList(site){
+  return v23FeatureList(site).map(function(feature){return feature==='이동성 산새'?'이동성 조류':feature;});
+}
+function v24RecommendedGear(site){
+  var habitat=(v23Value(site.habitatType,site.env)+' '+v23Value(site.env,'')).toLowerCase();
+  if(site.pelagic)return {label:'🚢 선상 탐조',lens:'100~500mm'};
+  if(/갯벌|하구/.test(habitat))return {label:'🏖 갯벌·하구',lens:'400~800mm'};
+  if(site.island)return {label:'🌊 섬 탐조',lens:'400~600mm'};
+  if(/들판|농경지|논|초지|습지|저수지|호수|하천|강변|간척|염전/.test(habitat))return {label:'🌾 들판·습지',lens:'600~800mm'};
+  if(/산림|숲|공원|수목원|고산|휴양림/.test(habitat))return {label:'🌲 산림',lens:'400~600mm'};
+  return {label:'🔭 일반 탐조',lens:'400~600mm'};
+}
 function selectedFeatures(){var a=[];document.querySelectorAll('.featureFilter:checked').forEach(function(b){a.push(b.value);});return a;}
 function v23WeatherTip(site){
   var key=v23Value(site.weatherRuleKey,'');
@@ -578,8 +590,10 @@ function v23TodayWeatherHtml(site){
   var typeItems='';
   if(type==='mudflat'){
     typeItems=v24TideHtml(tide);
-  }else if(type==='island'||type==='pelagic'){
+  }else if(type==='island'){
     typeItems='<div class="v24BriefingItem v24ProfileWide"><b>파고:</b> '+escapeHtml(v23Value(today&&today.wave,''))+'</div>'+v24TideHtml(tide)+'<div class="v24BriefingItem v24ProfileWide"><b>여객선:</b> '+escapeHtml(v24FerryStatus(today&&today.wind,today&&today.wave))+'</div>';
+  }else if(type==='pelagic'){
+    typeItems='<div class="v24BriefingItem v24ProfileWide"><b>파고:</b> '+escapeHtml(v23Value(today&&today.wave,''))+'</div>'+(site.island?v24TideHtml(tide):'')+'<div class="v24BriefingItem v24ProfileWide"><b>여객선:</b> '+escapeHtml(v24FerryStatus(today&&today.wind,today&&today.wave))+'</div>';
   }
   return '<div class="v23TodayBox v24BriefingCard"><div class="v23Title">오늘의 탐조 기상</div>'+
     '<div class="v24BriefingTop"><span class="v23TodayScore">'+escapeHtml(v23Value(today&&today.grade,''))+' '+escapeHtml(today&&today.score!==undefined?today.score+'점':'정보 없음')+'</span></div>'+
@@ -613,6 +627,7 @@ function v23ButtonsFromLegacy(source,site){
 function v23PopupContent(site,desktopContent){
   var source=popupContentElement(desktopContent);
   var cafe=source.querySelector('a.cafe');
+  var gear=v24RecommendedGear(site);
   var root=document.createElement('div');
   root.style.cssText="width:min(450px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
   root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
@@ -624,9 +639,9 @@ function v23PopupContent(site,desktopContent){
     '<b>대표종:</b> '+escapeHtml(site.birds||'정보 없음')+v23TodayWeatherHtml(site)+
     '<div class="v23InfoBox"><div class="v23Title">탐조지 프로필</div><div class="v24ProfileGrid">'+
     '<div class="v24ProfileWide"><b>대표 탐조:</b> '+escapeHtml(v23Value(site.mainBirdGroup,site.birds.split(/[ ,]/)[0]))+'</div>'+
-    '<div class="v24ProfileWide"><b>탐조특성:</b> '+escapeHtml(v23FeatureList(site).join(' · '))+'</div>'+
+    '<div class="v24ProfileWide"><b>탐조특성:</b> '+escapeHtml(v24FeatureList(site).join(' · '))+'</div>'+
     '<div class="v24ProfileWide"><b>최적 시기:</b> '+escapeHtml(v23Value(site.bestSeason,''))+' · '+escapeHtml(v23Value(site.bestMonth,''))+' · '+escapeHtml(v23Value(site.bestTime,''))+'</div>'+
-    '<div><b>추천 장비:</b> '+escapeHtml(v23Value(site.lensRecommend,''))+'</div>'+
+    '<div class="v24ProfileWide"><b>추천 장비:</b> '+escapeHtml(gear.label)+' · '+escapeHtml(gear.lens)+'</div>'+
     '<div><b>난이도:</b> '+escapeHtml(v23Value(site.difficulty,''))+'</div>'+
     '<div><b>주차:</b> '+escapeHtml(v23Value(site.parkingV23,popupField(source,'주차')))+'</div>'+
     '<div><b>화장실:</b> '+escapeHtml(v23Value(site.restroomV23,popupField(source,'화장실')))+'</div>'+
@@ -753,7 +768,7 @@ function renderResults(sites){
     if(s.birdingFeature){
       var featureInfo=document.createElement('span');
       featureInfo.className='resultFeature';
-      featureInfo.textContent='탐조특성 · '+s.birdingFeature;
+      featureInfo.textContent='탐조특성 · '+v24FeatureList(s).join(' · ');
       b.appendChild(featureInfo);
     }
     box.appendChild(b);
