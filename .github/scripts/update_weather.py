@@ -28,6 +28,7 @@ ATMOSPHERIC_PARAMETERS = [
     "windGust",
     "precip",
     "temp",
+    "visibility",
     "lclouds",
     "mclouds",
     "hclouds",
@@ -50,8 +51,8 @@ def load_site_data() -> list[dict[str, Any]]:
     if not match:
         raise RuntimeError("index.html에서 siteData를 찾지 못했습니다.")
     sites = json.loads(match.group(1))
-    if len(sites) != 155:
-        raise RuntimeError(f"siteData 개수가 155개가 아닙니다: {len(sites)}")
+    if len(sites) != 156:
+        raise RuntimeError(f"siteData 개수가 156개가 아닙니다: {len(sites)}")
     return sites
 
 
@@ -238,19 +239,28 @@ def summary_for(
         return "파고가 높아 선박 운항과 해안 관찰 안전을 우선 확인해야 합니다."
     if visibility_km is not None and visibility_km < float(rule["visibilityMinKm"]):
         return "시정이 낮아 원거리 탐조에 불리합니다. 안개와 박무가 걷히는 시간을 확인하세요."
-    if rule_key == "island_migrant" and 225 <= wind_direction <= 337.5:
-        return "서풍·북서풍 계열과 낮은 강수 조건으로 이동성 산새 관찰을 기대할 수 있습니다."
+    score_summary = (
+        "탐조에 매우 좋은 기상 조건입니다."
+        if score >= 90
+        else "탐조에 좋은 기상 조건입니다."
+        if score >= 80
+        else "탐조에 무난한 기상 조건입니다."
+        if score >= 70
+        else "탐조는 가능하지만 기상 변화에 유의하세요."
+        if score >= 60
+        else "탐조 여건이 좋지 않습니다."
+    )
     if rule_key == "mudflat_shorebird":
-        return "바람과 시정은 갯벌 탐조에 무난합니다. 실제 방문 전 조석 시간을 함께 확인하세요."
+        return f"{score_summary} 만조 전후 도요·물떼새 탐조 조건과 조석 시간을 함께 확인하세요."
     if rule_key == "pelagic_seabird":
-        return "풍속과 파고 기준의 선상 탐조 조건입니다. 출항 여부와 현장 안전 공지를 우선 확인하세요."
+        return f"{score_summary} 풍속과 파고, 출항 여부와 현장 안전 공지를 함께 확인하세요."
     if rule_key == "winter_waterfowl":
-        return "수면과 농경지의 겨울철새를 관찰하기에 무난한 기상 조건입니다."
+        return f"{score_summary} 수면이 안정적이면 물새 관찰에 유리합니다."
+    if rule_key == "forest_songbird":
+        return f"{score_summary} 바람이 약한 이른 아침 탐조를 권장합니다."
     if rule_key == "raptor_migration":
-        return "강수와 시정 조건을 기준으로 맹금류 관찰 가능성이 양호합니다."
-    if score >= 80:
-        return "바람·강수·시정 조건이 오늘 탐조에 대체로 양호합니다."
-    return "일부 기상 조건이 탐조에 불리할 수 있으니 Windy 상세 예보를 다시 확인하세요."
+        return f"{score_summary} 강수와 시정을 확인하며 시야가 트인 곳을 살펴보세요."
+    return score_summary
 
 
 def build_site_result(
@@ -354,7 +364,7 @@ def process_site(
     )
     wave = None
     wave_coordinate = None
-    if site.get("island") or site.get("pelagic"):
+    if site.get("showWave") or site.get("island") or site.get("pelagic"):
         for candidate in wave_coordinate_candidates(site):
             try:
                 candidate_wave = request_forecast(
@@ -382,9 +392,7 @@ def main() -> None:
     rules = load_rules()
     previous_sites = load_previous_sites()
     now = datetime.now(KST)
-    target = now.replace(hour=9, minute=0, second=0, microsecond=0)
-    if now > target:
-        target = now
+    target = now
 
     total = len(sites)
     print(f"Loading {total} sites", flush=True)

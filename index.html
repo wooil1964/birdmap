@@ -525,7 +525,27 @@ function v25WeatherSentence(today){
   if(today.temperature)parts.push('기온은 '+today.temperature);
   if(today.wind)parts.push('바람은 '+today.wind);
   if(today.rain)parts.push('강수는 '+today.rain);
+  if(today.visibility)parts.push('시정은 '+today.visibility);
+  if(today.wave)parts.push('파고는 '+today.wave);
   return parts.length?'현재 '+parts.join(', ')+'입니다. 현장에서는 급격한 기상 변화도 함께 확인하세요.':'출발 전에 풍향·풍속·강수 조건을 확인하세요.';
+}
+function v251ScoreSentence(today){
+  var score=Number(today&&today.score);
+  if(!Number.isFinite(score))return '';
+  if(score>=90)return '탐조에 매우 좋은 기상 조건입니다.';
+  if(score>=80)return '탐조에 좋은 기상 조건입니다.';
+  if(score>=70)return '탐조에 무난한 기상 조건입니다.';
+  if(score>=60)return '탐조는 가능하지만 기상 변화에 유의하세요.';
+  return '탐조 여건이 좋지 않습니다.';
+}
+function v251EnvironmentWeatherSentence(site){
+  var environment=v25EnvironmentLabel(site);
+  if(environment==='갯벌탐조')return '만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.';
+  if(environment==='산림탐조')return '바람이 약한 이른 아침 탐조를 권장합니다.';
+  if(/저수지탐조|호수탐조|습지탐조/.test(environment))return '수면이 안정적이면 물새 관찰에 유리합니다.';
+  if(environment==='농경지탐조')return '오전과 늦은 오후 탐조를 권장합니다.';
+  if(environment==='선상탐조'||site.pelagic)return '풍속과 파고를 함께 확인하세요.';
+  return '';
 }
 function v25FeatureSentence(site){
   var feature=String(site.birdingFeature||'');
@@ -544,7 +564,7 @@ function v25HasLowTideException(site){
   return /간조/.test(String(site.localBirdingTip||''));
 }
 function v25TideSentence(site){
-  if(!site.showTide||v25HasLowTideException(site))return '';
+  if(!site.showTide||v25HasLowTideException(site)||v25EnvironmentLabel(site)==='갯벌탐조')return '';
   return '조석의 영향을 받는 곳이므로 만조 전후 탐조를 권장합니다.';
 }
 function v25DisplayBestTime(site){
@@ -639,7 +659,7 @@ function v24TideHtml(tide){
 }
 function v24BriefingInterpretation(site,today){
   var month=new Date().getMonth()+1;
-  return [v25EnvironmentLabel(site)+' 환경입니다.',v25SeasonSentence(month),v25BirdGroupSentence(site,month),v25WeatherSentence(today),v25TideSentence(site),v25FeatureSentence(site)].filter(Boolean).join(' ');
+  return [v25EnvironmentLabel(site)+' 환경입니다.',v25SeasonSentence(month),v25BirdGroupSentence(site,month),v25WeatherSentence(today),v251ScoreSentence(today),v251EnvironmentWeatherSentence(site),v25TideSentence(site),v25FeatureSentence(site)].filter(Boolean).join(' ');
 }
 function v24LocalBirdingTipHtml(site){
   if(!site.localTipUse||!site.localBirdingTip)return '';
@@ -666,7 +686,8 @@ function v23TodayWeatherHtml(site){
     '<div class="v24BriefingItem"><b>기온:</b> '+escapeHtml(v23Value(today&&today.temperature,''))+'</div>'+
     '<div class="v24BriefingItem"><b>풍향:</b> '+escapeHtml(wind.direction)+'</div>'+
     '<div class="v24BriefingItem"><b>풍속:</b> '+escapeHtml(wind.speed)+'</div>'+
-    '<div class="v24BriefingItem"><b>강수:</b> '+escapeHtml(v23Value(today&&today.rain,''))+'</div>'+typeItems+'</div>'+
+    '<div class="v24BriefingItem"><b>강수:</b> '+escapeHtml(v23Value(today&&today.rain,''))+'</div>'+
+    (today&&today.visibility?'<div class="v24BriefingItem"><b>시정:</b> '+escapeHtml(today.visibility)+'</div>':'')+typeItems+'</div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
     '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today))+'</div>'+
     v24LocalBirdingTipHtml(site)+

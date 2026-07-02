@@ -1,4 +1,4 @@
-name: Update daily birding weather
+name: Update birding weather four times daily
 
 on:
   push:
@@ -8,15 +8,18 @@ on:
       - ".github/scripts/update_weather.py"
       - ".github/workflows/update-weather.yml"
   schedule:
-    # GitHub Actions cron uses UTC. 20:00 UTC is 05:00 KST the following day.
-    - cron: "0 20 * * *"
+    # GitHub Actions cron uses UTC: 21/01/05/09 UTC = 06/10/14/18 KST.
+    - cron: "0 21 * * *"
+    - cron: "0 1 * * *"
+    - cron: "0 5 * * *"
+    - cron: "0 9 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: update-daily-birding-weather
+  group: update-birding-weather-four-times-daily
   cancel-in-progress: false
 
 jobs:
@@ -42,6 +45,9 @@ jobs:
           WINDY_API_KEY: ${{ secrets.WINDY_API_KEY }}
         run: python .github/scripts/update_weather.py
 
+      - name: Validate weather_today.json
+        run: python -m json.tool weather_today.json > /dev/null
+
       - name: Commit updated weather
         run: |
           git config user.name "github-actions[bot]"
@@ -51,7 +57,7 @@ jobs:
             echo "No weather changes to commit."
             exit 0
           fi
-          git commit -m "chore: update daily birding weather"
+          git commit -m "chore: update birding weather"
           for attempt in 1 2 3; do
             git pull --rebase origin "${GITHUB_REF_NAME}"
             if git push origin "HEAD:${GITHUB_REF_NAME}"; then
