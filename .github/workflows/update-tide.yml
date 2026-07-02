@@ -1,0 +1,59 @@
+name: Update daily birding tides
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/scripts/update_tide.py"
+      - ".github/workflows/update-tide.yml"
+      - "data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
+  schedule:
+    # GitHub Actions cron uses UTC. 20:15 UTC is 05:15 KST the following day.
+    - cron: "15 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-daily-birding-tides
+  cancel-in-progress: false
+
+jobs:
+  update-tides:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check updater syntax
+        run: python -m py_compile .github/scripts/update_tide.py
+
+      - name: Build tide_today.json
+        env:
+          KHOA_API_KEY: ${{ secrets.KHOA_API_KEY }}
+        run: python .github/scripts/update_tide.py
+
+      - name: Validate tide_today.json
+        run: python -m json.tool tide_today.json > /dev/null
+
+      - name: Commit updated tides
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tide_today.json
+          if git diff --cached --quiet; then
+            echo "No tide changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update daily birding tides"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

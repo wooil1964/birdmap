@@ -244,6 +244,7 @@ var activeSearch='';
 var activeTerms=[];
 var routeLine=null;
 var weatherToday={updated:'',source:'',sites:{}};
+var tideToday={updated:'',source:'',sites:{}};
 
 function markerKey(site){return site.id+'|'+site.lat+'|'+site.lon;}
 
@@ -474,9 +475,23 @@ function weatherTodayForSite(site){
   if(!sites)return null;
   return sites[String(site.id)]||sites[site.name]||null;
 }
+function tideTodayForSite(site){
+  var sites=tideToday&&tideToday.sites;
+  if(!sites)return null;
+  return sites[String(site.id)]||null;
+}
+function v24TideHtml(site){
+  var tide=tideTodayForSite(site);
+  if(!tide)return '';
+  return '<div class="v23WeatherBox v24TideBox"><div class="v23Title">조석 정보</div>'+
+    '<b>기준 관측소:</b> '+escapeHtml(v23Value(tide.stationName,tide.tideStationName||''))+'<br>'+
+    '<b>간조:</b> '+escapeHtml(v23Value(tide.lowTide,'정보 없음'))+' / <b>만조:</b> '+escapeHtml(v23Value(tide.highTide,'정보 없음'))+'<br>'+
+    '<b>탐조 팁:</b> '+escapeHtml(v23Value(tide.summary,'간조 전후 2시간 추천'))+
+    (tide.updated?'<br><span class="smallText">조석 기준 '+escapeHtml(tide.updated)+'</span>':'')+'</div>';
+}
 function v23TodayWeatherHtml(site){
   var today=weatherTodayForSite(site);
-  if(!today)return '';
+  if(!today)return v24TideHtml(site);
   var expanded=!window.matchMedia('(max-width: 700px)').matches;
   var detailsId='v23WeatherDetails-'+escapeHtml(site.id);
   return '<div class="v23TodayBox"><div class="v23Title">오늘의 탐조 적합도</div>'+
@@ -487,7 +502,7 @@ function v23TodayWeatherHtml(site){
     '<b>추천 탐조군:</b> '+escapeHtml(v23Value(today.targetGroup,''))+'<br>'+
     '<b>바람:</b> '+escapeHtml(v23Value(today.wind,''))+' / <b>강수:</b> '+escapeHtml(v23Value(today.rain,''))+
     (today.wave?'<br><b>파고:</b> '+escapeHtml(today.wave):'')+
-    (today.forecastTime?'<br><span class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</span>':'')+'</div></div></div>';
+    (today.forecastTime?'<br><span class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</span>':'')+'</div></div></div>'+v24TideHtml(site);
 }
 function v23ButtonsFromLegacy(source,site){
   function link(selector,cls,text,href,show){
@@ -806,12 +821,23 @@ function loadWeatherToday(){
     weatherToday={updated:'',source:'',sites:{}};
   });
 }
+function loadTideToday(){
+  return fetch('./tide_today.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
+    if(!r.ok)throw new Error();
+    return r.json();
+  }).then(function(data){
+    if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
+    tideToday=data;
+  }).catch(function(){
+    tideToday={updated:'',source:'',sites:{}};
+  });
+}
 
 
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
 window.addEventListener('load',function(){
   hideBirdmapPanelOnMobile();
-  setTimeout(function(){rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);loadNotices();loadWeatherToday();},300);
+  setTimeout(function(){rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);loadNotices();loadWeatherToday();loadTideToday();},300);
 });
 window.addEventListener('resize',function(){
   rebuildMarkerRegistry();
