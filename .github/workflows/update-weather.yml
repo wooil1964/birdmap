@@ -19,8 +19,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: update-birding-weather-four-times-daily
-  cancel-in-progress: true
+  group: birdmap-data-refresh
+  cancel-in-progress: false
 
 jobs:
   update-weather:

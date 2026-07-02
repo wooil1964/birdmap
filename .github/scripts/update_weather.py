@@ -10,6 +10,7 @@ import re
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
@@ -22,6 +23,8 @@ HTML_PATH = ROOT / "index.html"
 RULES_PATH = ROOT / "weather_rules.json"
 OUTPUT_PATH = ROOT / "weather_today.json"
 API_URL = "https://api.windy.com/api/point-forecast/v2"
+OPEN_METEO_WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+OPEN_METEO_MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
 REQUEST_TIMEOUT_SECONDS = 10
 MAX_WORKERS = 3
 MIN_REQUEST_INTERVAL_SECONDS = 1.2
@@ -29,6 +32,7 @@ MAX_REQUEST_ATTEMPTS = 2
 KST = timezone(timedelta(hours=9))
 REQUEST_RATE_LOCK = threading.Lock()
 LAST_REQUEST_AT = 0.0
+WINDY_UNAVAILABLE = threading.Event()
 ATMOSPHERIC_PARAMETERS = [
     "wind",
     "windGust",
@@ -74,6 +78,8 @@ def request_forecast(
     model: str,
 ) -> dict[str, Any]:
     global LAST_REQUEST_AT
+    if WINDY_UNAVAILABLE.is_set():
+        raise RuntimeError("Windy request circuit is open")
     payload = json.dumps(
         {
             "lat": lat,
@@ -102,6 +108,8 @@ def request_forecast(
                     raise RuntimeError(f"HTTP {response.status}")
                 return json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
+            if exc.code in (401, 403, 429):
+                WINDY_UNAVAILABLE.set()
             if attempt < MAX_REQUEST_ATTEMPTS and (exc.code == 429 or exc.code >= 500):
                 retry_after = exc.headers.get("Retry-After")
                 delay = float(retry_after) if retry_after and retry_after.isdigit() else 2**attempt
@@ -121,6 +129,76 @@ def request_forecast(
         except json.JSONDecodeError as exc:
             raise RuntimeError(f"Invalid JSON: {exc}") from exc
     raise RuntimeError("Forecast request failed after retries")
+
+
+def request_open_meteo(url: str, parameters: dict[str, Any]) -> dict[str, Any]:
+    request_url = f"{url}?{urllib.parse.urlencode(parameters)}"
+    request = urllib.request.Request(
+        request_url, headers={"User-Agent": "birdmap-weather/1.0"}
+    )
+    with urllib.request.urlopen(request, timeout=15) as response:
+        if response.status != 200:
+            raise RuntimeError(f"Open-Meteo HTTP {response.status}")
+        return json.loads(response.read().decode("utf-8"))
+
+
+def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str, Any]:
+    data = request_open_meteo(
+        OPEN_METEO_WEATHER_URL,
+        {
+            "latitude": lat,
+            "longitude": lon,
+            "current": (
+                "temperature_2m,precipitation,cloud_cover,visibility,"
+                "wind_speed_10m,wind_direction_10m,wind_gusts_10m"
+            ),
+            "wind_speed_unit": "ms",
+            "timezone": "Asia/Seoul",
+        },
+    )
+    current = data.get("current") or {}
+    speed = float(current.get("wind_speed_10m") or 0.0)
+    direction = math.radians(float(current.get("wind_direction_10m") or 0.0))
+    time_text = current.get("time")
+    try:
+        forecast_time = datetime.fromisoformat(time_text).replace(tzinfo=KST)
+    except (TypeError, ValueError):
+        forecast_time = target
+    return {
+        "ts": [forecast_time.timestamp() * 1000],
+        "wind_u-surface": [-speed * math.sin(direction)],
+        "wind_v-surface": [-speed * math.cos(direction)],
+        "gust-surface": [current.get("wind_gusts_10m")],
+        "past3hprecip-surface": [current.get("precipitation")],
+        "temp-surface": [current.get("temperature_2m")],
+        "visibility-surface": [current.get("visibility")],
+        "lclouds-surface": [current.get("cloud_cover")],
+        "mclouds-surface": [None],
+        "hclouds-surface": [None],
+    }
+
+
+def open_meteo_wave(lat: float, lon: float, target: datetime) -> dict[str, Any]:
+    data = request_open_meteo(
+        OPEN_METEO_MARINE_URL,
+        {
+            "latitude": lat,
+            "longitude": lon,
+            "current": "wave_height",
+            "timezone": "Asia/Seoul",
+            "cell_selection": "sea",
+        },
+    )
+    current = data.get("current") or {}
+    time_text = current.get("time")
+    try:
+        forecast_time = datetime.fromisoformat(time_text).replace(tzinfo=KST)
+    except (TypeError, ValueError):
+        forecast_time = target
+    return {
+        "ts": [forecast_time.timestamp() * 1000],
+        "waves_height-surface": [current.get("wave_height")],
+    }
 
 
 def nearest_index(timestamps: list[float], target: datetime) -> int:
@@ -382,32 +460,55 @@ def process_site(
     atmospheric_model: str,
     atmospheric_parameters: list[str],
 ) -> dict[str, Any]:
-    atmospheric = request_forecast(
-        api_key,
-        float(site["lat"]),
-        float(site["lon"]),
-        atmospheric_parameters,
-        atmospheric_model,
-    )
+    weather_source = "Windy Point Forecast API"
+    try:
+        atmospheric = request_forecast(
+            api_key,
+            float(site["lat"]),
+            float(site["lon"]),
+            atmospheric_parameters,
+            atmospheric_model,
+        )
+    except Exception as exc:
+        print(f"{site['name']}: Windy unavailable, using Open-Meteo: {exc}", flush=True)
+        atmospheric = open_meteo_atmospheric(
+            float(site["lat"]), float(site["lon"]), target
+        )
+        weather_source = "Open-Meteo fallback"
     wave = None
     wave_coordinate = None
     if site.get("showWave") or site.get("island") or site.get("pelagic"):
         for candidate in wave_coordinate_candidates(site):
             try:
-                candidate_wave = request_forecast(
-                    api_key,
-                    candidate[0],
-                    candidate[1],
-                    ["waves"],
-                    "gfsWave",
-                )
+                if weather_source == "Windy Point Forecast API":
+                    candidate_wave = request_forecast(
+                        api_key,
+                        candidate[0],
+                        candidate[1],
+                        ["waves"],
+                        "gfsWave",
+                    )
+                else:
+                    candidate_wave = open_meteo_wave(candidate[0], candidate[1], target)
             except Exception:
-                continue
+                try:
+                    candidate_wave = open_meteo_wave(candidate[0], candidate[1], target)
+                    weather_source = "Windy weather with Open-Meteo wave fallback"
+                except Exception:
+                    continue
             if wave_has_data(candidate_wave):
                 wave = candidate_wave
-                wave_coordinate = candidate
+                wave_coordinate = (
+                    candidate[0],
+                    candidate[1],
+                    candidate[2]
+                    if weather_source == "Windy Point Forecast API"
+                    else f"{candidate[2]}_open_meteo",
+                )
                 break
-    return build_site_result(site, rules, atmospheric, wave, wave_coordinate, target)
+    result = build_site_result(site, rules, atmospheric, wave, wave_coordinate, target)
+    result["weatherSource"] = weather_source
+    return result
 
 
 def main() -> None:
@@ -529,7 +630,7 @@ def main() -> None:
 
     output = {
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-        "source": "Windy Point Forecast API",
+        "source": "Windy Point Forecast API with Open-Meteo fallback",
         "status": "ok" if failed_count == 0 else "partial",
         "siteCount": len(results),
         "successCount": success_count,
