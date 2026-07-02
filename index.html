@@ -518,9 +518,9 @@ function v24FerryStatus(wind,wave){
   var windSpeed=v24WindNumber(wind);
   var waveHeight=v24WaveNumber(wave);
   if((windSpeed!==null&&windSpeed>=11)||(waveHeight!==null&&waveHeight>=2.0))return '🔴 기상 악화 가능';
+  if(windSpeed===null||waveHeight===null)return '🟡 출항 전 확인 권장';
   if((windSpeed!==null&&windSpeed>=7)||(waveHeight!==null&&waveHeight>=1.5))return '🟡 출항 전 확인 권장';
-  if(windSpeed!==null||waveHeight!==null)return '🟢 출항 여건 양호';
-  return '🟡 출항 전 확인 권장';
+  return '🟢 출항 여건 양호';
 }
 function v24BriefingInterpretation(site,today,tide,type){
   var sentences=[];
