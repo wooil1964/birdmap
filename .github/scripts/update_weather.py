@@ -354,13 +354,15 @@ def process_site(
     site: dict[str, Any],
     rules: dict[str, Any],
     target: datetime,
+    atmospheric_model: str,
+    atmospheric_parameters: list[str],
 ) -> dict[str, Any]:
     atmospheric = request_forecast(
         api_key,
         float(site["lat"]),
         float(site["lon"]),
-        ATMOSPHERIC_PARAMETERS,
-        "gfs",
+        atmospheric_parameters,
+        atmospheric_model,
     )
     wave = None
     wave_coordinate = None
@@ -394,8 +396,26 @@ def main() -> None:
     now = datetime.now(KST)
     target = now
 
+    atmospheric_model = "icon"
+    atmospheric_parameters = ATMOSPHERIC_PARAMETERS
+    try:
+        request_forecast(
+            api_key,
+            float(sites[0]["lat"]),
+            float(sites[0]["lon"]),
+            atmospheric_parameters,
+            atmospheric_model,
+        )
+    except Exception as exc:
+        atmospheric_model = "gfs"
+        atmospheric_parameters = [
+            parameter for parameter in ATMOSPHERIC_PARAMETERS if parameter != "visibility"
+        ]
+        print(f"ICON visibility unavailable; falling back to GFS: {exc}", flush=True)
+
     total = len(sites)
     print(f"Loading {total} sites", flush=True)
+    print(f"Atmospheric model: {atmospheric_model}", flush=True)
     print(f"Using up to {MAX_WORKERS} concurrent requests", flush=True)
 
     results: dict[str, Any] = {}
@@ -406,7 +426,15 @@ def main() -> None:
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
-            executor.submit(process_site, api_key, site, rules, target): (position, site)
+            executor.submit(
+                process_site,
+                api_key,
+                site,
+                rules,
+                target,
+                atmospheric_model,
+                atmospheric_parameters,
+            ): (position, site)
             for position, site in enumerate(sites, start=1)
         }
         for future in as_completed(futures):
