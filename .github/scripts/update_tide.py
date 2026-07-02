@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
 OUTPUT_PATH = ROOT / "tide_today.json"
 MAPPING_PATH = ROOT / "tide_station_mapping.json"
-API_URL = "https://www.khoa.go.kr/oceangrid/grid/api/tideObsPreTab/search.do"
+API_URL = "https://apis.data.go.kr/1192136/tideFcstHghLw/GetTideFcstHghLwApiService"
 REQUEST_TIMEOUT_SECONDS = 10
 MAX_WORKERS = 8
 KST = timezone(timedelta(hours=9))
@@ -147,25 +147,70 @@ def resolve_tide_sites(
     return resolved, review_count
 
 
-def request_prediction(api_key: str, station_code: str, date_text: str) -> dict[str, Any]:
+def xml_to_data(element: ET.Element) -> Any:
+    children = list(element)
+    if not children:
+        return (element.text or "").strip()
+    data: dict[str, Any] = {}
+    for child in children:
+        key = child.tag.rsplit("}", 1)[-1]
+        value = xml_to_data(child)
+        if key in data:
+            if not isinstance(data[key], list):
+                data[key] = [data[key]]
+            data[key].append(value)
+        else:
+            data[key] = value
+    return data
+
+
+def request_prediction(
+    api_key: str, station_code: str, date_text: str, diagnostic: bool = False
+) -> dict[str, Any]:
+    decoded_key = urllib.parse.unquote(api_key)
+    parameters = {
+        "serviceKey": decoded_key,
+        "obsCode": station_code,
+        "reqDate": date_text,
+        "type": "json",
+        "numOfRows": "300",
+    }
     query = urllib.parse.urlencode(
-        {
-            "ServiceKey": api_key,
-            "ObsCode": station_code,
-            "Date": date_text,
-            "ResultType": "json",
-        }
+        parameters
     )
+    url = f"{API_URL}?{query}"
+    if diagnostic:
+        masked_parameters = dict(parameters)
+        masked_parameters["serviceKey"] = "***"
+        masked_query = urllib.parse.urlencode(
+            {key: value for key, value in parameters.items() if key != "serviceKey"}
+        )
+        print(f"First request URL: {API_URL}?serviceKey=***&{masked_query}", flush=True)
+        print(f"First request parameters: {masked_parameters}", flush=True)
     request = urllib.request.Request(
-        f"{API_URL}?{query}",
-        headers={"Accept": "application/json", "User-Agent": "birdmap-tide/1.0"},
+        url, headers={"Accept": "application/json, application/xml", "User-Agent": "birdmap-tide/1.0"}
     )
     try:
         with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-            if response.status != 200:
-                raise RuntimeError(f"HTTP {response.status}")
-            return json.loads(response.read().decode("utf-8"))
+            body = response.read().decode("utf-8", errors="replace")
+            safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
+            content_type = response.headers.get("Content-Type", "")
+            if diagnostic:
+                response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
+                print(f"First request HTTP status: {response.status}", flush=True)
+                print(f"First response format: {response_format} ({content_type})", flush=True)
+                print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
+            if body.lstrip().startswith("<"):
+                return xml_to_data(ET.fromstring(body))
+            return json.loads(body)
     except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
+        if diagnostic:
+            response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
+            print(f"First request HTTP status: {exc.code}", flush=True)
+            print(f"First response format: {response_format}", flush=True)
+            print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
         raise RuntimeError(f"HTTP {exc.code}") from exc
     except urllib.error.URLError as exc:
         raise RuntimeError(f"{type(exc.reason).__name__}: {exc.reason}") from exc
@@ -260,7 +305,9 @@ def main() -> None:
         raise RuntimeError("No verified tide station mappings; existing tide_today.json preserved")
     api_key = os.environ.get("KHOA_API_KEY", "").strip()
     if not api_key:
+        print("KHOA_API_KEY: not configured", flush=True)
         raise RuntimeError("GitHub Secret KHOA_API_KEY is not configured")
+    print("KHOA_API_KEY: *** (configured)", flush=True)
 
     previous_sites = load_previous_sites()
     now = datetime.now(KST)
@@ -270,10 +317,19 @@ def main() -> None:
     failed_count = 0
     reused_count = 0
 
+    first_site = sites[0]
+    print("Testing first tide station before full run", flush=True)
+    first_payload = request_prediction(
+        api_key, first_site["stationCode"], date_text, diagnostic=True
+    )
+    results[first_site["id"]] = build_site_result(first_site, first_payload, now)
+    success_count = 1
+    print(f"Site 1/{len(sites)} {first_site['name']}: OK", flush=True)
+
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
             executor.submit(request_prediction, api_key, site["stationCode"], date_text): (position, site)
-            for position, site in enumerate(sites, start=1)
+            for position, site in enumerate(sites[1:], start=2)
         }
         for future in as_completed(futures):
             position, site = futures[future]
