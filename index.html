@@ -606,6 +606,10 @@ function v23TodayWeatherHtml(site){
     (today&&today.forecastTime?'<div class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</div>':'')+'</div></div></div>';
 }
 function v23ButtonsFromLegacy(source,site){
+  var isGukhwado=String(site.id)==='156'&&site.name==='국화도';
+  var kakaoUrl=isGukhwado
+    ?'https://map.kakao.com/link/search/'+encodeURIComponent('장고항')
+    :(site.kakaoMapUrl||'https://map.kakao.com/link/map/'+encodeURIComponent(site.name)+','+site.lat+','+site.lon);
   function link(selector,cls,text,href,show){
     if(show===false)return '';
     var a=source.querySelector(selector);
@@ -615,11 +619,12 @@ function v23ButtonsFromLegacy(source,site){
   }
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'
     +link('a.naver','btn naver','🧭 네이버지도',site.naverMapUrl||'https://map.naver.com/v5/search/'+encodeURIComponent(site.name),true)
-    +link('a.kakao','btn kakao','🟡 카카오맵',site.kakaoMapUrl||'https://map.kakao.com/link/map/'+encodeURIComponent(site.name)+','+site.lat+','+site.lon,true)
+    +link('a.kakao','btn kakao','🟡 카카오맵',kakaoUrl,true)
     +link('a.ebird','btn ebird','🟢 eBird Hotspot',site.ebirdHotspotUrl||'',true)
     +link('a.windy','btn windy','🌬️ Windy',site.windyUrl||'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10',true)
     +link('a.ksa','btn ksa','🚢 KSA 섬여객선 예매',site.ksaUrl||'https://island.theksa.co.kr',site.island)
-    +'</div>';
+    +'</div>'
+    +(isGukhwado?'<div class="smallText">국화도는 카카오맵 섬 직행 길찾기가 제한될 수 있어 장고항 기준으로 안내합니다.<br>배편은 현장 운항 정보를 확인하세요.</div>':'');
 }
 function v23PopupContent(site,desktopContent){
   var source=popupContentElement(desktopContent);
