@@ -541,7 +541,9 @@ function v23TodayWeatherHtml(site){
   var expanded=!window.matchMedia('(max-width: 700px)').matches;
   var detailsId='v23WeatherDetails-'+escapeHtml(site.id);
   var typeItems='';
-  if(type==='mudflat'&&tide){
+  if(tide&&tide.unavailable){
+    typeItems='<div class="v24BriefingItem"><b>조석:</b> 관측소 없음</div>';
+  }else if(type==='mudflat'&&tide){
     typeItems='<div class="v24BriefingItem"><b>간조:</b> '+escapeHtml(v23Value(tide.lowTide,''))+'</div><div class="v24BriefingItem"><b>만조:</b> '+escapeHtml(v23Value(tide.highTide,''))+'</div>';
   }else if(type==='island'){
     typeItems='<div class="v24BriefingItem"><b>파고:</b> '+escapeHtml(v23Value(today&&today.wave,''))+'</div><div class="v24BriefingItem"><b>여객선 운항 참고:</b> '+escapeHtml(v24FerryStatus(today&&today.wave))+'</div>';

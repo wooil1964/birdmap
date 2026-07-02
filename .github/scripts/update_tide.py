@@ -340,44 +340,126 @@ def main() -> None:
     date_text = now.strftime("%Y%m%d")
     results: dict[str, Any] = {}
     success_count = 0
-    failed_count = 0
+    resolved_ids = {site["id"] for site in sites}
+    unavailable_targets = [target for target in targets if target["id"] not in resolved_ids]
+    failed_count = len(unavailable_targets)
     reused_count = 0
+    site_positions = {target["id"]: position for position, target in enumerate(targets, start=1)}
 
-    first_site = sites[0]
+    for target in unavailable_targets:
+        results[target["id"]] = {
+            "name": target["name"],
+            "stationName": "관측소 없음",
+            "lowTide": "관측소 없음",
+            "highTide": "관측소 없음",
+            "lowTideLevel": "관측소 없음",
+            "highTideLevel": "관측소 없음",
+            "summary": "80km 이내에 사용 가능한 공식 조석관측소가 없습니다.",
+            "updated": now.strftime("%Y-%m-%d %H:%M KST"),
+            "stale": False,
+            "unavailable": True,
+            "error": "관측소 없음",
+        }
+        print(
+            f"Site {site_positions[target['id']]}/{len(targets)} "
+            f"{target['name']}: 관측소 없음",
+            flush=True,
+        )
+
+    station_groups: dict[str, list[dict[str, str]]] = {}
+    for site in sites:
+        station_groups.setdefault(site["stationCode"], []).append(site)
+    groups = list(station_groups.values())
+    first_group = groups[0]
+    first_site = first_group[0]
     print("Testing first tide station before full run", flush=True)
-    first_payload = request_prediction(
-        api_key, first_site["stationCode"], date_text, diagnostic=True
-    )
-    results[first_site["id"]] = build_site_result(first_site, first_payload, now)
-    success_count = 1
-    print(f"Site 1/{len(sites)} {first_site['name']}: OK", flush=True)
+    try:
+        first_payload = request_prediction(
+            api_key, first_site["stationCode"], date_text, diagnostic=True
+        )
+        for site in first_group:
+            results[site["id"]] = build_site_result(site, first_payload, now)
+            success_count += 1
+            print(
+                f"Site {site_positions[site['id']]}/{len(targets)} {site['name']}: OK",
+                flush=True,
+            )
+    except Exception as exc:
+        for site in first_group:
+            failed_count += 1
+            previous = previous_sites.get(site["id"])
+            if isinstance(previous, dict):
+                result = dict(previous)
+                result["stale"] = True
+                result["error"] = str(exc) or type(exc).__name__
+                results[site["id"]] = result
+                reused_count += 1
+                state = f"{result['error']} - REUSED"
+            else:
+                state = str(exc) or type(exc).__name__
+            print(
+                f"Site {site_positions[site['id']]}/{len(targets)} {site['name']}: {state}",
+                flush=True,
+            )
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
-            executor.submit(request_prediction, api_key, site["stationCode"], date_text): (position, site)
-            for position, site in enumerate(sites[1:], start=2)
+            executor.submit(
+                request_prediction, api_key, group[0]["stationCode"], date_text
+            ): group
+            for group in groups[1:]
         }
         for future in as_completed(futures):
-            position, site = futures[future]
+            group = futures[future]
             try:
                 payload = future.result()
-                result = build_site_result(site, payload, now)
             except Exception as exc:
-                failed_count += 1
-                previous = previous_sites.get(site["id"])
-                if isinstance(previous, dict):
-                    result = dict(previous)
-                    result["stale"] = True
-                    result["error"] = str(exc) or type(exc).__name__
-                    results[site["id"]] = result
-                    reused_count += 1
-                    print(f"Site {position}/{len(sites)} {site['name']}: {result['error']} - REUSED", flush=True)
-                else:
-                    print(f"Site {position}/{len(sites)} {site['name']}: {exc}", flush=True)
+                for site in group:
+                    failed_count += 1
+                    previous = previous_sites.get(site["id"])
+                    if isinstance(previous, dict):
+                        result = dict(previous)
+                        result["stale"] = True
+                        result["error"] = str(exc) or type(exc).__name__
+                        results[site["id"]] = result
+                        reused_count += 1
+                        state = f"{result['error']} - REUSED"
+                    else:
+                        state = str(exc) or type(exc).__name__
+                    print(
+                        f"Site {site_positions[site['id']]}/{len(targets)} "
+                        f"{site['name']}: {state}",
+                        flush=True,
+                    )
             else:
-                results[site["id"]] = result
-                success_count += 1
-                print(f"Site {position}/{len(sites)} {site['name']}: OK", flush=True)
+                for site in group:
+                    try:
+                        result = build_site_result(site, payload, now)
+                    except Exception as exc:
+                        failed_count += 1
+                        previous = previous_sites.get(site["id"])
+                        if isinstance(previous, dict):
+                            result = dict(previous)
+                            result["stale"] = True
+                            result["error"] = str(exc) or type(exc).__name__
+                            results[site["id"]] = result
+                            reused_count += 1
+                            state = f"{result['error']} - REUSED"
+                        else:
+                            state = str(exc) or type(exc).__name__
+                        print(
+                            f"Site {site_positions[site['id']]}/{len(targets)} "
+                            f"{site['name']}: {state}",
+                            flush=True,
+                        )
+                    else:
+                        results[site["id"]] = result
+                        success_count += 1
+                        print(
+                            f"Site {site_positions[site['id']]}/{len(targets)} "
+                            f"{site['name']}: OK",
+                            flush=True,
+                        )
 
     print(f"Success: {success_count}", flush=True)
     print(f"Failed: {failed_count}", flush=True)

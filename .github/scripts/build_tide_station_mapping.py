@@ -29,6 +29,14 @@ REVIEW_DISTANCE_KM = 80.0
 AMBIGUITY_GAP_KM = 5.0
 KST = timezone(timedelta(hours=9))
 SPECIAL_GUNSAN_SITES = ("유부도", "새만금", "금강호", "금강하구")
+FORECAST_STATION_OVERRIDES = {
+    "17": "DT_0067",  # 태안 해안 -> 안흥
+    "25": "DT_0092",  # 순천만 -> 여호항
+    "49": "DT_0020",  # 호미곶 -> 울산
+    "50": "DT_0020",  # 청림운동장 -> 울산
+    "71": "DT_0092",  # 보성 벌교갯벌 -> 여호항
+}
+NO_FORECAST_STATION_SITE_IDS = {"51", "52", "55"}
 
 UPDATE_TIDE_PATH = Path(__file__).with_name("update_tide.py")
 UPDATE_TIDE_SPEC = importlib.util.spec_from_file_location("birdmap_update_tide", UPDATE_TIDE_PATH)
@@ -155,7 +163,9 @@ def ranked_stations(site: dict[str, Any], stations: list[dict[str, Any]]) -> lis
     )
 
 
-def choose_station(site: dict[str, Any], stations: list[dict[str, Any]]) -> dict[str, Any]:
+def choose_station(
+    site_id: str, site: dict[str, Any], stations: list[dict[str, Any]]
+) -> dict[str, Any]:
     ranked = ranked_stations(site, stations)
     site_name = normalize_name(str(site["name"]))
     selected_distance, selected = ranked[0]
@@ -186,6 +196,38 @@ def choose_station(site: dict[str, Any], stations: list[dict[str, Any]]) -> dict
     if method == "nearest" and len(ranked) > 1 and ranked[1][0] - ranked[0][0] < AMBIGUITY_GAP_KM:
         needs_review = True
         method = "nearest_ambiguous_review"
+
+    if site_id in NO_FORECAST_STATION_SITE_IDS:
+        return {
+            "name": site["name"],
+            "lat": float(site["lat"]),
+            "lon": float(site["lon"]),
+            "tideStationCode": "",
+            "tideStationName": "관측소 없음",
+            "stationLat": None,
+            "stationLon": None,
+            "distanceKm": None,
+            "needsReview": True,
+            "method": "no_forecast_station_within_80km",
+        }
+
+    override_code = FORECAST_STATION_OVERRIDES.get(site_id)
+    if override_code:
+        override = next((station for station in stations if station["code"] == override_code), None)
+        if override is None:
+            raise RuntimeError(f"Official fallback station not found: {override_code}")
+        override_distance = haversine_km(
+            float(site["lat"]), float(site["lon"]), override["lat"], override["lon"]
+        )
+        if override_distance >= REVIEW_DISTANCE_KM:
+            raise RuntimeError(
+                f"Fallback station exceeds {REVIEW_DISTANCE_KM:.0f}km: "
+                f"site {site_id}, {override_code}, {override_distance:.2f}km"
+            )
+        selected = override
+        selected_distance = override_distance
+        needs_review = False
+        method = "forecast_fallback"
 
     return {
         "name": site["name"],
@@ -238,7 +280,7 @@ def main() -> None:
         site = site_data.get(target["id"])
         if not site:
             raise RuntimeError(f"siteData ID not found: {target['id']}")
-        result = choose_station(site, stations)
+        result = choose_station(target["id"], site, stations)
         mapped_sites[target["id"]] = result
         state = "REVIEW" if result["needsReview"] else "OK"
         print(
