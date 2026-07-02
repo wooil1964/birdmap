@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
 OUTPUT_PATH = ROOT / "tide_today.json"
 MAPPING_PATH = ROOT / "tide_station_mapping.json"
-API_URL = "https://www.khoa.go.kr/api/oceangrid/tideObsPreTab/search.do"
+API_URL = "https://www.khoa.go.kr/oceangrid/grid/api/tideObsPreTab/search.do"
 REQUEST_TIMEOUT_SECONDS = 10
 MAX_WORKERS = 8
 KST = timezone(timedelta(hours=9))
