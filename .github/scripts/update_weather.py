@@ -7,6 +7,8 @@ import json
 import math
 import os
 import re
+import threading
+import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -21,8 +23,12 @@ RULES_PATH = ROOT / "weather_rules.json"
 OUTPUT_PATH = ROOT / "weather_today.json"
 API_URL = "https://api.windy.com/api/point-forecast/v2"
 REQUEST_TIMEOUT_SECONDS = 10
-MAX_WORKERS = 10
+MAX_WORKERS = 4
+MIN_REQUEST_INTERVAL_SECONDS = 0.7
+MAX_REQUEST_ATTEMPTS = 5
 KST = timezone(timedelta(hours=9))
+REQUEST_RATE_LOCK = threading.Lock()
+LAST_REQUEST_AT = 0.0
 ATMOSPHERIC_PARAMETERS = [
     "wind",
     "windGust",
@@ -67,6 +73,7 @@ def request_forecast(
     parameters: list[str],
     model: str,
 ) -> dict[str, Any]:
+    global LAST_REQUEST_AT
     payload = json.dumps(
         {
             "lat": lat,
@@ -83,19 +90,37 @@ def request_forecast(
         headers={"Content-Type": "application/json", "User-Agent": "birdmap-weather/1.0"},
         method="POST",
     )
-    try:
-        with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-            if response.status != 200:
-                raise RuntimeError(f"HTTP {response.status}")
-            return json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        raise RuntimeError(f"HTTP {exc.code}") from exc
-    except urllib.error.URLError as exc:
-        raise RuntimeError(f"{type(exc.reason).__name__}: {exc.reason}") from exc
-    except TimeoutError as exc:
-        raise RuntimeError(f"Timeout after {REQUEST_TIMEOUT_SECONDS}s") from exc
-    except json.JSONDecodeError as exc:
-        raise RuntimeError(f"Invalid JSON: {exc}") from exc
+    for attempt in range(1, MAX_REQUEST_ATTEMPTS + 1):
+        with REQUEST_RATE_LOCK:
+            wait_seconds = MIN_REQUEST_INTERVAL_SECONDS - (time.monotonic() - LAST_REQUEST_AT)
+            if wait_seconds > 0:
+                time.sleep(wait_seconds)
+            LAST_REQUEST_AT = time.monotonic()
+        try:
+            with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"HTTP {response.status}")
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if attempt < MAX_REQUEST_ATTEMPTS and (exc.code == 429 or exc.code >= 500):
+                retry_after = exc.headers.get("Retry-After")
+                delay = float(retry_after) if retry_after and retry_after.isdigit() else 2**attempt
+                time.sleep(min(60.0, delay))
+                continue
+            raise RuntimeError(f"HTTP {exc.code}") from exc
+        except urllib.error.URLError as exc:
+            if attempt < MAX_REQUEST_ATTEMPTS:
+                time.sleep(2**attempt)
+                continue
+            raise RuntimeError(f"{type(exc.reason).__name__}: {exc.reason}") from exc
+        except TimeoutError as exc:
+            if attempt < MAX_REQUEST_ATTEMPTS:
+                time.sleep(2**attempt)
+                continue
+            raise RuntimeError(f"Timeout after {REQUEST_TIMEOUT_SECONDS}s") from exc
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"Invalid JSON: {exc}") from exc
+    raise RuntimeError("Forecast request failed after retries")
 
 
 def nearest_index(timestamps: list[float], target: datetime) -> int:
@@ -459,9 +484,29 @@ def main() -> None:
                         flush=True,
                     )
                 else:
+                    rule_key, _ = merge_rule(
+                        rules, str(site.get("weatherRuleKey") or "general_birding")
+                    )
+                    results[site_id] = {
+                        "name": site["name"],
+                        "score": 0,
+                        "grade": "★☆☆☆☆",
+                        "summary": "최신 기상 정보를 가져오지 못했습니다. Windy 상세 예보를 확인하세요.",
+                        "wind": None,
+                        "rain": None,
+                        "targetGroup": None,
+                        "forecastTime": None,
+                        "temperature": None,
+                        "visibility": None,
+                        "cloud": None,
+                        "wave": None,
+                        "ruleKey": rule_key,
+                        "stale": True,
+                        "error": error_message,
+                    }
                     print(
                         f"Site {position}/{total} ({completed_count} completed) "
-                        f"{site['name']}: {error_message}",
+                        f"{site['name']}: {error_message} - PLACEHOLDER",
                         flush=True,
                     )
             else:
