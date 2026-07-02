@@ -32,6 +32,16 @@ ATMOSPHERIC_PARAMETERS = [
     "mclouds",
     "hclouds",
 ]
+WAVE_COORDINATE_OVERRIDES = {
+    "9": {"waveLat": 37.59, "waveLon": 126.45},
+    "57": {"waveLat": 33.50, "waveLon": 127.02},
+    "58": {"waveLat": 33.32, "waveLon": 126.10},
+    "59": {"waveLat": 33.55, "waveLon": 126.78},
+    "60": {"waveLat": 33.25, "waveLon": 126.60},
+    "112": {"waveLat": 33.20, "waveLon": 126.17},
+    "125": {"waveLat": 33.46, "waveLon": 127.02},
+    "150": {"waveLat": 33.52, "waveLon": 126.49},
+}
 
 
 def load_site_data() -> list[dict[str, Any]]:
@@ -99,6 +109,44 @@ def value_at(data: dict[str, Any], key: str, index: int) -> float | None:
     if not isinstance(values, list) or index >= len(values) or values[index] is None:
         return None
     return float(values[index])
+
+
+def wave_has_data(data: dict[str, Any]) -> bool:
+    values = data.get("waves_height-surface")
+    return isinstance(values, list) and any(value is not None for value in values)
+
+
+def wave_coordinate_candidates(site: dict[str, Any]) -> list[tuple[float, float, str]]:
+    candidates: list[tuple[float, float, str]] = []
+    explicit_lat = site.get("waveLat")
+    explicit_lon = site.get("waveLon")
+    override = WAVE_COORDINATE_OVERRIDES.get(str(site["id"]))
+    if explicit_lat is not None and explicit_lon is not None:
+        candidates.append((float(explicit_lat), float(explicit_lon), "site_wave_coordinate"))
+    elif override:
+        candidates.append(
+            (float(override["waveLat"]), float(override["waveLon"]), "marine_override")
+        )
+
+    lat = float(site["lat"])
+    lon = float(site["lon"])
+    candidates.append((lat, lon, "site_coordinate"))
+    for lat_offset, lon_offset, label in (
+        (0.08, 0.0, "nearest_marine_north"),
+        (0.0, 0.08, "nearest_marine_east"),
+        (-0.08, 0.0, "nearest_marine_south"),
+        (0.0, -0.08, "nearest_marine_west"),
+    ):
+        candidates.append((lat + lat_offset, lon + lon_offset, label))
+
+    unique: list[tuple[float, float, str]] = []
+    seen: set[tuple[float, float]] = set()
+    for candidate_lat, candidate_lon, source in candidates:
+        key = (round(candidate_lat, 5), round(candidate_lon, 5))
+        if key not in seen:
+            seen.add(key)
+            unique.append((candidate_lat, candidate_lon, source))
+    return unique
 
 
 def merge_rule(config: dict[str, Any], key: str) -> tuple[str, dict[str, Any]]:
@@ -210,6 +258,7 @@ def build_site_result(
     rules_config: dict[str, Any],
     atmospheric: dict[str, Any],
     wave: dict[str, Any] | None,
+    wave_coordinate: tuple[float, float, str] | None,
     target: datetime,
 ) -> dict[str, Any]:
     index = nearest_index(atmospheric.get("ts", []), target)
@@ -247,7 +296,7 @@ def build_site_result(
         wave_m,
     )
     forecast_time = datetime.fromtimestamp(atmospheric["ts"][index] / 1000, KST)
-    return {
+    result = {
         "name": site["name"],
         "score": score,
         "grade": grade_for(score),
@@ -271,6 +320,11 @@ def build_site_result(
         "wave": None if wave_m is None else f"{wave_m:.1f}m",
         "ruleKey": rule_key,
     }
+    if wave_coordinate:
+        result["waveLat"] = round(wave_coordinate[0], 5)
+        result["waveLon"] = round(wave_coordinate[1], 5)
+        result["waveSource"] = wave_coordinate[2]
+    return result
 
 
 def load_previous_sites() -> dict[str, Any]:
@@ -299,15 +353,24 @@ def process_site(
         "gfs",
     )
     wave = None
-    if site.get("weatherRuleKey") == "pelagic_seabird":
-        wave = request_forecast(
-            api_key,
-            float(site["lat"]),
-            float(site["lon"]),
-            ["waves"],
-            "gfsWave",
-        )
-    return build_site_result(site, rules, atmospheric, wave, target)
+    wave_coordinate = None
+    if site.get("island") or site.get("pelagic"):
+        for candidate in wave_coordinate_candidates(site):
+            try:
+                candidate_wave = request_forecast(
+                    api_key,
+                    candidate[0],
+                    candidate[1],
+                    ["waves"],
+                    "gfsWave",
+                )
+            except Exception:
+                continue
+            if wave_has_data(candidate_wave):
+                wave = candidate_wave
+                wave_coordinate = candidate
+                break
+    return build_site_result(site, rules, atmospheric, wave, wave_coordinate, target)
 
 
 def main() -> None:

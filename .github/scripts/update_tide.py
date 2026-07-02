@@ -236,7 +236,9 @@ def find_prediction_rows(payload: Any) -> list[dict[str, Any]]:
         if any(
             "predcDt" in item
             or "predcTdlvl" in item
+            or "predcTdlv" in item
             or "extrSe" in item
+            or "extrSeCd" in item
             or "tph_time" in item
             or "hl_code" in item
             for item in payload
@@ -256,7 +258,13 @@ def find_prediction_rows(payload: Any) -> list[dict[str, Any]]:
 
 
 def event_time(row: dict[str, Any]) -> str:
-    raw = str(row.get("predcDt") or row.get("tph_time") or row.get("time") or "").strip()
+    raw = str(
+        row.get("predcDt")
+        or row.get("predcDateTime")
+        or row.get("tph_time")
+        or row.get("time")
+        or ""
+    ).strip()
     match = re.search(r"(?:T|\s)(\d{2}:\d{2})(?::\d{2})?", raw)
     if match:
         return match.group(1)
@@ -265,16 +273,41 @@ def event_time(row: dict[str, Any]) -> str:
 
 
 def classify_event(row: dict[str, Any]) -> str:
-    code = str(row.get("extrSe") or row.get("hl_code") or row.get("type") or "").strip().lower()
-    if code in {"저조", "low", "l", "0"} or "저" in code or "low" in code:
+    code = str(
+        row.get("extrSe")
+        or row.get("extrSeCd")
+        or row.get("hl_code")
+        or row.get("hlCode")
+        or row.get("type")
+        or ""
+    ).strip().lower()
+    compact = re.sub(r"[.\s_-]", "", code)
+    if compact in {"저조", "low", "l", "lw", "0", "2"} or "저" in code or "low" in code:
         return "low"
-    if code in {"고조", "high", "h", "1"} or "고" in code or "high" in code:
+    if compact in {"고조", "high", "h", "hw", "1"} or "고" in code or "high" in code:
         return "high"
     return ""
 
 
 def event_level(row: dict[str, Any]) -> str:
-    return str(row.get("predcTdlvl") or row.get("tph_level") or "").strip()
+    for key in (
+        "predcTdlvl",
+        "predcTdlv",
+        "predcTideLevel",
+        "tideLevel",
+        "tph_level",
+        "level",
+    ):
+        value = str(row.get(key) or "").strip()
+        if value:
+            return re.sub(r"\s*cm$", "", value, flags=re.I).strip()
+    for key, raw_value in row.items():
+        normalized = re.sub(r"[^a-z]", "", str(key).lower())
+        if "predc" in normalized and ("tdlv" in normalized or "tidelevel" in normalized):
+            value = str(raw_value or "").strip()
+            if value:
+                return re.sub(r"\s*cm$", "", value, flags=re.I).strip()
+    return ""
 
 
 def summary_for(rule_key: str) -> str:
