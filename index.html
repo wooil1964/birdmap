@@ -61,7 +61,7 @@
     
             <div class="folium-map" id="map_7010a44f6ac2025090f0fe07508ed485" ></div>
         
-<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.02 · v24.5 MasterDB 기반 탐조 해석 · 156개 권역</span></div>
+<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.02 · v25 계절 우선 탐조 해석 · 156개 권역</span></div>
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <div id="birdmapPanel">
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
@@ -482,6 +482,64 @@ function v24FeatureList(site){
 function v24RecommendedGear(site){
   return {lens:v23Value(site.recommendedLensAuto,''),reason:v23Value(site.recommendedLensReason,'')};
 }
+function v25EnvironmentLabel(site){
+  var habitat=(String(site.habitatType||'')+' '+String(site.env||''));
+  if(habitat.indexOf('갯벌')>=0)return '갯벌탐조';
+  if(habitat.indexOf('습지')>=0)return '습지탐조';
+  if(/하천|천|강변/.test(habitat))return '하천탐조';
+  if(/산림|숲|수목원/.test(habitat))return '산림탐조';
+  if(habitat.indexOf('저수지')>=0)return '저수지탐조';
+  if(/호수|호반/.test(habitat))return '호수탐조';
+  if(/농경지|들판|간척지/.test(habitat))return '농경지탐조';
+  if(/해안|연안|항구|항만/.test(habitat))return '해안탐조';
+  if(site.island||/섬|도서/.test(habitat))return '섬탐조';
+  if(site.pelagic)return '선상탐조';
+  if(/공원|도시/.test(habitat))return '공원탐조';
+  return '생태 탐조';
+}
+function v25CurrentSeason(month){
+  if(month>=3&&month<=5)return '봄';
+  if(month>=6&&month<=8)return '여름';
+  if(month>=9&&month<=11)return '가을';
+  return '겨울';
+}
+function v25SeasonSentence(month){
+  if(month>=3&&month<=5)return '봄에는 이동성 조류와 번식조류의 이동을 관찰하기 좋습니다.';
+  if(month>=6&&month<=8)return '여름에는 번식조류와 텃새 활동을 관찰하기 좋습니다. 기온이 높은 시간대보다 이른 아침과 늦은 오후 탐조를 권장합니다.';
+  if(month>=9&&month<=11)return '가을에는 이동성 조류의 이동과 겨울철새의 도래를 관찰하기 좋습니다.';
+  return '겨울에는 겨울철새를 관찰하기 좋습니다.';
+}
+function v25BirdGroupSentence(site,month){
+  var group=String(site.mainBirdGroup||'');
+  var summer=month>=6&&month<=8;
+  if(summer&&/번식|텃새/.test(group))return '현재는 번식조류와 텃새의 활동을 중심으로 살펴보세요.';
+  if(summer&&/월동|겨울|기러기|고니|오리/.test(group)&&!/번식|텃새/.test(group))return '이 지역은 겨울철 월동조류가 주로 기록되는 곳이므로, 현재 시기에는 현장에서 확인되는 텃새를 중심으로 살펴보세요.';
+  if(summer&&/통과|이동|미조/.test(group))return '이동철에 다양한 조류가 머무는 곳이며, 현재는 번식조류와 텃새의 움직임을 중심으로 확인하세요.';
+  if(month>=3&&month<=5)return /통과|이동|미조/.test(group)?'이동 중 잠시 머무는 조류를 물가와 숲 가장자리에서 세심히 살펴보세요.':'번식 준비와 이동이 겹치는 시기이므로 울음과 활동 변화를 살펴보세요.';
+  if(month>=9&&month<=11)return '남하하는 이동성 조류와 막 도착한 겨울철새의 움직임을 함께 살펴보세요.';
+  return /월동|겨울|기러기|고니|오리/.test(group)?'월동조류가 쉬거나 먹이를 찾는 구역을 중심으로 살펴보세요.':'겨울에도 남아 있는 텃새와 현장에 머무는 조류를 중심으로 살펴보세요.';
+}
+function v25WeatherSentence(today){
+  if(!today)return '기상 정보가 없으므로 출발 전에 풍향·풍속·강수 조건을 확인하세요.';
+  var parts=[];
+  if(today.temperature)parts.push('기온은 '+today.temperature);
+  if(today.wind)parts.push('바람은 '+today.wind);
+  if(today.rain)parts.push('강수는 '+today.rain);
+  return parts.length?'현재 '+parts.join(', ')+'입니다. 현장에서는 급격한 기상 변화도 함께 확인하세요.':'출발 전에 풍향·풍속·강수 조건을 확인하세요.';
+}
+function v25FeatureSentence(site){
+  var feature=String(site.birdingFeature||'');
+  if(/도요|물떼새|저어새/.test(feature))return '물가와 갯벌 가장자리에서 먹이 활동과 무리의 이동을 세심히 살펴보세요.';
+  if(/바다새|갈매기/.test(feature)||site.pelagic)return '수평선과 해안 바깥쪽을 넓게 살피며 바다새의 이동을 확인하세요.';
+  if(/산림|고산|번식/.test(feature))return '숲 가장자리와 수관에서 울음과 움직임을 중심으로 살펴보세요.';
+  if(/맹금/.test(feature))return '시야가 트인 곳에서 상공과 먼 지형을 함께 확인하면 좋습니다.';
+  if(/희귀|미조/.test(feature))return '예상하지 못한 종이 머물 가능성이 있으므로 주변 무리를 꼼꼼히 확인하세요.';
+  return '서식지 가장자리와 조류의 이동 경로를 천천히 살펴보세요.';
+}
+function v25SpeciesText(site){
+  var birds=String(site.birds||'').trim(), group=String(site.mainBirdGroup||'').trim();
+  return group&&birds.indexOf(group)===0?birds.slice(group.length).trim():birds;
+}
 function selectedFeatures(){var a=[];document.querySelectorAll('.featureFilter:checked').forEach(function(b){a.push(b.value);});return a;}
 function v23WeatherTip(site){
   var key=v23Value(site.weatherRuleKey,'');
@@ -569,10 +627,8 @@ function v24TideHtml(tide){
   return '<div class="v24BriefingItem v24ProfileWide v24TideHeading">조석</div>'+v24TideEventHtml('만조','▲',tide.highTide,tide.highTideLevel)+v24TideEventHtml('간조','▼',tide.lowTide,tide.lowTideLevel);
 }
 function v24BriefingInterpretation(site,today){
-  var currentWeather=[today&&today.summary,today&&today.temperature,today&&today.wind,today&&today.rain]
-    .map(function(value){return String(value||'').trim();}).filter(Boolean).join(' · ');
-  return [site.environmentBirdingLabel,site.mainBirdGroup,v24FeatureList(site).join(' · '),site.seasonTags,(new Date().getMonth()+1)+'월',currentWeather]
-    .map(function(value){return String(value||'').trim();}).filter(Boolean).join(' · ');
+  var month=new Date().getMonth()+1;
+  return v25EnvironmentLabel(site)+' 환경입니다. '+v25SeasonSentence(month)+' '+v25BirdGroupSentence(site,month)+' '+v25WeatherSentence(today)+' '+v25FeatureSentence(site);
 }
 function v24LocalBirdingTipHtml(site){
   if(!site.localTipUse||!site.localBirdingTip)return '';
@@ -632,17 +688,18 @@ function v23PopupContent(site,desktopContent){
   var gear=v24RecommendedGear(site);
   var root=document.createElement('div');
   root.style.cssText="width:min(450px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
+  var currentMonth=new Date().getMonth()+1;
   root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
     '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
     '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
-    '<b>탐조환경:</b> '+escapeHtml(v23Value(site.habitatType,site.env))+'<br>'+
-    '<b>추천계절:</b> '+escapeHtml(v23Value(site.bestSeason,site.seasons&&site.seasons.join("·")))+' / <b>추천월:</b> '+escapeHtml(v23Value(site.bestMonth,'정보 없음'))+'<br>'+
-    '<b>대표조류군:</b> '+escapeHtml(v23Value(site.mainBirdGroup,site.birds.split(/[ ,]/)[0]))+'<br>'+
-    '<b>대표종:</b> '+escapeHtml(site.birds||'정보 없음')+v23TodayWeatherHtml(site)+
+    '<b>탐조환경:</b> '+escapeHtml(v25EnvironmentLabel(site))+'<br>'+
+    '<b>현재 탐조 시기:</b> '+currentMonth+'월 · '+escapeHtml(v25CurrentSeason(currentMonth))+' 탐조<br>'+
+    '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site)||'정보 없음')+v23TodayWeatherHtml(site)+
     '<div class="v23InfoBox"><div class="v23Title">탐조지 프로필</div><div class="v24ProfileGrid">'+
-    '<div class="v24ProfileWide"><b>대표 탐조:</b> '+escapeHtml(v23Value(site.mainBirdGroup,site.birds.split(/[ ,]/)[0]))+'</div>'+
-    '<div class="v24ProfileWide"><b>탐조특성:</b> '+escapeHtml(v24FeatureList(site).join(' · '))+'</div>'+
-    '<div class="v24ProfileWide"><b>최적 시기:</b> '+escapeHtml(v23Value(site.bestSeason,''))+' · '+escapeHtml(v23Value(site.bestMonth,''))+' · '+escapeHtml(v23Value(site.bestTime,''))+'</div>'+
+    '<div class="v24ProfileWide"><b>계절 안내:</b> '+escapeHtml(v25SeasonSentence(currentMonth))+'</div>'+
+    '<div class="v24ProfileWide"><b>관찰 포인트:</b> '+escapeHtml(v25BirdGroupSentence(site,currentMonth))+'</div>'+
+    '<div class="v24ProfileWide"><b>현장 특징:</b> '+escapeHtml(v25FeatureSentence(site))+'</div>'+
+    '<div class="v24ProfileWide"><b>추천 시간:</b> '+escapeHtml(v23Value(site.bestTime,''))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 장비:</b> '+escapeHtml(gear.lens)+(gear.reason?'<br><span class="smallText">'+escapeHtml(gear.reason)+'</span>':'')+'</div>'+
     '<div><b>난이도:</b> '+escapeHtml(v23Value(site.difficulty,''))+'</div>'+
     '<div><b>주차:</b> '+escapeHtml(v23Value(site.parkingV23,popupField(source,'주차')))+'</div>'+
@@ -757,8 +814,8 @@ function renderResults(sites){
     name.textContent=(i+1)+'. '+s.name;
     var meta=document.createElement('div');
     meta.className='resultMeta';
-    meta.textContent=s.country+' · '+s.region+' · '+s.env;
-    var birds=shortBirds(s.birds);
+    meta.textContent=s.country+' · '+s.region+' · '+v25EnvironmentLabel(s);
+    var birds=shortBirds(v25SpeciesText(s));
     b.appendChild(name);
     b.appendChild(meta);
     if(birds){
@@ -770,7 +827,7 @@ function renderResults(sites){
     if(s.birdingFeature){
       var featureInfo=document.createElement('span');
       featureInfo.className='resultFeature';
-      featureInfo.textContent='탐조특성 · '+v24FeatureList(s).join(' · ');
+      featureInfo.textContent='탐조 안내 · '+v25FeatureSentence(s);
       b.appendChild(featureInfo);
     }
     box.appendChild(b);
