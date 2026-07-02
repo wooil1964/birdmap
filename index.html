@@ -540,12 +540,23 @@ function v25SpeciesText(site){
   var birds=String(site.birds||'').trim(), group=String(site.mainBirdGroup||'').trim();
   return group&&birds.indexOf(group)===0?birds.slice(group.length).trim():birds;
 }
+function v25HasLowTideException(site){
+  return /간조/.test(String(site.localBirdingTip||''));
+}
+function v25TideSentence(site){
+  if(!site.showTide||v25HasLowTideException(site))return '';
+  return '조석의 영향을 받는 곳이므로 만조 전후 탐조를 권장합니다.';
+}
+function v25DisplayBestTime(site){
+  var value=v23Value(site.bestTime,'');
+  return v25HasLowTideException(site)?value:value.replace(/간조 전후/g,'만조 전후');
+}
 function selectedFeatures(){var a=[];document.querySelectorAll('.featureFilter:checked').forEach(function(b){a.push(b.value);});return a;}
 function v23WeatherTip(site){
   var key=v23Value(site.weatherRuleKey,'');
   var tips={
     'island_migrant':'비 뒤 서풍·북서풍 조건이면 이동성 조류가 섬에 하강할 가능성이 있습니다. Windy에서 풍향·강수 변화를 확인하십시오.',
-    'mudflat_shorebird':'갯벌·하구형 탐조지는 조석과 바람 영향이 큽니다. 간조 전후와 원거리 시야를 함께 확인하십시오.',
+    'mudflat_shorebird':'갯벌·하구형 탐조지는 조석과 바람 영향이 큽니다. 만조 전후와 원거리 시야를 함께 확인하십시오.',
     'pelagic':'선상·외해 탐조지는 풍속·파고가 핵심입니다. 출항 가능성과 해상 안전을 우선 확인하십시오.',
     'winter_waterfowl':'겨울철 수면·농경지 탐조지는 한파와 결빙 뒤 오리류·기러기류 집중 가능성이 있습니다.',
     'raptor':'맑고 시야가 좋으며 바람이 약한 날 맹금 이동·활동 관찰에 유리합니다.',
@@ -628,7 +639,7 @@ function v24TideHtml(tide){
 }
 function v24BriefingInterpretation(site,today){
   var month=new Date().getMonth()+1;
-  return v25EnvironmentLabel(site)+' 환경입니다. '+v25SeasonSentence(month)+' '+v25BirdGroupSentence(site,month)+' '+v25WeatherSentence(today)+' '+v25FeatureSentence(site);
+  return [v25EnvironmentLabel(site)+' 환경입니다.',v25SeasonSentence(month),v25BirdGroupSentence(site,month),v25WeatherSentence(today),v25TideSentence(site),v25FeatureSentence(site)].filter(Boolean).join(' ');
 }
 function v24LocalBirdingTipHtml(site){
   if(!site.localTipUse||!site.localBirdingTip)return '';
@@ -699,7 +710,7 @@ function v23PopupContent(site,desktopContent){
     '<div class="v24ProfileWide"><b>계절 안내:</b> '+escapeHtml(v25SeasonSentence(currentMonth))+'</div>'+
     '<div class="v24ProfileWide"><b>관찰 포인트:</b> '+escapeHtml(v25BirdGroupSentence(site,currentMonth))+'</div>'+
     '<div class="v24ProfileWide"><b>현장 특징:</b> '+escapeHtml(v25FeatureSentence(site))+'</div>'+
-    '<div class="v24ProfileWide"><b>추천 시간:</b> '+escapeHtml(v23Value(site.bestTime,''))+'</div>'+
+    '<div class="v24ProfileWide"><b>추천 시간:</b> '+escapeHtml(v25DisplayBestTime(site))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 장비:</b> '+escapeHtml(gear.lens)+(gear.reason?'<br><span class="smallText">'+escapeHtml(gear.reason)+'</span>':'')+'</div>'+
     '<div><b>난이도:</b> '+escapeHtml(v23Value(site.difficulty,''))+'</div>'+
     '<div><b>주차:</b> '+escapeHtml(v23Value(site.parkingV23,popupField(source,'주차')))+'</div>'+
