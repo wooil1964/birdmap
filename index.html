@@ -521,7 +521,10 @@ function v24BriefingInterpretation(site,today,tide,type){
   if(type==='mudflat'){
     sentences.push(tide?'간조 '+v23Value(tide.lowTide,'정보 없음')+'와 만조 '+v23Value(tide.highTide,'정보 없음')+'를 기준으로 갯벌 노출 시간을 확인하세요.':'방문 전 최신 간조·만조와 갯벌 노출 시간을 확인하세요.');
   }else if(type==='island'){
-    sentences.push('파고 '+v23Value(today&&today.wave,'정보 없음')+'로 여객선 운항 참고 상태는 '+v24FerryStatus(today&&today.wave)+'이며, 실제 운항 여부는 선사 공지를 확인하세요.');
+    var waveText=v23Value(today&&today.wave,'');
+    sentences.push(waveText
+      ? '파고 '+waveText+'로 여객선 운항 참고 상태는 '+v24FerryStatus(today&&today.wave)+'이며, 실제 운항 여부는 선사 공지를 확인하세요.'
+      : '파고 정보가 없어 여객선 운항 상태를 확인해야 하며, 실제 운항 여부는 선사 공지를 확인하세요.');
   }else if(type==='pelagic'){
     sentences.push('파고 '+v23Value(today&&today.wave,'정보 없음')+'와 풍속을 함께 확인하고 출항 및 해상 안전을 우선하세요.');
   }else{
