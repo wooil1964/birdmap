@@ -118,42 +118,8 @@
 <button id="helpToggleBtn" onclick="toggleHelpPanel()">📘 지도 사용법</button>
 <div id="helpPanel">
   <div class="panelHeader"><strong>📘 전국 탐조지도 사용법</strong><button onclick="toggleHelpPanel(false)">닫기</button></div>
-  <div style="padding-top:8px">
-    <div class="helpTitle">탐조 준비 흐름</div>
-    <div class="flowBox">① 가고 싶은 곳 검색<br>→ ② 여러 곳이면 루트 확인<br>→ ③ 지도웹으로 교통 확인<br>→ ④ Windy로 날씨 확인<br>→ ⑤ 탐조일 선택<br>→ ⑥ 배편 예약<br>→ ⑦ 탐조 시작</div>
-
-    <div class="helpTitle">1. 한 곳 검색</div>
-    <ol class="helpList">
-      <li>검색창에 탐조지명, 지역명, 국가명, 종명을 입력합니다.</li>
-      <li>예: <b>호미곶</b>, <b>송도</b>, <b>구미 강정습지</b></li>
-      <li>검색 결과 목록을 누르면 해당 마커로 이동합니다.</li>
-    </ol>
-
-    <div class="helpTitle">2. 여러 곳 함께 검색</div>
-    <ol class="helpList">
-      <li>하루에 두 곳 이상 볼 때는 공백이나 쉼표로 함께 입력합니다.</li>
-      <li>예: <b>호미곶 대왕암공원</b></li>
-      <li>예: <b>호미곶, 대왕암공원</b></li>
-      <li>검색된 여러 마커가 한 화면에 잡히고, 왼쪽 패널에 루트 버튼이 표시됩니다.</li>
-    </ol>
-
-    <div class="helpTitle">3. 루트 확인</div>
-    <ol class="helpList">
-      <li><b>카카오 경로</b>는 두 탐조지의 좌표를 직접 연결합니다.</li>
-      <li><b>네이버 경로검색</b>은 두 탐조지 이름으로 경로 검색을 엽니다.</li>
-      <li>실제 이동 전에는 내비 앱에서 도착지·주차 가능 여부를 다시 확인하십시오.</li>
-    </ol>
-
-    <div class="helpTitle">4. 탐조 전 확인</div>
-    <ol class="helpList">
-      <li>네이버지도는 교통·주변시설 확인에 씁니다.</li>
-      <li>카카오맵은 엑셀 좌표 위치 확인에 씁니다.</li>
-      <li>Windy로 바람·비·파도 확인 후 탐조일을 정합니다.</li>
-      <li>섬탐조는 KSA 여객선에서 배편을 확인합니다.</li>
-    </ol>
-
-    <a class="helpLink" href="https://naver.me/FLERU0Gk" target="_blank">자세한 사용법 보기</a>
-    <div class="helpNote">민감종, 번식지, 휴식지는 과도한 접근과 세부 위치 공유를 자제해 주십시오.</div>
+  <div class="helpGuideWrap">
+    <img class="helpGuideImage" src="./birdmap-user-guide.png" alt="전국 탐조지도 이렇게 활용하세요! 사용법 안내">
   </div>
 </div>
 <div id="jinhoSeal">眞<br>井</div>
@@ -184,9 +150,10 @@
 .noticeImage{display:block;width:100%;max-height:170px;object-fit:contain;margin:7px 0;border:1px solid #ddd;border-radius:6px;background:#f7f7f7}
 .leaflet-popup-content>div>div{width:min(450px,calc(100vw - 80px))!important;max-width:100%}
 #helpToggleBtn{position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-#helpPanel{display:none;position:fixed;top:166px;right:52px;z-index:10000;width:390px;max-height:70vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55}
+#helpPanel{display:none;position:fixed;top:166px;right:52px;z-index:10000;width:min(1100px,calc(100vw - 104px));max-height:70vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55}
 .panelHeader{display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px}
 .helpTitle{font-size:14px;font-weight:bold;color:#174d6f;margin:8px 0 6px}.flowBox{background:#f0f8ff;border:1px solid #9bc7df;border-radius:8px;padding:9px;margin:8px 0;font-weight:bold;color:#174d6f;line-height:1.65}.helpList{margin:7px 0 9px 18px;padding:0}.helpList li{margin-bottom:4px}.helpLink{display:inline-block;margin-top:8px;padding:7px 10px;background:#174d6f;color:white;border-radius:5px;text-decoration:none;font-weight:bold}.helpNote{margin-top:8px;padding-top:8px;border-top:1px solid #ddd;color:#5b1c1c;font-size:12px}
+.helpGuideWrap{padding-top:8px}.helpGuideImage{display:block;width:100%;height:auto;max-width:100%;object-fit:contain}
 
 .v23InfoBox{margin:8px 0;padding:8px;border:1px solid #d7e8d2;background:#f7fff5;border-radius:7px;line-height:1.55}
 .v23InfoBox .v23Title{font-weight:bold;color:#245b1d;margin-bottom:4px}
