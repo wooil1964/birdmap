@@ -702,7 +702,8 @@ function v24TideEventHtml(label,symbol,times,levels){
 function v24TideHtml(tide){
   if(!tide)return '<div class="v24BriefingItem v24ProfileWide"><b>조석:</b> 정보 없음</div>';
   if(tide.unavailable)return '<div class="v24BriefingItem v24ProfileWide"><b>조석:</b> 관측소 없음</div>';
-  return '<div class="v24BriefingItem v24ProfileWide v24TideHeading">조석</div>'+v24TideEventHtml('만조','▲',tide.highTide,tide.highTideLevel)+v24TideEventHtml('간조','▼',tide.lowTide,tide.lowTideLevel);
+  var staleDate=tideToday&&tideToday.date&&tideToday.date!==kstDateText()?'<div class="v24BriefingItem v24ProfileWide"><small>조석 기준 '+escapeHtml(tideToday.date)+'</small></div>':'';
+  return '<div class="v24BriefingItem v24ProfileWide v24TideHeading">조석</div>'+v24TideEventHtml('만조','▲',tide.highTide,tide.highTideLevel)+v24TideEventHtml('간조','▼',tide.lowTide,tide.lowTideLevel)+staleDate;
 }
 function v24BriefingInterpretation(site,today,tide){
   var month=new Date().getMonth()+1;
@@ -1205,7 +1206,6 @@ function loadTideToday(){
     return r.json();
   }).then(function(data){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
-    if(data.date!==kstDateText())throw new Error();
     tideToday=data;
     refreshOpenBirdPopup();
   }).catch(function(){
