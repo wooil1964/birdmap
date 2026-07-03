@@ -763,6 +763,9 @@ function v23TodayWeatherHtml(site){
     '<div class="v24BriefingItem" data-live-weather-row="humidity" style="display:none"><b>습도:</b> <span data-live-weather-field="humidity"></span></div>'+
     '<div class="v24BriefingItem" data-live-weather-row="sky" style="display:none"><b>하늘:</b> <span data-live-weather-field="sky"></span></div>'+
     (today&&today.visibility?'<div class="v24BriefingItem"><b>시정:</b> '+escapeHtml(today.visibility)+'</div>':'')+typeItems+'</div>'+
+    '<div data-live-weather-tomorrow style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid #dce8dc">'+
+    '<div data-live-weather-period="morning" style="display:none;margin-bottom:5px"><b data-live-weather-period-label></b><br><span class="smallText" data-live-weather-period-value></span></div>'+
+    '<div data-live-weather-period="afternoon" style="display:none"><b data-live-weather-period-label></b><br><span class="smallText" data-live-weather-period-value></span></div></div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
     '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</div>'+
     v24LocalBirdingTipHtml(site)+
@@ -789,6 +792,37 @@ function setLiveWeatherField(card,name,value){
   if(row)row.style.display='';
   return true;
 }
+function liveTomorrowPeriodText(period){
+  if(!period||typeof period!=='object')return '';
+  var parts=[];
+  var temperature=liveWeatherNumber(period.temperature,1,'℃');
+  if(temperature)parts.push(temperature);
+  var wind=[period.windDirection,liveWeatherNumber(period.windSpeed,1,'m/s')].filter(Boolean).join(' ');
+  if(wind)parts.push(wind);
+  var rainProbability=liveWeatherNumber(period.rainProbability,0,'%');
+  if(rainProbability)parts.push('강수확률 '+rainProbability);
+  if(period.sky)parts.push(period.sky);
+  return parts.join(' · ');
+}
+function applyLiveTomorrow(card,tomorrow){
+  if(!tomorrow||typeof tomorrow!=='object')return false;
+  var container=card.querySelector('[data-live-weather-tomorrow]'), shown=false;
+  if(!container)return false;
+  ['morning','afternoon'].forEach(function(name){
+    var period=tomorrow[name], text=liveTomorrowPeriodText(period);
+    if(!text)return;
+    var row=container.querySelector('[data-live-weather-period="'+name+'"]');
+    if(!row)return;
+    var time=period.forecastTime&&period.forecastTime.match(/\b(\d{2}):(\d{2})\b/);
+    var fallbackTime=name==='morning'?'09시':'15시';
+    row.querySelector('[data-live-weather-period-label]').textContent=(period.label||(name==='morning'?'내일 오전':'내일 오후'))+' '+(time?time[1]+'시':fallbackTime);
+    row.querySelector('[data-live-weather-period-value]').textContent=text;
+    row.style.display='';
+    shown=true;
+  });
+  if(shown)container.style.display='';
+  return shown;
+}
 function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
   var card=liveWeatherCurrentPopup(site,popup);
   if(!card||!data||data.ok!==true||String(data.siteId)!==String(site.id))return false;
@@ -809,6 +843,7 @@ function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
   setLiveWeatherField(card,'humidity',liveWeatherNumber(humidity,0,'%'));
   setLiveWeatherField(card,'sky',forecast.sky);
   setLiveWeatherField(card,'basis',observation.dataTime?'기상청 최신 기준 '+observation.dataTime:'');
+  applyLiveTomorrow(card,data.tomorrow);
   setLiveWeatherField(card,'status',fromMemoryCache?'기상청 최신 기상 적용 · 브라우저 캐시':'기상청 최신 기상 적용');
   popup.update();
   return true;
