@@ -136,10 +136,18 @@ def request_open_meteo(url: str, parameters: dict[str, Any]) -> dict[str, Any]:
     request = urllib.request.Request(
         request_url, headers={"User-Agent": "birdmap-weather/1.0"}
     )
-    with urllib.request.urlopen(request, timeout=15) as response:
-        if response.status != 200:
-            raise RuntimeError(f"Open-Meteo HTTP {response.status}")
-        return json.loads(response.read().decode("utf-8"))
+    last_error: Exception | None = None
+    for attempt in range(1, 4):
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"Open-Meteo HTTP {response.status}")
+                return json.loads(response.read().decode("utf-8"))
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            last_error = exc
+            if attempt < 3:
+                time.sleep(attempt * 2)
+    raise RuntimeError(f"Open-Meteo request failed: {last_error}")
 
 
 def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str, Any]:
