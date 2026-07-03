@@ -5,6 +5,7 @@ import {
   WORKER_CONFIG,
   createCacheKey,
   fetchJsonWithTimeout,
+  hasCompleteTomorrow,
   handleRequest,
   kmaBaseTimes,
   latestVillageForecastBase,
@@ -32,7 +33,7 @@ test("creates a stable cache key", () => {
   };
   assert.equal(
     createCacheKey("19", grid, bases),
-    "kma-v2:19:60x127:202607031800:202607031830:202607031700",
+    "kma-v3:19:60x127:202607031800:202607031830:202607031700",
   );
 });
 
@@ -211,8 +212,20 @@ test("keeps missing tomorrow periods and fields nullable", () => {
   assert.equal(tomorrow.afternoon, null);
 });
 
+test("only caches responses with both tomorrow periods", () => {
+  assert.equal(
+    hasCompleteTomorrow({ tomorrow: { morning: {}, afternoon: {} } }),
+    true,
+  );
+  assert.equal(hasCompleteTomorrow({ tomorrow: null }), false);
+  assert.equal(
+    hasCompleteTomorrow({ tomorrow: { morning: {}, afternoon: null } }),
+    false,
+  );
+});
+
 test("keeps the configured cache and timeout bounds", () => {
   assert.equal(WORKER_CONFIG.cacheTtlSeconds, 900);
   assert.equal(WORKER_CONFIG.upstreamTimeoutMs, 8000);
-  assert.equal(WORKER_CONFIG.tomorrowTimeoutMs, 5000);
+  assert.equal(WORKER_CONFIG.tomorrowTimeoutMs, 8000);
 });

@@ -253,9 +253,9 @@ def reuse_existing_mapping(reason: Exception) -> bool:
     sites = existing.get("sites")
     if (
         existing.get("source") != "KHOA official tide station list"
-        or existing.get("siteCount") != 88
+        or existing.get("siteCount") not in {88, 92}
         or not isinstance(sites, dict)
-        or len(sites) != 88
+        or len(sites) not in {88, 92}
     ):
         return False
     print(f"Official station refresh failed: {reason}", flush=True)
@@ -272,8 +272,8 @@ def main() -> None:
         raise
     site_data = load_site_data()
     targets = update_tide.load_tide_sites()
-    if len(targets) != 88:
-        raise RuntimeError(f"Tide target count is not 88: {len(targets)}")
+    if len(targets) != 92:
+        raise RuntimeError(f"Tide target count is not 92: {len(targets)}")
 
     mapped_sites: dict[str, Any] = {}
     for position, target in enumerate(targets, start=1):

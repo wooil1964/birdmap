@@ -5,7 +5,7 @@ const KMA_BASE_URL =
 const PRODUCTION_ORIGIN = "https://wooil1964.github.io";
 const CACHE_TTL_SECONDS = 15 * 60;
 const UPSTREAM_TIMEOUT_MS = 8_000;
-const TOMORROW_TIMEOUT_MS = 5_000;
+const TOMORROW_TIMEOUT_MS = 8_000;
 
 export class WorkerError extends Error {
   constructor(code, message, status = 500) {
@@ -114,7 +114,7 @@ export function latestVillageForecastBase(date = new Date()) {
 
 export function createCacheKey(siteId, grid, baseTimes) {
   return [
-    "kma-v2",
+    "kma-v3",
     siteId,
     `${grid.nx}x${grid.ny}`,
     `${baseTimes.observation.date}${baseTimes.observation.time}`,
@@ -363,6 +363,10 @@ export function normalizeTomorrowForecast(items, now = new Date()) {
   };
 }
 
+export function hasCompleteTomorrow(body) {
+  return Boolean(body?.tomorrow?.morning && body?.tomorrow?.afternoon);
+}
+
 async function requestKmaWeather(siteId, site, env, now) {
   const grid = latLonToKmaGrid(Number(site.lat), Number(site.lon));
   const baseTimes = kmaBaseTimes(now);
@@ -514,17 +518,22 @@ export async function handleRequest(request, env = {}, ctx = {}) {
     }
 
     const body = await requestKmaWeather(siteId, site, env, now);
-    const storedResponse = new Response(JSON.stringify(body), {
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": `public, max-age=${CACHE_TTL_SECONDS}`,
-      },
-    });
-    const write = cache.put(cacheRequest, storedResponse);
-    if (ctx.waitUntil) ctx.waitUntil(write);
-    else await write;
+    const cacheable = hasCompleteTomorrow(body);
+    if (cacheable) {
+      const storedResponse = new Response(JSON.stringify(body), {
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Cache-Control": `public, max-age=${CACHE_TTL_SECONDS}`,
+        },
+      });
+      const write = cache.put(cacheRequest, storedResponse);
+      if (ctx.waitUntil) ctx.waitUntil(write);
+      else await write;
+    }
     return jsonResponse(request, env, body, 200, {
-      "Cache-Control": `public, max-age=${CACHE_TTL_SECONDS}`,
+      "Cache-Control": cacheable
+        ? `public, max-age=${CACHE_TTL_SECONDS}`
+        : "no-store",
     });
   } catch (error) {
     return errorResponse(request, env, error);

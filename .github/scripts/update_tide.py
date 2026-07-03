@@ -30,6 +30,16 @@ NS = {
     "rel": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
     "pkg": "http://schemas.openxmlformats.org/package/2006/relationships",
 }
+ADDITIONAL_TIDE_SITES = (
+    {"id": "7", "name": "교동도", "stationName": "강화대교", "stationCode": "DT_0032"},
+    {"id": "13", "name": "화옹호", "stationName": "평택", "stationCode": "DT_0002"},
+    {"id": "134", "name": "솔개공원", "stationName": "울산", "stationCode": "DT_0020"},
+    {"id": "156", "name": "국화도", "stationName": "대산", "stationCode": "DT_0017"},
+)
+FORECAST_STATION_OVERRIDES = {
+    "17": ("안흥", "DT_0067"),
+    "49": ("울산", "DT_0020"),
+}
 
 
 def cell_column(reference: str) -> str:
@@ -102,6 +112,19 @@ def load_tide_sites() -> list[dict[str, str]]:
                 "ruleKey": row.get(columns["tideRuleKey"], "").strip(),
             }
         )
+    target_ids = {target["id"] for target in targets}
+    for additional in ADDITIONAL_TIDE_SITES:
+        if additional["id"] in target_ids:
+            continue
+        targets.append(
+            {
+                "id": additional["id"],
+                "name": additional["name"],
+                "dbStationName": additional["stationName"],
+                "dbStationCode": additional["stationCode"],
+                "ruleKey": "mudflat_high_tide",
+            }
+        )
     return targets
 
 
@@ -125,6 +148,12 @@ def resolve_tide_sites(
     review_count = 0
     for target in targets:
         site = dict(target)
+        override = FORECAST_STATION_OVERRIDES.get(site["id"])
+        if override:
+            site["stationName"], site["stationCode"] = override
+            site["mappingMethod"] = "forecast_fallback"
+            resolved.append(site)
+            continue
         if site["dbStationCode"]:
             site["stationCode"] = site["dbStationCode"]
             site["stationName"] = site["dbStationName"]
