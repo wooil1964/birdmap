@@ -283,9 +283,14 @@ def main() -> None:
         result = choose_station(target["id"], site, stations)
         mapped_sites[target["id"]] = result
         state = "REVIEW" if result["needsReview"] else "OK"
+        distance = (
+            f"{result['distanceKm']:.2f}km"
+            if result["distanceKm"] is not None
+            else "distance unavailable"
+        )
         print(
             f"Site {position}/{len(targets)} {site['name']}: "
-            f"{result['tideStationName']} {result['distanceKm']:.2f}km {state}",
+            f"{result['tideStationName']} {distance} {state}",
             flush=True,
         )
 
