@@ -255,6 +255,12 @@ var activeTerms=[];
 var routeLine=null;
 var weatherToday={updated:'',source:'',sites:{}};
 var tideToday={updated:'',source:'',sites:{}};
+var LIVE_WEATHER_ENABLED=true;
+var LIVE_WEATHER_WORKER_URL='https://birdmap-weather-proxy.wooil-birdmap.workers.dev';
+var LIVE_WEATHER_CACHE_TTL_MS=15*60*1000;
+var LIVE_WEATHER_REQUEST_TIMEOUT_MS=8000;
+var liveWeatherCache=new Map();
+var liveWeatherPending=new Map();
 
 function markerKey(site){return site.id+'|'+site.lat+'|'+site.lon;}
 
@@ -463,6 +469,7 @@ function setupResponsivePopups(){
     popup.setContent(v23PopupContent(site,popup._birdmapDesktopContent));
     popup._birdmapV23Active=true;
     popup.update();
+    requestLiveWeatherForPopup(site,popup);
   });
   map.on('popupclose',function(e){
     var popup=e.popup;
@@ -744,20 +751,95 @@ function v23TodayWeatherHtml(site){
   if(site.showWave)typeItems+='<div class="v24BriefingItem v24ProfileWide"><b>파고:</b> '+escapeHtml(v23Value(today&&today.wave,''))+'</div>';
   if(site.showTide)typeItems+=v24TideHtml(tide);
   if(site.island||site.pelagic)typeItems+='<div class="v24BriefingItem v24ProfileWide"><b>여객선:</b> '+escapeHtml(v24FerryStatus(today&&today.wind,today&&today.wave))+'</div>';
-  return '<div class="v23TodayBox v24BriefingCard"><div class="v23Title">오늘의 탐조 기상</div>'+
+  return '<div class="v23TodayBox v24BriefingCard" data-live-weather-site-id="'+escapeHtml(site.id)+'"><div class="v23Title">오늘의 탐조 기상</div>'+
     '<div class="v24BriefingTop"><span class="v23TodayScore">'+escapeHtml(v23Value(today&&today.grade,''))+' '+escapeHtml(today&&today.score!==undefined?today.score+'점':'정보 없음')+'</span></div>'+
     '<div class="v23WeatherDetails"><input type="checkbox" class="v23WeatherCheck" id="'+detailsId+'"'+(expanded?' checked':'')+'>'+
     '<label class="v23WeatherToggle" for="'+detailsId+'"><span class="v23WeatherShowLabel">▼ 브리핑 자세히 보기</span><span class="v23WeatherHideLabel">▲ 브리핑 접기</span></label>'+
     '<div class="v23WeatherDetailsContent"><div class="v24BriefingGrid">'+
-    '<div class="v24BriefingItem"><b>기온:</b> '+escapeHtml(v23Value(today&&today.temperature,''))+'</div>'+
-    '<div class="v24BriefingItem"><b>풍향:</b> '+escapeHtml(wind.direction)+'</div>'+
-    '<div class="v24BriefingItem"><b>풍속:</b> '+escapeHtml(wind.speed)+'</div>'+
-    '<div class="v24BriefingItem"><b>강수:</b> '+escapeHtml(v23Value(today&&today.rain,''))+'</div>'+
+    '<div class="v24BriefingItem"><b>기온:</b> <span data-live-weather-field="temperature">'+escapeHtml(v23Value(today&&today.temperature,''))+'</span></div>'+
+    '<div class="v24BriefingItem"><b>풍향:</b> <span data-live-weather-field="windDirection">'+escapeHtml(wind.direction)+'</span></div>'+
+    '<div class="v24BriefingItem"><b>풍속:</b> <span data-live-weather-field="windSpeed">'+escapeHtml(wind.speed)+'</span></div>'+
+    '<div class="v24BriefingItem"><b>강수:</b> <span data-live-weather-field="rain">'+escapeHtml(v23Value(today&&today.rain,''))+'</span></div>'+
+    '<div class="v24BriefingItem" data-live-weather-row="humidity" style="display:none"><b>습도:</b> <span data-live-weather-field="humidity"></span></div>'+
+    '<div class="v24BriefingItem" data-live-weather-row="sky" style="display:none"><b>하늘:</b> <span data-live-weather-field="sky"></span></div>'+
     (today&&today.visibility?'<div class="v24BriefingItem"><b>시정:</b> '+escapeHtml(today.visibility)+'</div>':'')+typeItems+'</div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
     '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</div>'+
     v24LocalBirdingTipHtml(site)+
-    (today&&today.forecastTime?'<div class="smallText">예보 기준 '+escapeHtml(today.forecastTime)+'</div>':'')+'</div></div></div>';
+    '<div class="smallText" data-live-weather-field="basis">'+(today&&today.forecastTime?'예보 기준 '+escapeHtml(today.forecastTime):'')+'</div>'+
+    ((LIVE_WEATHER_ENABLED&&site.id&&!site.pelagic)?'<div class="smallText" data-live-weather-field="status">최신 기상 확인 중...</div>':'')+'</div></div></div>';
+}
+function liveWeatherNumber(value,digits,unit){
+  var number=Number(value);
+  if(!Number.isFinite(number))return '';
+  return number.toFixed(digits).replace(/\.0+$/,'')+unit;
+}
+function liveWeatherCurrentPopup(site,popup){
+  var map=map_7010a44f6ac2025090f0fe07508ed485;
+  if(!map||map._popup!==popup||!popup.getElement())return null;
+  var card=popup.getElement().querySelector('[data-live-weather-site-id]');
+  return card&&card.getAttribute('data-live-weather-site-id')===String(site.id)?card:null;
+}
+function setLiveWeatherField(card,name,value){
+  if(value===undefined||value===null||value==='')return false;
+  var field=card.querySelector('[data-live-weather-field="'+name+'"]');
+  if(!field)return false;
+  field.textContent=value;
+  var row=card.querySelector('[data-live-weather-row="'+name+'"]');
+  if(row)row.style.display='';
+  return true;
+}
+function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
+  var card=liveWeatherCurrentPopup(site,popup);
+  if(!card||!data||data.ok!==true||String(data.siteId)!==String(site.id))return false;
+  var observation=data.observation||{}, forecast=data.forecast||{};
+  var temperature=observation.temperature;
+  if(temperature===undefined||temperature===null)temperature=forecast.temperature;
+  var windDirection=observation.windDirection||forecast.windDirection;
+  var windSpeed=observation.windSpeed;
+  if(windSpeed===undefined||windSpeed===null)windSpeed=forecast.windSpeed;
+  var rain=observation.rain;
+  if(rain===undefined||rain===null)rain=forecast.rain;
+  var humidity=observation.humidity;
+  if(humidity===undefined||humidity===null)humidity=forecast.humidity;
+  setLiveWeatherField(card,'temperature',liveWeatherNumber(temperature,1,'℃'));
+  setLiveWeatherField(card,'windDirection',windDirection);
+  setLiveWeatherField(card,'windSpeed',liveWeatherNumber(windSpeed,1,'m/s'));
+  if(rain!==undefined&&rain!==null)setLiveWeatherField(card,'rain',Number(rain)===0?'없음':liveWeatherNumber(rain,1,'mm'));
+  setLiveWeatherField(card,'humidity',liveWeatherNumber(humidity,0,'%'));
+  setLiveWeatherField(card,'sky',forecast.sky);
+  setLiveWeatherField(card,'basis',observation.dataTime?'기상청 최신 기준 '+observation.dataTime:'');
+  setLiveWeatherField(card,'status',fromMemoryCache?'기상청 최신 기상 적용 · 브라우저 캐시':'기상청 최신 기상 적용');
+  popup.update();
+  return true;
+}
+function fetchLiveWeatherForSite(siteId){
+  var cached=liveWeatherCache.get(siteId), now=Date.now();
+  if(cached&&now-cached.fetchedAt<LIVE_WEATHER_CACHE_TTL_MS)return Promise.resolve({data:cached.data,fromMemoryCache:true});
+  if(liveWeatherPending.has(siteId))return liveWeatherPending.get(siteId);
+  var controller=new AbortController();
+  var timeout=setTimeout(function(){controller.abort();},LIVE_WEATHER_REQUEST_TIMEOUT_MS);
+  var request=fetch(LIVE_WEATHER_WORKER_URL+'/weather?siteId='+encodeURIComponent(siteId),{signal:controller.signal})
+    .then(function(response){if(!response.ok)throw new Error('live weather unavailable');return response.json();})
+    .then(function(data){
+      if(!data||data.ok!==true||String(data.siteId)!==siteId)throw new Error('invalid live weather response');
+      liveWeatherCache.set(siteId,{data:data,fetchedAt:Date.now()});
+      return {data:data,fromMemoryCache:false};
+    }).finally(function(){clearTimeout(timeout);liveWeatherPending.delete(siteId);});
+  liveWeatherPending.set(siteId,request);
+  return request;
+}
+function requestLiveWeatherForPopup(site,popup){
+  if(!LIVE_WEATHER_ENABLED||!site||!site.id||site.pelagic)return;
+  var siteId=String(site.id), card=liveWeatherCurrentPopup(site,popup);
+  if(!card)return;
+  setLiveWeatherField(card,'status','최신 기상 확인 중...');
+  fetchLiveWeatherForSite(siteId).then(function(result){
+    applyLiveWeatherToPopup(site,popup,result.data,result.fromMemoryCache);
+  }).catch(function(){
+    var currentCard=liveWeatherCurrentPopup(site,popup);
+    if(currentCard)setLiveWeatherField(currentCard,'status','최신 기상 확인 실패 · 저장 기상 기준 표시 중');
+  });
 }
 function v23ButtonsFromLegacy(source,site){
   var isGukhwado=String(site.id)==='156'&&site.name==='국화도';
@@ -1072,6 +1154,7 @@ function refreshOpenBirdPopup(){
   popup.setContent(v23PopupContent(site,popup._birdmapDesktopContent));
   popup._birdmapV23Active=true;
   popup.update();
+  requestLiveWeatherForPopup(site,popup);
 }
 function kstDateText(){
   var parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
