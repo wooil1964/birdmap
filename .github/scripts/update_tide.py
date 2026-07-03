@@ -282,9 +282,9 @@ def classify_event(row: dict[str, Any]) -> str:
         or ""
     ).strip().lower()
     compact = re.sub(r"[.\s_-]", "", code)
-    if compact in {"저조", "low", "l", "lw", "0", "2"} or "저" in code or "low" in code:
+    if compact in {"저조", "low", "l", "lw", "0", "2", "4"} or "저" in code or "low" in code:
         return "low"
-    if compact in {"고조", "high", "h", "hw", "1"} or "고" in code or "high" in code:
+    if compact in {"고조", "high", "h", "hw", "1", "3"} or "고" in code or "high" in code:
         return "high"
     return ""
 
