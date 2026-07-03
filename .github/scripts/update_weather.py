@@ -483,6 +483,22 @@ def process_site(
             float(site["lat"]), float(site["lon"]), target
         )
         weather_source = "Open-Meteo fallback"
+    if not any(
+        value is not None for value in atmospheric.get("visibility-surface", [])
+    ):
+        try:
+            visibility_fallback = open_meteo_atmospheric(
+                float(site["lat"]), float(site["lon"]), target
+            )
+            fallback_values = visibility_fallback.get("visibility-surface", [None])
+            fallback_value = fallback_values[0] if fallback_values else None
+            atmospheric["visibility-surface"] = [fallback_value] * len(
+                atmospheric.get("ts", [])
+            )
+            if weather_source == "Windy Point Forecast API":
+                weather_source = "Windy with Open-Meteo visibility"
+        except Exception as exc:
+            print(f"{site['name']}: visibility fallback unavailable: {exc}", flush=True)
     wave = None
     wave_coordinate = None
     if site.get("showWave") or site.get("island") or site.get("pelagic"):
