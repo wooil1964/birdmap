@@ -9,10 +9,10 @@ on:
       - ".github/workflows/update-weather.yml"
   schedule:
     # GitHub Actions cron uses UTC: 21/01/05/09 UTC = 06/10/14/18 KST.
-    - cron: "0 21 * * *"
-    - cron: "0 1 * * *"
-    - cron: "0 5 * * *"
-    - cron: "0 9 * * *"
+    - cron: "17 21 * * *"
+    - cron: "17 1 * * *"
+    - cron: "17 5 * * *"
+    - cron: "17 9 * * *"
   workflow_dispatch:
 
 permissions:
