@@ -236,7 +236,9 @@ function kmaItems(payload) {
 
 function numeric(value) {
   const number = Number.parseFloat(value);
-  return Number.isFinite(number) ? number : null;
+  return Number.isFinite(number) && number !== 999 && number !== -999
+    ? number
+    : null;
 }
 
 function rainAmount(value) {

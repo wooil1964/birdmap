@@ -335,7 +335,7 @@ function ensureMasterDbMarkers(){
       +'<a class="windy" target="_blank" href="'+escapeHtml(site.windyUrl||('https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10'))+'">Windy</a> '
       +(site.ksaUrl?'<a class="ksa" target="_blank" href="'+escapeHtml(site.ksaUrl)+'">KSA</a>':'');
     var popup='<div><h4>'+escapeHtml(site.name)+'</h4><b>대표종:</b> '+escapeHtml(site.birds)+'<br><b>주차:</b> 정보 없음<br><b>화장실:</b> 정보 없음<br><b>숙박:</b> 정보 없음<br><b>선박정보:</b> 정보 없음<br><b>주의사항:</b> 정보 없음<br>'+links+'</div>';
-    window[site.markerVar]=L.marker([site.lat,site.lon]).addTo(map_7010a44f6ac2025090f0fe07508ed485).bindPopup(popup,{maxWidth:500});
+    window[site.markerVar]=L.marker([site.lat,site.lon]).addTo(map_7010a44f6ac2025090f0fe07508ed485).bindPopup(popup,{maxWidth:500}).bindTooltip(escapeHtml(site.name),{sticky:true});
   });
 }
 
@@ -752,8 +752,12 @@ function v23TodayWeatherHtml(site){
 }
 function liveWeatherNumber(value,digits,unit){
   var number=Number(value);
-  if(!Number.isFinite(number))return '';
+  if(!Number.isFinite(number)||number===999||number===-999)return '';
   return number.toFixed(digits).replace(/\.0+$/,'')+unit;
+}
+function liveWeatherUsableNumber(value){
+  var number=Number(value);
+  return Number.isFinite(number)&&number!==999&&number!==-999;
 }
 function liveWeatherCurrentPopup(site,popup){
   var map=map_7010a44f6ac2025090f0fe07508ed485;
@@ -819,15 +823,11 @@ function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
   var card=liveWeatherCurrentPopup(site,popup);
   if(!card||!data||data.ok!==true||String(data.siteId)!==String(site.id))return false;
   var observation=data.observation||{}, forecast=data.forecast||{};
-  var temperature=observation.temperature;
-  if(temperature===undefined||temperature===null)temperature=forecast.temperature;
+  var temperature=liveWeatherUsableNumber(observation.temperature)?observation.temperature:forecast.temperature;
   var windDirection=observation.windDirection||forecast.windDirection;
-  var windSpeed=observation.windSpeed;
-  if(windSpeed===undefined||windSpeed===null)windSpeed=forecast.windSpeed;
-  var rain=observation.rain;
-  if(rain===undefined||rain===null)rain=forecast.rain;
-  var humidity=observation.humidity;
-  if(humidity===undefined||humidity===null)humidity=forecast.humidity;
+  var windSpeed=liveWeatherUsableNumber(observation.windSpeed)?observation.windSpeed:forecast.windSpeed;
+  var rain=liveWeatherUsableNumber(observation.rain)?observation.rain:forecast.rain;
+  var humidity=liveWeatherUsableNumber(observation.humidity)?observation.humidity:forecast.humidity;
   setLiveWeatherField(card,'temperature',liveWeatherNumber(temperature,1,'℃'));
   setLiveWeatherField(card,'windDirection',windDirection);
   setLiveWeatherField(card,'windSpeed',liveWeatherNumber(windSpeed,1,'m/s'));

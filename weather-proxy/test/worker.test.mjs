@@ -163,6 +163,25 @@ test("keeps observation and forecast timestamps separate", () => {
   assert.equal(forecast.sky, "구름 많음");
 });
 
+test("treats KMA sentinel weather values as missing", () => {
+  const observation = normalizeObservation([
+    { category: "T1H", obsrValue: "-999", baseDate: "20260704", baseTime: "0800" },
+    { category: "WSD", obsrValue: "999", baseDate: "20260704", baseTime: "0800" },
+  ]);
+  assert.equal(observation.temperature, null);
+  assert.equal(observation.windSpeed, null);
+
+  const tomorrow = normalizeTomorrowForecast(
+    [
+      { category: "TMP", fcstValue: "999.0", fcstDate: "20260705", fcstTime: "0900" },
+      { category: "TMP", fcstValue: "26", fcstDate: "20260705", fcstTime: "1500" },
+    ],
+    new Date("2026-07-04T00:00:00Z"),
+  );
+  assert.equal(tomorrow.morning.temperature, null);
+  assert.equal(tomorrow.afternoon.temperature, 26);
+});
+
 test("selects tomorrow 09:00 and 15:00 KST forecasts", () => {
   const items = [
     { category: "TMP", fcstValue: "24", fcstDate: "20260704", fcstTime: "0900" },
