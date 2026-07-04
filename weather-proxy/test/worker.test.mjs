@@ -13,6 +13,7 @@ import {
   normalizeForecast,
   normalizeObservation,
   normalizeTomorrowForecast,
+  weatherNumber,
 } from "../src/index.js";
 
 const productionOrigin = { Origin: "https://wooil1964.github.io" };
@@ -163,22 +164,118 @@ test("keeps observation and forecast timestamps separate", () => {
   assert.equal(forecast.sky, "구름 많음");
 });
 
-test("treats KMA sentinel weather values as missing", () => {
+test("rejects missing, non-finite, sentinel, and out-of-range weather values", () => {
+  const invalidValues = [
+    999,
+    999.0,
+    -999,
+    998,
+    998.0,
+    -998,
+    998.9,
+    -998.9,
+    null,
+    undefined,
+    "",
+    "   ",
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+  ];
+  for (const field of [
+    "temperature",
+    "windSpeed",
+    "rain",
+    "humidity",
+    "windDirection",
+    "rainProbability",
+  ]) {
+    for (const value of invalidValues) {
+      assert.equal(weatherNumber(value, field), null, `${field}: ${String(value)}`);
+    }
+  }
+
+  const rangeCases = {
+    temperature: { valid: [-60, -12.5, 0, 24.1, 60], invalid: [-60.1, 60.1] },
+    windSpeed: { valid: [0, 3.4, 100], invalid: [-0.1, 100.1] },
+    rain: { valid: [0, 1.2, 500], invalid: [-0.1, 500.1] },
+    humidity: { valid: [0, 72, 100], invalid: [-0.1, 100.1] },
+    windDirection: { valid: [0, 225, 360], invalid: [-0.1, 360.1] },
+    rainProbability: { valid: [0, 30, 100], invalid: [-0.1, 100.1] },
+  };
+  for (const [field, cases] of Object.entries(rangeCases)) {
+    for (const value of cases.valid) assert.equal(weatherNumber(value, field), value);
+    for (const value of cases.invalid) assert.equal(weatherNumber(value, field), null);
+  }
+});
+
+test("normalizes invalid observation sentinels without changing real zero values", () => {
   const observation = normalizeObservation([
     { category: "T1H", obsrValue: "-999", baseDate: "20260704", baseTime: "0800" },
-    { category: "WSD", obsrValue: "999", baseDate: "20260704", baseTime: "0800" },
+    { category: "WSD", obsrValue: "-998.9", baseDate: "20260704", baseTime: "0800" },
+    { category: "RN1", obsrValue: "-998.9", baseDate: "20260704", baseTime: "0800" },
+    { category: "REH", obsrValue: "-998", baseDate: "20260704", baseTime: "0800" },
+    { category: "VEC", obsrValue: "-998", baseDate: "20260704", baseTime: "0800" },
   ]);
   assert.equal(observation.temperature, null);
   assert.equal(observation.windSpeed, null);
+  assert.equal(observation.rain, null);
+  assert.equal(observation.humidity, null);
+  assert.equal(observation.windDirectionDegrees, null);
+  assert.equal(observation.windDirection, null);
+
+  const zeroObservation = normalizeObservation([
+    { category: "T1H", obsrValue: "0", baseDate: "20260704", baseTime: "0800" },
+    { category: "WSD", obsrValue: "0", baseDate: "20260704", baseTime: "0800" },
+    { category: "RN1", obsrValue: "0", baseDate: "20260704", baseTime: "0800" },
+    { category: "REH", obsrValue: "0", baseDate: "20260704", baseTime: "0800" },
+    { category: "VEC", obsrValue: "0", baseDate: "20260704", baseTime: "0800" },
+  ]);
+  assert.equal(zeroObservation.temperature, 0);
+  assert.equal(zeroObservation.windSpeed, 0);
+  assert.equal(zeroObservation.rain, 0);
+  assert.equal(zeroObservation.humidity, 0);
+  assert.equal(zeroObservation.windDirectionDegrees, 0);
+  assert.equal(zeroObservation.windDirection, "북풍");
+});
+
+test("applies range validation to current and tomorrow forecasts", () => {
+  const forecast = normalizeForecast(
+    [
+      { category: "T1H", fcstValue: "998.9", baseDate: "20260704", baseTime: "1230", fcstDate: "20260704", fcstTime: "1300" },
+      { category: "WSD", fcstValue: "-998.9", baseDate: "20260704", baseTime: "1230", fcstDate: "20260704", fcstTime: "1300" },
+      { category: "RN1", fcstValue: "-998.9", baseDate: "20260704", baseTime: "1230", fcstDate: "20260704", fcstTime: "1300" },
+      { category: "REH", fcstValue: "-998", baseDate: "20260704", baseTime: "1230", fcstDate: "20260704", fcstTime: "1300" },
+      { category: "VEC", fcstValue: "-998", baseDate: "20260704", baseTime: "1230", fcstDate: "20260704", fcstTime: "1300" },
+      { category: "SKY", fcstValue: "2", baseDate: "20260704", baseTime: "1230", fcstDate: "20260704", fcstTime: "1300" },
+    ],
+    new Date("2026-07-04T04:00:00Z"),
+  );
+  assert.equal(forecast.temperature, null);
+  assert.equal(forecast.windSpeed, null);
+  assert.equal(forecast.rain, null);
+  assert.equal(forecast.humidity, null);
+  assert.equal(forecast.windDirectionDegrees, null);
+  assert.equal(forecast.windDirection, null);
+  assert.equal(forecast.sky, null);
 
   const tomorrow = normalizeTomorrowForecast(
     [
       { category: "TMP", fcstValue: "999.0", fcstDate: "20260705", fcstTime: "0900" },
+      { category: "WSD", fcstValue: "-998.9", fcstDate: "20260705", fcstTime: "0900" },
+      { category: "VEC", fcstValue: "-998", fcstDate: "20260705", fcstTime: "0900" },
+      { category: "POP", fcstValue: "998", fcstDate: "20260705", fcstTime: "0900" },
+      { category: "SKY", fcstValue: "2", fcstDate: "20260705", fcstTime: "0900" },
       { category: "TMP", fcstValue: "26", fcstDate: "20260705", fcstTime: "1500" },
     ],
     new Date("2026-07-04T00:00:00Z"),
   );
   assert.equal(tomorrow.morning.temperature, null);
+  assert.equal(tomorrow.morning.windSpeed, null);
+  assert.equal(tomorrow.morning.windDirectionDegrees, null);
+  assert.equal(tomorrow.morning.windDirection, null);
+  assert.equal(tomorrow.morning.rainProbability, null);
+  assert.equal(tomorrow.morning.sky, null);
   assert.equal(tomorrow.afternoon.temperature, 26);
 });
 
@@ -204,6 +301,7 @@ test("selects tomorrow 09:00 and 15:00 KST forecasts", () => {
     forecastTime: "2026-07-04 09:00 KST",
     temperature: 24,
     windSpeed: 2,
+    windDirectionDegrees: 270,
     windDirection: "서풍",
     rainProbability: 10,
     sky: "구름 많음",
@@ -213,6 +311,7 @@ test("selects tomorrow 09:00 and 15:00 KST forecasts", () => {
     forecastTime: "2026-07-04 15:00 KST",
     temperature: 27,
     windSpeed: 3.1,
+    windDirectionDegrees: 225,
     windDirection: "남서풍",
     rainProbability: 30,
     sky: "흐림",

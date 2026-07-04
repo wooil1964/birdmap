@@ -234,18 +234,31 @@ function kmaItems(payload) {
   return items;
 }
 
-function numeric(value) {
-  const number = Number.parseFloat(value);
-  return Number.isFinite(number) && number !== 999 && number !== -999
-    ? number
-    : null;
+export const WEATHER_VALUE_RANGES = Object.freeze({
+  temperature: Object.freeze({ min: -60, max: 60 }),
+  windSpeed: Object.freeze({ min: 0, max: 100 }),
+  rain: Object.freeze({ min: 0, max: 500 }),
+  humidity: Object.freeze({ min: 0, max: 100 }),
+  windDirection: Object.freeze({ min: 0, max: 360 }),
+  rainProbability: Object.freeze({ min: 0, max: 100 }),
+});
+
+export function weatherNumber(value, field) {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "number" && typeof value !== "string") return null;
+  if (typeof value === "string" && value.trim() === "") return null;
+  const range = WEATHER_VALUE_RANGES[field];
+  if (!range) return null;
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  return number >= range.min && number <= range.max ? number : null;
 }
 
 function rainAmount(value) {
   if (value == null) return null;
-  if (value === "강수없음") return 0;
-  const match = String(value).match(/[\d.]+/);
-  return match ? Number.parseFloat(match[0]) : null;
+  if (String(value).trim() === "강수없음") return 0;
+  const match = String(value).match(/-?\d+(?:\.\d+)?/);
+  return match ? weatherNumber(match[0], "rain") : null;
 }
 
 export function windDirectionName(degrees) {
@@ -272,16 +285,16 @@ export function normalizeObservation(items) {
   const values = Object.fromEntries(
     items.map((item) => [item.category, item.obsrValue]),
   );
-  const direction = numeric(values.VEC);
+  const direction = weatherNumber(values.VEC, "windDirection");
   const first = items[0] || {};
   return {
     dataTime: kstTimestamp(first.baseDate, first.baseTime),
-    temperature: numeric(values.T1H),
-    windSpeed: numeric(values.WSD),
+    temperature: weatherNumber(values.T1H, "temperature"),
+    windSpeed: weatherNumber(values.WSD, "windSpeed"),
     windDirectionDegrees: direction,
     windDirection: windDirectionName(direction),
     rain: rainAmount(values.RN1),
-    humidity: numeric(values.REH),
+    humidity: weatherNumber(values.REH, "humidity"),
   };
 }
 
@@ -305,16 +318,16 @@ export function normalizeForecast(items, now = new Date()) {
     selected.map((item) => [item.category, item.fcstValue]),
   );
   const first = selected[0] || items[0] || {};
-  const direction = numeric(values.VEC);
+  const direction = weatherNumber(values.VEC, "windDirection");
   return {
     issuedAt: kstTimestamp(first.baseDate, first.baseTime),
     forecastTime: kstTimestamp(first.fcstDate, first.fcstTime),
-    temperature: numeric(values.T1H),
-    windSpeed: numeric(values.WSD),
+    temperature: weatherNumber(values.T1H, "temperature"),
+    windSpeed: weatherNumber(values.WSD, "windSpeed"),
     windDirectionDegrees: direction,
     windDirection: windDirectionName(direction),
     rain: rainAmount(values.RN1),
-    humidity: numeric(values.REH),
+    humidity: weatherNumber(values.REH, "humidity"),
     sky: skyName(values.SKY),
   };
 }
@@ -335,14 +348,15 @@ function normalizeTomorrowPeriod(items, targetDate, targetTime, label) {
   const values = Object.fromEntries(
     selected.map((item) => [item.category, item.fcstValue]),
   );
-  const direction = numeric(values.VEC);
+  const direction = weatherNumber(values.VEC, "windDirection");
   return {
     label,
     forecastTime: kstTimestamp(targetDate, targetTime),
-    temperature: numeric(values.TMP),
-    windSpeed: numeric(values.WSD),
+    temperature: weatherNumber(values.TMP, "temperature"),
+    windSpeed: weatherNumber(values.WSD, "windSpeed"),
+    windDirectionDegrees: direction,
     windDirection: windDirectionName(direction),
-    rainProbability: numeric(values.POP),
+    rainProbability: weatherNumber(values.POP, "rainProbability"),
     sky: skyName(values.SKY),
   };
 }
