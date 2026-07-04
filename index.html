@@ -745,7 +745,7 @@ function v23TodayWeatherHtml(site){
     '<div class="v26TomorrowPeriod" data-live-weather-period="morning" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="sky"></div></div>'+
     '<div class="v26TomorrowPeriod" data-live-weather-period="afternoon" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="sky"></div></div></div></div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
-    '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> '+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</div>'+
+   '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> <span data-live-weather-field="interpretation">'+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</span></div>'+
     v24LocalBirdingTipHtml(site)+
     '<div class="smallText" data-live-weather-field="basis">'+(today&&today.forecastTime?'예보 기준 '+escapeHtml(today.forecastTime):'')+'</div>'+
     ((LIVE_WEATHER_ENABLED&&site.id&&!site.pelagic)?'<div class="smallText" data-live-weather-field="status">최신 기상 확인 중...</div>':'')+'</div></div></div>';
@@ -864,6 +864,12 @@ function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
   if(liveWeatherUsableNumber(rain,'rain'))setLiveWeatherField(card,'rain',Number(rain)===0?'없음':liveWeatherNumber(rain,1,'mm','rain'));else setLiveWeatherMissing(card,'rain');
   if(!setLiveWeatherField(card,'humidity',liveWeatherNumber(humidity,0,'%','humidity')))setLiveWeatherMissing(card,'humidity');
   if(!setLiveWeatherField(card,'sky',liveWeatherSky(forecast.sky)))setLiveWeatherMissing(card,'sky');
+  var mergedToday=Object.assign({},weatherTodayForSite(site)||{});
+var liveTemperatureText=liveWeatherNumber(temperature,1,'℃','temperature');
+if(liveTemperatureText)mergedToday.temperature=liveTemperatureText;
+var liveWindSpeedText=liveWeatherNumber(windSpeed,1,'m/s','windSpeed');
+if(windDirection&&liveWindSpeedText)mergedToday.wind=windDirection+' '+liveWindSpeedText;
+setLiveWeatherField(card,'interpretation',v24BriefingInterpretation(site,mergedToday,tideTodayForSite(site)));  
   setLiveWeatherField(card,'basis',observation.dataTime?'기상청 최신 기준 '+observation.dataTime:'');
   applyLiveTomorrow(card,data.tomorrow);
   setLiveWeatherField(card,'status',fromMemoryCache?'기상청 최신 기상 적용 · 브라우저 캐시':'기상청 최신 기상 적용');
