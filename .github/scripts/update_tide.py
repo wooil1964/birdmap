@@ -368,6 +368,17 @@ def build_site_result(site: dict[str, str], payload: dict[str, Any], now: dateti
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "stale": False,
     }
+def build_tomorrow_result(
+    site: dict[str, str], payload: dict[str, Any], now: datetime
+) -> dict[str, Any]:
+    result = build_site_result(site, payload, now)
+    return {
+        "lowTide": result["lowTide"],
+        "highTide": result["highTide"],
+        "lowTideLevel": result["lowTideLevel"],
+        "highTideLevel": result["highTideLevel"],
+    }
+
 
 
 def load_previous_sites(expected_date: str) -> dict[str, Any]:
@@ -384,7 +395,90 @@ def load_previous_sites(expected_date: str) -> dict[str, Any]:
     sites = data.get("sites", {})
     return sites if isinstance(sites, dict) else {}
 
+def fetch_and_build(
+    api_key: str,
+    groups: list[list[dict[str, str]]],
+    date_text: str,
+    now: datetime,
+    site_positions: dict[str, int],
+    total_targets: int,
+    build_fn: Any,
+    previous_for: Any,
+    label: str,
+) -> tuple[dict[str, Any], int, int, int]:
+    results: dict[str, Any] = {}
+    success_count = 0
+    failed_count = 0
+    reused_count = 0
+    if not groups:
+        return results, success_count, failed_count, reused_count
 
+    def handle_failure(group: list[dict[str, str]], exc: Exception) -> None:
+        nonlocal failed_count, reused_count
+        for site in group:
+            failed_count += 1
+            previous = previous_for(site["id"])
+            if isinstance(previous, dict):
+                result = dict(previous)
+                result["stale"] = True
+                result["error"] = str(exc) or type(exc).__name__
+                results[site["id"]] = result
+                reused_count += 1
+                state = f"{result['error']} - REUSED"
+            else:
+                state = str(exc) or type(exc).__name__
+            print(
+                f"[{label}] Site {site_positions[site['id']]}/{total_targets} "
+                f"{site['name']}: {state}",
+                flush=True,
+            )
+
+    first_group = groups[0]
+    first_site = first_group[0]
+    print(f"[{label}] Testing first tide station before full run", flush=True)
+    try:
+        first_payload = request_prediction(
+            api_key, first_site["stationCode"], date_text, diagnostic=True
+        )
+        for site in first_group:
+            results[site["id"]] = build_fn(site, first_payload, now)
+            success_count += 1
+            print(
+                f"[{label}] Site {site_positions[site['id']]}/{total_targets} {site['name']}: OK",
+                flush=True,
+            )
+    except Exception as exc:
+        handle_failure(first_group, exc)
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(
+                request_prediction, api_key, group[0]["stationCode"], date_text
+            ): group
+            for group in groups[1:]
+        }
+        for future in as_completed(futures):
+            group = futures[future]
+            try:
+                payload = future.result()
+            except Exception as exc:
+                handle_failure(group, exc)
+            else:
+                for site in group:
+                    try:
+                        result = build_fn(site, payload, now)
+                    except Exception as exc:
+                        handle_failure([site], exc)
+                    else:
+                        results[site["id"]] = result
+                        success_count += 1
+                        print(
+                            f"[{label}] Site {site_positions[site['id']]}/{total_targets} "
+                            f"{site['name']}: OK",
+                            flush=True,
+                        )
+
+    return results, success_count, failed_count, reused_count
 def main() -> None:
     targets = load_tide_sites()
     mapping_sites = load_station_mapping()
@@ -403,6 +497,8 @@ def main() -> None:
     now = datetime.now(KST)
     date_text = now.strftime("%Y%m%d")
     date_iso = now.strftime("%Y-%m-%d")
+      tomorrow = now + timedelta(days=1)
+    tomorrow_date_text = tomorrow.strftime("%Y%m%d")  
     previous_sites = load_previous_sites(date_iso)
     results: dict[str, Any] = {}
     success_count = 0
@@ -436,96 +532,22 @@ def main() -> None:
     for site in sites:
         station_groups.setdefault(site["stationCode"], []).append(site)
     groups = list(station_groups.values())
-    first_group = groups[0]
-    first_site = first_group[0]
-    print("Testing first tide station before full run", flush=True)
-    try:
-        first_payload = request_prediction(
-            api_key, first_site["stationCode"], date_text, diagnostic=True
-        )
-        for site in first_group:
-            results[site["id"]] = build_site_result(site, first_payload, now)
-            success_count += 1
-            print(
-                f"Site {site_positions[site['id']]}/{len(targets)} {site['name']}: OK",
-                flush=True,
-            )
-    except Exception as exc:
-        for site in first_group:
-            failed_count += 1
-            previous = previous_sites.get(site["id"])
-            if isinstance(previous, dict):
-                result = dict(previous)
-                result["stale"] = True
-                result["error"] = str(exc) or type(exc).__name__
-                results[site["id"]] = result
-                reused_count += 1
-                state = f"{result['error']} - REUSED"
-            else:
-                state = str(exc) or type(exc).__name__
-            print(
-                f"Site {site_positions[site['id']]}/{len(targets)} {site['name']}: {state}",
-                flush=True,
-            )
+       today_results, success_count, today_failed, reused_count = fetch_and_build(
+        api_key, groups, date_text, now, site_positions, len(targets),
+        build_site_result, lambda site_id: previous_sites.get(site_id), "today",
+    )
+    results.update(today_results)
+    failed_count += today_failed
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(
-                request_prediction, api_key, group[0]["stationCode"], date_text
-            ): group
-            for group in groups[1:]
-        }
-        for future in as_completed(futures):
-            group = futures[future]
-            try:
-                payload = future.result()
-            except Exception as exc:
-                for site in group:
-                    failed_count += 1
-                    previous = previous_sites.get(site["id"])
-                    if isinstance(previous, dict):
-                        result = dict(previous)
-                        result["stale"] = True
-                        result["error"] = str(exc) or type(exc).__name__
-                        results[site["id"]] = result
-                        reused_count += 1
-                        state = f"{result['error']} - REUSED"
-                    else:
-                        state = str(exc) or type(exc).__name__
-                    print(
-                        f"Site {site_positions[site['id']]}/{len(targets)} "
-                        f"{site['name']}: {state}",
-                        flush=True,
-                    )
-            else:
-                for site in group:
-                    try:
-                        result = build_site_result(site, payload, now)
-                    except Exception as exc:
-                        failed_count += 1
-                        previous = previous_sites.get(site["id"])
-                        if isinstance(previous, dict):
-                            result = dict(previous)
-                            result["stale"] = True
-                            result["error"] = str(exc) or type(exc).__name__
-                            results[site["id"]] = result
-                            reused_count += 1
-                            state = f"{result['error']} - REUSED"
-                        else:
-                            state = str(exc) or type(exc).__name__
-                        print(
-                            f"Site {site_positions[site['id']]}/{len(targets)} "
-                            f"{site['name']}: {state}",
-                            flush=True,
-                        )
-                    else:
-                        results[site["id"]] = result
-                        success_count += 1
-                        print(
-                            f"Site {site_positions[site['id']]}/{len(targets)} "
-                            f"{site['name']}: OK",
-                            flush=True,
-                        )
+    tomorrow_results, tomorrow_success, tomorrow_failed, tomorrow_reused = fetch_and_build(
+        api_key, groups, tomorrow_date_text, tomorrow, site_positions, len(targets),
+        build_tomorrow_result,
+        lambda site_id: previous_sites.get(site_id, {}).get("tomorrow") if isinstance(previous_sites.get(site_id), dict) else None,
+        "tomorrow",
+    )
+    for site_id, tomorrow_result in tomorrow_results.items():
+        if site_id in results:
+            results[site_id]["tomorrow"] = tomorrow_result
 
     print(f"Success: {success_count}", flush=True)
     print(f"Failed: {failed_count}", flush=True)
@@ -535,6 +557,11 @@ def main() -> None:
 
     output = {
         "date": date_iso,
+            "tomorrowDate": tomorrow.strftime("%Y-%m-%d"),
+        "tomorrowSuccessCount": tomorrow_success,
+        "tomorrowFailedCount": tomorrow_failed,
+        "tomorrowReusedCount": tomorrow_reused,
+        "tomorrowStatus": "ok" if tomorrow_failed == 0 else "partial",    
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "source": "KHOA Tide Forecast OpenAPI",
         "status": "ok" if failed_count == 0 else "partial",
