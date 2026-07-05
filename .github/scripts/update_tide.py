@@ -532,7 +532,7 @@ def main() -> None:
     for site in sites:
         station_groups.setdefault(site["stationCode"], []).append(site)
     groups = list(station_groups.values())
-       today_results, success_count, today_failed, reused_count = fetch_and_build(
+    today_results, success_count, today_failed, reused_count = fetch_and_build(
         api_key, groups, date_text, now, site_positions, len(targets),
         build_site_result, lambda site_id: previous_sites.get(site_id), "today",
     )
