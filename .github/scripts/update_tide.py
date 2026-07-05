@@ -497,7 +497,7 @@ def main() -> None:
     now = datetime.now(KST)
     date_text = now.strftime("%Y%m%d")
     date_iso = now.strftime("%Y-%m-%d")
-      tomorrow = now + timedelta(days=1)
+    tomorrow = now + timedelta(days=1)
     tomorrow_date_text = tomorrow.strftime("%Y%m%d")  
     previous_sites = load_previous_sites(date_iso)
     results: dict[str, Any] = {}
