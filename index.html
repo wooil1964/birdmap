@@ -176,6 +176,7 @@
 .v26TomorrowValue{font-size:11px;line-height:1.35;overflow-wrap:anywhere}
 .v24TideHeading{font-weight:bold;margin-top:3px}
 .v24TideEvent{padding-left:5px}
+  .v26TideTomorrow{margin-top:7px;padding-top:7px;border-top:1px solid #e1c46a}.v26TideTomorrowTitle{font-weight:bold;margin-bottom:3px}.v26TideTomorrowEvents{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}.v26TideTomorrowEvent{font-size:12px}  
 .v24BriefingInterpretation{margin-top:5px;padding-top:5px;border-top:1px solid rgba(118,86,0,.2)}
 .v24LocalBirdingTip{margin-top:5px;padding-top:5px;border-top:1px solid rgba(118,86,0,.2)}
 .v24FerryNote{margin-top:3px;font-size:11px;color:#6b4d00}
@@ -699,11 +700,41 @@ function v24TideEventHtml(label,symbol,times,levels){
   });
   return '<div class="v24BriefingItem v24ProfileWide v24TideEvent">'+events.join(' · ')+'</div>';
 }
+ function v24TideMinutesOfDay(time){
+  var match=String(time||'').match(/^(\d{1,2}):(\d{2})$/);
+  return match?Number(match[1])*60+Number(match[2]):null;
+}
+function v24TideDayEvents(day){
+  if(!day)return [];
+  var highs=v24TideParts(day.highTide), highLevels=v24TideParts(day.highTideLevel);
+  var lows=v24TideParts(day.lowTide), lowLevels=v24TideParts(day.lowTideLevel);
+  var events=[];
+  highs.forEach(function(time,index){events.push({time:time,level:highLevels[index]||'',label:'만조',symbol:'▲',minutes:v24TideMinutesOfDay(time)});});
+  lows.forEach(function(time,index){events.push({time:time,level:lowLevels[index]||'',label:'간조',symbol:'▼',minutes:v24TideMinutesOfDay(time)});});
+  events.sort(function(a,b){
+    if(a.minutes===null)return b.minutes===null?0:1;
+    if(b.minutes===null)return -1;
+    return a.minutes-b.minutes;
+  });
+  return events;
+}
+function v24TideEventLineHtml(event){
+  return '<div class="v24TideEvent">'+event.symbol+' '+event.label+' '+escapeHtml(event.time)+(event.level?' ('+escapeHtml(v24TideLevelDisplay(event.level))+'cm)':'')+'</div>';
+}
+function v24TideDayColumnHtml(label,events){
+  return '<div class="v24TideDay"><div class="v24TideDayLabel">'+label+'</div>'+(events.length?events.map(v24TideEventLineHtml).join(''):'<div class="v24TideEvent">정보 없음</div>')+'</div>';
+}   
 function v24TideHtml(tide){
   if(!tide)return '<div class="v24BriefingItem v24ProfileWide"><b>조석:</b> 정보 없음</div>';
   if(tide.unavailable)return '<div class="v24BriefingItem v24ProfileWide"><b>조석:</b> 관측소 없음</div>';
-  var staleDate=tideToday&&tideToday.date&&tideToday.date!==kstDateText()?'<div class="v24BriefingItem v24ProfileWide"><small>조석 기준 '+escapeHtml(tideToday.date)+'</small></div>':'';
-  return '<div class="v24BriefingItem v24ProfileWide v24TideHeading">조석</div>'+v24TideEventHtml('만조','▲',tide.highTide,tide.highTideLevel)+v24TideEventHtml('간조','▼',tide.lowTide,tide.lowTideLevel)+staleDate;
+  var todayEvents=v24TideDayEvents(tide);
+  var tomorrowEvents=v24TideDayEvents(tide.tomorrow);
+  var html='<div class="v24BriefingItem v24ProfileWide"><b>조석:</b>';
+  html+='<div class="v26TideTomorrowEvents">';
+  html+=v24TideDayColumnHtml('오늘',todayEvents);
+  html+=v24TideDayColumnHtml('내일',tomorrowEvents);
+  html+='</div></div>';
+  return html;
 }
 function v24BriefingInterpretation(site,today,tide){
   var month=new Date().getMonth()+1;
