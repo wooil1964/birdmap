@@ -901,7 +901,7 @@ var liveTemperatureText=liveWeatherNumber(temperature,1,'℃','temperature');
 if(liveTemperatureText)mergedToday.temperature=liveTemperatureText;
 var liveWindSpeedText=liveWeatherNumber(windSpeed,1,'m/s','windSpeed');
 if(windDirection&&liveWindSpeedText)mergedToday.wind=windDirection+' '+liveWindSpeedText;
-if(liveRainText)mergedToday.rain=liveRainText;    
+if(liveRainText)mergedToday.rain=Number(rain)===0?'강수 없음':'강수 '+liveRainText;    
 setLiveWeatherField(card,'interpretation',v24BriefingInterpretation(site,mergedToday,tideTodayForSite(site)));  
   setLiveWeatherField(card,'basis',observation.dataTime?'기상청 최신 기준 '+observation.dataTime:'');
   applyLiveTomorrow(card,data.tomorrow);
