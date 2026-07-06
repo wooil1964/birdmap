@@ -806,6 +806,18 @@ function liveWeatherNumber(value,digits,unit,field){
 function liveWeatherSky(value){
   return ['맑음','구름 많음','흐림'].indexOf(value)>=0?value:'';
 }
+function liveWeatherPrecipitationText(value){
+  return ['비','눈','비/눈','소나기','강수','비 가능성'].indexOf(value)>=0?value:'';
+}
+function liveWeatherRepresentativeText(weatherText,precipitationType,rain,rainProbability,sky,rainFallback){
+  var precipitation=liveWeatherPrecipitationText(weatherText)||liveWeatherPrecipitationText(precipitationType);
+  if(precipitation)return precipitation;
+  if(liveWeatherUsableNumber(rain,'rain')&&Number(rain)>0)return rainFallback||'강수';
+  if(liveWeatherUsableNumber(rainProbability,'rainProbability')&&Number(rainProbability)>=60)return '비 가능성';
+  var dryWeather=weatherText||liveWeatherSky(sky);
+  if(dryWeather==='맑음')return '맑음';
+  return dryWeather==='구름 많음'||dryWeather==='흐림'?'흐림':'';
+}
 function liveWeatherCurrentPopup(site,popup){
   var map=map_7010a44f6ac2025090f0fe07508ed485;
   if(!map||map._popup!==popup||!popup.getElement())return null;
@@ -864,7 +876,7 @@ function applyLiveTomorrow(card,tomorrow){
       temperature:liveWeatherNumber(period.temperature,1,'℃','temperature'),
       wind:[liveWeatherUsableNumber(period.windDirectionDegrees,'windDirection')?period.windDirection:'',liveWeatherNumber(period.windSpeed,1,'m/s','windSpeed')].filter(Boolean).join(' '),
       rain:liveWeatherUsableNumber(period.rainProbability,'rainProbability')?'강수 '+liveWeatherNumber(period.rainProbability,0,'%','rainProbability'):'',
-      weather:period.weatherText||liveWeatherSky(period.sky)
+      weather:liveWeatherRepresentativeText(period.weatherText,period.precipitationType,period.precipitationAmount,period.rainProbability,period.sky,'비 가능성')
     };
     Object.keys(values).forEach(function(fieldName){
       var field=row.querySelector('[data-live-weather-period-field="'+fieldName+'"]');
@@ -900,7 +912,8 @@ function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
  var liveRainText=currentPrecipitation?(currentPrecipitation+(Number(rain)>0&&liveRainAmount?' '+liveRainAmount:'')):(liveWeatherUsableNumber(rain,'rain')?(Number(rain)===0?'없음':liveRainAmount):'');
 if(liveRainText)setLiveWeatherField(card,'rain',liveRainText);else setLiveWeatherMissing(card,'rain');
   if(!setLiveWeatherField(card,'humidity',liveWeatherNumber(humidity,0,'%','humidity')))setLiveWeatherMissing(card,'humidity');
-  setLiveWeatherField(card,'weather',data.weatherText||forecast.weatherText||liveWeatherSky(forecast.sky));
+  var representativeWeather=liveWeatherRepresentativeText(data.weatherText||observation.weatherText||forecast.weatherText,observation.precipitationType||forecast.precipitationType,rain,null,forecast.sky,'강수');
+  setLiveWeatherField(card,'weather',representativeWeather);
   var mergedToday=Object.assign({},weatherTodayForSite(site)||{});
 var liveTemperatureText=liveWeatherNumber(temperature,1,'℃','temperature');
 if(liveTemperatureText)mergedToday.temperature=liveTemperatureText;
