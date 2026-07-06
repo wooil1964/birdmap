@@ -1,0 +1,65 @@
+name: Update monthly birding tides
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: Number of days to generate
+        required: true
+        default: "30"
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: birdmap-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  update-monthly-tides:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Check updater syntax
+        run: python -m py_compile .github/scripts/update_tide.py .github/scripts/update_tide_month.py
+
+      - name: List monthly tide targets
+        run: python .github/scripts/update_tide_month.py --list-targets
+
+      - name: Build tide_month.json
+        env:
+          KHOA_API_KEY: ${{ secrets.KHOA_API_KEY }}
+        run: python .github/scripts/update_tide_month.py --days "${{ inputs.days }}"
+
+      - name: Validate tide_month.json
+        run: python -m json.tool tide_month.json > /dev/null
+
+      - name: Commit updated monthly tides
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tide_month.json
+          if git diff --cached --quiet; then
+            echo "No monthly tide changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update monthly tide data"
+          for attempt in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
