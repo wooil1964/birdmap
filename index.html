@@ -261,6 +261,7 @@ var routeLine=null;
 var weatherToday={updated:'',source:'',sites:{}};
 var tideToday={updated:'',source:'',sites:{}};
 var MONTH_TIDE_SITE_IDS=new Set(['9','107','12','156','14','17','122','19','146','20','21','22','96','95','68','99','70','26','25','71','72','76','27','75','50','43','44']);
+var PUBLIC_TRANSIT_HIGH_SITE_IDS=new Set(['25','27','32','34','35','41','42','43','45','56','69','75','76','85','88','91','92','94','109','116','121','123','125','131','139','143','144','148','150','151','152','155']);
 var tideMonth=null;
 var tideMonthPending=null;
 var monthTideReturnFocus=null;
@@ -1069,6 +1070,8 @@ function requestLiveWeatherForPopup(site,popup){
 }
 function v23ButtonsFromLegacy(source,site){
   var isGukhwado=String(site.id)==='156'&&site.name==='국화도';
+  var ebirdUrl=site.ebirdHotspotUrl||'';
+  var ebirdText=/^https:\/\/ebird\.org\/hotspot\/L\d+$/i.test(ebirdUrl)?'🟢 eBird Hotspot':'🟢 eBird 탐색';
   var kakaoUrl=isGukhwado
     ?'https://map.kakao.com/link/search/'+encodeURIComponent('장고항')
     :(site.kakaoMapUrl||'https://map.kakao.com/link/map/'+encodeURIComponent(site.name)+','+site.lat+','+site.lon);
@@ -1082,7 +1085,7 @@ function v23ButtonsFromLegacy(source,site){
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'
     +link('a.naver','btn naver','🧭 네이버지도',site.naverMapUrl||'https://map.naver.com/v5/search/'+encodeURIComponent(site.name),true)
     +link('a.kakao','btn kakao','🟡 카카오맵',kakaoUrl,true)
-    +link('a.ebird','btn ebird','🟢 eBird Hotspot',site.ebirdHotspotUrl||'',true)
+    +link('a.ebird','btn ebird',ebirdText,ebirdUrl,true)
     +link('a.windy','btn windy','🌬️ Windy',site.windyUrl||'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10',true)
     +link('a.ksa','btn ksa','🚢 KSA 섬여객선 예매',site.ksaUrl||'https://island.theksa.co.kr',site.island)
     +'</div>'
@@ -1121,13 +1124,13 @@ function selectedSeasons(){
 
 function sitePasses(s){
   var ss=selectedSeasons();
-  if(!(s.seasons.length===0||s.seasons.some(function(x){return ss.includes(x);})))return false;
+  if(!(s.seasons.length===0||(ss.length>0&&s.seasons.includes('연중'))||s.seasons.some(function(x){return ss.includes(x);})))return false;
   if(document.getElementById('overseasOnly').checked&&!s.overseas)return false;
   if(document.getElementById('rareOnly').checked&&!s.rare)return false;
   if(document.getElementById('mijoOnly').checked&&!s.mijo)return false;
   if(document.getElementById('islandOnly').checked&&!s.island)return false;
   if(document.getElementById('pelagicOnly').checked&&!s.pelagic)return false;
-  if(document.getElementById('transitOnly').checked&&!s.publicTransitHigh)return false;
+  if(document.getElementById('transitOnly').checked&&!(s.publicTransitHigh||PUBLIC_TRANSIT_HIGH_SITE_IDS.has(String(s.id))))return false;
   if(document.getElementById('recommendOnly').checked&&!s.recommend5)return false;
   var fs=selectedFeatures();
   if(fs.length){
