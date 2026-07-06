@@ -164,6 +164,66 @@ test("keeps observation and forecast timestamps separate", () => {
   assert.equal(forecast.sky, "구름 많음");
 });
 
+test("prioritizes observed precipitation over cloudy sky", () => {
+  const rainy = normalizeForecast(
+    [
+      { category: "PTY", fcstValue: "1", fcstDate: "20260703", fcstTime: "1900" },
+      { category: "RN1", fcstValue: "1.0", fcstDate: "20260703", fcstTime: "1900" },
+      { category: "SKY", fcstValue: "4", fcstDate: "20260703", fcstTime: "1900" },
+    ],
+    new Date("2026-07-03T09:50:00Z"),
+  );
+  const snow = normalizeObservation([
+    { category: "PTY", obsrValue: "3", baseDate: "20260703", baseTime: "1800" },
+    { category: "RN1", obsrValue: "0", baseDate: "20260703", baseTime: "1800" },
+  ]);
+  const rainWithoutType = normalizeObservation([
+    { category: "PTY", obsrValue: "0", baseDate: "20260703", baseTime: "1800" },
+    { category: "RN1", obsrValue: "0.5", baseDate: "20260703", baseTime: "1800" },
+  ]);
+  assert.equal(rainy.weatherText, "비");
+  assert.equal(snow.weatherText, "눈");
+  assert.equal(rainWithoutType.weatherText, "강수");
+});
+
+test("prioritizes tomorrow precipitation and uses a 60 percent POP threshold", () => {
+  const items = [
+    { category: "PTY", fcstValue: "4", fcstDate: "20260704", fcstTime: "0900" },
+    { category: "PCP", fcstValue: "강수없음", fcstDate: "20260704", fcstTime: "0900" },
+    { category: "POP", fcstValue: "20", fcstDate: "20260704", fcstTime: "0900" },
+    { category: "SKY", fcstValue: "4", fcstDate: "20260704", fcstTime: "0900" },
+    { category: "PTY", fcstValue: "0", fcstDate: "20260704", fcstTime: "1500" },
+    { category: "PCP", fcstValue: "강수없음", fcstDate: "20260704", fcstTime: "1500" },
+    { category: "POP", fcstValue: "60", fcstDate: "20260704", fcstTime: "1500" },
+    { category: "SKY", fcstValue: "1", fcstDate: "20260704", fcstTime: "1500" },
+  ];
+  const tomorrow = normalizeTomorrowForecast(items, new Date("2026-07-03T12:00:00Z"));
+  assert.equal(tomorrow.morning.weatherText, "소나기");
+  assert.equal(tomorrow.afternoon.weatherText, "비 가능성");
+
+  const pcp = normalizeTomorrowForecast(
+    [
+      { category: "PTY", fcstValue: "0", fcstDate: "20260704", fcstTime: "0900" },
+      { category: "PCP", fcstValue: "1.0mm 미만", fcstDate: "20260704", fcstTime: "0900" },
+      { category: "POP", fcstValue: "20", fcstDate: "20260704", fcstTime: "0900" },
+      { category: "SKY", fcstValue: "4", fcstDate: "20260704", fcstTime: "0900" },
+    ],
+    new Date("2026-07-03T12:00:00Z"),
+  );
+  assert.equal(pcp.morning.weatherText, "비 가능성");
+
+  const dry = normalizeTomorrowForecast(
+    [
+      { category: "PTY", fcstValue: "0", fcstDate: "20260704", fcstTime: "0900" },
+      { category: "PCP", fcstValue: "강수없음", fcstDate: "20260704", fcstTime: "0900" },
+      { category: "POP", fcstValue: "50", fcstDate: "20260704", fcstTime: "0900" },
+      { category: "SKY", fcstValue: "3", fcstDate: "20260704", fcstTime: "0900" },
+    ],
+    new Date("2026-07-03T12:00:00Z"),
+  );
+  assert.equal(dry.morning.weatherText, "흐림");
+});
+
 test("rejects missing, non-finite, sentinel, and out-of-range weather values", () => {
   const invalidValues = [
     999,
@@ -304,7 +364,10 @@ test("selects tomorrow 09:00 and 15:00 KST forecasts", () => {
     windDirectionDegrees: 270,
     windDirection: "서풍",
     rainProbability: 10,
+    precipitationAmount: null,
     sky: "구름 많음",
+    precipitationType: null,
+    weatherText: "흐림",
   });
   assert.deepEqual(tomorrow.afternoon, {
     label: "내일 오후",
@@ -314,7 +377,10 @@ test("selects tomorrow 09:00 and 15:00 KST forecasts", () => {
     windDirectionDegrees: 225,
     windDirection: "남서풍",
     rainProbability: 30,
+    precipitationAmount: null,
     sky: "흐림",
+    precipitationType: null,
+    weatherText: "흐림",
   });
 });
 

@@ -261,6 +261,26 @@ function rainAmount(value) {
   return match ? weatherNumber(match[0], "rain") : null;
 }
 
+function ultraShortPrecipitationName(value) {
+  return {
+    "1": "비",
+    "2": "비/눈",
+    "3": "눈",
+    "5": "비",
+    "6": "비/눈",
+    "7": "눈",
+  }[String(value)] || null;
+}
+
+function villagePrecipitationName(value) {
+  return {
+    "1": "비",
+    "2": "비/눈",
+    "3": "눈",
+    "4": "소나기",
+  }[String(value)] || null;
+}
+
 export function windDirectionName(degrees) {
   if (!Number.isFinite(degrees)) return null;
   const names = [
@@ -286,6 +306,8 @@ export function normalizeObservation(items) {
     items.map((item) => [item.category, item.obsrValue]),
   );
   const direction = weatherNumber(values.VEC, "windDirection");
+  const rain = rainAmount(values.RN1);
+  const precipitationType = ultraShortPrecipitationName(values.PTY);
   const first = items[0] || {};
   return {
     dataTime: kstTimestamp(first.baseDate, first.baseTime),
@@ -293,8 +315,10 @@ export function normalizeObservation(items) {
     windSpeed: weatherNumber(values.WSD, "windSpeed"),
     windDirectionDegrees: direction,
     windDirection: windDirectionName(direction),
-    rain: rainAmount(values.RN1),
+    rain,
     humidity: weatherNumber(values.REH, "humidity"),
+    precipitationType,
+    weatherText: precipitationType || (rain > 0 ? "강수" : null),
   };
 }
 
@@ -319,6 +343,9 @@ export function normalizeForecast(items, now = new Date()) {
   );
   const first = selected[0] || items[0] || {};
   const direction = weatherNumber(values.VEC, "windDirection");
+  const rain = rainAmount(values.RN1);
+  const sky = skyName(values.SKY);
+  const precipitationType = ultraShortPrecipitationName(values.PTY);
   return {
     issuedAt: kstTimestamp(first.baseDate, first.baseTime),
     forecastTime: kstTimestamp(first.fcstDate, first.fcstTime),
@@ -326,9 +353,11 @@ export function normalizeForecast(items, now = new Date()) {
     windSpeed: weatherNumber(values.WSD, "windSpeed"),
     windDirectionDegrees: direction,
     windDirection: windDirectionName(direction),
-    rain: rainAmount(values.RN1),
+    rain,
     humidity: weatherNumber(values.REH, "humidity"),
-    sky: skyName(values.SKY),
+    sky,
+    precipitationType,
+    weatherText: precipitationType || (rain > 0 ? "강수" : sky === "맑음" ? "맑음" : sky ? "흐림" : null),
   };
 }
 
@@ -349,6 +378,18 @@ function normalizeTomorrowPeriod(items, targetDate, targetTime, label) {
     selected.map((item) => [item.category, item.fcstValue]),
   );
   const direction = weatherNumber(values.VEC, "windDirection");
+  const rainProbability = weatherNumber(values.POP, "rainProbability");
+  const precipitationAmount = rainAmount(values.PCP);
+  const sky = skyName(values.SKY);
+  const precipitationType = villagePrecipitationName(values.PTY);
+  const weatherText = precipitationType ||
+    (precipitationAmount > 0 || rainProbability >= 60
+      ? "비 가능성"
+      : sky === "맑음"
+        ? "맑음"
+        : sky
+          ? "흐림"
+          : null);
   return {
     label,
     forecastTime: kstTimestamp(targetDate, targetTime),
@@ -356,8 +397,11 @@ function normalizeTomorrowPeriod(items, targetDate, targetTime, label) {
     windSpeed: weatherNumber(values.WSD, "windSpeed"),
     windDirectionDegrees: direction,
     windDirection: windDirectionName(direction),
-    rainProbability: weatherNumber(values.POP, "rainProbability"),
-    sky: skyName(values.SKY),
+    rainProbability,
+    precipitationAmount,
+    sky,
+    precipitationType,
+    weatherText,
   };
 }
 
@@ -417,6 +461,8 @@ async function requestKmaWeather(siteId, site, env, now) {
     ),
   ]);
   const tomorrow = await tomorrowRequest;
+  const observation = normalizeObservation(kmaItems(observationPayload));
+  const forecast = normalizeForecast(kmaItems(forecastPayload), now);
 
   return {
     ok: true,
@@ -424,8 +470,9 @@ async function requestKmaWeather(siteId, site, env, now) {
     siteName: site.name,
     source: "KMA",
     grid,
-    observation: normalizeObservation(kmaItems(observationPayload)),
-    forecast: normalizeForecast(kmaItems(forecastPayload), now),
+    observation,
+    forecast,
+    weatherText: observation.weatherText || forecast.weatherText,
     tomorrow,
     fetchedAt: new Date().toISOString(),
     cached: false,

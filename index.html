@@ -770,11 +770,11 @@ function v23TodayWeatherHtml(site){
     '<div class="v24BriefingItem"><b>풍속:</b> <span data-live-weather-field="windSpeed">'+escapeHtml(wind.speed)+'</span></div>'+
     '<div class="v24BriefingItem"><b>강수:</b> <span data-live-weather-field="rain">'+escapeHtml(v23Value(today&&today.rain,'자료 없음'))+'</span></div>'+
     '<div class="v24BriefingItem" data-live-weather-row="humidity" style="display:none"><b>습도:</b> <span data-live-weather-field="humidity"></span></div>'+
-    '<div class="v24BriefingItem" data-live-weather-row="sky" style="display:none"><b>하늘:</b> <span data-live-weather-field="sky"></span></div>'+
+    '<div class="v24BriefingItem" data-live-weather-row="weather" style="display:none"><b>날씨:</b> <span data-live-weather-field="weather"></span></div>'+
     (today&&today.visibility?'<div class="v24BriefingItem"><b>시정:</b> '+escapeHtml(today.visibility)+'</div>':'')+typeItems+'</div>'+
     '<div class="v26TomorrowForecast" data-live-weather-tomorrow style="display:none"><div class="v26TomorrowTitle">내일 예보</div><div class="v26TomorrowGrid">'+
-    '<div class="v26TomorrowPeriod" data-live-weather-period="morning" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="sky"></div></div>'+
-    '<div class="v26TomorrowPeriod" data-live-weather-period="afternoon" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="sky"></div></div></div></div>'+
+    '<div class="v26TomorrowPeriod" data-live-weather-period="morning" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="weather"></div></div>'+
+    '<div class="v26TomorrowPeriod" data-live-weather-period="afternoon" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="weather"></div></div></div></div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
    '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> <span data-live-weather-field="interpretation">'+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</span></div>'+
     v24LocalBirdingTipHtml(site)+
@@ -864,7 +864,7 @@ function applyLiveTomorrow(card,tomorrow){
       temperature:liveWeatherNumber(period.temperature,1,'℃','temperature'),
       wind:[liveWeatherUsableNumber(period.windDirectionDegrees,'windDirection')?period.windDirection:'',liveWeatherNumber(period.windSpeed,1,'m/s','windSpeed')].filter(Boolean).join(' '),
       rain:liveWeatherUsableNumber(period.rainProbability,'rainProbability')?'강수 '+liveWeatherNumber(period.rainProbability,0,'%','rainProbability'):'',
-      sky:liveWeatherSky(period.sky)
+      weather:period.weatherText||liveWeatherSky(period.sky)
     };
     Object.keys(values).forEach(function(fieldName){
       var field=row.querySelector('[data-live-weather-period-field="'+fieldName+'"]');
@@ -889,19 +889,24 @@ function applyLiveWeatherToPopup(site,popup,data,fromMemoryCache){
   var windSpeed=liveWeatherUsableNumber(observation.windSpeed,'windSpeed')?observation.windSpeed:(liveWeatherUsableNumber(forecast.windSpeed,'windSpeed')?forecast.windSpeed:null);
   var rain=liveWeatherUsableNumber(observation.rain,'rain')?observation.rain:(liveWeatherUsableNumber(forecast.rain,'rain')?forecast.rain:null);
   var humidity=liveWeatherUsableNumber(observation.humidity,'humidity')?observation.humidity:(liveWeatherUsableNumber(forecast.humidity,'humidity')?forecast.humidity:null);
+  var precipitationLabels=['비','눈','비/눈','소나기','강수'];
+  var observationWeather=precipitationLabels.indexOf(observation.weatherText)>=0?observation.weatherText:'';
+  var forecastWeather=precipitationLabels.indexOf(forecast.weatherText)>=0?forecast.weatherText:'';
+  var currentPrecipitation=observationWeather||(!liveWeatherUsableNumber(observation.rain,'rain')?forecastWeather:'');
   if(!setLiveWeatherField(card,'temperature',liveWeatherNumber(temperature,1,'℃','temperature')))setLiveWeatherMissing(card,'temperature');
   if(!setLiveWeatherField(card,'windDirection',windDirection))setLiveWeatherMissing(card,'windDirection');
   if(!setLiveWeatherField(card,'windSpeed',liveWeatherNumber(windSpeed,1,'m/s','windSpeed')))setLiveWeatherMissing(card,'windSpeed');
- var liveRainText=liveWeatherUsableNumber(rain,'rain')?(Number(rain)===0?'없음':liveWeatherNumber(rain,1,'mm','rain')):'';
+ var liveRainAmount=liveWeatherNumber(rain,1,'mm','rain');
+ var liveRainText=currentPrecipitation?(currentPrecipitation+(Number(rain)>0&&liveRainAmount?' '+liveRainAmount:'')):(liveWeatherUsableNumber(rain,'rain')?(Number(rain)===0?'없음':liveRainAmount):'');
 if(liveRainText)setLiveWeatherField(card,'rain',liveRainText);else setLiveWeatherMissing(card,'rain');
   if(!setLiveWeatherField(card,'humidity',liveWeatherNumber(humidity,0,'%','humidity')))setLiveWeatherMissing(card,'humidity');
-  if(!setLiveWeatherField(card,'sky',liveWeatherSky(forecast.sky)))setLiveWeatherMissing(card,'sky');
+  setLiveWeatherField(card,'weather',data.weatherText||forecast.weatherText||liveWeatherSky(forecast.sky));
   var mergedToday=Object.assign({},weatherTodayForSite(site)||{});
 var liveTemperatureText=liveWeatherNumber(temperature,1,'℃','temperature');
 if(liveTemperatureText)mergedToday.temperature=liveTemperatureText;
 var liveWindSpeedText=liveWeatherNumber(windSpeed,1,'m/s','windSpeed');
 if(windDirection&&liveWindSpeedText)mergedToday.wind=windDirection+' '+liveWindSpeedText;
-if(liveRainText)mergedToday.rain=Number(rain)===0?'강수 없음':'강수 '+liveRainText;    
+if(liveRainText)mergedToday.rain=currentPrecipitation?liveRainText:(Number(rain)===0?'강수 없음':'강수 '+liveRainText);
 setLiveWeatherField(card,'interpretation',v24BriefingInterpretation(site,mergedToday,tideTodayForSite(site)));  
   setLiveWeatherField(card,'basis',observation.dataTime?'기상청 최신 기준 '+observation.dataTime:'');
   applyLiveTomorrow(card,data.tomorrow);
