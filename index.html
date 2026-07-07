@@ -555,7 +555,22 @@ function v25WeatherSentence(today){
   if(today.wave)parts.push('파고는 '+today.wave);
   return parts.length?'현재 '+parts.join(', ')+'입니다. 현장에서는 급격한 기상 변화도 함께 확인하세요.':'출발 전에 풍향·풍속·강수 조건을 확인하세요.';
 }
+function v251RainInfo(today){
+  var text=String((today&&today.rain)||'').trim();
+  if(!text||/없음/.test(text))return {raining:false,amount:null};
+  var match=text.match(/([\d.]+)\s*mm/);
+  var amount=match?Number(match[1]):null;
+  if(amount!==null&&!(amount>0))return {raining:false,amount:0};
+  var raining=amount!==null||/비|눈|소나기|강수/.test(text);
+  return {raining:raining,amount:amount};
+}
 function v251ScoreSentence(today){
+  var rain=v251RainInfo(today);
+  if(rain.raining){
+    if(rain.amount!==null&&rain.amount>=5)return '강수가 많아 탐조에 적합하지 않은 기상 조건입니다. 비가 잦아든 뒤 탐조를 권장합니다.';
+    if(rain.amount===null||rain.amount>=1)return '강수가 있어 탐조를 권장하지 않는 기상 조건입니다. 우천 대비와 기상 변화 확인이 필요합니다.';
+    return '약한 강수가 있어 우천 대비가 필요한 기상 조건입니다.';
+  }
   var score=Number(today&&today.score);
   if(!Number.isFinite(score))return '';
   if(score>=90)return '탐조에 매우 좋은 기상 조건입니다.';
