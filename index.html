@@ -579,6 +579,29 @@ function v251ScoreSentence(today){
   if(score>=60)return '탐조는 가능하지만 기상 변화에 유의하세요.';
   return '탐조 여건이 좋지 않습니다.';
 }
+function v251GradeStars(score){
+  var stars=score>=90?5:score>=80?4:score>=70?3:score>=60?2:1;
+  return '★★★★★'.slice(0,stars)+'☆☆☆☆☆'.slice(0,5-stars);
+}
+function v251EffectiveScore(today){
+  var score=Number(today&&today.score);
+  if(!Number.isFinite(score))return score;
+  var rain=v251RainInfo(today);
+  if(!rain.raining)return score;
+  var cap=rain.amount===null?55:(rain.amount>=5?35:(rain.amount>=1?55:75));
+  return Math.min(score,cap);
+}
+function v251ScoreDisplayText(today){
+  var grade=v23Value(today&&today.grade,'');
+  var scoreText=today&&today.score!==undefined?today.score+'점':'정보 없음';
+  var raw=Number(today&&today.score);
+  var effective=v251EffectiveScore(today);
+  if(Number.isFinite(raw)&&Number.isFinite(effective)&&effective<raw){
+    grade=v251GradeStars(effective);
+    scoreText=effective+'점';
+  }
+  return grade+' '+scoreText;
+}
 function v251EnvironmentWeatherSentence(site){
   var environment=v25EnvironmentLabel(site);
   if(environment==='갯벌탐조')return '만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.';
@@ -898,7 +921,7 @@ function v23TodayWeatherHtml(site){
   if(site.showTide)typeItems+=v24TideHtml(tide)+monthTideButtonHtml(site);
   if(site.island||site.pelagic)typeItems+='<div class="v24BriefingItem v24ProfileWide"><b>여객선:</b> '+escapeHtml(v24FerryStatus(today&&today.wind,today&&today.wave))+'</div>';
   return '<div class="v23TodayBox v24BriefingCard" data-live-weather-site-id="'+escapeHtml(site.id)+'"><div class="v23Title">오늘의 탐조 기상</div>'+
-    '<div class="v24BriefingTop"><span class="v23TodayScore">'+escapeHtml(v23Value(today&&today.grade,''))+' '+escapeHtml(today&&today.score!==undefined?today.score+'점':'정보 없음')+'</span></div>'+
+    '<div class="v24BriefingTop"><span class="v23TodayScore" data-live-weather-field="score">'+escapeHtml(v251ScoreDisplayText(today))+'</span></div>'+
     '<div class="v23WeatherDetails"><input type="checkbox" class="v23WeatherCheck" id="'+detailsId+'"'+(expanded?' checked':'')+'>'+
     '<label class="v23WeatherToggle" for="'+detailsId+'"><span class="v23WeatherShowLabel">▼ 브리핑 자세히 보기</span><span class="v23WeatherHideLabel">▲ 브리핑 접기</span></label>'+
     '<div class="v23WeatherDetailsContent"><div class="v24BriefingGrid">'+
@@ -1057,7 +1080,8 @@ if(liveTemperatureText)mergedToday.temperature=liveTemperatureText;
 var liveWindSpeedText=liveWeatherNumber(windSpeed,1,'m/s','windSpeed');
 if(windDirection&&liveWindSpeedText)mergedToday.wind=windDirection+' '+liveWindSpeedText;
 if(liveRainText)mergedToday.rain=currentPrecipitation?liveRainText:(Number(rain)===0?'강수 없음':'강수 '+liveRainText);
-setLiveWeatherField(card,'interpretation',v24BriefingInterpretation(site,mergedToday,tideTodayForSite(site)));  
+setLiveWeatherField(card,'interpretation',v24BriefingInterpretation(site,mergedToday,tideTodayForSite(site)));
+setLiveWeatherField(card,'score',v251ScoreDisplayText(mergedToday));
   setLiveWeatherField(card,'basis',observation.dataTime?'기상청 최신 기준 '+observation.dataTime:'');
   applyLiveTomorrow(card,data.tomorrow);
   setLiveWeatherField(card,'status',fromMemoryCache?'기상청 최신 기상 적용 · 브라우저 캐시':'기상청 최신 기상 적용');
