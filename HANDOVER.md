@@ -27,8 +27,9 @@
 - 신규 탐조지 후보 중 24개(ID 161, 164~186): 엑셀 정제본에는 포함되었으나 지도 반영은 보류 상태.
   반영 시 `AI_WORK_RULES.md` 5항(좌표 검증)과 7항(기상 이중 관리)을 반드시 준수할 것.
 - 반영된 6곳의 eBird Hotspot ID는 미확정으로 공백 유지 중(후보 ID는 보완표 참조). 공식 확인 후 입력할 것.
-- `.github/scripts/build_tide_station_mapping.py`의 siteData 개수 검증(156)이 남아 있어
-  조석 워크플로 실행 시 실패함 — 162로 갱신 필요(사용자 승인 대기).
+- `.github/scripts/build_tide_station_mapping.py`의 siteData 개수 검증은 사용자 승인 하에
+  162로 갱신 완료(2026-07-08). 이후 권역 수 변경 시 이 검증값과
+  `update_weather.py`의 검증값을 함께 갱신할 것.
 
 ## 다음 작업자를 위한 주의사항
 

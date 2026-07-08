@@ -129,8 +129,8 @@ def load_site_data() -> dict[str, dict[str, Any]]:
     if not match:
         raise RuntimeError("index.html siteData not found")
     sites = json.loads(match.group(1))
-    if len(sites) != 156:
-        raise RuntimeError(f"siteData count is not 156: {len(sites)}")
+    if len(sites) != 162:
+        raise RuntimeError(f"siteData count is not 162: {len(sites)}")
     return {str(site["id"]): site for site in sites}
 
 
