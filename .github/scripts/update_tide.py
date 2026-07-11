@@ -35,6 +35,12 @@ ADDITIONAL_TIDE_SITES = (
     {"id": "13", "name": "화옹호", "stationName": "평택", "stationCode": "DT_0002"},
     {"id": "134", "name": "솔개공원", "stationName": "울산", "stationCode": "DT_0020"},
     {"id": "156", "name": "국화도", "stationName": "대산", "stationCode": "DT_0017"},
+    {"id": "174", "name": "송지호", "stationName": "속초", "stationCode": "DT_0012"},
+    {"id": "180", "name": "목포 남항·갓바위 해안", "stationName": "목포", "stationCode": "DT_0007"},
+    {"id": "181", "name": "제주 예래생태공원·논짓물 하천", "stationName": "모슬포", "stationCode": "DT_0023"},
+    {"id": "182", "name": "포항 형산강 하구", "stationName": "포항", "stationCode": "DT_0091"},
+    {"id": "183", "name": "영덕 오십천 하구", "stationName": "후포", "stationCode": "DT_0011"},
+    {"id": "185", "name": "사천 광포만", "stationName": "삼천포", "stationCode": "DT_0061"},
 )
 FORECAST_STATION_OVERRIDES = {
     "17": ("안흥", "DT_0067"),

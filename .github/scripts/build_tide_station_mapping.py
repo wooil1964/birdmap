@@ -129,8 +129,8 @@ def load_site_data() -> dict[str, dict[str, Any]]:
     if not match:
         raise RuntimeError("index.html siteData not found")
     sites = json.loads(match.group(1))
-    if len(sites) != 162:
-        raise RuntimeError(f"siteData count is not 162: {len(sites)}")
+    if len(sites) != 182:
+        raise RuntimeError(f"siteData count is not 182: {len(sites)}")
     return {str(site["id"]): site for site in sites}
 
 
@@ -253,9 +253,9 @@ def reuse_existing_mapping(reason: Exception) -> bool:
     sites = existing.get("sites")
     if (
         existing.get("source") != "KHOA official tide station list"
-        or existing.get("siteCount") not in {88, 92}
+        or existing.get("siteCount") not in {88, 92, 98}
         or not isinstance(sites, dict)
-        or len(sites) not in {88, 92}
+        or len(sites) not in {88, 92, 98}
     ):
         return False
     print(f"Official station refresh failed: {reason}", flush=True)
@@ -272,8 +272,8 @@ def main() -> None:
         raise
     site_data = load_site_data()
     targets = update_tide.load_tide_sites()
-    if len(targets) != 92:
-        raise RuntimeError(f"Tide target count is not 92: {len(targets)}")
+    if len(targets) != 98:
+        raise RuntimeError(f"Tide target count is not 98: {len(targets)}")
 
     mapped_sites: dict[str, Any] = {}
     for position, target in enumerate(targets, start=1):

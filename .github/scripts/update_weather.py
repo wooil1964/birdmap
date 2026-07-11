@@ -61,8 +61,8 @@ def load_site_data() -> list[dict[str, Any]]:
     if not match:
         raise RuntimeError("index.html에서 siteData를 찾지 못했습니다.")
     sites = json.loads(match.group(1))
-    if len(sites) != 162:
-        raise RuntimeError(f"siteData 개수가 162개가 아닙니다: {len(sites)}")
+    if len(sites) != 182:
+        raise RuntimeError(f"siteData 개수가 182개가 아닙니다: {len(sites)}")
     return sites
 
 
