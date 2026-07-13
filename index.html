@@ -667,6 +667,7 @@ function v252ProfileFeatureSentence(site){
 function v252CurrentTargetSentence(site,month){
   var environment=v25EnvironmentLabel(site), season=v25CurrentSeason(month);
   var prefix=month+'월 '+season+'철에는 ';
+  if(month===7&&(site.name==='고창갯벌'||String(site.id)==='22'))return '7월 여름철에는 구시포해변의 뿔제비갈매기를 중심으로 살펴보세요.';
   if(environment==='갯벌탐조')return prefix+'갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요.';
   if(environment==='산림탐조')return prefix+'번식조류와 산림성 조류의 울음과 움직임을 중심으로 살펴보세요.';
   if(/저수지탐조|호수탐조|습지탐조/.test(environment))return prefix+'물새와 수변에서 번식하는 조류를 중심으로 살펴보세요.';
