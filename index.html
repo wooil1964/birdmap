@@ -186,6 +186,9 @@ body.monthTideOpen{overflow:hidden}
 
 .v23InfoBox{margin:8px 0;padding:8px;border:1px solid #d7e8d2;background:#f7fff5;border-radius:7px;line-height:1.55}
 .v23InfoBox .v23Title{font-weight:bold;color:#245b1d;margin-bottom:4px}
+.v23FieldInfoBox{margin:7px 0;padding:8px;border:1px solid #d9dfc9;background:#fbfcf3;border-radius:7px;line-height:1.55;overflow-wrap:anywhere}
+.v23FieldInfoBox .v23Title{font-weight:bold;color:#596122;margin-bottom:4px}
+.v23FieldInfoGrid{display:grid;grid-template-columns:1fr;gap:3px}
 .v23WeatherBox{margin:7px 0;padding:7px;border:1px solid #bee1e5;background:#f0fcff;border-radius:7px;line-height:1.55}
 .v23WeatherBox .v23Title{font-weight:bold;color:#006064;margin-bottom:4px}
 .v23TodayBox{margin:7px 0;padding:8px;border:1px solid #e1c46a;background:#fffbea;border-radius:7px;line-height:1.55}
@@ -268,6 +271,48 @@ var siteData=[{"id":"1","name":"어청도","country":"대한민국","region":"�
 var markerRegistry={};
 /* eBird 버튼 비노출 실험(임시): true로 바꾸면 eBird 버튼이 다시 생성됨. 데이터(ebirdHotspotUrl)는 그대로 유지 */
 var SHOW_EBIRD_BUTTON=false;
+var FIELD_INFO_BY_SITE={
+  "고창갯벌":{
+    type:"갯벌·해안",
+    season:"봄·가을 이동기, 7월 뿔제비갈매기, 검은머리물떼새 번식기",
+    species:"뿔제비갈매기, 검은머리물떼새, 도요·물떼새류, 괭이갈매기",
+    difficulty:"중급",
+    time:"1~3시간",
+    caution:"만조시간은 피하는 것이 좋으며, 번식 개체와 어린새에게 가까이 접근하지 않는다."
+  },
+  "매향리":{
+    type:"갯벌",
+    season:"봄·가을 이동기",
+    species:"넓적부리도요, 청다리도요사촌, 작은도요, 도요·물떼새류",
+    difficulty:"중급",
+    time:"1~3시간",
+    caution:"조석 확인이 중요하며, 만조 전후 관찰 위치를 미리 잡는 것이 좋다."
+  },
+  "걸매리":{
+    type:"갯벌·농경지",
+    season:"봄 이동기, 가을 이동기",
+    species:"긴부리흑꼬리도요, 지느러미발도요, 청다리도요사촌, 도요·물떼새류",
+    difficulty:"중급",
+    time:"1~2시간",
+    caution:"만조 시 주변 물댄논으로 이동하는 개체가 있을 수 있으며, 농경지 출입에 주의한다."
+  },
+  "유부도":{
+    type:"갯벌·하구·섬",
+    season:"가을 추석 무렵, 겨울",
+    species:"넓적부리도요, 청다리도요사촌, 작은도요, 검은머리물떼새",
+    difficulty:"상급",
+    time:"반나절~하루",
+    caution:"조석과 출입 가능 여부를 반드시 확인하고, 대형 무리에 가까이 접근하지 않는다."
+  },
+  "국화도":{
+    type:"섬·갯벌·해안",
+    season:"봄·여름 번식기, 봄·가을 이동기",
+    species:"섬개개비, 쏙독새, 도요·물떼새류, 갈매기류",
+    difficulty:"중급",
+    time:"반나절~하루",
+    caution:"섬개개비와 쏙독새 번식기에는 소음과 접근을 줄이고, 배편과 간조 시간을 함께 확인한다."
+  }
+};
 var activeSearch='';
 var activeTerms=[];
 var routeLine=null;
@@ -720,6 +765,21 @@ function v23WeatherTip(site){
   return tips[key]||v23Value(site.aiTip||site.weatherMemo,'Windy에서 풍향·풍속·강수·파고를 확인한 뒤 현장 조건을 판단하십시오.');
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fieldInfoRow(label,value){
+  return '<div><b>'+label+':</b> '+escapeHtml(value)+'</div>';
+}
+function fieldInfoHtml(site){
+  var info=FIELD_INFO_BY_SITE[site.name];
+  if(!info)return '';
+  return '<div class="v23FieldInfoBox"><div class="v23Title">현장 기본정보</div><div class="v23FieldInfoGrid">'+
+    fieldInfoRow('탐조유형',info.type)+
+    fieldInfoRow('추천계절',info.season)+
+    fieldInfoRow('대표종',info.species)+
+    fieldInfoRow('난이도',info.difficulty)+
+    fieldInfoRow('소요시간',info.time)+
+    fieldInfoRow('주의사항',info.caution)+
+    '</div></div>';
+}
 function weatherTodayForSite(site){
   var sites=weatherToday&&weatherToday.sites;
   if(!sites)return null;
@@ -1154,7 +1214,7 @@ function v23PopupContent(site,desktopContent){
   root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
     '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
     '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
-    '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site)||'정보 없음')+v23TodayWeatherHtml(site)+
+    '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site)||'정보 없음')+v23TodayWeatherHtml(site)+fieldInfoHtml(site)+
     '<div class="v23InfoBox"><div class="v23Title">탐조지 프로필</div><div class="v24ProfileGrid">'+
     '<div class="v24ProfileWide"><b>환경 안내:</b> '+escapeHtml(v252ProfileEnvironmentSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>대표 탐조:</b> '+escapeHtml(v252ProfileBirdSentence(site))+'</div>'+
