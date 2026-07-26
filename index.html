@@ -162,7 +162,7 @@ a.ebird,.btn.ebird{display:none !important}
 #noticeToggleBtn{position:fixed;top:86px;right:52px;z-index:10001;padding:8px 11px;background:#fff7db;border:2px solid #a67800;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #noticeBadge{display:inline-block;min-width:17px;height:17px;line-height:17px;margin-left:4px;padding:0 3px;border-radius:10px;background:#a30000;color:white;font-size:10px;text-align:center}
 #noticePanel{display:none;position:fixed;top:126px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
-.noticeCard{padding:10px 2px;border-bottom:1px solid #e4e4e4}.noticeTitle{font-size:14px;font-weight:bold;color:#533500;margin-bottom:4px}.noticeDate{font-size:11px;color:#777;margin-bottom:5px}.noticeContent{line-height:1.55;white-space:pre-line;color:#222}.noticeLink{display:inline-block;margin-top:7px;padding:5px 8px;background:#5b2c83;color:white;border-radius:5px;text-decoration:none;font-weight:bold}
+.noticeCard{padding:10px 2px;border-bottom:1px solid #e4e4e4}.noticeTitle{font-size:14px;font-weight:bold;color:#533500;margin-bottom:4px}.noticeSummary{margin-bottom:5px;font-weight:bold;color:#8a4d00}.noticeDate{font-size:11px;color:#777;margin-bottom:5px}.noticeContent{line-height:1.55;white-space:pre-line;color:#222}.noticeLink{display:inline-block;margin-top:7px;padding:5px 8px;background:#5b2c83;color:white;border-radius:5px;text-decoration:none;font-weight:bold}
 .noticeImage{display:block;width:100%;max-height:170px;object-fit:contain;margin:7px 0;border:1px solid #ddd;border-radius:6px;background:#f7f7f7}
 .leaflet-popup-content>div>div{width:min(450px,calc(100vw - 80px))!important;max-width:100%}
 #helpToggleBtn{position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
@@ -1440,6 +1440,16 @@ function activeNotice(i){
   return i.published!==false&&(i.start||'0000-01-01')<=t&&t<=(i.end||'9999-12-31');
 }
 
+var PINNED_BIRDING_ISSUES=[
+  {
+    title:'부산 기장 군함조 관찰',
+    summary:'부산 기장에 군함조가 관찰되었습니다.',
+    start:'2026-07-27',
+    content:'부산 기장 해안에서 군함조가 관찰되었습니다.\n\n군함조는 국내에서 흔히 볼 수 있는 종이 아니므로, 주변 해안과 항구, 방파제 일대를 넓게 살피는 것이 좋습니다.\n\n관찰 시에는 방파제 끝단 접근과 강풍 시 탐조를 피하고, 안전한 위치에서 바다 위를 천천히 확인해 주세요.\n\n탐조지도에서 ‘이천항’을 검색하면 부산 기장 해안 탐조 위치를 확인할 수 있습니다.',
+    published:true
+  }
+];
+
 function noticeCard(i){
   var c=document.createElement('div');
   c.className='noticeCard';
@@ -1447,6 +1457,12 @@ function noticeCard(i){
   t.className='noticeTitle';
   t.textContent=i.title||'탐조 기획';
   c.appendChild(t);
+  if(i.summary){
+    var s=document.createElement('div');
+    s.className='noticeSummary';
+    s.textContent=i.summary;
+    c.appendChild(s);
+  }
   var d=document.createElement('div');
   d.className='noticeDate';
   d.textContent=(i.start||'')+((i.start&&i.end)?' ~ ':'')+(i.end||'');
@@ -1477,22 +1493,25 @@ function noticeCard(i){
   return c;
 }
 
+function renderNoticeItems(items){
+  var l=document.getElementById('noticeList'),activeItems=(items||[]).filter(activeNotice);
+  l.innerHTML='';
+  document.getElementById('noticeBadge').textContent=activeItems.length;
+  if(!activeItems.length){
+    l.textContent='현재 게시 중인 기획글이 없습니다.';
+    return;
+  }
+  activeItems.slice(0,5).forEach(function(i){l.appendChild(noticeCard(i));});
+}
+
 function loadNotices(){
   fetch('./notices.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
     if(!r.ok)throw new Error();
     return r.json();
   }).then(function(data){
-    var l=document.getElementById('noticeList'),items=(Array.isArray(data)?data:[]).filter(activeNotice);
-    l.innerHTML='';
-    document.getElementById('noticeBadge').textContent=items.length;
-    if(!items.length){
-      l.textContent='현재 게시 중인 기획글이 없습니다.';
-      return;
-    }
-    items.slice(0,5).forEach(function(i){l.appendChild(noticeCard(i));});
+    renderNoticeItems(PINNED_BIRDING_ISSUES.concat(Array.isArray(data)?data:[]));
   }).catch(function(){
-    document.getElementById('noticeBadge').textContent='0';
-    document.getElementById('noticeList').textContent='현재 게시 중인 기획글이 없습니다.';
+    renderNoticeItems(PINNED_BIRDING_ISSUES);
   });
 }
 
