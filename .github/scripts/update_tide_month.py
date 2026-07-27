@@ -31,6 +31,7 @@ DEFAULT_TARGET_SITE_IDS = (
     "9", "107", "12", "156", "14", "17", "122", "19", "146",
     "20", "21", "22", "96", "95", "68", "99", "70", "26",
     "25", "71", "72", "76", "27", "75", "50", "43", "44",
+    "188",
 )
 SKIPPED_SITES = (
     {
@@ -53,7 +54,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--target-site-ids",
         default=",".join(DEFAULT_TARGET_SITE_IDS),
-        help="Comma-separated subset of the approved 27 site IDs",
+        help="Comma-separated subset of the approved 28 site IDs",
     )
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT_PATH), help="Output JSON path")
     return parser.parse_args()
@@ -68,7 +69,7 @@ def parse_target_site_ids(value: str) -> list[str]:
     unsupported = [site_id for site_id in site_ids if site_id not in DEFAULT_TARGET_SITE_IDS]
     if unsupported:
         raise RuntimeError(
-            "Target site IDs are outside the approved 27-site set: " + ", ".join(unsupported)
+            "Target site IDs are outside the approved 28-site set: " + ", ".join(unsupported)
         )
     return site_ids
 

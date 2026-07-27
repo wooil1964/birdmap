@@ -41,6 +41,7 @@ ADDITIONAL_TIDE_SITES = (
     {"id": "182", "name": "포항 형산강 하구", "stationName": "포항", "stationCode": "DT_0091"},
     {"id": "183", "name": "영덕 오십천 하구", "stationName": "후포", "stationCode": "DT_0011"},
     {"id": "185", "name": "사천 광포만", "stationName": "삼천포", "stationCode": "DT_0061"},
+    {"id": "188", "name": "이천항", "stationName": "부산", "stationCode": "DT_0005", "ruleKey": "pelagic_wave_tide"},
 )
 FORECAST_STATION_OVERRIDES = {
     "17": ("안흥", "DT_0067"),
@@ -128,7 +129,7 @@ def load_tide_sites() -> list[dict[str, str]]:
                 "name": additional["name"],
                 "dbStationName": additional["stationName"],
                 "dbStationCode": additional["stationCode"],
-                "ruleKey": "mudflat_high_tide",
+                "ruleKey": additional.get("ruleKey", "mudflat_high_tide"),
             }
         )
     return targets
