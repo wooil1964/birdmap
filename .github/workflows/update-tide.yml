@@ -12,6 +12,8 @@ on:
   schedule:
     # GitHub Actions cron uses UTC. 15:05 UTC is 00:05 KST the following day.
     - cron: "5 15 * * *"
+    # Backup refresh: 21:05 UTC is 06:05 KST, preventing stale daily tide data if the midnight run is missed or conflicts.
+    - cron: "5 21 * * *"
   workflow_dispatch:
 
 permissions:

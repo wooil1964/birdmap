@@ -796,7 +796,43 @@ function weatherTodayForSite(site){
 function tideTodayForSite(site){
   var sites=tideToday&&tideToday.sites;
   if(!sites)return null;
-  return sites[String(site.id)]||null;
+  if(tideTodayIsCurrent())return sites[String(site.id)]||null;
+  var fallback=monthTideDayForSite(site);
+  if(fallback)return fallback;
+  return {staleDaily:true,staleDailyDate:tideTodayDateText()};
+}
+function tideTodayDateText(){
+  return String(tideToday&&tideToday.date||'').trim();
+}
+function tideTodayIsCurrent(){
+  return tideTodayDateText()===kstDateText();
+}
+function tideStaleWarningHtml(tide){
+  if(!tide||!tide.staleDaily)return '';
+  var message=tide.staleDailyDate?'조석자료 갱신 지연: tide_today.json은 '+tide.staleDailyDate+' 자료입니다.':'조석자료 갱신 지연: 최신 하루 조석자료가 아닙니다.';
+  return '<div class="smallText v26TideStaleWarning">'+escapeHtml(message)+'</div>';
+}
+function monthTideFallbackNoticeHtml(tide){
+  if(!tide||!tide.monthFallback)return '';
+  return '<div class="smallText v26TideFallbackNotice">월간 조석표 기준 오늘 자료입니다.</div>';
+}
+function monthTideDayForSite(site){
+  var monthSite=monthTideForSite(site&&site.id);
+  var days=monthSite&&Array.isArray(monthSite.days)?monthSite.days:[];
+  var today=kstDateText();
+  for(var i=0;i<days.length;i++){
+    if(days[i]&&days[i].date===today){
+      var day=Object.assign({},days[i]);
+      day.stationCode=monthSite.stationCode||day.stationCode;
+      day.stationName=monthSite.stationName||day.stationName;
+      day.source=monthSite.source||day.source;
+      day.staleDaily=true;
+      day.staleDailyDate=tideTodayDateText();
+      day.monthFallback=true;
+      return day;
+    }
+  }
+  return null;
 }
 function v24BriefingType(site){
   if(site.pelagic)return 'pelagic';
@@ -883,9 +919,11 @@ function v24TideHtml(tide){
   var todayEvents=v24TideDayEvents(tide);
   var tomorrowEvents=v24TideDayEvents(tide.tomorrow);
   var html='<div class="v24BriefingItem v24ProfileWide"><b>조석:</b>';
+  html+=tideStaleWarningHtml(tide);
+  html+=monthTideFallbackNoticeHtml(tide);
   html+='<div class="v26TideTomorrowEvents">';
   html+=v24TideDayColumnHtml('오늘',todayEvents);
-  html+=v24TideDayColumnHtml('내일',tomorrowEvents);
+  if(tide.tomorrow)html+=v24TideDayColumnHtml('내일',tomorrowEvents);
   html+='</div></div>';
   return html;
 }
@@ -1550,6 +1588,11 @@ function loadTideToday(){
   }).then(function(data){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
     tideToday=data;
+    if(!tideTodayIsCurrent()){
+      return loadTideMonth().catch(function(){return null;}).then(function(){
+        refreshOpenBirdPopup();
+      });
+    }
     refreshOpenBirdPopup();
   }).catch(function(){
     tideToday={updated:'',source:'',sites:{}};
