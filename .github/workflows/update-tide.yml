@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - ".github/scripts/update_tide.py"
+      - ".github/scripts/audit_tide_health.py"
       - ".github/scripts/build_tide_station_mapping.py"
       - ".github/workflows/update-tide.yml"
       - "data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
@@ -39,7 +40,7 @@ jobs:
           python-version: "3.12"
 
       - name: Check updater syntax
-        run: python -m py_compile .github/scripts/build_tide_station_mapping.py .github/scripts/update_tide.py
+        run: python -m py_compile .github/scripts/build_tide_station_mapping.py .github/scripts/update_tide.py .github/scripts/audit_tide_health.py
 
       - name: Build official station mapping
         run: python .github/scripts/build_tide_station_mapping.py
@@ -55,11 +56,37 @@ jobs:
       - name: Validate tide_today.json
         run: python -m json.tool tide_today.json > /dev/null
 
+      - name: Check tide_today freshness
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone, timedelta
+          from pathlib import Path
+
+          kst = timezone(timedelta(hours=9))
+          today = datetime.now(kst).strftime("%Y-%m-%d")
+          data = json.loads(Path("tide_today.json").read_text(encoding="utf-8"))
+
+          if data.get("date") != today:
+            raise SystemExit(f"tide_today.json date mismatch: expected {today}, got {data.get('date')}")
+
+          if int(data.get("successCount", 0)) <= 0:
+            raise SystemExit("tide_today.json has no successful tide results")
+
+          print(f"tide_today.json is fresh: {today}, successCount={data.get('successCount')}")
+          PY
+
+      - name: Build tide health report
+        run: python .github/scripts/audit_tide_health.py
+
+      - name: Validate tide_health.json
+        run: python -m json.tool tide_health.json > /dev/null
+
       - name: Commit updated tides
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tide_station_mapping.json tide_today.json
+          git add tide_station_mapping.json tide_today.json tide_health.json
           if git diff --cached --quiet; then
             echo "No tide changes to commit."
             exit 0

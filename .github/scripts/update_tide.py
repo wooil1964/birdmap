@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -22,8 +23,10 @@ DB_PATH = ROOT / "data" / "birdmap_latest_v24_MasterDB_조석연동_업데이트
 OUTPUT_PATH = ROOT / "tide_today.json"
 MAPPING_PATH = ROOT / "tide_station_mapping.json"
 API_URL = "https://apis.data.go.kr/1192136/tideFcstHghLw/GetTideFcstHghLwApiService"
-REQUEST_TIMEOUT_SECONDS = 10
-MAX_WORKERS = 8
+REQUEST_TIMEOUT_SECONDS = 20
+MAX_WORKERS = 4
+MAX_RETRIES = 3
+RETRY_DELAYS_SECONDS = (2, 5, 10)
 KST = timezone(timedelta(hours=9))
 NS = {
     "main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
@@ -228,34 +231,52 @@ def request_prediction(
     request = urllib.request.Request(
         url, headers={"Accept": "application/json, application/xml", "User-Agent": "birdmap-tide/1.0"}
     )
-    try:
-        with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-            body = response.read().decode("utf-8", errors="replace")
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+                body = response.read().decode("utf-8", errors="replace")
+                safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
+                content_type = response.headers.get("Content-Type", "")
+                if diagnostic:
+                    response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
+                    print(f"First request HTTP status: {response.status}", flush=True)
+                    print(f"First response format: {response_format} ({content_type})", flush=True)
+                    print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
+                if body.lstrip().startswith("<"):
+                    return xml_to_data(ET.fromstring(body))
+                return json.loads(body)
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
             safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
-            content_type = response.headers.get("Content-Type", "")
+            error_message = f"HTTP {exc.code}"
             if diagnostic:
                 response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
-                print(f"First request HTTP status: {response.status}", flush=True)
-                print(f"First response format: {response_format} ({content_type})", flush=True)
+                print(f"First request HTTP status: {exc.code}", flush=True)
+                print(f"First response format: {response_format}", flush=True)
                 print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
-            if body.lstrip().startswith("<"):
-                return xml_to_data(ET.fromstring(body))
-            return json.loads(body)
-    except urllib.error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
+            if attempt >= MAX_RETRIES:
+                raise RuntimeError(error_message) from exc
+        except urllib.error.URLError as exc:
+            error_message = f"{type(exc.reason).__name__}: {exc.reason}"
+            if attempt >= MAX_RETRIES:
+                raise RuntimeError(error_message) from exc
+        except TimeoutError as exc:
+            error_message = f"Timeout after {REQUEST_TIMEOUT_SECONDS}s"
+            if attempt >= MAX_RETRIES:
+                raise RuntimeError(error_message) from exc
+        except json.JSONDecodeError as exc:
+            error_message = f"Invalid JSON: {exc}"
+            if attempt >= MAX_RETRIES:
+                raise RuntimeError(error_message) from exc
+        delay = RETRY_DELAYS_SECONDS[min(attempt, len(RETRY_DELAYS_SECONDS) - 1)]
         if diagnostic:
-            response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
-            print(f"First request HTTP status: {exc.code}", flush=True)
-            print(f"First response format: {response_format}", flush=True)
-            print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
-        raise RuntimeError(f"HTTP {exc.code}") from exc
-    except urllib.error.URLError as exc:
-        raise RuntimeError(f"{type(exc.reason).__name__}: {exc.reason}") from exc
-    except TimeoutError as exc:
-        raise RuntimeError(f"Timeout after {REQUEST_TIMEOUT_SECONDS}s") from exc
-    except json.JSONDecodeError as exc:
-        raise RuntimeError(f"Invalid JSON: {exc}") from exc
+            print(
+                f"First request attempt {attempt + 1}/{MAX_RETRIES + 1} failed: "
+                f"{error_message}; retrying in {delay}s",
+                flush=True,
+            )
+        time.sleep(delay)
+    raise RuntimeError("KHOA request failed after retries")
 
 
 def find_prediction_rows(payload: Any) -> list[dict[str, Any]]:

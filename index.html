@@ -179,6 +179,8 @@ a.ebird,.btn.ebird{display:none !important}
 .monthTideDays{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
 .monthTideDay{min-width:0;padding:9px;border:1px solid #c9dce8;border-radius:7px;background:#fbfdff}
 .monthTideDate{margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid #dce8ef;font-weight:bold;color:#174d6f}
+.monthTideStaleBadge{display:inline-block;margin-left:5px;padding:1px 5px;border:1px solid #d9b36c;border-radius:999px;background:#fff6df;color:#7a5200;font-size:11px;font-weight:normal;vertical-align:middle}
+.monthTideStaleNote,.v26TideStaleWarning,.v26TideFallbackStaleWarning,.v26TideFallbackMissing{color:#7a5200}
 .monthTideDay .v24TideEvent{padding-left:0;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
 .monthTideButtonWrap{margin-top:7px;padding-top:6px;border-top:1px solid rgba(118,86,0,.18)}
 .monthTideButton{padding:6px 9px;border:1px solid #2d6f9f;border-radius:5px;background:#eef7ff;color:#174d6f;font-weight:bold;cursor:pointer}
@@ -799,7 +801,7 @@ function tideTodayForSite(site){
   if(tideTodayIsCurrent())return sites[String(site.id)]||null;
   var fallback=monthTideDayForSite(site);
   if(fallback)return fallback;
-  return {staleDaily:true,staleDailyDate:tideTodayDateText()};
+  return {staleDaily:true,staleDailyDate:tideTodayDateText(),monthFallbackMissing:true};
 }
 function tideTodayDateText(){
   return String(tideToday&&tideToday.date||'').trim();
@@ -814,7 +816,13 @@ function tideStaleWarningHtml(tide){
 }
 function monthTideFallbackNoticeHtml(tide){
   if(!tide||!tide.monthFallback)return '';
-  return '<div class="smallText v26TideFallbackNotice">월간 조석표 기준 오늘 자료입니다.</div>';
+  var html='<div class="smallText v26TideFallbackNotice">월간 조석표 기준 오늘 자료입니다.</div>';
+  if(tide.monthFallbackStale)html+='<div class="smallText v26TideFallbackStaleWarning">※ 이 날짜 자료는 API 실패로 재사용된 조석자료입니다.</div>';
+  return html;
+}
+function monthTideFallbackMissingHtml(tide){
+  if(!tide||!tide.monthFallbackMissing)return '';
+  return '<div class="smallText v26TideFallbackMissing">오늘 조석자료를 불러오지 못했습니다. 월간 조석표를 확인해 주세요.</div>';
 }
 function monthTideDayForSite(site){
   var monthSite=monthTideForSite(site&&site.id);
@@ -829,6 +837,7 @@ function monthTideDayForSite(site){
       day.staleDaily=true;
       day.staleDailyDate=tideTodayDateText();
       day.monthFallback=true;
+      day.monthFallbackStale=day.stale===true;
       return day;
     }
   }
@@ -921,6 +930,7 @@ function v24TideHtml(tide){
   var html='<div class="v24BriefingItem v24ProfileWide"><b>조석:</b>';
   html+=tideStaleWarningHtml(tide);
   html+=monthTideFallbackNoticeHtml(tide);
+  html+=monthTideFallbackMissingHtml(tide);
   html+='<div class="v26TideTomorrowEvents">';
   html+=v24TideDayColumnHtml('오늘',todayEvents);
   if(tide.tomorrow)html+=v24TideDayColumnHtml('내일',tomorrowEvents);
@@ -962,8 +972,10 @@ function renderMonthTideHtml(siteMonthData){
   if(!days.length)return '<div>월간 조석 자료가 없습니다.</div>';
   return '<div class="monthTideDays">'+days.map(function(day){
     var events=v24TideDayEvents(day);
-    return '<section class="monthTideDay"><div class="monthTideDate">'+escapeHtml(monthTideDateLabel(day.date))+'</div>'+
-      (events.length?events.map(v24TideEventLineHtml).join(''):'<div class="v24TideEvent">자료 없음</div>')+'</section>';
+    var staleBadge=day.stale===true?'<span class="monthTideStaleBadge">재사용 자료</span>':'';
+    var staleNote=day.stale===true?'<div class="smallText monthTideStaleNote">※ 재사용 자료</div>':'';
+    return '<section class="monthTideDay"><div class="monthTideDate">'+escapeHtml(monthTideDateLabel(day.date))+staleBadge+'</div>'+
+      (events.length?events.map(v24TideEventLineHtml).join(''):'<div class="v24TideEvent">자료 없음</div>')+staleNote+'</section>';
   }).join('')+'</div>';
 }
 function openMonthTideModal(siteId){
