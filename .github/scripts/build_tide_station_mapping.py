@@ -129,8 +129,13 @@ def load_site_data() -> dict[str, dict[str, Any]]:
     if not match:
         raise RuntimeError("index.html siteData not found")
     sites = json.loads(match.group(1))
-    if len(sites) != 182:
-        raise RuntimeError(f"siteData count is not 182: {len(sites)}")
+    if len(sites) < 183:
+        raise RuntimeError(f"siteData count is unexpectedly low: {len(sites)}")
+    ids = [str(site["id"]) for site in sites]
+    duplicate_ids = sorted({site_id for site_id in ids if ids.count(site_id) > 1})
+    if duplicate_ids:
+        raise RuntimeError(f"Duplicate siteData IDs found: {', '.join(duplicate_ids)}")
+    print(f"siteData count: {len(sites)}", flush=True)
     return {str(site["id"]): site for site in sites}
 
 
