@@ -164,7 +164,9 @@ a.ebird,.btn.ebird{display:none !important}
 #noticePanel{display:none;position:fixed;top:126px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
 .noticeCard{padding:10px 2px;border-bottom:1px solid #e4e4e4}.noticeTitle{font-size:14px;font-weight:bold;color:#533500;margin-bottom:4px}.noticeSummary{margin-bottom:5px;font-weight:bold;color:#8a4d00}.noticeDate{font-size:11px;color:#777;margin-bottom:5px}.noticeContent{line-height:1.55;white-space:pre-line;color:#222}.noticeLink{display:inline-block;margin-top:7px;padding:5px 8px;background:#5b2c83;color:white;border-radius:5px;text-decoration:none;font-weight:bold}
 .noticeImage{display:block;width:100%;max-height:170px;object-fit:contain;margin:7px 0;border:1px solid #ddd;border-radius:6px;background:#f7f7f7}
-.leaflet-popup-content>div>div{width:min(450px,calc(100vw - 80px))!important;max-width:100%}
+.leaflet-popup-content{max-width:500px;max-height:78vh;overflow-y:auto;padding-right:4px;overscroll-behavior:contain}
+.leaflet-popup-content-wrapper{max-height:82vh}
+.leaflet-popup-content>div>div{width:min(440px,calc(100vw - 80px))!important;max-width:100%}
 #helpToggleBtn{position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #helpPanel{display:none;position:fixed;top:166px;right:52px;z-index:10000;width:min(1100px,calc(100vw - 104px));max-height:70vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55}
 .panelHeader{display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px}
@@ -191,6 +193,10 @@ body.monthTideOpen{overflow:hidden}
 .v23FieldInfoBox{margin:7px 0;padding:8px;border:1px solid #d9dfc9;background:#fbfcf3;border-radius:7px;line-height:1.55;overflow-wrap:anywhere}
 .v23FieldInfoBox .v23Title{font-weight:bold;color:#596122;margin-bottom:4px}
 .v23FieldInfoGrid{display:grid;grid-template-columns:1fr;gap:3px}
+.popup-extra-info{margin-top:8px;border:1px solid #d8e2d0;border-radius:8px;padding:8px 10px;background:#f7fbf3}
+.popup-extra-info summary{cursor:pointer;font-weight:700;color:#31572c;list-style-position:inside}
+.popup-extra-info[open] summary{margin-bottom:6px}
+.popup-extra-info .v23InfoBox,.popup-extra-info .v23FieldInfoBox{margin:0;padding:0;border:0;background:transparent}
 .v23WeatherBox{margin:7px 0;padding:7px;border:1px solid #bee1e5;background:#f0fcff;border-radius:7px;line-height:1.55}
 .v23WeatherBox .v23Title{font-weight:bold;color:#006064;margin-bottom:4px}
 .v23TodayBox{margin:7px 0;padding:8px;border:1px solid #e1c46a;background:#fffbea;border-radius:7px;line-height:1.55}
@@ -243,7 +249,8 @@ body.monthTideOpen{overflow:hidden}
   .resultBirds{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#777}
   #routeTools>b{display:inline-block;margin-bottom:2px}
   #routeToggleBtn{margin-top:5px!important}
-  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 72px);max-height:60vh;overflow-y:auto;overscroll-behavior:contain}
+  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 48px);max-height:72vh;overflow-y:auto;overscroll-behavior:contain}
+  .leaflet-popup-content-wrapper{max-height:76vh}
   .mobileBirdPopup{width:min(280px,calc(100vw - 76px));font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;line-height:1.4}
   .mobileBirdPopup h4{margin:0 0 7px;font-size:16px;color:#222}
   .mobilePopupRow{margin:3px 0;color:#333;overflow-wrap:anywhere}
@@ -781,14 +788,14 @@ function fieldInfoRow(label,value){
 function fieldInfoHtml(site){
   var info=FIELD_INFO_BY_SITE[site.name];
   if(!info)return '';
-  return '<div class="v23FieldInfoBox"><div class="v23Title">현장 기본정보</div><div class="v23FieldInfoGrid">'+
+  return '<details class="popup-extra-info popup-field-info"><summary>현장 기본정보 보기</summary><div class="v23FieldInfoBox"><div class="v23FieldInfoGrid">'+
     fieldInfoRow('탐조유형',info.type)+
     fieldInfoRow('추천계절',info.season)+
     fieldInfoRow('대표종',info.species)+
     fieldInfoRow('난이도',info.difficulty)+
     fieldInfoRow('소요시간',info.time)+
     fieldInfoRow('주의사항',info.caution)+
-    '</div></div>';
+    '</div></div></details>';
 }
 function weatherTodayForSite(site){
   var sites=weatherToday&&weatherToday.sites;
@@ -1268,12 +1275,12 @@ function v23PopupContent(site,desktopContent){
   var cafe=source.querySelector('a.cafe');
   var gear=v24RecommendedGear(site);
   var root=document.createElement('div');
-  root.style.cssText="width:min(450px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
+  root.style.cssText="width:min(440px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
   root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
     '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
     '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
     '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site)||'정보 없음')+v23TodayWeatherHtml(site)+fieldInfoHtml(site)+
-    '<div class="v23InfoBox"><div class="v23Title">탐조지 프로필</div><div class="v24ProfileGrid">'+
+    '<details class="popup-extra-info popup-profile-info"><summary>탐조지 프로필 보기</summary><div class="v23InfoBox"><div class="v24ProfileGrid">'+
     '<div class="v24ProfileWide"><b>환경 안내:</b> '+escapeHtml(v252ProfileEnvironmentSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>대표 탐조:</b> '+escapeHtml(v252ProfileBirdSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>탐조 특성:</b> '+escapeHtml(v252ProfileFeatureSentence(site))+'</div>'+
@@ -1282,7 +1289,7 @@ function v23PopupContent(site,desktopContent){
     '<div><b>난이도:</b> '+escapeHtml(v23Value(site.difficulty,''))+'</div>'+
     '<div><b>주차:</b> '+escapeHtml(v23Value(site.parkingV23,popupField(source,'주차')))+'</div>'+
     '<div><b>화장실:</b> '+escapeHtml(v23Value(site.restroomV23,popupField(source,'화장실')))+'</div>'+
-    '<div class="v24ProfileWide"><b>도보 거리:</b> '+escapeHtml(v23Value(site.walkingLevel,''))+'</div></div></div>'+
+    '<div class="v24ProfileWide"><b>도보 거리:</b> '+escapeHtml(v23Value(site.walkingLevel,''))+'</div></div></div></details>'+
     v23ButtonsFromLegacy(source,site)+
     (cafe?'<a href="'+escapeHtml(cafe.href)+'" target="_blank" class="cafe">📷 들뫼 탐조 보기</a>':'');
   return root;
