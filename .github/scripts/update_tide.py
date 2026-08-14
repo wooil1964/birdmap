@@ -21,12 +21,13 @@ from xml.etree import ElementTree as ET
 ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
 OUTPUT_PATH = ROOT / "tide_today.json"
+TIDE_MONTH_PATH = ROOT / "tide_month.json"
 MAPPING_PATH = ROOT / "tide_station_mapping.json"
 API_URL = "https://apis.data.go.kr/1192136/tideFcstHghLw/GetTideFcstHghLwApiService"
-REQUEST_TIMEOUT_SECONDS = 20
+REQUEST_TIMEOUT_SECONDS = 8
 MAX_WORKERS = 4
-MAX_RETRIES = 3
-RETRY_DELAYS_SECONDS = (2, 5, 10)
+MAX_RETRIES = 1
+RETRY_DELAYS_SECONDS = (2,)
 KST = timezone(timedelta(hours=9))
 NS = {
     "main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
@@ -423,6 +424,109 @@ def load_previous_sites(expected_date: str) -> dict[str, Any]:
     sites = data.get("sites", {})
     return sites if isinstance(sites, dict) else {}
 
+
+def load_previous_tomorrow_sites(expected_date: str) -> dict[str, Any]:
+    if not OUTPUT_PATH.exists():
+        return {}
+    try:
+        data = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"Previous tomorrow tide data unavailable: {exc}", flush=True)
+        return {}
+    if data.get("tomorrowDate") != expected_date:
+        return {}
+    sites = data.get("sites")
+    if not isinstance(sites, dict):
+        return {}
+    results: dict[str, Any] = {}
+    for site_id, site in sites.items():
+        if not isinstance(site, dict) or not isinstance(site.get("tomorrow"), dict):
+            continue
+        tomorrow = site["tomorrow"]
+        results[str(site_id)] = {
+            "name": site.get("name", ""),
+            "stationName": site.get("stationName", ""),
+            "lowTide": tomorrow.get("lowTide", ""),
+            "highTide": tomorrow.get("highTide", ""),
+            "lowTideLevel": tomorrow.get("lowTideLevel", ""),
+            "highTideLevel": tomorrow.get("highTideLevel", ""),
+            "summary": site.get("summary", ""),
+            "updated": site.get("updated", ""),
+            "stale": True,
+            "fallbackSource": "previous_tomorrow",
+        }
+    if results:
+        print(
+            f"Previous tide_today.json tomorrow fallback available for {expected_date}: "
+            f"{len(results)} site(s)",
+            flush=True,
+        )
+    return results
+
+
+def load_monthly_day_results(date_iso: str, now: datetime, include_site_fields: bool) -> dict[str, Any]:
+    if not TIDE_MONTH_PATH.exists():
+        return {}
+    try:
+        data = json.loads(TIDE_MONTH_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"Monthly tide fallback unavailable: {exc}", flush=True)
+        return {}
+    sites = data.get("sites")
+    if not isinstance(sites, dict):
+        return {}
+    results: dict[str, Any] = {}
+    for site_id, site in sites.items():
+        if not isinstance(site, dict) or not isinstance(site.get("days"), list):
+            continue
+        day = next(
+            (
+                item
+                for item in site["days"]
+                if isinstance(item, dict) and item.get("date") == date_iso
+            ),
+            None,
+        )
+        if not isinstance(day, dict):
+            continue
+        result = {
+            "lowTide": day.get("lowTide", ""),
+            "highTide": day.get("highTide", ""),
+            "lowTideLevel": day.get("lowTideLevel", ""),
+            "highTideLevel": day.get("highTideLevel", ""),
+            "stale": True,
+            "fallbackSource": "tide_month",
+            "monthlyGeneratedAt": data.get("generatedAt", ""),
+        }
+        if include_site_fields:
+            result.update(
+                {
+                    "name": site.get("name", ""),
+                    "stationName": site.get("stationName", ""),
+                    "summary": summary_for(str(site.get("tideRuleKey") or "")),
+                    "updated": now.strftime("%Y-%m-%d %H:%M KST"),
+                }
+            )
+        results[str(site_id)] = result
+    if results:
+        print(
+            f"Monthly tide fallback available for {date_iso}: {len(results)} site(s)",
+            flush=True,
+        )
+    return results
+
+
+def first_available(*sources: dict[str, Any]):
+    def lookup(site_id: str) -> Any:
+        for source in sources:
+            value = source.get(site_id)
+            if isinstance(value, dict):
+                return value
+        return None
+
+    return lookup
+
+
 def fetch_and_build(
     api_key: str,
     groups: list[list[dict[str, str]]],
@@ -442,7 +546,7 @@ def fetch_and_build(
         return results, success_count, failed_count, reused_count
 
     def handle_failure(group: list[dict[str, str]], exc: Exception) -> None:
-        nonlocal failed_count, reused_count
+        nonlocal success_count, failed_count, reused_count
         for site in group:
             failed_count += 1
             previous = previous_for(site["id"])
@@ -451,6 +555,7 @@ def fetch_and_build(
                 result["stale"] = True
                 result["error"] = str(exc) or type(exc).__name__
                 results[site["id"]] = result
+                success_count += 1
                 reused_count += 1
                 state = f"{result['error']} - REUSED"
             else:
@@ -528,6 +633,9 @@ def main() -> None:
     tomorrow = now + timedelta(days=1)
     tomorrow_date_text = tomorrow.strftime("%Y%m%d")  
     previous_sites = load_previous_sites(date_iso)
+    previous_tomorrow_sites = load_previous_tomorrow_sites(date_iso)
+    monthly_today_sites = load_monthly_day_results(date_iso, now, True)
+    monthly_tomorrow_sites = load_monthly_day_results(tomorrow.strftime("%Y-%m-%d"), tomorrow, False)
     results: dict[str, Any] = {}
     success_count = 0
     resolved_ids = {site["id"] for site in sites}
@@ -562,7 +670,9 @@ def main() -> None:
     groups = list(station_groups.values())
     today_results, success_count, today_failed, reused_count = fetch_and_build(
         api_key, groups, date_text, now, site_positions, len(targets),
-        build_site_result, lambda site_id: previous_sites.get(site_id), "today",
+        build_site_result,
+        first_available(previous_sites, previous_tomorrow_sites, monthly_today_sites),
+        "today",
     )
     results.update(today_results)
     failed_count += today_failed
@@ -570,7 +680,14 @@ def main() -> None:
     tomorrow_results, tomorrow_success, tomorrow_failed, tomorrow_reused = fetch_and_build(
         api_key, groups, tomorrow_date_text, tomorrow, site_positions, len(targets),
         build_tomorrow_result,
-        lambda site_id: previous_sites.get(site_id, {}).get("tomorrow") if isinstance(previous_sites.get(site_id), dict) else None,
+        first_available(
+            {
+                site_id: site.get("tomorrow")
+                for site_id, site in previous_sites.items()
+                if isinstance(site, dict) and isinstance(site.get("tomorrow"), dict)
+            },
+            monthly_tomorrow_sites,
+        ),
         "tomorrow",
     )
     for site_id, tomorrow_result in tomorrow_results.items():
@@ -595,6 +712,7 @@ def main() -> None:
         "status": "ok" if failed_count == 0 else "partial",
         "siteCount": len(results),
         "successCount": success_count,
+        "liveSuccessCount": success_count - reused_count,
         "failedCount": failed_count,
         "reusedCount": reused_count,
         "sites": results,
