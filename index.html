@@ -167,6 +167,11 @@ a.ebird,.btn.ebird{display:none !important}
 .leaflet-popup-content{max-width:500px;max-height:78vh;overflow-y:auto;padding-right:4px;overscroll-behavior:contain}
 .leaflet-popup-content-wrapper{max-height:82vh}
 .leaflet-popup-content>div>div{width:min(440px,calc(100vw - 80px))!important;max-width:100%}
+.yubudoMapGuide{margin:8px 0;padding:8px;border:1px solid #c9dce8;border-radius:6px;background:#fbfdff;line-height:1.45}
+.yubudoMapGuideTitle{font-weight:bold;color:#174d6f;margin-bottom:4px}.yubudoMapGuideText{font-size:12px;color:#333}
+.yubudoMapChoices{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:7px 0 4px}
+.yubudoMapChoice{min-width:0}.yubudoMapChoiceLabel{font-weight:bold;font-size:12px;margin-bottom:3px;color:#333}
+.yubudoMapChoice .btn{margin:2px 3px 2px 0}
 #helpToggleBtn{position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #helpPanel{display:none;position:fixed;top:166px;right:52px;z-index:10000;width:min(1100px,calc(100vw - 104px));max-height:70vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55}
 .panelHeader{display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px}
@@ -257,6 +262,8 @@ body.monthTideOpen{overflow:hidden}
   .mobilePopupRow b{color:#111}
   .mobilePopupButtons{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid #ddd}
   .mobilePopupButtons .btn,.leaflet-popup-content .btn{display:inline-flex;align-items:center;min-height:36px;box-sizing:border-box;padding:6px 8px;font-size:11px}
+  .yubudoMapChoices{grid-template-columns:1fr;gap:5px}
+  .yubudoMapChoice .btn{width:100%;justify-content:center;margin:2px 0;white-space:normal;text-align:center}
   .v23WeatherToggle{min-height:40px;padding:4px 2px}
   .v24BriefingGrid,.v24ProfileGrid{grid-template-columns:1fr}
   .v26TomorrowGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1247,7 +1254,42 @@ function requestLiveWeatherForPopup(site,popup){
     if(currentCard)setLiveWeatherField(currentCard,'status','최신 기상 확인 실패 · 저장 기상 기준 표시 중');
   });
 }
+function isYubudoSite(site){
+  return String(site.id)==='19'&&site.name==='유부도';
+}
+function yubudoMapGuidanceHtml(site){
+  var departureAddress='전북 군산시 소룡동 1-10';
+  var departureName='유부도 출항지';
+  var destinationName='유부도 탐조지';
+  var lat='36.001158';
+  var lon='126.605031';
+  var naverDeparture='https://map.naver.com/v5/search/'+encodeURIComponent(departureName+' '+departureAddress);
+  var naverDestination='https://map.naver.com/v5/?c='+lon+','+lat+',15,0,0,0,dh';
+  var kakaoDeparture='https://map.kakao.com/link/search/'+encodeURIComponent(departureName+' '+departureAddress);
+  var kakaoDestination='https://map.kakao.com/link/map/'+encodeURIComponent(destinationName)+','+lat+','+lon;
+  var windyUrl=site.windyUrl||('https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10');
+  var ebirdUrl=site.ebirdHotspotUrl||'';
+  var ebirdText=/^https:\/\/ebird\.org\/hotspot\/L\d+$/i.test(ebirdUrl)?'?윟 eBird Hotspot':'?윟 eBird ?먯깋';
+  var html='<div class="yubudoMapGuide"><div class="yubudoMapGuideTitle">유부도 지도 안내</div>'+
+    '<div class="yubudoMapGuideText">소룡동 출항지까지 차량 이동 → 배를 타고 유부도로 이동</div>'+
+    '<div class="yubudoMapGuideText">① '+escapeHtml(departureName)+' · '+escapeHtml(departureAddress)+'</div>'+
+    '<div class="yubudoMapGuideText">② '+escapeHtml(destinationName)+' · '+lat+', '+lon+'</div>'+
+    '<div class="yubudoMapChoices">'+
+    '<div class="yubudoMapChoice"><div class="yubudoMapChoiceLabel">네이버지도</div>'+
+    '<a href="'+escapeHtml(naverDeparture)+'" target="_blank" class="btn naver">1차 경유지 길찾기</a>'+
+    '<a href="'+escapeHtml(naverDestination)+'" target="_blank" class="btn naver">최종 유부도 탐조지 보기</a></div>'+
+    '<div class="yubudoMapChoice"><div class="yubudoMapChoiceLabel">카카오맵</div>'+
+    '<a href="'+escapeHtml(kakaoDeparture)+'" target="_blank" class="btn kakao">1차 경유지 길찾기</a>'+
+    '<a href="'+escapeHtml(kakaoDestination)+'" target="_blank" class="btn kakao">최종 유부도 탐조지 보기</a></div>'+
+    '</div></div>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">';
+  if(SHOW_EBIRD_BUTTON&&ebirdUrl)html+='<a href="'+escapeHtml(ebirdUrl)+'" target="_blank" class="btn ebird">'+ebirdText+'</a>';
+  html+='<a href="'+escapeHtml(windyUrl)+'" target="_blank" class="btn windy">?뙩截?Windy</a>';
+  if(site.ksaUrl)html+='<a href="'+escapeHtml(site.ksaUrl)+'" target="_blank" class="btn ksa">?슓 KSA ?ъ뿬媛앹꽑 ?덈ℓ</a>';
+  return html+'</div>';
+}
 function v23ButtonsFromLegacy(source,site){
+  if(isYubudoSite(site))return yubudoMapGuidanceHtml(site);
   var isGukhwado=String(site.id)==='156'&&site.name==='국화도';
   var ebirdUrl=site.ebirdHotspotUrl||'';
   var ebirdText=/^https:\/\/ebird\.org\/hotspot\/L\d+$/i.test(ebirdUrl)?'🟢 eBird Hotspot':'🟢 eBird 탐색';
