@@ -164,6 +164,8 @@ a.ebird,.btn.ebird{display:none !important}
 #noticePanel{display:none;position:fixed;top:126px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
 .noticeCard{padding:10px 2px;border-bottom:1px solid #e4e4e4}.noticeTitle{font-size:14px;font-weight:bold;color:#533500;margin-bottom:4px}.noticeSummary{margin-bottom:5px;font-weight:bold;color:#8a4d00}.noticeDate{font-size:11px;color:#777;margin-bottom:5px}.noticeContent{line-height:1.55;white-space:pre-line;color:#222}.noticeLink{display:inline-block;margin-top:7px;padding:5px 8px;background:#5b2c83;color:white;border-radius:5px;text-decoration:none;font-weight:bold}
 .noticeImage{display:block;width:100%;max-height:170px;object-fit:contain;margin:7px 0;border:1px solid #ddd;border-radius:6px;background:#f7f7f7}
+.yubudoAccessPin{border-radius:50%;color:white;font-weight:bold;text-align:center;line-height:28px;border:2px solid white;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.yubudoAccessLabel{background:rgba(255,255,255,.96);border:1px solid #777;border-radius:4px;color:#111;font-size:12px;font-weight:bold;padding:2px 5px;box-shadow:0 1px 4px rgba(0,0,0,.22);white-space:nowrap}
 .leaflet-popup-content{max-width:500px;max-height:78vh;overflow-y:auto;padding-right:4px;overscroll-behavior:contain}
 .leaflet-popup-content-wrapper{max-height:82vh}
 .leaflet-popup-content>div>div{width:min(440px,calc(100vw - 80px))!important;max-width:100%}
@@ -257,6 +259,7 @@ body.monthTideOpen{overflow:hidden}
   .mobilePopupRow b{color:#111}
   .mobilePopupButtons{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid #ddd}
   .mobilePopupButtons .btn,.leaflet-popup-content .btn{display:inline-flex;align-items:center;min-height:36px;box-sizing:border-box;padding:6px 8px;font-size:11px}
+  .yubudoAccessLabel{font-size:11px;padding:1px 4px}
   .v23WeatherToggle{min-height:40px;padding:4px 2px}
   .v24BriefingGrid,.v24ProfileGrid{grid-template-columns:1fr}
   .v26TomorrowGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1247,6 +1250,37 @@ function requestLiveWeatherForPopup(site,popup){
     if(currentCard)setLiveWeatherField(currentCard,'status','최신 기상 확인 실패 · 저장 기상 기준 표시 중');
   });
 }
+var yubudoAccessLayer=null;
+function yubudoAccessPinIcon(number,color){
+  return L.divIcon({
+    className:'',
+    html:'<div class="yubudoAccessPin" style="background:'+color+'">'+number+'</div>',
+    iconSize:[32,32],
+    iconAnchor:[16,16],
+    popupAnchor:[0,-16]
+  });
+}
+function showYubudoAccessMap(){
+  var map=map_7010a44f6ac2025090f0fe07508ed485;
+  if(!map)return false;
+  if(yubudoAccessLayer)map.removeLayer(yubudoAccessLayer);
+  var points=[
+    {number:'1',name:'유부도 출항지',lat:'35.97698056',lon:'126.60557500',color:'#d9480f',direction:'left'},
+    {number:'2',name:'유부도 선착장',lat:'35.98959167',lon:'126.59993889',color:'#1971c2',direction:'right'},
+    {number:'3',name:'유부도 탐조지',lat:'36.001158',lon:'126.605031',color:'#2b8a3e',direction:'top'}
+  ];
+  yubudoAccessLayer=L.layerGroup().addTo(map);
+  points.forEach(function(p){
+    var lat=Number(p.lat), lon=Number(p.lon);
+    L.marker([lat,lon],{icon:yubudoAccessPinIcon(p.number,p.color)})
+      .bindTooltip(p.number+'. '+p.name,{permanent:true,direction:p.direction,offset:[0,-6],className:'yubudoAccessLabel'})
+      .bindPopup('<b>'+escapeHtml(p.number+'. '+p.name)+'</b><br>'+escapeHtml(p.lat+', '+p.lon))
+      .addTo(yubudoAccessLayer);
+  });
+  map.closePopup();
+  map.fitBounds(points.map(function(p){return [Number(p.lat),Number(p.lon)];}),{padding:[70,70],maxZoom:14});
+  return false;
+}
 function v23ButtonsFromLegacy(source,site){
   var isGukhwado=String(site.id)==='156'&&site.name==='국화도';
   var isYubudo=String(site.id)==='19'&&site.name==='유부도';
@@ -1261,7 +1295,6 @@ function v23ButtonsFromLegacy(source,site){
     :(site.naverMapUrl||'https://map.naver.com/v5/search/'+encodeURIComponent(site.name));
   var naverAppUrl='';
   var yubudoKakaoDepartureUrl='https://map.kakao.com/link/map/'+encodeURIComponent('유부도 출항지')+','+yubudoDepartureLat+','+yubudoDepartureLon;
-  var yubudoKakaoLocationUrl='https://map.kakao.com/link/map/'+encodeURIComponent('유부도 탐조지')+','+yubudoDestinationLat+','+yubudoDestinationLon;
   var kakaoUrl=isGukhwado
     ?'https://map.kakao.com/link/search/'+encodeURIComponent('장고항')
     :(site.kakaoMapUrl||'https://map.kakao.com/link/map/'+encodeURIComponent(site.name)+','+site.lat+','+site.lon);
@@ -1273,11 +1306,15 @@ function v23ButtonsFromLegacy(source,site){
     var appAttr=appUrl?' onclick="if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){location.href=\''+escapeHtml(appUrl)+'\';return false;}"':'';
     return '<a href="'+escapeHtml(url)+'" target="_blank" class="'+cls+'"'+appAttr+'>'+text+'</a>';
   }
+  function actionButton(cls,text,onclick,show){
+    if(show===false)return '';
+    return '<button type="button" class="'+cls+'" onclick="'+onclick+'">'+text+'</button>';
+  }
   return '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'
+    +(isYubudo?actionButton('btn naver','🗺️ 유부도 접근 지도','return showYubudoAccessMap()',true):'')
     +link('a.naver','btn naver','🧭 네이버지도',naverUrl,true,naverAppUrl)
     +(isYubudo
       ?link('a.kakao','btn kakao','🟡 카카오 출항지 위치',yubudoKakaoDepartureUrl,true)
-        +link('a.kakao','btn kakao','🟡 카카오 유부도 위치',yubudoKakaoLocationUrl,true)
       :link('a.kakao','btn kakao','🟡 카카오맵',kakaoUrl,true))
     +link('a.ebird','btn ebird',ebirdText,ebirdUrl,SHOW_EBIRD_BUTTON)
     +link('a.windy','btn windy','🌬️ Windy',site.windyUrl||'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10',true)
@@ -2621,7 +2658,7 @@ window.addEventListener('resize',function(){
 
         
             
-                var html_dca8fd06b4a88d4c8bb2aee357e44422 = $(`<div id="html_dca8fd06b4a88d4c8bb2aee357e44422" style="width: 100.0%; height: 100.0%;"><div style="width:450px;font-family:Arial,'Malgun Gothic',sans-serif"><h4 style="margin:0 0 6px">유부도</h4><b>권역 ID:</b> 19<br><b>국가/지역:</b> 대한민국 / 서천<br><b>환경유형:</b> 갯벌·하구<br><b>추천계절:</b> 봄·가을 이동기<br><b>계절태그:</b> 봄,가을<br><b>대표조류군:</b> 도요물떼새류·저어새류<br><b>대표종:</b> 넓적부리도요, 저어새, 알락꼬리마도요, 붉은어깨도요, 검은머리물떼새, 검은머리갈매기, 청다리도요사촌, 흑꼬리도요, 붉은가슴도요<hr style="margin:8px 0"><b>희귀조권역:</b> 예 / <b>미기록·희귀 가능성:</b> 예<br><b>섬탐조:</b> 아니오 / <b>선상탐조:</b> 아니오<br><b>접근난이도:</b> 매우 어려움 / <b>대중교통:</b> 하<br><b>주차:</b> 제한 / <b>화장실:</b> 제한 / <b>숙박:</b> 제한<br><b>선박정보:</b> 해당 없음<br><b>주의사항:</b> 군산시 소룡동1-10·해광호010.3933.6059<hr style="margin:8px 0"><div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0"><a href="https://map.naver.com/v5/search/%EC%A0%84%EB%B6%81%20%EA%B5%B0%EC%82%B0%EC%8B%9C%20%EC%86%8C%EB%A3%A1%EB%8F%99%201-10" target="_blank" class="btn naver">🧭 네이버지도</a><a href="https://map.kakao.com/link/map/%EC%9C%A0%EB%B6%80%EB%8F%84%20%EC%B6%9C%ED%95%AD%EC%A7%80,35.97698056,126.60557500" target="_blank" class="btn kakao">🟡 카카오 출항지 위치</a><a href="https://map.kakao.com/link/map/%EC%9C%A0%EB%B6%80%EB%8F%84%20%ED%83%90%EC%A1%B0%EC%A7%80,36.001158,126.605031" target="_blank" class="btn kakao">🟡 카카오 유부도 위치</a><a href="https://ebird.org/hotspot/L1675623" target="_blank" class="btn ebird">🟢 eBird Hotspot</a><a href="https://www.windy.com/36.001158/126.605031?36.001158,126.605031,10" target="_blank" class="btn windy">🌬️ Windy</a></div><br><a href="https://naver.me/FSvUeFHH" target="_blank" class="cafe">📷 들뫼 탐조 보기</a></div></div>`)[0];
+                var html_dca8fd06b4a88d4c8bb2aee357e44422 = $(`<div id="html_dca8fd06b4a88d4c8bb2aee357e44422" style="width: 100.0%; height: 100.0%;"><div style="width:450px;font-family:Arial,'Malgun Gothic',sans-serif"><h4 style="margin:0 0 6px">유부도</h4><b>권역 ID:</b> 19<br><b>국가/지역:</b> 대한민국 / 서천<br><b>환경유형:</b> 갯벌·하구<br><b>추천계절:</b> 봄·가을 이동기<br><b>계절태그:</b> 봄,가을<br><b>대표조류군:</b> 도요물떼새류·저어새류<br><b>대표종:</b> 넓적부리도요, 저어새, 알락꼬리마도요, 붉은어깨도요, 검은머리물떼새, 검은머리갈매기, 청다리도요사촌, 흑꼬리도요, 붉은가슴도요<hr style="margin:8px 0"><b>희귀조권역:</b> 예 / <b>미기록·희귀 가능성:</b> 예<br><b>섬탐조:</b> 아니오 / <b>선상탐조:</b> 아니오<br><b>접근난이도:</b> 매우 어려움 / <b>대중교통:</b> 하<br><b>주차:</b> 제한 / <b>화장실:</b> 제한 / <b>숙박:</b> 제한<br><b>선박정보:</b> 해당 없음<br><b>주의사항:</b> 군산시 소룡동1-10·해광호010.3933.6059<hr style="margin:8px 0"><div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0"><button type="button" class="btn naver" onclick="return showYubudoAccessMap()">🗺️ 유부도 접근 지도</button><a href="https://map.naver.com/v5/search/%EC%A0%84%EB%B6%81%20%EA%B5%B0%EC%82%B0%EC%8B%9C%20%EC%86%8C%EB%A3%A1%EB%8F%99%201-10" target="_blank" class="btn naver">🧭 네이버지도</a><a href="https://map.kakao.com/link/map/%EC%9C%A0%EB%B6%80%EB%8F%84%20%EC%B6%9C%ED%95%AD%EC%A7%80,35.97698056,126.60557500" target="_blank" class="btn kakao">🟡 카카오 출항지 위치</a><a href="https://ebird.org/hotspot/L1675623" target="_blank" class="btn ebird">🟢 eBird Hotspot</a><a href="https://www.windy.com/36.001158/126.605031?36.001158,126.605031,10" target="_blank" class="btn windy">🌬️ Windy</a></div><br><a href="https://naver.me/FSvUeFHH" target="_blank" class="cafe">📷 들뫼 탐조 보기</a></div></div>`)[0];
                 popup_8dc88eafef7a727f38094ce009c514bd.setContent(html_dca8fd06b4a88d4c8bb2aee357e44422);
             
         
