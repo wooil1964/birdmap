@@ -1,18 +1,18 @@
 {
   "date": "2026-08-23",
   "tomorrowDate": "2026-08-24",
-  "tomorrowSuccessCount": 28,
-  "tomorrowFailedCount": 96,
-  "tomorrowReusedCount": 28,
-  "tomorrowStatus": "partial",
-  "updated": "2026-08-23 00:21 KST",
+  "tomorrowSuccessCount": 96,
+  "tomorrowFailedCount": 0,
+  "tomorrowReusedCount": 0,
+  "tomorrowStatus": "ok",
+  "updated": "2026-08-23 06:30 KST",
   "source": "KHOA Tide Forecast OpenAPI",
   "status": "partial",
   "siteCount": 99,
   "successCount": 96,
-  "liveSuccessCount": 0,
-  "failedCount": 99,
-  "reusedCount": 96,
+  "liveSuccessCount": 96,
+  "failedCount": 3,
+  "reusedCount": 0,
   "sites": {
     "51": {
       "name": "울릉도",
@@ -22,7 +22,7 @@
       "lowTideLevel": "관측소 없음",
       "highTideLevel": "관측소 없음",
       "summary": "80km 이내에 사용 가능한 공식 조석관측소가 없습니다.",
-      "updated": "2026-08-23 00:21 KST",
+      "updated": "2026-08-23 06:30 KST",
       "stale": false,
       "unavailable": true,
       "error": "관측소 없음"
@@ -35,7 +35,7 @@
       "lowTideLevel": "관측소 없음",
       "highTideLevel": "관측소 없음",
       "summary": "80km 이내에 사용 가능한 공식 조석관측소가 없습니다.",
-      "updated": "2026-08-23 00:21 KST",
+      "updated": "2026-08-23 06:30 KST",
       "stale": false,
       "unavailable": true,
       "error": "관측소 없음"
@@ -48,7 +48,7 @@
       "lowTideLevel": "관측소 없음",
       "highTideLevel": "관측소 없음",
       "summary": "80km 이내에 사용 가능한 공식 조석관측소가 없습니다.",
-      "updated": "2026-08-23 00:21 KST",
+      "updated": "2026-08-23 06:30 KST",
       "stale": false,
       "unavailable": true,
       "error": "관측소 없음"
@@ -61,10 +61,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "2": {
       "name": "외연도",
@@ -74,10 +78,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "101": {
       "name": "어청도",
@@ -87,10 +95,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "102": {
       "name": "어청도",
@@ -100,10 +112,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "103": {
       "name": "어청도",
@@ -113,10 +129,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "104": {
       "name": "외연도",
@@ -126,10 +146,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "105": {
       "name": "외연도",
@@ -139,10 +163,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "106": {
       "name": "외연도",
@@ -152,10 +180,14 @@
       "lowTideLevel": "287.0, 206.0",
       "highTideLevel": "368.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:08",
+        "highTide": "00:58, 12:53",
+        "lowTideLevel": "254.0, 179.0",
+        "highTideLevel": "458.0, 391.0"
+      }
     },
     "9": {
       "name": "동검도",
@@ -165,19 +197,13 @@
       "lowTideLevel": "416.0, 316.0",
       "highTideLevel": "662.0, 575.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "09:08, 20:47",
         "highTide": "02:29, 14:41",
         "lowTideLevel": "363.0, 268.0",
-        "highTideLevel": "695.0, 620.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "695.0, 620.0"
       }
     },
     "10": {
@@ -188,140 +214,14 @@
       "lowTideLevel": "416.0, 316.0",
       "highTideLevel": "662.0, 575.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "3": {
-      "name": "굴업도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "4": {
-      "name": "백령도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "5": {
-      "name": "대청도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "6": {
-      "name": "연평도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "100": {
-      "name": "백아도 덕적군도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "110": {
-      "name": "소청도예동마을",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "111": {
-      "name": "소청도등대",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "117": {
-      "name": "백령도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "118": {
-      "name": "백령도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "119": {
-      "name": "백령도",
-      "stationName": "굴업도",
-      "lowTide": "07:36, 19:08",
-      "highTide": "00:46, 12:51",
-      "lowTideLevel": "353.0, 259.0",
-      "highTideLevel": "542.0, 460.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "09:08, 20:47",
+        "highTide": "02:29, 14:41",
+        "lowTideLevel": "363.0, 268.0",
+        "highTideLevel": "695.0, 620.0"
+      }
     },
     "8": {
       "name": "석모도",
@@ -331,10 +231,14 @@
       "lowTideLevel": "236.0, 159.0",
       "highTideLevel": "470.0, 381.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "10:14, 22:11",
+        "highTide": "03:39, 15:56",
+        "lowTideLevel": "209.0, 142.0",
+        "highTideLevel": "500.0, 421.0"
+      }
     },
     "37": {
       "name": "공릉천",
@@ -344,10 +248,14 @@
       "lowTideLevel": "236.0, 159.0",
       "highTideLevel": "470.0, 381.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "10:14, 22:11",
+        "highTide": "03:39, 15:56",
+        "lowTideLevel": "209.0, 142.0",
+        "highTideLevel": "500.0, 421.0"
+      }
     },
     "7": {
       "name": "교동도",
@@ -357,10 +265,184 @@
       "lowTideLevel": "236.0, 159.0",
       "highTideLevel": "470.0, 381.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "10:14, 22:11",
+        "highTide": "03:39, 15:56",
+        "lowTideLevel": "209.0, 142.0",
+        "highTideLevel": "500.0, 421.0"
+      }
+    },
+    "3": {
+      "name": "굴업도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "4": {
+      "name": "백령도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "5": {
+      "name": "대청도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "6": {
+      "name": "연평도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "100": {
+      "name": "백아도 덕적군도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "110": {
+      "name": "소청도예동마을",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "111": {
+      "name": "소청도등대",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "117": {
+      "name": "백령도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "118": {
+      "name": "백령도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
+    },
+    "119": {
+      "name": "백령도",
+      "stationName": "굴업도",
+      "lowTide": "07:36, 19:08",
+      "highTide": "00:46, 12:51",
+      "lowTideLevel": "353.0, 259.0",
+      "highTideLevel": "542.0, 460.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:55, 20:23",
+        "highTide": "02:16, 14:19",
+        "lowTideLevel": "311.0, 222.0",
+        "highTideLevel": "571.0, 496.0"
+      }
     },
     "11": {
       "name": "영종도",
@@ -370,10 +452,31 @@
       "lowTideLevel": "407.0, 308.0",
       "highTideLevel": "630.0, 550.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:59, 20:39",
+        "highTide": "02:26, 14:30",
+        "lowTideLevel": "352.0, 261.0",
+        "highTideLevel": "669.0, 596.0"
+      }
+    },
+    "12": {
+      "name": "시화호 대부도",
+      "stationName": "인천송도",
+      "lowTide": "07:30, 19:12",
+      "highTide": "00:37, 12:56",
+      "lowTideLevel": "414.0, 309.0",
+      "highTideLevel": "637.0, 554.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:56, 20:30",
+        "highTide": "02:12, 14:25",
+        "lowTideLevel": "361.0, 264.0",
+        "highTideLevel": "668.0, 597.0"
+      }
     },
     "18": {
       "name": "금강호 금강하구",
@@ -383,10 +486,14 @@
       "lowTideLevel": "334.0, 252.0",
       "highTideLevel": "438.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:34, 19:04",
+        "highTide": "00:52, 12:52",
+        "lowTideLevel": "296.0, 222.0",
+        "highTideLevel": "534.0, 467.0"
+      }
     },
     "19": {
       "name": "유부도",
@@ -396,19 +503,13 @@
       "lowTideLevel": "334.0, 252.0",
       "highTideLevel": "438.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "07:34, 19:04",
         "highTide": "00:52, 12:52",
         "lowTideLevel": "296.0, 222.0",
-        "highTideLevel": "534.0, 467.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "534.0, 467.0"
       }
     },
     "20": {
@@ -419,19 +520,13 @@
       "lowTideLevel": "334.0, 252.0",
       "highTideLevel": "438.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "07:34, 19:04",
         "highTide": "00:52, 12:52",
         "lowTideLevel": "296.0, 222.0",
-        "highTideLevel": "534.0, 467.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "534.0, 467.0"
       }
     },
     "146": {
@@ -442,19 +537,13 @@
       "lowTideLevel": "334.0, 252.0",
       "highTideLevel": "438.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "07:34, 19:04",
         "highTide": "00:52, 12:52",
         "lowTideLevel": "296.0, 222.0",
-        "highTideLevel": "534.0, 467.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "534.0, 467.0"
       }
     },
     "17": {
@@ -465,19 +554,13 @@
       "lowTideLevel": "328.0, 239.0",
       "highTideLevel": "500.0, 423.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "08:19, 19:49",
         "highTide": "01:41, 13:36",
         "lowTideLevel": "289.0, 204.0",
-        "highTideLevel": "528.0, 454.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "528.0, 454.0"
       }
     },
     "114": {
@@ -488,10 +571,14 @@
       "lowTideLevel": "328.0, 239.0",
       "highTideLevel": "500.0, 423.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:19, 19:49",
+        "highTide": "01:41, 13:36",
+        "lowTideLevel": "289.0, 204.0",
+        "highTideLevel": "528.0, 454.0"
+      }
     },
     "115": {
       "name": "가의도",
@@ -501,32 +588,13 @@
       "lowTideLevel": "328.0, 239.0",
       "highTideLevel": "500.0, 423.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "12": {
-      "name": "시화호 대부도",
-      "stationName": "인천송도",
-      "lowTide": "07:30, 19:12",
-      "highTide": "00:37, 12:56",
-      "lowTideLevel": "414.0, 309.0",
-      "highTideLevel": "637.0, 554.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
-        "lowTide": "08:56, 20:30",
-        "highTide": "02:12, 14:25",
-        "lowTideLevel": "361.0, 264.0",
-        "highTideLevel": "668.0, 597.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "lowTide": "08:19, 19:49",
+        "highTide": "01:41, 13:36",
+        "lowTideLevel": "289.0, 204.0",
+        "highTideLevel": "528.0, 454.0"
       }
     },
     "14": {
@@ -537,19 +605,13 @@
       "lowTideLevel": "424.0, 326.0",
       "highTideLevel": "663.0, 577.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "09:00, 20:37",
         "highTide": "02:15, 14:27",
         "lowTideLevel": "369.0, 276.0",
-        "highTideLevel": "696.0, 623.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "696.0, 623.0"
       }
     },
     "107": {
@@ -560,19 +622,13 @@
       "lowTideLevel": "424.0, 326.0",
       "highTideLevel": "663.0, 577.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "09:00, 20:37",
         "highTide": "02:15, 14:27",
         "lowTideLevel": "369.0, 276.0",
-        "highTideLevel": "696.0, 623.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "696.0, 623.0"
       }
     },
     "13": {
@@ -583,147 +639,13 @@
       "lowTideLevel": "424.0, 326.0",
       "highTideLevel": "663.0, 577.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "21": {
-      "name": "동진강 만경강",
-      "stationName": "장항",
-      "lowTide": "06:06, 17:48",
-      "highTide": "11:32",
-      "lowTideLevel": "351.0, 269.0",
-      "highTideLevel": "454.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
-        "lowTide": "07:38, 19:10",
-        "highTide": "00:52, 12:57",
-        "lowTideLevel": "314.0, 240.0",
-        "highTideLevel": "554.0, 485.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
-      }
-    },
-    "122": {
-      "name": "송림갯벌",
-      "stationName": "장항",
-      "lowTide": "06:06, 17:48",
-      "highTide": "11:32",
-      "lowTideLevel": "351.0, 269.0",
-      "highTideLevel": "454.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
-      "tomorrow": {
-        "lowTide": "07:38, 19:10",
-        "highTide": "00:52, 12:57",
-        "lowTideLevel": "314.0, 240.0",
-        "highTideLevel": "554.0, 485.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
-      }
-    },
-    "27": {
-      "name": "낙동강",
-      "stationName": "부산",
-      "lowTide": "10:56",
-      "highTide": "04:49, 18:15",
-      "lowTideLevel": "66.0",
-      "highTideLevel": "88.0, 101.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
-      "tomorrow": {
-        "lowTide": "00:16, 12:03",
-        "highTide": "06:00, 18:57",
-        "lowTideLevel": "57.0, 57.0",
-        "highTideLevel": "95.0, 109.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
-      }
-    },
-    "75": {
-      "name": "부산 오륙도 이기대",
-      "stationName": "부산",
-      "lowTide": "10:56",
-      "highTide": "04:49, 18:15",
-      "lowTideLevel": "66.0",
-      "highTideLevel": "88.0, 101.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
-      "tomorrow": {
-        "lowTide": "00:16, 12:03",
-        "highTide": "06:00, 18:57",
-        "lowTideLevel": "57.0, 57.0",
-        "highTideLevel": "95.0, 109.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
-      }
-    },
-    "76": {
-      "name": "다대포 몰운대",
-      "stationName": "부산",
-      "lowTide": "10:56",
-      "highTide": "04:49, 18:15",
-      "lowTideLevel": "66.0",
-      "highTideLevel": "88.0, 101.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
-      "tomorrow": {
-        "lowTide": "00:16, 12:03",
-        "highTide": "06:00, 18:57",
-        "lowTideLevel": "57.0, 57.0",
-        "highTideLevel": "95.0, 109.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
-      }
-    },
-    "188": {
-      "name": "이천항",
-      "stationName": "부산",
-      "lowTide": "10:56",
-      "highTide": "04:49, 18:15",
-      "lowTideLevel": "66.0",
-      "highTideLevel": "88.0, 101.0",
-      "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
-      "tomorrow": {
-        "lowTide": "00:16, 12:03",
-        "highTide": "06:00, 18:57",
-        "lowTideLevel": "57.0, 57.0",
-        "highTideLevel": "95.0, 109.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "lowTide": "09:00, 20:37",
+        "highTide": "02:15, 14:27",
+        "lowTideLevel": "369.0, 276.0",
+        "highTideLevel": "696.0, 623.0"
       }
     },
     "25": {
@@ -734,19 +656,13 @@
       "lowTideLevel": "186.0, 150.0",
       "highTideLevel": "222.0, 291.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "01:43, 13:03",
         "highTide": "06:56, 20:10",
         "lowTideLevel": "164.0, 130.0",
-        "highTideLevel": "244.0, 313.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "244.0, 313.0"
       }
     },
     "26": {
@@ -757,19 +673,13 @@
       "lowTideLevel": "186.0, 150.0",
       "highTideLevel": "222.0, 291.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "01:43, 13:03",
         "highTide": "06:56, 20:10",
         "lowTideLevel": "164.0, 130.0",
-        "highTideLevel": "244.0, 313.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "244.0, 313.0"
       }
     },
     "71": {
@@ -780,19 +690,13 @@
       "lowTideLevel": "186.0, 150.0",
       "highTideLevel": "222.0, 291.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "01:43, 13:03",
         "highTide": "06:56, 20:10",
         "lowTideLevel": "164.0, 130.0",
-        "highTideLevel": "244.0, 313.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "244.0, 313.0"
       }
     },
     "22": {
@@ -803,19 +707,13 @@
       "lowTideLevel": "304.0, 225.0",
       "highTideLevel": "408.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "07:13, 18:47",
         "highTide": "00:33, 12:31",
         "lowTideLevel": "269.0, 195.0",
-        "highTideLevel": "505.0, 436.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "505.0, 436.0"
       }
     },
     "126": {
@@ -826,98 +724,116 @@
       "lowTideLevel": "304.0, 225.0",
       "highTideLevel": "408.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "44": {
-      "name": "양양남대천",
-      "stationName": "속초",
-      "lowTide": "19:14",
-      "highTide": "10:34",
-      "lowTideLevel": "22.0",
-      "highTideLevel": "42.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
-        "lowTide": "19:53",
-        "highTide": "11:50",
-        "lowTideLevel": "21.0",
-        "highTideLevel": "43.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "lowTide": "07:13, 18:47",
+        "highTide": "00:33, 12:31",
+        "lowTideLevel": "269.0, 195.0",
+        "highTideLevel": "505.0, 436.0"
       }
     },
-    "45": {
-      "name": "속초 영랑호 청초호",
-      "stationName": "속초",
-      "lowTide": "19:14",
-      "highTide": "10:34",
-      "lowTideLevel": "22.0",
-      "highTideLevel": "42.0",
+    "21": {
+      "name": "동진강 만경강",
+      "stationName": "장항",
+      "lowTide": "06:06, 17:48",
+      "highTide": "11:32",
+      "lowTideLevel": "351.0, 269.0",
+      "highTideLevel": "454.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:10",
+        "highTide": "00:52, 12:57",
+        "lowTideLevel": "314.0, 240.0",
+        "highTideLevel": "554.0, 485.0"
+      }
     },
-    "46": {
-      "name": "고성 화진포",
-      "stationName": "속초",
-      "lowTide": "19:14",
-      "highTide": "10:34",
-      "lowTideLevel": "22.0",
-      "highTideLevel": "42.0",
+    "122": {
+      "name": "송림갯벌",
+      "stationName": "장항",
+      "lowTide": "06:06, 17:48",
+      "highTide": "11:32",
+      "lowTideLevel": "351.0, 269.0",
+      "highTideLevel": "454.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "07:38, 19:10",
+        "highTide": "00:52, 12:57",
+        "lowTideLevel": "314.0, 240.0",
+        "highTideLevel": "554.0, 485.0"
+      }
     },
-    "48": {
-      "name": "대진항",
-      "stationName": "속초",
-      "lowTide": "19:14",
-      "highTide": "10:34",
-      "lowTideLevel": "22.0",
-      "highTideLevel": "42.0",
+    "27": {
+      "name": "낙동강",
+      "stationName": "부산",
+      "lowTide": "10:56",
+      "highTide": "04:49, 18:15",
+      "lowTideLevel": "66.0",
+      "highTideLevel": "88.0, 101.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "00:16, 12:03",
+        "highTide": "06:00, 18:57",
+        "lowTideLevel": "57.0, 57.0",
+        "highTideLevel": "95.0, 109.0"
+      }
+    },
+    "75": {
+      "name": "부산 오륙도 이기대",
+      "stationName": "부산",
+      "lowTide": "10:56",
+      "highTide": "04:49, 18:15",
+      "lowTideLevel": "66.0",
+      "highTideLevel": "88.0, 101.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "00:16, 12:03",
+        "highTide": "06:00, 18:57",
+        "lowTideLevel": "57.0, 57.0",
+        "highTideLevel": "95.0, 109.0"
+      }
+    },
+    "76": {
+      "name": "다대포 몰운대",
+      "stationName": "부산",
+      "lowTide": "10:56",
+      "highTide": "04:49, 18:15",
+      "lowTideLevel": "66.0",
+      "highTideLevel": "88.0, 101.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "00:16, 12:03",
+        "highTide": "06:00, 18:57",
+        "lowTideLevel": "57.0, 57.0",
+        "highTideLevel": "95.0, 109.0"
+      }
+    },
+    "188": {
+      "name": "이천항",
+      "stationName": "부산",
+      "lowTide": "10:56",
+      "highTide": "04:49, 18:15",
+      "lowTideLevel": "66.0",
+      "highTideLevel": "88.0, 101.0",
       "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "53": {
-      "name": "주문진항",
-      "stationName": "속초",
-      "lowTide": "19:14",
-      "highTide": "10:34",
-      "lowTideLevel": "22.0",
-      "highTideLevel": "42.0",
-      "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "174": {
-      "name": "송지호",
-      "stationName": "속초",
-      "lowTide": "19:14",
-      "highTide": "10:34",
-      "lowTideLevel": "22.0",
-      "highTideLevel": "42.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "00:16, 12:03",
+        "highTide": "06:00, 18:57",
+        "lowTideLevel": "57.0, 57.0",
+        "highTideLevel": "95.0, 109.0"
+      }
     },
     "43": {
       "name": "경포호",
@@ -927,19 +843,13 @@
       "lowTideLevel": "14.0",
       "highTideLevel": "32.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "19:51",
         "highTide": "11:39",
         "lowTideLevel": "13.0",
-        "highTideLevel": "33.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "33.0"
       }
     },
     "54": {
@@ -950,10 +860,31 @@
       "lowTideLevel": "14.0",
       "highTideLevel": "32.0",
       "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:51",
+        "highTide": "11:39",
+        "lowTideLevel": "13.0",
+        "highTideLevel": "33.0"
+      }
+    },
+    "36": {
+      "name": "한강 하구 장항습지",
+      "stationName": "경인항",
+      "lowTide": "07:30, 19:16",
+      "highTide": "00:43, 12:53",
+      "lowTideLevel": "420.0, 319.0",
+      "highTideLevel": "654.0, 576.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:59, 20:37",
+        "highTide": "02:23, 14:28",
+        "lowTideLevel": "370.0, 270.0",
+        "highTideLevel": "687.0, 614.0"
+      }
     },
     "49": {
       "name": "호미곶",
@@ -963,10 +894,14 @@
       "lowTideLevel": "35.0, 21.0",
       "highTideLevel": "41.0, 40.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "11:18",
+        "highTide": "05:43, 17:24",
+        "lowTideLevel": "32.0",
+        "highTideLevel": "44.0, 43.0"
+      }
     },
     "50": {
       "name": "청림운동장",
@@ -976,19 +911,13 @@
       "lowTideLevel": "35.0, 21.0",
       "highTideLevel": "41.0, 40.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "11:18",
         "highTide": "05:43, 17:24",
         "lowTideLevel": "32.0",
-        "highTideLevel": "44.0, 43.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "44.0, 43.0"
       }
     },
     "56": {
@@ -999,10 +928,14 @@
       "lowTideLevel": "35.0, 21.0",
       "highTideLevel": "41.0, 40.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "11:18",
+        "highTide": "05:43, 17:24",
+        "lowTideLevel": "32.0",
+        "highTideLevel": "44.0, 43.0"
+      }
     },
     "74": {
       "name": "울산 앞바다 선상",
@@ -1012,10 +945,14 @@
       "lowTideLevel": "35.0, 21.0",
       "highTideLevel": "41.0, 40.0",
       "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "11:18",
+        "highTide": "05:43, 17:24",
+        "lowTideLevel": "32.0",
+        "highTideLevel": "44.0, 43.0"
+      }
     },
     "134": {
       "name": "솔개공원",
@@ -1025,75 +962,14 @@
       "lowTideLevel": "35.0, 21.0",
       "highTideLevel": "41.0, 40.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "36": {
-      "name": "한강 하구 장항습지",
-      "stationName": "경인항",
-      "lowTide": "07:30, 19:16",
-      "highTide": "00:43, 12:53",
-      "lowTideLevel": "420.0, 319.0",
-      "highTideLevel": "654.0, 576.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "57": {
-      "name": "제주 하도리 성산포",
-      "stationName": "성산포",
-      "lowTide": "02:22, 12:28",
-      "highTide": "05:30, 20:14",
-      "lowTideLevel": "150.0, 104.0",
-      "highTideLevel": "155.0, 205.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "125": {
-      "name": "오조리철새도래지",
-      "stationName": "성산포",
-      "lowTide": "02:22, 12:28",
-      "highTide": "05:30, 20:14",
-      "lowTideLevel": "150.0, 104.0",
-      "highTideLevel": "155.0, 205.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "60": {
-      "name": "한라산 선덕사",
-      "stationName": "서귀포",
-      "lowTide": "02:09, 12:33",
-      "highTide": "05:39, 20:12",
-      "lowTideLevel": "182.0, 128.0",
-      "highTideLevel": "192.0, 248.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "62": {
-      "name": "제주 남방",
-      "stationName": "서귀포",
-      "lowTide": "02:09, 12:33",
-      "highTide": "05:39, 20:12",
-      "lowTideLevel": "182.0, 128.0",
-      "highTideLevel": "192.0, 248.0",
-      "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "11:18",
+        "highTide": "05:43, 17:24",
+        "lowTideLevel": "32.0",
+        "highTideLevel": "44.0, 43.0"
+      }
     },
     "58": {
       "name": "제주 용수저수지",
@@ -1103,10 +979,14 @@
       "lowTideLevel": "170.0, 127.0",
       "highTideLevel": "186.0, 242.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:39, 14:40",
+        "highTide": "08:14, 21:40",
+        "lowTideLevel": "159.0, 115.0",
+        "highTideLevel": "196.0, 252.0"
+      }
     },
     "59": {
       "name": "동백동산 선흘곶자왈",
@@ -1116,10 +996,14 @@
       "lowTideLevel": "170.0, 127.0",
       "highTideLevel": "186.0, 242.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:39, 14:40",
+        "highTide": "08:14, 21:40",
+        "lowTideLevel": "159.0, 115.0",
+        "highTideLevel": "196.0, 252.0"
+      }
     },
     "150": {
       "name": "한라수목원",
@@ -1129,10 +1013,269 @@
       "lowTideLevel": "170.0, 127.0",
       "highTideLevel": "186.0, 242.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:39, 14:40",
+        "highTide": "08:14, 21:40",
+        "lowTideLevel": "159.0, 115.0",
+        "highTideLevel": "196.0, 252.0"
+      }
+    },
+    "60": {
+      "name": "한라산 선덕사",
+      "stationName": "서귀포",
+      "lowTide": "02:09, 12:33",
+      "highTide": "05:39, 20:12",
+      "lowTideLevel": "182.0, 128.0",
+      "highTideLevel": "192.0, 248.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "02:31, 13:29",
+        "highTide": "07:06, 20:40",
+        "lowTideLevel": "170.0, 114.0",
+        "highTideLevel": "204.0, 262.0"
+      }
+    },
+    "62": {
+      "name": "제주 남방",
+      "stationName": "서귀포",
+      "lowTide": "02:09, 12:33",
+      "highTide": "05:39, 20:12",
+      "lowTideLevel": "182.0, 128.0",
+      "highTideLevel": "192.0, 248.0",
+      "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "02:31, 13:29",
+        "highTide": "07:06, 20:40",
+        "lowTideLevel": "170.0, 114.0",
+        "highTideLevel": "204.0, 262.0"
+      }
+    },
+    "57": {
+      "name": "제주 하도리 성산포",
+      "stationName": "성산포",
+      "lowTide": "02:22, 12:28",
+      "highTide": "05:30, 20:14",
+      "lowTideLevel": "150.0, 104.0",
+      "highTideLevel": "155.0, 205.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "02:33, 13:24",
+        "highTide": "07:02, 20:40",
+        "lowTideLevel": "139.0, 91.0",
+        "highTideLevel": "166.0, 216.0"
+      }
+    },
+    "125": {
+      "name": "오조리철새도래지",
+      "stationName": "성산포",
+      "lowTide": "02:22, 12:28",
+      "highTide": "05:30, 20:14",
+      "lowTideLevel": "150.0, 104.0",
+      "highTideLevel": "155.0, 205.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "02:33, 13:24",
+        "highTide": "07:02, 20:40",
+        "lowTideLevel": "139.0, 91.0",
+        "highTideLevel": "166.0, 216.0"
+      }
+    },
+    "66": {
+      "name": "비금도",
+      "stationName": "목포",
+      "lowTide": "04:47, 16:06",
+      "highTide": "09:30, 23:27",
+      "lowTideLevel": "212.0, 159.0",
+      "highTideLevel": "293.0, 370.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:41, 17:10",
+        "highTide": "11:01",
+        "lowTideLevel": "188.0, 139.0",
+        "highTideLevel": "301.0"
+      }
+    },
+    "67": {
+      "name": "도초도",
+      "stationName": "목포",
+      "lowTide": "04:47, 16:06",
+      "highTide": "09:30, 23:27",
+      "lowTideLevel": "212.0, 159.0",
+      "highTideLevel": "293.0, 370.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:41, 17:10",
+        "highTide": "11:01",
+        "lowTideLevel": "188.0, 139.0",
+        "highTideLevel": "301.0"
+      }
+    },
+    "69": {
+      "name": "목포 남항 영산강",
+      "stationName": "목포",
+      "lowTide": "04:47, 16:06",
+      "highTide": "09:30, 23:27",
+      "lowTideLevel": "212.0, 159.0",
+      "highTideLevel": "293.0, 370.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:41, 17:10",
+        "highTide": "11:01",
+        "lowTideLevel": "188.0, 139.0",
+        "highTideLevel": "301.0"
+      }
+    },
+    "180": {
+      "name": "목포 남항·갓바위 해안",
+      "stationName": "목포",
+      "lowTide": "04:47, 16:06",
+      "highTide": "09:30, 23:27",
+      "lowTideLevel": "212.0, 159.0",
+      "highTideLevel": "293.0, 370.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:41, 17:10",
+        "highTide": "11:01",
+        "lowTideLevel": "188.0, 139.0",
+        "highTideLevel": "301.0"
+      }
+    },
+    "63": {
+      "name": "흑산도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
+    },
+    "64": {
+      "name": "홍도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
+    },
+    "65": {
+      "name": "가거도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
+    },
+    "127": {
+      "name": "흑산도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
+    },
+    "128": {
+      "name": "흑산도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
+    },
+    "129": {
+      "name": "흑산도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
+    },
+    "130": {
+      "name": "흑산도",
+      "stationName": "흑산도",
+      "lowTide": "04:58, 16:14",
+      "highTide": "09:53, 23:39",
+      "lowTideLevel": "175.0, 123.0",
+      "highTideLevel": "223.0, 286.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "05:58, 17:21",
+        "highTide": "11:17",
+        "lowTideLevel": "161.0, 110.0",
+        "highTideLevel": "235.0"
+      }
     },
     "61": {
       "name": "마라도 가파도",
@@ -1142,10 +1285,14 @@
       "lowTideLevel": "162.0, 108.0",
       "highTideLevel": "173.0, 226.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:12, 14:08",
+        "highTide": "07:39, 21:19",
+        "lowTideLevel": "151.0, 95.0",
+        "highTideLevel": "185.0, 236.0"
+      }
     },
     "112": {
       "name": "알뜨르비행장",
@@ -1155,10 +1302,14 @@
       "lowTideLevel": "162.0, 108.0",
       "highTideLevel": "173.0, 226.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:12, 14:08",
+        "highTide": "07:39, 21:19",
+        "lowTideLevel": "151.0, 95.0",
+        "highTideLevel": "185.0, 236.0"
+      }
     },
     "181": {
       "name": "제주 예래생태공원·논짓물 하천",
@@ -1168,10 +1319,14 @@
       "lowTideLevel": "162.0, 108.0",
       "highTideLevel": "173.0, 226.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:12, 14:08",
+        "highTide": "07:39, 21:19",
+        "lowTideLevel": "151.0, 95.0",
+        "highTideLevel": "185.0, 236.0"
+      }
     },
     "68": {
       "name": "증도 지도갯벌",
@@ -1181,19 +1336,13 @@
       "lowTideLevel": "287.0, 221.0",
       "highTideLevel": "388.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "06:37, 18:06",
         "highTide": "00:28, 12:10",
         "lowTideLevel": "257.0, 194.0",
-        "highTideLevel": "481.0, 410.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "481.0, 410.0"
       }
     },
     "95": {
@@ -1204,19 +1353,13 @@
       "lowTideLevel": "287.0, 221.0",
       "highTideLevel": "388.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "06:37, 18:06",
         "highTide": "00:28, 12:10",
         "lowTideLevel": "257.0, 194.0",
-        "highTideLevel": "481.0, 410.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "481.0, 410.0"
       }
     },
     "96": {
@@ -1227,19 +1370,13 @@
       "lowTideLevel": "287.0, 221.0",
       "highTideLevel": "388.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "06:37, 18:06",
         "highTide": "00:28, 12:10",
         "lowTideLevel": "257.0, 194.0",
-        "highTideLevel": "481.0, 410.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "481.0, 410.0"
       }
     },
     "70": {
@@ -1250,19 +1387,13 @@
       "lowTideLevel": "197.0, 151.0",
       "highTideLevel": "226.0, 303.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "02:56, 13:59",
         "highTide": "07:49, 20:54",
         "lowTideLevel": "177.0, 133.0",
-        "highTideLevel": "244.0, 321.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "244.0, 321.0"
       }
     },
     "98": {
@@ -1273,201 +1404,13 @@
       "lowTideLevel": "197.0, 151.0",
       "highTideLevel": "226.0, 303.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "63": {
-      "name": "흑산도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "64": {
-      "name": "홍도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "65": {
-      "name": "가거도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "127": {
-      "name": "흑산도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "128": {
-      "name": "흑산도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "129": {
-      "name": "흑산도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "130": {
-      "name": "흑산도",
-      "stationName": "흑산도",
-      "lowTide": "04:58, 16:14",
-      "highTide": "09:53, 23:39",
-      "lowTideLevel": "175.0, 123.0",
-      "highTideLevel": "223.0, 286.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "66": {
-      "name": "비금도",
-      "stationName": "목포",
-      "lowTide": "04:47, 16:06",
-      "highTide": "09:30, 23:27",
-      "lowTideLevel": "212.0, 159.0",
-      "highTideLevel": "293.0, 370.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "67": {
-      "name": "도초도",
-      "stationName": "목포",
-      "lowTide": "04:47, 16:06",
-      "highTide": "09:30, 23:27",
-      "lowTideLevel": "212.0, 159.0",
-      "highTideLevel": "293.0, 370.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "69": {
-      "name": "목포 남항 영산강",
-      "stationName": "목포",
-      "lowTide": "04:47, 16:06",
-      "highTide": "09:30, 23:27",
-      "lowTideLevel": "212.0, 159.0",
-      "highTideLevel": "293.0, 370.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "180": {
-      "name": "목포 남항·갓바위 해안",
-      "stationName": "목포",
-      "lowTide": "04:47, 16:06",
-      "highTide": "09:30, 23:27",
-      "lowTideLevel": "212.0, 159.0",
-      "highTideLevel": "293.0, 370.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "73": {
-      "name": "거제 해안",
-      "stationName": "거제도",
-      "lowTide": "11:18",
-      "highTide": "04:55, 18:44",
-      "lowTideLevel": "92.0",
-      "highTideLevel": "128.0, 161.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "97": {
-      "name": "여수 돌산 향일암 해안",
-      "stationName": "여수",
-      "lowTide": "00:40, 11:34",
-      "highTide": "05:24, 19:09",
-      "lowTideLevel": "172.0, 143.0",
-      "highTideLevel": "206.0, 260.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "99": {
-      "name": "진도 해안",
-      "stationName": "진도",
-      "lowTide": "03:15, 14:06",
-      "highTide": "07:54, 21:20",
-      "lowTideLevel": "194.0, 143.0",
-      "highTideLevel": "238.0, 320.0",
-      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
-        "lowTide": "03:58, 15:09",
-        "highTide": "08:54, 21:59",
-        "lowTideLevel": "176.0, 124.0",
-        "highTideLevel": "253.0, 336.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "lowTide": "02:56, 13:59",
+        "highTide": "07:49, 20:54",
+        "lowTideLevel": "177.0, 133.0",
+        "highTideLevel": "244.0, 321.0"
       }
     },
     "72": {
@@ -1478,19 +1421,13 @@
       "lowTideLevel": "155.0, 129.0",
       "highTideLevel": "186.0, 241.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
         "lowTide": "01:07, 12:40",
         "highTide": "06:30, 19:39",
         "lowTideLevel": "136.0, 112.0",
-        "highTideLevel": "204.0, 261.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "highTideLevel": "204.0, 261.0"
       }
     },
     "185": {
@@ -1501,23 +1438,167 @@
       "lowTideLevel": "155.0, 129.0",
       "highTideLevel": "186.0, 241.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "01:07, 12:40",
+        "highTide": "06:30, 19:39",
+        "lowTideLevel": "136.0, 112.0",
+        "highTideLevel": "204.0, 261.0"
+      }
     },
-    "182": {
-      "name": "포항 형산강 하구",
-      "stationName": "포항",
-      "lowTide": "19:59",
-      "highTide": "10:24",
-      "lowTideLevel": "21.0",
-      "highTideLevel": "36.0",
+    "44": {
+      "name": "양양남대천",
+      "stationName": "속초",
+      "lowTide": "19:14",
+      "highTide": "10:34",
+      "lowTideLevel": "22.0",
+      "highTideLevel": "42.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:53",
+        "highTide": "11:50",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "43.0"
+      }
+    },
+    "45": {
+      "name": "속초 영랑호 청초호",
+      "stationName": "속초",
+      "lowTide": "19:14",
+      "highTide": "10:34",
+      "lowTideLevel": "22.0",
+      "highTideLevel": "42.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:53",
+        "highTide": "11:50",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "43.0"
+      }
+    },
+    "46": {
+      "name": "고성 화진포",
+      "stationName": "속초",
+      "lowTide": "19:14",
+      "highTide": "10:34",
+      "lowTideLevel": "22.0",
+      "highTideLevel": "42.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:53",
+        "highTide": "11:50",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "43.0"
+      }
+    },
+    "48": {
+      "name": "대진항",
+      "stationName": "속초",
+      "lowTide": "19:14",
+      "highTide": "10:34",
+      "lowTideLevel": "22.0",
+      "highTideLevel": "42.0",
+      "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:53",
+        "highTide": "11:50",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "43.0"
+      }
+    },
+    "53": {
+      "name": "주문진항",
+      "stationName": "속초",
+      "lowTide": "19:14",
+      "highTide": "10:34",
+      "lowTideLevel": "22.0",
+      "highTideLevel": "42.0",
+      "summary": "조석과 파고, 출항 공지를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:53",
+        "highTide": "11:50",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "43.0"
+      }
+    },
+    "174": {
+      "name": "송지호",
+      "stationName": "속초",
+      "lowTide": "19:14",
+      "highTide": "10:34",
+      "lowTideLevel": "22.0",
+      "highTideLevel": "42.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "19:53",
+        "highTide": "11:50",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "43.0"
+      }
+    },
+    "99": {
+      "name": "진도 해안",
+      "stationName": "진도",
+      "lowTide": "03:15, 14:06",
+      "highTide": "07:54, 21:20",
+      "lowTideLevel": "194.0, 143.0",
+      "highTideLevel": "238.0, 320.0",
+      "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:58, 15:09",
+        "highTide": "08:54, 21:59",
+        "lowTideLevel": "176.0, 124.0",
+        "highTideLevel": "253.0, 336.0"
+      }
+    },
+    "73": {
+      "name": "거제 해안",
+      "stationName": "거제도",
+      "lowTide": "11:18",
+      "highTide": "04:55, 18:44",
+      "lowTideLevel": "92.0",
+      "highTideLevel": "128.0, 161.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "00:45, 12:21",
+        "highTide": "06:07, 19:21",
+        "lowTideLevel": "91.0, 81.0",
+        "highTideLevel": "140.0, 174.0"
+      }
+    },
+    "97": {
+      "name": "여수 돌산 향일암 해안",
+      "stationName": "여수",
+      "lowTide": "00:40, 11:34",
+      "highTide": "05:24, 19:09",
+      "lowTideLevel": "172.0, 143.0",
+      "highTideLevel": "206.0, 260.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "01:22, 12:44",
+        "highTide": "06:36, 19:45",
+        "lowTideLevel": "153.0, 124.0",
+        "highTideLevel": "224.0, 280.0"
+      }
     },
     "120": {
       "name": "덕적도",
@@ -1527,32 +1608,13 @@
       "lowTideLevel": "376.0, 279.0",
       "highTideLevel": "565.0, 494.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
-    },
-    "156": {
-      "name": "국화도",
-      "stationName": "대산",
-      "lowTide": "07:12, 18:51",
-      "highTide": "00:27, 12:30",
-      "lowTideLevel": "373.0, 276.0",
-      "highTideLevel": "565.0, 487.0",
-      "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
       "tomorrow": {
-        "lowTide": "08:38, 20:10",
-        "highTide": "02:01, 14:04",
-        "lowTideLevel": "329.0, 238.0",
-        "highTideLevel": "598.0, 524.0",
-        "stale": true,
-        "fallbackSource": "tide_month",
-        "monthlyGeneratedAt": "2026-08-21 03:56 KST",
-        "error": "TimeoutError: timed out"
+        "lowTide": "08:53, 20:30",
+        "highTide": "02:21, 14:23",
+        "lowTideLevel": "329.0, 237.0",
+        "highTideLevel": "599.0, 532.0"
       }
     },
     "124": {
@@ -1563,10 +1625,48 @@
       "lowTideLevel": "183.0, 133.0",
       "highTideLevel": "208.0, 275.0",
       "summary": "조석은 참고하고 여객선 운항 여부를 함께 확인하세요.",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "03:53, 15:00",
+        "highTide": "08:41, 22:00",
+        "lowTideLevel": "166.0, 117.0",
+        "highTideLevel": "218.0, 286.0"
+      }
+    },
+    "156": {
+      "name": "국화도",
+      "stationName": "대산",
+      "lowTide": "07:12, 18:51",
+      "highTide": "00:27, 12:30",
+      "lowTideLevel": "373.0, 276.0",
+      "highTideLevel": "565.0, 487.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "08:38, 20:10",
+        "highTide": "02:01, 14:04",
+        "lowTideLevel": "329.0, 238.0",
+        "highTideLevel": "598.0, 524.0"
+      }
+    },
+    "182": {
+      "name": "포항 형산강 하구",
+      "stationName": "포항",
+      "lowTide": "19:59",
+      "highTide": "10:24",
+      "lowTideLevel": "21.0",
+      "highTideLevel": "36.0",
+      "summary": "만조 전후 2시간 추천",
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "20:57",
+        "highTide": "11:38",
+        "lowTideLevel": "21.0",
+        "highTideLevel": "36.0"
+      }
     },
     "183": {
       "name": "영덕 오십천 하구",
@@ -1576,10 +1676,14 @@
       "lowTideLevel": "11.0",
       "highTideLevel": "26.0",
       "summary": "만조 전후 2시간 추천",
-      "updated": "2026-08-22 06:33 KST",
-      "stale": true,
-      "fallbackSource": "previous_tomorrow",
-      "error": "TimeoutError: timed out"
+      "updated": "2026-08-23 06:30 KST",
+      "stale": false,
+      "tomorrow": {
+        "lowTide": "20:04",
+        "highTide": "11:13",
+        "lowTideLevel": "10.0",
+        "highTideLevel": "26.0"
+      }
     }
   }
 }
