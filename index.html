@@ -1549,15 +1549,7 @@ function activeNotice(i){
   return i.published!==false&&(i.start||'0000-01-01')<=t&&t<=(i.end||'9999-12-31');
 }
 
-var PINNED_BIRDING_ISSUES=[
-  {
-    title:'부산 기장 군함조 관찰',
-    summary:'부산 기장에 군함조가 관찰되었습니다.',
-    start:'2026-07-27',
-    content:'부산 기장 해안에서 군함조가 관찰되었습니다.\n\n군함조는 국내에서 흔히 볼 수 있는 종이 아니므로, 주변 해안과 항구, 방파제 일대를 넓게 살피는 것이 좋습니다.\n\n관찰 시에는 방파제 끝단 접근과 강풍 시 탐조를 피하고, 안전한 위치에서 바다 위를 천천히 확인해 주세요.\n\n탐조지도에서 ‘이천항’을 검색하면 부산 기장 해안 탐조 위치를 확인할 수 있습니다.',
-    published:true
-  }
-];
+var PINNED_BIRDING_ISSUES=[];
 
 function noticeCard(i){
   var c=document.createElement('div');
