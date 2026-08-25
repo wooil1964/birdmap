@@ -1360,7 +1360,26 @@ function v23ButtonsFromLegacy(source,site){
     +'</div>'
     +(isGukhwado?'<div class="smallText">국화도는 카카오맵 섬 직행 길찾기가 제한될 수 있어 장고항 기준으로 안내합니다.<br>배편은 현장 운항 정보를 확인하세요.</div>':'');
 }
+function directCoastalPopupContent(site,desktopContent){
+  var source=popupContentElement(desktopContent);
+  return '<div style="width:min(440px,calc(100vw - 80px));font-family:Arial,\'Malgun Gothic\',sans-serif">'+
+    '<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
+    '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
+    '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
+    '<b>환경유형:</b> '+escapeHtml(site.habitatType)+'<br>'+
+    '<b>추천계절:</b> '+escapeHtml(site.bestSeason)+'<br>'+
+    '<b>계절태그:</b> '+escapeHtml(site.seasons.join(', '))+'<br>'+
+    '<b>대표조류군:</b> '+escapeHtml(site.mainBirdGroup)+'<br>'+
+    '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site))+'<hr style="margin:8px 0">'+
+    '<b>섬탐조:</b> 아니오 / <b>선상탐조:</b> 아니오<br>'+
+    '<b>접근난이도:</b> 미확인 / <b>대중교통:</b> 미확인<br>'+
+    '<b>주차:</b> 미확인 / <b>화장실:</b> 미확인 / <b>숙박:</b> 미확인<br>'+
+    '<b>선박정보:</b> 해당 없음<br>'+
+    '<b>주의사항:</b> 태풍·강풍 후 바다새 관찰 가능성이 높아질 수 있으며, 강풍과 높은 파도 시 안전에 유의'+
+    v23TodayWeatherHtml(site)+v23ButtonsFromLegacy(source,site)+'</div>';
+}
 function v23PopupContent(site,desktopContent){
+  if(site.id==='189'||site.id==='190')return directCoastalPopupContent(site,desktopContent);
   var source=popupContentElement(desktopContent);
   var cafe=source.querySelector('a.cafe');
   var gear=v24RecommendedGear(site);
