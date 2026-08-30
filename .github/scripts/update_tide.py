@@ -49,6 +49,7 @@ ADDITIONAL_TIDE_SITES = (
 )
 FORECAST_STATION_OVERRIDES = {
     "17": ("안흥", "DT_0067"),
+    "19": ("군산외항", "DT_0018"),
     "49": ("울산", "DT_0020"),
     "107": ("궁평항", "SO_1268"),
 }
