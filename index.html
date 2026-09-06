@@ -67,7 +67,7 @@
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
 <button id="helpToggleBtn" onclick="toggleHelpPanel()">📘 지도 사용법</button>
-<button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 오늘 어디 갈까</button>
+<button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 이번주 어디 갈까</button>
 </div>
 </div>
 <div id="birdmapPanel">
@@ -131,8 +131,8 @@
 </div>
 
 <div id="todayPanel">
-  <div class="panelHeader"><strong>🧭 오늘 어디 갈까</strong><button onclick="toggleTodayPanel(false)">닫기</button></div>
-  <div class="smallText" style="margin-top:6px">오늘 기상·조석·계절·탐조 특성을 바탕으로 추천합니다.<br>※ 추천은 탐조 여건을 바탕으로 한 참고 판단입니다.</div>
+  <div class="panelHeader"><strong>🧭 이번주 어디 갈까</strong><button onclick="toggleTodayPanel(false)">닫기</button></div>
+  <div class="smallText" style="margin-top:6px">이번 주 기상·조석·계절·탐조 특성을 바탕으로 추천합니다.<br>※ 추천은 확인 가능한 이번 주 예보와 탐조 조건을 바탕으로 한 참고 판단입니다.</div>
   <div id="todayPanelBody">자료를 불러오는 중입니다.</div>
 </div>
 <div id="monthTideModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="monthTideTitle" onclick="if(event.target===this)closeMonthTideModal()">
@@ -1764,6 +1764,7 @@ function toggleTodayPanel(force){
     if(n)n.style.display='none';
     if(h)h.style.display='none';
     renderTodayPanel();
+    loadTideMonth().then(function(){refreshTodayPanelIfOpen();}).catch(function(){refreshTodayPanelIfOpen();});
   }
 }
 
@@ -1780,7 +1781,7 @@ function activeNotice(i){
 var PINNED_BIRDING_ISSUES=[];
 var loadedNotices=[];
 
-/* 기존 noticePanel과 '오늘 어디 갈까' 이슈 섹션이 같은 데이터·같은 활성 판정을 공유한다 */
+/* 기존 noticePanel과 '이번주 어디 갈까' 이슈 섹션이 같은 데이터·같은 활성 판정을 공유한다 */
 function activeNoticeItems(){
   return PINNED_BIRDING_ISSUES.concat(loadedNotices).filter(activeNotice);
 }
@@ -1877,18 +1878,49 @@ function refreshTodayPanelIfOpen(){
   if(p&&p.style.display==='block')renderTodayPanel();
 }
 
-/* '오늘 어디 갈까': 기존 저장 기상 점수(v251EffectiveScore)는 정렬에만 사용한다.
+/* '이번주 어디 갈까': 기존 저장 기상 점수(v251EffectiveScore)는 정렬에만 사용한다.
+   weather_today.json은 단일 날짜 저장 예보이므로 이번 주 안의 실제 저장 날짜만 기상 판단에 사용한다.
    notices는 순위·점수에 어떤 영향도 주지 않는다. */
 var TODAY_MUDFLAT_TIDE_RULES={
-  '19':{months:[9,10],minHighTideCm:700,reason:'도요 이동기 물때 주목'},   // 유부도
-  '107':{months:[9,10],minHighTideCm:850,reason:'도요 이동기 물때 주목'},  // 매향리
-  '14':{months:[9,10],minHighTideCm:850,reason:'도요 이동기 물때 주목'}    // 걸매리
+  '19':{months:[9,10],minHighTideCm:700,reason:'🌊 도요 이동기 물때 주목'},   // 유부도
+  '107':{months:[9,10],minHighTideCm:850,reason:'🌊 도요 이동기 물때 주목'},  // 매향리
+  '14':{months:[9,10],minHighTideCm:850,reason:'🌊 도요 이동기 물때 주목'}    // 걸매리
 };
 var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES={'백령도':true,'외연도':true,'어청도':true};
 function todayKstMonth(){
   var parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',month:'numeric'}).formatToParts(new Date());
   for(var i=0;i<parts.length;i++)if(parts[i].type==='month')return Number(parts[i].value);
   return new Date().getMonth()+1;
+}
+function weeklyKstDateParts(date){
+  var parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(date||new Date()), values={};
+  parts.forEach(function(part){values[part.type]=part.value;});
+  return {year:Number(values.year),month:Number(values.month),day:Number(values.day),weekday:values.weekday};
+}
+function weeklyDateFromText(dateText){
+  var match=String(dateText||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match?new Date(Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]),12)):null;
+}
+function weeklyDateTextFromUtc(date){
+  return date.getUTCFullYear()+'-'+String(date.getUTCMonth()+1).padStart(2,'0')+'-'+String(date.getUTCDate()).padStart(2,'0');
+}
+function weeklyInfo(){
+  var p=weeklyKstDateParts(new Date()), todayUtc=new Date(Date.UTC(p.year,p.month-1,p.day,12));
+  var day=todayUtc.getUTCDay(), offset=(day+6)%7, start=new Date(todayUtc.getTime()-offset*86400000), end=new Date(start.getTime()+6*86400000), dates=[];
+  for(var i=0;i<7;i++)dates.push(weeklyDateTextFromUtc(new Date(start.getTime()+i*86400000)));
+  return {start:weeklyDateTextFromUtc(start),end:weeklyDateTextFromUtc(end),dates:dates};
+}
+function weeklyDateInRange(dateText,week){
+  return !!dateText&&dateText>=week.start&&dateText<=week.end;
+}
+function weeklyMonthForDate(dateText){
+  var match=String(dateText||'').match(/^\d{4}-(\d{2})-\d{2}$/);
+  return match?Number(match[1]):todayKstMonth();
+}
+function weeklyDateLabel(dateText){
+  var date=weeklyDateFromText(dateText), weekdays=['일','월','화','수','목','금','토'];
+  if(!date)return String(dateText||'날짜 미확인');
+  return (date.getUTCMonth()+1)+'월 '+date.getUTCDate()+'일 '+weekdays[date.getUTCDay()]+'요일';
 }
 function todayHighTideLevelsCm(tide){
   if(!tide||!tide.highTide||!tide.highTideLevel)return [];
@@ -1900,14 +1932,32 @@ function todayHighTideLevelsCm(tide){
   if(!times.length||!levels.length)return [];
   return levels;
 }
-function todayMudflatMandatoryReason(site){
-  var month=todayKstMonth(), rule=TODAY_MUDFLAT_TIDE_RULES[String(site&&site.id)];
-  if(!rule||rule.months.indexOf(month)<0)return '';
-  var tide=tideTodayForSite(site);
-  if(!tide||tide.unavailable||tide.monthFallbackMissing)return '';
-  var highs=todayHighTideLevelsCm(tide);
-  if(!highs.length)return '';
-  return highs.some(function(level){return level>=rule.minHighTideCm;})?rule.reason:'';
+function weeklyHighTideEvents(day){
+  if(!day||!day.highTide||!day.highTideLevel)return [];
+  var times=String(day.highTide).split(',').map(function(v){return v.trim();}).filter(Boolean);
+  var levels=String(day.highTideLevel).split(',').map(function(v){
+    var n=Number(String(v).replace(/[^0-9.\-]/g,''));
+    return Number.isFinite(n)?n:null;
+  });
+  return times.map(function(time,index){return {time:time,level:levels[index]};}).filter(function(event){return Number.isFinite(event.level);});
+}
+function weeklyBestMudflatTide(site,week){
+  var rule=TODAY_MUDFLAT_TIDE_RULES[String(site&&site.id)];
+  if(!rule)return null;
+  var siteMonth=monthTideForSite(site.id);
+  var days=siteMonth&&Array.isArray(siteMonth.days)?siteMonth.days:[];
+  var candidates=[];
+  days.forEach(function(day){
+    if(!weeklyDateInRange(day.date,week)||rule.months.indexOf(weeklyMonthForDate(day.date))<0)return;
+    var highs=weeklyHighTideEvents(day).filter(function(event){return event.level>=rule.minHighTideCm;});
+    if(!highs.length)return;
+    highs.sort(function(a,b){return b.level-a.level;});
+    candidates.push({date:day.date,day:day,best:highs[0],qualified:highs});
+  });
+  if(!candidates.length)return null;
+  candidates.sort(function(a,b){return b.best.level-a.best.level||String(a.date).localeCompare(String(b.date));});
+  var best=candidates[0], extras=candidates.slice(1,3).map(function(item){return weeklyDateLabel(item.date)+' '+item.best.time+' · '+item.best.level+'cm';});
+  return {date:best.date,reason:rule.reason,tideText:'만조 '+best.best.time+' · '+best.best.level+'cm',extraText:extras.length?'그 밖의 좋은 날: '+extras.join(' / '):'',cautionText:(best.day.stale===true&&best.day.fallbackSource!=='monthly_cache')?'※ 이전 조석 자료':'',sortLevel:best.best.level};
 }
 function todayIsEastWindDirection(direction){
   var value=String(direction||'').trim().toUpperCase().replace(/\s*[0-9.]+\s*M\/S.*$/,'').trim();
@@ -1918,21 +1968,29 @@ function todayWeatherCautionNote(today){
   var rainText=String(today&&today.rain||'');
   var rainMatch=rainText.match(/([0-9.]+)\s*mm/i);
   var rainAmount=rainMatch?Number(rainMatch[1]):null;
-  if((wave!==null&&wave>=2.0)||(rainAmount!==null&&rainAmount>=10)||/폭우|호우|강한 비/.test(rainText))return ' · 이동기 주목 조건이지만 현장 탐조 주의';
+  if((wave!==null&&wave>=2.0)||(rainAmount!==null&&rainAmount>=10)||/폭우|호우|강한 비/.test(rainText))return '이동기 주목 조건이지만 현장 탐조 주의';
   return '';
 }
 function todaySoutheastEastWindReason(site,today){
-  if(todayKstMonth()!==9)return '';
+  var result=weeklyEastWindRecommendation(site,today?{date:today.date||String(today.forecastTime||'').slice(0,10),weather:today}:null,weeklyInfo());
+  return result?result.reason+(result.cautionText?' · '+result.cautionText:''):'';
+}
+function weeklyEastWindRecommendation(site,weatherEntry,week){
+  if(!weatherEntry||!weeklyDateInRange(weatherEntry.date,week)||weeklyMonthForDate(weatherEntry.date)!==9)return null;
+  var today=weatherEntry.weather;
+  if(!today||today.stale||today.dataUnavailable)return null;
   var area=String(site.region||'')+' '+String(site.sido||'')+' '+String(site.sigungu||'');
-  if(!/포항|울산|부산/.test(area))return '';
+  if(!/포항|울산|부산/.test(area))return null;
   var feature=[site.birdingFeature,site.env,site.habitatType,site.mainBirdGroup,site.weatherRuleKey].join(' ');
-  if(!/이동성|통과|해안|연안|항구|외해|바다새|갈매기|선상/.test(feature))return '';
+  if(!/이동성|통과|해안|연안|항구|외해|바다새|갈매기|선상/.test(feature))return null;
   var wind=v24WindParts(today&&today.wind), speed=v24WindNumber(today&&today.wind);
-  if(!todayIsEastWindDirection(wind.direction)||speed===null||speed<8)return '';
-  return '동풍 이동기 주목'+todayWeatherCautionNote(today);
+  if(!todayIsEastWindDirection(wind.direction)||speed===null||speed<8)return null;
+  return {date:weatherEntry.date,reason:'🌬️ 9월 동풍 이동기 주목',weatherText:wind.direction+' '+speed.toFixed(speed%1?1:0)+'m/s',cautionText:todayWeatherCautionNote(today),detailText:'9월 이동기에 강한 동풍으로 이동성 조류 유입 가능성에 주목할 조건으로 추정'};
 }
 function todayMandatoryReason(site,today){
-  return todayMudflatMandatoryReason(site)||todaySoutheastEastWindReason(site,today);
+  var tide=weeklyBestMudflatTide(site,weeklyInfo());
+  var wind=weeklyEastWindRecommendation(site,today?{date:today.date||String(today.forecastTime||'').slice(0,10),weather:today}:null,weeklyInfo());
+  return [tide&&tide.reason,wind&&wind.reason].filter(Boolean).join(' · ');
 }
 function todayIsAutumnRemoteIsland(site){
   var month=todayKstMonth();
@@ -1942,35 +2000,52 @@ function todaySpringIslandReason(site){
   var month=todayKstMonth();
   return (month===4||month===5)&&site&&site.weatherRuleKey==='island_migrant'?'봄 섬 이동기 주목':'';
 }
+function weeklyWeatherEntryForSite(site,week){
+  var sites=weatherToday&&weatherToday.sites;
+  if(!sites)return null;
+  var raw=sites[String(site.id)]||sites[site.name]||null;
+  var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
+  var score=raw&&raw.score!==null&&raw.score!==undefined&&raw.score!==''?Number(raw.score):NaN;
+  if(!raw||raw.stale||raw.dataUnavailable||!weeklyDateInRange(date,week)||!Number.isFinite(score))return null;
+  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
+  return {date:date,weather:today,score:score};
+}
+function weeklyRecommendationForSite(site,week){
+  if(todayIsAutumnRemoteIsland(site))return null;
+  var weatherEntry=weeklyWeatherEntryForSite(site,week);
+  var tideRec=weeklyBestMudflatTide(site,week);
+  var windRec=weeklyEastWindRecommendation(site,weatherEntry,week);
+  var reasons=[], caution=[];
+  if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}
+  if(windRec){reasons.push(windRec.reason); if(windRec.detailText)reasons.push(windRec.detailText); if(windRec.cautionText)caution.push('⚠️ '+windRec.cautionText);}
+  var springReason=todaySpringIslandReason(site);
+  var isMandatory=!!(tideRec||windRec);
+  if(!isMandatory&&!weatherEntry)return null;
+  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||week.start;
+  return {site:site,today:weatherEntry&&weatherEntry.weather,score:weatherEntry?weatherEntry.score:null,isMandatory:isMandatory,reasons:reasons,springReason:springReason,recommendationDate:date,
+    tideText:tideRec&&tideRec.tideText,extraText:tideRec&&tideRec.extraText,weatherText:(windRec&&windRec.weatherText)||(weatherEntry&&weatherEntry.weather&&weatherEntry.weather.wind)||'',cautionText:caution.join(' · '),basisText:weatherEntry?'확인 가능한 예보 기간 내 추천':'조석 주간 자료 기준',sortLevel:tideRec&&tideRec.sortLevel};
+}
 function todayRecommendedSites(){
-  var ranked=[];
+  var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
   siteData.forEach(function(site){
-    if(todayIsAutumnRemoteIsland(site))return;
-    var today=weatherTodayForSite(site);
-    var score=v251EffectiveScore(today);
-    if(Number.isFinite(score)){
-      ranked.push({site:site,today:today,score:score,mandatoryReason:todayMandatoryReason(site,today),springReason:todaySpringIslandReason(site)});
-    }
+    var entry=weeklyRecommendationForSite(site,week);
+    if(!entry)return;
+    (entry.isMandatory?mandatory:general).push(entry);
   });
-  ranked.sort(function(a,b){return (b.score-a.score)||(Number(a.site.id)-Number(b.site.id));});
-  var selected=[], selectedIds={}, generalCount=0;
-  ranked.forEach(function(entry){
-    if(entry.mandatoryReason&&!selectedIds[String(entry.site.id)]){
-      selectedIds[String(entry.site.id)]=true;
-      selected.push(entry);
-    }
-  });
-  ranked.forEach(function(entry){
-    if(generalCount>=5)return;
-    if(!selectedIds[String(entry.site.id)]){
-      selectedIds[String(entry.site.id)]=true;
-      selected.push(entry);
-      generalCount++;
-    }
+  function rank(a,b){
+    var as=Number.isFinite(a.score)?a.score:-Infinity, bs=Number.isFinite(b.score)?b.score:-Infinity;
+    return (bs-as)||((b.sortLevel||0)-(a.sortLevel||0))||Number(a.site.id)-Number(b.site.id);
+  }
+  mandatory.sort(rank);general.sort(rank);
+  mandatory.concat(general).forEach(function(entry){
+    if(selected.length>=10)return;
+    var id=String(entry.site.id);
+    if(selectedIds[id])return;
+    selectedIds[id]=true;
+    selected.push(entry);
   });
   return selected;
 }
-
 function todayTideLineText(site){
   var tide=tideTodayForSite(site);
   if(!tide||tide.unavailable||tide.monthFallbackMissing)return '';
@@ -1980,6 +2055,10 @@ function todayTideLineText(site){
   if(tide.staleDaily||tide.monthFallbackStale)text+=' · ※ 이전 자료';
   else if(tide.monthFallback)text+=' · 월간 조석표 기준';
   return text;
+}
+function weeklyWeatherCoverageText(week){
+  var date=String(weatherToday&&weatherToday.date||'');
+  return date&&weeklyDateInRange(date,week)?weeklyDateLabel(date)+' 저장 예보':'확인 가능한 주간 일별 기상예보 없음';
 }
 
 function goToSiteFromTodayPanel(siteId){
@@ -2026,15 +2105,20 @@ function renderTodayPanel(){
   var linkedIdSet={};
   linkedIdsByNotice.forEach(function(ids){ids.forEach(function(id){linkedIdSet[id]=true;});});
 
+  var week=weeklyInfo();
+  var top=todayRecommendedSites();
   var topTitle=document.createElement('div');
   topTitle.className='todaySectionTitle';
-  topTitle.textContent='🧭 오늘 추천';
+  topTitle.textContent='🧭 이번 주 추천 '+top.length+'곳';
   body.appendChild(topTitle);
-  var top=todayRecommendedSites();
+  var basisInfo=document.createElement('div');
+  basisInfo.className='todayRankBasis';
+  basisInfo.textContent='이번 주: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+' · 조석: KHOA 예측자료';
+  body.appendChild(basisInfo);
   if(!top.length){
     var none=document.createElement('div');
     none.className='smallText';
-    none.textContent='오늘 적합도 자료가 없어 추천을 표시할 수 없습니다. 기상 자료 갱신 후 다시 확인해 주세요.';
+    none.textContent='이번 주에 확인 가능한 추천 자료가 없습니다. 기상·조석 자료 갱신 후 다시 확인해 주세요.';
     body.appendChild(none);
   }
   top.forEach(function(entry,index){
@@ -2054,30 +2138,55 @@ function renderTodayPanel(){
     item.appendChild(name);
     var score=document.createElement('div');
     score.className='todayRankScore';
-    score.textContent=v251ScoreDisplayText(entry.today);
+    score.textContent=entry.today?v251ScoreDisplayText(entry.today):'조석 기준 추천';
     item.appendChild(score);
+    var recDate=document.createElement('div');
+    recDate.className='todayRankMeta';
+    recDate.textContent='📅 추천: '+weeklyDateLabel(entry.recommendationDate);
+    item.appendChild(recDate);
     var meta=document.createElement('div');
     meta.className='todayRankMeta';
     meta.textContent=entry.site.region+' · '+v25EnvironmentLabel(entry.site);
     item.appendChild(meta);
-    var seasonalReason=entry.mandatoryReason||entry.springReason;
-    if(seasonalReason){
+    var seasonalReasons=(entry.reasons&&entry.reasons.length)?entry.reasons:(entry.springReason?[entry.springReason]:[]);
+    seasonalReasons.forEach(function(text){
       var reason=document.createElement('div');
       reason.className='todayMandatoryReason';
-      reason.textContent=seasonalReason;
+      reason.textContent=text;
       item.appendChild(reason);
+    });
+    if(entry.weatherText){
+      var weather=document.createElement('div');
+      weather.className='todayRankTide';
+      weather.textContent='🌬️ '+entry.weatherText+(entry.today&&entry.today.rain?' · '+entry.today.rain:'')+(entry.today&&entry.today.wave?' · 파고 '+entry.today.wave:'');
+      item.appendChild(weather);
     }
-    var tideText=todayTideLineText(entry.site);
-    if(tideText){
+    if(entry.tideText){
       var tide=document.createElement('div');
       tide.className='todayRankTide';
-      tide.textContent='🌊 '+tideText;
+      tide.textContent='🌊 '+entry.tideText;
       item.appendChild(tide);
+    }
+    if(entry.extraText){
+      var extra=document.createElement('div');
+      extra.className='todayRankTide';
+      extra.textContent=entry.extraText;
+      item.appendChild(extra);
+    }
+    if(entry.cautionText){
+      var caution=document.createElement('div');
+      caution.className='todayMandatoryReason';
+      caution.textContent=entry.cautionText;
+      item.appendChild(caution);
     }
     var basis=document.createElement('div');
     basis.className='todayRankBasis';
-    basis.textContent=storedWeatherLabel(entry.today);
+    basis.textContent=entry.basisText+(entry.today?' · 저장 예보 '+(entry.today.forecastTime||'시각 미확인')+' · 생성 '+(entry.today.generatedAt||'시각 미확인'):'');
     item.appendChild(basis);
+    var mapHint=document.createElement('div');
+    mapHint.className='todayRankBasis';
+    mapHint.textContent='🗺️ 지도에서 보기';
+    item.appendChild(mapHint);
     body.appendChild(item);
   });
 
