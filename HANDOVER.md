@@ -14,6 +14,7 @@
 
 ## 최근 완료 작업
 
+- 모바일 popup 겹침·가로 스크롤 안정화(2026-09-06): 원인은 ① Leaflet popup autoPan 기본 패딩(5px)이 모바일 상단 고정 UI(`#topUiWrap`, z-index 10001)를 고려하지 않음, ② `moveToSite`의 `setView` 애니메이션이 popup autoPan 결과를 되돌림, ③ 모바일 패널 고정 `top:178px`이 버튼 줄바꿈 시 실제 상단 UI 높이(약 198px)보다 작아 겹침. 수정: 상단 UI 실제 높이를 CSS 변수(`--birdmapTopUiH`, `--birdmapPopupMaxH`)로 계산해 패널 top·popup 최대 높이에 반영, popupopen 시 `autoPanPaddingTopLeft/BottomRight` 동적 설정, 이동/애니메이션 안정화 후 `popup.update()` 재보정, 열린 검색 패널 아래 popup 최소 공간(180px)이 있으면 패널 유지·없으면 기존 패턴대로 자동 닫기. `#birdmapPanel`·입력창·`#noticePanel`에 box-sizing 보정, 모바일 한정 `html,body{overflow-x:hidden}` 안전장치. 390x844/360x800/412x915 및 1366/1920 데스크톱 회귀 검증(187개·중복 ID 0·조석/기상/버튼 정상). 조석·기상·좌표·데이터 변경 없음.
 - 기상 최종 원격 검증: 코드 `842a8d1` 및 `959ee96` main push, Actions `34022709060`/`34023132421` 성공. 최종 자동 JSON `a1233ee`: 2026-09-06 17:54 생성/18:00 갱신, 187 성공, 실패·stale·재사용·없음 0, 점수 적격 187. Windy GFS + Open-Meteo 시정 보완. 회귀 총 61개 통과. KMA 외부 timeout과 모바일 팝업 겹침은 미해결이며 신규 추천 기능은 구현하지 않았다.
 
 - 기상 안정화(2026-09-06, Worker 배포 완료): runtime/Worker 코드 187개 전수 일치, ID 188 추가 및 ID 14 이름 일치. 저장 기상 concat 파서 오류 수정, 원 시각·출처·stale·점수 적격 상태 분리, 일부 KMA 요청 실패 시 유효 응답 보존. 실제 Open-Meteo 저장 기상 187개 성공, 이전 자료는 오늘 점수에서 제외. 상세 `.github/scripts/weather_system_review.md` 참조. Worker version 0c8fbbb2-728d-4dfd-8d3b-2ed0fb5d8e05 배포 완료. 대표 실제 호출은 7곳 KMA_TIMEOUT, 독도 해양 우선 분기였다. 코드 배포와 외부 API 정상화를 구분할 것.

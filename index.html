@@ -240,8 +240,9 @@ body.monthTideOpen{overflow:hidden}
   #topBtnRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;pointer-events:none}
   #topBtnRow button{position:static;pointer-events:auto;font-size:12px;padding:6px 9px}
   .desktopToggleLabel{display:none}.mobileToggleLabel{display:inline}
-  #birdmapPanel{display:none;top:178px;left:8px;width:min(300px,calc(100vw - 16px));max-height:min(48vh,420px);overflow-y:auto;padding:9px 10px;font-size:12px}
-  #birdmapPanel input[type=text]{width:calc(100% - 58px);min-width:0}
+  html,body{overflow-x:hidden}
+  #birdmapPanel{display:none;top:var(--birdmapTopUiH,178px);left:8px;width:min(300px,calc(100vw - 16px));box-sizing:border-box;max-height:min(48vh,420px);overflow-y:auto;padding:9px 10px;font-size:12px}
+  #birdmapPanel input[type=text]{width:calc(100% - 58px);min-width:0;box-sizing:border-box}
   #birdmapPanel .mobileSectionToggle{display:block;width:100%;margin-top:7px;font-weight:bold}
   #birdmapPanel .mobileCollapsible{display:none}
   #birdmapPanel .mobileCollapsible.mobileOpen{display:block}
@@ -251,8 +252,8 @@ body.monthTideOpen{overflow:hidden}
   .resultBirds{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#777}
   #routeTools>b{display:inline-block;margin-bottom:2px}
   #routeToggleBtn{margin-top:5px!important}
-  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 48px);max-height:72vh;overflow-y:auto;overscroll-behavior:contain}
-  .leaflet-popup-content-wrapper{max-height:76vh}
+  .leaflet-popup-content{margin:10px 12px;max-width:calc(100vw - 48px);max-height:min(72vh,var(--birdmapPopupMaxH,72vh));overflow-y:auto;overscroll-behavior:contain}
+  .leaflet-popup-content-wrapper{max-height:min(76vh,calc(var(--birdmapPopupMaxH,72vh) + 24px))}
   .mobileBirdPopup{width:min(280px,calc(100vw - 76px));font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;line-height:1.4}
   .mobileBirdPopup h4{margin:0 0 7px;font-size:16px;color:#222}
   .mobilePopupRow{margin:3px 0;color:#333;overflow-wrap:anywhere}
@@ -266,9 +267,9 @@ body.monthTideOpen{overflow:hidden}
   .v26TomorrowPeriod{padding:2px 5px}
   .v24ProfileWide{grid-column:auto}
 
-  #noticePanel{top:178px;left:8px;right:8px;width:auto;max-height:calc(100vh - 154px)}
+  #noticePanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;box-sizing:border-box;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
 
-  #helpPanel{top:178px;left:8px;right:8px;width:auto;max-height:calc(100vh - 154px)}
+  #helpPanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
   .monthTideModal{padding:8px;align-items:stretch}
   .monthTideDialog{max-height:calc(100vh - 16px);border-radius:8px}
   .monthTideHeader{padding:10px 11px;font-size:15px}
@@ -452,6 +453,7 @@ function toggleBirdmapPanel(){
   var mobile=window.innerWidth<=700;
   if(window.getComputedStyle(p).display==='none'){p.style.display='block';b.innerText=mobile?'검색 닫기':'필터 숨기기';}
   else{p.style.display='none';b.innerText=mobile?'검색 열기':'필터 보이기';}
+  updateMobileUiMetrics();
 }
 
 function toggleMobileSection(contentId,buttonId,closedText,openText){
@@ -461,6 +463,55 @@ function toggleMobileSection(contentId,buttonId,closedText,openText){
   content.classList.toggle('mobileOpen',opening);
   button.setAttribute('aria-expanded',opening?'true':'false');
   button.innerText=opening?openText:closedText;
+}
+
+function birdmapMobileLayout(){return window.innerWidth<=700;}
+
+/* 모바일 상단 고정 UI(제목+버튼줄) 실제 높이를 CSS 변수로 반영해
+   패널 top과 popup 최대 높이를 기기별로 계산한다. */
+function updateMobileUiMetrics(){
+  var root=document.documentElement;
+  if(!birdmapMobileLayout()){
+    root.style.removeProperty('--birdmapTopUiH');
+    root.style.removeProperty('--birdmapPopupMaxH');
+    return null;
+  }
+  var ui=document.getElementById('topUiWrap');
+  var topUiBottom=ui?Math.ceil(ui.getBoundingClientRect().bottom)+8:178;
+  root.style.setProperty('--birdmapTopUiH',topUiBottom+'px');
+  var occlusion=topUiBottom;
+  var panel=document.getElementById('birdmapPanel');
+  if(panel&&window.getComputedStyle(panel).display!=='none'){
+    var panelBottom=Math.ceil(panel.getBoundingClientRect().bottom)+8;
+    if(panelBottom>occlusion&&birdmapPopupFitsBelow(panelBottom))occlusion=panelBottom;
+  }
+  root.style.setProperty('--birdmapPopupMaxH',Math.max(180,window.innerHeight-occlusion-40)+'px');
+  return occlusion;
+}
+
+/* 해당 y 아래에 popup 최소 표시 공간(내용 180px)이 남는지 */
+function birdmapPopupFitsBelow(bottom){
+  return window.innerHeight-bottom-40>=180;
+}
+
+/* 모바일에서 popup autoPan이 상단 고정 UI·열린 검색 패널 아래로 popup을 내리도록 패딩을 설정.
+   열린 검색 패널 아래에 popup 최소 공간이 없을 때만 기존 패턴대로 패널을 자동으로 닫는다. */
+function applyMobilePopupAutoPan(popup){
+  if(!popup||!popup.options)return;
+  if(!birdmapMobileLayout()){
+    popup.options.autoPanPaddingTopLeft=null;
+    popup.options.autoPanPaddingBottomRight=null;
+    return;
+  }
+  var panel=document.getElementById('birdmapPanel');
+  if(panel&&window.getComputedStyle(panel).display!=='none'&&
+     !birdmapPopupFitsBelow(Math.ceil(panel.getBoundingClientRect().bottom)+8)){
+    hideBirdmapPanelOnMobile();
+  }
+  var occlusion=updateMobileUiMetrics();
+  if(occlusion===null)return;
+  popup.options.autoPanPaddingTopLeft=L.point(12,occlusion);
+  popup.options.autoPanPaddingBottomRight=L.point(12,16);
 }
 
 function hideBirdmapPanelOnMobile(){
@@ -590,6 +641,7 @@ function setupResponsivePopups(){
   var map=map_7010a44f6ac2025090f0fe07508ed485;
   map.on('popupopen',function(e){
     var popup=e.popup,marker=popup._source;
+    applyMobilePopupAutoPan(popup);
     var site=siteData.find(function(s){return window[s.markerVar]===marker;});
     if(!site)return;
     if(!popup._birdmapDesktopContent)popup._birdmapDesktopContent=popup.getContent();
@@ -597,6 +649,11 @@ function setupResponsivePopups(){
     popup._birdmapV23Active=true;
     popup.update();
     requestLiveWeatherForPopup(site,popup);
+    /* setView/줌 애니메이션이 autoPan 결과를 되돌릴 수 있어 안정화 후 한 번 더 위치 보정 */
+    if(popup._birdmapSettleTimer)clearTimeout(popup._birdmapSettleTimer);
+    popup._birdmapSettleTimer=setTimeout(function(){
+      if(map.hasLayer(popup))popup.update();
+    },650);
   });
   map.on('popupclose',function(e){
     var popup=e.popup;
@@ -1501,9 +1558,15 @@ function sitePasses(s){
 }
 
 function moveToSite(site){
-  map_7010a44f6ac2025090f0fe07508ed485.setView([site.lat,site.lon],11);
+  var m=map_7010a44f6ac2025090f0fe07508ed485;
+  m.setView([site.lat,site.lon],11);
   var mk=markerRegistry[markerKey(site)];
-  if(mk){mk.addTo(map_7010a44f6ac2025090f0fe07508ed485);mk.openPopup();}
+  if(mk){
+    mk.addTo(m);
+    mk.openPopup();
+    /* setView 애니메이션이 popup autoPan 결과를 되돌리므로 이동 완료 후 위치를 재보정 */
+    m.once('moveend',function(){var p=m._popup;if(p&&m.hasLayer(p))p.update();});
+  }
 }
 
 function haversineKm(a,b){
@@ -1792,11 +1855,13 @@ document.getElementById('searchBox').addEventListener('keydown',function(e){if(e
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMonthTideModal();});
 window.addEventListener('load',function(){
   hideBirdmapPanelOnMobile();
+  updateMobileUiMetrics();
   setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);loadNotices();loadWeatherToday();loadTideToday();},300);
 });
 window.addEventListener('resize',function(){
   rebuildMarkerRegistry();
   applyResponsiveMarkerSizes();
+  updateMobileUiMetrics();
 });
 </script>
 
