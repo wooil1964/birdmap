@@ -110,8 +110,20 @@ Open-Meteo의 current 강수를 3시간 누적 강수로 오인하지 않도록 
 | 이전 저장값 재사용 수 | 0 (오래된 파일 자체 유지) | 0 |
 | 데이터 없음 수 | runtime 중 4 | 0 |
 
-Commit/Push 후 Actions 결과와 GitHub main 검증은 후속 기록에 남긴다. Cloudflare 배포는 완료됐으나 외부 KMA 안정 응답은 미해결이다. 전체 live 정상화를 주장하지 않는다.
+Commit/Push 후 Actions 결과와 GitHub main 검증은 아래 기록 참조. Cloudflare 배포는 완료됐으나 외부 KMA 안정 응답은 미해결이다. 전체 live 정상화를 주장하지 않는다.
 
 production GitHub Pages에서 이천항 검색·팝업·현재 저장 자료 및 live 실패 fallback 표시 확인. 모바일에서 재개방해도 상단 검색 패널과 팝업이 겹침을 확인했으며 별도 개선 대상으로 남긴다. 자료 없음 fixture도 브라우저에서 오늘 적합도 미확인/자료 없음으로 확인했다.
 
 추가 회귀: 저장 기상과 조석이 모두 없는 월악산(77)에서도 기상 카드/실시간 조회가 유지되도록 조건을 수정했다. 브라우저에서 기상 자료 없음·오늘 적합도 미확인·최신 기상 조회 실패 문구를 확인했다.
+
+## GitHub main / Actions 확인
+
+- 핵심 변경: `842a8d173be45e3c98bf874339dbfd09a354973d` (`fix: stabilize weather data freshness and worker mapping`).
+- 자료 없음 조회 경로 보완: `959ee96d5113d07b0e72c3cfd68fb2af7eee50e6`. 두 커밋 main push 완료.
+- [첫 새 Actions 34022709060](https://github.com/wooil1964/birdmap/actions/runs/34022709060): 성공. 기상 Python 8개/Node 33개 테스트 통과. 17:44 생성 시작 → 17:52 갱신 완료, 187개 성공, 실패/재사용/stale/없음 0, 점수 적격 187. 자동 생성 커밋 `85df0b5`를 보존하여 후속 코드를 rebase했다.
+- Actions의 기본 기상 출처는 Windy GFS 187개, 시정은 Open-Meteo 187개 보완, 필요한 파고는 Windy 66개. 최초 ICON visibility 요청 HTTP 400 후 기존 GFS fallback이 정상 작동했다. providerFallbackCount=187은 전체 기상 실패가 아니라 시정 보완을 포함한 수다.
+- GitHub raw의 index, Worker 코드/등록표, updater, site loader, validator, workflow, weather JSON 총 8개 파일을 959ee96 기준 로컬 검증본과 직접 비교하여 모두 일치 확인.
+- production 이천항 단독 재시도도 HTTP 504/KMA_TIMEOUT, 8.172초였다. 이전 404 등록 문제는 해소됐으며 외부 timeout은 남아 있다.
+
+- [최종 코드 Actions 34023132421](https://github.com/wooil1964/birdmap/actions/runs/34023132421): 959ee96 코드로 성공. Python 기상 8개/Node 33개 통과. 최종 JSON은 2026-09-06 17:54 생성/18:00 갱신, success=187, failed=0, reused=0, stale=0, unavailable=0, scoreEligible=187, providerFallback=187, registry 차이 0. 생성 커밋 `a1233ee`를 로컬에도 fast-forward하고 validator로 실제 파일을 재검증했다.
+- 기상/Worker/UI 41개 + 조석 20개 = 총 61개 회귀 통과. 환경변수 키 원문/URL 인코딩 변형이 변경 파일에 들어 있지 않음 확인. 임시 테스트 서버 종료, 모바일 viewport 복원. 최종 남은 문제는 KMA 외부 timeout, 새 배포의 live 성공/cache hit 미확인, 기존 모바일 팝업 위치/겹침이다.
