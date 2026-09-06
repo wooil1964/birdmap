@@ -188,6 +188,7 @@ a.ebird,.btn.ebird{display:none !important}
 .todayRankScore{font-weight:bold;color:#704d00}
 .todayRankMeta{font-size:11px;color:#666}
 .todayRankTide{font-size:11px;color:#31576f;overflow-wrap:anywhere}
+.todayMandatoryReason{margin-top:2px;font-size:11px;font-weight:bold;color:#1d5c38}
 .todayRankBasis{font-size:10px;color:#999}
 .todayIssueLinkTag{display:inline-block;margin-left:4px;padding:1px 6px;border:1px solid #c8a800;border-radius:999px;background:#fff8cc;color:#6b5600;font-size:10px;font-weight:bold;vertical-align:middle}
 .todayIssueCard{margin:6px 0;padding:7px 8px;border:1px solid #e6d9ae;border-radius:6px;background:#fffdf2}
@@ -1878,7 +1879,36 @@ function refreshTodayPanelIfOpen(){
 
 /* '오늘 어디 갈까' Top 5: 기존 저장 기상 점수(v251EffectiveScore)를 그대로 정렬에만 사용.
    notices는 순위·점수에 어떤 영향도 주지 않는다. */
-function todayTopSites(){
+function todayKstMonth(){
+  var parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',month:'numeric'}).formatToParts(new Date());
+  for(var i=0;i<parts.length;i++)if(parts[i].type==='month')return Number(parts[i].value);
+  return new Date().getMonth()+1;
+}
+function todayHasUsableTide(site){
+  var tide=tideTodayForSite(site);
+  return !!tide&&!tide.unavailable&&!tide.monthFallbackMissing&&v24TideDayEvents(tide).length>0;
+}
+function todayMudflatMandatoryReason(site){
+  var month=todayKstMonth();
+  if(month!==9&&month!==10)return '';
+  if(v25EnvironmentLabel(site)!=='갯벌탐조')return '';
+  if(!MONTH_TIDE_SITE_IDS.has(String(site.id))||!todayHasUsableTide(site))return '';
+  return '도요 이동기 물때 주목';
+}
+function todaySoutheastEastWindReason(site,today){
+  if(todayKstMonth()!==9)return '';
+  var area=String(site.region||'')+' '+String(site.sido||'')+' '+String(site.sigungu||'');
+  if(!/포항|울산|부산/.test(area))return '';
+  var feature=[site.birdingFeature,site.env,site.habitatType,site.mainBirdGroup,site.weatherRuleKey].join(' ');
+  if(!/이동성|통과|해안|연안|항구|외해|바다새|갈매기|선상/.test(feature))return '';
+  var wind=v24WindParts(today&&today.wind), speed=v24WindNumber(today&&today.wind);
+  if(!/동풍|북동풍|남동풍/.test(wind.direction)||speed===null||speed<7)return '';
+  return '동풍 이동기 주목';
+}
+function todayMandatoryReason(site,today){
+  return todaySoutheastEastWindReason(site,today)||todayMudflatMandatoryReason(site);
+}
+function todayRecommendedSites(){
   var ranked=[];
   siteData.forEach(function(site){
     var today=weatherTodayForSite(site);
@@ -1886,7 +1916,18 @@ function todayTopSites(){
     if(Number.isFinite(score))ranked.push({site:site,today:today,score:score});
   });
   ranked.sort(function(a,b){return (b.score-a.score)||(Number(a.site.id)-Number(b.site.id));});
-  return ranked.slice(0,5);
+  var selected=ranked.slice(0,5), selectedIds={};
+  selected.forEach(function(entry){selectedIds[String(entry.site.id)]=true;});
+  ranked.slice(5).forEach(function(entry){
+    var reason=todayMandatoryReason(entry.site,entry.today);
+    if(reason&&!selectedIds[String(entry.site.id)]){
+      entry.mandatoryReason=reason;
+      selectedIds[String(entry.site.id)]=true;
+      selected.push(entry);
+    }
+  });
+  selected.slice(0,5).forEach(function(entry){entry.mandatoryReason='';});
+  return selected;
 }
 
 function todayTideLineText(site){
@@ -1946,9 +1987,9 @@ function renderTodayPanel(){
 
   var topTitle=document.createElement('div');
   topTitle.className='todaySectionTitle';
-  topTitle.textContent='🧭 오늘 추천 Top 5';
+  topTitle.textContent='🧭 오늘 추천';
   body.appendChild(topTitle);
-  var top=todayTopSites();
+  var top=todayRecommendedSites();
   if(!top.length){
     var none=document.createElement('div');
     none.className='smallText';
@@ -1978,6 +2019,12 @@ function renderTodayPanel(){
     meta.className='todayRankMeta';
     meta.textContent=entry.site.region+' · '+v25EnvironmentLabel(entry.site);
     item.appendChild(meta);
+    if(entry.mandatoryReason){
+      var reason=document.createElement('div');
+      reason.className='todayMandatoryReason';
+      reason.textContent=entry.mandatoryReason;
+      item.appendChild(reason);
+    }
     var tideText=todayTideLineText(entry.site);
     if(tideText){
       var tide=document.createElement('div');
