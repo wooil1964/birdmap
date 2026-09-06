@@ -1909,6 +1909,18 @@ function todayMudflatMandatoryReason(site){
   if(!highs.length)return '';
   return highs.some(function(level){return level>=rule.minHighTideCm;})?rule.reason:'';
 }
+function todayIsEastWindDirection(direction){
+  var value=String(direction||'').trim().toUpperCase().replace(/\s*[0-9.]+\s*M\/S.*$/,'').trim();
+  return /동풍|북동풍|남동풍/.test(value)||/^(E|ENE|ESE)$/.test(value);
+}
+function todayWeatherCautionNote(today){
+  var wave=v24WaveNumber(today&&today.wave);
+  var rainText=String(today&&today.rain||'');
+  var rainMatch=rainText.match(/([0-9.]+)\s*mm/i);
+  var rainAmount=rainMatch?Number(rainMatch[1]):null;
+  if((wave!==null&&wave>=2.0)||(rainAmount!==null&&rainAmount>=10)||/폭우|호우|강한 비/.test(rainText))return ' · 이동기 주목 조건이지만 현장 탐조 주의';
+  return '';
+}
 function todaySoutheastEastWindReason(site,today){
   if(todayKstMonth()!==9)return '';
   var area=String(site.region||'')+' '+String(site.sido||'')+' '+String(site.sigungu||'');
@@ -1916,8 +1928,8 @@ function todaySoutheastEastWindReason(site,today){
   var feature=[site.birdingFeature,site.env,site.habitatType,site.mainBirdGroup,site.weatherRuleKey].join(' ');
   if(!/이동성|통과|해안|연안|항구|외해|바다새|갈매기|선상/.test(feature))return '';
   var wind=v24WindParts(today&&today.wind), speed=v24WindNumber(today&&today.wind);
-  if(!/동풍|북동풍|남동풍/.test(wind.direction)||speed===null||speed<7)return '';
-  return '동풍 이동기 주목';
+  if(!todayIsEastWindDirection(wind.direction)||speed===null||speed<8)return '';
+  return '동풍 이동기 주목'+todayWeatherCautionNote(today);
 }
 function todayMandatoryReason(site,today){
   return todayMudflatMandatoryReason(site)||todaySoutheastEastWindReason(site,today);
