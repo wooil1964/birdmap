@@ -67,6 +67,7 @@
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
 <button id="helpToggleBtn" onclick="toggleHelpPanel()">📘 지도 사용법</button>
+<button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 오늘 어디 갈까</button>
 </div>
 </div>
 <div id="birdmapPanel">
@@ -128,6 +129,12 @@
     <img class="helpGuideImage" src="./birdmap-user-guide.png" alt="전국 탐조지도 이렇게 활용하세요! 사용법 안내">
   </div>
 </div>
+
+<div id="todayPanel">
+  <div class="panelHeader"><strong>🧭 오늘 어디 갈까</strong><button onclick="toggleTodayPanel(false)">닫기</button></div>
+  <div class="smallText" style="margin-top:6px">오늘 기상·조석·계절·탐조 특성을 바탕으로 추천합니다.<br>※ 추천은 탐조 여건을 바탕으로 한 참고 판단입니다.</div>
+  <div id="todayPanelBody">자료를 불러오는 중입니다.</div>
+</div>
 <div id="monthTideModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="monthTideTitle" onclick="if(event.target===this)closeMonthTideModal()">
   <div class="monthTideDialog">
     <div class="monthTideHeader"><strong id="monthTideTitle">한 달 조석</strong><button type="button" onclick="closeMonthTideModal()">닫기</button></div>
@@ -170,6 +177,25 @@ a.ebird,.btn.ebird{display:none !important}
 .leaflet-popup-content-wrapper{max-height:82vh}
 .leaflet-popup-content>div>div{width:min(440px,calc(100vw - 80px))!important;max-width:100%}
 #helpToggleBtn{position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#todayToggleBtn{position:fixed;top:166px;right:52px;z-index:10001;padding:8px 11px;background:#eefbf1;border:2px solid #2f7d4f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#todayPanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:380px;max-height:66vh;overflow-y:auto;background:white;border:2px solid #2f7d4f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.5;overscroll-behavior:contain}
+#todayPanel .panelHeader{border-color:#bfe0cb}
+.todaySectionTitle{margin:11px 0 6px;font-size:14px;font-weight:bold;color:#1d5c38}
+.todayDivider{margin:11px 0 0;border:0;border-top:1px solid #d8e6dc}
+.todayRankItem{display:block;width:100%;text-align:left;margin:4px 0;padding:7px 8px;border:1px solid #cfe0d4;border-radius:6px;background:#fbfffc;cursor:pointer;line-height:1.4;font-size:12px}
+.todayRankItem:hover{background:#eef7f0;border-color:#7fb894}
+.todayRankName{font-weight:bold;color:#1d3a29;font-size:13px}
+.todayRankScore{font-weight:bold;color:#704d00}
+.todayRankMeta{font-size:11px;color:#666}
+.todayRankTide{font-size:11px;color:#31576f;overflow-wrap:anywhere}
+.todayRankBasis{font-size:10px;color:#999}
+.todayIssueLinkTag{display:inline-block;margin-left:4px;padding:1px 6px;border:1px solid #c8a800;border-radius:999px;background:#fff8cc;color:#6b5600;font-size:10px;font-weight:bold;vertical-align:middle}
+.todayIssueCard{margin:6px 0;padding:7px 8px;border:1px solid #e6d9ae;border-radius:6px;background:#fffdf2}
+.todayIssueTitle{font-weight:bold;color:#533500;margin-bottom:2px}
+.todayIssueText{color:#4a3a12;white-space:pre-line;overflow-wrap:anywhere;font-size:12px}
+.todayIssueDate{font-size:10px;color:#977f3d;margin-top:3px}
+.todayIssueMapBtn{display:inline-block;margin:4px 4px 0 0;padding:4px 7px;border:1px solid #2d6f9f;border-radius:5px;background:#eef7ff;color:#174d6f;font-weight:bold;font-size:11px;cursor:pointer}
+.todayAllIssuesBtn{display:block;width:100%;margin-top:7px;padding:7px 9px;border:1px solid #a67800;border-radius:6px;background:#fff7db;color:#533500;font-weight:bold;cursor:pointer}
 #helpPanel{display:none;position:fixed;top:166px;right:52px;z-index:10000;width:min(1100px,calc(100vw - 104px));max-height:70vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55}
 .panelHeader{display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px}
 .helpTitle{font-size:14px;font-weight:bold;color:#174d6f;margin:8px 0 6px}.flowBox{background:#f0f8ff;border:1px solid #9bc7df;border-radius:8px;padding:9px;margin:8px 0;font-weight:bold;color:#174d6f;line-height:1.65}.helpList{margin:7px 0 9px 18px;padding:0}.helpList li{margin-bottom:4px}.helpLink{display:inline-block;margin-top:8px;padding:7px 10px;background:#174d6f;color:white;border-radius:5px;text-decoration:none;font-weight:bold}.helpNote{margin-top:8px;padding-top:8px;border-top:1px solid #ddd;color:#5b1c1c;font-size:12px}
@@ -270,6 +296,8 @@ body.monthTideOpen{overflow:hidden}
   #noticePanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;box-sizing:border-box;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
 
   #helpPanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
+
+  #todayPanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
   .monthTideModal{padding:8px;align-items:stretch}
   .monthTideDialog{max-height:calc(100vh - 16px);border-radius:8px}
   .monthTideHeader{padding:10px 11px;font-size:15px}
@@ -1716,15 +1744,26 @@ function resetFilters(){
 
 
 function toggleNoticePanel(force){
-  var p=document.getElementById('noticePanel'),h=document.getElementById('helpPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
+  var p=document.getElementById('noticePanel'),h=document.getElementById('helpPanel'),d=document.getElementById('todayPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
   p.style.display=o?'block':'none';
-  if(o){hideBirdmapPanelOnMobile();if(h)h.style.display='none';}
+  if(o){hideBirdmapPanelOnMobile();if(h)h.style.display='none';if(d)d.style.display='none';}
 }
 
 function toggleHelpPanel(force){
-  var p=document.getElementById('helpPanel'),n=document.getElementById('noticePanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
+  var p=document.getElementById('helpPanel'),n=document.getElementById('noticePanel'),d=document.getElementById('todayPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
   p.style.display=o?'block':'none';
-  if(o){hideBirdmapPanelOnMobile();if(n)n.style.display='none';}
+  if(o){hideBirdmapPanelOnMobile();if(n)n.style.display='none';if(d)d.style.display='none';}
+}
+
+function toggleTodayPanel(force){
+  var p=document.getElementById('todayPanel'),n=document.getElementById('noticePanel'),h=document.getElementById('helpPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
+  p.style.display=o?'block':'none';
+  if(o){
+    hideBirdmapPanelOnMobile();
+    if(n)n.style.display='none';
+    if(h)h.style.display='none';
+    renderTodayPanel();
+  }
 }
 
 function todayString(){
@@ -1738,6 +1777,30 @@ function activeNotice(i){
 }
 
 var PINNED_BIRDING_ISSUES=[];
+var loadedNotices=[];
+
+/* 기존 noticePanel과 '오늘 어디 갈까' 이슈 섹션이 같은 데이터·같은 활성 판정을 공유한다 */
+function activeNoticeItems(){
+  return PINNED_BIRDING_ISSUES.concat(loadedNotices).filter(activeNotice);
+}
+
+/* 공지에 구조적으로 기재된 탐조지(id 또는 정확한 이름 일치)만 연결한다. 자연어 추론 금지. */
+function noticeLinkedSites(notice){
+  var raw=[].concat(
+    Array.isArray(notice&&notice.siteIds)?notice.siteIds:[],
+    notice&&notice.siteId!==undefined&&notice.siteId!==null?[notice.siteId]:[],
+    Array.isArray(notice&&notice.sites)?notice.sites:[],
+    notice&&notice.site!==undefined&&notice.site!==null?[notice.site]:[]
+  );
+  var found=[],seen={};
+  raw.forEach(function(value){
+    var key=String(value).trim();
+    if(!key)return;
+    var site=siteData.find(function(s){return String(s.id)===key||s.name===key;});
+    if(site&&!seen[site.id]){seen[site.id]=true;found.push(site);}
+  });
+  return found;
+}
 
 function noticeCard(i){
   var c=document.createElement('div');
@@ -1798,10 +1861,155 @@ function loadNotices(){
     if(!r.ok)throw new Error();
     return r.json();
   }).then(function(data){
-    renderNoticeItems(PINNED_BIRDING_ISSUES.concat(Array.isArray(data)?data:[]));
+    loadedNotices=Array.isArray(data)?data:[];
+    renderNoticeItems(PINNED_BIRDING_ISSUES.concat(loadedNotices));
+    refreshTodayPanelIfOpen();
   }).catch(function(){
+    loadedNotices=[];
     renderNoticeItems(PINNED_BIRDING_ISSUES);
+    refreshTodayPanelIfOpen();
   });
+}
+
+function refreshTodayPanelIfOpen(){
+  var p=document.getElementById('todayPanel');
+  if(p&&p.style.display==='block')renderTodayPanel();
+}
+
+/* '오늘 어디 갈까' Top 5: 기존 저장 기상 점수(v251EffectiveScore)를 그대로 정렬에만 사용.
+   notices는 순위·점수에 어떤 영향도 주지 않는다. */
+function todayTopSites(){
+  var ranked=[];
+  siteData.forEach(function(site){
+    var today=weatherTodayForSite(site);
+    var score=v251EffectiveScore(today);
+    if(Number.isFinite(score))ranked.push({site:site,today:today,score:score});
+  });
+  ranked.sort(function(a,b){return (b.score-a.score)||(Number(a.site.id)-Number(b.site.id));});
+  return ranked.slice(0,5);
+}
+
+function todayTideLineText(site){
+  var tide=tideTodayForSite(site);
+  if(!tide||tide.unavailable||tide.monthFallbackMissing)return '';
+  var events=v24TideDayEvents(tide);
+  if(!events.length)return '';
+  var text=events.map(function(e){return e.symbol+' '+e.label+' '+e.time+(e.level?' ('+v24TideLevelDisplay(e.level)+'cm)':'');}).join(' · ');
+  if(tide.staleDaily||tide.monthFallbackStale)text+=' · ※ 이전 자료';
+  else if(tide.monthFallback)text+=' · 월간 조석표 기준';
+  return text;
+}
+
+function goToSiteFromTodayPanel(siteId){
+  var site=siteData.find(function(s){return String(s.id)===String(siteId);});
+  if(!site)return;
+  toggleTodayPanel(false);
+  moveToSite(site);
+}
+
+function todayIssueCard(notice,linkedTop5Ids){
+  var card=document.createElement('div');
+  card.className='todayIssueCard';
+  var title=document.createElement('div');
+  title.className='todayIssueTitle';
+  title.textContent=notice.title||'탐조 이슈';
+  card.appendChild(title);
+  var text=document.createElement('div');
+  text.className='todayIssueText';
+  text.textContent=notice.summary||notice.content||'';
+  card.appendChild(text);
+  if(notice.start||notice.end){
+    var date=document.createElement('div');
+    date.className='todayIssueDate';
+    date.textContent=(notice.start||'')+((notice.start&&notice.end)?' ~ ':'')+(notice.end||'');
+    card.appendChild(date);
+  }
+  noticeLinkedSites(notice).forEach(function(site){
+    var btn=document.createElement('button');
+    btn.type='button';
+    btn.className='todayIssueMapBtn';
+    btn.textContent='🗺️ '+site.name+' 지도에서 보기';
+    btn.onclick=function(){goToSiteFromTodayPanel(site.id);};
+    card.appendChild(btn);
+  });
+  return card;
+}
+
+function renderTodayPanel(){
+  var body=document.getElementById('todayPanelBody');
+  if(!body)return;
+  body.innerHTML='';
+  var issues=activeNoticeItems();
+  var linkedIdsByNotice=issues.map(function(n){return noticeLinkedSites(n).map(function(s){return String(s.id);});});
+  var linkedIdSet={};
+  linkedIdsByNotice.forEach(function(ids){ids.forEach(function(id){linkedIdSet[id]=true;});});
+
+  var topTitle=document.createElement('div');
+  topTitle.className='todaySectionTitle';
+  topTitle.textContent='🧭 오늘 추천 Top 5';
+  body.appendChild(topTitle);
+  var top=todayTopSites();
+  if(!top.length){
+    var none=document.createElement('div');
+    none.className='smallText';
+    none.textContent='오늘 적합도 자료가 없어 추천을 표시할 수 없습니다. 기상 자료 갱신 후 다시 확인해 주세요.';
+    body.appendChild(none);
+  }
+  top.forEach(function(entry,index){
+    var item=document.createElement('button');
+    item.type='button';
+    item.className='todayRankItem';
+    item.onclick=function(){goToSiteFromTodayPanel(entry.site.id);};
+    var name=document.createElement('div');
+    name.className='todayRankName';
+    name.textContent=(index+1)+'. '+entry.site.name;
+    if(linkedIdSet[String(entry.site.id)]){
+      var tag=document.createElement('span');
+      tag.className='todayIssueLinkTag';
+      tag.textContent='📢 현재 탐조 이슈 연계';
+      name.appendChild(tag);
+    }
+    item.appendChild(name);
+    var score=document.createElement('div');
+    score.className='todayRankScore';
+    score.textContent=v251ScoreDisplayText(entry.today);
+    item.appendChild(score);
+    var meta=document.createElement('div');
+    meta.className='todayRankMeta';
+    meta.textContent=entry.site.region+' · '+v25EnvironmentLabel(entry.site);
+    item.appendChild(meta);
+    var tideText=todayTideLineText(entry.site);
+    if(tideText){
+      var tide=document.createElement('div');
+      tide.className='todayRankTide';
+      tide.textContent='🌊 '+tideText;
+      item.appendChild(tide);
+    }
+    var basis=document.createElement('div');
+    basis.className='todayRankBasis';
+    basis.textContent=storedWeatherLabel(entry.today);
+    item.appendChild(basis);
+    body.appendChild(item);
+  });
+
+  body.appendChild(Object.assign(document.createElement('hr'),{className:'todayDivider'}));
+  var issueTitle=document.createElement('div');
+  issueTitle.className='todaySectionTitle';
+  issueTitle.textContent='📢 지금 볼 만한 탐조 이슈';
+  body.appendChild(issueTitle);
+  if(!issues.length){
+    var noneIssue=document.createElement('div');
+    noneIssue.className='smallText';
+    noneIssue.textContent='현재 게시 중인 탐조 이슈가 없습니다.';
+    body.appendChild(noneIssue);
+  }
+  issues.forEach(function(notice){body.appendChild(todayIssueCard(notice));});
+  var allBtn=document.createElement('button');
+  allBtn.type='button';
+  allBtn.className='todayAllIssuesBtn';
+  allBtn.textContent='전체 탐조 이슈 보기';
+  allBtn.onclick=function(){toggleNoticePanel(true);};
+  body.appendChild(allBtn);
 }
 
 function refreshOpenBirdPopup(){
