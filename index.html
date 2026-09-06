@@ -1129,7 +1129,6 @@ function v24LocalBirdingTipHtml(site){
 function v23TodayWeatherHtml(site,forceRender){
   var today=weatherTodayForSite(site);
   var tide=tideTodayForSite(site);
-  if(!today&&!tide&&!site.localTipUse&&!forceRender)return '';
   var type=v24BriefingType(site);
   var wind=v24WindParts(today&&today.wind);
   var expanded=!window.matchMedia('(max-width: 700px)').matches;
@@ -1138,7 +1137,7 @@ function v23TodayWeatherHtml(site,forceRender){
   if(site.showWave)typeItems+='<div class="v24BriefingItem v24ProfileWide"><b>파고:</b> '+escapeHtml(v23Value(today&&today.wave,''))+'</div>';
   if(site.showTide)typeItems+=v24TideHtml(tide)+monthTideButtonHtml(site);
   if(site.island||site.pelagic)typeItems+='<div class="v24BriefingItem v24ProfileWide"><b>여객선:</b> '+escapeHtml(today&&today._weatherState.dataCurrent?v24FerryStatus(today.wind,today.wave):'기상 미확인 · 선사 공지 확인')+'</div>';
-  return '<div class="v23TodayBox v24BriefingCard" data-live-weather-site-id="'+escapeHtml(site.id)+'"><div class="v23Title" data-live-weather-field="title">'+(today&&today._weatherState.dataCurrent?'오늘의 탐조 기상':'저장 기상 참고')+'</div>'+
+  return '<div class="v23TodayBox v24BriefingCard" data-live-weather-site-id="'+escapeHtml(site.id)+'"><div class="v23Title" data-live-weather-field="title">'+(today&&today._weatherState.dataCurrent?'오늘의 탐조 기상':!today||today._weatherState.kind==='none'?'기상 자료 없음':'저장 기상 참고')+'</div>'+
     '<div class="v24BriefingTop"><span class="v23TodayScore" data-live-weather-field="score">'+escapeHtml(v251ScoreDisplayText(today))+'</span></div>'+
     '<div class="smallText" data-live-weather-field="storedStatus">'+escapeHtml(storedWeatherLabel(today))+'</div>'+
     '<div class="v23WeatherDetails"><input type="checkbox" class="v23WeatherCheck" id="'+detailsId+'"'+(expanded?' checked':'')+'>'+

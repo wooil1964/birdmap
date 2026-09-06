@@ -54,7 +54,20 @@ Actions는 KST 06:17/10:17/14:17/18:17, 작업 제한 30분이다. 예정 실행
 
 로컬에는 WINDY_API_KEY가 없어서 환경변수 값을 출력하지 않고 기존 Open-Meteo fallback으로 실제 생성했다. 17:31 시작/17:32 종료, 187개 성공, failed/reused/stale/unavailable 모두 0, scoreEligible 187, providerFallback 187. 대기 자료를 수동 수정하지 않고 생성 스크립트로 갱신했다. 이 성공 수는 저장 기상 API 수이며 KMA Worker live 성공 수가 아니다.
 
-Worker 수정 코드는 로컬 테스트 및 Wrangler 4.129.0 `deploy --dry-run` 통과(51.72 KiB). Cloudflare 인증이 만료되어 실제 재배포는 대기 중이다. 위 production 표는 수정 전 배포본의 결과이며 새 코드 production 성공을 뜻하지 않는다. 사용자에게 `npx wrangler login` 갱신을 요청했다. API 토큰 환경변수도 없는 상태였다.
+Worker 수정 코드는 로컬 테스트 및 Wrangler 4.129.0 `deploy --dry-run` 통과. 최초 인증 만료 확인 후 갱신된 인증을 재확인하여 실제 배포 완료했다. Version ID `0c8fbbb2-728d-4dfd-8d3b-2ed0fb5d8e05` (51.89 KiB). `secret list`로 KMA_SERVICE_KEY 등록 이름만 확인했고 값은 읽거나 출력하지 않았다. 위 표는 수정 전 배포본 결과다. 배포 후 결과는 아래와 같다.
+
+| ID | HTTP | 소요 초 | 결과 |
+|---|---|---|---|
+| 107 | 504 | 8.172 | KMA_TIMEOUT |
+| 19 | 504 | 8.187 | KMA_TIMEOUT |
+| 9 | 504 | 8.172 | KMA_TIMEOUT |
+| 50 | 504 | 8.141 | KMA_TIMEOUT |
+| 188 | 504 | 8.156 | 등록 누락 해결, KMA_TIMEOUT |
+| 51 | 504 | 8.140 | KMA_TIMEOUT |
+| 52 | 422 | 0.141 | 기존 해양 우선 분기 |
+| 57 | 504 | 8.140 | KMA_TIMEOUT |
+
+새 production 8곳 모두 기대 CORS 헤더, preflight 204, 잘못된 Origin 403/CORS 없음, 잘못된 ID 404. 기본 Python User-Agent는 Cloudflare 403/1010으로 차단되어 브라우저 형식 User-Agent로 재검증했다. 이 차단을 KMA parsing 오류로 오인하지 않는다. 429는 관측되지 않았다. 새 배포에서 실제 기상 성공·cache hit·응답 좌표/내일 데이터는 timeout 때문에 확인할 수 없었다. 이를 로컬 fixture 성공으로 대체하지 않는다. HTTP 504를 유지하며 UI에서 저장 기상 fallback을 명시한다.
 
 ## freshness / fallback 정책
 
@@ -89,12 +102,16 @@ Open-Meteo의 current 강수를 3시간 누적 강수로 오인하지 않도록 
 | 항목 | 수정 전 | 수정 후 |
 |---|---|---|
 | runtime 수 | 187 | 187 |
-| Worker 코드 등록 수 | 186 | 187 (production 재배포 대기) |
-| 누락 ID 수 | 1 | 코드 0 / 기존 production 1 |
+| Worker 코드 등록 수 | 186 | 187 (production 배포 완료) |
+| 누락 ID 수 | 1 | 코드/production 0 |
 | stale weather 수 | 183개 모두 8/25, 플래그 0 | 0 |
-| live 성공/실패 | 1 성공, 5 timeout, 1 누락, 1 해양 분기 | 새 Worker production 검증 대기 |
+| live 성공/실패 | 1 성공, 5 timeout, 1 누락, 1 해양 분기 | 새 배포: 7 timeout, 1 해양 분기 |
 | 저장값 대상 수 | 183 | 187 |
 | 이전 저장값 재사용 수 | 0 (오래된 파일 자체 유지) | 0 |
 | 데이터 없음 수 | runtime 중 4 | 0 |
 
-Commit/Push 후 Actions 결과와 GitHub main 검증은 후속 기록에 남긴다. Cloudflare 재배포와 외부 KMA 안정 응답이 확인되기 전 전체 완료로 판정하지 않는다.
+Commit/Push 후 Actions 결과와 GitHub main 검증은 후속 기록에 남긴다. Cloudflare 배포는 완료됐으나 외부 KMA 안정 응답은 미해결이다. 전체 live 정상화를 주장하지 않는다.
+
+production GitHub Pages에서 이천항 검색·팝업·현재 저장 자료 및 live 실패 fallback 표시 확인. 모바일에서 재개방해도 상단 검색 패널과 팝업이 겹침을 확인했으며 별도 개선 대상으로 남긴다. 자료 없음 fixture도 브라우저에서 오늘 적합도 미확인/자료 없음으로 확인했다.
+
+추가 회귀: 저장 기상과 조석이 모두 없는 월악산(77)에서도 기상 카드/실시간 조회가 유지되도록 조건을 수정했다. 브라우저에서 기상 자료 없음·오늘 적합도 미확인·최신 기상 조회 실패 문구를 확인했다.
