@@ -16,6 +16,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+from site_data import load_runtime_sites, load_worker_sites, compare_sites
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -33,6 +34,7 @@ KST = timezone(timedelta(hours=9))
 REQUEST_RATE_LOCK = threading.Lock()
 LAST_REQUEST_AT = 0.0
 WINDY_UNAVAILABLE = threading.Event()
+REQUEST_DEADLINE = float("inf")
 ATMOSPHERIC_PARAMETERS = [
     "wind",
     "windGust",
@@ -56,14 +58,26 @@ WAVE_COORDINATE_OVERRIDES = {
 
 
 def load_site_data() -> list[dict[str, Any]]:
-    html = HTML_PATH.read_text(encoding="utf-8")
-    match = re.search(r"var siteData=(\[.*?\]);\s*var markerRegistry=", html, re.S)
-    if not match:
-        raise RuntimeError("index.html에서 siteData를 찾지 못했습니다.")
-    sites = json.loads(match.group(1))
-    if len(sites) != 183:
-        raise RuntimeError(f"siteData 개수가 183개가 아닙니다: {len(sites)}")
-    return sites
+    return load_runtime_sites(HTML_PATH)
+
+
+def safe_error(exc: Exception) -> str:
+    if isinstance(exc, urllib.error.HTTPError):
+        return f"HTTP {exc.code}"
+    message = str(exc) if isinstance(exc, RuntimeError) else type(exc).__name__
+    for name in ("WINDY_API_KEY", "KMA_SERVICE_KEY"):
+        key = os.environ.get(name, "").strip()
+        if key:
+            for value in {key, urllib.parse.unquote(key), urllib.parse.quote_plus(urllib.parse.unquote(key))}:
+                message = message.replace(value, "[REDACTED]")
+    return re.sub(r"(?i)((?:serviceKey|key)\s*[=:]\s*)[^&\s]+", r"\1[REDACTED]", message)
+
+
+def request_timeout(default: float) -> float:
+    remaining = REQUEST_DEADLINE - time.monotonic()
+    if remaining <= 0:
+        raise RuntimeError("Weather request budget exhausted")
+    return min(default, remaining)
 
 
 def load_rules() -> dict[str, Any]:
@@ -80,6 +94,8 @@ def request_forecast(
     global LAST_REQUEST_AT
     if WINDY_UNAVAILABLE.is_set():
         raise RuntimeError("Windy request circuit is open")
+    if not api_key:
+        raise RuntimeError("WINDY_API_KEY not configured")
     payload = json.dumps(
         {
             "lat": lat,
@@ -103,7 +119,7 @@ def request_forecast(
                 time.sleep(wait_seconds)
             LAST_REQUEST_AT = time.monotonic()
         try:
-            with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            with urllib.request.urlopen(request, timeout=request_timeout(REQUEST_TIMEOUT_SECONDS)) as response:
                 if response.status != 200:
                     raise RuntimeError(f"HTTP {response.status}")
                 return json.loads(response.read().decode("utf-8"))
@@ -120,14 +136,14 @@ def request_forecast(
             if attempt < MAX_REQUEST_ATTEMPTS:
                 time.sleep(2**attempt)
                 continue
-            raise RuntimeError(f"{type(exc.reason).__name__}: {exc.reason}") from exc
+            raise RuntimeError(f"Windy transport error: {type(exc.reason).__name__}") from None
         except TimeoutError as exc:
             if attempt < MAX_REQUEST_ATTEMPTS:
                 time.sleep(2**attempt)
                 continue
             raise RuntimeError(f"Timeout after {REQUEST_TIMEOUT_SECONDS}s") from exc
         except json.JSONDecodeError as exc:
-            raise RuntimeError(f"Invalid JSON: {exc}") from exc
+            raise RuntimeError("Windy invalid JSON") from None
     raise RuntimeError("Forecast request failed after retries")
 
 
@@ -139,7 +155,7 @@ def request_open_meteo(url: str, parameters: dict[str, Any]) -> dict[str, Any]:
     last_error: Exception | None = None
     for attempt in range(1, 4):
         try:
-            with urllib.request.urlopen(request, timeout=20) as response:
+            with urllib.request.urlopen(request, timeout=request_timeout(20)) as response:
                 if response.status != 200:
                     raise RuntimeError(f"Open-Meteo HTTP {response.status}")
                 return json.loads(response.read().decode("utf-8"))
@@ -147,7 +163,7 @@ def request_open_meteo(url: str, parameters: dict[str, Any]) -> dict[str, Any]:
             last_error = exc
             if attempt < 3:
                 time.sleep(attempt * 2)
-    raise RuntimeError(f"Open-Meteo request failed: {last_error}")
+    raise RuntimeError(f"Open-Meteo request failed: {safe_error(last_error)}") from None
 
 
 def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str, Any]:
@@ -161,23 +177,34 @@ def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str
                 "wind_speed_10m,wind_direction_10m,wind_gusts_10m"
             ),
             "wind_speed_unit": "ms",
+            "hourly": "precipitation",
+            "past_days": 1,
             "timezone": "Asia/Seoul",
         },
     )
     current = data.get("current") or {}
-    speed = float(current.get("wind_speed_10m") or 0.0)
-    direction = math.radians(float(current.get("wind_direction_10m") or 0.0))
+    speed = current.get("wind_speed_10m")
+    direction = current.get("wind_direction_10m")
+    if speed is None or direction is None:
+        raise RuntimeError("Open-Meteo wind data missing")
+    speed, direction = float(speed), math.radians(float(direction))
     time_text = current.get("time")
     try:
         forecast_time = datetime.fromisoformat(time_text).replace(tzinfo=KST)
     except (TypeError, ValueError):
-        forecast_time = target
+        raise RuntimeError("Open-Meteo atmospheric timestamp missing") from None
+    hourly = data.get("hourly", {})
+    hour_end = forecast_time.replace(minute=0, second=0, microsecond=0)
+    hourly_rain = dict(zip(hourly.get("time", []), hourly.get("precipitation", [])))
+    rain_values = [hourly_rain.get((hour_end - timedelta(hours=i)).strftime("%Y-%m-%dT%H:%M")) for i in range(3)]
+    rain_3h = sum(float(v) for v in rain_values) if all(v is not None for v in rain_values) else None
     return {
         "ts": [forecast_time.timestamp() * 1000],
         "wind_u-surface": [-speed * math.sin(direction)],
         "wind_v-surface": [-speed * math.cos(direction)],
         "gust-surface": [current.get("wind_gusts_10m")],
-        "past3hprecip-surface": [current.get("precipitation")],
+        "past3hprecip-surface": [rain_3h],
+        "precipitationValidAt": hour_end.strftime("%Y-%m-%d %H:%M KST"),
         "temp-surface": [current.get("temperature_2m")],
         "visibility-surface": [current.get("visibility")],
         "lclouds-surface": [current.get("cloud_cover")],
@@ -202,7 +229,7 @@ def open_meteo_wave(lat: float, lon: float, target: datetime) -> dict[str, Any]:
     try:
         forecast_time = datetime.fromisoformat(time_text).replace(tzinfo=KST)
     except (TypeError, ValueError):
-        forecast_time = target
+        raise RuntimeError("Open-Meteo wave timestamp missing") from None
     return {
         "ts": [forecast_time.timestamp() * 1000],
         "waves_height-surface": [current.get("wave_height")],
@@ -220,7 +247,8 @@ def value_at(data: dict[str, Any], key: str, index: int) -> float | None:
     values = data.get(key)
     if not isinstance(values, list) or index >= len(values) or values[index] is None:
         return None
-    return float(values[index])
+    value = float(values[index])
+    return value if math.isfinite(value) else None
 
 
 def wave_has_data(data: dict[str, Any]) -> bool:
@@ -383,12 +411,16 @@ def build_site_result(
     target: datetime,
 ) -> dict[str, Any]:
     index = nearest_index(atmospheric.get("ts", []), target)
-    u = value_at(atmospheric, "wind_u-surface", index) or 0.0
-    v = value_at(atmospheric, "wind_v-surface", index) or 0.0
+    u = value_at(atmospheric, "wind_u-surface", index)
+    v = value_at(atmospheric, "wind_v-surface", index)
+    if u is None or v is None:
+        raise RuntimeError("Atmospheric wind values missing")
     wind_speed = math.hypot(u, v)
     wind_direction = wind_from_degrees(u, v)
     gust = value_at(atmospheric, "gust-surface", index)
-    precipitation = value_at(atmospheric, "past3hprecip-surface", index) or 0.0
+    precipitation = value_at(atmospheric, "past3hprecip-surface", index)
+    if precipitation is not None and precipitation < 0:
+        precipitation = None
     temperature = value_at(atmospheric, "temp-surface", index)
     if temperature is not None and temperature > 150:
         temperature -= 273.15
@@ -400,9 +432,13 @@ def build_site_result(
         value_at(atmospheric, "hclouds-surface", index),
     )
     wave_m = None
+    wave_time = None
     if wave:
         wave_index = nearest_index(wave.get("ts", []), target)
         wave_m = value_at(wave, "waves_height-surface", wave_index)
+        wave_time = datetime.fromtimestamp(wave["ts"][wave_index] / 1000, KST)
+        if wave_time.date() != target.date() or wave_m is not None and wave_m < 0:
+            wave_m = None
 
     rule_key, rule = merge_rule(rules_config, str(site.get("weatherRuleKey") or "general_birding"))
     score = score_weather(
@@ -411,14 +447,25 @@ def build_site_result(
         wind_speed,
         wind_direction,
         gust,
-        precipitation,
+        precipitation if precipitation is not None else 0.0,
         visibility_km,
         cloud_pct,
         wave_m,
     )
     forecast_time = datetime.fromtimestamp(atmospheric["ts"][index] / 1000, KST)
+    stamps = sorted(set(atmospheric["ts"]))
+    spacing = min((b - a for a, b in zip(stamps, stamps[1:]) if b > a), default=60 * 60 * 1000)
+    stale = forecast_time.date() != target.date() or abs((forecast_time - target).total_seconds() * 1000) > spacing
+    wave_required = bool(site.get("showWave") or site.get("island") or site.get("pelagic"))
+    score_eligible = not stale and precipitation is not None and (not wave_required or wave_m is not None)
+    stamp = target.strftime("%Y-%m-%d %H:%M KST")
     result = {
         "name": site["name"],
+        "date": forecast_time.date().isoformat(),
+        "generatedAt": stamp, "refreshedAt": stamp,
+        "sourceType": "saved_forecast", "stale": stale,
+        "scoreEligible": score_eligible,
+        "missingScoreFields": (["precipitation"] if precipitation is None else []) + (["wave"] if wave_required and wave_m is None else []),
         "score": score,
         "grade": grade_for(score),
         "summary": summary_for(
@@ -427,12 +474,12 @@ def build_site_result(
             score,
             wind_speed,
             wind_direction,
-            precipitation,
+            precipitation if precipitation is not None else 0.0,
             visibility_km,
             wave_m,
         ),
         "wind": f"{wind_name(wind_direction)} {wind_speed:.1f}m/s",
-        "rain": "강수 없음" if precipitation < 0.1 else f"3시간 강수 {precipitation:.1f}mm",
+        "rain": None if precipitation is None else "강수 없음" if precipitation < 0.1 else f"3시간 강수 {precipitation:.1f}mm",
         "targetGroup": rule["targetGroup"],
         "forecastTime": forecast_time.strftime("%Y-%m-%d %H:%M KST"),
         "temperature": None if temperature is None else f"{temperature:.1f}°C",
@@ -440,7 +487,11 @@ def build_site_result(
         "cloud": None if cloud_pct is None else f"{cloud_pct:.0f}%",
         "wave": None if wave_m is None else f"{wave_m:.1f}m",
         "ruleKey": rule_key,
+        "precipitationValidAt": atmospheric.get("precipitationValidAt", forecast_time.strftime("%Y-%m-%d %H:%M KST")),
+        "waveForecastTime": wave_time.strftime("%Y-%m-%d %H:%M KST") if wave_time else None,
     }
+    if not score_eligible:
+        result.update(score=None, grade="", summary="기상 자료의 시각 또는 필수 항목을 확인할 수 없어 오늘 탐조 적합도는 미확인입니다.")
     if wave_coordinate:
         result["waveLat"] = round(wave_coordinate[0], 5)
         result["waveLon"] = round(wave_coordinate[1], 5)
@@ -457,7 +508,12 @@ def load_previous_sites() -> dict[str, Any]:
         print(f"Previous weather data unavailable: {exc}", flush=True)
         return {}
     sites = previous.get("sites", {})
-    return sites if isinstance(sites, dict) else {}
+    if not isinstance(sites, dict):
+        return {}
+    return {sid: dict(day, generatedAt=day.get("generatedAt") or ("" if day.get("stale") else previous.get("generatedAt") or previous.get("updated", "")),
+                      date=day.get("date") or str(day.get("forecastTime") or "")[:10])
+            for sid, day in sites.items() if isinstance(day, dict) and not day.get("dataUnavailable")
+            and any(day.get(key) is not None for key in ("temperature", "wind", "rain", "visibility", "wave"))}
 
 
 def process_site(
@@ -469,6 +525,7 @@ def process_site(
     atmospheric_parameters: list[str],
 ) -> dict[str, Any]:
     weather_source = "Windy Point Forecast API"
+    atmospheric_source = "windy"
     try:
         atmospheric = request_forecast(
             api_key,
@@ -478,11 +535,13 @@ def process_site(
             atmospheric_model,
         )
     except Exception as exc:
-        print(f"{site['name']}: Windy unavailable, using Open-Meteo: {exc}", flush=True)
+        print(f"{site['name']}: Windy unavailable, using Open-Meteo: {safe_error(exc)}", flush=True)
         atmospheric = open_meteo_atmospheric(
             float(site["lat"]), float(site["lon"]), target
         )
         weather_source = "Open-Meteo fallback"
+        atmospheric_source = "open_meteo"
+    visibility_source = atmospheric_source
     if not any(
         value is not None for value in atmospheric.get("visibility-surface", [])
     ):
@@ -495,16 +554,18 @@ def process_site(
             atmospheric["visibility-surface"] = [fallback_value] * len(
                 atmospheric.get("ts", [])
             )
+            visibility_source = "open_meteo"
             if weather_source == "Windy Point Forecast API":
                 weather_source = "Windy with Open-Meteo visibility"
         except Exception as exc:
-            print(f"{site['name']}: visibility fallback unavailable: {exc}", flush=True)
+            print(f"{site['name']}: visibility fallback unavailable: {safe_error(exc)}", flush=True)
     wave = None
     wave_coordinate = None
+    wave_source = None
     if site.get("showWave") or site.get("island") or site.get("pelagic"):
         for candidate in wave_coordinate_candidates(site):
             try:
-                if weather_source == "Windy Point Forecast API":
+                if atmospheric_source == "windy":
                     candidate_wave = request_forecast(
                         api_key,
                         candidate[0],
@@ -512,35 +573,47 @@ def process_site(
                         ["waves"],
                         "gfsWave",
                     )
+                    candidate_source = "windy"
                 else:
                     candidate_wave = open_meteo_wave(candidate[0], candidate[1], target)
+                    candidate_source = "open_meteo"
             except Exception:
                 try:
                     candidate_wave = open_meteo_wave(candidate[0], candidate[1], target)
-                    weather_source = "Windy weather with Open-Meteo wave fallback"
+                    candidate_source = "open_meteo"
                 except Exception:
                     continue
             if wave_has_data(candidate_wave):
                 wave = candidate_wave
+                wave_source = candidate_source
                 wave_coordinate = (
                     candidate[0],
                     candidate[1],
                     candidate[2]
-                    if weather_source == "Windy Point Forecast API"
+                    if candidate_source == "windy"
                     else f"{candidate[2]}_open_meteo",
                 )
                 break
     result = build_site_result(site, rules, atmospheric, wave, wave_coordinate, target)
-    result["weatherSource"] = weather_source
+    result["fieldSources"] = {"atmosphere": atmospheric_source, "visibility": visibility_source, "wave": wave_source}
+    result["fallbackSource"] = "open_meteo" if "open_meteo" in result["fieldSources"].values() else None
+    result["weatherSource"] = ("Windy" if atmospheric_source == "windy" else "Open-Meteo") + (" with Open-Meteo component fallback" if atmospheric_source == "windy" and result["fallbackSource"] else "")
     return result
 
 
 def main() -> None:
+    global REQUEST_DEADLINE
+    REQUEST_DEADLINE = time.monotonic() + 1200
+    WINDY_UNAVAILABLE.clear()
     api_key = os.environ.get("WINDY_API_KEY", "").strip()
     if not api_key:
-        raise RuntimeError("GitHub Secret WINDY_API_KEY가 설정되지 않았습니다.")
+        WINDY_UNAVAILABLE.set()
+        print("::warning::WINDY_API_KEY not configured; existing Open-Meteo fallback will be used", flush=True)
 
     sites = load_site_data()
+    registry = compare_sites(sites, load_worker_sites())
+    if any(registry[k] for k in ("missingWorkerIds", "workerOnlyIds", "coordinateMismatchIds", "pelagicMismatchIds", "nameMismatchIds", "environmentMismatchIds")):
+        raise RuntimeError("Runtime/Worker registry mismatch; data generation stopped")
     rules = load_rules()
     previous_sites = load_previous_sites()
     now = datetime.now(KST)
@@ -561,7 +634,7 @@ def main() -> None:
         atmospheric_parameters = [
             parameter for parameter in ATMOSPHERIC_PARAMETERS if parameter != "visibility"
         ]
-        print(f"ICON visibility unavailable; falling back to GFS: {exc}", flush=True)
+        print(f"ICON visibility unavailable; falling back to GFS: {safe_error(exc)}", flush=True)
 
     total = len(sites)
     print(f"Loading {total} sites", flush=True)
@@ -595,12 +668,14 @@ def main() -> None:
                 result = future.result()
             except Exception as exc:
                 failed_count += 1
-                error_message = str(exc) or type(exc).__name__
+                error_message = safe_error(exc)
                 previous = previous_sites.get(site_id)
                 if isinstance(previous, dict):
                     reused = dict(previous)
                     reused["stale"] = True
                     reused["error"] = error_message
+                    reused.update(refreshedAt=now.strftime("%Y-%m-%d %H:%M KST"),
+                                  fallbackSource="previous_saved", sourceType="saved_reference", scoreEligible=False)
                     results[site_id] = reused
                     reused_count += 1
                     print(
@@ -614,8 +689,8 @@ def main() -> None:
                     )
                     results[site_id] = {
                         "name": site["name"],
-                        "score": 0,
-                        "grade": "★☆☆☆☆",
+                        "score": None,
+                        "grade": "",
                         "summary": "최신 기상 정보를 가져오지 못했습니다. Windy 상세 예보를 확인하세요.",
                         "wind": None,
                         "rain": None,
@@ -627,6 +702,10 @@ def main() -> None:
                         "wave": None,
                         "ruleKey": rule_key,
                         "stale": True,
+                        "dataUnavailable": True, "scoreEligible": False,
+                        "date": now.date().isoformat(), "generatedAt": "",
+                        "refreshedAt": now.strftime("%Y-%m-%d %H:%M KST"),
+                        "sourceType": "none", "fallbackSource": "none",
                         "error": error_message,
                     }
                     print(
@@ -635,7 +714,7 @@ def main() -> None:
                         flush=True,
                     )
             else:
-                result["stale"] = False
+                result.setdefault("stale", False)
                 result.pop("error", None)
                 results[site_id] = result
                 success_count += 1
@@ -649,17 +728,25 @@ def main() -> None:
     print(f"Failed: {failed_count}", flush=True)
     print(f"Reused: {reused_count}", flush=True)
 
-    if success_count == 0:
-        raise RuntimeError("No successful Windy API responses; existing weather_today.json preserved")
-
+    stale_count = sum(bool(d.get("stale")) for d in results.values())
+    unavailable_count = sum(bool(d.get("dataUnavailable")) for d in results.values())
     output = {
+        "date": now.date().isoformat(),
+        "generatedAt": now.strftime("%Y-%m-%d %H:%M KST"),
+        "refreshedAt": datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "source": "Windy Point Forecast API with Open-Meteo fallback",
-        "status": "ok" if failed_count == 0 else "partial",
+        "status": "api_failed_fallback_available" if success_count == 0 and reused_count else "api_failed_no_data" if success_count == 0 else "partial" if failed_count or stale_count or any(not d.get("scoreEligible") for d in results.values()) else "ok",
         "siteCount": len(results),
         "successCount": success_count,
         "failedCount": failed_count,
         "reusedCount": reused_count,
+        "upstreamSuccessCount": success_count,
+        "staleCount": stale_count,
+        "unavailableSiteCount": unavailable_count,
+        "scoreEligibleCount": sum(bool(d.get("scoreEligible")) for d in results.values()),
+        "providerFallbackCount": sum(d.get("fallbackSource") == "open_meteo" for d in results.values()),
+        "registry": registry,
         "sites": results,
     }
     temporary_path = OUTPUT_PATH.with_suffix(".json.tmp")
@@ -668,6 +755,8 @@ def main() -> None:
         encoding="utf-8",
     )
     temporary_path.replace(OUTPUT_PATH)
+    if output["status"] != "ok":
+        print(f"::warning::Weather status={output['status']}; upstream={success_count}, reused={reused_count}, unavailable={unavailable_count}", flush=True)
     print(f"{OUTPUT_PATH.name}: {len(results)} sites saved", flush=True)
 
 

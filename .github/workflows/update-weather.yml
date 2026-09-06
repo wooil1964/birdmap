@@ -6,6 +6,13 @@ on:
       - main
     paths:
       - ".github/scripts/update_weather.py"
+      - ".github/scripts/site_data.py"
+      - ".github/scripts/test_weather.py"
+      - ".github/scripts/validate_weather.py"
+      - "weather_rules.json"
+      - "weather-proxy/src/sites.js"
+      - "weather-proxy/test/**"
+      - "index.html"
       - ".github/workflows/update-weather.yml"
   schedule:
     # GitHub Actions cron uses UTC: 21/01/05/09 UTC = 06/10/14/18 KST.
@@ -38,7 +45,10 @@ jobs:
           python-version: "3.12"
 
       - name: Check updater syntax
-        run: python -m py_compile .github/scripts/update_weather.py
+        run: |
+          python -m py_compile .github/scripts/update_weather.py .github/scripts/site_data.py
+          python .github/scripts/test_weather.py
+          node --test weather-proxy/test/*.test.mjs
 
       - name: Build weather_today.json
         env:
@@ -46,7 +56,7 @@ jobs:
         run: python .github/scripts/update_weather.py
 
       - name: Validate weather_today.json
-        run: python -m json.tool weather_today.json > /dev/null
+        run: python .github/scripts/validate_weather.py
 
       - name: Commit updated weather
         run: |

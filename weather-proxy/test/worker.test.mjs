@@ -34,7 +34,7 @@ test("creates a stable cache key", () => {
   };
   assert.equal(
     createCacheKey("19", grid, bases),
-    "kma-v3:19:60x127:202607031800:202607031830:202607031700",
+    "kma-v4:19:60x127:202607031800:202607031830:202607031700",
   );
 });
 
@@ -399,7 +399,7 @@ test("keeps missing tomorrow periods and fields nullable", () => {
 test("only caches responses with both tomorrow periods", () => {
   assert.equal(
     hasCompleteTomorrow({ tomorrow: { morning: {}, afternoon: {} } }),
-    true,
+    false,
   );
   assert.equal(hasCompleteTomorrow({ tomorrow: null }), false);
   assert.equal(

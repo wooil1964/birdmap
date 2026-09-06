@@ -114,7 +114,7 @@ export function latestVillageForecastBase(date = new Date()) {
 
 export function createCacheKey(siteId, grid, baseTimes) {
   return [
-    "kma-v3",
+    "kma-v4",
     siteId,
     `${grid.nx}x${grid.ny}`,
     `${baseTimes.observation.date}${baseTimes.observation.time}`,
@@ -223,12 +223,12 @@ function kmaItems(payload) {
   if (!header || header.resultCode !== "00") {
     throw new WorkerError(
       "KMA_API_ERROR",
-      header?.resultMsg || "KMA response did not contain a success header",
+      "KMA response did not contain a success header",
       502,
     );
   }
   const items = payload?.response?.body?.items?.item;
-  if (!Array.isArray(items)) {
+  if (!Array.isArray(items) || !items.length) {
     throw new WorkerError("KMA_EMPTY_DATA", "KMA returned no weather items", 502);
   }
   return items;
@@ -424,13 +424,28 @@ export function normalizeTomorrowForecast(items, now = new Date()) {
 }
 
 export function hasCompleteTomorrow(body) {
-  return Boolean(body?.tomorrow?.morning && body?.tomorrow?.afternoon);
+  return [body?.tomorrow?.morning, body?.tomorrow?.afternoon].every((period) =>
+    period?.forecastTime && (hasCurrentValues(period) || period.rainProbability !== null && period.rainProbability !== undefined || period.sky));
 }
 
-async function requestKmaWeather(siteId, site, env, now) {
+export function validateKmaItems(payload, base, grid) {
+  const items = kmaItems(payload);
+  if (items.some((item) => item.baseDate !== base.date || item.baseTime !== base.time ||
+      (item.nx !== undefined && Number(item.nx) !== grid.nx) ||
+      (item.ny !== undefined && Number(item.ny) !== grid.ny))) {
+    throw new WorkerError("KMA_IDENTITY_MISMATCH", "KMA response date/grid mismatch", 502);
+  }
+  return items;
+}
+
+function hasCurrentValues(value) {
+  return [value?.temperature, value?.windSpeed, value?.rain].some((v) => v !== null && v !== undefined);
+}
+
+export async function requestKmaWeather(siteId, site, env, now) {
   const grid = latLonToKmaGrid(Number(site.lat), Number(site.lon));
   const baseTimes = kmaBaseTimes(now);
-  const tomorrowRequest = fetchJsonWithTimeout(
+  const requests = [fetchJsonWithTimeout(
     kmaUrl(
       "getVilageFcst",
       env.KMA_SERVICE_KEY,
@@ -440,9 +455,7 @@ async function requestKmaWeather(siteId, site, env, now) {
     ),
     TOMORROW_TIMEOUT_MS,
   )
-    .then((payload) => normalizeTomorrowForecast(kmaItems(payload), now))
-    .catch(() => null);
-  const [observationPayload, forecastPayload] = await Promise.all([
+    .then((payload) => normalizeTomorrowForecast(validateKmaItems(payload, baseTimes.village, grid), now)),
     fetchJsonWithTimeout(
       kmaUrl(
         "getUltraSrtNcst",
@@ -450,7 +463,11 @@ async function requestKmaWeather(siteId, site, env, now) {
         grid,
         baseTimes.observation,
       ),
-    ),
+    ).then((payload) => {
+      const value = normalizeObservation(validateKmaItems(payload, baseTimes.observation, grid));
+      if (!hasCurrentValues(value)) throw new WorkerError("KMA_EMPTY_DATA", "No usable current observation", 502);
+      return value;
+    }),
     fetchJsonWithTimeout(
       kmaUrl(
         "getUltraSrtFcst",
@@ -458,23 +475,50 @@ async function requestKmaWeather(siteId, site, env, now) {
         grid,
         baseTimes.forecast,
       ),
-    ),
-  ]);
-  const tomorrow = await tomorrowRequest;
-  const observation = normalizeObservation(kmaItems(observationPayload));
-  const forecast = normalizeForecast(kmaItems(forecastPayload), now);
+    ).then((payload) => {
+      const items = validateKmaItems(payload, baseTimes.forecast, grid);
+      const nowKey = kmaDate(kstParts(now)) + pad(kstParts(now).hour) + pad(kstParts(now).minute);
+      const end = kstParts(new Date(now.getTime() + 6 * 60 * 60 * 1000));
+      const endKey = kmaDate(end) + pad(end.hour) + pad(end.minute);
+      const future = items.filter((item) => `${item.fcstDate}${item.fcstTime}` >= nowKey && `${item.fcstDate}${item.fcstTime}` <= endKey);
+      const value = normalizeForecast(future, now);
+      if (!hasCurrentValues(value)) throw new WorkerError("KMA_EMPTY_DATA", "No usable current forecast", 502);
+      return value;
+    }),
+  ];
+  const [tomorrowResult, observationResult, forecastResult] = await Promise.allSettled(requests);
+  const observation = observationResult.status === "fulfilled" ? observationResult.value : {};
+  const forecast = forecastResult.status === "fulfilled" ? forecastResult.value : {};
+  if (!hasCurrentValues(observation) && !hasCurrentValues(forecast)) {
+    throw observationResult.reason || forecastResult.reason || new WorkerError("KMA_EMPTY_DATA", "No current weather", 502);
+  }
+  const tomorrow = tomorrowResult.status === "fulfilled" ? tomorrowResult.value : null;
+  const errors = {};
+  for (const [name, result] of [["observation", observationResult], ["forecast", forecastResult], ["tomorrow", tomorrowResult]]) {
+    if (result.status === "rejected") errors[name] = result.reason instanceof WorkerError ? result.reason.code : "KMA_TRANSPORT_ERROR";
+  }
+  const fetchedAt = new Date().toISOString();
 
   return {
     ok: true,
     siteId,
     siteName: site.name,
     source: "KMA",
+    sourceType: "live",
+    status: Object.keys(errors).length || !hasCompleteTomorrow({ tomorrow }) ? "partial" : "ok",
+    stale: false,
+    fallbackSource: !hasCurrentValues(observation) ? "kma_forecast" : null,
+    errors,
     grid,
+    coordinates: { lat: Number(site.lat), lon: Number(site.lon) },
+    baseTimes,
     observation,
     forecast,
     weatherText: observation.weatherText || forecast.weatherText,
     tomorrow,
-    fetchedAt: new Date().toISOString(),
+    fetchedAt,
+    generatedAt: fetchedAt,
+    refreshedAt: fetchedAt,
     cached: false,
   };
 }
@@ -572,16 +616,21 @@ export async function handleRequest(request, env = {}, ctx = {}) {
     );
     const cache = caches.default;
     const cachedResponse = await cache.match(cacheRequest);
-    if (cachedResponse) {
-      const cachedBody = await cachedResponse.json();
+    const cachedBody = cachedResponse ? await cachedResponse.json() : null;
+    const cacheAge = now.getTime() - Date.parse(cachedBody?.generatedAt || cachedBody?.fetchedAt);
+    if (cachedBody?.ok && !cachedBody.stale && cachedBody.status === "ok" &&
+        (hasCurrentValues(cachedBody.observation) || hasCurrentValues(cachedBody.forecast)) &&
+        hasCompleteTomorrow(cachedBody) && String(cachedBody.siteId) === siteId && cacheAge >= 0 && cacheAge < CACHE_TTL_SECONDS * 1000) {
       cachedBody.cached = true;
+      cachedBody.sourceType = "worker_cache";
+      cachedBody.refreshedAt = now.toISOString();
       return jsonResponse(request, env, cachedBody, 200, {
         "Cache-Control": `public, max-age=${CACHE_TTL_SECONDS}`,
       });
     }
 
     const body = await requestKmaWeather(siteId, site, env, now);
-    const cacheable = hasCompleteTomorrow(body);
+    const cacheable = body.status === "ok" && hasCompleteTomorrow(body);
     if (cacheable) {
       const storedResponse = new Response(JSON.stringify(body), {
         headers: {
