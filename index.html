@@ -84,22 +84,17 @@
     <label><input type="checkbox" class="seasonFilter" value="겨울" checked onchange="applyFilters()"> 겨울</label>
   </div>
   <div class="section"><b>🐦 권역 필터</b><br>
-    <label><input type="checkbox" id="overseasOnly" onchange="applyFilters(true)"> 🌏 해외탐조만</label><br>
     <label><input type="checkbox" id="rareOnly" onchange="applyFilters()"> 희귀조권역</label>
     <label><input type="checkbox" id="mijoOnly" onchange="applyFilters()"> 미기록·희귀 가능성</label><br>
     <label><input type="checkbox" id="islandOnly" onchange="applyFilters()"> 섬탐조</label>
     <label><input type="checkbox" id="pelagicOnly" onchange="applyFilters()"> 선상탐조</label><br>
-    <label><input type="checkbox" id="transitOnly" onchange="applyFilters()"> 대중교통 좋은 곳</label>
-    <label><input type="checkbox" id="recommendOnly" onchange="applyFilters()"> 들뫼 추천</label><br>
     <button onclick="resetFilters()" style="margin-top:6px">전체 보기</button>
   </div>
   <div class="section"><b>🧭 탐조특성 필터</b><br>
     <label><input type="checkbox" class="featureFilter" value="이동성 조류" onchange="applyFilters()"> 이동성 조류</label>
     <label><input type="checkbox" class="featureFilter" value="도요물떼새" onchange="applyFilters()"> 도요물떼새</label><br>
     <label><input type="checkbox" class="featureFilter" value="겨울철새" onchange="applyFilters()"> 겨울철새</label>
-    <label><input type="checkbox" class="featureFilter" value="맹금" onchange="applyFilters()"> 맹금</label><br>
     <label><input type="checkbox" class="featureFilter" value="바다새" onchange="applyFilters()"> 바다새</label>
-    <label><input type="checkbox" class="featureFilter" value="갈매기" onchange="applyFilters()"> 갈매기</label><br>
     <label><input type="checkbox" class="featureFilter" value="희귀조" onchange="applyFilters()"> 희귀조</label>
   </div>
   </div>
@@ -1567,13 +1562,10 @@ function selectedSeasons(){
 function sitePasses(s){
   var ss=selectedSeasons();
   if(!(s.seasons.length===0||(ss.length>0&&s.seasons.includes('연중'))||s.seasons.some(function(x){return ss.includes(x);})))return false;
-  if(document.getElementById('overseasOnly').checked&&!s.overseas)return false;
   if(document.getElementById('rareOnly').checked&&!s.rare)return false;
   if(document.getElementById('mijoOnly').checked&&!s.mijo)return false;
   if(document.getElementById('islandOnly').checked&&!s.island)return false;
   if(document.getElementById('pelagicOnly').checked&&!s.pelagic)return false;
-  if(document.getElementById('transitOnly').checked&&!(s.publicTransitHigh||PUBLIC_TRANSIT_HIGH_SITE_IDS.has(String(s.id))))return false;
-  if(document.getElementById('recommendOnly').checked&&!s.recommend5)return false;
   var fs=selectedFeatures();
   if(fs.length){
     var featureText=(s.birdingFeature||'')+' '+(s.mainBirdGroup||'')+' '+(s.weatherRuleKey||'');
@@ -1734,7 +1726,7 @@ function searchSite(){
 function resetFilters(){
   clearRouteLine();
   document.querySelectorAll('.seasonFilter').forEach(function(b){b.checked=true;});
-  ['overseasOnly','rareOnly','mijoOnly','islandOnly','pelagicOnly','transitOnly','recommendOnly'].forEach(function(id){document.getElementById(id).checked=false;});
+  ['rareOnly','mijoOnly','islandOnly','pelagicOnly'].forEach(function(id){document.getElementById(id).checked=false;});
   document.querySelectorAll('.featureFilter').forEach(function(b){b.checked=false;});
   document.getElementById('searchBox').value='';
   activeSearch='';
@@ -2000,6 +1992,16 @@ function todaySpringIslandReason(site){
   var month=todayKstMonth();
   return (month===4||month===5)&&site&&site.weatherRuleKey==='island_migrant'?'봄 섬 이동기 주목':'';
 }
+function weeklyIssueReason(site){
+  var linked=false;
+  activeNoticeItems().forEach(function(notice){
+    noticeLinkedSites(notice).forEach(function(linkedSite){if(String(linkedSite.id)===String(site.id))linked=true;});
+  });
+  return linked?'📢 지금 볼 만한 탐조 이슈':'';
+}
+function weeklyRecommendationDateLabel(entry){
+  return entry.recommendationDate?weeklyDateLabel(entry.recommendationDate):'이번 주 주목';
+}
 function weeklyWeatherEntryForSite(site,week){
   var sites=weatherToday&&weatherToday.sites;
   if(!sites)return null;
@@ -2013,17 +2015,19 @@ function weeklyWeatherEntryForSite(site,week){
 function weeklyRecommendationForSite(site,week){
   if(todayIsAutumnRemoteIsland(site))return null;
   var weatherEntry=weeklyWeatherEntryForSite(site,week);
+  var issueReason=weeklyIssueReason(site);
   var tideRec=weeklyBestMudflatTide(site,week);
   var windRec=weeklyEastWindRecommendation(site,weatherEntry,week);
   var reasons=[], caution=[];
+  if(issueReason)reasons.push(issueReason);
   if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}
   if(windRec){reasons.push(windRec.reason); if(windRec.detailText)reasons.push(windRec.detailText); if(windRec.cautionText)caution.push('⚠️ '+windRec.cautionText);}
   var springReason=todaySpringIslandReason(site);
-  var isMandatory=!!(tideRec||windRec);
-  if(!isMandatory&&!weatherEntry)return null;
-  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||week.start;
-  return {site:site,today:weatherEntry&&weatherEntry.weather,score:weatherEntry?weatherEntry.score:null,isMandatory:isMandatory,reasons:reasons,springReason:springReason,recommendationDate:date,
-    tideText:tideRec&&tideRec.tideText,extraText:tideRec&&tideRec.extraText,weatherText:(windRec&&windRec.weatherText)||(weatherEntry&&weatherEntry.weather&&weatherEntry.weather.wind)||'',cautionText:caution.join(' · '),basisText:weatherEntry?'확인 가능한 예보 기간 내 추천':'조석 주간 자료 기준',sortLevel:tideRec&&tideRec.sortLevel};
+  var priority=issueReason?1:(tideRec?2:(windRec?3:4));
+  if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;
+  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';
+  return {site:site,today:weatherEntry&&weatherEntry.weather,score:weatherEntry?weatherEntry.score:null,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,
+    tideText:tideRec&&tideRec.tideText,extraText:tideRec&&tideRec.extraText,weatherText:(windRec&&windRec.weatherText)||(weatherEntry&&weatherEntry.weather&&weatherEntry.weather.wind)||'',cautionText:caution.join(' · '),basisText:weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준'),sortLevel:tideRec&&tideRec.sortLevel};
 }
 function todayRecommendedSites(){
   var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
@@ -2033,8 +2037,9 @@ function todayRecommendedSites(){
     (entry.isMandatory?mandatory:general).push(entry);
   });
   function rank(a,b){
+    var ap=a.priority||4, bp=b.priority||4;
     var as=Number.isFinite(a.score)?a.score:-Infinity, bs=Number.isFinite(b.score)?b.score:-Infinity;
-    return (bs-as)||((b.sortLevel||0)-(a.sortLevel||0))||Number(a.site.id)-Number(b.site.id);
+    return (ap-bp)||(bs-as)||((b.sortLevel||0)-(a.sortLevel||0))||Number(a.site.id)-Number(b.site.id);
   }
   mandatory.sort(rank);general.sort(rank);
   mandatory.concat(general).forEach(function(entry){
@@ -2142,7 +2147,7 @@ function renderTodayPanel(){
     item.appendChild(score);
     var recDate=document.createElement('div');
     recDate.className='todayRankMeta';
-    recDate.textContent='📅 추천: '+weeklyDateLabel(entry.recommendationDate);
+    recDate.textContent='📅 추천: '+weeklyRecommendationDateLabel(entry);
     item.appendChild(recDate);
     var meta=document.createElement('div');
     meta.className='todayRankMeta';
@@ -2190,22 +2195,10 @@ function renderTodayPanel(){
     body.appendChild(item);
   });
 
-  body.appendChild(Object.assign(document.createElement('hr'),{className:'todayDivider'}));
-  var issueTitle=document.createElement('div');
-  issueTitle.className='todaySectionTitle';
-  issueTitle.textContent='📢 지금 볼 만한 탐조 이슈';
-  body.appendChild(issueTitle);
-  if(!issues.length){
-    var noneIssue=document.createElement('div');
-    noneIssue.className='smallText';
-    noneIssue.textContent='현재 게시 중인 탐조 이슈가 없습니다.';
-    body.appendChild(noneIssue);
-  }
-  issues.forEach(function(notice){body.appendChild(todayIssueCard(notice));});
   var allBtn=document.createElement('button');
   allBtn.type='button';
   allBtn.className='todayAllIssuesBtn';
-  allBtn.textContent='전체 탐조 이슈 보기';
+  allBtn.textContent='📢 탐조 이슈 자세히 보기';
   allBtn.onclick=function(){toggleNoticePanel(true);};
   body.appendChild(allBtn);
 }
