@@ -190,6 +190,21 @@ def reusable_month_day(day: Any, station_code: str, now: datetime) -> bool:
     return timedelta(0) <= now - generated < timedelta(days=7)
 
 
+def reused_month_cache_day(day: dict[str, Any]) -> dict[str, Any]:
+    reused = dict(day, stale=False, cacheReused=True, cacheSource="monthly_cache")
+    for key in (
+        "fallbackSource",
+        "error",
+        "generationTimeUnknown",
+        "staleDaily",
+        "monthFallback",
+        "monthFallbackStale",
+        "monthFallbackMissing",
+    ):
+        reused.pop(key, None)
+    return reused
+
+
 def output_path_for(value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else ROOT / path
@@ -247,7 +262,7 @@ def main() -> None:
             pending.append((station_code, linked_sites, date))
         else:
             for site in linked_sites:
-                site_days[site["id"]][date.isoformat()] = dict(cached, stale=True, fallbackSource="monthly_cache")
+                site_days[site["id"]][date.isoformat()] = reused_month_cache_day(cached)
                 cached_count += 1
     print(f"KHOA requests planned: {len(pending)}; cached site-days: {cached_count}", flush=True)
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:

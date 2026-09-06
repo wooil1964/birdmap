@@ -208,6 +208,20 @@ class TideTests(unittest.TestCase):
         self.assertFalse(monthly.reusable_month_day(day, "DT_0018", NOW + timedelta(days=7)))
         self.assertFalse(monthly.reusable_month_day(dict(day, stale=True), "DT_0018", NOW))
         self.assertTrue(monthly.reusable_month_day(dict(day, stale=True, fallbackSource="monthly_cache"), "DT_0018", NOW))
+        reused = monthly.reused_month_cache_day(dict(
+            day,
+            stale=True,
+            fallbackSource="monthly_cache",
+            error="timeout",
+            generationTimeUnknown=True,
+            staleDaily=True,
+            monthFallback=True,
+        ))
+        self.assertFalse(reused["stale"])
+        self.assertTrue(reused["cacheReused"])
+        self.assertEqual(reused["cacheSource"], "monthly_cache")
+        for key in ("fallbackSource", "error", "generationTimeUnknown", "staleDaily", "monthFallback"):
+            self.assertNotIn(key, reused)
 
     def test_official_mapping_and_protected_sites(self):
         data = json.loads(daily.MAPPING_PATH.read_text(encoding="utf-8"))
@@ -243,6 +257,13 @@ class TideTests(unittest.TestCase):
                 self.assertEqual(cached["cachedDataCount"], 4)
                 self.assertEqual(cached["apiRequestCount"], 0)
                 self.assertEqual(cached["sites"]["19"]["days"][0]["generatedAt"], first["sites"]["19"]["days"][0]["generatedAt"])
+                self.assertEqual(cached["sites"]["19"]["days"][0]["refreshedAt"], "2026-09-06 10:00 KST")
+                for site in cached["sites"].values():
+                    for day in site["days"]:
+                        self.assertFalse(day["stale"])
+                        self.assertTrue(day["cacheReused"])
+                        self.assertEqual(day["cacheSource"], "monthly_cache")
+                        self.assertNotIn("fallbackSource", day)
                 for site in cached["sites"].values():
                     for day in site["days"]:
                         day["generatedAt"] = "2026-08-25 06:00 KST"
@@ -252,6 +273,7 @@ class TideTests(unittest.TestCase):
                 reused = json.loads(output.read_text(encoding="utf-8"))
                 self.assertEqual(reused["reusedDataCount"], 4)
                 self.assertEqual(reused["sites"]["19"]["days"][0]["generatedAt"], "2026-08-25 06:00 KST")
+                self.assertTrue(reused["sites"]["19"]["days"][0]["stale"])
                 self.assertEqual(reused["sites"]["19"]["days"][0]["fallbackSource"], "previous_month")
                 # Expired cache plus API failure retains original dates/values.
                 clock.now.return_value = NOW + timedelta(days=7)

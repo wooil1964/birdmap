@@ -1066,8 +1066,9 @@ function renderMonthTideHtml(siteMonthData){
   if(!days.length)return '<div>월간 조석 자료가 없습니다.</div>';
   return '<div class="monthTideDays">'+days.map(function(day){
     var events=v24TideDayEvents(day);
-    var staleBadge=day.stale===true?'<span class="monthTideStaleBadge">재사용 자료</span>':'';
-    var staleNote=day.stale===true?'<div class="smallText monthTideStaleNote">※ 재사용 자료</div>':'';
+    var showStaleWarning=day.stale===true&&day.fallbackSource!=="monthly_cache";
+    var staleBadge=showStaleWarning?'<span class="monthTideStaleBadge">이전 자료</span>':'';
+    var staleNote=showStaleWarning?'<div class="smallText monthTideStaleNote">※ 이전 자료</div>':'';
     return '<section class="monthTideDay"><div class="monthTideDate">'+escapeHtml(monthTideDateLabel(day.date))+staleBadge+'</div>'+
       (events.length?events.map(v24TideEventLineHtml).join(''):'<div class="v24TideEvent">자료 없음</div>')+staleNote+'</section>';
   }).join('')+'</div>';
