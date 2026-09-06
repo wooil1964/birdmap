@@ -53,8 +53,6 @@
         
     <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
 </head>
 <body>
     
@@ -62,11 +60,10 @@
             <div class="folium-map" id="map_7010a44f6ac2025090f0fe07508ed485" ></div>
         
 <div id="topUiWrap">
-<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.07.11 · v27 신규 후보 20곳 조석·기상 반영 · 187개 권역</span><br><span class="copyright">© 2026 들뫼생태연구회 · All rights reserved.</span></div>
+<div id="mapTitleBox"><b>전국 탐조지도</b><br><span>최종 업데이트: 2026.09.07 · v27 신규 후보 20곳 조석·기상 반영 · 187개 권역</span><br><span class="copyright">© 2026 들뫼생태연구회 · All rights reserved.</span></div>
 <div id="topBtnRow">
 <button id="togglePanelBtn" onclick="toggleBirdmapPanel()"><span class="desktopToggleLabel">필터 숨기기</span><span class="mobileToggleLabel">검색 열기</span></button>
 <button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
-<button id="helpToggleBtn" onclick="toggleHelpPanel()">📘 지도 사용법</button>
 <button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 이번주 어디 갈까</button>
 </div>
 </div>
@@ -117,14 +114,6 @@
   <div class="panelHeader"><strong>📢 이달의 탐조 기획</strong><button onclick="toggleNoticePanel(false)">닫기</button></div>
   <div id="noticeList">현재 게시 중인 기획글이 없습니다.</div>
 </div>
-
-<div id="helpPanel">
-  <div class="panelHeader"><strong>📘 전국 탐조지도 사용법</strong><button onclick="toggleHelpPanel(false)">닫기</button></div>
-  <div class="helpGuideWrap">
-    <img class="helpGuideImage" src="./birdmap-user-guide.png" alt="전국 탐조지도 이렇게 활용하세요! 사용법 안내">
-  </div>
-</div>
-
 <div id="todayPanel">
   <div class="panelHeader"><strong>🧭 이번주 어디 갈까</strong><button onclick="toggleTodayPanel(false)">닫기</button></div>
   <div class="smallText" style="margin-top:6px">이번 주 기상·조석·계절·탐조 특성을 바탕으로 추천합니다.<br>※ 추천은 확인 가능한 이번 주 예보와 탐조 조건을 바탕으로 한 참고 판단입니다.</div>
@@ -171,7 +160,6 @@ a.ebird,.btn.ebird{display:none !important}
 .leaflet-popup-content{max-width:500px;max-height:78vh;overflow-y:auto;padding-right:4px;overscroll-behavior:contain}
 .leaflet-popup-content-wrapper{max-height:82vh}
 .leaflet-popup-content>div>div{width:min(440px,calc(100vw - 80px))!important;max-width:100%}
-#helpToggleBtn{position:fixed;top:126px;right:52px;z-index:10001;padding:8px 11px;background:#eef7ff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #todayToggleBtn{position:fixed;top:166px;right:52px;z-index:10001;padding:8px 11px;background:#eefbf1;border:2px solid #2f7d4f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #todayPanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:380px;max-height:66vh;overflow-y:auto;background:white;border:2px solid #2f7d4f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.5;overscroll-behavior:contain}
 #todayPanel .panelHeader{border-color:#bfe0cb}
@@ -192,10 +180,7 @@ a.ebird,.btn.ebird{display:none !important}
 .todayIssueDate{font-size:10px;color:#977f3d;margin-top:3px}
 .todayIssueMapBtn{display:inline-block;margin:4px 4px 0 0;padding:4px 7px;border:1px solid #2d6f9f;border-radius:5px;background:#eef7ff;color:#174d6f;font-weight:bold;font-size:11px;cursor:pointer}
 .todayAllIssuesBtn{display:block;width:100%;margin-top:7px;padding:7px 9px;border:1px solid #a67800;border-radius:6px;background:#fff7db;color:#533500;font-weight:bold;cursor:pointer}
-#helpPanel{display:none;position:fixed;top:166px;right:52px;z-index:10000;width:min(1100px,calc(100vw - 104px));max-height:70vh;overflow-y:auto;background:white;border:2px solid #2d6f9f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.55}
 .panelHeader{display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px}
-.helpTitle{font-size:14px;font-weight:bold;color:#174d6f;margin:8px 0 6px}.flowBox{background:#f0f8ff;border:1px solid #9bc7df;border-radius:8px;padding:9px;margin:8px 0;font-weight:bold;color:#174d6f;line-height:1.65}.helpList{margin:7px 0 9px 18px;padding:0}.helpList li{margin-bottom:4px}.helpLink{display:inline-block;margin-top:8px;padding:7px 10px;background:#174d6f;color:white;border-radius:5px;text-decoration:none;font-weight:bold}.helpNote{margin-top:8px;padding-top:8px;border-top:1px solid #ddd;color:#5b1c1c;font-size:12px}
-.helpGuideWrap{padding-top:8px}.helpGuideImage{display:block;width:100%;height:auto;max-width:100%;object-fit:contain}
 .monthTideModal{display:none;position:fixed;inset:0;z-index:11000;padding:28px;background:rgba(0,0,0,.5);box-sizing:border-box;align-items:center;justify-content:center;font-family:Arial,'Malgun Gothic',sans-serif}
 .monthTideDialog{width:min(760px,100%);max-height:calc(100vh - 56px);overflow:hidden;background:white;border:2px solid #2d6f9f;border-radius:10px;box-shadow:0 5px 24px rgba(0,0,0,.4);display:flex;flex-direction:column}
 .monthTideHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #b7d3e6;color:#174d6f;font-size:17px}
@@ -290,8 +275,6 @@ body.monthTideOpen{overflow:hidden}
   .v24ProfileWide{grid-column:auto}
 
   #noticePanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;box-sizing:border-box;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
-
-  #helpPanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
 
   #todayPanel{top:var(--birdmapTopUiH,178px);left:8px;right:8px;width:auto;max-height:calc(100vh - var(--birdmapTopUiH,178px) - 12px)}
   .monthTideModal{padding:8px;align-items:stretch}
@@ -1169,7 +1152,6 @@ function openMonthTideModal(siteId){
   modal.style.display='flex';
   document.body.classList.add('monthTideOpen');
   toggleNoticePanel(false);
-  toggleHelpPanel(false);
   loadTideMonth().then(function(data){
     if(modal.dataset.siteId!==String(site.id))return;
     var siteMonth=monthTideForSite(site.id);
@@ -1737,24 +1719,17 @@ function resetFilters(){
 
 
 function toggleNoticePanel(force){
-  var p=document.getElementById('noticePanel'),h=document.getElementById('helpPanel'),d=document.getElementById('todayPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
+  var p=document.getElementById('noticePanel'),d=document.getElementById('todayPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
   p.style.display=o?'block':'none';
-  if(o){hideBirdmapPanelOnMobile();if(h)h.style.display='none';if(d)d.style.display='none';}
-}
-
-function toggleHelpPanel(force){
-  var p=document.getElementById('helpPanel'),n=document.getElementById('noticePanel'),d=document.getElementById('todayPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
-  p.style.display=o?'block':'none';
-  if(o){hideBirdmapPanelOnMobile();if(n)n.style.display='none';if(d)d.style.display='none';}
+  if(o){hideBirdmapPanelOnMobile();if(d)d.style.display='none';}
 }
 
 function toggleTodayPanel(force){
-  var p=document.getElementById('todayPanel'),n=document.getElementById('noticePanel'),h=document.getElementById('helpPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
+  var p=document.getElementById('todayPanel'),n=document.getElementById('noticePanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
   p.style.display=o?'block':'none';
   if(o){
     hideBirdmapPanelOnMobile();
     if(n)n.style.display='none';
-    if(h)h.style.display='none';
     renderTodayPanel();
     loadTideMonth().then(function(){refreshTodayPanelIfOpen();}).catch(function(){refreshTodayPanelIfOpen();});
   }
@@ -2326,29 +2301,6 @@ window.addEventListener('resize',function(){
   "forceSeparateButton": false,
 }
             ).addTo(map_7010a44f6ac2025090f0fe07508ed485);
-        
-    
-            var tile_layer_90e04821451133ab76c1bb5636ce3642 = L.tileLayer(
-                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            );
-            var mini_map_3f16a92a6cb1cec27ff3f8cb610bd63a = new L.Control.MiniMap(
-                tile_layer_90e04821451133ab76c1bb5636ce3642,
-                {
-  "position": "bottomright",
-  "width": 150,
-  "height": 150,
-  "collapsedWidth": 25,
-  "collapsedHeight": 25,
-  "zoomLevelOffset": -5,
-  "centerFixed": false,
-  "zoomAnimation": false,
-  "toggleDisplay": true,
-  "autoToggleDisplay": false,
-  "minimized": false,
-}
-            );
-            map_7010a44f6ac2025090f0fe07508ed485.addControl(mini_map_3f16a92a6cb1cec27ff3f8cb610bd63a);
         
     
             var marker_ec36fa8265d4abe1d99c9380c5c91ddf = L.marker(
