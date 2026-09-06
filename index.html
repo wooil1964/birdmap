@@ -1877,23 +1877,37 @@ function refreshTodayPanelIfOpen(){
   if(p&&p.style.display==='block')renderTodayPanel();
 }
 
-/* '오늘 어디 갈까' Top 5: 기존 저장 기상 점수(v251EffectiveScore)를 그대로 정렬에만 사용.
+/* '오늘 어디 갈까': 기존 저장 기상 점수(v251EffectiveScore)는 정렬에만 사용한다.
    notices는 순위·점수에 어떤 영향도 주지 않는다. */
+var TODAY_MUDFLAT_TIDE_RULES={
+  '19':{months:[9,10],minHighTideCm:700,reason:'도요 이동기 물때 주목'},   // 유부도
+  '107':{months:[9,10],minHighTideCm:850,reason:'도요 이동기 물때 주목'},  // 매향리
+  '14':{months:[9,10],minHighTideCm:850,reason:'도요 이동기 물때 주목'}    // 걸매리
+};
+var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES={'백령도':true,'외연도':true,'어청도':true};
 function todayKstMonth(){
   var parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',month:'numeric'}).formatToParts(new Date());
   for(var i=0;i<parts.length;i++)if(parts[i].type==='month')return Number(parts[i].value);
   return new Date().getMonth()+1;
 }
-function todayHasUsableTide(site){
-  var tide=tideTodayForSite(site);
-  return !!tide&&!tide.unavailable&&!tide.monthFallbackMissing&&v24TideDayEvents(tide).length>0;
+function todayHighTideLevelsCm(tide){
+  if(!tide||!tide.highTide||!tide.highTideLevel)return [];
+  var times=String(tide.highTide).split(',').map(function(v){return v.trim();}).filter(Boolean);
+  var levels=String(tide.highTideLevel).split(',').map(function(v){
+    var n=Number(String(v).replace(/[^0-9.\-]/g,''));
+    return Number.isFinite(n)?n:null;
+  }).filter(function(v){return v!==null;});
+  if(!times.length||!levels.length)return [];
+  return levels;
 }
 function todayMudflatMandatoryReason(site){
-  var month=todayKstMonth();
-  if(month!==9&&month!==10)return '';
-  if(v25EnvironmentLabel(site)!=='갯벌탐조')return '';
-  if(!MONTH_TIDE_SITE_IDS.has(String(site.id))||!todayHasUsableTide(site))return '';
-  return '도요 이동기 물때 주목';
+  var month=todayKstMonth(), rule=TODAY_MUDFLAT_TIDE_RULES[String(site&&site.id)];
+  if(!rule||rule.months.indexOf(month)<0)return '';
+  var tide=tideTodayForSite(site);
+  if(!tide||tide.unavailable||tide.monthFallbackMissing)return '';
+  var highs=todayHighTideLevelsCm(tide);
+  if(!highs.length)return '';
+  return highs.some(function(level){return level>=rule.minHighTideCm;})?rule.reason:'';
 }
 function todaySoutheastEastWindReason(site,today){
   if(todayKstMonth()!==9)return '';
@@ -1906,27 +1920,42 @@ function todaySoutheastEastWindReason(site,today){
   return '동풍 이동기 주목';
 }
 function todayMandatoryReason(site,today){
-  return todaySoutheastEastWindReason(site,today)||todayMudflatMandatoryReason(site);
+  return todayMudflatMandatoryReason(site)||todaySoutheastEastWindReason(site,today);
+}
+function todayIsAutumnRemoteIsland(site){
+  var month=todayKstMonth();
+  return (month===9||month===10)&&!!TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES[String(site&&site.name||'')];
+}
+function todaySpringIslandReason(site){
+  var month=todayKstMonth();
+  return (month===4||month===5)&&site&&site.weatherRuleKey==='island_migrant'?'봄 섬 이동기 주목':'';
 }
 function todayRecommendedSites(){
   var ranked=[];
   siteData.forEach(function(site){
+    if(todayIsAutumnRemoteIsland(site))return;
     var today=weatherTodayForSite(site);
     var score=v251EffectiveScore(today);
-    if(Number.isFinite(score))ranked.push({site:site,today:today,score:score});
+    if(Number.isFinite(score)){
+      ranked.push({site:site,today:today,score:score,mandatoryReason:todayMandatoryReason(site,today),springReason:todaySpringIslandReason(site)});
+    }
   });
   ranked.sort(function(a,b){return (b.score-a.score)||(Number(a.site.id)-Number(b.site.id));});
-  var selected=ranked.slice(0,5), selectedIds={};
-  selected.forEach(function(entry){selectedIds[String(entry.site.id)]=true;});
-  ranked.slice(5).forEach(function(entry){
-    var reason=todayMandatoryReason(entry.site,entry.today);
-    if(reason&&!selectedIds[String(entry.site.id)]){
-      entry.mandatoryReason=reason;
+  var selected=[], selectedIds={}, generalCount=0;
+  ranked.forEach(function(entry){
+    if(entry.mandatoryReason&&!selectedIds[String(entry.site.id)]){
       selectedIds[String(entry.site.id)]=true;
       selected.push(entry);
     }
   });
-  selected.slice(0,5).forEach(function(entry){entry.mandatoryReason='';});
+  ranked.forEach(function(entry){
+    if(generalCount>=5)return;
+    if(!selectedIds[String(entry.site.id)]){
+      selectedIds[String(entry.site.id)]=true;
+      selected.push(entry);
+      generalCount++;
+    }
+  });
   return selected;
 }
 
@@ -2019,10 +2048,11 @@ function renderTodayPanel(){
     meta.className='todayRankMeta';
     meta.textContent=entry.site.region+' · '+v25EnvironmentLabel(entry.site);
     item.appendChild(meta);
-    if(entry.mandatoryReason){
+    var seasonalReason=entry.mandatoryReason||entry.springReason;
+    if(seasonalReason){
       var reason=document.createElement('div');
       reason.className='todayMandatoryReason';
-      reason.textContent=entry.mandatoryReason;
+      reason.textContent=seasonalReason;
       item.appendChild(reason);
     }
     var tideText=todayTideLineText(entry.site);
