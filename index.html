@@ -1223,9 +1223,7 @@ function v23TodayWeatherHtml(site,forceRender){
     '<div class="v26TomorrowPeriod" data-live-weather-period="afternoon" style="display:none"><div class="v26TomorrowTime" data-live-weather-period-label></div><div class="v26TomorrowTemperature" data-live-weather-period-field="temperature"></div><div class="v26TomorrowValue" data-live-weather-period-field="wind"></div><div class="v26TomorrowValue" data-live-weather-period-field="rain"></div><div class="v26TomorrowValue" data-live-weather-period-field="weather"></div></div></div></div>'+
     ((site.island||site.pelagic)?'<div class="v24FerryNote">※ 실제 운항 여부는 선사 공지를 확인하세요.</div>':'')+
    '<div class="v24BriefingInterpretation"><b>탐조 해석:</b> <span data-live-weather-field="interpretation">'+escapeHtml(v24BriefingInterpretation(site,today,tide))+'</span></div>'+
-    v24LocalBirdingTipHtml(site)+
-    '<div class="smallText" data-live-weather-field="basis">'+(today&&today.forecastTime?'예보 기준 '+escapeHtml(today.forecastTime):'')+'</div>'+
-    ((LIVE_WEATHER_ENABLED&&site.id&&!site.pelagic)?'<div class="smallText" data-live-weather-field="status">최신 기상 확인 중...</div>':'')+'</div></div></div>';
+    v24LocalBirdingTipHtml(site)+'</div></div></div>';
 }
 var LIVE_WEATHER_VALUE_RANGES={
   temperature:{min:-60,max:60},
