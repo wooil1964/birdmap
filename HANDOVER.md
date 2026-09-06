@@ -14,6 +14,9 @@
 
 ## 최근 완료 작업
 
+- 조석 안정화(2026-09-06): 공식 코드 99개 탐조지/38개 관측소 검증, 필수 8곳 및 전체 today/tomorrow 인증 API 실호출 확인. 명시적 매핑, fallback 출처·원 생성/현재 갱신 시각, 실제 HTTP·live·timeout 진단, 월간 캐시, 회귀 검사와 Actions 진단을 보강했다. 상세 증거와 반복 비교 결과는 `.github/scripts/tide_system_review.md`, `tide_api_verification.json`, `tide_api_benchmark.json` 참조. 외해 기준의 내부 갯벌 대표성 등 31개 검토 표시는 보존했다.
+- 탐조 의사결정 2단계는 `.github/scripts/birding_decision_design.md`에 설계만 작성. 기존 점수 중복, 추천 시간 승인 규칙, 관측/추정 분리, 모바일 및 단일 원본 후보를 정리했으며 새 기능은 구현하지 않았다.
+- 현재 런타임은 187개(중복 ID 0), Worker는 186개로 ID 188 이천항이 없다. 공통 좌표와 조석 매핑 좌표는 일치한다. 아래 과거 162개/반영 보류 기록을 현재 상태로 오인하지 말 것.
 - 기상 표시 개선 및 Worker 배포 완료
 - 한 달 조석 데이터·모달 기능 완료
 - P1 품질 개선 완료
@@ -31,9 +34,7 @@
 - 신규 탐조지 후보 중 24개(ID 161, 164~186): 엑셀 정제본에는 포함되었으나 지도 반영은 보류 상태.
   반영 시 `AI_WORK_RULES.md` 5항(좌표 검증)과 7항(기상 이중 관리)을 반드시 준수할 것.
 - 반영된 6곳의 eBird Hotspot ID는 미확정으로 공백 유지 중(후보 ID는 보완표 참조). 공식 확인 후 입력할 것.
-- `.github/scripts/build_tide_station_mapping.py`의 siteData 개수 검증은 사용자 승인 하에
-  162로 갱신 완료(2026-07-08). 이후 권역 수 변경 시 이 검증값과
-  `update_weather.py`의 검증값을 함께 갱신할 것.
+- 조석 매핑 검증기는 이제 HTML의 고정 개수/정규식 대신 조석 대상 ID 집합 및 공식 코드를 검증한다. mappingVersion 2가 실행 기준이며 유부도 DT_0018, 매향리 SO_1268은 보호한다. Excel·HTML 전체를 덮어써 매핑을 되돌리지 말 것.
 
 ## 다음 작업자를 위한 주의사항
 

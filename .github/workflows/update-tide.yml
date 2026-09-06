@@ -8,6 +8,9 @@ on:
       - ".github/scripts/update_tide.py"
       - ".github/scripts/audit_tide_health.py"
       - ".github/scripts/build_tide_station_mapping.py"
+      - ".github/scripts/tide_official_stations.json"
+      - ".github/scripts/test_tide.py"
+      - "tide_station_mapping.json"
       - ".github/workflows/update-tide.yml"
       - "data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
   schedule:
@@ -42,7 +45,10 @@ jobs:
       - name: Check updater syntax
         run: python -m py_compile .github/scripts/build_tide_station_mapping.py .github/scripts/update_tide.py .github/scripts/audit_tide_health.py
 
-      - name: Build official station mapping
+      - name: Test tide reliability
+        run: python -m unittest discover -s .github/scripts -p "test_tide.py"
+
+      - name: Validate curated official station mapping
         run: python .github/scripts/build_tide_station_mapping.py
 
       - name: Validate station mapping
@@ -70,17 +76,35 @@ jobs:
           if data.get("date") != today:
             raise SystemExit(f"tide_today.json date mismatch: expected {today}, got {data.get('date')}")
 
-          if int(data.get("successCount", 0)) <= 0:
-            raise SystemExit("tide_today.json has no successful tide results")
+          tomorrow = (datetime.now(kst) + timedelta(days=1)).strftime("%Y-%m-%d")
+          if data.get("tomorrowDate") != tomorrow:
+            raise SystemExit("tomorrowDate mismatch")
+          for site in data["sites"].values():
+            if site.get("date") != today or site.get("tomorrow", {}).get("date") != tomorrow:
+              raise SystemExit("per-site prediction date mismatch")
+          if data.get("siteCount") != data.get("targetSiteCount"):
+            raise SystemExit("missing tide-enabled sites")
 
           print(f"tide_today.json is fresh: {today}, successCount={data.get('successCount')}")
           PY
 
       - name: Build tide health report
+        if: always()
         run: python .github/scripts/audit_tide_health.py
 
       - name: Validate tide_health.json
+        if: always()
         run: python -m json.tool tide_health.json > /dev/null
+
+      - name: Upload tide diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tide-diagnostics
+          path: |
+            tide_today.json
+            tide_health.json
+          retention-days: 7
 
       - name: Commit updated tides
         run: |

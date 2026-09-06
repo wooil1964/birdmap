@@ -13,15 +13,20 @@ from typing import Any
 
 from update_tide import (
     KST,
+    RequestStats,
+    build_site_result,
+    has_tide_data,
+    no_data,
+    prediction_rows_for_date,
     MAX_WORKERS,
     classify_event,
     event_level,
     event_time,
-    find_prediction_rows,
     load_station_mapping,
     load_tide_sites,
     request_prediction,
     resolve_tide_sites,
+    safe_error,
 )
 
 
@@ -132,9 +137,7 @@ def print_targets(sites: list[dict[str, str]]) -> None:
 
 
 def build_day(payload: dict[str, Any], date_iso: str) -> dict[str, str]:
-    rows = find_prediction_rows(payload)
-    if not rows:
-        raise RuntimeError("KHOA response contains no tide predictions")
+    rows = prediction_rows_for_date(payload, date_iso)
     lows = [event_time(row) for row in rows if classify_event(row) == "low" and event_time(row)]
     highs = [event_time(row) for row in rows if classify_event(row) == "high" and event_time(row)]
     low_levels = [event_level(row) for row in rows if classify_event(row) == "low" and event_level(row)]
@@ -166,11 +169,25 @@ def load_previous_days(output_path: Path) -> dict[str, dict[str, dict[str, Any]]
         if not isinstance(site, dict) or not isinstance(site.get("days"), list):
             continue
         previous[str(site_id)] = {
-            str(day.get("date")): day
+            str(day.get("date")): dict(day,
+                stationCode=day.get("stationCode") or site.get("stationCode", ""),
+                generatedAt=day.get("generatedAt") or ("" if day.get("stale") else data.get("generatedAt", "")))
             for day in site["days"]
             if isinstance(day, dict) and day.get("date")
         }
     return previous
+
+
+def reusable_month_day(day: Any, station_code: str, now: datetime) -> bool:
+    if not has_tide_data(day) or day.get("stationCode") != station_code:
+        return False
+    if day.get("stale") and day.get("fallbackSource") != "monthly_cache":
+        return False
+    try:
+        generated = datetime.strptime(day.get("generatedAt", ""), "%Y-%m-%d %H:%M KST").replace(tzinfo=KST)
+    except (ValueError, TypeError):
+        return False
+    return timedelta(0) <= now - generated < timedelta(days=7)
 
 
 def output_path_for(value: str) -> Path:
@@ -209,58 +226,70 @@ def main() -> None:
     failed_requests = 0
     reused_count = 0
 
+    stats = RequestStats(1200)
+    cached_count = 0
     tasks = [
         (station_code, linked_sites, date)
-        for station_code, linked_sites in groups.items()
         for date in dates
+        for station_code, linked_sites in groups.items()
     ]
-    print(f"KHOA requests planned: {len(tasks)}", flush=True)
+    # Reuse only identical station/date forecasts, for at most seven days from
+    # their actual generation time. Rolling windows then fetch only missing days.
+    pending = []
+    for station_code, linked_sites, date in tasks:
+        cached = None
+        for site in linked_sites:
+            candidate = previous_days.get(site["id"], {}).get(date.isoformat())
+            if reusable_month_day(candidate, station_code, now):
+                cached = candidate
+                break
+        if cached is None:
+            pending.append((station_code, linked_sites, date))
+        else:
+            for site in linked_sites:
+                site_days[site["id"]][date.isoformat()] = dict(cached, stale=True, fallbackSource="monthly_cache")
+                cached_count += 1
+    print(f"KHOA requests planned: {len(pending)}; cached site-days: {cached_count}", flush=True)
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
-            executor.submit(
-                request_prediction,
-                api_key,
-                station_code,
-                date.strftime("%Y%m%d"),
-            ): (station_code, linked_sites, date)
-            for station_code, linked_sites, date in tasks
+            executor.submit(request_prediction, api_key, station_code, date.strftime("%Y%m%d"), False, stats): (station_code, linked_sites, date)
+            for station_code, linked_sites, date in pending
         }
         for future in as_completed(futures):
             station_code, linked_sites, date = futures[future]
             date_iso = date.isoformat()
             try:
-                day = build_day(future.result(), date_iso)
+                payload = future.result()
+                # Validate station identity too, before sharing a day with sites.
+                build_site_result(linked_sites[0], payload, now, date_iso)
+                day = build_day(payload, date_iso)
+                day.update(stationCode=station_code, generatedAt=now.strftime("%Y-%m-%d %H:%M KST"), stale=False)
             except Exception as exc:
+                error = safe_error(exc)
                 failed_requests += 1
                 failed_stations.add(station_code)
-                reused_here = 0
                 for site in linked_sites:
                     previous = previous_days.get(site["id"], {}).get(date_iso)
-                    if isinstance(previous, dict):
-                        reused = dict(previous)
-                        reused["stale"] = True
-                        reused["error"] = str(exc) or type(exc).__name__
+                    if has_tide_data(previous) and previous.get("stationCode") == station_code:
+                        reused = dict(previous, stale=True, fallbackSource="previous_month", error=error,
+                                      generationTimeUnknown=not bool(previous.get("generatedAt")))
                         site_days[site["id"]][date_iso] = reused
                         reused_count += 1
-                        reused_here += 1
-                print(
-                    f"WARNING {station_code} {date_iso}: {exc} "
-                    f"(reused for {reused_here} site(s))",
-                    flush=True,
-                )
+                    else:
+                        site_days[site["id"]][date_iso] = no_data(site, date_iso, error)
+                print(f"WARNING {station_code} {date_iso}: {error}", flush=True)
             else:
                 successful_requests += 1
                 successful_stations.add(station_code)
                 for site in linked_sites:
                     site_days[site["id"]][date_iso] = dict(day)
 
-    if successful_requests == 0:
-        raise RuntimeError("No successful KHOA API responses; existing tide_month.json preserved")
-
     complete_stations = successful_stations - failed_stations
     results: dict[str, Any] = {}
     for site in sites:
         days = [site_days[site["id"]][date] for date in sorted(site_days[site["id"]])]
+        for day in days:
+            day["refreshedAt"] = now.strftime("%Y-%m-%d %H:%M KST")
         results[site["id"]] = {
             "siteId": int(site["id"]),
             "name": site["name"],
@@ -277,6 +306,11 @@ def main() -> None:
         "days": args.days,
         "source": "KHOA Tide Forecast OpenAPI",
         "status": "ok" if failed_requests == 0 else "partial",
+        "uniqueStationCount": len(groups),
+        "plannedStationDateCount": len(pending),
+        "cachedDataCount": cached_count,
+        "cacheMaxAgeDays": 7,
+        **stats.snapshot(),
         "targetSiteIds": [int(site_id) for site_id in target_site_ids],
         "skippedSiteIds": list(SKIPPED_SITES),
         "stationCount": len(groups),

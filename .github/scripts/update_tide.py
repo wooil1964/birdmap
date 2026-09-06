@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import time
@@ -11,6 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from threading import Lock
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -24,10 +26,10 @@ OUTPUT_PATH = ROOT / "tide_today.json"
 TIDE_MONTH_PATH = ROOT / "tide_month.json"
 MAPPING_PATH = ROOT / "tide_station_mapping.json"
 API_URL = "https://apis.data.go.kr/1192136/tideFcstHghLw/GetTideFcstHghLwApiService"
-REQUEST_TIMEOUT_SECONDS = 8
-MAX_WORKERS = 4
+REQUEST_TIMEOUT_SECONDS = 15
+MAX_WORKERS = 2
 MAX_RETRIES = 1
-RETRY_DELAYS_SECONDS = (2,)
+RETRY_DELAYS_SECONDS = (3,)
 KST = timezone(timedelta(hours=9))
 NS = {
     "main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
@@ -161,6 +163,19 @@ def resolve_tide_sites(
     review_count = 0
     for target in targets:
         site = dict(target)
+        mapped = mapping_sites.get(site["id"])
+        # Reviewed per-site mappings take precedence over legacy DB/overrides.
+        if isinstance(mapped, dict) and mapped.get("mappingVersion") == 2:
+            site["needsReview"] = bool(mapped.get("needsReview"))
+            site["codeVerified"] = bool(mapped.get("codeVerified"))
+            site["reviewReason"] = str(mapped.get("reviewReason") or "")
+            review_count += int(site["needsReview"])
+            if mapped.get("tideStationCode"):
+                site["stationCode"] = mapped["tideStationCode"]
+                site["stationName"] = mapped["tideStationName"]
+                site["mappingMethod"] = mapped["method"]
+                resolved.append(site)
+            continue
         override = FORECAST_STATION_OVERRIDES.get(site["id"])
         if override:
             site["stationName"], site["stationCode"] = override
@@ -191,6 +206,66 @@ def resolve_tide_sites(
     return resolved, review_count
 
 
+class RequestStats:
+    """Count real HTTP attempts, including retries, across worker threads."""
+
+    def __init__(self, budget_seconds: float = 600):
+        self.deadline = time.monotonic() + budget_seconds
+        self.lock = Lock()
+        self.attempts: dict[str, int] = {}
+        self.timeouts = 0
+        self.budget_skips = 0
+
+    def remaining(self) -> float:
+        return self.deadline - time.monotonic()
+
+    def record(self, station_code: str, date_text: str) -> None:
+        with self.lock:
+            key = f"{station_code}:{date_text}"
+            self.attempts[key] = self.attempts.get(key, 0) + 1
+
+    def timeout(self) -> None:
+        with self.lock:
+            self.timeouts += 1
+
+    def budget_skip(self) -> None:
+        with self.lock:
+            self.budget_skips += 1
+
+    def snapshot(self) -> dict[str, Any]:
+        with self.lock:
+            return {
+                "apiRequestCount": sum(self.attempts.values()),
+                "requestedStationDateCount": len(self.attempts),
+                "retryCount": sum(n - 1 for n in self.attempts.values()),
+                "timeoutCount": self.timeouts,
+                "budgetSkippedRequestCount": self.budget_skips,
+                "requestAttemptsByStationDate": dict(sorted(self.attempts.items())),
+            }
+
+
+class PredictionError(RuntimeError):
+    def __init__(self, message: str, retryable: bool = False, timeout: bool = False):
+        super().__init__(message)
+        self.retryable = retryable
+        self.timeout = timeout
+
+
+def check_api_status(payload: Any) -> None:
+    if not isinstance(payload, dict):
+        return
+    response = payload.get("response", payload)
+    if not isinstance(response, dict):
+        return
+    header = response.get("header", response.get("cmmMsgHeader", {}))
+    if not isinstance(header, dict):
+        return
+    code = str(header.get("resultCode", header.get("returnReasonCode", ""))).strip()
+    if code and code not in {"0", "00", "000", "0000", "200", "NORMAL_SERVICE"}:
+        # Do not persist raw server messages: they can contain a request URL/key.
+        raise PredictionError(f"KHOA resultCode={code}", code in {"01", "04", "05", "23"}, code == "05")
+
+
 def xml_to_data(element: ET.Element) -> Any:
     children = list(element)
     if not children:
@@ -208,78 +283,66 @@ def xml_to_data(element: ET.Element) -> Any:
     return data
 
 
+def safe_error(exc: Exception) -> str:
+    """Never persist arbitrary transport exceptions or authenticated URLs."""
+    message = str(exc) if isinstance(exc, PredictionError) else type(exc).__name__
+    key = os.environ.get("KHOA_API_KEY", "").strip()
+    if key:
+        decoded = urllib.parse.unquote(key)
+        for value in sorted({key, decoded, urllib.parse.quote_plus(decoded), urllib.parse.quote(decoded, safe="")}, key=len, reverse=True):
+            message = message.replace(value, "[REDACTED]")
+    return re.sub(r"(?i)(serviceKey\s*[=:]\s*)[^&\s]+", r"\1[REDACTED]", message)
+
+
 def request_prediction(
-    api_key: str, station_code: str, date_text: str, diagnostic: bool = False
+    api_key: str, station_code: str, date_text: str, diagnostic: bool = False,
+    stats: RequestStats | None = None,
 ) -> dict[str, Any]:
-    decoded_key = urllib.parse.unquote(api_key)
     parameters = {
-        "serviceKey": decoded_key,
-        "obsCode": station_code,
-        "reqDate": date_text,
-        "type": "json",
-        "numOfRows": "300",
+        "serviceKey": urllib.parse.unquote(api_key), "obsCode": station_code,
+        "reqDate": date_text, "type": "json", "numOfRows": "300", "pageNo": "1",
     }
-    query = urllib.parse.urlencode(
-        parameters
-    )
-    url = f"{API_URL}?{query}"
-    if diagnostic:
-        masked_parameters = dict(parameters)
-        masked_parameters["serviceKey"] = "***"
-        masked_query = urllib.parse.urlencode(
-            {key: value for key, value in parameters.items() if key != "serviceKey"}
-        )
-        print(f"First request URL: {API_URL}?serviceKey=***&{masked_query}", flush=True)
-        print(f"First request parameters: {masked_parameters}", flush=True)
     request = urllib.request.Request(
-        url, headers={"Accept": "application/json, application/xml", "User-Agent": "birdmap-tide/1.0"}
+        f"{API_URL}?{urllib.parse.urlencode(parameters)}",
+        headers={"Accept": "application/json, application/xml", "User-Agent": "birdmap-tide/2.0"},
     )
+    if diagnostic:
+        print(f"KHOA station={station_code} date={date_text} timeout={REQUEST_TIMEOUT_SECONDS}s", flush=True)
     for attempt in range(MAX_RETRIES + 1):
+        if stats and stats.remaining() <= 0:
+            stats.budget_skip()
+            raise PredictionError("KHOA request budget exhausted")
+        timeout = min(REQUEST_TIMEOUT_SECONDS, stats.remaining()) if stats else REQUEST_TIMEOUT_SECONDS
+        if stats:
+            stats.record(station_code, date_text)
         try:
-            with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            with urllib.request.urlopen(request, timeout=max(0.01, timeout)) as response:
                 body = response.read().decode("utf-8", errors="replace")
-                safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
-                content_type = response.headers.get("Content-Type", "")
-                if diagnostic:
-                    response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
-                    print(f"First request HTTP status: {response.status}", flush=True)
-                    print(f"First response format: {response_format} ({content_type})", flush=True)
-                    print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
-                if body.lstrip().startswith("<"):
-                    return xml_to_data(ET.fromstring(body))
-                return json.loads(body)
+            payload = xml_to_data(ET.fromstring(body)) if body.lstrip().startswith("<") else json.loads(body)
+            check_api_status(payload)
+            # Validate dates before sharing a station response with multiple sites.
+            prediction_rows_for_date(payload, datetime.strptime(date_text, "%Y%m%d").date().isoformat())
+            return payload
         except urllib.error.HTTPError as exc:
-            body = exc.read().decode("utf-8", errors="replace")
-            safe_body = body.replace(api_key, "***").replace(decoded_key, "***")
-            error_message = f"HTTP {exc.code}"
-            if diagnostic:
-                response_format = "JSON" if body.lstrip().startswith(("{", "[")) else "XML" if body.lstrip().startswith("<") else "UNKNOWN"
-                print(f"First request HTTP status: {exc.code}", flush=True)
-                print(f"First response format: {response_format}", flush=True)
-                print(f"First response body (500 chars): {safe_body[:500]}", flush=True)
-            if attempt >= MAX_RETRIES:
-                raise RuntimeError(error_message) from exc
-        except urllib.error.URLError as exc:
-            error_message = f"{type(exc.reason).__name__}: {exc.reason}"
-            if attempt >= MAX_RETRIES:
-                raise RuntimeError(error_message) from exc
-        except TimeoutError as exc:
-            error_message = f"Timeout after {REQUEST_TIMEOUT_SECONDS}s"
-            if attempt >= MAX_RETRIES:
-                raise RuntimeError(error_message) from exc
-        except json.JSONDecodeError as exc:
-            error_message = f"Invalid JSON: {exc}"
-            if attempt >= MAX_RETRIES:
-                raise RuntimeError(error_message) from exc
+            error = PredictionError(f"KHOA HTTP {exc.code}", exc.code in {408, 429, 500, 502, 503, 504}, exc.code in {408, 504})
+        except (TimeoutError, urllib.error.URLError) as exc:
+            reason = exc.reason if isinstance(exc, urllib.error.URLError) else exc
+            timed_out = isinstance(reason, TimeoutError) or "timed out" in str(reason).lower()
+            error = PredictionError("KHOA timeout" if timed_out else f"KHOA transport error: {type(reason).__name__}", True, timed_out)
+        except (json.JSONDecodeError, ET.ParseError):
+            error = PredictionError("KHOA malformed JSON/XML", True)
+        except PredictionError as exc:
+            error = exc
+        if error.timeout and stats:
+            stats.timeout()
+        if not error.retryable or attempt >= MAX_RETRIES:
+            raise error
         delay = RETRY_DELAYS_SECONDS[min(attempt, len(RETRY_DELAYS_SECONDS) - 1)]
-        if diagnostic:
-            print(
-                f"First request attempt {attempt + 1}/{MAX_RETRIES + 1} failed: "
-                f"{error_message}; retrying in {delay}s",
-                flush=True,
-            )
+        if stats and stats.remaining() <= delay:
+            stats.budget_skip()
+            raise error
         time.sleep(delay)
-    raise RuntimeError("KHOA request failed after retries")
+    raise PredictionError("KHOA request failed after retries")
 
 
 def find_prediction_rows(payload: Any) -> list[dict[str, Any]]:
@@ -351,6 +414,7 @@ def classify_event(row: dict[str, Any]) -> str:
 
 def event_level(row: dict[str, Any]) -> str:
     for key in (
+        "predcTdlvVl",
         "predcTdlvl",
         "predcTdlv",
         "predcTideLevel",
@@ -358,13 +422,13 @@ def event_level(row: dict[str, Any]) -> str:
         "tph_level",
         "level",
     ):
-        value = str(row.get(key) or "").strip()
+        value = str(row[key]).strip() if row.get(key) is not None else ""
         if value:
             return re.sub(r"\s*cm$", "", value, flags=re.I).strip()
     for key, raw_value in row.items():
         normalized = re.sub(r"[^a-z]", "", str(key).lower())
         if "predc" in normalized and ("tdlv" in normalized or "tidelevel" in normalized):
-            value = str(raw_value or "").strip()
+            value = str(raw_value).strip() if raw_value is not None else ""
             if value:
                 return re.sub(r"\s*cm$", "", value, flags=re.I).strip()
     return ""
@@ -375,354 +439,298 @@ def summary_for(rule_key: str) -> str:
         return "조석은 참고하고 여객선 운항 여부를 함께 확인하세요."
     if rule_key == "pelagic_wave_tide":
         return "조석과 파고, 출항 공지를 함께 확인하세요."
-    return "만조 전후 2시간 추천"
+    return "탐조지별 검증된 조석 기준과 현장 여건을 확인하세요."
 
 
-def build_site_result(site: dict[str, str], payload: dict[str, Any], now: datetime) -> dict[str, Any]:
+def prediction_rows_for_date(payload: Any, date_iso: str) -> list[dict[str, Any]]:
+    check_api_status(payload)
     rows = find_prediction_rows(payload)
     if not rows:
-        raise RuntimeError("KHOA response contains no tide predictions")
-    lows = [event_time(row) for row in rows if classify_event(row) == "low" and event_time(row)]
-    highs = [event_time(row) for row in rows if classify_event(row) == "high" and event_time(row)]
-    low_levels = [event_level(row) for row in rows if classify_event(row) == "low" and event_level(row)]
-    high_levels = [event_level(row) for row in rows if classify_event(row) == "high" and event_level(row)]
-    if not lows and not highs:
-        raise RuntimeError("KHOA response contains no high/low tide events")
-    return {
-        "name": site["name"],
-        "stationName": site["stationName"],
-        "lowTide": ", ".join(lows) if lows else "정보 없음",
-        "highTide": ", ".join(highs) if highs else "정보 없음",
-        "lowTideLevel": ", ".join(low_levels) if low_levels else "정보 없음",
-        "highTideLevel": ", ".join(high_levels) if high_levels else "정보 없음",
-        "summary": summary_for(site["ruleKey"]),
+        raise PredictionError("KHOA response contains no tide predictions")
+    for row in rows:
+        raw = str(row.get("predcDt") or row.get("predcDateTime") or row.get("tph_time") or row.get("time") or "")
+        if not re.match(re.escape(date_iso) + r"[ T]", raw) or not re.fullmatch(r"(?:[01][0-9]|2[0-3]):[0-5][0-9]", event_time(row)):
+            raise PredictionError(f"KHOA prediction date/time mismatch: expected {date_iso}")
+        if not classify_event(row):
+            raise PredictionError("KHOA unknown high/low tide event")
+        try:
+            valid_level = math.isfinite(float(event_level(row)))
+        except ValueError:
+            valid_level = False
+        if not valid_level:
+            raise PredictionError("KHOA missing or invalid tide level")
+    return sorted(rows, key=event_time)
+
+
+def build_site_result(site: dict[str, Any], payload: Any, now: datetime, date_iso: str | None = None) -> dict[str, Any]:
+    date_iso = date_iso or now.date().isoformat()
+    rows = prediction_rows_for_date(payload, date_iso)
+    aliases = {"군산외항": "군산"}
+    expected_name = aliases.get(site["stationName"], site["stationName"])
+    for row in rows:
+        returned_code = row.get("obsCode") or row.get("stationCode")
+        returned_name = row.get("obsvtrNm")
+        if returned_code and str(returned_code) != site["stationCode"]:
+            raise PredictionError("KHOA station code mismatch")
+        if returned_name and aliases.get(str(returned_name).strip(), str(returned_name).strip()) != expected_name:
+            raise PredictionError("KHOA station name mismatch")
+    result = {
+        "name": site["name"], "stationName": site["stationName"], "stationCode": site["stationCode"],
+        "date": date_iso, "summary": summary_for(site["ruleKey"]),
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-        "stale": False,
+        "generatedAt": now.strftime("%Y-%m-%d %H:%M KST"),
+        "stale": False, "source": "KHOA Tide Forecast OpenAPI",
     }
-def build_tomorrow_result(
-    site: dict[str, str], payload: dict[str, Any], now: datetime
-) -> dict[str, Any]:
-    result = build_site_result(site, payload, now)
-    return {
-        "lowTide": result["lowTide"],
-        "highTide": result["highTide"],
-        "lowTideLevel": result["lowTideLevel"],
-        "highTideLevel": result["highTideLevel"],
-    }
+    for kind in ("low", "high"):
+        events = [row for row in rows if classify_event(row) == kind]
+        result[kind + "Tide"] = ", ".join(event_time(row) for row in events) or "정보 없음"
+        result[kind + "TideLevel"] = ", ".join(event_level(row) for row in events) or "정보 없음"
+    return result
 
 
+def build_tomorrow_result(site: dict[str, Any], payload: Any, now: datetime, date_iso: str | None = None) -> dict[str, Any]:
+    return build_site_result(site, payload, now, date_iso)
 
-def load_previous_sites(expected_date: str) -> dict[str, Any]:
-    if not OUTPUT_PATH.exists():
-        return {}
+
+def read_optional_json(path: Path) -> dict[str, Any]:
     try:
-        data = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"Previous tide data unavailable: {exc}", flush=True)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
         return {}
-    if data.get("date") != expected_date:
-        print("Previous tide data belongs to a different KST date; reuse disabled", flush=True)
-        return {}
-    sites = data.get("sites", {})
-    return sites if isinstance(sites, dict) else {}
 
 
-def load_previous_tomorrow_sites(expected_date: str) -> dict[str, Any]:
-    if not OUTPUT_PATH.exists():
-        return {}
-    try:
-        data = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"Previous tomorrow tide data unavailable: {exc}", flush=True)
-        return {}
-    if data.get("tomorrowDate") != expected_date:
-        return {}
-    sites = data.get("sites")
-    if not isinstance(sites, dict):
-        return {}
-    results: dict[str, Any] = {}
-    for site_id, site in sites.items():
-        if not isinstance(site, dict) or not isinstance(site.get("tomorrow"), dict):
+def has_tide_data(result: Any) -> bool:
+    if not isinstance(result, dict) or result.get("unavailable") or result.get("dataUnavailable"):
+        return False
+    found = False
+    for kind in ("low", "high"):
+        times = str(result.get(kind + "Tide", "")).split(",")
+        levels = str(result.get(kind + "TideLevel", "")).split(",")
+        if len(times) == 1 and times[0].strip() in {"", "정보 없음", "조석정보 없음"}:
             continue
-        tomorrow = site["tomorrow"]
-        results[str(site_id)] = {
-            "name": site.get("name", ""),
-            "stationName": site.get("stationName", ""),
-            "lowTide": tomorrow.get("lowTide", ""),
-            "highTide": tomorrow.get("highTide", ""),
-            "lowTideLevel": tomorrow.get("lowTideLevel", ""),
-            "highTideLevel": tomorrow.get("highTideLevel", ""),
-            "summary": site.get("summary", ""),
-            "updated": site.get("updated", ""),
-            "stale": True,
-            "fallbackSource": "previous_tomorrow",
-        }
-    if results:
-        print(
-            f"Previous tide_today.json tomorrow fallback available for {expected_date}: "
-            f"{len(results)} site(s)",
-            flush=True,
-        )
-    return results
+        if len(times) != len(levels):
+            return False
+        for clock, level in zip(times, levels):
+            if not re.fullmatch(r"(?:[01][0-9]|2[0-3]):[0-5][0-9]", clock.strip()):
+                return False
+            try:
+                if not math.isfinite(float(level)):
+                    return False
+            except ValueError:
+                return False
+        found = True
+    return found
 
 
-def load_monthly_day_results(date_iso: str, now: datetime, include_site_fields: bool) -> dict[str, Any]:
-    if not TIDE_MONTH_PATH.exists():
-        return {}
-    try:
-        data = json.loads(TIDE_MONTH_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"Monthly tide fallback unavailable: {exc}", flush=True)
-        return {}
-    sites = data.get("sites")
-    if not isinstance(sites, dict):
-        return {}
-    results: dict[str, Any] = {}
-    for site_id, site in sites.items():
-        if not isinstance(site, dict) or not isinstance(site.get("days"), list):
-            continue
-        day = next(
-            (
-                item
-                for item in site["days"]
-                if isinstance(item, dict) and item.get("date") == date_iso
-            ),
-            None,
-        )
-        if not isinstance(day, dict):
-            continue
-        result = {
-            "lowTide": day.get("lowTide", ""),
-            "highTide": day.get("highTide", ""),
-            "lowTideLevel": day.get("lowTideLevel", ""),
-            "highTideLevel": day.get("highTideLevel", ""),
-            "stale": True,
-            "fallbackSource": "tide_month",
-            "monthlyGeneratedAt": data.get("generatedAt", ""),
-        }
-        if include_site_fields:
-            result.update(
-                {
-                    "name": site.get("name", ""),
-                    "stationName": site.get("stationName", ""),
-                    "summary": summary_for(str(site.get("tideRuleKey") or "")),
-                    "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-                }
-            )
-        results[str(site_id)] = result
-    if results:
-        print(
-            f"Monthly tide fallback available for {date_iso}: {len(results)} site(s)",
-            flush=True,
-        )
-    return results
-
-
-def first_available(*sources: dict[str, Any]):
-    def lookup(site_id: str) -> Any:
-        for source in sources:
-            value = source.get(site_id)
-            if isinstance(value, dict):
-                return value
+def normalize_cached_day(day: Any, site: dict[str, Any], date_iso: str, source: str, generated_at: str) -> dict[str, Any] | None:
+    if not has_tide_data(day) or day.get("date", date_iso) != date_iso:
         return None
+    # Old daily files have no stationCode: use only their stored exact station name.
+    # Monthly records always carry a code; a changed mapping must never reuse it.
+    code = day.get("stationCode")
+    if code:
+        if code != site["stationCode"]:
+            return None
+    elif day.get("stationName") != site["stationName"]:
+        return None
+    result = {k: v for k, v in day.items() if k != "tomorrow"}
+    original_time = day.get("generatedAt") or day.get("monthlyGeneratedAt") or generated_at or ""
+    result.update({
+        "name": site["name"], "stationCode": site["stationCode"], "stationName": site["stationName"],
+        "date": date_iso, "stale": True, "fallbackSource": source,
+        "generatedAt": original_time, "updated": original_time,
+        "generationTimeUnknown": not bool(original_time),
+        "summary": "재사용 조석예보 자료입니다. 생성 시각과 출처를 확인하세요.",
+        # Existing UI reads staleDaily, not stale. Keep warnings visible without UI edits.
+        "staleDaily": True, "staleDailyDate": str(original_time)[:10],
+    })
+    if source == "tide_month":
+        result.update(monthFallback=True, monthFallbackStale=True, monthlyGeneratedAt=original_time)
+    return result
 
-    return lookup
+
+def fallback_for_date(sites: list[dict[str, Any]], date_iso: str, daily: dict[str, Any], monthly: dict[str, Any]) -> dict[str, Any]:
+    results = {}
+    for site in sites:
+        old = daily.get("sites", {}).get(site["id"], {})
+        candidates = []
+        if daily.get("tomorrowDate") == date_iso and isinstance(old.get("tomorrow"), dict):
+            day = dict(old["tomorrow"])
+            day.setdefault("stationCode", old.get("stationCode", ""))
+            day.setdefault("stationName", old.get("stationName", ""))
+            candidates.append((day, "previous_tomorrow", day.get("updated") or old.get("updated", "")))
+        if daily.get("date") == date_iso:
+            # Preserve a successful earlier same-day refresh before monthly fallback.
+            candidates.append((old, old.get("fallbackSource") or "previous_today", old.get("updated", "")))
+        # Monthly forecasts are station data, not site-specific measurements.
+        # Share only an identical code/date, including with sites outside the
+        # monthly target list; never borrow a neighbouring station's forecast.
+        month_days = [
+            (month_site, day)
+            for month_site in monthly.get("sites", {}).values()
+            if isinstance(month_site, dict) and month_site.get("stationCode") == site["stationCode"]
+            for day in month_site.get("days", [])
+            if isinstance(day, dict) and day.get("date") == date_iso
+        ]
+        for month_site, month_day in month_days:
+            if isinstance(month_day, dict) and month_day.get("date") == date_iso:
+                day = dict(month_day)
+                day.setdefault("stationCode", month_site.get("stationCode", ""))
+                day.setdefault("stationName", month_site.get("stationName", ""))
+                # A legacy stale monthly day has no trustworthy per-day generation time.
+                stamp = day.get("generatedAt") or ("" if day.get("stale") else monthly.get("generatedAt", ""))
+                candidates.append((day, "tide_month", stamp))
+        for day, source, stamp in candidates:
+            result = normalize_cached_day(day, site, date_iso, source, stamp)
+            if result:
+                results[site["id"]] = result
+                break
+    return results
+
+
+def no_data(site: dict[str, Any], date_iso: str, error: str, station_missing: bool = False) -> dict[str, Any]:
+    result = {
+        "name": site["name"], "stationName": site.get("stationName", "공식 직접 관측소 미확인"),
+        "stationCode": site.get("stationCode", ""), "date": date_iso,
+        "lowTide": "정보 없음", "highTide": "정보 없음",
+        "lowTideLevel": "정보 없음", "highTideLevel": "정보 없음",
+        "summary": "공식 직접 관측소/API 지원 검토 필요" if station_missing else "조석정보 없음",
+        "stale": True, "fallbackSource": "none", "generatedAt": "", "updated": "",
+        "dataUnavailable": True, "error": error,
+    }
+    if station_missing:
+        result["unavailable"] = True
+    return result
+
+
+def group_by_station(sites: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for site in sites:
+        groups.setdefault(site["stationCode"], []).append(site)
+    return list(groups.values())
 
 
 def fetch_and_build(
-    api_key: str,
-    groups: list[list[dict[str, str]]],
-    date_text: str,
-    now: datetime,
-    site_positions: dict[str, int],
-    total_targets: int,
-    build_fn: Any,
-    previous_for: Any,
-    label: str,
+    api_key: str, groups: list[list[dict[str, Any]]], date_text: str, now: datetime,
+    site_positions: dict[str, int], total_targets: int, build_fn: Any,
+    previous_for: Any, label: str, stats: RequestStats | None = None,
 ) -> tuple[dict[str, Any], int, int, int]:
     results: dict[str, Any] = {}
-    success_count = 0
-    failed_count = 0
-    reused_count = 0
-    if not groups:
-        return results, success_count, failed_count, reused_count
-
-    def handle_failure(group: list[dict[str, str]], exc: Exception) -> None:
-        nonlocal success_count, failed_count, reused_count
-        for site in group:
-            failed_count += 1
-            previous = previous_for(site["id"])
-            if isinstance(previous, dict):
-                result = dict(previous)
-                result["stale"] = True
-                result["error"] = str(exc) or type(exc).__name__
-                results[site["id"]] = result
-                success_count += 1
-                reused_count += 1
-                state = f"{result['error']} - REUSED"
-            else:
-                state = str(exc) or type(exc).__name__
-            print(
-                f"[{label}] Site {site_positions[site['id']]}/{total_targets} "
-                f"{site['name']}: {state}",
-                flush=True,
-            )
-
-    first_group = groups[0]
-    first_site = first_group[0]
-    print(f"[{label}] Testing first tide station before full run", flush=True)
-    try:
-        first_payload = request_prediction(
-            api_key, first_site["stationCode"], date_text, diagnostic=True
-        )
-        for site in first_group:
-            results[site["id"]] = build_fn(site, first_payload, now)
-            success_count += 1
-            print(
-                f"[{label}] Site {site_positions[site['id']]}/{total_targets} {site['name']}: OK",
-                flush=True,
-            )
-    except Exception as exc:
-        handle_failure(first_group, exc)
-
+    success_count = failed_count = reused_count = 0
+    codes = [group[0]["stationCode"] for group in groups]
+    if len(codes) != len(set(codes)):
+        raise ValueError("Duplicate stationCode groups would cause duplicate API calls")
+    date_iso = datetime.strptime(date_text, "%Y%m%d").date().isoformat()
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
-            executor.submit(
-                request_prediction, api_key, group[0]["stationCode"], date_text
-            ): group
-            for group in groups[1:]
+            executor.submit(request_prediction, api_key, group[0]["stationCode"], date_text, False, stats): group
+            for group in groups
         }
         for future in as_completed(futures):
             group = futures[future]
             try:
                 payload = future.result()
             except Exception as exc:
-                handle_failure(group, exc)
+                payload, request_error = None, safe_error(exc)
             else:
-                for site in group:
+                request_error = ""
+            for site in group:
+                error = request_error
+                if not error:
                     try:
-                        result = build_fn(site, payload, now)
+                        result = build_fn(site, payload, now, date_iso)
                     except Exception as exc:
-                        handle_failure([site], exc)
+                        error = safe_error(exc)
+                if error:
+                    failed_count += 1
+                    previous = previous_for(site["id"])
+                    if isinstance(previous, dict) and has_tide_data(previous):
+                        result = dict(previous, stale=True, error=error)
+                        reused_count += 1
                     else:
-                        results[site["id"]] = result
-                        success_count += 1
-                        print(
-                            f"[{label}] Site {site_positions[site['id']]}/{total_targets} "
-                            f"{site['name']}: OK",
-                            flush=True,
-                        )
-
+                        result = no_data(site, date_iso, error)
+                if has_tide_data(result):
+                    success_count += 1
+                result["refreshedAt"] = now.strftime("%Y-%m-%d %H:%M KST")
+                results[site["id"]] = result
+            print(f"[{label}] {group[0]['stationCode']} {len(group)} site(s): {request_error or 'response processed'}", flush=True)
     return results, success_count, failed_count, reused_count
-def main() -> None:
+
+
+def build_daily_output(api_key: str, now: datetime, stats: RequestStats | None = None) -> dict[str, Any]:
     targets = load_tide_sites()
     mapping_sites = load_station_mapping()
     sites, review_count = resolve_tide_sites(targets, mapping_sites)
-    print(f"Loading {len(targets)} tide-enabled sites", flush=True)
-    print(f"Verified mappings: {len(sites)}", flush=True)
-    print(f"Review/excluded mappings: {review_count}", flush=True)
     if not sites:
-        raise RuntimeError("No verified tide station mappings; existing tide_today.json preserved")
+        raise RuntimeError("No usable tide station mappings")
+    stats = stats or RequestStats(600)
+    daily = read_optional_json(OUTPUT_PATH)
+    monthly = read_optional_json(TIDE_MONTH_PATH)
+    dates = [now.date().isoformat(), (now + timedelta(days=1)).date().isoformat()]
+    groups = group_by_station(sites)
+    results_by_date = []
+    counts = []
+    positions = {target["id"]: n for n, target in enumerate(targets, 1)}
+    resolved_ids = {site["id"] for site in sites}
+    missing = [target for target in targets if target["id"] not in resolved_ids]
+    for date_iso, label in zip(dates, ("today", "tomorrow")):
+        fallback = fallback_for_date(sites, date_iso, daily, monthly)
+        results, success, failed, reused = fetch_and_build(
+            api_key, groups, date_iso.replace("-", ""), now, positions, len(targets),
+            build_site_result, fallback.get, label, stats,
+        )
+        for site in missing:
+            entry = mapping_sites.get(site["id"], {})
+            known_candidates = any(c.get("codeVerified") for c in entry.get("candidates", []))
+            # A known official station with untested API support is not evidence
+            # that no observation station exists. Avoid that UI label.
+            results[site["id"]] = no_data(site, date_iso, entry.get("reviewReason") or "공식 직접 관측소/API 지원 미확인", not known_candidates)
+            results[site["id"]]["stationReview"] = True
+            results[site["id"]]["refreshedAt"] = now.strftime("%Y-%m-%d %H:%M KST")
+            results[site["id"]]["summary"] = entry.get("reviewReason") or "공식 직접 관측소/API 지원 미확인"
+        results_by_date.append(results)
+        counts.append((success, failed + len(missing), reused))
+    results, tomorrow_results = results_by_date
+    live_station_count = len({s["stationCode"] for s in results.values() if not s.get("stale") and has_tide_data(s)})
+    month_count = sum(s.get("fallbackSource") == "tide_month" for s in results.values())
+    for site_id, result in results.items():
+        result["tomorrow"] = tomorrow_results[site_id]
+        if tomorrow_results[site_id].get("stale") and has_tide_data(tomorrow_results[site_id]):
+            result.setdefault("staleDaily", True)
+            result.setdefault("staleDailyDate", "")
+    success, failed, reused = counts[0]
+    tomorrow_success, tomorrow_failed, tomorrow_reused = counts[1]
+    output = {
+        "date": dates[0], "tomorrowDate": dates[1], "updated": now.strftime("%Y-%m-%d %H:%M KST"),
+        "source": "KHOA Tide Forecast OpenAPI", "status": "ok" if failed == 0 else "partial",
+        "targetSiteCount": len(targets), "linkedSiteCount": len(sites), "siteCount": len(results),
+        "uniqueStationCount": len(groups), "plannedStationDateCount": len(groups) * 2,
+        "successCount": success, "liveSuccessCount": success - reused, "liveSuccessStationCount": live_station_count,
+        "failedCount": failed, "reusedCount": reused, "fallbackCount": reused, "monthFallbackCount": month_count,
+        "previousTomorrowFallbackCount": sum(s.get("fallbackSource") == "previous_tomorrow" for s in results.values()),
+        "unavailableSiteCount": sum(not has_tide_data(s) for s in results.values()),
+        "noStationCount": len(missing), "noStationSites": [{"id": s["id"], "name": s["name"]} for s in missing],
+        "reviewCount": review_count,
+        "codeReviewSites": [{"id": t["id"], "name": t["name"], "reason": mapping_sites.get(t["id"], {}).get("reviewReason", "")}
+                            for t in targets if mapping_sites.get(t["id"], {}).get("needsReview")],
+        "tomorrowSuccessCount": tomorrow_success, "tomorrowFailedCount": tomorrow_failed,
+        "tomorrowLiveSuccessCount": tomorrow_success - tomorrow_reused, "tomorrowReusedCount": tomorrow_reused,
+        "tomorrowStatus": "ok" if tomorrow_failed == 0 else "partial", "sites": results,
+        **stats.snapshot(),
+    }
+    return output
+
+
+def main() -> None:
     api_key = os.environ.get("KHOA_API_KEY", "").strip()
     if not api_key:
-        print("KHOA_API_KEY: not configured", flush=True)
-        raise RuntimeError("GitHub Secret KHOA_API_KEY is not configured")
-    print("KHOA_API_KEY: *** (configured)", flush=True)
-
-    now = datetime.now(KST)
-    date_text = now.strftime("%Y%m%d")
-    date_iso = now.strftime("%Y-%m-%d")
-    tomorrow = now + timedelta(days=1)
-    tomorrow_date_text = tomorrow.strftime("%Y%m%d")  
-    previous_sites = load_previous_sites(date_iso)
-    previous_tomorrow_sites = load_previous_tomorrow_sites(date_iso)
-    monthly_today_sites = load_monthly_day_results(date_iso, now, True)
-    monthly_tomorrow_sites = load_monthly_day_results(tomorrow.strftime("%Y-%m-%d"), tomorrow, False)
-    results: dict[str, Any] = {}
-    success_count = 0
-    resolved_ids = {site["id"] for site in sites}
-    unavailable_targets = [target for target in targets if target["id"] not in resolved_ids]
-    failed_count = len(unavailable_targets)
-    reused_count = 0
-    site_positions = {target["id"]: position for position, target in enumerate(targets, start=1)}
-
-    for target in unavailable_targets:
-        results[target["id"]] = {
-            "name": target["name"],
-            "stationName": "관측소 없음",
-            "lowTide": "관측소 없음",
-            "highTide": "관측소 없음",
-            "lowTideLevel": "관측소 없음",
-            "highTideLevel": "관측소 없음",
-            "summary": "80km 이내에 사용 가능한 공식 조석관측소가 없습니다.",
-            "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-            "stale": False,
-            "unavailable": True,
-            "error": "관측소 없음",
-        }
-        print(
-            f"Site {site_positions[target['id']]}/{len(targets)} "
-            f"{target['name']}: 관측소 없음",
-            flush=True,
-        )
-
-    station_groups: dict[str, list[dict[str, str]]] = {}
-    for site in sites:
-        station_groups.setdefault(site["stationCode"], []).append(site)
-    groups = list(station_groups.values())
-    today_results, success_count, today_failed, reused_count = fetch_and_build(
-        api_key, groups, date_text, now, site_positions, len(targets),
-        build_site_result,
-        first_available(previous_sites, previous_tomorrow_sites, monthly_today_sites),
-        "today",
-    )
-    results.update(today_results)
-    failed_count += today_failed
-
-    tomorrow_results, tomorrow_success, tomorrow_failed, tomorrow_reused = fetch_and_build(
-        api_key, groups, tomorrow_date_text, tomorrow, site_positions, len(targets),
-        build_tomorrow_result,
-        first_available(
-            {
-                site_id: site.get("tomorrow")
-                for site_id, site in previous_sites.items()
-                if isinstance(site, dict) and isinstance(site.get("tomorrow"), dict)
-            },
-            monthly_tomorrow_sites,
-        ),
-        "tomorrow",
-    )
-    for site_id, tomorrow_result in tomorrow_results.items():
-        if site_id in results:
-            results[site_id]["tomorrow"] = tomorrow_result
-
-    print(f"Success: {success_count}", flush=True)
-    print(f"Failed: {failed_count}", flush=True)
-    print(f"Reused: {reused_count}", flush=True)
-    if success_count == 0:
-        raise RuntimeError("No successful KHOA API responses; existing tide_today.json preserved")
-
-    output = {
-        "date": date_iso,
-            "tomorrowDate": tomorrow.strftime("%Y-%m-%d"),
-        "tomorrowSuccessCount": tomorrow_success,
-        "tomorrowFailedCount": tomorrow_failed,
-        "tomorrowReusedCount": tomorrow_reused,
-        "tomorrowStatus": "ok" if tomorrow_failed == 0 else "partial",    
-        "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-        "source": "KHOA Tide Forecast OpenAPI",
-        "status": "ok" if failed_count == 0 else "partial",
-        "siteCount": len(results),
-        "successCount": success_count,
-        "liveSuccessCount": success_count - reused_count,
-        "failedCount": failed_count,
-        "reusedCount": reused_count,
-        "sites": results,
-    }
+        raise RuntimeError("KHOA_API_KEY is not configured; existing data preserved")
+    output = build_daily_output(api_key, datetime.now(KST))
     temporary_path = OUTPUT_PATH.with_suffix(".json.tmp")
     temporary_path.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temporary_path.replace(OUTPUT_PATH)
-    print(f"{OUTPUT_PATH.name}: {len(results)} sites saved", flush=True)
+    print(f"Saved {output['siteCount']} sites; live={output['liveSuccessCount']}, fallback={output['fallbackCount']}, HTTP attempts={output['apiRequestCount']}", flush=True)
 
 
 if __name__ == "__main__":

@@ -37,6 +37,12 @@ jobs:
       - name: Check updater syntax
         run: python -m py_compile .github/scripts/update_tide.py .github/scripts/update_tide_month.py
 
+      - name: Test tide reliability
+        run: python -m unittest discover -s .github/scripts -p "test_tide.py"
+
+      - name: Validate curated official station mapping
+        run: python .github/scripts/build_tide_station_mapping.py
+
       - name: List monthly tide targets
         run: python .github/scripts/update_tide_month.py --list-targets
 
