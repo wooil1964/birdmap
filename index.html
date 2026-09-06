@@ -160,7 +160,7 @@ a.ebird,.btn.ebird{display:none !important}
 .leaflet-popup-content{max-width:500px;max-height:78vh;overflow-y:auto;padding-right:4px;overscroll-behavior:contain}
 .leaflet-popup-content-wrapper{max-height:82vh}
 .leaflet-popup-content>div>div{width:min(440px,calc(100vw - 80px))!important;max-width:100%}
-#todayToggleBtn{position:fixed;top:166px;right:52px;z-index:10001;padding:8px 11px;background:#eefbf1;border:2px solid #2f7d4f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#todayToggleBtn{position:fixed;top:131px;right:52px;z-index:10001;padding:8px 11px;background:#eefbf1;border:2px solid #2f7d4f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #todayPanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:380px;max-height:66vh;overflow-y:auto;background:white;border:2px solid #2f7d4f;border-radius:9px;padding:12px 14px;box-sizing:border-box;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28);line-height:1.5;overscroll-behavior:contain}
 #todayPanel .panelHeader{border-color:#bfe0cb}
 .todaySectionTitle{margin:11px 0 6px;font-size:14px;font-weight:bold;color:#1d5c38}
@@ -244,8 +244,12 @@ body.monthTideOpen{overflow:hidden}
 @media(max-width:700px){
   #topUiWrap{position:fixed;top:8px;left:8px;right:8px;z-index:10001;pointer-events:none}
   #mapTitleBox{position:static;pointer-events:auto;padding:8px 10px}
-  #topBtnRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;pointer-events:none}
+  #topBtnRow{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:6px;pointer-events:none;align-items:start}
   #topBtnRow button{position:static;pointer-events:auto;font-size:12px;padding:6px 9px}
+  #togglePanelBtn{grid-column:1;grid-row:1;justify-self:start}
+  #noticeToggleBtn,#todayToggleBtn{grid-column:2;justify-self:end}
+  #noticeToggleBtn{grid-row:1}
+  #todayToggleBtn{grid-row:2}
   .desktopToggleLabel{display:none}.mobileToggleLabel{display:inline}
   html,body{overflow-x:hidden}
   #birdmapPanel{display:none;top:var(--birdmapTopUiH,178px);left:8px;width:min(300px,calc(100vw - 16px));box-sizing:border-box;max-height:min(48vh,420px);overflow-y:auto;padding:9px 10px;font-size:12px}
