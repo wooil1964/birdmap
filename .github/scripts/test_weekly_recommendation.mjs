@@ -52,6 +52,7 @@ const NAMES = [
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
   'todayRecommendedSites', 'weeklyEastWindRecommendation', 'v24WindParts', 'v24WindNumber',
   'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'todayString', 'v23Value',
+  'weeklyRecommendationIsSafe',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -476,4 +477,92 @@ test('실데이터 187곳의 가을 추천·선상 안전·score 무변경 및 �
     top:top.map(e=>({id:e.site.id,name:e.site.name,type:api.autumnAxisLabel(e.axes),slot:e.selectedAxis,date:e.recommendationDate,time:e.recommendationTime,score:e.score,mandatory:e.isMandatory,reasons:e.reasons})),
     pelagic:{evaluated:ships.length,safeSites:safeSites.length,safeSamples:safeSamples.length,selected:top.filter(e=>e.axes.pelagic).map(e=>({name:e.site.name,...e.sample}))}
   },null,2));
+});
+
+test('추천 caution은 mandatory/점수와 무관하며 미확인은 별도 상태',()=>{
+ const api=loadApi();
+ for(const score of [60,65,92,95])for(const isMandatory of [true,false]){
+  const entry={score,isMandatory,today:{wave:'1.9m',rain:'강수 없음'},reasons:['공지','물때','동풍']};
+  const saved=JSON.stringify(entry);
+  assert.equal(api.weeklyRecommendationIsSafe(entry),true);
+  assert.equal(JSON.stringify(entry),saved);
+  for(const today of [{wave:'2.0m'},{rain:'3시간 강수 10.0mm'},{rain:'강한 비'}])
+   assert.equal(api.weeklyRecommendationIsSafe({...entry,today}),false);
+ }
+ assert.equal(api.weeklyRecommendationIsSafe({today:null,isMandatory:true}),null);
+ assert.equal(api.weeklyRecommendationIsSafe({today:{wind:'동풍 3m/s'},isMandatory:true}),null);
+});
+
+test('다른 시각의 caution 근거 대신 카드 표시 기상만 판단',()=>{
+ const api=loadApi(),date=futureDate(1);
+ const safe=sample(`${date} 09:00 KST`,90,{waveM:1});
+ const unsafe=sample(`${date} 12:00 KST`,95,{waveM:2.2});
+ const entry={site:SITE,recommendationDate:date,recommendationTime:'09:00',sample:safe,
+  today:api.weeklySampleAsWeather(SITE,safe,date),cautionText:'다른 시각 현장 탐조 주의',reasons:['12:00 동풍 근거']};
+ assert.equal(api.weeklyRecommendationIsSafe(entry),true);
+ assert.equal(api.weeklyRecommendationIsSafe({...entry,sample:unsafe,recommendationTime:'12:00',
+  today:api.weeklySampleAsWeather(SITE,unsafe,date),cautionText:''}),false);
+});
+
+test('최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음',()=>{
+ const date=loadApi().weeklyTodayDateText();
+ const sites=Array.from({length:13},(_,i)=>({...SITE,id:300+i,name:'후보'+i,env:i<5?'농경지':i<9?'갯벌':'습지'}));
+ const weatherToday={sites:Object.fromEntries(sites.map((s,i)=>[s.id,{date,forecastTime:date+' 12:00 KST',score:i===0?65:i===1?95:60,wind:'동풍 3m/s',wave:i<2||i===5?'2.2m':'1.0m',rain:'강수 없음'}]))};
+ const api=loadApi({siteData:sites,weatherToday,notices:[{siteId:300},{siteId:305}]});
+ const original=api.weeklyRecommendationForSite(sites[0],api.weeklyInfo());
+ assert.equal(original.isMandatory,true);assert.equal(original.score,65);
+ const top=api.todayRecommendedSites();
+ assert.equal(top.length,10);assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+ assert.ok(!top.some(e=>[300,301].includes(e.site.id)));
+ assert.ok(top.some(e=>e.score===60));
+ assert.ok(top.every(e=>api.weeklyRecommendationIsSafe(e)!==false));
+ assert.ok(api.weeklyIssueReason(sites[0]));assert.ok(original.reasons.length);
+ assert.equal(top.filter(e=>e.selectedAxis==='mudflat').length,3);
+ assert.ok(!top.some(e=>e.site.id===305));assert.ok(top.some(e=>e.site.id===308&&e.selectedAxis==='mudflat'));
+ weatherToday.sites[300].wave='1.0m';
+ assert.ok(api.todayRecommendedSites().some(e=>e.site.id===300&&e.score===65&&e.isMandatory));
+});
+
+test('물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외',()=>{
+ const date=futureDate(1),s={...SITE,env:'갯벌'};
+ const doc=weekDoc(s.id,{[date]:[sample(`${date} 09:00 KST`,95,{waveM:2.2})]});
+ const api=loadApi({siteData:[s],weatherWeek:doc,tideMonth:{sites:{[s.id]:{days:[{date,highTide:'15:00',highTideLevel:'720'}]}}}});
+ const entry=api.weeklyRecommendationForSite(s,api.weeklyInfo());
+ assert.ok(entry.isMandatory);assert.match(entry.reasons.join(' '),/물때/);
+ assert.equal(api.todayRecommendedSites().length,0);
+ doc.sites[s.id].days[date].samples[0].waveM=1;
+ assert.equal(api.todayRecommendedSites().length,1);
+});
+
+test('실데이터 caution 전후 비교와 동풍·공지 보존',()=>{
+ const api=loadApi({siteData:RUNTIME,weatherWeek:actualWeek,
+  tideMonth:JSON.parse(readFileSync(join(ROOT,'tide_month.json'),'utf8')),
+  notices:JSON.parse(readFileSync(join(ROOT,'notices.json'),'utf8'))});
+ const entries=RUNTIME.map((s,i)=>{const e=api.weeklyRecommendationForSite(s,api.weeklyInfo());return e&&{...e,stableOrder:i};}).filter(Boolean);
+ const before=api.autumnBalancedRecommendations(entries),after=api.todayRecommendedSites();
+ const site=entries.find(e=>String(e.site.id)==='50');
+ assert.ok(site.isMandatory);assert.match(site.reasons.join(' '),/동풍/);
+ assert.ok(api.weeklyIssueReason(site.site));
+ assert.equal(after.length,10);assert.equal(new Set(after.map(e=>e.site.id)).size,10);
+ assert.ok(after.every(e=>api.weeklyRecommendationIsSafe(e)!==false));
+ if(api.weeklyRecommendationIsSafe(site)===false)assert.ok(!after.some(e=>e.site.id===site.site.id));
+ if(process.env.CAUTION_REPORT==='1'){
+  const describe=e=>({id:e.site.id,name:e.site.name,type:api.autumnAxisLabel(e.axes),date:e.recommendationDate,time:e.recommendationTime,score:e.score,mandatory:e.isMandatory,caution:api.todayWeatherCautionNote(e.today),slot:e.selectedAxis});
+  console.log(JSON.stringify({generatedAt:actualWeek.generatedAt,cheongrim:describe(site),before:before.map(describe),after:after.map(describe),added:after.filter(e=>!before.some(b=>b.site.id===e.site.id)).map(describe)},null,2));
+ }
+});
+
+test('동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충',()=>{
+ const date=futureDate(1),site={...POHANG,id:50,name:'청림운동장',env:'해안·갯벌'};
+ const others=[501,502,503].map(id=>({...SITE,id,name:'안전 갯벌 '+id,env:'갯벌'}));
+ const doc=weekDoc(site.id,{[date]:[sample(`${date} 09:00 KST`,65,{windSpeed:8,waveM:2.2})]});
+ for(const s of others)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(`${date} 09:00 KST`,60,{waveM:1})]}).sites);
+ const api=loadApi({siteData:[site,...others],weatherWeek:doc,notices:[{siteId:50}]});
+ const entry=api.weeklyRecommendationForSite(site,api.weeklyInfo());
+ assert.ok(entry.isMandatory);assert.match(entry.reasons.join(' '),/동풍/);
+ const before=JSON.stringify(entry),top=api.todayRecommendedSites();
+ assert.equal(JSON.stringify(entry),before);assert.ok(api.weeklyIssueReason(site));
+ assert.deepEqual(top.map(e=>e.site.id),[501,502,503]);
+ doc.sites['50'].days[date].samples[0].waveM=1;
+ assert.ok(api.todayRecommendedSites().some(e=>e.site.id===50&&e.score===65));
 });

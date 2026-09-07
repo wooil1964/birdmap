@@ -2215,11 +2215,20 @@ function weeklyRecommendationForSite(site,week){
     recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',
     tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?'주간 3시간 예보 기준':(weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel};
 }
+function weeklyRecommendationIsSafe(entry){
+  // 카드에 표시하는 동일 날짜/시각의 기상만 검사한다. 미확인은 안전 판정이 아니다.
+  // 다른 시각의 동풍 근거나 조석 주의 문구(entry.cautionText)는 섞지 않는다.
+  if(!entry||!entry.today)return null;
+  if(!entry.today.wave&&!entry.today.rain)return null;
+  return !todayWeatherCautionNote(entry.today);
+}
 function todayRecommendedSites(){
   var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
   siteData.forEach(function(site,stableOrder){
     var entry=weeklyRecommendationForSite(site,week);
     if(!entry)return;
+    // mandatory/공지 정보는 후보에 보존하고, 현장주의만 최종 선발에서 제외한다.
+    if(weeklyRecommendationIsSafe(entry)===false)return;
     entry.stableOrder=stableOrder;
     (entry.isMandatory?mandatory:general).push(entry);
   });
