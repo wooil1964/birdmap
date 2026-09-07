@@ -30,25 +30,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  inspect-windy:
-    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[inspect-windy]')
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-      - name: Inspect one Windy GFS atmospheric response
-        env:
-          WINDY_API_KEY: ${{ secrets.WINDY_API_KEY }}
-          PYTHONUNBUFFERED: "1"
-        run: python .github/scripts/inspect_windy_forecast.py
-
   update-weather:
-    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[inspect-windy]')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
