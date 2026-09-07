@@ -169,7 +169,9 @@ def request_open_meteo(url: str, parameters: dict[str, Any]) -> dict[str, Any]:
     raise RuntimeError(f"Open-Meteo request failed: {safe_error(last_error)}") from None
 
 
-def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str, Any]:
+def open_meteo_atmospheric(lat: float, lon: float, target: datetime, full_hourly: bool = False) -> dict[str, Any]:
+    """`full_hourly` asks for the whole weekly timeline; otherwise only what today and
+    the weekly visibility need, so the component fallback stays as light as it was."""
     data = request_open_meteo(
         OPEN_METEO_WEATHER_URL,
         {
@@ -183,7 +185,9 @@ def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str
             "hourly": (
                 "temperature_2m,precipitation,cloud_cover,visibility,"
                 "wind_speed_10m,wind_direction_10m,wind_gusts_10m"
-            ),
+            )
+            if full_hourly
+            else "precipitation,visibility",
             "past_days": 1,
             "forecast_days": WEEK_FORECAST_DAYS,
             "timezone": "Asia/Seoul",
@@ -796,7 +800,7 @@ def process_site(
     except Exception as exc:
         print(f"{site['name']}: Windy unavailable, using Open-Meteo: {safe_error(exc)}", flush=True)
         atmospheric = open_meteo_atmospheric(
-            float(site["lat"]), float(site["lon"]), target
+            float(site["lat"]), float(site["lon"]), target, full_hourly=True
         )
         weather_source = "Open-Meteo fallback"
         atmospheric_source = "open_meteo"

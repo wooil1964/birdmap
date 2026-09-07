@@ -192,6 +192,21 @@ class WeatherWeekTests(unittest.TestCase):
         self.assertEqual(today["score"], matching["score"])
         self.assertEqual(today["grade"], matching["grade"])
 
+    def test_component_fallback_only_asks_for_the_hourly_fields_it_needs(self):
+        requests = []
+
+        def meteo(url, parameters):
+            requests.append(parameters["hourly"])
+            return self.open_meteo_payload()
+
+        windy = dict(self.atmosphere, **{"visibility-surface": [None] * len(self.stamps)})
+        with patch.object(weather, "request_forecast", return_value=windy), \
+                patch.object(weather, "request_open_meteo", side_effect=meteo):
+            _, week = weather.process_site("k", self.site, self.rules, self.now, "gfs", ["wind"])
+        self.assertEqual(requests, ["precipitation,visibility"])
+        self.assertEqual(week["fieldSources"], {"atmosphere": "windy", "visibility": "open_meteo", "wave": None})
+        self.assertTrue(all(s["visibilityKm"] == 20.0 for s in self.samples(week["days"])))
+
     def test_open_meteo_future_days_are_fallback_but_not_stale(self):
         payload = self.open_meteo_payload()
         with patch.object(weather, "request_forecast", side_effect=RuntimeError("offline")), \
