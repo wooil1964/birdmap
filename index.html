@@ -1868,15 +1868,13 @@ function autumnBirdingAxes(site){
     pelagic:!!site&&site.pelagic===true&&String(site.name)!=='독도'};
 }
 function autumnRecommendationSeason(){return todayKstMonth()===9||todayKstMonth()===10;}
+function weeklyPelagicRecommendationSeason(){return [4,5,9,10].indexOf(todayKstMonth())>=0;}
 function weeklyPelagicSafety(sample){
-  var config=recommendationWeatherRules;
-  if(!sample||sample.scoreEligible!==true||typeof sample.score!=='number'||!Number.isFinite(sample.score)||!config||!config.rules||!config.rules.pelagic_seabird)return false;
-  var rule=Object.assign({},config.default,config.rules.pelagic_seabird);
-  var checks=[['windSpeed','windMax'],['gust','gustMax'],['precipitation3h','precip3hMax'],['visibilityKm','visibilityMinKm'],['waveM','waveMaxM']];
-  return checks.every(function(check){
-    var value=sample[check[0]], limit=rule[check[1]];
-    if(typeof value!=='number'||!Number.isFinite(value)||value<0||typeof limit!=='number'||!Number.isFinite(limit))return false;
-    return check[0]==='visibilityKm'?value>=limit:value<=limit;
+  // 추천 전용 기준. 기존 weather_rules와 점수 계산은 그대로 둔다.
+  if(!sample||sample.scoreEligible!==true||typeof sample.score!=='number'||!Number.isFinite(sample.score))return false;
+  return [['windSpeed',6],['waveM',0.7],['precipitation3h',0]].every(function(check){
+    var value=sample[check[0]];
+    return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=check[1];
   });
 }
 function autumnFieldRank(a,b){
@@ -2189,14 +2187,16 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
 function weeklyRecommendationForSite(site,week){
   if(todayIsAutumnRemoteIsland(site))return null;
   var autumn=autumnRecommendationSeason(), axes=autumnBirdingAxes(site);
-  var pelagic=autumn&&axes.pelagic;
+  var pelagic=axes.pelagic;
+  if(site.pelagic===true&&(!pelagic||!weeklyPelagicRecommendationSeason()))return null;
   var bestWeather=weeklyBestWeatherDay(site,week,pelagic?weeklyPelagicSafety:null);
-  // 가을 선상은 주간 안전 sample이 없으면 공지/동풍이나 today fallback으로 승격하지 않는다.
+  // 이동기 선상은 주간 안전 sample이 없으면 공지/동풍이나 today fallback으로 승격하지 않는다.
   if(pelagic&&!bestWeather)return null;
   var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);
   var issueReason=weeklyIssueReason(site);
   var tideRec=weeklyBestMudflatTide(site,week);
-  var windRec=weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week);
+  // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.
+  var windRec=pelagic?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));
   var reasons=[], caution=[];
   if(issueReason)reasons.push(issueReason);
   if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}
@@ -2205,7 +2205,7 @@ function weeklyRecommendationForSite(site,week){
   var priority=issueReason?1:(tideRec?2:(windRec?3:4));
   if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;
   var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';
-  if(autumn&&(axes.field||pelagic)&&bestWeather)date=bestWeather.date;
+  if((pelagic||(autumn&&axes.field))&&bestWeather)date=bestWeather.date;
   /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */
   var dayBest=(weatherEntry&&weatherEntry.fromWeek)?weeklyDailyBestSample(site,date,pelagic?weeklyPelagicSafety:null):null;
   var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(weatherEntry&&weatherEntry.date===date?weatherEntry.weather:null);
@@ -2242,7 +2242,7 @@ function todayRecommendedSites(){
   mandatory.concat(general).forEach(function(entry){
     if(selected.length>=10)return;
     var id=String(entry.site.id);
-    if(selectedIds[id])return;
+    if(selectedIds[id]||(entry.axes.pelagic&&selected.some(function(e){return e.axes.pelagic;})))return;
     selectedIds[id]=true;
     selected.push(entry);
   });
@@ -2339,7 +2339,7 @@ function renderTodayPanel(){
       name.appendChild(tag);
     }
     item.appendChild(name);
-    if(autumnRecommendationSeason()){
+    if(autumnRecommendationSeason()||entry.axes.pelagic){
       var axis=document.createElement('div');
       axis.className='todayRankMeta';
       axis.textContent=autumnAxisLabel(entry.axes);
@@ -2370,14 +2370,14 @@ function renderTodayPanel(){
       weather.textContent='🌬️ '+entry.weatherText+(entry.today&&entry.today.rain?' · '+entry.today.rain:'')+(entry.today&&entry.today.wave?' · 파고 '+entry.today.wave:'');
       item.appendChild(weather);
     }
-    if(autumnRecommendationSeason()&&entry.axes.pelagic&&entry.sample){
+    if(entry.axes.pelagic&&entry.sample){
       var safety=document.createElement('div');
       safety.className='todayRankTide';
-      safety.textContent='💨 돌풍 '+entry.sample.gust.toFixed(1)+'m/s · 👁️ 시정 '+entry.sample.visibilityKm.toFixed(1)+'km';
+      safety.textContent=[Number.isFinite(entry.sample.gust)?'💨 돌풍 '+entry.sample.gust.toFixed(1)+'m/s':'',Number.isFinite(entry.sample.visibilityKm)?'👁️ 시정 '+entry.sample.visibilityKm.toFixed(1)+'km':''].filter(Boolean).join(' · ');
       item.appendChild(safety);
       var ferry=document.createElement('div');
       ferry.className='todayRankBasis';
-      ferry.textContent='🚢 선상탐조 기상 기준 충족 · '+v24FerryStatus(entry.today.wind,entry.today.wave)+' · ※ 실제 출항 여부는 선사 공지를 확인하세요';
+      ferry.textContent='🟢 선상탐조 추천 조건 충족 · ※ 실제 출항 여부는 선사 공지를 확인하세요';
       item.appendChild(ferry);
     }
     if(entry.tideText){

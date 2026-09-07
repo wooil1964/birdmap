@@ -52,7 +52,7 @@ const NAMES = [
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
   'todayRecommendedSites', 'weeklyEastWindRecommendation', 'v24WindParts', 'v24WindNumber',
   'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'todayString', 'v23Value',
-  'weeklyRecommendationIsSafe',
+  'weeklyRecommendationIsSafe', 'weeklyPelagicRecommendationSeason',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -337,26 +337,28 @@ test('선상 분류는 pelagic true만 사용하며 독도를 제외', () => {
   }
 });
 
-test('선상 safety 5개 기준의 inclusive 경계와 결측값', () => {
-  const api=loadApi(), valid=sample('2026-09-10 09:00 KST',92,{waveM:1});
-  const boundaries={waveM:[1.4,1.5,1.6],windSpeed:[8.9,9,9.1],gust:[12.9,13,13.1],precipitation3h:[0.9,1,1.1],visibilityKm:[8.1,8,7.9]};
+test('선상 추천 3개 기준의 inclusive 경계, 결측과 기존 score rule 독립', () => {
+  const api=loadApi(), valid=sample('2026-09-10 09:00 KST',92,{waveM:0.6});
+  const boundaries={waveM:[[0.6,true],[0.7,true],[0.8,false]],windSpeed:[[5.9,true],[6,true],[6.1,false]],precipitation3h:[[0,true],[0.1,false],[1,false]]};
   for(const [key,values] of Object.entries(boundaries)) {
-    values.forEach((value,i)=>assert.equal(api.weeklyPelagicSafety({...valid,[key]:value}),i<2,`${key}=${value}`));
+    values.forEach(([value,expected])=>assert.equal(api.weeklyPelagicSafety({...valid,[key]:value}),expected,`${key}=${value}`));
     for(const value of [null,undefined,NaN,Infinity,'',false,-1])
       assert.equal(api.weeklyPelagicSafety({...valid,[key]:value}),false,`${key} missing/invalid`);
   }
   assert.equal(api.weeklyPelagicSafety({...valid,scoreEligible:false}),false);
-  assert.equal(loadApi({rules:null}).weeklyPelagicSafety(valid),false);
-  const changed=structuredClone(RULES);changed.rules.pelagic_seabird.waveMaxM=0.5;
-  assert.equal(loadApi({rules:changed}).weeklyPelagicSafety(valid),false,'JSON 규칙을 실제로 사용');
+  for(const extra of [{gust:null,visibilityKm:null},{gust:20,visibilityKm:1}])
+    assert.equal(api.weeklyPelagicSafety({...valid,...extra}),true,'돌풍/시정은 참고정보');
+  assert.equal(loadApi({rules:null}).weeklyPelagicSafety(valid),true);
+  const changed=structuredClone(RULES);changed.rules.pelagic_seabird.waveMaxM=0.1;
+  assert.equal(loadApi({rules:changed}).weeklyPelagicSafety(valid),true,'추천 gate는 점수 rule과 독립');
 });
 
 const PELAGIC={...SITE,id:74,name:'울산 앞바다 선상',pelagic:true,env:'외해·선상',seasons:['봄','겨울']};
 test('선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서', () => {
   const a=futureDate(1),b=futureDate(2),week={start:a,end:b,dates:[a,b]};
   const api=loadApi({weatherWeek:weekDoc(74,{
-    [a]:[sample(`${a} 09:00 KST`,92,{waveM:0.8}),sample(`${a} 12:00 KST`,95,{waveM:1.8}),sample(`${a} 15:00 KST`,92,{waveM:1})],
-    [b]:[sample(`${b} 09:00 KST`,92,{waveM:0.8})]
+    [a]:[sample(`${a} 09:00 KST`,92,{waveM:0.6}),sample(`${a} 12:00 KST`,95,{waveM:1.8}),sample(`${a} 15:00 KST`,92,{waveM:0.7})],
+    [b]:[sample(`${b} 09:00 KST`,92,{waveM:0.6})]
   })});
   const best=api.weeklyBestWeatherDay(PELAGIC,week,api.weeklyPelagicSafety);
   assert.equal(best.date,a);assert.equal(api.weeklySampleTimeText(best.sample),'09:00');
@@ -565,4 +567,87 @@ test('동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후�
  assert.deepEqual(top.map(e=>e.site.id),[501,502,503]);
  doc.sites['50'].days[date].samples[0].waveM=1;
  assert.ok(api.todayRecommendedSites().some(e=>e.site.id===50&&e.score===65));
+});
+
+test('동풍과 선상 gate는 지역·풍향·풍속에서 독립',()=>{
+ const date='2026-09-10',week={start:date,end:date,dates:[date]};
+ for(const [region,windName,windSpeed,east,ship] of [
+  ['포항','E',7.9,false,false],['포항','E',8,true,false],['울산','NE',9.5,true,false],
+  ['부산','SE',10,true,false],['포항','W',12,false,false],['포항','NW',12,false,false],
+  ['포항','SW',12,false,false],['강릉','E',12,false,false],['울산','E',5,false,true],['부산','W',4,false,true]
+ ]){
+  const site={...POHANG,region,sido:region,sigungu:region},s=sample(date+' 09:00 KST',92,{windName,windSpeed,waveM:0.5});
+  const api=loadApi({weatherWeek:weekDoc(site.id,{[date]:[s]})});
+  assert.equal(!!api.weeklyEastWindFromWeek(site,week),east);
+  assert.equal(api.weeklyPelagicSafety(s),ship);
+ }
+});
+
+test('선상은 4·5·9·10월만, seasons 무관하며 독도 제외',()=>{
+ for(const month of [1,4,5,7,9,10]){
+  const date=`2027-${String(month).padStart(2,'0')}-10`,week={start:date,end:date,dates:[date]};
+  const site={...PELAGIC,seasons:['겨울'],bestSeason:'겨울'},saved=JSON.stringify(site);
+  const api=loadApi({month,weatherWeek:weekDoc(site.id,{[date]:[sample(date+' 09:00 KST',92,{waveM:0.7})]})});
+  assert.equal(!!api.weeklyRecommendationForSite(site,week),[4,5,9,10].includes(month));
+  assert.equal(api.weeklyRecommendationForSite({...site,name:'독도'},week),null);
+  assert.equal(JSON.stringify(site),saved);
+ }
+});
+
+test('강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으며 전부 위험하면 0',()=>{
+ const a='2026-09-10',b='2026-09-11',week={start:a,end:b,dates:[a,b]};
+ const site={...PELAGIC,region:'울산',birdingFeature:'선상'};
+ const unsafe=sample(a+' 09:00 KST',99,{windSpeed:8.5,waveM:0.5});
+ const safe=sample(b+' 09:00 KST',88,{windSpeed:5,waveM:0.6,gust:null,visibilityKm:null});
+ const api=loadApi({weatherWeek:weekDoc(site.id,{[a]:[unsafe],[b]:[safe]})});
+ assert.ok(api.weeklyEastWindFromWeek(site,week));
+ const entry=api.weeklyRecommendationForSite(site,week);
+ assert.equal(entry.recommendationDate,b);assert.equal(entry.score,88);
+ assert.equal(entry.isMandatory,false);assert.ok(!entry.reasons.some(s=>/동풍/.test(s)));
+ assert.equal(api.weeklyRecommendationIsSafe(entry),true);
+ api.setWeek(weekDoc(site.id,{[a]:[unsafe]}));
+ assert.equal(api.weeklyRecommendationForSite(site,week),null);
+});
+
+test('실제 동풍·선상 후보별 gate와 최종 선발 보고',()=>{
+ const api=loadApi({weatherWeek:actualWeek,siteData:RUNTIME,
+  tideMonth:JSON.parse(readFileSync(join(ROOT,'tide_month.json'),'utf8')),
+  notices:JSON.parse(readFileSync(join(ROOT,'notices.json'),'utf8'))});
+ const week=api.weeklyInfo();
+ const east=RUNTIME.filter(s=>/포항|울산|부산/.test([s.region,s.sido,s.sigungu].join(' '))).map(site=>{
+  const wind=api.weeklyEastWindFromWeek(site,week);
+  const representative=wind?.sample||api.weeklyBestWeatherDay(site,week)?.sample;
+  return {name:site.name,pelagic:site.pelagic===true,time:representative?.forecastTime,wind:representative?.windName,speed:representative?.windSpeed,qualified:!!wind};
+ });
+ const ships=RUNTIME.filter(s=>s.pelagic===true).map(site=>{
+  const best=api.weeklyBestWeatherDay(site,week,api.weeklyPelagicSafety);
+  const candidates=week.dates.flatMap(d=>api.weeklyDaylightCandidates(site,d));
+  const chosen=best?.sample||api.weeklyBestWeatherDay(site,week)?.sample;
+  const excluded=site.name==='독도';
+  return {name:site.name,time:chosen?.forecastTime,wind:chosen?.windSpeed,wave:chosen?.waveM,rain:chosen?.precipitation3h,passed:!excluded&&!!best,
+   reason:excluded?'독도 제외':best?'통과':'안전 sample 없음',safeSamples:excluded?0:candidates.filter(api.weeklyPelagicSafety).length,
+   rejected:{wind:candidates.filter(s=>!Number.isFinite(s.windSpeed)||s.windSpeed<0||s.windSpeed>6).length,
+    wave:candidates.filter(s=>!Number.isFinite(s.waveM)||s.waveM<0||s.waveM>0.7).length,
+    rain:candidates.filter(s=>!Number.isFinite(s.precipitation3h)||s.precipitation3h!==0).length}};
+ });
+ const top=api.todayRecommendedSites();
+ for(const e of top.filter(e=>e.axes.pelagic)){
+  assert.ok(api.weeklyPelagicSafety(e.sample));assert.equal(api.weeklyRecommendationIsSafe(e),true);
+  assert.ok(!e.reasons.some(r=>/동풍/.test(r)));
+ }
+ if(process.env.PELAGIC_REPORT==='1')console.log(JSON.stringify({generatedAt:actualWeek.generatedAt,week,east,ships,
+  selected:top.filter(e=>e.axes.pelagic).map(e=>({name:e.site.name,...e.sample})),
+  top:top.map(e=>({name:e.site.name,axis:e.selectedAxis,score:e.score,date:e.recommendationDate,time:e.recommendationTime}))},null,2));
+});
+
+test('봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충',()=>{
+ const date=futureDate(1),ships=[{...PELAGIC,id:701},{...PELAGIC,id:702}];
+ const land=Array.from({length:11},(_,i)=>({...SITE,id:710+i,name:'일반 '+i,env:'산림'}));
+ const sites=[...ships,...land],doc={sites:{}};
+ for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(date+' 09:00 KST',s.pelagic?95:92,{waveM:0.6})]}).sites);
+ const api=loadApi({month:4,siteData:sites,weatherWeek:doc});
+ let top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,1);
+ for(const s of ships)doc.sites[s.id].days[date].samples[0].precipitation3h=0.1;
+ top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,0);
+ assert.equal(new Set(top.map(e=>e.site.id)).size,10);
 });
