@@ -9,6 +9,7 @@ on:
       - ".github/scripts/site_data.py"
       - ".github/scripts/test_weather.py"
       - ".github/scripts/validate_weather.py"
+      - ".github/scripts/validate_weather_week.py"
       - "weather_rules.json"
       - "weather-proxy/src/sites.js"
       - "weather-proxy/test/**"
@@ -46,23 +47,25 @@ jobs:
 
       - name: Check updater syntax
         run: |
-          python -m py_compile .github/scripts/update_weather.py .github/scripts/site_data.py
+          python -m py_compile .github/scripts/update_weather.py .github/scripts/site_data.py .github/scripts/validate_weather_week.py
           python .github/scripts/test_weather.py
           node --test weather-proxy/test/*.test.mjs
 
-      - name: Build weather_today.json
+      - name: Build weather_today.json and weather_week.json
         env:
           WINDY_API_KEY: ${{ secrets.WINDY_API_KEY }}
         run: python .github/scripts/update_weather.py
 
-      - name: Validate weather_today.json
-        run: python .github/scripts/validate_weather.py
+      - name: Validate weather_today.json and weather_week.json
+        run: |
+          python .github/scripts/validate_weather.py
+          python .github/scripts/validate_weather_week.py
 
       - name: Commit updated weather
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add weather_today.json
+          git add weather_today.json weather_week.json
           if git diff --cached --quiet; then
             echo "No weather changes to commit."
             exit 0

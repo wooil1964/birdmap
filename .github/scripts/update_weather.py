@@ -23,6 +23,9 @@ ROOT = Path(__file__).resolve().parents[2]
 HTML_PATH = ROOT / "index.html"
 RULES_PATH = ROOT / "weather_rules.json"
 OUTPUT_PATH = ROOT / "weather_today.json"
+WEEK_OUTPUT_PATH = ROOT / "weather_week.json"
+WEEK_FORECAST_DAYS = 7
+WEEK_SAMPLE_HOUR_STEP = 3
 API_URL = "https://api.windy.com/api/point-forecast/v2"
 OPEN_METEO_WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
 OPEN_METEO_MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
@@ -177,8 +180,12 @@ def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str
                 "wind_speed_10m,wind_direction_10m,wind_gusts_10m"
             ),
             "wind_speed_unit": "ms",
-            "hourly": "precipitation",
+            "hourly": (
+                "temperature_2m,precipitation,cloud_cover,visibility,"
+                "wind_speed_10m,wind_direction_10m,wind_gusts_10m"
+            ),
             "past_days": 1,
+            "forecast_days": WEEK_FORECAST_DAYS,
             "timezone": "Asia/Seoul",
         },
     )
@@ -210,6 +217,7 @@ def open_meteo_atmospheric(lat: float, lon: float, target: datetime) -> dict[str
         "lclouds-surface": [current.get("cloud_cover")],
         "mclouds-surface": [None],
         "hclouds-surface": [None],
+        "hourlySeries": hourly,
     }
 
 
@@ -220,6 +228,8 @@ def open_meteo_wave(lat: float, lon: float, target: datetime) -> dict[str, Any]:
             "latitude": lat,
             "longitude": lon,
             "current": "wave_height",
+            "hourly": "wave_height",
+            "forecast_days": WEEK_FORECAST_DAYS,
             "timezone": "Asia/Seoul",
             "cell_selection": "sea",
         },
@@ -233,6 +243,7 @@ def open_meteo_wave(lat: float, lon: float, target: datetime) -> dict[str, Any]:
     return {
         "ts": [forecast_time.timestamp() * 1000],
         "waves_height-surface": [current.get("wave_height")],
+        "hourlySeries": data.get("hourly") or {},
     }
 
 
@@ -402,6 +413,34 @@ def summary_for(
     return score_summary
 
 
+def extract_atmospheric_sample(atmospheric: dict[str, Any], index: int) -> dict[str, Any]:
+    """Read one timeline position; shared by the daily result and the weekly samples."""
+    u = value_at(atmospheric, "wind_u-surface", index)
+    v = value_at(atmospheric, "wind_v-surface", index)
+    if u is None or v is None:
+        raise RuntimeError("Atmospheric wind values missing")
+    precipitation = value_at(atmospheric, "past3hprecip-surface", index)
+    if precipitation is not None and precipitation < 0:
+        precipitation = None
+    temperature = value_at(atmospheric, "temp-surface", index)
+    if temperature is not None and temperature > 150:
+        temperature -= 273.15
+    visibility = value_at(atmospheric, "visibility-surface", index)
+    return {
+        "windSpeed": math.hypot(u, v),
+        "windDirection": wind_from_degrees(u, v),
+        "gust": value_at(atmospheric, "gust-surface", index),
+        "precipitation": precipitation,
+        "temperature": temperature,
+        "visibilityKm": visibility / 1000 if visibility is not None and visibility > 100 else visibility,
+        "cloudPct": normalized_cloud(
+            value_at(atmospheric, "lclouds-surface", index),
+            value_at(atmospheric, "mclouds-surface", index),
+            value_at(atmospheric, "hclouds-surface", index),
+        ),
+    }
+
+
 def build_site_result(
     site: dict[str, Any],
     rules_config: dict[str, Any],
@@ -411,26 +450,14 @@ def build_site_result(
     target: datetime,
 ) -> dict[str, Any]:
     index = nearest_index(atmospheric.get("ts", []), target)
-    u = value_at(atmospheric, "wind_u-surface", index)
-    v = value_at(atmospheric, "wind_v-surface", index)
-    if u is None or v is None:
-        raise RuntimeError("Atmospheric wind values missing")
-    wind_speed = math.hypot(u, v)
-    wind_direction = wind_from_degrees(u, v)
-    gust = value_at(atmospheric, "gust-surface", index)
-    precipitation = value_at(atmospheric, "past3hprecip-surface", index)
-    if precipitation is not None and precipitation < 0:
-        precipitation = None
-    temperature = value_at(atmospheric, "temp-surface", index)
-    if temperature is not None and temperature > 150:
-        temperature -= 273.15
-    visibility = value_at(atmospheric, "visibility-surface", index)
-    visibility_km = visibility / 1000 if visibility is not None and visibility > 100 else visibility
-    cloud_pct = normalized_cloud(
-        value_at(atmospheric, "lclouds-surface", index),
-        value_at(atmospheric, "mclouds-surface", index),
-        value_at(atmospheric, "hclouds-surface", index),
-    )
+    sample = extract_atmospheric_sample(atmospheric, index)
+    wind_speed = sample["windSpeed"]
+    wind_direction = sample["windDirection"]
+    gust = sample["gust"]
+    precipitation = sample["precipitation"]
+    temperature = sample["temperature"]
+    visibility_km = sample["visibilityKm"]
+    cloud_pct = sample["cloudPct"]
     wave_m = None
     wave_time = None
     if wave:
@@ -499,6 +526,237 @@ def build_site_result(
     return result
 
 
+def hourly_value(hourly: dict[str, Any], key: str, index: int) -> float | None:
+    values = hourly.get(key)
+    if not isinstance(values, list) or index < 0 or index >= len(values) or values[index] is None:
+        return None
+    value = float(values[index])
+    return value if math.isfinite(value) else None
+
+
+def series_spacing_ms(timestamps: list[float], default: float) -> float:
+    stamps = sorted(set(timestamps))
+    return min((b - a for a, b in zip(stamps, stamps[1:]) if b > a), default=default)
+
+
+def week_window(target: datetime) -> tuple[Any, Any]:
+    start = target.date()
+    return start, start + timedelta(days=WEEK_FORECAST_DAYS - 1)
+
+
+def week_series_positions(atmospheric: dict[str, Any], start_date, end_date) -> list[tuple[datetime, int]]:
+    """Ascending, de-duplicated timeline positions whose KST date is inside the week."""
+    timestamps = atmospheric.get("ts") or []
+    positions: list[tuple[datetime, int]] = []
+    seen: set[float] = set()
+    for index in sorted(range(len(timestamps)), key=lambda position: timestamps[position]):
+        stamp = timestamps[index]
+        if stamp in seen:
+            continue
+        seen.add(stamp)
+        moment = datetime.fromtimestamp(stamp / 1000, KST)
+        if start_date <= moment.date() <= end_date:
+            positions.append((moment, index))
+    return positions
+
+
+def hourly_index_lookup(hourly: dict[str, Any]) -> dict[str, int]:
+    return {text: index for index, text in enumerate(hourly.get("time") or [])}
+
+
+def rolling_three_hour_rain(hourly: dict[str, Any], lookup: dict[str, int], moment: datetime) -> float | None:
+    """Open-Meteo hourly precipitation accumulated over the sample hour and the two before it."""
+    values = [
+        hourly_value(hourly, "precipitation", lookup.get((moment - timedelta(hours=offset)).strftime("%Y-%m-%dT%H:%M"), -1))
+        for offset in range(3)
+    ]
+    return sum(values) if all(value is not None for value in values) else None
+
+
+def apply_hourly_visibility(atmospheric: dict[str, Any], hourly: dict[str, Any]) -> dict[str, Any]:
+    """Align one Open-Meteo hourly visibility response to the Windy timeline for weekly samples."""
+    lookup = hourly_index_lookup(hourly)
+    values = [
+        hourly_value(
+            hourly,
+            "visibility",
+            lookup.get(datetime.fromtimestamp(stamp / 1000, KST).replace(minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M"), -1),
+        )
+        for stamp in atmospheric.get("ts") or []
+    ]
+    return dict(atmospheric, **{"visibility-surface": values})
+
+
+def open_meteo_week_atmospheric(hourly: dict[str, Any], start_date, end_date) -> dict[str, Any]:
+    """Rebuild a Windy-shaped 3-hour timeline from one Open-Meteo hourly response."""
+    lookup = hourly_index_lookup(hourly)
+    series: dict[str, list[Any]] = {
+        key: []
+        for key in (
+            "ts", "wind_u-surface", "wind_v-surface", "gust-surface", "past3hprecip-surface",
+            "temp-surface", "visibility-surface", "lclouds-surface", "mclouds-surface", "hclouds-surface",
+        )
+    }
+    for text, index in sorted(lookup.items(), key=lambda item: item[0]):
+        try:
+            moment = datetime.fromisoformat(text).replace(tzinfo=KST)
+        except ValueError:
+            continue
+        if moment.hour % WEEK_SAMPLE_HOUR_STEP or not start_date <= moment.date() <= end_date:
+            continue
+        speed = hourly_value(hourly, "wind_speed_10m", index)
+        direction = hourly_value(hourly, "wind_direction_10m", index)
+        if speed is None or direction is None:
+            continue
+        radians = math.radians(direction)
+        series["ts"].append(moment.timestamp() * 1000)
+        series["wind_u-surface"].append(-speed * math.sin(radians))
+        series["wind_v-surface"].append(-speed * math.cos(radians))
+        series["gust-surface"].append(hourly_value(hourly, "wind_gusts_10m", index))
+        series["past3hprecip-surface"].append(rolling_three_hour_rain(hourly, lookup, moment))
+        series["temp-surface"].append(hourly_value(hourly, "temperature_2m", index))
+        series["visibility-surface"].append(hourly_value(hourly, "visibility", index))
+        series["lclouds-surface"].append(hourly_value(hourly, "cloud_cover", index))
+        series["mclouds-surface"].append(None)
+        series["hclouds-surface"].append(None)
+    return series
+
+
+def weekly_wave_series(wave: dict[str, Any]) -> dict[str, Any]:
+    """The full wave timeline: Windy already returns one, Open-Meteo needs its hourly block."""
+    hourly = wave.get("hourlySeries")
+    if not hourly:
+        return wave
+    timestamps: list[float] = []
+    heights: list[Any] = []
+    for index, text in enumerate(hourly.get("time") or []):
+        try:
+            moment = datetime.fromisoformat(text).replace(tzinfo=KST)
+        except ValueError:
+            continue
+        timestamps.append(moment.timestamp() * 1000)
+        heights.append(hourly_value(hourly, "wave_height", index))
+    return {"ts": timestamps, "waves_height-surface": heights}
+
+
+def wave_value_at(wave: dict[str, Any], moment: datetime) -> float | None:
+    """Nearest wave sample inside half a step and on the same KST date, so no slot is borrowed."""
+    timestamps = wave.get("ts") or []
+    if not timestamps:
+        return None
+    index = nearest_index(timestamps, moment)
+    spacing = series_spacing_ms(timestamps, 3 * 60 * 60 * 1000)
+    if abs(timestamps[index] - moment.timestamp() * 1000) > spacing / 2:
+        return None
+    wave_time = datetime.fromtimestamp(timestamps[index] / 1000, KST)
+    if wave_time.date() != moment.date():
+        return None
+    value = value_at(wave, "waves_height-surface", index)
+    return None if value is not None and value < 0 else value
+
+
+def build_week_days(
+    site: dict[str, Any],
+    rules_config: dict[str, Any],
+    atmospheric: dict[str, Any],
+    wave: dict[str, Any] | None,
+    target: datetime,
+) -> dict[str, Any]:
+    """Weekly 3-hour samples taken from the very series the daily result already used."""
+    start_date, end_date = week_window(target)
+    rule_key, rule = merge_rule(rules_config, str(site.get("weatherRuleKey") or "general_birding"))
+    wave_required = bool(site.get("showWave") or site.get("island") or site.get("pelagic"))
+    wave_series = weekly_wave_series(wave) if wave else None
+    days: dict[str, list[dict[str, Any]]] = {}
+    for moment, index in week_series_positions(atmospheric, start_date, end_date):
+        try:
+            sample = extract_atmospheric_sample(atmospheric, index)
+        except RuntimeError:
+            continue
+        wave_m = wave_value_at(wave_series, moment) if wave_series else None
+        precipitation = sample["precipitation"]
+        missing = (["precipitation"] if precipitation is None else []) + (
+            ["wave"] if wave_required and wave_m is None else []
+        )
+        score = score_weather(
+            rule_key,
+            rule,
+            sample["windSpeed"],
+            sample["windDirection"],
+            sample["gust"],
+            precipitation if precipitation is not None else 0.0,
+            sample["visibilityKm"],
+            sample["cloudPct"],
+            wave_m,
+        )
+        days.setdefault(moment.date().isoformat(), []).append(
+            {
+                "forecastTime": moment.strftime("%Y-%m-%d %H:%M KST"),
+                "windSpeed": round(sample["windSpeed"], 1),
+                "windDirectionDeg": round(sample["windDirection"]) % 360,
+                "windName": wind_name(sample["windDirection"]),
+                "gust": None if sample["gust"] is None else round(sample["gust"], 1),
+                "precipitation3h": None if precipitation is None else round(precipitation, 1),
+                "temperature": None if sample["temperature"] is None else round(sample["temperature"], 1),
+                "visibilityKm": None if sample["visibilityKm"] is None else round(sample["visibilityKm"], 1),
+                "cloudPct": None if sample["cloudPct"] is None else round(sample["cloudPct"]),
+                "waveM": None if wave_m is None else round(wave_m, 1),
+                "score": None if missing else score,
+                "grade": "" if missing else grade_for(score),
+                "scoreEligible": not missing,
+                "missingScoreFields": missing,
+                "isPastAtGeneration": moment < target,
+            }
+        )
+    return {date: {"samples": samples} for date, samples in sorted(days.items())}
+
+
+def unavailable_week_entry(site: dict[str, Any], rule_key: str, error_message: str) -> dict[str, Any]:
+    """Weekly entries never fall back to previously saved forecasts; they stay empty instead."""
+    return {
+        "name": site["name"],
+        "ruleKey": rule_key,
+        "fieldSources": {"atmosphere": None, "visibility": None, "wave": None},
+        "fallbackSource": "none",
+        "dataUnavailable": True,
+        "error": error_message,
+        "days": {},
+    }
+
+
+def week_json_text(output: dict[str, Any]) -> str:
+    """Indent the structure but keep every forecast sample on a single readable line."""
+    blocks: list[list[dict[str, Any]]] = []
+    token = "<<week-sample-block-%d>>"
+
+    def register(samples: list[dict[str, Any]]) -> str:
+        blocks.append(samples)
+        return token % (len(blocks) - 1)
+
+    def replace(node: Any) -> Any:
+        if isinstance(node, dict):
+            return {
+                key: register(value) if key == "samples" else replace(value)
+                for key, value in node.items()
+            }
+        if isinstance(node, list):
+            return [replace(item) for item in node]
+        return node
+
+    text = json.dumps(replace(output), ensure_ascii=False, indent=2)
+    for index, samples in enumerate(blocks):
+        marker = json.dumps(token % index)
+        position = text.index(marker)
+        line = text[text.rfind("\n", 0, position) + 1 : position]
+        indent = " " * (len(line) - len(line.lstrip()))
+        body = ",\n".join(
+            f"{indent}  " + json.dumps(sample, ensure_ascii=False, separators=(",", ":")) for sample in samples
+        )
+        rendered = "[]" if not samples else f"[\n{body}\n{indent}]"
+        text = text[:position] + rendered + text[position + len(marker) :]
+    return text + "\n"
+
+
 def load_previous_sites() -> dict[str, Any]:
     if not OUTPUT_PATH.exists():
         return {}
@@ -523,9 +781,10 @@ def process_site(
     target: datetime,
     atmospheric_model: str,
     atmospheric_parameters: list[str],
-) -> dict[str, Any]:
+) -> tuple[dict[str, Any], dict[str, Any]]:
     weather_source = "Windy Point Forecast API"
     atmospheric_source = "windy"
+    hourly_series: dict[str, Any] = {}
     try:
         atmospheric = request_forecast(
             api_key,
@@ -541,6 +800,7 @@ def process_site(
         )
         weather_source = "Open-Meteo fallback"
         atmospheric_source = "open_meteo"
+        hourly_series = atmospheric.get("hourlySeries") or {}
     visibility_source = atmospheric_source
     if not any(
         value is not None for value in atmospheric.get("visibility-surface", [])
@@ -554,6 +814,7 @@ def process_site(
             atmospheric["visibility-surface"] = [fallback_value] * len(
                 atmospheric.get("ts", [])
             )
+            hourly_series = visibility_fallback.get("hourlySeries") or {}
             visibility_source = "open_meteo"
             if weather_source == "Windy Point Forecast API":
                 weather_source = "Windy with Open-Meteo visibility"
@@ -598,7 +859,28 @@ def process_site(
     result["fieldSources"] = {"atmosphere": atmospheric_source, "visibility": visibility_source, "wave": wave_source}
     result["fallbackSource"] = "open_meteo" if "open_meteo" in result["fieldSources"].values() else None
     result["weatherSource"] = ("Windy" if atmospheric_source == "windy" else "Open-Meteo") + (" with Open-Meteo component fallback" if atmospheric_source == "windy" and result["fallbackSource"] else "")
-    return result
+
+    try:
+        start_date, end_date = week_window(target)
+        if atmospheric_source == "windy":
+            week_atmospheric = apply_hourly_visibility(atmospheric, hourly_series) if hourly_series else atmospheric
+        else:
+            week_atmospheric = open_meteo_week_atmospheric(hourly_series, start_date, end_date)
+        week_entry = {
+            "name": site["name"],
+            "ruleKey": result["ruleKey"],
+            "fieldSources": dict(result["fieldSources"]),
+            "fallbackSource": result["fallbackSource"],
+            "days": build_week_days(site, rules, week_atmospheric, wave, target),
+        }
+        for key in ("waveLat", "waveLon", "waveSource"):
+            if key in result:
+                week_entry[key] = result[key]
+    except Exception as exc:
+        # The weekly dataset is additive: it must never take the daily result down with it.
+        print(f"{site['name']}: weekly samples unavailable: {safe_error(exc)}", flush=True)
+        week_entry = unavailable_week_entry(site, result["ruleKey"], safe_error(exc))
+    return result, week_entry
 
 
 def main() -> None:
@@ -642,6 +924,7 @@ def main() -> None:
     print(f"Using up to {MAX_WORKERS} concurrent requests", flush=True)
 
     results: dict[str, Any] = {}
+    week_results: dict[str, Any] = {}
     success_count = 0
     failed_count = 0
     reused_count = 0
@@ -665,10 +948,14 @@ def main() -> None:
             site_id = str(site["id"])
             completed_count += 1
             try:
-                result = future.result()
+                result, week_entry = future.result()
             except Exception as exc:
                 failed_count += 1
                 error_message = safe_error(exc)
+                rule_key, _ = merge_rule(
+                    rules, str(site.get("weatherRuleKey") or "general_birding")
+                )
+                week_results[site_id] = unavailable_week_entry(site, rule_key, error_message)
                 previous = previous_sites.get(site_id)
                 if isinstance(previous, dict):
                     reused = dict(previous)
@@ -684,9 +971,6 @@ def main() -> None:
                         flush=True,
                     )
                 else:
-                    rule_key, _ = merge_rule(
-                        rules, str(site.get("weatherRuleKey") or "general_birding")
-                    )
                     results[site_id] = {
                         "name": site["name"],
                         "score": None,
@@ -717,6 +1001,7 @@ def main() -> None:
                 result.setdefault("stale", False)
                 result.pop("error", None)
                 results[site_id] = result
+                week_results[site_id] = week_entry
                 success_count += 1
                 print(
                     f"Site {position}/{total} ({completed_count} completed) "
@@ -758,6 +1043,43 @@ def main() -> None:
     if output["status"] != "ok":
         print(f"::warning::Weather status={output['status']}; upstream={success_count}, reused={reused_count}, unavailable={unavailable_count}", flush=True)
     print(f"{OUTPUT_PATH.name}: {len(results)} sites saved", flush=True)
+    write_week_output(week_results, now)
+
+
+def write_week_output(week_results: dict[str, Any], now: datetime) -> None:
+    """Save the rolling seven-day, three-hour dataset built from the same API responses."""
+    start_date, end_date = week_window(now)
+    sample_count = sum(len(day["samples"]) for site in week_results.values() for day in site["days"].values())
+    site_with_samples = sum(bool(site["days"]) for site in week_results.values())
+    unavailable_count = sum(bool(site.get("dataUnavailable")) for site in week_results.values())
+    stamp = now.strftime("%Y-%m-%d %H:%M KST")
+    output = {
+        "startDate": start_date.isoformat(),
+        "endDate": end_date.isoformat(),
+        "generatedAt": stamp,
+        "refreshedAt": datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
+        "forecastDayCount": WEEK_FORECAST_DAYS,
+        "sampleIntervalHours": WEEK_SAMPLE_HOUR_STEP,
+        "source": "Windy Point Forecast API with Open-Meteo fallback",
+        "status": "ok" if unavailable_count == 0 else "partial" if site_with_samples else "api_failed_no_data",
+        "siteCount": len(week_results),
+        "siteWithSamplesCount": site_with_samples,
+        "unavailableSiteCount": unavailable_count,
+        "sampleCount": sample_count,
+        "scoreEligibleSampleCount": sum(
+            bool(sample["scoreEligible"])
+            for site in week_results.values()
+            for day in site["days"].values()
+            for sample in day["samples"]
+        ),
+        "sites": dict(sorted(week_results.items(), key=lambda item: int(item[0]))),
+    }
+    temporary_path = WEEK_OUTPUT_PATH.with_suffix(".json.tmp")
+    temporary_path.write_text(week_json_text(output), encoding="utf-8")
+    temporary_path.replace(WEEK_OUTPUT_PATH)
+    if output["status"] != "ok":
+        print(f"::warning::Weekly weather status={output['status']}; unavailable={unavailable_count}", flush=True)
+    print(f"{WEEK_OUTPUT_PATH.name}: {len(week_results)} sites, {sample_count} samples saved", flush=True)
 
 
 if __name__ == "__main__":
