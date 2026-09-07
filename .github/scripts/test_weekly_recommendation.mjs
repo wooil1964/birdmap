@@ -6,9 +6,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import vm from 'node:vm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const HTML = readFileSync(join(ROOT, 'index.html'), 'utf8');
+const RULES = JSON.parse(readFileSync(join(ROOT, 'weather_rules.json'), 'utf8'));
+const siteContext = vm.createContext({});
+vm.runInContext(HTML.match(/var siteData=([^\n]+);/)[0] + '\n' + HTML.match(/siteData=siteData\.concat\([\s\S]*?\);/)[0], siteContext);
+const RUNTIME = JSON.parse(JSON.stringify(siteContext.siteData));
+const actualWeek = JSON.parse(readFileSync(join(ROOT, 'weather_week.json'), 'utf8'));
 
 /* index.html에서 함수 하나를 중괄호 균형으로 잘라온다. */
 function functionSource(name) {
@@ -40,6 +46,12 @@ const NAMES = [
   'weeklyDailyBestSample', 'weeklyBestWeatherDay', 'weeklySampleAsWeather',
   'todayIsEastWindDirection', 'v24WaveNumber', 'todayWeatherCautionNote',
   'weeklyEastWindFromWeek', 'weeklyHighTideEvents', 'weeklyBestMudflatTide',
+  'autumnBirdingAxes', 'autumnRecommendationSeason', 'weeklyPelagicSafety',
+  'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
+  'todayIsAutumnRemoteIsland', 'todaySpringIslandReason', 'weeklyIssueReason',
+  'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
+  'todayRecommendedSites', 'weeklyEastWindRecommendation', 'v24WindParts', 'v24WindNumber',
+  'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'todayString', 'v23Value',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -49,12 +61,17 @@ function loadApi(state = {}) {
   const factory = new Function(
     'ctx',
     'var weatherWeek=ctx.weatherWeek||null;var tideMonth=ctx.tideMonth||null;' +
+    'var siteData=ctx.siteData||[],weatherToday=ctx.weatherToday||null;' +
+    'var loadedNotices=ctx.notices||[],PINNED_BIRDING_ISSUES=[];' +
+    'var recommendationWeatherRules=ctx.rules;' +
+    HTML.match(/var AUTUMN_CORE_FIELD_SITE_IDS=.*?;/)[0] +
+    HTML.match(/var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES=.*?;/)[0] +
     'function monthTideForSite(id){return tideMonth&&tideMonth.sites?tideMonth.sites[String(id)]||null:null;}' +
     'function todayKstMonth(){return ctx.month||9;}' +
     tideRules + '\n' + source + '\n' +
     'return {' + NAMES.join(',') + ',setWeek:function(w){weatherWeek=w;}};'
   );
-  return factory(state);
+  return factory(Object.assign({rules:RULES},state));
 }
 
 const SITE = { id: '19', name: '유부도', lat: 36.0, lon: 126.6, region: '충남 서천' };
@@ -197,6 +214,7 @@ test('9월 동남해안 동풍 mandatory 는 8.0m/s 부터 충족', () => {
   assert.ok(build('동풍', 8.0), '8.0m/s 충족');
   assert.ok(build('북동풍', 9.5), '북동풍 충족');
   assert.ok(build('남동풍', 10), '남동풍 충족');
+  for(const wind of ['E','NE','SE'])assert.ok(build(wind,8),wind+' 8.0m/s 충족');
   assert.equal(build('서풍', 12), null, '서풍 미충족');
   const other = Object.assign({}, POHANG, { id: '90', region: '충북 옥천', sido: '충북', sigungu: '옥천' });
   assert.equal(build('동풍', 12, other), null, '대상 지역이 아니면 미적용');
@@ -269,4 +287,193 @@ test('실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다', () =
   const weather = api.weeklySampleAsWeather(site, bestDay.sample, bestDay.date);
   assert.match(weather.wind, /m\/s$/);
   assert.equal(weather._weatherState.scoreEligible, true);
+});
+
+test('가을 핵심 5곳과 실제 env token 분류', () => {
+  const api=loadApi();
+  for(const id of [7,8,10,15,20]) {
+    const site=RUNTIME.find(s=>Number(s.id)===id);
+    assert.deepEqual(api.autumnBirdingAxes(site),{field:true,mudflat:id!==15,pelagic:false});
+  }
+  for(const env of ['농경지','하천·농경지','간척지','목초지','초지','강변 초지·습지'])
+    assert.equal(api.autumnBirdingAxes({env}).field,true,env);
+  for(const env of ['간척호','하구','석호·하구','해안·하구','염전'])
+    assert.deepEqual(api.autumnBirdingAxes({env}),{field:false,mudflat:false,pelagic:false},env);
+  for(const env of ['갯벌','해안·갯벌','간척지·갯벌'])
+    assert.equal(api.autumnBirdingAxes({env}).mudflat,true,env);
+  assert.equal(api.autumnBirdingAxes({env:'간척지·갯벌'}).field,true);
+  for(const name of ['부남호','영암호 금호호']) {
+    const site=RUNTIME.find(s=>s.name===name);
+    assert.ok(site);assert.equal(api.autumnBirdingAxes(site).field,false);
+  }
+});
+
+function candidate(id,axis,score=92,extra={}) {
+  return Object.assign({site:{id,name:String(id)},axes:{field:axis==='field',mudflat:axis==='mudflat',pelagic:axis==='pelagic'},
+    score,recommendationDate:'2026-09-10',stableOrder:100+Number(id),priority:4,isMandatory:false},extra);
+}
+
+test('들판은 score → core → 날짜 → 안정 순서 → ID로 정렬', () => {
+  const rank=loadApi().autumnFieldRank;
+  const general=candidate(2,'field',100), core=candidate(7,'field',92);
+  assert.ok(rank(general,core)<0);
+  general.score=92;assert.ok(rank(core,general)<0);
+  const near=candidate(20,'field',92,{recommendationDate:'2026-09-09'});
+  assert.ok(rank(near,core)<0);
+  const stable=candidate(20,'field',92,{stableOrder:0});
+  assert.ok(rank(stable,core)<0,'ID가 아닌 기존 순서');
+  const equal=candidate(20,'field',92,{stableOrder:core.stableOrder});
+  assert.ok(rank(core,equal)<0,'모두 같을 때만 ID');
+});
+
+test('선상 분류는 pelagic true만 사용하며 독도를 제외', () => {
+  const api=loadApi();
+  assert.equal(api.autumnBirdingAxes({pelagic:true,seasons:['봄','겨울']}).pelagic,true);
+  assert.equal(api.autumnBirdingAxes({pelagic:false,birdingFeature:'선상탐조',name:'항구 앞바다 해안'}).pelagic,false);
+  for(const name of ['독도','호미곶','청림운동장']) {
+    const site=RUNTIME.find(s=>s.name===name);assert.ok(site);
+    assert.equal(api.autumnBirdingAxes(site).pelagic,false);
+  }
+});
+
+test('선상 safety 5개 기준의 inclusive 경계와 결측값', () => {
+  const api=loadApi(), valid=sample('2026-09-10 09:00 KST',92,{waveM:1});
+  const boundaries={waveM:[1.4,1.5,1.6],windSpeed:[8.9,9,9.1],gust:[12.9,13,13.1],precipitation3h:[0.9,1,1.1],visibilityKm:[8.1,8,7.9]};
+  for(const [key,values] of Object.entries(boundaries)) {
+    values.forEach((value,i)=>assert.equal(api.weeklyPelagicSafety({...valid,[key]:value}),i<2,`${key}=${value}`));
+    for(const value of [null,undefined,NaN,Infinity,'',false,-1])
+      assert.equal(api.weeklyPelagicSafety({...valid,[key]:value}),false,`${key} missing/invalid`);
+  }
+  assert.equal(api.weeklyPelagicSafety({...valid,scoreEligible:false}),false);
+  assert.equal(loadApi({rules:null}).weeklyPelagicSafety(valid),false);
+  const changed=structuredClone(RULES);changed.rules.pelagic_seabird.waveMaxM=0.5;
+  assert.equal(loadApi({rules:changed}).weeklyPelagicSafety(valid),false,'JSON 규칙을 실제로 사용');
+});
+
+const PELAGIC={...SITE,id:74,name:'울산 앞바다 선상',pelagic:true,env:'외해·선상',seasons:['봄','겨울']};
+test('선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서', () => {
+  const a=futureDate(1),b=futureDate(2),week={start:a,end:b,dates:[a,b]};
+  const api=loadApi({weatherWeek:weekDoc(74,{
+    [a]:[sample(`${a} 09:00 KST`,92,{waveM:0.8}),sample(`${a} 12:00 KST`,95,{waveM:1.8}),sample(`${a} 15:00 KST`,92,{waveM:1})],
+    [b]:[sample(`${b} 09:00 KST`,92,{waveM:0.8})]
+  })});
+  const best=api.weeklyBestWeatherDay(PELAGIC,week,api.weeklyPelagicSafety);
+  assert.equal(best.date,a);assert.equal(api.weeklySampleTimeText(best.sample),'09:00');
+  const entry=api.weeklyRecommendationForSite(PELAGIC,week);
+  assert.equal(entry.score,92);assert.equal(entry.recommendationDate,a);assert.equal(entry.recommendationTime,'09:00');
+  assert.equal(api.weeklyDailyBestSample({...PELAGIC,lat:NaN},a,api.weeklyPelagicSafety),null);
+  api.setWeek(weekDoc(74,{[a]:[sample(`${a} 09:00 KST`,99,{waveM:1.6})]}));
+  assert.equal(api.weeklyRecommendationForSite(PELAGIC,week),null);
+});
+
+test('선상도 밤/오늘 과거 sample 제외, 다른 날짜 동풍 근거로 위험 sample 승격 금지', () => {
+  const api=loadApi(),today=api.weeklyTodayDateText(),later=futureDate(1);
+  const site={...PELAGIC,region:'울산',birdingFeature:'선상'};
+  api.setWeek(weekDoc(site.id,{
+    [today]:[sample(`${today} 09:00 KST`,100,{waveM:0.5,isPastAtGeneration:true}),sample(`${today} 23:00 KST`,100,{waveM:0.5})],
+    [later]:[sample(`${later} 09:00 KST`,95,{waveM:1.8,windSpeed:8.5}),sample(`${later} 12:00 KST`,92,{waveM:0.5})]
+  }));
+  const e=api.weeklyRecommendationForSite(site,{start:today,end:later,dates:[today,later]});
+  assert.equal(e.recommendationDate,later);assert.equal(e.recommendationTime,'12:00');assert.equal(e.sample.waveM,0.5);
+});
+
+test('soft target은 4/3/1/2, 복합형 dedupe와 mandatory 독점 방지', () => {
+  const api=loadApi();
+  const fields=[7,8,10,15,20].map(id=>candidate(id,'field',92));
+  fields[0].axes.mudflat=true;
+  const tides=[19,107,14].map(id=>candidate(id,'mudflat',90,{isMandatory:true,priority:2}));
+  const winds=Array.from({length:12},(_,i)=>candidate(200+i,'other',89,{isMandatory:true,priority:3}));
+  const ships=[candidate(74,'pelagic'),candidate(75,'pelagic')];
+  const input=[...fields,...tides,...ships,...winds],saved=JSON.stringify(input);
+  const top=api.autumnBalancedRecommendations(input);
+  assert.equal(top.length,10);assert.equal(new Set(top.map(e=>String(e.site.id))).size,10);
+  for(const [axis,count] of Object.entries({field:4,mudflat:3,pelagic:1,other:2}))
+    assert.equal(top.filter(e=>e.selectedAxis===axis).length,count);
+  assert.ok(top.filter(e=>e.isMandatory).length<10);
+  assert.equal(top.filter(e=>e.axes.pelagic).length,1);
+  assert.equal(JSON.stringify(input),saved,'score/mandatory와 입력 배열 불변');
+});
+
+test('들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허용', () => {
+  const api=loadApi();
+  const others=Array.from({length:15},(_,i)=>candidate(300+i,'other',92));
+  const top=api.autumnBalancedRecommendations([candidate(7,'field'),...others]);
+  assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,0);
+  assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+  assert.equal(api.autumnBalancedRecommendations(others.slice(0,2)).length,2);
+});
+
+test('weather_week/rules 실패에도 today 일반 추천, 선상만 제외', () => {
+  const today=loadApi().weeklyTodayDateText();
+  const sites=[{...SITE,id:15,env:'간척호·농경지'},PELAGIC];
+  const weatherToday={sites:Object.fromEntries(sites.map(s=>[s.id,{date:today,forecastTime:today+' 12:00 KST',score:92,wind:'동풍 3m/s',rain:'강수 없음'}]))};
+  const api=loadApi({weatherToday,siteData:sites,rules:null});
+  const top=api.todayRecommendedSites();
+  assert.equal(top.length,1);assert.equal(top[0].site.id,15);assert.equal(top[0].score,92);
+});
+
+test('공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 못한다', () => {
+  const date=futureDate(1),site={...PELAGIC,region:'울산',birdingFeature:'선상'};
+  const api=loadApi({siteData:[site],notices:[{siteId:site.id}],weatherWeek:weekDoc(site.id,{
+    [date]:[sample(`${date} 09:00 KST`,92,{waveM:null,windSpeed:8})]
+  })});
+  assert.equal(api.weeklyRecommendationForSite(site,{start:date,end:date,dates:[date]}),null);
+});
+
+test('물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않는다', () => {
+  const a='2026-09-12',b='2026-09-13',week={start:a,end:b,dates:[a,b]};
+  const api=loadApi({weatherWeek:weekDoc(SITE.id,{[b]:[sample(`${b} 09:00 KST`,92)]}),
+    tideMonth:{sites:{[SITE.id]:{days:[{date:a,highTide:'03:00,15:00',highTideLevel:'650,720'}]}}}});
+  const e=api.weeklyRecommendationForSite(SITE,week);
+  assert.equal(e.recommendationDate,a);assert.equal(e.score,null);assert.equal(e.sample,null);
+  assert.ok(e.isMandatory);assert.match(e.tideText,/720cm/);
+});
+
+test('원거리 섬 제외/봄 정책과 structured notice linkage 유지', () => {
+  const api=loadApi({siteData:RUNTIME,notices:[{content:'교동도 추천'},{siteId:15},{sites:['새만금']},{siteIds:[7]}]});
+  for(const name of ['백령도','외연도','어청도'])assert.equal(api.todayIsAutumnRemoteIsland({name}),true);
+  assert.equal(loadApi({month:4}).todayIsAutumnRemoteIsland({name:'어청도'}),false);
+  assert.ok(loadApi({month:4}).todaySpringIslandReason({weatherRuleKey:'island_migrant'}));
+  assert.equal(api.weeklyIssueReason({id:8}), '');
+  for(const id of [7,15,20])assert.ok(api.weeklyIssueReason({id}));
+  assert.equal(loadApi({month:11}).autumnRecommendationSeason(),false);
+});
+
+test('전체 inline JavaScript 문법 정상', () => {
+  let count=0;
+  for(const match of HTML.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+    if(match[1].trim()){new vm.Script(match[1]);count++;}
+  }
+  assert.ok(count>=3);
+});
+
+test('실데이터 187곳의 가을 추천·선상 안전·score 무변경 및 보고', () => {
+  const before=JSON.stringify(actualWeek);
+  const api=loadApi({weatherWeek:actualWeek,siteData:RUNTIME,
+    tideMonth:JSON.parse(readFileSync(join(ROOT,'tide_month.json'),'utf8')),
+    notices:JSON.parse(readFileSync(join(ROOT,'notices.json'),'utf8'))});
+  const window=api.weeklyInfo();
+  const entries=RUNTIME.map((s,i)=>{const e=api.weeklyRecommendationForSite(s,window);return e&&{...e,stableOrder:i};}).filter(Boolean);
+  const fields=entries.filter(e=>e.axes.field&&!e.axes.pelagic).sort(api.autumnFieldRank);
+  const ships=RUNTIME.filter(s=>api.autumnBirdingAxes(s).pelagic);
+  const safeSamples=ships.flatMap(s=>window.dates.flatMap(d=>api.weeklyDaylightCandidates(s,d).filter(api.weeklyPelagicSafety)));
+  const safeSites=ships.filter(s=>api.weeklyBestWeatherDay(s,window,api.weeklyPelagicSafety));
+  const top=api.todayRecommendedSites();
+  assert.equal(RUNTIME.length,187);assert.equal(top.length,10);
+  assert.equal(new Set(top.map(e=>String(e.site.id))).size,top.length);
+  assert.ok(top.filter(e=>e.axes.pelagic).length<=1);
+  for(const e of top) {
+    if(e.sample) {
+      assert.equal(e.score,e.sample.score);
+      assert.equal(e.recommendationDate,api.weeklySampleDateText(e.sample));
+    }
+    if(e.axes.pelagic)assert.equal(api.weeklyPelagicSafety(e.sample),true);
+  }
+  assert.equal(JSON.stringify(actualWeek),before);
+  if(process.env.AUTUMN_REPORT==='1')console.log(JSON.stringify({
+    generatedAt:actualWeek.generatedAt,checkedAt:new Date().toISOString(),window,
+    core:[7,8,10,15,20].map(id=>{const e=fields.find(e=>Number(e.site.id)===id);return {id,name:e?.site.name,date:e?.recommendationDate,time:e?.recommendationTime,score:e?.score,fieldRank:fields.indexOf(e)+1};}),
+    top:top.map(e=>({id:e.site.id,name:e.site.name,type:api.autumnAxisLabel(e.axes),slot:e.selectedAxis,date:e.recommendationDate,time:e.recommendationTime,score:e.score,mandatory:e.isMandatory,reasons:e.reasons})),
+    pelagic:{evaluated:ships.length,safeSites:safeSites.length,safeSamples:safeSamples.length,selected:top.filter(e=>e.axes.pelagic).map(e=>({name:e.site.name,...e.sample}))}
+  },null,2));
 });
