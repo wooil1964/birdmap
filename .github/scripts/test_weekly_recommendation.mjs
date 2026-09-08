@@ -1282,3 +1282,83 @@ test('H01 계절 판정은 12개월을 중첩·공백 없이 한 번씩 덮는�
   assert.deepEqual(seasons, { 1: 'winter', 2: 'winter', 3: 'spring', 4: 'spring', 5: 'spring', 6: 'summer',
     7: 'summer', 8: 'summer', 9: 'autumn', 10: 'autumn', 11: 'winter', 12: 'winter' });
 });
+
+/* M01/M02 회귀: 명시적으로 부적격이거나 유효 sample이 0인 후보는
+   공지·mandatory·core·높은 점수로도 최종 추천에 되살아나지 않아야 한다.
+   미확인(missing/null)은 기존 unknown 의미를 그대로 유지한다. */
+const M_NOTICE = (id) => [{ siteIds: [Number(id)], published: true, title: '테스트 공지', summary: '연계 확인' }];
+function mWeek(site, days) {
+  const doc = weekDoc(site.id, days, site.name);
+  const dates = Object.keys(days).sort();
+  doc.startDate = dates[0] || '';
+  doc.endDate = dates[dates.length - 1] || '';
+  return doc;
+}
+function mApi(today, month, state) {
+  return loadApi(Object.assign({ month, now: today + 'T09:00:00+09:00' }, state));
+}
+function mRecommended(api, id) {
+  return api.todayRecommendedSites().some((entry) => String(entry.site.id) === String(id));
+}
+
+test('M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아나지 않는다', () => {
+  const autumn = h01Site('107'), winter = h01Site('7');
+  const rows = [
+    { name: '가을 매향리 scoreEligible=false', today: '2026-10-13', month: 10, site: autumn,
+      days: { '2026-10-14': [sample('2026-10-14 09:00 KST', 92, { scoreEligible: false, score: null, missingScoreFields: ['wave'] })] } },
+    { name: '가을 매향리 samples=[]', today: '2026-10-13', month: 10, site: autumn, days: { '2026-10-14': [] } },
+    { name: '가을 매향리 days={}', today: '2026-10-13', month: 10, site: autumn, days: {} },
+    { name: '가을 매향리 야간 sample만', today: '2026-10-13', month: 10, site: autumn,
+      days: { '2026-10-14': [sample('2026-10-14 21:00 KST', 99)] } },
+    { name: '가을 매향리 오늘 과거 sample만', today: '2026-10-13', month: 10, site: autumn,
+      days: { '2026-10-13': [sample('2026-10-13 06:00 KST', 99, { isPastAtGeneration: true })] } },
+    { name: '겨울 교동도 scoreEligible=false', today: '2026-12-08', month: 12, site: winter,
+      days: { '2026-12-09': [sample('2026-12-09 09:00 KST', 95, { scoreEligible: false, score: null, missingScoreFields: ['wave'] })] } },
+    { name: '겨울 교동도 samples=[]', today: '2026-12-08', month: 12, site: winter, days: { '2026-12-09': [] } },
+    { name: '겨울 교동도 야간 sample만', today: '2026-12-08', month: 12, site: winter,
+      days: { '2026-12-09': [sample('2026-12-09 21:00 KST', 99)] } },
+  ];
+  for (const row of rows) {
+    const api = mApi(row.today, row.month, { siteData: [row.site], weatherWeek: mWeek(row.site, row.days), notices: M_NOTICE(row.site.id) });
+    assert.equal(h01Entry(api, row.site), null, row.name + ' 후보');
+    assert.equal(mRecommended(api, row.site.id), false, row.name + ' 최종 추천');
+  }
+  /* 물때 mandatory가 있어도 유효 sample 0을 되살리지 못한다. */
+  const tide = { sites: { 107: { days: [{ date: '2026-10-14', highTide: '12:00', highTideLevel: '900' }] } } };
+  const api = mApi('2026-10-13', 10, { siteData: [autumn], weatherWeek: mWeek(autumn, { '2026-10-14': [] }),
+    notices: M_NOTICE('107'), tideMonth: tide });
+  assert.equal(mRecommended(api, '107'), false, '공지+물때 mandatory도 우회 금지');
+});
+
+test('M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다', () => {
+  const autumn = h01Site('107'), winter = h01Site('7');
+  const todayDoc = (id, date, extra) => ({ sites: { [id]: Object.assign({ date: date, score: 99, wind: '북풍 3m/s', rain: '강수 없음' }, extra) } });
+  const rows = [
+    { name: '가을 explicit false', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: false }, expected: false },
+    { name: '가을 explicit false + 공지', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: false }, notice: true, expected: false },
+    { name: '겨울 core explicit false', today: '2026-12-08', month: 12, site: winter, extra: { scoreEligible: false }, expected: false },
+    { name: '겨울 core explicit false + 공지', today: '2026-12-08', month: 12, site: winter, extra: { scoreEligible: false }, notice: true, expected: false },
+    { name: '가을 explicit true', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: true }, expected: true },
+    { name: '가을 eligibility 없음(unknown)', today: '2026-10-13', month: 10, site: autumn, extra: {}, expected: true },
+    { name: '가을 eligibility null(unknown)', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: null }, expected: true },
+    { name: '겨울 explicit true', today: '2026-12-08', month: 12, site: winter, extra: { scoreEligible: true }, expected: true },
+  ];
+  for (const row of rows) {
+    const state = { siteData: [row.site], weatherWeek: null, weatherToday: todayDoc(row.site.id, row.today, row.extra) };
+    if (row.notice) state.notices = M_NOTICE(row.site.id);
+    const api = mApi(row.today, row.month, state);
+    assert.equal(mRecommended(api, row.site.id), row.expected, row.name);
+  }
+  /* mandatory(물때)도 명시적 부적격을 이기지 못한다. */
+  const tide = { sites: { 107: { days: [{ date: '2026-10-14', highTide: '12:00', highTideLevel: '900' }] } } };
+  const blocked = mApi('2026-10-13', 10, { siteData: [autumn], weatherWeek: null,
+    weatherToday: todayDoc('107', '2026-10-13', { scoreEligible: false }), tideMonth: tide, notices: M_NOTICE('107') });
+  assert.equal(mRecommended(blocked, '107'), false, '물때 mandatory + 공지 + explicit false');
+  /* 주간·오늘 자료가 모두 없는 공지 전용 unknown fallback은 기존 정책 그대로 남는다. */
+  const noticeOnly = mApi('2026-10-13', 10, { siteData: [autumn], weatherWeek: null, weatherToday: null, notices: M_NOTICE('107') });
+  const entry = h01Entry(noticeOnly, autumn);
+  assert.ok(entry, '공지 전용 fallback은 유지한다');
+  assert.equal(entry.today, null);
+  assert.equal(entry.basisText, '탐조 이슈 기준');
+  assert.equal(mRecommended(noticeOnly, '107'), true);
+});

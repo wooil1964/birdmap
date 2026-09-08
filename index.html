@@ -2384,7 +2384,7 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
   var score=raw&&raw.score!==null&&raw.score!==undefined&&raw.score!==''?Number(raw.score):NaN;
   if(!raw||raw.stale||raw.dataUnavailable||!weeklyDateInRange(date,week)||!Number.isFinite(score))return null;
-  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
+  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:raw.scoreEligible!==false,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
   return {date:date,weather:today,score:score};
 }
 /* 추천 정책은 화면을 연 날이 아니라 후보의 추천 날짜가 속한 계절을 따른다.
@@ -2429,9 +2429,11 @@ function weeklyRecommendationForSite(site,week){
   if(!policy)return null;
   var axes=policy.axes, pelagic=policy.pelagic, sampleFilter=policy.sampleFilter;
   var autumn=policy.autumn, winter=policy.winter, spring=policy.spring, summer=policy.summer;
-  // 선상은 주간 안전 sample이 없으면 공지/동풍이나 today fallback으로 승격하지 않는다.
-  if((pelagic||((spring||summer)&&weeklyWeekSite(site)))&&!bestWeather)return null;
-  if((spring||summer)&&weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;
+  // 선상과 주간 자료가 있는 탐조지는 유효 sample이 0이면 공지/물때/동풍이나 today fallback으로 승격하지 않는다.
+  if((pelagic||weeklyWeekSite(site))&&!bestWeather)return null;
+  // 저장 기상이 명시적으로 부적격(scoreEligible===false)이면 계절·공지·mandatory와 무관하게 제외한다.
+  // 값이 없거나 null인 미확인 상태는 기존 의미를 그대로 둔다.
+  if(weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;
   var issueReason=weeklyIssueReason(site);
   var tideRec=autumn?weeklyBestMudflatTide(site,week):null;
   // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.
