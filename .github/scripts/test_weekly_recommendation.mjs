@@ -53,6 +53,7 @@ const NAMES = [
   'todayRecommendedSites', 'weeklyEastWindRecommendation', 'v24WindParts', 'v24WindNumber',
   'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'todayString', 'v23Value',
   'weeklyRecommendationIsSafe', 'weeklyPelagicRecommendationSeason',
+  'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -60,19 +61,21 @@ function loadApi(state = {}) {
   const source = NAMES.map(functionSource).join('\n');
   const tideRules = HTML.match(/var TODAY_MUDFLAT_TIDE_RULES=\{[\s\S]*?\};/)[0];
   const factory = new Function(
-    'ctx',
+    'ctx','Date',
     'var weatherWeek=ctx.weatherWeek||null;var tideMonth=ctx.tideMonth||null;' +
     'var siteData=ctx.siteData||[],weatherToday=ctx.weatherToday||null;' +
     'var loadedNotices=ctx.notices||[],PINNED_BIRDING_ISSUES=[];' +
     'var recommendationWeatherRules=ctx.rules;' +
     HTML.match(/var AUTUMN_CORE_FIELD_SITE_IDS=.*?;/)[0] +
+    [...HTML.matchAll(/var WINTER_[A-Z_]+=new Set\(.*?;/g)].map(m=>m[0]).join('\n') +
     HTML.match(/var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES=.*?;/)[0] +
     'function monthTideForSite(id){return tideMonth&&tideMonth.sites?tideMonth.sites[String(id)]||null:null;}' +
     'function todayKstMonth(){return ctx.month||9;}' +
     tideRules + '\n' + source + '\n' +
     'return {' + NAMES.join(',') + ',setWeek:function(w){weatherWeek=w;}};'
   );
-  return factory(Object.assign({rules:RULES},state));
+  const Clock=state.now?class extends Date {constructor(...args){super(...(args.length?args:[state.now]));} static now(){return new Date(state.now).getTime();}}:Date;
+  return factory(Object.assign({rules:RULES},state),Clock);
 }
 
 const SITE = { id: '19', name: '유부도', lat: 36.0, lon: 126.6, region: '충남 서천' };
@@ -583,12 +586,12 @@ test('동풍과 선상 gate는 지역·풍향·풍속에서 독립',()=>{
  }
 });
 
-test('선상은 4·5·9·10월만, seasons 무관하며 독도 제외',()=>{
+test('봄·가을 선상과 겨울 별도 허용, seasons 무관하며 독도 제외',()=>{
  for(const month of [1,4,5,7,9,10]){
   const date=`2027-${String(month).padStart(2,'0')}-10`,week={start:date,end:date,dates:[date]};
   const site={...PELAGIC,seasons:['겨울'],bestSeason:'겨울'},saved=JSON.stringify(site);
   const api=loadApi({month,weatherWeek:weekDoc(site.id,{[date]:[sample(date+' 09:00 KST',92,{waveM:0.7})]})});
-  assert.equal(!!api.weeklyRecommendationForSite(site,week),[4,5,9,10].includes(month));
+  assert.equal(!!api.weeklyRecommendationForSite(site,week),[1,4,5,9,10].includes(month));
   assert.equal(api.weeklyRecommendationForSite({...site,name:'독도'},week),null);
   assert.equal(JSON.stringify(site),saved);
  }
@@ -650,4 +653,161 @@ test('봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 
  for(const s of ships)doc.sites[s.id].days[date].samples[0].precipitation3h=0.1;
  top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,0);
  assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+});
+
+// 겨울 자료는 합성 fixture다. 현재 9월 실제 예보를 겨울 예보로 바꾸지 않는다.
+function winterFixture(extra={}){
+ const date='2026-12-10',sites=extra.siteData||RUNTIME,doc={sites:{}};
+ for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[
+  sample(date+' 06:00 KST',100,{waveM:0.5}),
+  sample(date+' 09:00 KST',92,{waveM:0.5}),
+  sample(date+' 12:00 KST',92,{waveM:0.5}),
+  sample(date+' 18:00 KST',100,{waveM:0.5})
+ ]}).sites);
+ return {month:12,now:'2026-12-10T08:00:00+09:00',siteData:sites,weatherWeek:doc,...extra};
+}
+
+test('겨울 추천 달 경계와 전역 가을/이동기 정의 독립',()=>{
+ for(const [date,winter] of [['2026-10-31',false],['2026-11-01',true],['2026-12-31',true],['2027-01-01',true],['2027-02-28',true],['2028-02-29',true],['2027-03-01',false]]){
+  const month=Number(date.slice(5,7)),api=loadApi({month,now:date+'T12:00:00+09:00'});
+  assert.equal(api.weeklyWinterRecommendationSeason(),winter,date);
+  assert.equal(api.weeklyWinterRecommendationSeason(month),winter);
+  assert.equal(api.autumnRecommendationSeason(),[9,10].includes(month));
+  assert.equal(api.weeklyPelagicRecommendationSeason(),[4,5,9,10].includes(month),'기존 이동기 정의 무변경');
+ }
+});
+
+test('겨울 실제 핵심 들판 5곳과 습지/해안 복합환경 유지',()=>{
+ const api=loadApi(),saved=JSON.stringify(RUNTIME);
+ const core={39:['한탄강두루미탐조대','농경지·하천'],15:['천수만 간월호','간척호·농경지'],10:['강화도','갯벌·농경지'],7:['교동도','간척지·갯벌'],20:['새만금','간척지·갯벌']};
+ for(const [id,[name,env]] of Object.entries(core)){
+  const s=RUNTIME.find(s=>String(s.id)===id);assert.equal(s.name,name);assert.equal(s.env,env);
+  assert.equal(api.winterBirdingAxes(s).field,true);assert.equal(api.winterBirdingAxes(s).excludedReason,'');
+ }
+ assert.ok(api.winterBirdingAxes(RUNTIME.find(s=>s.id==='15')).water);
+ for(const id of ['7','10','20'])assert.ok(api.winterBirdingAxes(RUNTIME.find(s=>s.id===id)).coast);
+ for(const id of ['28','16','29','42','31'])assert.ok(api.winterBirdingAxes(RUNTIME.find(s=>s.id===id)).water);
+ assert.equal(JSON.stringify(RUNTIME),saved);
+});
+
+test('겨울은 score → core → 날짜 → stable → ID, bonus와 강제 선발 없음',()=>{
+ const api=loadApi(),rank=api.winterRecommendationRank;
+ const c=candidate(39,'field',92),g=candidate(900,'field',93),saved=JSON.stringify(c);
+ assert.ok(rank(g,c)<0);g.score=92;assert.ok(rank(c,g)<0);
+ const near={...c,site:{id:15},recommendationDate:'2026-01-01'};assert.ok(rank(near,c)<0);
+ const stable={...c,site:{id:20},stableOrder:0};assert.ok(rank(stable,c)<0);
+ const same={...c,site:{id:20}};assert.ok(rank(same,c)<0);
+ assert.equal(JSON.stringify(c),saved);
+ const general=Array.from({length:12},(_,i)=>candidate(900+i,'field',95));
+ assert.ok(!api.winterBalancedRecommendations([c,...general]).some(e=>e.site.id===39));
+});
+
+test('겨울 3/3/3/최대1과 부족 보충 및 전역 dedupe',()=>{
+ const api=loadApi();
+ const make=(id,axis)=>({...candidate(id,'other',92),axes:{field:false,water:false,coast:false,pelagic:false,[axis]:true}});
+ const entries=['field','water','coast','pelagic'].flatMap((axis,i)=>Array.from({length:4},(_,j)=>make(300+i*10+j,axis)));
+ entries[0].axes.water=true;entries[0].axes.coast=true;
+ const saved=JSON.stringify(entries),top=api.winterBalancedRecommendations(entries);
+ assert.equal(top.length,10);assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+ for(const [axis,n] of Object.entries({field:3,water:3,coast:3,pelagic:1}))assert.equal(top.filter(e=>e.selectedAxis===axis).length,n);
+ assert.equal(top.filter(e=>e.axes.pelagic).length,1);assert.equal(JSON.stringify(entries),saved);
+ const coast=Array.from({length:12},(_,i)=>make(500+i,'coast'));
+ assert.equal(api.winterBalancedRecommendations(coast).length,10);
+ assert.equal(api.winterBalancedRecommendations(coast.slice(0,2)).length,2);
+ assert.equal(api.winterBalancedRecommendations(coast).filter(e=>e.axes.pelagic).length,0);
+});
+
+test('겨울 명시 제외는 정확한 ID/이름만, 미등록 7곳을 다른 site로 추정하지 않는다',()=>{
+ const api=loadApi(winterFixture());
+ for(const id of ['23','30','68']){
+  const site=RUNTIME.find(s=>s.id===id);assert.equal(api.winterBirdingAxes(site).excludedReason,'explicit');
+  assert.equal(api.weeklyRecommendationForSite(site,api.weeklyInfo()),null);
+ }
+ const absent=['대저생태공원','해평습지','담양습지','영광 불갑저수지','태평염전','백수해안도로','봉암갯벌'];
+ for(const name of absent){
+  assert.ok(!RUNTIME.some(s=>s.name===name));
+  assert.equal(api.winterBirdingAxes({id:900,name,env:'습지·갯벌'}).excludedReason,'explicit');
+ }
+ for(const id of ['93','178'])assert.equal(api.winterBirdingAxes(RUNTIME.find(s=>s.id===id)).excludedReason,'');
+ for(const name of ['대저생태공원 인근','담양습지 별도','고천암 다른 곳'])
+  assert.equal(api.winterBirdingAxes({id:900,name,env:'습지'}).excludedReason,'');
+});
+
+test('겨울 섬 예외와 환경 정확 token, 이름으로 산/섬을 추정하지 않음',()=>{
+ const api=loadApi();
+ for(const id of ['7','10','19','9'])assert.equal(api.winterBirdingAxes(RUNTIME.find(s=>s.id===id)).excludedReason,'');
+ for(const id of ['1','4','51','117','124'])assert.equal(api.winterBirdingAxes(RUNTIME.find(s=>s.id===id)).excludedReason,'island');
+ for(const env of ['산','산림','도심산림','숲·습지','휴양림','저수지·수목원'])
+  assert.equal(api.winterBirdingAxes({id:900,env}).excludedReason,'forest');
+ assert.equal(api.winterBirdingAxes({id:900,env:'연근해'}).excludedReason,'marine');
+ for(const name of ['새로운도','산이름','숲이름'])assert.equal(api.winterBirdingAxes({id:900,name,env:'농경지'}).field,true);
+ for(const env of ['공원','강','하천','강변','유수지','염전','농경지추정'])assert.equal(api.winterBirdingAxes({id:900,env}).excludedReason,'unclassified');
+});
+
+test('겨울 선상 5곳은 기존 safety 재사용, 항구 3곳은 육상 coast 유지',()=>{
+ const state=winterFixture(),api=loadApi(state),week=api.weeklyInfo();
+ for(const id of ['48','62','191','192','74']){
+  const site=RUNTIME.find(s=>s.id===id);assert.equal(site.pelagic,true);
+  let e=api.weeklyRecommendationForSite(site,week);assert.ok(e.axes.pelagic);assert.ok(api.weeklyPelagicSafety(e.sample));
+  assert.equal(e.recommendationTime,'09:00');assert.equal(e.score,92);
+  for(const [key,value] of [['windSpeed',6.1],['waveM',0.8],['precipitation3h',0.1],['windSpeed',null],['waveM',NaN],['precipitation3h',undefined]]){
+   const original=state.weatherWeek.sites[id].days['2026-12-10'].samples;
+   state.weatherWeek.sites[id].days['2026-12-10'].samples=original.map(s=>({...s,[key]:value}));
+   assert.equal(api.weeklyRecommendationForSite(site,week),null,`${id} ${key}`);
+   state.weatherWeek.sites[id].days['2026-12-10'].samples=original;
+  }
+ }
+ for(const id of ['53','54','55']){
+  const site=RUNTIME.find(s=>s.id===id),e=api.weeklyRecommendationForSite(site,week);
+  assert.equal(site.pelagic,true);assert.equal(e.axes.pelagic,false);assert.equal(e.axes.coast,true);
+ }
+ assert.equal(api.weeklyRecommendationForSite(RUNTIME.find(s=>s.id==='52'),week),null);
+});
+
+test('겨울 통합: 실제 187 site + 합성 겨울 예보, 10곳/점수/caution/시간/공지 보존',()=>{
+ const state=winterFixture({notices:[{siteIds:[39],published:true}]}),api=loadApi(state);
+ const saved=JSON.stringify(state),top=api.todayRecommendedSites();
+ assert.equal(top.length,10);assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+ for(const [axis,n] of Object.entries({field:3,water:3,coast:3,pelagic:1}))assert.equal(top.filter(e=>e.selectedAxis===axis).length,n);
+ for(const e of top){assert.equal(e.score,92);assert.equal(e.recommendationTime,'09:00');assert.equal(api.weeklyRecommendationIsSafe(e),true);}
+ assert.equal(JSON.stringify(state),saved);
+ const core=RUNTIME.find(s=>s.id==='39');
+ let e=api.weeklyRecommendationForSite(core,api.weeklyInfo());assert.ok(e.isMandatory);assert.match(e.reasons.join(' '),/이슈/);
+ for(const s of state.weatherWeek.sites['39'].days['2026-12-10'].samples){s.waveM=2;s.score=100;}
+ e=api.weeklyRecommendationForSite(core,api.weeklyInfo());assert.ok(e.isMandatory);assert.equal(api.weeklyRecommendationIsSafe(e),false);
+ assert.ok(!api.todayRecommendedSites().some(e=>e.site.id==='39'));
+ for(const s of state.weatherWeek.sites['39'].days['2026-12-10'].samples){s.waveM=0.5;s.score=60;}
+ assert.equal(api.weeklyRecommendationIsSafe(api.weeklyRecommendationForSite(core,api.weeklyInfo())),true);
+});
+
+test('겨울 today fallback 미확인 의미 유지, 선상 fallback 승격 금지',()=>{
+ const site=RUNTIME.find(s=>s.id==='39'),ship=RUNTIME.find(s=>s.id==='48');
+ const state=winterFixture({siteData:[site,ship],weatherWeek:null,weatherToday:{sites:{39:{date:'2026-12-10',score:65,wind:'북풍 3m/s'},48:{date:'2026-12-10',score:92,wind:'북풍 3m/s'}}}});
+ const api=loadApi(state),top=api.todayRecommendedSites();assert.equal(top.length,1);assert.equal(top[0].site.id,'39');
+ assert.equal(api.weeklyRecommendationIsSafe(top[0]),null);
+});
+
+test('겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)',()=>{
+ const api=loadApi(),rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,island:s.island,runtimePelagic:s.pelagic,...api.winterBirdingAxes(s)}));
+ const counts=Object.fromEntries(['field','water','coast','pelagic'].map(axis=>[axis,rows.filter(e=>e[axis]).length]));
+ const excluded=Object.fromEntries(['explicit','dokdo','island','forest','marine','unclassified'].map(reason=>[reason,rows.filter(e=>e.excludedReason===reason).length]));
+ assert.equal(rows.length,187);assert.equal(counts.pelagic,5);assert.equal(excluded.explicit,3);
+ if(process.env.WINTER_REPORT==='1')console.log(JSON.stringify({counts,excluded,
+  core:rows.filter(e=>['39','15','10','7','20'].includes(e.id)),
+  ships:rows.filter(e=>RUNTIME.find(s=>s.id===e.id).pelagic),
+  unclassified:rows.filter(e=>e.excludedReason==='unclassified'),
+  fixtureTop:loadApi(winterFixture()).todayRecommendedSites().map(e=>({id:e.site.id,name:e.site.name,axis:e.selectedAxis,time:e.recommendationTime,score:e.score}))},null,2));
+});
+
+test('겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전부 탈락 보충',()=>{
+ const state=winterFixture({now:'2026-12-10T10:00:00+09:00'}),api=loadApi(state);
+ for(const id of ['48','62','191','192','74'])for(const s of state.weatherWeek.sites[id].days['2026-12-10'].samples){s.windSpeed=6;s.waveM=0.7;s.precipitation3h=0;}
+ let top=api.todayRecommendedSites();assert.equal(top.length,10);
+ for(const e of top)assert.equal(e.recommendationTime,'12:00');
+ assert.equal(top.filter(e=>e.axes.pelagic).length,1);
+ for(const id of ['48','62','191','192','74'])for(const s of state.weatherWeek.sites[id].days['2026-12-10'].samples)s.precipitation3h=0.1;
+ top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,0);
+ assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+ const rollover=loadApi({month:12,now:'2026-12-31T10:00:00+09:00'}).weeklyInfo();
+ assert.equal(rollover.start,'2026-12-31');assert.equal(rollover.end,'2027-01-06');
 });

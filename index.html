@@ -1908,6 +1908,56 @@ function autumnAxisLabel(axes){
   if(axes.pelagic)return '🚢 선상탐조';
   return [axes.field?'🌾 들판탐조':'',axes.mudflat?'🌊 갯벌탐조':''].filter(Boolean).join(' · ')||'🐦 기타 탐조';
 }
+/* 겨울 추천 정책만 11~2월. 전역 계절/점수/원본 탐조지 데이터는 변경하지 않는다. */
+var WINTER_CORE_FIELD_SITE_IDS=new Set([39,15,10,7,20]); // 철원평야의 현 명칭: ID 39 한탄강두루미탐조대
+var WINTER_EXCLUDED_SITE_IDS=new Set([23,30,68]); // 고천암철새도래지, 화포천습지, 증도 지도갯벌
+var WINTER_EXCLUDED_SITE_NAMES=new Set(['대저생태공원','해평습지','담양습지','영광 불갑저수지','화포천습지','고천암','고천암철새도래지','신안 증도 갯벌','태평염전','백수해안도로','봉암갯벌']);
+var WINTER_PELAGIC_SITE_IDS=new Set([48,62,191,192,74]);
+var WINTER_ISLAND_EXCEPTION_SITE_IDS=new Set([7,10,19,9]); // 교동도, 강화도, 유부도, 명시 허용 동검도
+function weeklyWinterRecommendationSeason(month){return [11,12,1,2].indexOf(month===undefined?todayKstMonth():month)>=0;}
+function winterBirdingAxes(site){
+  var id=Number(site&&site.id), tokens=String(site&&site.env||'').split(/[·,;\/|\s]+/);
+  var axes={field:false,water:false,coast:false,pelagic:false,excludedReason:''};
+  function has(values){return tokens.some(function(token){return values.indexOf(token)>=0;});}
+  if(site&&site.name==='독도'){axes.excludedReason='dokdo';return axes;}
+  if(!site||WINTER_EXCLUDED_SITE_IDS.has(id)||WINTER_EXCLUDED_SITE_NAMES.has(String(site.name))){axes.excludedReason='explicit';return axes;}
+  if(site.pelagic===true&&WINTER_PELAGIC_SITE_IDS.has(id)){axes.pelagic=true;return axes;}
+  // 이름의 '도'가 아니라 실제 도서 token/island 값 사용. 사용자가 허용한 육상 예외는 보존한다.
+  if(!WINTER_ISLAND_EXCEPTION_SITE_IDS.has(id)&&(site.island===true||has(['섬','도서','해양도서']))){axes.excludedReason='island';return axes;}
+  if(has(['산','산림','숲','고산','도심산림','휴양림','수목원','곶자왈'])){axes.excludedReason='forest';return axes;}
+  axes.coast=has(['해안','갯벌','항구','해변','하구']);
+  // 항구·외해의 주문진/어달/후포는 육상 항구 token으로만 평가한다.
+  if(has(['연근해'])||(has(['외해','선상'])&&!axes.coast)){axes.coast=false;axes.excludedReason='marine';return axes;}
+  axes.field=WINTER_CORE_FIELD_SITE_IDS.has(id)||has(['농경지','간척지','목초지','초지']);
+  axes.water=has(['습지','호수','저수지','간척호','내륙습지','하천습지','갈대습지','연안습지','습지생태공원','습지공원','석호']);
+  if(!axes.field&&!axes.water&&!axes.coast)axes.excludedReason='unclassified';
+  return axes;
+}
+function winterRecommendationRank(a,b){
+  var as=Number.isFinite(a.score)?a.score:-Infinity,bs=Number.isFinite(b.score)?b.score:-Infinity;
+  return (bs-as)||(Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
+    String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
+    ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
+}
+function winterBalancedRecommendations(entries){
+  var selected=[],ids=new Set(),pelagicCount=0;
+  var ranked=entries.filter(function(e){return e.axes&&!e.axes.excludedReason&&(e.axes.field||e.axes.water||e.axes.coast||e.axes.pelagic);}).slice().sort(winterRecommendationRank);
+  function take(axis,count){
+    var added=0;
+    ranked.forEach(function(entry){
+      var id=String(entry.site.id);
+      if(selected.length>=10||added>=count||ids.has(id)||(axis!=='fill'&&!entry.axes[axis])||(entry.axes.pelagic&&pelagicCount>=1))return;
+      ids.add(id);if(entry.axes.pelagic)pelagicCount++;
+      selected.push(Object.assign({},entry,{selectedAxis:axis}));added++;
+    });
+  }
+  take('field',3);take('water',3);take('coast',3);take('pelagic',1);take('fill',10);
+  return selected;
+}
+function winterAxisLabel(axes){
+  if(axes.pelagic)return '🚢 선상탐조';
+  return [axes.field?'🌾 들판·농경지':'',axes.water?'🦆 습지·호수':'',axes.coast?'🌊 해안·갯벌·항구':''].filter(Boolean).join(' · ');
+}
 function todayKstMonth(){
   var parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',month:'numeric'}).formatToParts(new Date());
   for(var i=0;i<parts.length;i++)if(parts[i].type==='month')return Number(parts[i].value);
@@ -2186,11 +2236,13 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
 }
 function weeklyRecommendationForSite(site,week){
   if(todayIsAutumnRemoteIsland(site))return null;
-  var autumn=autumnRecommendationSeason(), axes=autumnBirdingAxes(site);
+  var autumn=autumnRecommendationSeason(), winter=weeklyWinterRecommendationSeason();
+  var axes=winter?winterBirdingAxes(site):autumnBirdingAxes(site);
+  if(winter&&axes.excludedReason)return null;
   var pelagic=axes.pelagic;
-  if(site.pelagic===true&&(!pelagic||!weeklyPelagicRecommendationSeason()))return null;
+  if(!winter&&site.pelagic===true&&(!pelagic||!weeklyPelagicRecommendationSeason()))return null;
   var bestWeather=weeklyBestWeatherDay(site,week,pelagic?weeklyPelagicSafety:null);
-  // 이동기 선상은 주간 안전 sample이 없으면 공지/동풍이나 today fallback으로 승격하지 않는다.
+  // 선상은 주간 안전 sample이 없으면 공지/동풍이나 today fallback으로 승격하지 않는다.
   if(pelagic&&!bestWeather)return null;
   var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);
   var issueReason=weeklyIssueReason(site);
@@ -2205,7 +2257,7 @@ function weeklyRecommendationForSite(site,week){
   var priority=issueReason?1:(tideRec?2:(windRec?3:4));
   if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;
   var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';
-  if((pelagic||(autumn&&axes.field))&&bestWeather)date=bestWeather.date;
+  if((winter||pelagic||(autumn&&axes.field))&&bestWeather)date=bestWeather.date;
   /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */
   var dayBest=(weatherEntry&&weatherEntry.fromWeek)?weeklyDailyBestSample(site,date,pelagic?weeklyPelagicSafety:null):null;
   var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(weatherEntry&&weatherEntry.date===date?weatherEntry.weather:null);
@@ -2232,6 +2284,7 @@ function todayRecommendedSites(){
     entry.stableOrder=stableOrder;
     (entry.isMandatory?mandatory:general).push(entry);
   });
+  if(weeklyWinterRecommendationSeason())return winterBalancedRecommendations(mandatory.concat(general));
   if(autumnRecommendationSeason())return autumnBalancedRecommendations(mandatory.concat(general));
   function rank(a,b){
     var ap=a.priority||4, bp=b.priority||4;
@@ -2339,10 +2392,10 @@ function renderTodayPanel(){
       name.appendChild(tag);
     }
     item.appendChild(name);
-    if(autumnRecommendationSeason()||entry.axes.pelagic){
+    if(autumnRecommendationSeason()||weeklyWinterRecommendationSeason()||entry.axes.pelagic){
       var axis=document.createElement('div');
       axis.className='todayRankMeta';
-      axis.textContent=autumnAxisLabel(entry.axes);
+      axis.textContent=weeklyWinterRecommendationSeason()?winterAxisLabel(entry.axes):autumnAxisLabel(entry.axes);
       item.appendChild(axis);
     }
     var score=document.createElement('div');
@@ -2355,7 +2408,7 @@ function renderTodayPanel(){
     item.appendChild(recDate);
     var meta=document.createElement('div');
     meta.className='todayRankMeta';
-    meta.textContent=entry.site.region+' · '+v25EnvironmentLabel(entry.site);
+    meta.textContent=entry.site.region+' · '+(weeklyWinterRecommendationSeason()&&entry.site.pelagic===true&&!entry.axes.pelagic?'해안·항구 육상탐조':v25EnvironmentLabel(entry.site));
     item.appendChild(meta);
     var seasonalReasons=(entry.reasons&&entry.reasons.length)?entry.reasons:(entry.springReason?[entry.springReason]:[]);
     seasonalReasons.forEach(function(text){

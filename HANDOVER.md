@@ -14,6 +14,43 @@
 
 ## 최근 완료 작업
 
+- 겨울 추천 엔진(2026-09-08, local 시작 `945a89c`, 자동 갱신3개를 반영한 구현 기준 `0cfeffc`): 추천 전용 `weeklyWinterRecommendationSeason()`을 11·12·1·2월에 적용한다. 전역 계절 표시는 무변경, 9~10월 가을 경로와 기존 4·5·9·10월 선상 함수 정의도 그대로다. 겨울은 들판3/습지·호수·저수지·간척호3/해안·갯벌·항구3/선상최대1 soft target, 부족분은 같은 겨울 후보군의 점수순 보충, 전역 ID dedupe, 안전한 선상 sample이 없으면 선상0. 점수 desc → 겨울 core → 가까운 날짜 → 기존 순서 → ID이며 점수 가산·강제 최종 포함 없음. 선발 전 기존 `weeklyRecommendationIsSafe()` false만 제외하고 null fallback 의미는 유지한다. 날짜/시간은 기존 daylight·scoreEligible·오늘 과거시각 제외·daily/weeklyBest 재사용.
+  - 핵심 들판: ID39 한탄강두루미탐조대(농경지·하천), 15 천수만 간월호(간척호·농경지), 10 강화도(갯벌·농경지), 7 교동도(간척지·갯벌), 20 새만금(간척지·갯벌). ID39는 git `b46ce3f^`의 철원평야가 `b46ce3f`에서 현 명칭으로 바뀐 이력을 확인했다. 경안천 습지생태공원은 runtime31 경안천(습지생태공원·하천)으로 water에 포함. 천수만은 field를 먼저 선발하며 water 복합속성 보존.
+  - 환경: `env`를 ·/쉼표/구분자/공백의 정확 token으로 나눈다. 농경지·간척지·목초지·초지는 field, 습지·호수·저수지·간척호 및 직접 대응 습지 token/석호는 water, 해안·갯벌·항구·해변·하구는 coast. 도서/섬 token 또는 실제 island=true는 일반 후보에서 제외하고, 산·산림·숲·고산·도심산림·휴양림·수목원·곶자왈도 제외한다. 지명의 '도'나 '산'으로 판단하지 않는다. 교동도7/강화도10/유부도19와 사용자가 coast로 명시한 동검도9는 섬 제외 예외. 연근해/육상 coast token 없는 외해·선상은 일반 제외하되 pelagic 허용5곳은 별도 평가. `항구·외해`는 육상 항구로 평가하며 원본 pelagic 값은 바꾸지 않는다.
+  - 명시 제외: runtime23 고천암철새도래지,30 화포천습지,68 증도 지도갯벌(전남 신안)을 정확 ID로 제외. 대저생태공원/해평습지/담양습지/영광 불갑저수지/태평염전/백수해안도로/봉암갯벌 7곳은 현재187곳에 없고 정확 이름 Set으로만 기록했다. 담양 죽녹원178·구미 강정습지93 등 비슷한 장소를 대체 제외하지 않는다. 신규 장소나 좌표는 생성하지 않았다.
+  - 겨울 선상 허용: 대진항48,제주 남방62,강사리 선상탐조191,장생포 고래선상탐조192,울산 앞바다 선상74(모두 원본 pelagic=true). 주문진항53·어달항54·후포항55(원본 pelagic=true)는 겨울 선상 제외하되 실제 항구 token으로 coast 허용, 카드에 '해안·항구 육상탐조' 표시. 독도52(pelagic=true)는 전체 제외 유지. 기존 `weeklyPelagicSafety` 평균풍속<=6.0m/s·파고<=0.7m·3시간 강수0mm 및 결측/비수치 탈락 그대로, 돌풍/시정은 참고정보. 기존 caution도 통과해야 하며 '선상탐조 추천 조건 충족'·선사 확인 안내 유지.
+  - 실데이터 분류(기상 선발 전, 복합 축 중복 집계): field23/water39/coast54/pelagic5, 고유 허용100곳. 제외87곳은 명시3/독도1/섬44/산림16/일반해양0/허용축 미분류23으로 중복 없이 집계. 현재 연근해 단독 token은 없으며 해양 후보는 허용 선상·육상 항구·독도로 처리된다. 9월 실제 예보를 겨울 예보로 바꾸지 않았다. 겨울은 2026-12-10 합성 fixture와 테스트 clock으로 검증. 실제 9월 추천 entry 전체는 `0cfeffc`와 동일했다.
+  - 검증: 주간50·기상22·조석20·Worker33 총125개 테스트 및 weather/weekly validator 통과. runtime/Worker187/187·mismatch/duplicate0, siteData 전체가 기준 commit과 동일·좌표 변경0. inline JS 문법/diff check 통과. 겨울 합성 화면 PC1366x768/모바일390x844에서 카드10·가로/카드 넘침0·항구 육상 표시/선상 안내 정상·notice 연계/재열기/주문진항 실제 지도 popup 정상·console error/warn0. 현재9월 실제 화면도10카드·가로 넘침/콘솔 오류0. 변경 파일은 index.html·test_weekly_recommendation.mjs·HANDOVER.md뿐이며 weather_rules/점수/원본data/생성JSON/updater/Worker/Actions/엑셀은 무변경.
+  - 미해결 데이터 분류: 강·하천·강변·공원·유수지 단독은 사용자가 확정한 water/coast/field token으로 확장하지 않았다. 이름에 습지가 있어도 env가 공원이면 보류한다. 아래23곳은 임의 포함하지 않았으며, 겨울 포함을 원하면 환경 또는 정책을 명시적으로 확정할 것.
+
+|ID|겨울 허용 축 미분류 장소|실제 env|
+|---|---|---|
+|32|팔당|강|
+|33|팔당고니|강|
+|41|굴포천|하천|
+|92|공주 금강|하천|
+|109|파주삼릉|릉|
+|113|현등사|사찰|
+|131|을숙도철새공원|생태공원·강|
+|136|대왕암공원|공원|
+|137|산청|강변|
+|139|용현유수지|공원 유수지|
+|141|연천군 두루미 관람대|강변|
+|142|미호천|강변|
+|143|강서습지생태공원|공원|
+|144|송도|공원|
+|147|맥도생태공원|공원|
+|148|태종대|공원|
+|149|둔치도|강변|
+|151|관곡지|공원|
+|153|강릉남대천|강변|
+|158|중랑천 하류·살곶이체육공원|도심 하천|
+|159|안양천 하류·오목교 일대|도심 하천·갈대|
+|160|탄천 한강합류부|도심 하천 합류부|
+|187|연천 숭의전|유적지|
+
+분류 재현: PowerShell `$env:WINTER_REPORT='1'; node --test --test-name-pattern='겨울 실제 환경' .github/scripts/test_weekly_recommendation.mjs` (fixture 결과는 실제 겨울 예보가 아님).
+
 - 동풍/선상 추천 분리(2026-09-08, 시작 local `31c9c37`, 최신 자동 갱신 main `35641bc` fast-forward 후 작업): 기존 9월 포항·울산·부산 동풍 8.0m/s inclusive mandatory 판정 함수·추정형 문구는 무변경. 선상 카드에서는 육상 동풍 사유를 섞지 않고, `weeklyPelagicSafety`를 추천 전용 평균풍속 <=6.0m/s·파고 <=0.7m·3시간 강수 0mm로 변경했다(필수값 결측/비수치/음수 탈락). 돌풍/시정은 값이 있으면 참고 표시하며 기존 score rule의 gust/visibility gate를 강제하지 않는다. `weeklyPelagicRecommendationSeason()`은 현재 KST 월 4·5·9·10에만 활성화하며 seasons/bestSeason을 읽거나 수정하지 않는다. pelagic=true·독도 제외, 낮·scoreEligible·오늘 과거시간 제외 후 기존 daily/weeklyBest와 tie-break 재사용. 안전 sample이 없으면 공지/동풍/today fallback으로 승격하지 않는다. 선상 추천은 기존 caution filter도 통과해야 한다. 가을 4/3/최대1/2 및 보충/dedupe 유지, 봄도 선상 최대1. 카드에 '선상탐조 추천 조건 충족'과 선사 확인 문구를 사용하며 출항 가능을 단정하지 않는다. 기존 v24FerryStatus 함수와 다른 사용처는 그대로 유지.
   - 점수/가산점/weather_rules·siteData·좌표·자동 JSON·updater·notices·Worker·Actions 무변경. 기존 핵심 들판5곳·들판 tie-break·갯벌 물때 threshold·caution 회귀 통과.
   - 검증: 주간39·기상22·조석20·Worker33 총114개 및 두 validator 통과. runtime/Worker187/187·mismatch/duplicate0·siteData 전체 비교 동일·좌표 변경0·inline JS 문법/diff check 통과. PC1366x768/1920x1080·모바일390x844/360x800에서 추천10·가로/카드 넘침0, 동풍 추정 문구와 선상 3조건 표시 정상, notice 연계/패널 재열기/대진항 지도 popup 정상·console error/warn0.
