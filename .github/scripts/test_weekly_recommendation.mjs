@@ -49,6 +49,7 @@ const NAMES = [
   'todayIsEastWindDirection', 'v24WaveNumber', 'todayWeatherCautionNote',
   'weeklyEastWindFromWeek', 'weeklyHighTideEvents', 'weeklyBestMudflatTide',
   'autumnBirdingAxes', 'autumnRecommendationSeason', 'weeklyPelagicSafety',
+  'weeklySeasonForDate', 'weeklyDatePolicy', 'weeklySeasonalBestWeatherDay', 'weeklySeasonQuotaEntries',
   'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
   'todayIsAutumnRemoteIsland', 'todaySpringIslandReason', 'weeklyIssueReason',
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
@@ -1144,4 +1145,140 @@ test('C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 �
       assert.equal(ids.includes('48'), item.recommended, season.name + ' ' + item.name);
     }
   }
+});
+
+/* H01 회귀: 계절 정책은 화면을 연 날이 아니라 각 후보의 추천 날짜(recommendationDate) 기준으로 적용해야 한다. */
+function h01Sample(time, score, extra = {}) {
+  const base = sample(time, score, Object.assign({ windSpeed: 3, waveM: 0.5, precipitation3h: 0 }, extra));
+  /* C01 구조 유지: 선상 안전판정은 표시값이 아니라 safetyRaw 원자료를 본다. */
+  return Object.assign(base, { safetyRaw: { windSpeed: base.windSpeed, waveM: base.waveM, precipitation3h: base.precipitation3h } });
+}
+function h01Week(rows) {
+  const sites = {}, dates = [];
+  for (const [site, days] of rows) {
+    Object.assign(sites, weekDoc(site.id, days, site.name).sites);
+    dates.push(...Object.keys(days));
+  }
+  dates.sort();
+  return { startDate: dates[0], endDate: dates[dates.length - 1], sites };
+}
+function h01Api(today, month, rows) {
+  return loadApi({ siteData: RUNTIME, weatherWeek: h01Week(rows), month, now: today + 'T09:00:00+09:00' });
+}
+function h01Site(id) { return RUNTIME.find((site) => String(site.id) === String(id)); }
+function h01Entry(api, site) { return api.weeklyRecommendationForSite(site, api.weeklyInfo()); }
+
+test('H01 다음 계절 날짜의 sample에 현재 계절 정책을 적용하지 않는다', () => {
+  const cases = [
+    { name: 'CASE A 2/28→3/1 제주 남방 선상', today: '2026-02-28', month: 2, id: '62', date: '2026-03-01' },
+    { name: 'CASE A 윤년 2/29→3/1 제주 남방 선상', today: '2028-02-29', month: 2, id: '62', date: '2028-03-01' },
+    { name: 'CASE B 5/31→6/1 제주 남방 선상', today: '2026-05-31', month: 5, id: '62', date: '2026-06-01' },
+    { name: 'CASE C 5/31→6/1 어청도 도서', today: '2026-05-31', month: 5, id: '1', date: '2026-06-01' },
+    { name: 'CASE D 5/31→6/1 한탄강두루미탐조대 농경지', today: '2026-05-31', month: 5, id: '39', date: '2026-06-01' },
+    { name: 'CASE F 10/31→11/1 증도 지도갯벌 겨울 명시 제외', today: '2026-10-31', month: 10, id: '68', date: '2026-11-01' },
+  ];
+  for (const item of cases) {
+    const site = h01Site(item.id);
+    const api = h01Api(item.today, item.month, [[site, { [item.date]: [h01Sample(item.date + ' 09:00 KST', 95)] }]]);
+    assert.equal(h01Entry(api, site), null, item.name);
+    assert.equal(api.todayRecommendedSites().some((entry) => String(entry.site.id) === item.id), false, item.name + ' 최종 추천');
+  }
+});
+
+test('H01 CASE E 11/1 주문진항은 가을 선상이 아니라 겨울 해안·항구 육상 후보다', () => {
+  const site = h01Site('53'), date = '2026-11-01';
+  const api = h01Api('2026-10-31', 10, [[site, { [date]: [h01Sample(date + ' 09:00 KST', 88)] }]]);
+  const entry = h01Entry(api, site);
+  assert.ok(entry, '겨울 육상 coast 후보로 남아야 한다');
+  assert.equal(entry.recommendationDate, date);
+  assert.equal(entry.axes.pelagic, false, '11/1 sample을 선상으로 취급하면 안 된다');
+  assert.equal(entry.axes.coast, true);
+  assert.deepEqual(entry.reasons, [], '가을 선상 사유가 남으면 안 된다');
+  assert.ok(api.todayRecommendedSites().some((item) => String(item.site.id) === '53'));
+});
+
+test('H01 CASE G 8/31에 열어도 9/1 가을 들판 후보는 여름 제외로 사라지지 않는다', () => {
+  const site = h01Site('15'), date = '2026-09-01';
+  const api = h01Api('2026-08-31', 8, [[site, { [date]: [h01Sample(date + ' 09:00 KST', 91)] }]]);
+  const entry = h01Entry(api, site);
+  assert.ok(entry, '9/1 가을 후보가 8월 농경지 제외로 사라지면 안 된다');
+  assert.equal(entry.recommendationDate, date);
+  assert.equal(entry.axes.field, true);
+  assert.ok(api.todayRecommendedSites().some((item) => String(item.site.id) === '15'));
+});
+
+test('H01 계절 적격 sample 중에서만 주간 대표 날짜와 사유를 고른다', () => {
+  const island = h01Site('1'), field = h01Site('15');
+  /* A. 현재 계절 유효 90 + 다음 계절 부적격 100 → 90점 5/31 선택 */
+  let api = h01Api('2026-05-31', 5, [[island, {
+    '2026-05-31': [h01Sample('2026-05-31 12:00 KST', 90)],
+    '2026-06-01': [h01Sample('2026-06-01 09:00 KST', 100)],
+  }]]);
+  let entry = h01Entry(api, island);
+  assert.ok(entry);
+  assert.equal(entry.recommendationDate, '2026-05-31');
+  assert.equal(entry.score, 90);
+  assert.ok(entry.reasons.indexOf('봄 도서 이동기') >= 0, '봄 사유는 봄 날짜에만 붙는다');
+  /* B. 현재 계절 부적격 100 + 다음 계절 유효 90 → 90점 9/1 선택 */
+  api = h01Api('2026-08-31', 8, [[field, {
+    '2026-08-31': [h01Sample('2026-08-31 12:00 KST', 100)],
+    '2026-09-01': [h01Sample('2026-09-01 09:00 KST', 90)],
+  }]]);
+  entry = h01Entry(api, field);
+  assert.ok(entry);
+  assert.equal(entry.recommendationDate, '2026-09-01');
+  assert.equal(entry.score, 90);
+  /* C. 두 날짜 모두 유효 → 기존 점수·날짜 tie 정책 그대로 */
+  api = h01Api('2026-05-29', 5, [[island, {
+    '2026-05-30': [h01Sample('2026-05-30 09:00 KST', 90)],
+    '2026-05-31': [h01Sample('2026-05-31 09:00 KST', 100)],
+  }]]);
+  assert.equal(h01Entry(api, island).recommendationDate, '2026-05-31');
+  /* D. 두 날짜 모두 부적격 → 제외 */
+  api = h01Api('2026-05-31', 5, [[island, {
+    '2026-06-01': [h01Sample('2026-06-01 09:00 KST', 100)],
+    '2026-06-02': [h01Sample('2026-06-02 09:00 KST', 99)],
+  }]]);
+  assert.equal(h01Entry(api, island), null);
+});
+
+test('H01 계절 경계 8곳에서 그 날짜의 계절 정책이 적용된다', () => {
+  const rows = [
+    ['2/28→3/1 3월 선상 없음', '2026-02-28', 2, '62', '2026-03-01', false, false],
+    ['윤년 2/29→3/1 3월 선상 없음', '2028-02-29', 2, '62', '2028-03-01', false, false],
+    ['5/31→6/1 6월은 대진항만 선상', '2026-05-31', 5, '48', '2026-06-01', true, true],
+    ['5/31→6/1 제주 남방 여름 제외', '2026-05-31', 5, '62', '2026-06-01', false, false],
+    ['6/30→7/1 7월 선상 없음', '2026-06-30', 6, '48', '2026-07-01', false, false],
+    ['7/31→8/1 여름 섬 제외 유지', '2026-07-31', 7, '1', '2026-08-01', false, false],
+    ['7/31→8/1 여름 농경지 제외 유지', '2026-07-31', 7, '39', '2026-08-01', false, false],
+    ['8/31→9/1 가을 들판 허용', '2026-08-31', 8, '15', '2026-09-01', true, false],
+    ['10/31→11/1 겨울은 선상 아님', '2026-10-31', 10, '53', '2026-11-01', true, false],
+    ['12/31→1/1 겨울 선상 유지', '2026-12-31', 12, '48', '2027-01-01', true, true],
+  ];
+  for (const [name, today, month, id, date, allowed, pelagic] of rows) {
+    const site = h01Site(id);
+    const api = h01Api(today, month, [[site, { [date]: [h01Sample(date + ' 09:00 KST', 93)] }]]);
+    const entry = h01Entry(api, site);
+    assert.equal(!!entry, allowed, name);
+    if (entry) {
+      assert.equal(entry.recommendationDate, date, name + ' 추천일');
+      assert.equal(!!entry.axes.pelagic, pelagic, name + ' 선상 여부');
+    }
+  }
+});
+
+test('H01 계절 판정은 12개월을 중첩·공백 없이 한 번씩 덮는다', () => {
+  const api = loadApi({ month: 9 });
+  const seasons = {};
+  for (let month = 1; month <= 12; month++) {
+    const flags = {
+      spring: api.weeklySpringRecommendationSeason(month), summer: api.weeklySummerRecommendationSeason(month),
+      autumn: api.autumnRecommendationSeason(month), winter: api.weeklyWinterRecommendationSeason(month),
+    };
+    const active = Object.keys(flags).filter((key) => flags[key]);
+    assert.equal(active.length, 1, month + '월 계절 판정');
+    seasons[month] = active[0];
+  }
+  assert.deepEqual(seasons, { 1: 'winter', 2: 'winter', 3: 'spring', 4: 'spring', 5: 'spring', 6: 'summer',
+    7: 'summer', 8: 'summer', 9: 'autumn', 10: 'autumn', 11: 'winter', 12: 'winter' });
 });
