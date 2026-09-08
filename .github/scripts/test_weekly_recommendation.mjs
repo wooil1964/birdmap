@@ -54,6 +54,8 @@ const NAMES = [
   'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'todayString', 'v23Value',
   'weeklyRecommendationIsSafe', 'weeklyPelagicRecommendationSeason',
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
+  'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
+  'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -67,7 +69,7 @@ function loadApi(state = {}) {
     'var loadedNotices=ctx.notices||[],PINNED_BIRDING_ISSUES=[];' +
     'var recommendationWeatherRules=ctx.rules;' +
     HTML.match(/var AUTUMN_CORE_FIELD_SITE_IDS=.*?;/)[0] +
-    [...HTML.matchAll(/var WINTER_[A-Z_]+=new Set\(.*?;/g)].map(m=>m[0]).join('\n') +
+    [...HTML.matchAll(/var (?:WINTER|SPRING)_[A-Z_]+=new Set\(.*?;/g)].map(m=>m[0]).join('\n') +
     HTML.match(/var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES=.*?;/)[0] +
     'function monthTideForSite(id){return tideMonth&&tideMonth.sites?tideMonth.sites[String(id)]||null:null;}' +
     'function todayKstMonth(){return ctx.month||9;}' +
@@ -546,7 +548,10 @@ test('실데이터 caution 전후 비교와 동풍·공지 보존',()=>{
  const entries=RUNTIME.map((s,i)=>{const e=api.weeklyRecommendationForSite(s,api.weeklyInfo());return e&&{...e,stableOrder:i};}).filter(Boolean);
  const before=api.autumnBalancedRecommendations(entries),after=api.todayRecommendedSites();
  const site=entries.find(e=>String(e.site.id)==='50');
- assert.ok(site.isMandatory);assert.match(site.reasons.join(' '),/동풍/);
+ assert.ok(site.isMandatory);
+ // 자동 갱신 예보에서 동풍은 사라질 수 있다. 조건이 있을 때만 사유가 보존되어야 한다.
+ const wind=api.weeklyEastWindFromWeek(site.site,api.weeklyInfo());
+ assert.equal(site.reasons.includes('🌬️ 9월 동풍 이동기 주목'),!!wind);
  assert.ok(api.weeklyIssueReason(site.site));
  assert.equal(after.length,10);assert.equal(new Set(after.map(e=>e.site.id)).size,10);
  assert.ok(after.every(e=>api.weeklyRecommendationIsSafe(e)!==false));
@@ -645,7 +650,7 @@ test('실제 동풍·선상 후보별 gate와 최종 선발 보고',()=>{
 
 test('봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충',()=>{
  const date=futureDate(1),ships=[{...PELAGIC,id:701},{...PELAGIC,id:702}];
- const land=Array.from({length:11},(_,i)=>({...SITE,id:710+i,name:'일반 '+i,env:'산림'}));
+ const land=Array.from({length:11},(_,i)=>({...SITE,id:710+i,name:'일반 '+i,env:'산림',seasons:['봄'],birdingFeature:'이동성 조류'}));
  const sites=[...ships,...land],doc={sites:{}};
  for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(date+' 09:00 KST',s.pelagic?95:92,{waveM:0.6})]}).sites);
  const api=loadApi({month:4,siteData:sites,weatherWeek:doc});
@@ -810,4 +815,135 @@ test('겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전�
  assert.equal(new Set(top.map(e=>e.site.id)).size,10);
  const rollover=loadApi({month:12,now:'2026-12-31T10:00:00+09:00'}).weeklyInfo();
  assert.equal(rollover.start,'2026-12-31');assert.equal(rollover.end,'2027-01-06');
+});
+
+// 합성 봄 예보와 고정 KST clock. 실제 현재 weather_week 날짜를 바꾸지 않는다.
+function springFixture(date='2027-05-05',extra={}){
+ const sites=extra.siteData||RUNTIME,doc={sites:{}};
+ for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[
+  sample(date+' 03:00 KST',100,{waveM:0.5}),sample(date+' 09:00 KST',92,{waveM:0.5}),sample(date+' 12:00 KST',92,{waveM:0.5})
+ ]}).sites);
+ return {month:Number(date.slice(5,7)),now:date+'T08:00:00+09:00',siteData:sites,weatherWeek:doc,...extra};
+}
+
+test('봄 추천 3/1~5/31 경계, 3월 선상 미확대',()=>{
+ for(const [date,expected] of [['2027-02-28',false],['2028-02-29',false],['2027-03-01',true],['2027-03-20',true],['2027-04-01',true],['2027-05-01',true],['2027-05-31',true],['2027-06-01',false]]){
+  const api=loadApi(springFixture(date));assert.equal(api.weeklySpringRecommendationSeason(),expected,date);
+  assert.equal(api.weeklySpringRecommendationSeason(Number(date.slice(5,7))),expected);
+  if(expected)assert.equal(api.todayRecommendedSites().filter(e=>e.axes.pelagic).length,date.slice(5,7)==='03'?0:1);
+ }
+});
+
+test('봄 핵심 도서 6개 정확 이름의 19개 ID, 환경과 점수 무변경',()=>{
+ const api=loadApi(),groups={'어청도':[1,101,102,103],'외연도':[2,104,105,106],'백령도':[4,117,118,119],'흑산도':[63,127,128,129,130],'홍도':[64],'가거도':[65]};
+ for(const [name,ids] of Object.entries(groups)){
+  assert.deepEqual(RUNTIME.filter(s=>s.name===name).map(s=>Number(s.id)),ids);
+  for(const id of ids){const site=RUNTIME.find(s=>Number(s.id)===id);assert.equal(site.island,true);assert.equal(site.pelagic,false);assert.ok(api.springBirdingAxes(site).island);}
+ }
+ assert.equal(api.springBirdingAxes({id:900,name:'어청도 인근',env:'공원',seasons:['겨울']}).island,false);
+ assert.equal(api.springBirdingAxes({id:900,env:'알수없음',weatherRuleKey:'island_migrant',seasons:['봄']}).island,false,'weatherRuleKey로 환경 추정 금지');
+});
+
+test('봄 24시간 선행 강수 + W/NW 정확 경계 및 미래/결측 제외',()=>{
+ const site=RUNTIME.find(s=>s.id==='1'),T='2027-05-05 09:00 KST';
+ const target=sample(T,92,{windName:'W',waveM:0.5});
+ const check=(previous,extra={})=>{
+  const api=loadApi({weatherWeek:weekDoc(site.id,{'2027-05-04':previous,'2027-05-05':[target]})});
+  return api.springIslandRainWindCondition(site,{...target,...extra});
+ };
+ const wet=time=>sample(time,50,{precipitation3h:0.1,isPastAtGeneration:true,scoreEligible:false});
+ assert.equal(check([wet('2027-05-04 09:00 KST')]),true,'정확히 24h 포함');
+ assert.equal(check([wet('2027-05-04 08:59 KST')]),false,'24h 초과 제외');
+ assert.equal(check([wet('2027-05-04 08:00 KST')],{windName:'NW'}),false,'25h 제외');
+ assert.equal(check([wet('2027-05-05 03:00 KST')],{windName:'북서풍'}),true,'야간/과거 강수 근거 허용');
+ for(const windName of ['W','NW','서풍','북서풍'])assert.equal(check([wet('2027-05-04 12:00 KST')],{windName}),true);
+ for(const windName of ['E','SW','SSW','N','NE','남서풍','북풍','WNW'])assert.equal(check([wet('2027-05-04 12:00 KST')],{windName}),false);
+ assert.equal(check([]),false);assert.equal(check([wet(T)]),false,'T 자신은 과거 강수가 아님');
+ assert.equal(check([wet('2027-05-05 12:00 KST')]),false,'미래 강수 제외');
+ for(const rain of [0,null,undefined,NaN,Infinity,'0.1',-1])assert.equal(check([{...wet('2027-05-04 12:00 KST'),precipitation3h:rain}]),false);
+ assert.equal(check([wet('2027-05-04 12:00 KST')],{windName:null,windDirectionDeg:null}),false);
+ for(const windSpeed of [0,30,null])assert.equal(check([wet('2027-05-04 12:00 KST')],{windSpeed}),true,'새 풍속 제한 없음');
+});
+
+test('봄 degree 풍향은 기존 Worker 8방위 변환과 일치',async()=>{
+ const {windDirectionName}=await import('../../weather-proxy/src/index.js');
+ const api=loadApi();
+ for(const degree of [0,45,90,180,225,247.49,247.5,270,292.49,292.5,315,337.49,337.5,360])
+  assert.equal(api.springWestNorthwestWind({windDirectionDeg:degree}),['서풍','북서풍'].includes(windDirectionName(degree)),String(degree));
+ for(const degree of [null,undefined,NaN,Infinity,'270',-1,361])assert.equal(api.springWestNorthwestWind({windDirectionDeg:degree}),false);
+ assert.equal(api.weeklySampleTimestamp({forecastTime:'2027-02-30 09:00 KST'}),null);
+});
+
+test('봄 유입 사유는 표시 sample에서만 판정, caution을 우회하지 않음',()=>{
+ const site=RUNTIME.find(s=>s.id==='1'),state=springFixture('2027-05-05',{siteData:[site]});
+ const samples=state.weatherWeek.sites['1'].days['2027-05-05'].samples;
+ samples[0].precipitation3h=1;samples[1].windName='NW';samples[2].windName='E';
+ const api=loadApi(state);let e=api.todayRecommendedSites()[0];
+ assert.match(e.reasons.join(' '),/봄 도서 이동기/);assert.match(e.reasons.join(' '),/가능성에 주목/);assert.equal(e.score,92);
+ samples[2].score=95;e=api.todayRecommendedSites()[0];assert.equal(e.recommendationTime,'12:00');assert.ok(!e.reasons.join(' ').includes('비 뒤'));
+ samples[1].score=100;samples[1].waveM=2;
+ assert.equal(api.todayRecommendedSites().length,0,'강수+NW라도 표시 기상 caution이면 제외');
+});
+
+test('걸매리 5/1~10 우선은 추천일 기준이며 점수·가을 조석을 바꾸지 않는다',()=>{
+ const site=RUNTIME.find(s=>s.id==='14');
+ for(const [date,expected] of [['2027-04-30',false],['2027-05-01',true],['2027-05-05',true],['2027-05-10',true],['2027-05-11',false]]){
+  const state=springFixture(date,{siteData:[site],tideMonth:{sites:{14:{days:[{date,highTide:'12:00',highTideLevel:'999'}]}}}}),api=loadApi(state);
+  const e=api.weeklyRecommendationForSite(site,api.weeklyInfo());
+  assert.equal(api.springGeolmaeriPriority(site,date),expected);assert.equal(e.springGeolmaeriPriority,expected);assert.equal(e.score,92);
+  assert.equal(e.isMandatory,false);assert.equal(e.tideText,null);assert.equal(api.weeklyBestMudflatTide(site,api.weeklyInfo()),null);
+  assert.equal(e.reasons.some(r=>r.includes('긴부리흑꼬리도요')),expected);
+ }
+ const state=springFixture('2027-05-10',{siteData:[site]}),api=loadApi(state);
+ state.weatherWeek.sites['14'].days['2027-05-11']={samples:[sample('2027-05-11 09:00 KST',95,{waveM:0.5})]};
+ const e=api.weeklyRecommendationForSite(site,api.weeklyInfo());assert.equal(e.recommendationDate,'2027-05-11');assert.equal(e.springGeolmaeriPriority,false);
+});
+
+test('걸매리 특별 우선은 일반 갯벌보다 앞서지만 caution/부적격/결측 승격 금지',()=>{
+ const mud=RUNTIME.filter(s=>['14','9','11','22','107'].includes(s.id)),state=springFixture('2027-05-05',{siteData:mud,notices:[{siteIds:[14],published:true}]}),api=loadApi(state);
+ const samples=state.weatherWeek.sites['14'].days['2027-05-05'].samples;
+ for(const s of samples)s.score=60;
+ let top=api.todayRecommendedSites();const firstMudflat=top.find(e=>e.selectedAxis==='mudflat');assert.equal(firstMudflat.site.id,'14');assert.equal(firstMudflat.score,60);
+ for(const s of samples)s.waveM=2;assert.ok(!api.todayRecommendedSites().some(e=>e.site.id==='14'));
+ for(const s of samples){s.waveM=0.5;s.scoreEligible=false;}assert.equal(api.weeklyRecommendationForSite(mud.find(s=>s.id==='14'),api.weeklyInfo()),null);
+ state.weatherWeek.sites['14'].days={};assert.ok(!api.todayRecommendedSites().some(e=>e.site.id==='14'),'공지로 결측 승격 금지');
+});
+
+test('유부도는 봄에만 추천 제외, 가을·겨울 후보 및 원본 유지',()=>{
+ const site=RUNTIME.find(s=>s.id==='19'),saved=JSON.stringify(site);
+ for(const month of [3,4,5,9,10,11,12,1,2]){
+  const date=`2027-${String(month).padStart(2,'0')}-05`,state=springFixture(date,{siteData:[site]}),api=loadApi(state);
+  assert.equal(!!api.weeklyRecommendationForSite(site,api.weeklyInfo()),![3,4,5].includes(month));
+ }
+ assert.equal(JSON.stringify(site),saved);
+});
+
+test('봄 통합 4/3/최대1/2와 core 동점 우선, 부족 보충/dedupe/점수 보존',()=>{
+ const state=springFixture(),saved=JSON.stringify(state),api=loadApi(state),top=api.todayRecommendedSites();
+ for(const [axis,count] of Object.entries({island:4,mudflat:3,pelagic:1,other:2}))assert.equal(top.filter(e=>e.selectedAxis===axis).length,count);
+ assert.equal(top.length,10);assert.equal(new Set(top.map(e=>e.site.id)).size,10);assert.equal(JSON.stringify(state),saved);
+ for(const e of top){assert.equal(e.score,92);assert.equal(e.recommendationTime,'09:00');}
+ const core={...candidate(1,'other',92),axes:{island:true}},general={...candidate(3,'other',92),axes:{island:true},stableOrder:0};
+ assert.equal(api.springBalancedRecommendations([general,core])[0].site.id,1);
+ general.score=95;assert.equal(api.springBalancedRecommendations([general,core])[0].site.id,3);
+ const others=Array.from({length:12},(_,i)=>({...candidate(700+i,'other',92),axes:{other:true}}));
+ assert.equal(api.springBalancedRecommendations(others).length,10);assert.equal(api.springBalancedRecommendations(others.slice(0,2)).length,2);
+ const mixed={...others[0],axes:{other:true,island:true,mudflat:true}};
+ assert.equal(new Set(api.springBalancedRecommendations([mixed,...others]).map(e=>e.site.id)).size,10);
+});
+
+test('봄 일반 today fallback의 null 안전 의미 유지',()=>{
+ const site=RUNTIME.find(s=>s.id==='39'),date='2027-04-05';
+ const state=springFixture(date,{siteData:[site],weatherWeek:null,weatherToday:{sites:{39:{date,score:65,wind:'서풍 3m/s'}}}}),api=loadApi(state);
+ let top=api.todayRecommendedSites();assert.equal(top.length,1);assert.equal(api.weeklyRecommendationIsSafe(top[0]),null);
+ state.weatherToday.sites[39].scoreEligible=false;assert.equal(api.todayRecommendedSites().length,0);
+});
+
+test('봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가 아님)',()=>{
+ const api=loadApi(),coreNames=['어청도','외연도','백령도','흑산도','홍도','가거도'];
+ const rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,runtimeIsland:s.island,runtimePelagic:s.pelagic,seasons:s.seasons,birdingFeature:s.birdingFeature,...api.springBirdingAxes(s)}));
+ const counts=Object.fromEntries(['island','mudflat','pelagic','other'].map(axis=>[axis,rows.filter(e=>e[axis]).length]));
+ counts.unique=rows.filter(e=>!e.excludedReason).length;assert.equal(counts.pelagic,8);assert.equal(rows.length,187);
+ if(process.env.SPRING_REPORT==='1')console.log(JSON.stringify({counts,core:rows.filter(e=>coreNames.includes(e.name)),excluded:rows.filter(e=>e.excludedReason),
+  fixtureTop:loadApi(springFixture()).todayRecommendedSites().map(e=>({id:e.site.id,name:e.site.name,axis:e.selectedAxis,score:e.score,time:e.recommendationTime}))},null,2));
 });
