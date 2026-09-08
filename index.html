@@ -1871,9 +1871,12 @@ function autumnRecommendationSeason(){return todayKstMonth()===9||todayKstMonth(
 function weeklyPelagicRecommendationSeason(){return [4,5,9,10].indexOf(todayKstMonth())>=0;}
 function weeklyPelagicSafety(sample){
   // 추천 전용 기준. 기존 weather_rules와 점수 계산은 그대로 둔다.
+  // 표시용 값은 생성 단계에서 소수점 한 자리로 반올림되므로, 판정은 sample.safetyRaw의 원자료를 우선 사용한다.
+  // 기준값(풍속 6.0·파고 0.7·3시간 강수 0)은 변경하지 않는다.
   if(!sample||sample.scoreEligible!==true||typeof sample.score!=='number'||!Number.isFinite(sample.score))return false;
+  var raw=(sample.safetyRaw&&typeof sample.safetyRaw==='object')?sample.safetyRaw:null;
   return [['windSpeed',6],['waveM',0.7],['precipitation3h',0]].every(function(check){
-    var value=sample[check[0]];
+    var value=raw?raw[check[0]]:sample[check[0]];
     return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=check[1];
   });
 }

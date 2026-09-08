@@ -1,5 +1,6 @@
 """Validate the rolling seven-day, three-hour weather dataset."""
 import json
+import math
 from datetime import date, datetime
 from pathlib import Path
 from site_data import load_runtime_sites
@@ -85,6 +86,15 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
                     assert sample["missingScoreFields"], f"{label} is ineligible without a reason"
                 if wave_required and sample["waveM"] is None:
                     assert "wave" in sample["missingScoreFields"], f"{label} ignores its missing wave"
+                raw = sample.get("safetyRaw")
+                if raw is not None:
+                    # 선상 안전 판정용 원자료는 표시용 반올림 값과 같은 측정을 가리켜야 한다.
+                    for field in ("windSpeed", "waveM", "precipitation3h"):
+                        value = raw[field]
+                        assert value is None or (isinstance(value, (int, float)) and math.isfinite(value)), \
+                            f"{label} safetyRaw {field} is not a finite number"
+                        rounded = None if value is None else round(value, 1)
+                        assert sample[field] == rounded, f"{label} safetyRaw {field} disagrees with the stored value"
         if site.get("dataUnavailable"):
             assert not site["days"], f"{site_id} keeps samples while marked unavailable"
 

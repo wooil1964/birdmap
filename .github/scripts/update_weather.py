@@ -693,25 +693,28 @@ def build_week_days(
             sample["cloudPct"],
             wave_m,
         )
-        days.setdefault(moment.date().isoformat(), []).append(
-            {
-                "forecastTime": moment.strftime("%Y-%m-%d %H:%M KST"),
-                "windSpeed": round(sample["windSpeed"], 1),
-                "windDirectionDeg": round(sample["windDirection"]) % 360,
-                "windName": wind_name(sample["windDirection"]),
-                "gust": None if sample["gust"] is None else round(sample["gust"], 1),
-                "precipitation3h": None if precipitation is None else round(precipitation, 1),
-                "temperature": None if sample["temperature"] is None else round(sample["temperature"], 1),
-                "visibilityKm": None if sample["visibilityKm"] is None else round(sample["visibilityKm"], 1),
-                "cloudPct": None if sample["cloudPct"] is None else round(sample["cloudPct"]),
-                "waveM": None if wave_m is None else round(wave_m, 1),
-                "score": None if missing else score,
-                "grade": "" if missing else grade_for(score),
-                "scoreEligible": not missing,
-                "missingScoreFields": missing,
-                "isPastAtGeneration": moment < target,
-            }
-        )
+        entry = {
+            "forecastTime": moment.strftime("%Y-%m-%d %H:%M KST"),
+            "windSpeed": round(sample["windSpeed"], 1),
+            "windDirectionDeg": round(sample["windDirection"]) % 360,
+            "windName": wind_name(sample["windDirection"]),
+            "gust": None if sample["gust"] is None else round(sample["gust"], 1),
+            "precipitation3h": None if precipitation is None else round(precipitation, 1),
+            "temperature": None if sample["temperature"] is None else round(sample["temperature"], 1),
+            "visibilityKm": None if sample["visibilityKm"] is None else round(sample["visibilityKm"], 1),
+            "cloudPct": None if sample["cloudPct"] is None else round(sample["cloudPct"]),
+            "waveM": None if wave_m is None else round(wave_m, 1),
+            "score": None if missing else score,
+            "grade": "" if missing else grade_for(score),
+            "scoreEligible": not missing,
+            "missingScoreFields": missing,
+            "isPastAtGeneration": moment < target,
+        }
+        if site.get("pelagic") is True:
+            # 선상 안전 판정 전용 원자료. 위 표시·점수용 값은 기존 반올림을 그대로 둔다.
+            entry["safetyRaw"] = {"windSpeed": sample["windSpeed"], "waveM": wave_m,
+                                  "precipitation3h": precipitation}
+        days.setdefault(moment.date().isoformat(), []).append(entry)
     return {date: {"samples": samples} for date, samples in sorted(days.items())}
 
 

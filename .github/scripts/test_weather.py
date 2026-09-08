@@ -267,6 +267,51 @@ class WeatherWeekTests(unittest.TestCase):
         # 00:00 has no earlier hours to accumulate; every later anchor sums exactly three.
         self.assertEqual(series["past3hprecip-surface"], [None, 3.0, 3.0, 3.0, 3.0])
 
+    def test_pelagic_samples_keep_raw_values_while_display_stays_rounded(self):
+        """선상 안전 판정은 원자료를 봐야 하므로, 표시용 반올림과 별도로 safetyRaw를 남긴다."""
+        count = len(self.stamps)
+        atmosphere = dict(self.atmosphere, **{
+            "wind_u-surface": [0.0] * count, "wind_v-surface": [-6.01] * count,
+            "past3hprecip-surface": [0.01] * count,
+        })
+        wave = {"ts": list(self.atmosphere["ts"]), "waves_height-surface": [0.71] * count}
+        pelagic = self.samples(weather.build_week_days(dict(self.site, pelagic=True), self.rules,
+                                                       atmosphere, wave, self.now))
+        self.assertTrue(pelagic)
+        for sample in pelagic:
+            self.assertEqual((sample["windSpeed"], sample["waveM"], sample["precipitation3h"]), (6.0, 0.7, 0.0))
+            self.assertEqual(sample["safetyRaw"],
+                             {"windSpeed": 6.01, "waveM": 0.71, "precipitation3h": 0.01})
+        stored = json.loads(weather.week_json_text({"sites": {"1": {"days": {"2026-09-07": {"samples": pelagic}}}}}))
+        self.assertEqual(stored["sites"]["1"]["days"]["2026-09-07"]["samples"][0]["safetyRaw"],
+                         {"windSpeed": 6.01, "waveM": 0.71, "precipitation3h": 0.01})
+        inland = self.samples(weather.build_week_days(self.site, self.rules, atmosphere, wave, self.now))
+        self.assertTrue(inland and all("safetyRaw" not in sample for sample in inland))
+
+    def test_validator_rejects_safety_raw_that_disagrees_with_the_stored_value(self):
+        import validate_weather_week as validator
+
+        document = {
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
+            "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
+            "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant", "days": {"2026-09-07": {"samples": [
+                {"forecastTime": "2026-09-07 06:00 KST", "windSpeed": 6.0, "windDirectionDeg": 0,
+                 "precipitation3h": 0.0, "waveM": 0.7, "score": 92, "grade": "★★★★★",
+                 "scoreEligible": True, "missingScoreFields": [],
+                 "safetyRaw": {"windSpeed": 6.4, "waveM": 0.7, "precipitation3h": 0.0}}]}}}},
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "weather_week.json"
+            path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+            with patch.object(validator, "load_runtime_sites", return_value=[dict(self.site)]):
+                with self.assertRaisesRegex(AssertionError, "safetyRaw windSpeed"):
+                    validator.validate(path)
+                document["sites"]["1"]["days"]["2026-09-07"]["samples"][0]["safetyRaw"]["windSpeed"] = 6.04
+                path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(validator.validate(path)["sampleCount"], 1)
+
     def test_validator_rejects_a_sample_stored_under_the_wrong_day(self):
         import validate_weather_week as validator
 

@@ -4,6 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import vm from 'node:vm';
@@ -1044,4 +1045,103 @@ test('여름 실제 환경 전수 보고',()=>{
  const rawIsland=RUNTIME.filter(s=>s.island===true||s.env.split(/[·,;\/|\s]+/).some(t=>['도서','섬','해양도서'].includes(t)));
  assert.equal(rows.length,187);assert.equal(counts.pelagic,1);assert.equal(counts.tomb,1);
  if(process.env.SUMMER_REPORT)console.log(JSON.stringify({counts,excludes,uniqueJune:rows.filter(r=>!r.axes.excludedReason).length,uniqueJuly:RUNTIME.filter(s=>!api.summerBirdingAxes(s,7).excludedReason).length,rawField:rawField.length,rawIsland:rawIsland.length,islandTrue:RUNTIME.filter(s=>s.island===true).length,fieldIslandOverlap:rawField.filter(s=>rawIsland.includes(s)).length,compoundFields:rawField.filter(s=>s.env.split(/[·,;\/|\s]+/).length>1).map(s=>({id:s.id,name:s.name,env:s.env})),unclassified:rows.filter(r=>r.axes.excludedReason==='unclassified'),other:rows.filter(r=>r.axes.other)},null,2));
+});
+
+/* C01 회귀: 생성 단계 반올림이 선상 안전조건을 우회하지 못하는지
+   원자료 → update_weather 생성 함수 → weather_week JSON 직렬화/역직렬화 → 추천 경로로 확인한다. */
+const PELAGIC_FIXTURE = join(ROOT, '.github', 'scripts', 'pelagic_safety_fixture.py');
+const DAEJIN = RUNTIME.find((site) => String(site.id) === '48');
+
+function generatedWeeks(cases, now) {
+  const input = JSON.stringify({ siteId: '48', now, cases });
+  let output = null;
+  for (const python of ['python3', 'python']) {
+    try { output = execFileSync(python, [PELAGIC_FIXTURE], { input, encoding: 'utf8', cwd: ROOT }); break; }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
+  }
+  assert.ok(output, 'python 실행 파일을 찾지 못했습니다');
+  /* 생성기가 실제로 저장하는 텍스트를 그대로 되읽어 JSON 왕복까지 실제 경로로 확인한다. */
+  return Object.fromEntries(Object.entries(JSON.parse(output)).map(([name, text]) => [name, JSON.parse(text)]));
+}
+
+function generatedSamples(week) {
+  return Object.entries(week.sites['48'].days)
+    .flatMap(([date, day]) => day.samples.map((sample) => ({ date, sample })));
+}
+
+function clockText(now) { return now.replace(' ', 'T') + ':00+09:00'; }
+
+const C01_CASES = [
+  { name: 'wind', windSpeed: 6.01, waveM: 0.7, precipitation3h: 0, recommended: false },
+  { name: 'wave', windSpeed: 6, waveM: 0.71, precipitation3h: 0, recommended: false },
+  { name: 'rain', windSpeed: 6, waveM: 0.7, precipitation3h: 0.01, recommended: false },
+  { name: 'combined', windSpeed: 6.04, waveM: 0.74, precipitation3h: 0.04, recommended: false },
+  { name: 'limit', windSpeed: 6, waveM: 0.7, precipitation3h: 0, recommended: true },
+];
+
+test('C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다', () => {
+  const now = '2026-09-08 09:00';
+  const weeks = generatedWeeks(C01_CASES, now);
+  for (const item of C01_CASES) {
+    const week = weeks[item.name];
+    const api = loadApi({ siteData: RUNTIME, weatherWeek: week, month: 9, now: clockText(now) });
+    const first = generatedSamples(week)[0];
+    /* 표시용 저장값은 기존처럼 소수점 한 자리다. 안전판정만 원자료를 본다. */
+    assert.deepEqual([first.sample.windSpeed, first.sample.waveM, first.sample.precipitation3h], [6, 0.7, 0], item.name);
+    const shown = api.weeklySampleAsWeather(DAEJIN, first.sample, first.date);
+    assert.deepEqual([shown.wind, shown.wave, shown.rain], ['북풍 6.0m/s', '0.7m', '강수 없음'], item.name);
+    assert.equal(api.weeklyPelagicSafety(first.sample), item.recommended, item.name + ' gate');
+    const top = api.todayRecommendedSites();
+    assert.equal(top.some((entry) => String(entry.site.id) === '48'), item.recommended, item.name + ' 최종 추천');
+  }
+});
+
+test('C01 생성 JSON은 선상 안전판정에 필요한 원자료 precision을 잃지 않는다', () => {
+  const cases = [
+    { name: 'wind-5.999', windSpeed: 5.999, waveM: 0.7, precipitation3h: 0, safe: true },
+    { name: 'wind-6', windSpeed: 6, waveM: 0.7, precipitation3h: 0, safe: true },
+    { name: 'wind-6.000001', windSpeed: 6.000001, waveM: 0.7, precipitation3h: 0, safe: false },
+    { name: 'wave-0.699', windSpeed: 6, waveM: 0.699, precipitation3h: 0, safe: true },
+    { name: 'wave-0.7', windSpeed: 6, waveM: 0.7, precipitation3h: 0, safe: true },
+    { name: 'wave-0.700001', windSpeed: 6, waveM: 0.700001, precipitation3h: 0, safe: false },
+    { name: 'rain-0', windSpeed: 6, waveM: 0.7, precipitation3h: 0, safe: true },
+    { name: 'rain-0.000001', windSpeed: 6, waveM: 0.7, precipitation3h: 0.000001, safe: false },
+  ];
+  const api = loadApi({ month: 9 });
+  const weeks = generatedWeeks(cases, '2026-09-08 09:00');
+  for (const item of cases) {
+    const samples = generatedSamples(weeks[item.name]);
+    assert.ok(samples.length > 0, item.name);
+    for (const { sample } of samples) assert.equal(api.weeklyPelagicSafety(sample), item.safe, item.name);
+  }
+  /* safetyRaw가 있으면 그 원자료만 본다. 결측·비수치는 안전으로 보지 않는다. */
+  const safe = generatedSamples(weeks['wind-6'])[0].sample;
+  assert.equal(api.weeklyPelagicSafety(safe), true);
+  for (const raw of [{}, { windSpeed: 6, waveM: 0.7 }, { windSpeed: '6', waveM: 0.7, precipitation3h: 0 },
+                     { windSpeed: null, waveM: 0.7, precipitation3h: 0 }, { windSpeed: NaN, waveM: 0.7, precipitation3h: 0 },
+                     { windSpeed: Infinity, waveM: 0.7, precipitation3h: 0 }])
+    assert.equal(api.weeklyPelagicSafety({ ...safe, safetyRaw: raw }), false, JSON.stringify(raw));
+  /* safetyRaw가 없는 기존 저장본은 종전대로 표시값으로 판정한다. */
+  assert.equal(api.weeklyPelagicSafety({ ...safe, safetyRaw: null }), true);
+});
+
+test('C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 경계가 그대로다', () => {
+  const seasons = [
+    { name: '봄', month: 5, now: '2026-05-12 09:00' },
+    { name: '여름 대진항', month: 6, now: '2026-06-10 09:00' },
+    { name: '가을', month: 9, now: '2026-09-08 09:00' },
+    { name: '겨울', month: 12, now: '2026-12-08 09:00' },
+  ];
+  const cases = [
+    { name: 'safe', windSpeed: 6, waveM: 0.7, precipitation3h: 0, recommended: true },
+    { name: 'over', windSpeed: 6.01, waveM: 0.71, precipitation3h: 0.01, recommended: false },
+  ];
+  for (const season of seasons) {
+    const weeks = generatedWeeks(cases, season.now);
+    for (const item of cases) {
+      const api = loadApi({ siteData: RUNTIME, weatherWeek: weeks[item.name], month: season.month, now: clockText(season.now) });
+      const ids = api.todayRecommendedSites().map((entry) => String(entry.site.id));
+      assert.equal(ids.includes('48'), item.recommended, season.name + ' ' + item.name);
+    }
+  }
 });
