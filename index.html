@@ -2035,6 +2035,60 @@ function springAxisLabel(axes){
   if(axes.pelagic)return '🚢 선상탐조';
   return [axes.island?'🏝️ 도서 이동기':'',axes.mudflat?'🐦 갯벌·하구':'',axes.other?'🌾🦆 들판·습지 등':''].filter(Boolean).join(' · ');
 }
+/* 여름 추천 전용 분류. 지명이나 weatherRuleKey로 환경을 추정하지 않는다. */
+function weeklySummerRecommendationSeason(month){
+  return [6,7,8].indexOf(month===undefined?todayKstMonth():month)!==-1;
+}
+function summerBirdingAxes(site,month){
+  var axes={forest:false,water:false,coast:false,other:false,pelagic:false,tomb:false,excludedReason:''};
+  if(!site){axes.excludedReason='unclassified';return axes;}
+  var tokens=String(site.env||'').split(/[·,;\/|\s]+/).filter(Boolean);
+  function has(values){return values.some(function(value){return tokens.indexOf(value)!==-1;});}
+  // 복합 환경도 들판/섬 제외가 우선한다.
+  if(has(['농경지','간척지','목초지','초지'])){axes.excludedReason='field';return axes;}
+  if(site.island===true||has(['도서','섬','해양도서'])){axes.excludedReason='island';return axes;}
+  if(site.pelagic===true){
+    if(Number(site.id)===48&&(month===undefined?todayKstMonth():month)===6)axes.pelagic=true;
+    else axes.excludedReason='pelagic';
+    return axes;
+  }
+  axes.forest=has(['산림','고산','도심산림','숲','휴양림','수목원','곶자왈']);
+  axes.water=has(['습지','습지생태공원','하천','강','강변','호수','저수지','간척호','석호','유수지','갈대습지','내륙습지','하천습지','연안습지','습지공원','도심하천','한강변']);
+  axes.coast=has(['해안','갯벌','해변','하구','항구']);
+  axes.tomb=has(['릉']); // 현재 runtime에는 왕릉 token이 없다.
+  var seasons=[site.seasons,site.seasonTags,site.bestSeason].flat().join(' ').split(/[·,;\/|\s]+/);
+  axes.other=axes.tomb||(!axes.forest&&!axes.water&&!axes.coast&&tokens.length>0&&seasons.indexOf('여름')!==-1);
+  if(!axes.forest&&!axes.water&&!axes.coast&&!axes.other)axes.excludedReason='unclassified';
+  return axes;
+}
+function summerBalancedRecommendations(entries){
+  var selected=[],ids=new Set(),june=todayKstMonth()===6;
+  var candidates=entries.filter(function(e){
+    return e.axes&&!e.axes.excludedReason&&weeklyRecommendationIsSafe(e)!==false&&
+      (e.axes.pelagic?(june&&Number(e.site.id)===48&&weeklyPelagicSafety(e.sample)):
+        (e.axes.forest||e.axes.water||e.axes.coast||e.axes.other));
+  });
+  function take(axis,count){
+    var added=0;
+    candidates.filter(function(e){return axis==='fill'?!e.axes.pelagic:e.axes[axis];}).sort(springRecommendationRank).forEach(function(entry){
+      var id=String(entry.site.id);
+      if(selected.length>=10||added>=count||ids.has(id))return;
+      ids.add(id);selected.push(Object.assign({},entry,{selectedAxis:axis}));added++;
+    });
+  }
+  take('forest',3);take('water',3);take('coast',2);take('other',june?1:2);
+  if(june)take('pelagic',1);
+  take('fill',10);
+  return selected;
+}
+function summerPelagicSafety(sample){
+  return weeklyMonthForDate(weeklySampleDateText(sample))===6&&weeklyPelagicSafety(sample);
+}
+function summerAxisLabel(axes){
+  if(axes.pelagic)return '🚢 6월 슴새 선상탐조 시기로 주목';
+  return [axes.forest?'여름 숲·산림 탐조':'',axes.water?'여름 습지·하천 탐조':'',
+    axes.coast?'여름 해안·갯벌 탐조':'',axes.tomb?'여름 릉·수림 탐조':(axes.other?'여름 기타 탐조':'')].filter(Boolean).join(' · ');
+}
 function todayKstMonth(){
   var parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',month:'numeric'}).formatToParts(new Date());
   for(var i=0;i<parts.length;i++)if(parts[i].type==='month')return Number(parts[i].value);
@@ -2313,20 +2367,21 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
 }
 function weeklyRecommendationForSite(site,week){
   if(todayIsAutumnRemoteIsland(site))return null;
-  var autumn=autumnRecommendationSeason(), winter=weeklyWinterRecommendationSeason(), spring=weeklySpringRecommendationSeason();
-  var axes=spring?springBirdingAxes(site):(winter?winterBirdingAxes(site):autumnBirdingAxes(site));
-  if((spring||winter)&&axes.excludedReason)return null;
+  var autumn=autumnRecommendationSeason(), winter=weeklyWinterRecommendationSeason(), spring=weeklySpringRecommendationSeason(), summer=weeklySummerRecommendationSeason();
+  var axes=summer?summerBirdingAxes(site):(spring?springBirdingAxes(site):(winter?winterBirdingAxes(site):autumnBirdingAxes(site)));
+  if((summer||spring||winter)&&axes.excludedReason)return null;
   var pelagic=axes.pelagic;
-  if(!winter&&site.pelagic===true&&(!pelagic||!weeklyPelagicRecommendationSeason()))return null;
-  var bestWeather=weeklyBestWeatherDay(site,week,pelagic?weeklyPelagicSafety:null);
+  if(!summer&&!winter&&site.pelagic===true&&(!pelagic||!weeklyPelagicRecommendationSeason()))return null;
+  var sampleFilter=pelagic?(summer?summerPelagicSafety:weeklyPelagicSafety):null;
+  var bestWeather=weeklyBestWeatherDay(site,week,sampleFilter);
   // 선상은 주간 안전 sample이 없으면 공지/동풍이나 today fallback으로 승격하지 않는다.
-  if((pelagic||(spring&&weeklyWeekSite(site)))&&!bestWeather)return null;
+  if((pelagic||((spring||summer)&&weeklyWeekSite(site)))&&!bestWeather)return null;
   var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);
-  if(spring&&weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;
+  if((spring||summer)&&weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;
   var issueReason=weeklyIssueReason(site);
-  var tideRec=spring?null:weeklyBestMudflatTide(site,week);
+  var tideRec=(spring||summer)?null:weeklyBestMudflatTide(site,week);
   // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.
-  var windRec=(pelagic||spring)?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));
+  var windRec=(pelagic||spring||summer)?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));
   var reasons=[], caution=[];
   if(issueReason)reasons.push(issueReason);
   if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}
@@ -2335,9 +2390,9 @@ function weeklyRecommendationForSite(site,week){
   var priority=issueReason?1:(tideRec?2:(windRec?3:4));
   if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;
   var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';
-  if((spring||winter||pelagic||(autumn&&axes.field))&&bestWeather)date=bestWeather.date;
+  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather)date=bestWeather.date;
   /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */
-  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?weeklyDailyBestSample(site,date,pelagic?weeklyPelagicSafety:null):null;
+  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?weeklyDailyBestSample(site,date,sampleFilter):null;
   var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(weatherEntry&&weatherEntry.date===date?weatherEntry.weather:null);
   var dayScore=dayBest?Number(dayBest.score):(dayWeather&&weatherEntry?weatherEntry.score:null);
   var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);
@@ -2370,6 +2425,7 @@ function todayRecommendedSites(){
     entry.stableOrder=stableOrder;
     (entry.isMandatory?mandatory:general).push(entry);
   });
+  if(weeklySummerRecommendationSeason())return summerBalancedRecommendations(mandatory.concat(general));
   if(weeklySpringRecommendationSeason())return springBalancedRecommendations(mandatory.concat(general));
   if(weeklyWinterRecommendationSeason())return winterBalancedRecommendations(mandatory.concat(general));
   if(autumnRecommendationSeason())return autumnBalancedRecommendations(mandatory.concat(general));
@@ -2479,10 +2535,10 @@ function renderTodayPanel(){
       name.appendChild(tag);
     }
     item.appendChild(name);
-    if(weeklySpringRecommendationSeason()||autumnRecommendationSeason()||weeklyWinterRecommendationSeason()||entry.axes.pelagic){
+    if(weeklySummerRecommendationSeason()||weeklySpringRecommendationSeason()||autumnRecommendationSeason()||weeklyWinterRecommendationSeason()||entry.axes.pelagic){
       var axis=document.createElement('div');
       axis.className='todayRankMeta';
-      axis.textContent=weeklySpringRecommendationSeason()?springAxisLabel(entry.axes):(weeklyWinterRecommendationSeason()?winterAxisLabel(entry.axes):autumnAxisLabel(entry.axes));
+      axis.textContent=weeklySummerRecommendationSeason()?summerAxisLabel(entry.axes):weeklySpringRecommendationSeason()?springAxisLabel(entry.axes):(weeklyWinterRecommendationSeason()?winterAxisLabel(entry.axes):autumnAxisLabel(entry.axes));
       item.appendChild(axis);
     }
     var score=document.createElement('div');

@@ -39,6 +39,7 @@ function functionSource(name) {
 }
 
 const NAMES = [
+  'summerPelagicSafety','weeklySummerRecommendationSeason','summerBirdingAxes','summerBalancedRecommendations','summerAxisLabel',
   'weeklyKstDateParts', 'weeklyDateFromText', 'weeklyDateTextFromUtc', 'weeklyTodayDateText',
   'weeklyInfo', 'weeklyDateInRange', 'weeklyMonthForDate', 'weeklyDateLabel',
   'weeklyNowKstMinutes', 'weeklySampleMinutes', 'weeklySampleTimeText', 'weeklySampleDateText',
@@ -946,4 +947,101 @@ test('봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가
  counts.unique=rows.filter(e=>!e.excludedReason).length;assert.equal(counts.pelagic,8);assert.equal(rows.length,187);
  if(process.env.SPRING_REPORT==='1')console.log(JSON.stringify({counts,core:rows.filter(e=>coreNames.includes(e.name)),excluded:rows.filter(e=>e.excludedReason),
   fixtureTop:loadApi(springFixture()).todayRecommendedSites().map(e=>({id:e.site.id,name:e.site.name,axis:e.selectedAxis,score:e.score,time:e.recommendationTime}))},null,2));
+});
+
+// 여름도 실제 index.html 함수를 호출하며, 시계/예보만 합성한다.
+function summerFixture(date='2027-06-10',extra={}){return springFixture(date,extra);}
+
+test('여름 6/1~8/31 월 경계',()=>{
+ for(const [date,want] of [['2027-05-31',false],['2027-06-01',true],['2027-06-30',true],['2027-07-01',true],['2027-07-31',true],['2027-08-01',true],['2027-08-31',true],['2027-09-01',false]])
+  assert.equal(loadApi(summerFixture(date)).weeklySummerRecommendationSeason(),want,date);
+});
+test('여름 실제 산림/수계/해안 및 릉 token, 이름과 weatherRuleKey 추정 금지',()=>{
+ const api=loadApi({month:6});
+ for(const id of [77,78,79,80,81,82,85,86])assert.equal(api.summerBirdingAxes(RUNTIME.find(s=>Number(s.id)===id)).forest,true,String(id));
+ for(const env of ['습지','습지생태공원','하천','강','강변','호수','저수지','간척호','석호','공원 유수지'])assert.equal(api.summerBirdingAxes({env}).water,true,env);
+ for(const env of ['해안','갯벌','해변','하구','항구'])assert.equal(api.summerBirdingAxes({env}).coast,true,env);
+ const tomb=RUNTIME.find(s=>s.id==='109');assert.equal(tomb.name,'파주삼릉');assert.equal(tomb.env,'릉');assert.equal(api.summerBirdingAxes(tomb).other,true);
+ assert.equal(api.summerAxisLabel(api.summerBirdingAxes(tomb)),'여름 릉·수림 탐조');
+ assert.equal(RUNTIME.some(s=>s.env.split(/[·\s]+/).includes('왕릉')),false);
+ assert.equal(RUNTIME.some(s=>s.name==='파주 장릉'||s.name==='파주장릉'),false);
+ for(const site of [{name:'강릉',env:'공원'},{env:'사찰',seasons:['봄']},{env:'유적지',weatherRuleKey:'wetland_waterbird'},{env:'미분류'}])assert.equal(api.summerBirdingAxes(site).excludedReason,'unclassified');
+ assert.equal(api.summerBirdingAxes({env:'공원',seasons:['여름']}).other,true);
+ assert.equal(api.summerBirdingAxes({env:'공원',seasons:['봄']}).water,false);
+});
+test('여름 농경지/섬은 복합 환경과 100점 공지에서도 제외',()=>{
+ const sites=['농경지','간척지','목초지','초지','농경지·하천','간척호·농경지','갯벌·간척지','도서·해안','섬·산림','해양도서'].map((env,i)=>({...SITE,id:String(1000+i),env}));
+ sites.push({...SITE,id:'1100',env:'산림',island:true});
+ for(const month of [6,7,8]){
+  const state=summerFixture(`2027-0${month}-10`,{siteData:sites,notices:sites.map(s=>({siteIds:[s.id],published:true}))});
+  Object.values(state.weatherWeek.sites).forEach(s=>Object.values(s.days).forEach(d=>d.samples.forEach(s=>s.score=100)));
+  assert.deepEqual(loadApi(state).todayRecommendedSites(),[]);
+ }
+ const api=loadApi({month:6});assert.equal(api.summerBirdingAxes({name:'신시도',env:'휴양림',island:false}).forest,true);
+});
+test('봄 핵심 6개 섬 전 ID는 여름 제외, 원본/봄 정책 유지',()=>{
+ const core=RUNTIME.filter(s=>['1','2','4','63','64','65','101','102','103','104','105','106','117','118','119','127','128','129','130'].includes(s.id));
+ assert.equal(core.length,19);
+ for(const month of [6,7,8]){const api=loadApi(summerFixture(`2027-0${month}-10`,{siteData:core}));assert.equal(api.todayRecommendedSites().length,0);for(const s of core)assert.equal(api.summerBirdingAxes(s).excludedReason,'island');}
+ assert.ok(loadApi(springFixture('2027-05-05',{siteData:core})).todayRecommendedSites().length>0);
+});
+test('여름 실제 187 후보 배분 6월 3/3/2/1/1, 7~8월 3/3/2/2 및 점수 불변',()=>{
+ for(const month of [6,7,8]){
+  const state=summerFixture(`2027-0${month}-10`),before=JSON.stringify(state),api=loadApi(state),top=api.todayRecommendedSites();
+  assert.equal(top.length,10);assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+  assert.deepEqual(Object.fromEntries(['forest','water','coast','other','pelagic'].map(a=>[a,top.filter(e=>e.selectedAxis===a).length])),{forest:3,water:3,coast:2,other:month===6?1:2,pelagic:month===6?1:0});
+  assert.ok(top.some(e=>e.site.id==='109'));assert.equal(top.some(e=>e.site.id==='48'),month===6);
+  assert.ok(top.every(e=>e.score===92&&e.recommendationTime==='09:00'&&e.recommendationDate===`2027-0${month}-10`));
+  assert.equal(JSON.stringify(state),before);
+ }
+});
+test('여름 부족 보충은 허용 축만, 복합 dedupe와 unsafe/미분류 제외',()=>{
+ const sites=RUNTIME.filter(s=>[77,78,79,80,81,82,83,84,85,86,87,154].includes(Number(s.id)));
+ const state=summerFixture('2027-06-10',{siteData:sites}),api=loadApi(state),top=api.todayRecommendedSites();
+ assert.equal(top.length,10);assert.ok(top.every(e=>e.axes.forest));assert.equal(new Set(top.map(e=>e.site.id)).size,10);
+ const entries=[...top,{...top[0],site:{id:'x'},axes:{excludedReason:'field'},score:100}, {...top[0],site:{id:'y'},today:{wave:'3.0m'}}];
+ const filled=api.summerBalancedRecommendations(entries);assert.ok(filled.every(e=>!['x','y'].includes(e.site.id)));
+ assert.deepEqual(api.summerBalancedRecommendations([{...top[0],axes:{}}]),[]);
+});
+test('여름 선상은 대진항48 pelagic=true의 6월 sample만, 6/30 주간 경계',()=>{
+ const site=RUNTIME.find(s=>s.id==='48');assert.equal(site.name,'대진항');assert.equal(site.pelagic,true);
+ for(const date of ['2027-06-01','2027-06-30','2027-07-01','2027-08-01']){
+  const api=loadApi(summerFixture(date,{siteData:RUNTIME.filter(s=>s.pelagic)})),top=api.todayRecommendedSites();
+  assert.deepEqual(top.map(e=>e.site.id),date.slice(5,7)==='06'?['48']:[]);
+ }
+ const state=summerFixture('2027-06-30',{siteData:[site]});state.weatherWeek.sites['48'].days['2027-07-01']={samples:[sample('2027-07-01 09:00 KST',100,{waveM:.5})]};
+ const api=loadApi(state);assert.equal(api.todayRecommendedSites()[0].recommendationDate,'2027-06-30');
+ state.weatherWeek.sites['48'].days['2027-06-30'].samples=[];assert.equal(loadApi(state).todayRecommendedSites().length,0);
+});
+test('여름 대진항 선상 안전 경계/결측/비수치와 caution 이중 검사',()=>{
+ const site=RUNTIME.find(s=>s.id==='48'),date='2027-06-10';
+ for(const [extra,want] of [[{windSpeed:6,waveM:.7},true],[{windSpeed:6.1},false],[{waveM:.71},false],[{precipitation3h:.1},false],[{windSpeed:null},false],[{waveM:NaN},false],[{precipitation3h:Infinity},false],[{scoreEligible:false},false]]){
+  const state=summerFixture(date,{siteData:[site]});state.weatherWeek.sites['48'].days[date].samples=[sample(date+' 09:00 KST',92,{waveM:.5,...extra})];
+  assert.equal(loadApi(state).todayRecommendedSites().length,want?1:0,JSON.stringify(extra));
+ }
+ const api=loadApi(summerFixture(date,{siteData:[site]})),entry=api.todayRecommendedSites()[0];
+ assert.equal(api.summerBalancedRecommendations([{...entry,today:{rain:'3시간 강수 10.0mm'}}]).length,0);
+ assert.match(api.summerAxisLabel(entry.axes),/6월 슴새 선상탐조 시기로 주목/);
+});
+test('여름 daylight/과거/최고점/날짜 tie 및 가을 조석 비활성',()=>{
+ const site=RUNTIME.find(s=>s.id==='19'),date='2027-06-10',state=summerFixture(date,{siteData:[site],tideMonth:{sites:{19:{days:[{date,highTide:'12:00',highTideLevel:'999'}]}}}});
+ state.weatherWeek.sites['19'].days[date].samples=[sample(date+' 06:00 KST',100),sample(date+' 09:00 KST',80),sample(date+' 12:00 KST',90),sample(date+' 21:00 KST',100)];
+ state.weatherWeek.sites['19'].days['2027-06-11']={samples:[sample('2027-06-11 09:00 KST',90)]};
+ const e=loadApi(state).todayRecommendedSites()[0];assert.equal(e.recommendationTime,'12:00');assert.equal(e.recommendationDate,date);assert.equal(e.score,90);assert.equal(e.tideText,null);assert.equal(e.isMandatory,false);
+});
+test('여름 공지로 부적격 sample 승격 금지, today fallback 미확인 유지',()=>{
+ const site=RUNTIME.find(s=>s.id==='109'),date='2027-06-10',state=summerFixture(date,{siteData:[site],notices:[{siteIds:[109],published:true}]});
+ state.weatherWeek.sites['109'].days[date].samples.forEach(s=>s.scoreEligible=false);assert.equal(loadApi(state).todayRecommendedSites().length,0);
+ const fallback=summerFixture(date,{siteData:[site],weatherWeek:null,weatherToday:{sites:{109:{date,score:65,wind:'서풍 3m/s'}}}});
+ const api=loadApi(fallback),top=api.todayRecommendedSites();assert.equal(top.length,1);assert.equal(api.weeklyRecommendationIsSafe(top[0]),null);
+ fallback.weatherToday.sites[109].scoreEligible=false;assert.equal(loadApi(fallback).todayRecommendedSites().length,0);
+});
+test('여름 실제 환경 전수 보고',()=>{
+ const api=loadApi({month:6}),rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,island:s.island,axes:api.summerBirdingAxes(s)}));
+ const counts=Object.fromEntries(['forest','water','coast','other','tomb','pelagic'].map(a=>[a,rows.filter(r=>r.axes[a]).length]));
+ const excludes=Object.fromEntries(['field','island','pelagic','unclassified'].map(a=>[a,rows.filter(r=>r.axes.excludedReason===a).length]));
+ const rawField=RUNTIME.filter(s=>s.env.split(/[·,;\/|\s]+/).some(t=>['농경지','간척지','목초지','초지'].includes(t)));
+ const rawIsland=RUNTIME.filter(s=>s.island===true||s.env.split(/[·,;\/|\s]+/).some(t=>['도서','섬','해양도서'].includes(t)));
+ assert.equal(rows.length,187);assert.equal(counts.pelagic,1);assert.equal(counts.tomb,1);
+ if(process.env.SUMMER_REPORT)console.log(JSON.stringify({counts,excludes,uniqueJune:rows.filter(r=>!r.axes.excludedReason).length,uniqueJuly:RUNTIME.filter(s=>!api.summerBirdingAxes(s,7).excludedReason).length,rawField:rawField.length,rawIsland:rawIsland.length,islandTrue:RUNTIME.filter(s=>s.island===true).length,fieldIslandOverlap:rawField.filter(s=>rawIsland.includes(s)).length,compoundFields:rawField.filter(s=>s.env.split(/[·,;\/|\s]+/).length>1).map(s=>({id:s.id,name:s.name,env:s.env})),unclassified:rows.filter(r=>r.axes.excludedReason==='unclassified'),other:rows.filter(r=>r.axes.other)},null,2));
 });
