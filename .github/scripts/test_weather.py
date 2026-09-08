@@ -288,6 +288,99 @@ class WeatherWeekTests(unittest.TestCase):
         inland = self.samples(weather.build_week_days(self.site, self.rules, atmosphere, wave, self.now))
         self.assertTrue(inland and all("safetyRaw" not in sample for sample in inland))
 
+    def open_meteo_hourly(self, visibility, cloud):
+        """Open-Meteo hourly 응답 한 벌. 시정은 미터, 운량은 퍼센트로 온다."""
+        hours = [datetime(2026, 9, 7, 0, 0, tzinfo=weather.KST) + timedelta(hours=step) for step in range(24 * 8)]
+        return {"time": [hour.strftime("%Y-%m-%dT%H:%M") for hour in hours],
+                "temperature_2m": [22.0] * len(hours), "precipitation": [0.0] * len(hours),
+                "cloud_cover": [cloud] * len(hours), "visibility": [visibility] * len(hours),
+                "wind_speed_10m": [5.0] * len(hours), "wind_direction_10m": [45.0] * len(hours),
+                "wind_gusts_10m": [8.0] * len(hours)}
+
+    def open_meteo_sample(self, visibility=20000.0, cloud=10.0):
+        series = weather.open_meteo_week_atmospheric(self.open_meteo_hourly(visibility, cloud),
+                                                     self.now.date(), self.now.date())
+        return weather.extract_atmospheric_sample(series, 0)
+
+    def test_open_meteo_visibility_is_converted_from_meters_exactly_once(self):
+        """Open-Meteo 시정은 미터다. 50m가 50km 같은 좋은 시정으로 해석되면 안 된다."""
+        for meters, km in [(0, 0.0), (50, 0.05), (100, 0.1), (500, 0.5), (1000, 1.0),
+                           (5000, 5.0), (10000, 10.0), (20000, 20.0)]:
+            self.assertAlmostEqual(self.open_meteo_sample(visibility=meters)["visibilityKm"], km, places=9,
+                                   msg=f"{meters}m")
+        self.assertIsNone(self.open_meteo_sample(visibility=None)["visibilityKm"])
+        self.assertIsNone(self.open_meteo_sample(visibility=float("nan"))["visibilityKm"])
+        self.assertIsNone(self.open_meteo_sample(visibility=float("inf"))["visibilityKm"])
+
+    def test_open_meteo_cloud_cover_stays_percent(self):
+        """Open-Meteo cloud_cover는 0~100 %다. 1이 100%로 부풀면 안 된다."""
+        for percent in [0, 0.5, 1, 10, 50, 99, 100]:
+            self.assertAlmostEqual(self.open_meteo_sample(cloud=percent)["cloudPct"], float(percent), places=9,
+                                   msg=f"{percent}%")
+        self.assertIsNone(self.open_meteo_sample(cloud=None)["cloudPct"])
+
+    def test_windy_visibility_and_cloud_normalization_are_unchanged(self):
+        """Windy 계열 값의 기존 해석은 그대로 둔다(이번 수정 범위는 Open-Meteo뿐)."""
+        def windy(visibility=None, clouds=(10.0, None, None)):
+            series = dict(self.atmosphere, **{"visibility-surface": [visibility] * len(self.stamps),
+                                              "lclouds-surface": [clouds[0]] * len(self.stamps),
+                                              "mclouds-surface": [clouds[1]] * len(self.stamps),
+                                              "hclouds-surface": [clouds[2]] * len(self.stamps)})
+            return weather.extract_atmospheric_sample(series, 0)
+        self.assertEqual(windy(visibility=20000.0)["visibilityKm"], 20.0)
+        self.assertEqual(windy(visibility=500.0)["visibilityKm"], 0.5)
+        self.assertEqual(windy(visibility=50.0)["visibilityKm"], 50.0)
+        self.assertEqual(windy(clouds=(1.0, None, None))["cloudPct"], 100.0)
+        self.assertEqual(windy(clouds=(0.8, None, None))["cloudPct"], 80.0)
+        self.assertEqual(windy(clouds=(10.0, 40.0, None))["cloudPct"], 40.0)
+
+    def test_open_meteo_fallback_feeds_normalized_values_into_today_week_and_score(self):
+        """상류 응답 → 실제 생성기 → today/weekly sample → 점수까지 단위가 한 번만 변환된다."""
+        def payload(visibility, cloud):
+            hourly = self.open_meteo_hourly(visibility, cloud)
+            return {"current": {"time": "2026-09-07T10:00", "temperature_2m": 22.0, "precipitation": 0.0,
+                                "cloud_cover": cloud, "visibility": visibility, "wind_speed_10m": 5.0,
+                                "wind_direction_10m": 45.0, "wind_gusts_10m": 8.0},
+                    "hourly": hourly}
+
+        def run(visibility, cloud):
+            with patch.object(weather, "request_forecast", side_effect=RuntimeError("offline")), \
+                    patch.object(weather, "request_open_meteo", return_value=payload(visibility, cloud)):
+                return weather.process_site("k", self.site, self.rules, self.now, "gfs", ["wind"])
+
+        result, week = run(100.0, 1.0)
+        samples = self.samples(week["days"])
+        self.assertEqual(result["visibility"], "0.1km")
+        self.assertEqual(result["cloud"], "1%")
+        self.assertTrue(all(s["visibilityKm"] == 0.1 and s["cloudPct"] == 1 for s in samples))
+        stored = json.loads(weather.week_json_text({"sites": {"1": {"days": {"2026-09-07": {"samples": samples[:1]}}}}}))
+        self.assertEqual(stored["sites"]["1"]["days"]["2026-09-07"]["samples"][0]["visibilityKm"], 0.1)
+        clear, clear_week = run(20000.0, 1.0)
+        self.assertEqual(clear["visibility"], "20.0km")
+        # 시정만 다른 두 입력에서 기존 score_weather 규칙이 그대로 낮은 시정을 감점한다.
+        self.assertLess(result["score"], clear["score"])
+        def scored(days):
+            return {s["forecastTime"]: s for s in self.samples(days) if s["score"] is not None}
+        low, high = scored(week["days"]), scored(clear_week["days"])
+        stamp = "2026-09-08 09:00 KST"
+        self.assertLess(low[stamp]["score"], high[stamp]["score"])
+
+    def test_windy_atmosphere_with_open_meteo_visibility_converts_only_visibility(self):
+        """혼합 source: 시정만 Open-Meteo(미터), 나머지는 Windy 해석 그대로."""
+        windy = dict(self.atmosphere, **{"visibility-surface": [None] * len(self.stamps),
+                                         "lclouds-surface": [1.0] * len(self.stamps)})
+        hourly = self.open_meteo_hourly(100.0, 1.0)
+        with patch.object(weather, "request_forecast", return_value=windy), \
+                patch.object(weather, "request_open_meteo", return_value={"current": {
+                    "time": "2026-09-07T10:00", "temperature_2m": 22.0, "precipitation": 0.0, "cloud_cover": 1.0,
+                    "visibility": 100.0, "wind_speed_10m": 5.0, "wind_direction_10m": 45.0, "wind_gusts_10m": 8.0},
+                    "hourly": hourly}):
+            result, week = weather.process_site("k", self.site, self.rules, self.now, "gfs", ["wind"])
+        self.assertEqual(result["fieldSources"], {"atmosphere": "windy", "visibility": "open_meteo", "wave": None})
+        self.assertEqual(result["visibility"], "0.1km")
+        self.assertEqual(result["cloud"], "100%")  # Windy 운량 해석은 그대로
+        self.assertTrue(all(s["visibilityKm"] == 0.1 for s in self.samples(week["days"])))
+
     def test_validator_rejects_safety_raw_that_disagrees_with_the_stored_value(self):
         import validate_weather_week as validator
 

@@ -221,6 +221,8 @@ def open_meteo_atmospheric(lat: float, lon: float, target: datetime, full_hourly
         "lclouds-surface": [current.get("cloud_cover")],
         "mclouds-surface": [None],
         "hclouds-surface": [None],
+        "visibilityUnit": "m",
+        "cloudUnit": "percent",
         "hourlySeries": hourly,
     }
 
@@ -321,12 +323,25 @@ def wind_name(degrees: float) -> str:
     return names[int((degrees + 22.5) // 45) % 8]
 
 
-def normalized_cloud(*values: float | None) -> float | None:
+def normalized_cloud(*values: float | None, unit: str | None = None) -> float | None:
+    """Open-Meteo cloud_cover는 0~100 %라 그대로 쓰고, 단위를 알리지 않는 Windy 계열만 기존 추정을 유지한다."""
     present = [value for value in values if value is not None]
     if not present:
         return None
     cloud = max(present)
+    if unit == "percent":
+        return min(100.0, cloud)
     return min(100.0, cloud * 100 if cloud <= 1.5 else cloud)
+
+
+def normalized_visibility_km(value: float | None, unit: str | None = None) -> float | None:
+    """Open-Meteo 시정은 미터로 명시되므로 정확히 한 번 나눈다. 50m가 50km가 되면 안 된다.
+    단위를 알리지 않는 Windy 계열은 기존 추정을 그대로 유지한다."""
+    if value is None:
+        return None
+    if unit == "m":
+        return value / 1000
+    return value / 1000 if value > 100 else value
 
 
 def grade_for(score: int) -> str:
@@ -436,11 +451,12 @@ def extract_atmospheric_sample(atmospheric: dict[str, Any], index: int) -> dict[
         "gust": value_at(atmospheric, "gust-surface", index),
         "precipitation": precipitation,
         "temperature": temperature,
-        "visibilityKm": visibility / 1000 if visibility is not None and visibility > 100 else visibility,
+        "visibilityKm": normalized_visibility_km(visibility, atmospheric.get("visibilityUnit")),
         "cloudPct": normalized_cloud(
             value_at(atmospheric, "lclouds-surface", index),
             value_at(atmospheric, "mclouds-surface", index),
             value_at(atmospheric, "hclouds-surface", index),
+            unit=atmospheric.get("cloudUnit"),
         ),
     }
 
@@ -588,7 +604,7 @@ def apply_hourly_visibility(atmospheric: dict[str, Any], hourly: dict[str, Any])
         )
         for stamp in atmospheric.get("ts") or []
     ]
-    return dict(atmospheric, **{"visibility-surface": values})
+    return dict(atmospheric, **{"visibility-surface": values, "visibilityUnit": "m"})
 
 
 def open_meteo_week_atmospheric(hourly: dict[str, Any], start_date, end_date) -> dict[str, Any]:
@@ -623,6 +639,8 @@ def open_meteo_week_atmospheric(hourly: dict[str, Any], start_date, end_date) ->
         series["lclouds-surface"].append(hourly_value(hourly, "cloud_cover", index))
         series["mclouds-surface"].append(None)
         series["hclouds-surface"].append(None)
+    series["visibilityUnit"] = "m"
+    series["cloudUnit"] = "percent"
     return series
 
 
@@ -821,6 +839,7 @@ def process_site(
             atmospheric["visibility-surface"] = [fallback_value] * len(
                 atmospheric.get("ts", [])
             )
+            atmospheric["visibilityUnit"] = "m"
             hourly_series = visibility_fallback.get("hourlySeries") or {}
             visibility_source = "open_meteo"
             if weather_source == "Windy Point Forecast API":
