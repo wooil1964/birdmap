@@ -962,10 +962,16 @@ function weatherTodayForSite(site){
 function tideTodayForSite(site){
   var sites=tideToday&&tideToday.sites;
   if(!sites)return null;
-  if(tideTodayIsCurrent())return sites[String(site.id)]||null;
+  var dailyIsToday=tideTodayIsCurrent();
+  var daily=dailyIsToday?sites[String(site.id)]||null:null;
+  // 1) 오늘 날짜 daily에 실제로 쓸 수 있는 값이 있으면 그대로 쓴다.
+  if(daily&&v24TideDayEvents(daily).length)return daily;
+  // 2) daily가 없거나 자료 없음이면 같은 site의 '정확히 오늘 날짜' 월간 값만 확인한다.
   var fallback=monthTideDayForSite(site);
   if(fallback)return fallback;
-  return {staleDaily:true,staleDailyDate:tideTodayDateText(),monthFallbackMissing:true};
+  // 3) 둘 다 없으면 기존 표시를 그대로 유지한다.
+  if(daily)return daily;
+  return dailyIsToday?null:{staleDaily:true,staleDailyDate:tideTodayDateText(),monthFallbackMissing:true};
 }
 function tideTodayDateText(){
   return String(tideToday&&tideToday.date||'').trim();
@@ -993,12 +999,13 @@ function monthTideDayForSite(site){
   var days=monthSite&&Array.isArray(monthSite.days)?monthSite.days:[];
   var today=kstDateText();
   for(var i=0;i<days.length;i++){
-    if(days[i]&&days[i].date===today){
+    // 정확히 오늘 날짜이면서 실제 조석값이 있는 row만 오늘 자료로 쓴다(row 존재 != 사용 가능).
+    if(days[i]&&days[i].date===today&&v24TideDayEvents(days[i]).length){
       var day=Object.assign({},days[i]);
       day.stationCode=monthSite.stationCode||day.stationCode;
       day.stationName=monthSite.stationName||day.stationName;
       day.source=monthSite.source||day.source;
-      day.staleDaily=true;
+      day.staleDaily=!tideTodayIsCurrent();
       day.staleDailyDate=tideTodayDateText();
       day.monthFallback=true;
       day.monthFallbackStale=day.stale===true;
@@ -2736,6 +2743,10 @@ function loadTideToday(){
     refreshOpenBirdPopup();
   }).catch(function(){
     tideToday={updated:'',source:'',sites:{}};
+    // daily를 못 받아도 오늘 날짜 월간 자료가 있으면 쓸 수 있으므로 기존 loader로 한 번 확인한다.
+    return loadTideMonth().catch(function(){return null;}).then(function(){
+      refreshOpenBirdPopup();
+    });
   });
 }
 
