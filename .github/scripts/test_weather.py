@@ -436,5 +436,141 @@ class WeatherWeekTests(unittest.TestCase):
         self.assertIn('{"forecastTime":"2026-09-07 06:00 KST","score":92},\n', text)
 
 
+class TodayWaveFreshnessTests(unittest.TestCase):
+    """M05: today 파고도 weekly와 똑같은 '같은 날짜 + 시계열 간격의 절반 이내' 정책으로만 채택한다.
+
+    정책 자체는 weekly의 wave_value_at()이 원본이며 여기서 새 허용시간을 만들지 않는다.
+    """
+
+    def setUp(self):
+        self.rules = weather.load_rules()
+        self.site = {"id": 188, "name": "이천항", "lat": 35.263447, "lon": 129.239856}
+        self.target = datetime(2026, 9, 6, 18, 0, tzinfo=weather.KST)
+
+    def atmosphere_at(self, moment):
+        """평가시각 한 점짜리 대기 시계열. 파고 시각만 변수로 남긴다."""
+        return {"ts": [moment.timestamp() * 1000], "wind_u-surface": [0], "wind_v-surface": [0],
+                "past3hprecip-surface": [0], "temp-surface": [25]}
+
+    def wave_series(self, entries):
+        """Windy gfsWave 모양의 (시각, 파고) 시계열."""
+        return {"ts": [moment.timestamp() * 1000 for moment, _ in entries],
+                "waves_height-surface": [height for _, height in entries]}
+
+    def both(self, wave, target=None, site_fields=None):
+        """같은 fixture를 today와 weekly에 각각 통과시켜 (today, weekly sample)을 돌려준다."""
+        target = target or self.target
+        site = dict(self.site, **({"showWave": True} if site_fields is None else site_fields))
+        atmosphere = self.atmosphere_at(target)
+        today = weather.build_site_result(site, self.rules, atmosphere, wave, None, target)
+        days = weather.build_week_days(site, self.rules, atmosphere, wave, target)
+        samples = [sample for day in days.values() for sample in day["samples"]]
+        self.assertEqual(len(samples), 1)
+        return today, samples[0]
+
+    def assertWave(self, wave, expected, target=None, site_fields=None):
+        """today가 기대한 파고를 쓰는지, 그리고 weekly와 판정이 일치하는지 함께 본다."""
+        today, sample = self.both(wave, target=target, site_fields=site_fields)
+        self.assertEqual(today["wave"], None if expected is None else "%.1fm" % expected)
+        self.assertEqual(sample["waveM"], expected)
+        self.assertEqual(today["missingScoreFields"], sample["missingScoreFields"])
+        self.assertEqual(today["scoreEligible"], sample["scoreEligible"])
+        self.assertFalse(today["stale"])
+        return today, sample
+
+    def test_exact_timestamp_wave_is_used(self):
+        self.assertWave(self.wave_series([(self.target, 0.5)]), 0.5)
+
+    def test_wave_inside_weekly_tolerance_is_used(self):
+        """3시간 간격 시계열에서 1시간 떨어진 파고는 기존처럼 그대로 쓴다."""
+        base = datetime(2026, 9, 6, 15, 0, tzinfo=weather.KST)
+        series = self.wave_series([(base + timedelta(hours=3 * step), 0.5) for step in range(3)])
+        self.assertWave(series, 0.5, target=datetime(2026, 9, 6, 19, 0, tzinfo=weather.KST))
+
+    def test_weekly_tolerance_boundary_is_used_and_beyond_is_rejected(self):
+        """간격의 절반(1.5시간)까지는 채택, 1분이라도 넘으면 거부한다."""
+        series = self.wave_series([(datetime(2026, 9, 6, 6, 0, tzinfo=weather.KST), 0.5),
+                                   (datetime(2026, 9, 6, 9, 0, tzinfo=weather.KST), 0.5)])
+        self.assertWave(series, 0.5, target=datetime(2026, 9, 6, 10, 30, tzinfo=weather.KST))
+        self.assertWave(series, None, target=datetime(2026, 9, 6, 10, 31, tzinfo=weather.KST))
+
+    def test_same_date_twelve_hour_gap_is_rejected(self):
+        """M05 CASE A: 같은 날짜라는 이유만으로 12시간 전 파고를 18:00 평가에 쓰지 않는다."""
+        today, sample = self.assertWave(
+            self.wave_series([(datetime(2026, 9, 6, 6, 0, tzinfo=weather.KST), 0.5)]), None)
+        self.assertEqual(today["missingScoreFields"], ["wave"])
+        self.assertIsNone(today["score"])
+        self.assertFalse(today["scoreEligible"])
+        self.assertIsNone(sample["score"])
+
+    def test_date_boundary_follows_weekly_policy(self):
+        """허용시간 안이어도 KST 날짜가 다르면 weekly와 똑같이 거부한다."""
+        series = self.wave_series([(datetime(2026, 9, 6, 20, 30, tzinfo=weather.KST), 0.5),
+                                   (datetime(2026, 9, 6, 23, 30, tzinfo=weather.KST), 0.5)])
+        self.assertWave(series, None, target=datetime(2026, 9, 7, 0, 30, tzinfo=weather.KST))
+
+    def test_multiple_samples_use_the_nearest_one(self):
+        series = self.wave_series([(datetime(2026, 9, 6, 12, 0, tzinfo=weather.KST), 0.3),
+                                   (datetime(2026, 9, 6, 15, 0, tzinfo=weather.KST), 0.6),
+                                   (datetime(2026, 9, 6, 18, 0, tzinfo=weather.KST), 0.9)])
+        self.assertWave(series, 0.9, target=datetime(2026, 9, 6, 17, 40, tzinfo=weather.KST))
+
+    def test_nearest_sample_invalid_means_wave_missing(self):
+        """가장 가까운 sample이 무효면 더 먼 유효 sample을 빌려오지 않는다."""
+        for broken in (None, -1.0):
+            with self.subTest(nearest=broken):
+                series = self.wave_series([(datetime(2026, 9, 6, 15, 0, tzinfo=weather.KST), 0.6),
+                                           (self.target, broken)])
+                self.assertWave(series, None)
+
+    def test_wave_required_sites_cannot_score_with_stale_wave(self):
+        stale = self.wave_series([(datetime(2026, 9, 6, 6, 0, tzinfo=weather.KST), 0.5)])
+        for field in ("showWave", "island", "pelagic"):
+            with self.subTest(required=field):
+                today, sample = self.both(stale, site_fields={field: True})
+                self.assertFalse(today["scoreEligible"])
+                self.assertEqual(today["missingScoreFields"], ["wave"])
+                self.assertIsNone(today["wave"])
+                self.assertFalse(sample["scoreEligible"])
+
+    def test_non_wave_site_keeps_scoring(self):
+        """파고가 필수가 아닌 곳은 예전처럼 점수가 나오고 결측 목록도 비어 있다."""
+        stale = self.wave_series([(datetime(2026, 9, 6, 6, 0, tzinfo=weather.KST), 0.5)])
+        fresh = self.wave_series([(self.target, 0.5)])
+        none_wave, _ = self.both(None, site_fields={})
+        for wave in (stale, fresh):
+            today, sample = self.both(wave, site_fields={})
+            self.assertTrue(today["scoreEligible"])
+            self.assertEqual(today["missingScoreFields"], [])
+            self.assertEqual(today["score"], none_wave["score"])
+            self.assertTrue(sample["scoreEligible"])
+
+    def test_open_meteo_marine_follows_the_same_policy(self):
+        """Open-Meteo marine fallback도 today에서 같은 날짜+간격 검증을 받는다.
+
+        today는 기존대로 current 값을 쓰고 weekly는 hourly를 펼쳐 쓰므로, 여기서는
+        두 경로가 같은 시각을 가리키는 실제 응답 모양으로 정책만 비교한다.
+        """
+        for hour, expected in (("06:00", None), ("18:00", 0.5)):
+            with self.subTest(current=hour):
+                payload = {"current": {"time": "2026-09-06T" + hour, "wave_height": 0.5},
+                           "hourly": {"time": ["2026-09-06T" + hour], "wave_height": [0.5]}}
+                with patch.object(weather, "request_open_meteo", return_value=payload):
+                    wave = weather.open_meteo_wave(35.26, 129.24, self.target)
+                self.assertWave(wave, expected)
+
+    def test_today_and_weekly_never_disagree_on_windy_series(self):
+        """같은 Windy 시계열이라면 어떤 시각 차이에서도 두 경로의 파고 판정이 갈리지 않는다."""
+        series = self.wave_series([(datetime(2026, 9, 6, 6, 0, tzinfo=weather.KST), 0.5),
+                                   (datetime(2026, 9, 6, 9, 0, tzinfo=weather.KST), 0.5)])
+        for minutes in range(0, 16 * 60, 17):
+            moment = datetime(2026, 9, 6, 6, 0, tzinfo=weather.KST) + timedelta(minutes=minutes)
+            with self.subTest(evaluation=moment.strftime("%H:%M")):
+                today, sample = self.both(series, target=moment)
+                self.assertEqual(today["wave"],
+                                 None if sample["waveM"] is None else "%.1fm" % sample["waveM"])
+                self.assertEqual(today["missingScoreFields"], sample["missingScoreFields"])
+
+
 if __name__ == "__main__":
     unittest.main()

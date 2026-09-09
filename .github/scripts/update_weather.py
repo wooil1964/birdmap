@@ -482,10 +482,9 @@ def build_site_result(
     wave_time = None
     if wave:
         wave_index = nearest_index(wave.get("ts", []), target)
-        wave_m = value_at(wave, "waves_height-surface", wave_index)
         wave_time = datetime.fromtimestamp(wave["ts"][wave_index] / 1000, KST)
-        if wave_time.date() != target.date() or wave_m is not None and wave_m < 0:
-            wave_m = None
+        # 같은 날짜라는 이유만으로 오래된 파고를 쓰지 않도록, weekly와 동일한 wave_value_at 정책을 그대로 적용한다.
+        wave_m = wave_value_at(wave, target)
 
     rule_key, rule = merge_rule(rules_config, str(site.get("weatherRuleKey") or "general_birding"))
     score = score_weather(
@@ -662,7 +661,10 @@ def weekly_wave_series(wave: dict[str, Any]) -> dict[str, Any]:
 
 
 def wave_value_at(wave: dict[str, Any], moment: datetime) -> float | None:
-    """Nearest wave sample inside half a step and on the same KST date, so no slot is borrowed."""
+    """Nearest wave sample inside half a step and on the same KST date, so no slot is borrowed.
+
+    today(build_site_result)와 weekly(build_week_days)가 공유하는 단일 파고 검증 정책이다.
+    """
     timestamps = wave.get("ts") or []
     if not timestamps:
         return None
