@@ -1749,8 +1749,8 @@ function toggleTodayPanel(force){
 }
 
 function todayString(){
-  var d=new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  // 공지 활성 판정은 브라우저 현지시간이 아니라 항상 KST 기준 날짜를 쓴다(기존 kstDateText 재사용).
+  return kstDateText();
 }
 
 function activeNotice(i){

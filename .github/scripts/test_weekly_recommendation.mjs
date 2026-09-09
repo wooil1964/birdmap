@@ -54,7 +54,7 @@ const NAMES = [
   'todayIsAutumnRemoteIsland', 'todaySpringIslandReason', 'weeklyIssueReason',
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
   'todayRecommendedSites', 'weeklyEastWindRecommendation', 'v24WindParts', 'v24WindNumber',
-  'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'todayString', 'v23Value',
+  'activeNotice', 'activeNoticeItems', 'noticeLinkedSites', 'kstDateText', 'todayString', 'v23Value',
   'weeklyRecommendationIsSafe', 'weeklyPelagicRecommendationSeason',
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
