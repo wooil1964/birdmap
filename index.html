@@ -1143,7 +1143,8 @@ function renderMonthTideHtml(siteMonthData){
   if(!days.length)return '<div>월간 조석 자료가 없습니다.</div>';
   return '<div class="monthTideDays">'+days.map(function(day){
     var events=v24TideDayEvents(day);
-    var showStaleWarning=day.stale===true&&day.fallbackSource!=="monthly_cache";
+    // '자료 없음'과 '이전 자료'는 의미가 다르다. 쓸 수 있는 조석 값이 있는 날에만 재사용 경고를 붙인다.
+    var showStaleWarning=events.length>0&&day.stale===true&&day.fallbackSource!=="monthly_cache";
     var staleBadge=showStaleWarning?'<span class="monthTideStaleBadge">이전 자료</span>':'';
     var staleNote=showStaleWarning?'<div class="smallText monthTideStaleNote">※ 이전 자료</div>':'';
     return '<section class="monthTideDay"><div class="monthTideDate">'+escapeHtml(monthTideDateLabel(day.date))+staleBadge+'</div>'+

@@ -108,7 +108,7 @@ const CHROME = ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
   .filter(Boolean).find((path) => existsSync(path));
 
 /* 실제 index.html 을 Chromium 으로 띄워 모달 제목을 DOM 에서 읽는다(L01 과 같은 방식, 새 의존성 없음). */
-async function modalTitle(siteId, { monthName, blankRuntimeName = false } = {}) {
+async function openModal(siteId, { monthName, blankRuntimeName = false, days } = {}) {
   const profile = mkdtempSync(join(tmpdir(), 'birdmap-l04-'));
   const proc = spawn(CHROME, ['--headless=new', '--remote-debugging-port=0', '--no-sandbox',
     '--disable-gpu', '--disable-dev-shm-usage', '--user-data-dir=' + profile, 'about:blank'],
@@ -154,15 +154,17 @@ async function modalTitle(siteId, { monthName, blankRuntimeName = false } = {}) 
     const fixture = JSON.stringify({
       windowStart: '2026-09-10', windowEnd: '2026-10-10',
       sites: { [String(siteId)]: { siteId: String(siteId), name: monthName, stationName: '평택',
-        stationCode: 'DT_0002', days: [{ date: '2026-09-10', highTide: '04:23', highTideLevel: '902.0',
-          lowTide: '10:43', lowTideLevel: '122.0', stationCode: 'DT_0002', stale: false }] } },
+        stationCode: 'DT_0002', days: days || [{ date: '2026-09-10', highTide: '04:23',
+          highTideLevel: '902.0', lowTide: '10:43', lowTideLevel: '122.0',
+          stationCode: 'DT_0002', stale: false }] } },
     });
     const expression = `(async function(){
       tideMonth = ${fixture};
       ${blankRuntimeName ? `siteData.find(function(s){return String(s.id)===${JSON.stringify(String(siteId))};}).name='';` : ''}
       openMonthTideModal(${JSON.stringify(String(siteId))});
       for (var i = 0; i < 5; i++) await new Promise(function(r){setTimeout(r, 0);});
-      return document.getElementById('monthTideTitle').textContent;
+      return {title: document.getElementById('monthTideTitle').textContent,
+              content: document.getElementById('monthTideContent').innerHTML};
     })()`;
     const { result, exceptionDetails } = await send('Runtime.evaluate',
       { expression, returnByValue: true, awaitPromise: true }, sessionId);
@@ -174,6 +176,8 @@ async function modalTitle(siteId, { monthName, blankRuntimeName = false } = {}) 
     try { rmSync(profile, { recursive: true, force: true }); } catch { /* 임시 프로필 */ }
   }
 }
+
+const modalTitle = async (siteId, options) => (await openModal(siteId, options)).title;
 
 test('ID 14 는 runtime 이름이 걸매리이고 월간 조석 자료에는 과거 명칭이 남아 있다', () => {
   const site = siteById('14');
@@ -198,4 +202,50 @@ test('runtime 이름을 쓸 수 없으면 월간 자료의 이름으로 대체�
   async () => {
     assert.equal(await modalTitle('14', { monthName: '아산만 삽교호', blankRuntimeName: true }),
       '한 달 조석 — 아산만 삽교호');
+  });
+
+/* ---- L05: 조석 자료가 없는 날짜에는 '이전 자료' 배지를 붙이지 않는다 ---- */
+
+const TIDE_DAY = { date: '2026-09-10', highTide: '04:23', highTideLevel: '902.0',
+  lowTide: '10:43', lowTideLevel: '122.0', stationCode: 'DT_0002' };
+const NO_TIDE_DAY = { date: '2026-09-11', highTide: '', highTideLevel: '',
+  lowTide: '', lowTideLevel: '', stationCode: 'DT_0002' };
+
+async function monthContent(days) {
+  return (await openModal('14', { monthName: '걸매리', days })).content;
+}
+
+test('조석 값이 있는 최신 자료에는 이전 자료 배지가 없다', { skip: CHROME ? false : 'Chromium 없음' },
+  async () => {
+    const content = await monthContent([{ ...TIDE_DAY, stale: false }]);
+    assert.ok(!content.includes('이전 자료'), '최신 자료에 배지가 붙었다');
+    assert.ok(content.includes('만조'), '조석 내용은 그대로 보여야 한다');
+    assert.ok(!content.includes('자료 없음'));
+  });
+
+test('조석 값이 있는 stale 자료에는 기존 이전 자료 경고를 그대로 유지한다',
+  { skip: CHROME ? false : 'Chromium 없음' }, async () => {
+    const content = await monthContent([{ ...TIDE_DAY, stale: true }]);
+    assert.ok(content.includes('monthTideStaleBadge'), 'stale 배지가 사라지면 안 된다');
+    assert.ok(content.includes('※ 이전 자료'), 'stale 주석이 사라지면 안 된다');
+    assert.ok(content.includes('만조'));
+  });
+
+test('조석 자료가 없는 날짜에는 자료 없음만 표시하고 이전 자료 배지를 붙이지 않는다',
+  { skip: CHROME ? false : 'Chromium 없음' }, async () => {
+    const content = await monthContent([{ ...NO_TIDE_DAY, stale: true }]);
+    assert.ok(content.includes('자료 없음'), '자료 없음 표시는 유지되어야 한다');
+    assert.ok(!content.includes('이전 자료'),
+      '자료가 없는 날에 이전 자료 배지를 붙이면 안 된다: ' + content);
+    assert.ok(!content.includes('monthTideStaleBadge'));
+  });
+
+test('자료 없음과 stale 자료가 한 달에 섞여 있어도 각 날짜가 제 상태로 표시된다',
+  { skip: CHROME ? false : 'Chromium 없음' }, async () => {
+    const content = await monthContent([{ ...TIDE_DAY, stale: true }, { ...NO_TIDE_DAY, stale: true }]);
+    const sections = content.split('<section').slice(1);
+    assert.equal(sections.length, 2);
+    assert.ok(sections[0].includes('이전 자료'), '값이 있는 stale 날짜는 경고 유지');
+    assert.ok(sections[1].includes('자료 없음'), '값이 없는 날짜는 자료 없음');
+    assert.ok(!sections[1].includes('이전 자료'), '값이 없는 날짜에는 경고 없음');
   });
