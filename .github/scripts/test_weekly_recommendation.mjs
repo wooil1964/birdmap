@@ -117,6 +117,11 @@ function futureDate(offsetDays = 3) {
   return `${v.year}-${v.month}-${v.day}`;
 }
 
+/* 9월 동풍·선상 fixture는 날짜를 2026-09-10/11로 고정해야 정책 검증이 성립한다.
+   그 날짜가 실행일과 겹치면 '오늘 이미 지난 시각 제외'가 09:00 sample을 지우므로
+   테스트 시계도 그 앞날로 함께 고정해 sample이 항상 미래로 남게 한다. */
+const SEPTEMBER_FIXTURE_NOW = '2026-09-09T12:00:00+09:00';
+
 test('일출·일몰이 공표된 서울 하지/동지 값과 일치한다', () => {
   const api = loadApi();
   const summer = api.weeklySunTimes(37.5665, 126.978, '2026-06-21');
@@ -231,7 +236,7 @@ test('9월 동남해안 동풍 mandatory 는 8.0m/s 부터 충족', () => {
   const date = '2026-09-10';
   const week = { dates: [date] };
   const build = (windName, speed, site = POHANG) => {
-    const api = loadApi();
+    const api = loadApi({ now: SEPTEMBER_FIXTURE_NOW });
     api.setWeek(weekDoc(site.id, { [date]: [sample(`${date} 09:00 KST`, 85, { windName, windSpeed: speed })] }, site.name));
     return api.weeklyEastWindFromWeek(site, week);
   };
@@ -604,7 +609,7 @@ test('동풍과 선상 gate는 지역·풍향·풍속에서 독립',()=>{
   ['포항','SW',12,false,false],['강릉','E',12,false,false],['울산','E',5,false,true],['부산','W',4,false,true]
  ]){
   const site={...POHANG,region,sido:region,sigungu:region},s=sample(date+' 09:00 KST',92,{windName,windSpeed,waveM:0.5});
-  const api=loadApi({weatherWeek:weekDoc(site.id,{[date]:[s]})});
+  const api=loadApi({now:SEPTEMBER_FIXTURE_NOW,weatherWeek:weekDoc(site.id,{[date]:[s]})});
   assert.equal(!!api.weeklyEastWindFromWeek(site,week),east);
   assert.equal(api.weeklyPelagicSafety(s),ship);
  }
@@ -626,7 +631,7 @@ test('강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으�
  const site={...PELAGIC,region:'울산',birdingFeature:'선상'};
  const unsafe=sample(a+' 09:00 KST',99,{windSpeed:8.5,waveM:0.5});
  const safe=sample(b+' 09:00 KST',88,{windSpeed:5,waveM:0.6,gust:null,visibilityKm:null});
- const api=loadApi({weatherWeek:weekDoc(site.id,{[a]:[unsafe],[b]:[safe]})});
+ const api=loadApi({now:SEPTEMBER_FIXTURE_NOW,weatherWeek:weekDoc(site.id,{[a]:[unsafe],[b]:[safe]})});
  assert.ok(api.weeklyEastWindFromWeek(site,week));
  const entry=api.weeklyRecommendationForSite(site,week);
  assert.equal(entry.recommendationDate,b);assert.equal(entry.score,88);
