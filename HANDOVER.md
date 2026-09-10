@@ -17,6 +17,14 @@
 > **[과거 기록]** 이 절은 완료된 작업을 최신순으로 쌓아 둔 이력 로그입니다. 각 항목은 **그 작업 당시의 상태·수치·판단**을 적은 것이므로
 > 현재 운영 상태로 읽지 마세요. 현재 상태는 위의 '현재 서비스 기준'과 아래 '진행 중 / 보류 사항'을 보세요.
 
+- 팝업 탐조 해석 문구의 월을 KST로 통일(Ultra L01~L06와 별개 발견, 2026-09-10, 시작·기준 main `249284c`): **root cause** — `v24BriefingInterpretation()`이 해석 문장의 월을 `new Date().getMonth()+1`, 즉 **브라우저 현지시간**에서 얻어 `v252CurrentTargetSentence(site, month)`에 넘겼다. 그 값이 화면 문구 `N월 ○○철에는 …`과 계절 표기(`v25CurrentSeason`)를 직접 결정한다. M07(공지 활성 날짜)과 원인 계열은 같지만 **다른 코드 경로**다.
+  - 수정 전 재현(동일 순간 `2026-09-30T15:30:00Z` = 2026-10-01 00:30 KST): Asia/Seoul은 `MONTH=10`인데 UTC·America/Los_Angeles·Pacific/Honolulu는 모두 `MONTH=9`였다. 같은 순간에 기존 `todayKstMonth()`는 네 timezone 모두 10월을 반환했다.
+  - 최소 수정은 `index.html` **1줄**(주석 1줄 포함 3줄)이다: `new Date().getMonth()+1` → **기존 `todayKstMonth()` 호출**. 이미 Intl `timeZone:'Asia/Seoul'` 기반이라 새 timezone helper를 만들지 않았고, 두 함수는 같은 inline script 블록에 있어 선언 호이스팅으로 정의 순서와 무관하게 안전하다.
+  - **M07 `activeNotice()`는 한 줄도 건드리지 않았고**(diff 0) 추천 계절 엔진(이미 `todayKstMonth()`를 쓰던 `autumnRecommendationSeason` 등)·score·pelagic·물때 임계값·공지 우선순위도 무변경이다. 수정 후 네 timezone 모두 `MONTH=10 SEASON=가을`로 일치하고 **Asia/Seoul 결과는 수정 전과 동일**하다.
+  - 검증: 신규 `.github/scripts/test_briefing_kst_month.mjs` **5개**(index.html 실제 함수 사용, 같은 실제 순간을 유지한 채 local getter만 해당 timezone으로 답하는 Date 주입). 월 경계 순간 4개 timezone 일치, KST 자정 23:59/00:00/00:01, 연말 12/31→1/1, 여름→가을 경계(9/1 00:30 KST)에서 8월로 읽히지 않음, 서울 무변화를 포함한다. **수정 전 5개 중 4개가 실패**하고 수정 후 5/5 통과한다.
+  - 전체 회귀: 해석 월 5(신규)·월간 조석 UI 13·기상 48·주간 추천 83·L01 5·M07 9·M06 19·조석 생성기 20·Worker 33으로 **총 235** 통과, validator 2종 통과, inline JS 3개 문법 정상, runtime/Worker 187/187·불일치 0·siteData 187개 완전 동일·좌표 변경 0. C01 3·H01 6·M01 1·M02 1·물때/계절/선상 34도 통과한다.
+  - 변경 파일은 `index.html`·`.github/scripts/test_briefing_kst_month.mjs`(신규)·`HANDOVER.md`뿐이다. `notices.json`·`tide_station_mapping.json`·조석/기상 생성 JSON·생성기·`weather_rules.json`·`weather-proxy/src/sites.js`·좌표·siteData는 **무변경**이다.
+
 - 자료 없는 날짜의 '이전 자료' 배지 제거(L05, 2026-09-10, 시작·기준 main `ee9d81a`): **root cause** — `renderMonthTideHtml()`이 `showStaleWarning=day.stale===true&&day.fallbackSource!=="monthly_cache"`로 **조석 값의 유무와 무관하게** 재사용 경고를 결정했다. 그래서 그 날짜에 쓸 수 있는 조석 값이 하나도 없어도 `stale=true`이면 '자료 없음' 문구와 '이전 자료' 배지·주석이 **동시에** 렌더됐다. '자료 없음'과 '과거 자료'는 의미가 다르다.
   - 수정 전 재현(실제 Chromium/CDP로 `renderMonthTideHtml` 결과 DOM 확인): `<div class="monthTideDate">9월 11일 금요일<span class="monthTideStaleBadge">이전 자료</span></div><div class="v24TideEvent">자료 없음</div><div class="smallText monthTideStaleNote">※ 이전 자료</div>`.
   - 수정은 `index.html` **1개 조건**뿐이다(주석 1줄 포함 실질 3줄): `showStaleWarning`에 `events.length>0` 전제를 더했다. `events`는 기존 `v24TideDayEvents(day)` 결과를 그대로 재사용하므로 새 no-data 판정 규칙을 만들지 않았다.

@@ -1194,7 +1194,8 @@ function closeMonthTideModal(){
   monthTideReturnFocus=null;
 }
 function v24BriefingInterpretation(site,today,tide){
-  var month=new Date().getMonth()+1;
+  // 해석 문구의 월도 브라우저 현지시간이 아니라 KST 기준이어야 한다(기존 todayKstMonth 재사용).
+  var month=todayKstMonth();
   return [v252CurrentTargetSentence(site,month),v252WeatherSentence(site,today,tide),v251ScoreSentence(today),v251EnvironmentWeatherSentence(site),v25TideSentence(site)].filter(Boolean).join(' ');
 }
 function v24LocalBirdingTipHtml(site){
