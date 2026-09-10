@@ -428,6 +428,95 @@ class WeatherWeekTests(unittest.TestCase):
                 with contextlib.redirect_stdout(io.StringIO()):
                     self.assertEqual(validator.validate(path)["sampleCount"], 1)
 
+    # ---- L03 후속: today validator 의 수치 검증 ----
+
+    def today_document(self, **site_fields):
+        """today 검증기 입력용 최소 문서. 실제 저장 형태처럼 기상값은 포맷 문자열이다."""
+        today = datetime.now(weather.KST).date().isoformat()
+        entry = {"name": "어청도", "date": today, "generatedAt": today + " 06:00 KST",
+                 "refreshedAt": today + " 06:00 KST", "sourceType": "saved_forecast",
+                 "stale": False, "scoreEligible": True, "missingScoreFields": [],
+                 "score": 92, "grade": "★★★★★", "summary": "좋음",
+                 "wind": "북동풍 3.6m/s", "rain": "강수 없음", "targetGroup": "솔새류",
+                 "forecastTime": today + " 06:00 KST", "temperature": "22.0°C",
+                 "visibility": "20.0km", "cloud": "10%", "wave": "0.7m", "ruleKey": "island_migrant",
+                 "waveLat": 36.12, "waveLon": 125.98}
+        entry.update(site_fields)
+        return {"date": today, "updated": today + " 06:00 KST", "source": "test", "status": "ok",
+                "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
+                "unavailableSiteCount": 0,
+                "scoreEligibleCount": 1 if entry.get("scoreEligible") else 0,
+                "sites": {"1": entry}}
+
+    def run_today_validator(self, document, raw_replace=None):
+        """실제 validate() 를 임시 파일로 호출한다. raw_replace 는 JSON 원문 치환용이다."""
+        import validate_weather as validator
+
+        text = json.dumps(document, ensure_ascii=False)
+        if raw_replace:
+            text = text.replace(*raw_replace)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "weather_today.json"
+            path.write_text(text, encoding="utf-8")
+            with patch.object(validator, "load_runtime_sites", return_value=[dict(self.site)]):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    return validator.validate(path)
+
+    def test_today_validator_rejects_malformed_numbers(self):
+        """today 가 실제로 숫자로 저장하는 값은 score 와 파고 좌표뿐이며 모두 유한한 숫자여야 한다."""
+        cases = [
+            ({"score": True}, "score is not a finite number"),
+            ({"score": "90"}, "score is not a finite number"),
+            ({"score": -1}, "score is not a finite number"),
+            ({"score": 101}, "score is not a finite number"),
+            ({"waveLat": "x"}, "waveLat is not a finite number"),
+            ({"waveLat": False}, "waveLat is not a finite number"),
+            ({"waveLon": "125.98"}, "waveLon is not a finite number"),
+        ]
+        for fields, message in cases:
+            with self.subTest(fields=fields):
+                with self.assertRaisesRegex(AssertionError, message):
+                    self.run_today_validator(self.today_document(**fields))
+
+    def test_today_validator_rejects_json_special_numbers(self):
+        """1e999 는 inf 로 파싱되고 NaN·Infinity 리터럴은 parse_constant 가 막는다."""
+        self.assertEqual(json.loads("1e999"), float("inf"))
+        for field, marker in (("score", 987654321), ("waveLat", 987654321)):
+            for literal in ("1e999", "NaN", "Infinity", "-Infinity"):
+                with self.subTest(field=field, literal=literal):
+                    document = self.today_document(**{field: marker})
+                    with self.assertRaisesRegex(AssertionError, "(not a finite number|Weather contains)"):
+                        self.run_today_validator(document, raw_replace=(str(marker), literal))
+
+    def test_today_validator_accepts_valid_numbers(self):
+        """정상 값과 정상 결측은 그대로 통과해야 한다."""
+        for fields in [
+            {},
+            {"score": 0, "grade": "★"},
+            {"score": 100},
+            {"waveLat": 0, "waveLon": 0},
+            {"wave": None, "waveLat": None, "waveLon": None},   # 파고가 없는 내륙 지역
+        ]:
+            with self.subTest(fields=fields):
+                self.assertEqual(self.run_today_validator(self.today_document(**fields))["siteCount"], 1)
+
+    def test_today_validator_keeps_ineligible_sites_valid(self):
+        """scoreEligible=false 는 score None 과 결측 사유가 정상이며 거부되면 안 된다."""
+        document = self.today_document(scoreEligible=False, score=None, grade="",
+                                       stale=True, missingScoreFields=["precipitation"], rain=None)
+        document["staleCount"] = 1
+        self.assertEqual(self.run_today_validator(document)["scoreEligibleCount"], 0)
+        # 부적격이어도 파고 좌표에 값이 들어 있으면 그 값은 유한한 숫자여야 한다.
+        broken = self.today_document(scoreEligible=False, score=None, grade="",
+                                     missingScoreFields=["wave"], waveLat="36.12")
+        with self.assertRaisesRegex(AssertionError, "waveLat is not a finite number"):
+            self.run_today_validator(broken)
+        # NaN 리터럴은 개별 필드 검사 이전에 parse_constant 가 먼저 막는다.
+        nan_document = self.today_document(scoreEligible=False, score=None, grade="",
+                                           missingScoreFields=["wave"], waveLat=987654321)
+        with self.assertRaisesRegex(AssertionError, "Weather contains NaN"):
+            self.run_today_validator(nan_document, raw_replace=("987654321", "NaN"))
+
     # ---- L03: weekly validator 의 수치 타입·음수·비유한값 검증 ----
 
     OVERFLOW_MARKER = 123456.789
