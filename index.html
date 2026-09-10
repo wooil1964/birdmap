@@ -1173,7 +1173,8 @@ function openMonthTideModal(siteId){
       content.textContent='이 탐조지의 월간 조석 자료가 없습니다.';
       return;
     }
-    title.textContent='한 달 조석 — '+v23Value(siteMonth.name,site.name);
+    // 월간 자료의 name 은 생성 당시 원본 명칭이므로, 표시는 현재 탐조지명을 우선한다.
+    title.textContent='한 달 조석 — '+v23Value(site.name,siteMonth.name);
     meta.textContent='기간: '+v23Value(data.windowStart,'정보 없음')+' ~ '+v23Value(data.windowEnd,'정보 없음')+' · 자료: KHOA 조석예보';
     content.innerHTML=renderMonthTideHtml(siteMonth);
   }).catch(function(){
