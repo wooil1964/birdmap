@@ -129,18 +129,34 @@ test('일출·일몰이 공표된 서울 하지/동지 값과 일치한다', () 
   assert.ok(Math.abs(equinox.setMin - equinox.riseMin - 729) <= 5, '추분 낮 길이는 약 12시간 09분');
 });
 
-test('일출~일몰 경계: 06:00 제외, 09:00·18:00 포함, 21:00 제외', () => {
-  const date = futureDate();
-  const api = loadApi();
-  api.setWeek(weekDoc(SITE.id, {
-    [date]: [sample(`${date} 06:00 KST`, 95), sample(`${date} 09:00 KST`, 80),
-             sample(`${date} 18:00 KST`, 81), sample(`${date} 21:00 KST`, 99)],
-  }));
-  const sun = api.weeklySunTimes(SITE.lat, SITE.lon, date);
-  assert.ok(sun.riseMin > 6 * 60 && sun.riseMin < 9 * 60, '일출이 06:00~09:00 사이여야 이 경계 테스트가 유효');
-  assert.ok(sun.setMin > 18 * 60 && sun.setMin < 21 * 60, '일몰이 18:00~21:00 사이여야 이 경계 테스트가 유효');
-  const times = api.weeklyDaylightCandidates(SITE, date).map(api.weeklySampleTimeText);
-  assert.deepEqual(times, ['09:00', '18:00']);
+/* 일출은 여름에 05시대, 일몰은 겨울에 17시대가 되는 것이 정상이므로 고정 시각대를 가정하지 않는다.
+   실제 weeklySunTimes() 결과를 기준으로 경계 관계만 검증하고, 테스트 시계와 대상 날짜를 함께
+   고정해 실행 날짜·계절·시스템 timezone과 무관하게 같은 결과가 나오게 한다. */
+test('일출~일몰 경계: 계산된 일출·일몰 직전은 제외하고 정각과 그 사이는 포함한다', () => {
+  const hhmm = (minutes) => String(Math.floor(minutes / 60)).padStart(2, '0') + ':' + String(minutes % 60).padStart(2, '0');
+  const seasons = [
+    ['겨울', '2027-01-10T09:00:00+09:00', '2027-01-15'],
+    ['여름', '2027-06-16T09:00:00+09:00', '2027-06-21'],
+    ['봄', '2027-03-15T09:00:00+09:00', '2027-03-20'],
+    ['가을', '2027-10-10T09:00:00+09:00', '2027-10-15'],
+  ];
+  for (const [season, now, date] of seasons) {
+    const api = loadApi({ now });
+    assert.notEqual(api.weeklyTodayDateText(), date, season + ': 대상 날짜가 오늘이면 과거시간 제외가 끼어든다');
+    const sun = api.weeklySunTimes(SITE.lat, SITE.lon, date);
+    assert.ok(sun && Number.isFinite(sun.riseMin) && Number.isFinite(sun.setMin), season + ': 일출·일몰을 계산하지 못했다');
+    /* 기존 구현의 경계 의미 그대로: minutes < riseMin 또는 minutes > setMin 만 제외하므로 양 끝은 포함된다. */
+    const points = [[sun.riseMin - 1, false], [sun.riseMin, true], [sun.riseMin + 1, true],
+                    [sun.setMin - 1, true], [sun.setMin, true], [sun.setMin + 1, false]];
+    api.setWeek(weekDoc(SITE.id, {
+      [date]: points.map(([minutes], index) => sample(`${date} ${hhmm(minutes)} KST`, 90 - index)),
+    }));
+    const times = api.weeklyDaylightCandidates(SITE, date).map(api.weeklySampleTimeText);
+    const where = `${season} ${date} 일출 ${hhmm(sun.riseMin)} 일몰 ${hhmm(sun.setMin)}`;
+    assert.deepEqual(times, points.filter(([, keep]) => keep).map(([minutes]) => hhmm(minutes)), where);
+    assert.ok(!times.includes(hhmm(sun.riseMin - 1)), where + ' : 일출 1분 전이 포함됐다');
+    assert.ok(!times.includes(hhmm(sun.setMin + 1)), where + ' : 일몰 1분 후가 포함됐다');
+  }
 });
 
 test('동점이면 오전 우선, 오전 안에서는 더 이른 시각', () => {
