@@ -428,6 +428,113 @@ class WeatherWeekTests(unittest.TestCase):
                 with contextlib.redirect_stdout(io.StringIO()):
                     self.assertEqual(validator.validate(path)["sampleCount"], 1)
 
+    # ---- L03: weekly validator 의 수치 타입·음수·비유한값 검증 ----
+
+    OVERFLOW_MARKER = 123456.789
+
+    def week_document(self, **sample_fields):
+        """검증기 입력용 최소 주간 문서. sample 한 필드씩 바꿔 가며 쓴다."""
+        sample = {"forecastTime": "2026-09-07 06:00 KST", "windSpeed": 5.0, "windDirectionDeg": 45,
+                  "precipitation3h": 0.0, "waveM": 0.7, "score": 92, "grade": "★★★★★",
+                  "scoreEligible": True, "missingScoreFields": []}
+        sample.update(sample_fields)
+        return {
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
+            "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
+            "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant",
+                            "days": {"2026-09-07": {"samples": [sample]}}}},
+        }
+
+    def run_week_validator(self, document, site_fields=None, overflow_field=None):
+        """실제 validate() 를 임시 파일로 호출한다. overflow_field 는 JSON 숫자 리터럴 1e999 로 넣는다."""
+        import validate_weather_week as validator
+
+        if overflow_field:
+            document = self.week_document(**{overflow_field: self.OVERFLOW_MARKER})
+        text = json.dumps(document, ensure_ascii=False)
+        if overflow_field:
+            text = text.replace(repr(self.OVERFLOW_MARKER), "1e999")
+            self.assertIn("1e999", text)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "weather_week.json"
+            path.write_text(text, encoding="utf-8")
+            with patch.object(validator, "load_runtime_sites",
+                              return_value=[dict(self.site, **(site_fields or {}))]):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    return validator.validate(path)
+
+    def test_validator_rejects_malformed_weekly_numbers(self):
+        """문자열·bool·음수·비유한값은 저장된 주간 수치로 인정하지 않는다."""
+        wave = {"showWave": True}
+        cases = [
+            ("windSpeed", "NaN", "windSpeed is not a finite number", None),
+            ("windSpeed", False, "windSpeed is not a finite number", None),
+            ("windSpeed", -1, "windSpeed is negative", None),
+            ("precipitation3h", -1, "precipitation3h is negative", None),
+            ("precipitation3h", "0", "precipitation3h is not a finite number", None),
+            ("precipitation3h", False, "precipitation3h is not a finite number", None),
+            ("windDirectionDeg", "90", "windDirectionDeg is not a finite number", None),
+            ("windDirectionDeg", False, "windDirectionDeg is not a finite number", None),
+            ("windDirectionDeg", -1, "windDirectionDeg is negative", None),
+            ("windDirectionDeg", 360, "windDirectionDeg is outside", None),
+            ("waveM", "0.5", "waveM is not a finite number", wave),
+            ("waveM", False, "waveM is not a finite number", wave),
+            ("waveM", -0.1, "waveM is negative", wave),
+            ("score", True, "score out of range", None),
+            ("score", "92", "score out of range", None),
+        ]
+        for field, value, message, site_fields in cases:
+            with self.subTest(field=field, value=value):
+                with self.assertRaisesRegex(AssertionError, message):
+                    self.run_week_validator(self.week_document(**{field: value}), site_fields)
+
+    def test_validator_rejects_json_number_overflow(self):
+        """JSON 숫자 1e999 는 parse_constant 가 아니라 inf 로 파싱되므로 유한성 검사로 막는다."""
+        self.assertEqual(json.loads("1e999"), float("inf"))
+        for field in ("windSpeed", "windDirectionDeg", "precipitation3h", "waveM", "score"):
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(AssertionError, "(not a finite number|out of range)"):
+                    self.run_week_validator(None, {"showWave": True}, overflow_field=field)
+        # NaN·Infinity 리터럴은 기존 parse_constant 경로가 그대로 막는다.
+        text = json.dumps(self.week_document()).replace('"windSpeed": 5.0', '"windSpeed": NaN')
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "weather_week.json"
+            path.write_text(text, encoding="utf-8")
+            import validate_weather_week as validator
+            with patch.object(validator, "load_runtime_sites", return_value=[dict(self.site)]):
+                with self.assertRaisesRegex(AssertionError, "contains NaN"):
+                    validator.validate(path)
+
+    def test_validator_accepts_valid_weekly_numbers(self):
+        """정상 경계값은 그대로 통과해야 한다."""
+        wave = {"showWave": True}
+        for fields, site_fields in [
+            ({}, None),
+            ({"windSpeed": 0, "precipitation3h": 0, "windDirectionDeg": 0}, None),
+            ({"windDirectionDeg": 359}, None),
+            ({"windSpeed": 5, "waveM": 0}, wave),          # int 도 수치다
+            ({"score": 0, "grade": "★"}, None),
+            ({"score": 100}, None),
+            ({"waveM": None, "grade": "★★★★★"}, None),      # 파고가 필수가 아닌 곳은 결측이 정상
+        ]:
+            with self.subTest(fields=fields):
+                self.assertEqual(self.run_week_validator(self.week_document(**fields), site_fields)["sampleCount"], 1)
+
+    def test_validator_keeps_ineligible_sample_gaps_valid(self):
+        """scoreEligible=false 는 결측 사유와 함께 None 이 정상이며 L03 때문에 거부되면 안 된다."""
+        document = self.week_document(scoreEligible=False, score=None, grade="",
+                                      precipitation3h=None, waveM=None,
+                                      missingScoreFields=["precipitation"])
+        document["scoreEligibleSampleCount"] = 0
+        self.assertEqual(self.run_week_validator(document)["sampleCount"], 1)
+        # 결측이어도 값이 들어 있으면 그 값은 여전히 유한한 숫자여야 한다.
+        broken = self.week_document(scoreEligible=False, score=None, grade="",
+                                    precipitation3h=-1, missingScoreFields=["precipitation"])
+        broken["scoreEligibleSampleCount"] = 0
+        with self.assertRaisesRegex(AssertionError, "precipitation3h is negative"):
+            self.run_week_validator(broken)
+
     def test_weekly_file_keeps_one_sample_per_line_and_stays_valid_json(self):
         text = weather.week_json_text({"sites": {"1": {"days": {"2026-09-07": {
             "samples": [{"forecastTime": "2026-09-07 06:00 KST", "score": 92},

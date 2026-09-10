@@ -7,6 +7,14 @@ from site_data import load_runtime_sites
 from update_weather import KST, WEEK_FORECAST_DAYS
 
 SCORE_FIELDS = ("windSpeed", "windDirectionDeg", "precipitation3h")
+# 물리적으로 음수가 될 수 없는 저장 수치. 생성기는 windSpeed·precipitation3h·waveM 을 round()로,
+# windDirectionDeg 를 `% 360` 으로 저장하므로 모두 0 이상이다.
+NUMERIC_FIELDS = SCORE_FIELDS + ("waveM",)
+
+
+def finite_number(value):
+    """유한한 숫자만 인정한다. Python에서 bool은 int의 서브클래스라 명시적으로 제외한다."""
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
 
 
 def reject_constant(name):
@@ -73,7 +81,18 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
                 assert previous is None or previous < moment, f"{label} is out of order or duplicated"
                 previous = moment
                 score = sample["score"]
-                assert score is None or 0 <= score <= 100, f"{label} score out of range"
+                assert score is None or (finite_number(score) and 0 <= score <= 100), \
+                    f"{label} score out of range: {score!r}"
+                # 결측(None) 자체의 허용 여부는 아래 eligible/ineligible 규칙이 그대로 판단하고,
+                # 여기서는 값이 있을 때 그 값이 유한한 음이 아닌 숫자인지만 본다.
+                for field in NUMERIC_FIELDS:
+                    value = sample[field]
+                    assert value is None or finite_number(value), \
+                        f"{label} {field} is not a finite number: {value!r}"
+                    assert value is None or value >= 0, f"{label} {field} is negative: {value!r}"
+                direction = sample["windDirectionDeg"]
+                assert direction is None or direction < 360, \
+                    f"{label} windDirectionDeg is outside the stored 0-359 range: {direction!r}"
                 if sample["scoreEligible"]:
                     eligible_count += 1
                     assert not sample["missingScoreFields"], f"{label} is eligible with missing fields"
@@ -91,8 +110,8 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
                     # 선상 안전 판정용 원자료는 표시용 반올림 값과 같은 측정을 가리켜야 한다.
                     for field in ("windSpeed", "waveM", "precipitation3h"):
                         value = raw[field]
-                        assert value is None or (isinstance(value, (int, float)) and math.isfinite(value)), \
-                            f"{label} safetyRaw {field} is not a finite number"
+                        assert value is None or finite_number(value), \
+                            f"{label} safetyRaw {field} is not a finite number: {value!r}"
                         rounded = None if value is None else round(value, 1)
                         assert sample[field] == rounded, f"{label} safetyRaw {field} disagrees with the stored value"
         if site.get("dataUnavailable"):
