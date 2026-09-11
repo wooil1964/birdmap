@@ -269,3 +269,38 @@ test('F. 다른 overlay(추천 패널·월간 조석 모달)의 stacking 회귀�
     } finally { await page.close(); }
   }
 });
+
+test('정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하고 중복 없이 지도에 연결한다', async () => {
+  const page = await browser.open({width:1366,height:768});
+  try {
+    const result = await page.evaluate(`(function(){
+      siteData=[{id:'126',name:'해리천습지'},{id:'107',name:'매향리'},
+        {id:'19',name:'유부도'},{id:'50',name:'청림운동장'}];
+      PINNED_BIRDING_ISSUES=[];
+      loadedNotices=[{title:'연계 공지',siteIds:[126,107,19,50]},
+        {title:'중복 공지',siteIds:[126]},
+        {title:'만료 공지',siteIds:[126],end:'2000-01-01'}];
+      todayRecommendedSites=function(){return [];};
+      weeklyRecommendationForSite=function(site){
+        return site.id==='19'?null:{site:site};
+      };
+      weeklyRecommendationIsSafe=function(entry){return entry.site.id!=='50';};
+      weeklyWeatherCoverageText=function(){return '';};
+      var clicked=null;
+      moveToSite=function(site){clicked=site.id;};
+      renderTodayPanel();
+      var cards=[...document.querySelectorAll('.todayIssueCard')];
+      var buttons=[...document.querySelectorAll('.todayIssueMapBtn')];
+      var labels=buttons.map(b=>b.textContent);
+      buttons[0].click();
+      loadedNotices=[];
+      renderTodayPanel();
+      return {cards:cards.length,labels:labels,clicked:clicked,
+        afterExpiry:document.querySelectorAll('.todayIssueCard').length};
+    })()`);
+    assert.equal(result.cards,1);
+    assert.deepEqual(result.labels,['🗺️ 해리천습지 지도에서 보기','🗺️ 매향리 지도에서 보기']);
+    assert.equal(result.clicked,'126');
+    assert.equal(result.afterExpiry,0);
+  } finally { await page.close(); }
+});

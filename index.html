@@ -2671,6 +2671,27 @@ function renderTodayPanel(){
     body.appendChild(item);
   });
 
+  // 계절별 추천 정원을 바꾸지 않고, 정원 밖의 적격 공지 연계 장소도 안내한다.
+  var shownIssueIds=new Set(top.map(function(entry){return String(entry.site.id);}));
+  var extraIssueTitle=null;
+  issues.forEach(function(notice){
+    var extraSites=noticeLinkedSites(notice).filter(function(site){
+      if(shownIssueIds.has(String(site.id)))return false;
+      var entry=weeklyRecommendationForSite(site,week);
+      return entry&&weeklyRecommendationIsSafe(entry)!==false;
+    });
+    if(!extraSites.length)return;
+    if(!extraIssueTitle){
+      extraIssueTitle=document.createElement('div');
+      extraIssueTitle.className='todaySectionTitle';
+      extraIssueTitle.textContent='📢 추천 10곳 외 탐조 이슈 연계 장소';
+      body.appendChild(extraIssueTitle);
+    }
+    extraSites.forEach(function(site){shownIssueIds.add(String(site.id));});
+    body.appendChild(todayIssueCard({title:notice.title,summary:notice.summary||notice.content,
+      start:notice.start,end:notice.end,siteIds:extraSites.map(function(site){return site.id;})}));
+  });
+
   var allBtn=document.createElement('button');
   allBtn.type='button';
   allBtn.className='todayAllIssuesBtn';
