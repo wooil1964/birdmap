@@ -304,3 +304,28 @@ test('정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하�
     assert.equal(result.afterExpiry,0);
   } finally { await page.close(); }
 });
+
+test('주간 편집 목록은 지정 순서·표시명과 기존 적격성을 유지하고 날짜로 만료되지 않는다', async () => {
+  const page = await browser.open({width:1366,height:768});
+  try {
+    const result = await page.evaluate(`(function(){
+      siteData=[{id:'15',name:'천수만 간월호'},{id:'108',name:'호곡리'},
+        {id:'50',name:'청림운동장'},{id:'134',name:'솔개공원'}];
+      PINNED_BIRDING_ISSUES=[];
+      loadedNotices=[{weeklyRecommendations:[{siteId:15,name:'천수만',reason:'맹금류'},
+        {siteId:108,name:'화성 호곡리'},{siteId:15},{siteId:50},{siteId:134},{siteId:999}]}];
+      weeklyRecommendationForSite=function(site){return site.id==='50'?null:{site:site,reasons:[]};};
+      weeklyRecommendationIsSafe=function(entry){return entry.site.id!=='134';};
+      var entries=weeklyEditorialRecommendations({});
+      loadedNotices[0].end='2000-01-01';
+      return {ids:entries.map(e=>e.site.id),names:entries.map(e=>e.displayName),
+        originalNames:entries.map(e=>e.site.name),reason:entries[0].reasons,
+        afterDate:weeklyEditorialRecommendations({}).map(e=>e.site.id)};
+    })()`);
+    assert.deepEqual(result.ids,['15','108']);
+    assert.deepEqual(result.names,['천수만','화성 호곡리']);
+    assert.deepEqual(result.originalNames,['천수만 간월호','호곡리']);
+    assert.deepEqual(result.reason,['맹금류']);
+    assert.deepEqual(result.afterDate,['15','108']);
+  } finally { await page.close(); }
+});

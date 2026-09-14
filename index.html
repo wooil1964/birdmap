@@ -2561,6 +2561,22 @@ function todayIssueCard(notice,linkedTop5Ids){
   return card;
 }
 
+// 명시한 편집 목록은 날짜로 만료시키지 않으며, 기존 기상 적격성 판정을 재사용한다.
+function weeklyEditorialRecommendations(week){
+  var notice=loadedNotices.find(function(item){return item.published!==false&&Array.isArray(item.weeklyRecommendations);});
+  if(!notice)return null;
+  var seen=new Set();
+  return notice.weeklyRecommendations.map(function(item){
+    var site=siteData.find(function(site){return String(site.id)===String(item.siteId);});
+    if(!site||seen.has(String(site.id)))return null;
+    seen.add(String(site.id));
+    var entry=weeklyRecommendationForSite(site,week);
+    if(!entry||weeklyRecommendationIsSafe(entry)===false)return null;
+    return Object.assign({},entry,{displayName:item.name||site.name,
+      reasons:item.reason?[item.reason].concat(entry.reasons||[]):entry.reasons});
+  }).filter(Boolean).slice(0,10);
+}
+
 function renderTodayPanel(){
   var body=document.getElementById('todayPanelBody');
   if(!body)return;
@@ -2571,7 +2587,7 @@ function renderTodayPanel(){
   linkedIdsByNotice.forEach(function(ids){ids.forEach(function(id){linkedIdSet[id]=true;});});
 
   var week=weeklyInfo();
-  var top=todayRecommendedSites();
+  var top=weeklyEditorialRecommendations(week)||todayRecommendedSites();
   var topTitle=document.createElement('div');
   topTitle.className='todaySectionTitle';
   topTitle.textContent='🧭 이번 주 추천 '+top.length+'곳';
@@ -2593,7 +2609,7 @@ function renderTodayPanel(){
     item.onclick=function(){goToSiteFromTodayPanel(entry.site.id);};
     var name=document.createElement('div');
     name.className='todayRankName';
-    name.textContent=(index+1)+'. '+entry.site.name;
+    name.textContent=(index+1)+'. '+(entry.displayName||entry.site.name);
     if(linkedIdSet[String(entry.site.id)]){
       var tag=document.createElement('span');
       tag.className='todayIssueLinkTag';

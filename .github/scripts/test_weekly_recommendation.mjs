@@ -568,7 +568,8 @@ test('물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caut
 test('실데이터 caution 전후 비교와 동풍·공지 보존',()=>{
  const api=loadApi({siteData:RUNTIME,weatherWeek:actualWeek,
   tideMonth:JSON.parse(readFileSync(join(ROOT,'tide_month.json'),'utf8')),
-  notices:JSON.parse(readFileSync(join(ROOT,'notices.json'),'utf8'))});
+  // 운영 공지의 교체·만료와 무관하게 청림 공지 연계의 안전 판정을 검증한다.
+  notices:[{siteId:50,published:true}]});
  const entries=RUNTIME.map((s,i)=>{const e=api.weeklyRecommendationForSite(s,api.weeklyInfo());return e&&{...e,stableOrder:i};}).filter(Boolean);
  const before=api.autumnBalancedRecommendations(entries),after=api.todayRecommendedSites();
  const site=entries.find(e=>String(e.site.id)==='50');
