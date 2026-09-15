@@ -240,6 +240,31 @@ test('H3. daily root 날짜가 어제면 기존 staleDaily 경고를 그대로 �
   assert.equal(tide.date, TODAY, '어제 daily를 오늘로 인정하면 안 된다');
 });
 
+test('H4. daily 갱신이 늦어도 전날 미리 받은 오늘 예보를 99개 사이트 경로에서 사용한다', () => {
+  const yesterday = dailyDoc('2026-09-09', {
+    19: Object.assign(dailyDay('2026-09-09'), { tomorrow: dailyDay(TODAY) }),
+  });
+  yesterday.tomorrowDate = TODAY;
+  const api = loadApi({ now: NOW, tideToday: yesterday, tideMonth: monthDoc([monthDay(TODAY)]) });
+  const tide = api.tideTodayForSite(SITE);
+  assert.equal(tide.date, TODAY);
+  assert.equal(tide.highTideLevel, '702.0, 859.0', '전날 daily의 tomorrow 값이어야 한다');
+  assert.equal(tide.prefetchedPreviousDay, true);
+  assert.equal(tide.staleDaily, false, '정확한 날짜의 정상 사전예보를 갱신 지연으로 표시하면 안 된다');
+  assert.equal(tide.monthFallback, undefined, '정상 사전예보를 월간 자료로 덮어쓰면 안 된다');
+});
+
+test('H5. 전날 사전예보가 stale이면 정상 월간 exact-date 자료를 우선한다', () => {
+  const yesterday = dailyDoc('2026-09-09', {
+    19: Object.assign(dailyDay('2026-09-09'), { tomorrow: dailyDay(TODAY, { stale: true }) }),
+  });
+  yesterday.tomorrowDate = TODAY;
+  const api = loadApi({ now: NOW, tideToday: yesterday, tideMonth: monthDoc([monthDay(TODAY)]) });
+  const tide = api.tideTodayForSite(SITE);
+  assert.equal(tide.monthFallback, true);
+  assert.equal(tide.prefetchedPreviousDay, undefined);
+});
+
 /* ---------- CASE I/J: 월 경계 ---------- */
 
 test('I/J. 월 경계에서도 그날의 exact row만 쓴다 (9/30, 10/1, 12/31, 1/1, 2/28, 윤년 2/29, 3/1)', () => {

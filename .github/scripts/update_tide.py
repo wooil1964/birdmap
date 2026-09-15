@@ -7,6 +7,7 @@ import json
 import math
 import os
 import re
+import sys
 import time
 import urllib.error
 import urllib.parse
@@ -536,6 +537,23 @@ def normalize_cached_day(day: Any, site: dict[str, Any], date_iso: str, source: 
         return None
     result = {k: v for k, v in day.items() if k != "tomorrow"}
     original_time = day.get("generatedAt") or day.get("monthlyGeneratedAt") or generated_at or ""
+    # A successful KHOA forecast remains valid for its exact forecast date.
+    # Keep a same-day result (or yesterday's prefetched tomorrow result) live
+    # when a later refresh attempt fails. This prevents a failed backup run
+    # from downgrading data that was already fetched successfully.
+    fresh_daily_cache = source in {"previous_today", "previous_tomorrow"} and day.get("stale") is not True
+    if fresh_daily_cache:
+        result.update({
+            "name": site["name"], "stationCode": site["stationCode"], "stationName": site["stationName"],
+            "date": date_iso, "stale": False, "cacheReused": True, "cacheSource": source,
+            "generatedAt": original_time, "updated": original_time,
+        })
+        for key in (
+            "fallbackSource", "error", "refreshError", "generationTimeUnknown",
+            "staleDaily", "staleDailyDate", "monthFallback", "monthFallbackStale",
+        ):
+            result.pop(key, None)
+        return result
     result.update({
         "name": site["name"], "stationCode": site["stationCode"], "stationName": site["stationName"],
         "date": date_iso, "stale": True, "fallbackSource": source,
@@ -622,10 +640,23 @@ def fetch_and_build(
     if len(codes) != len(set(codes)):
         raise ValueError("Duplicate stationCode groups would cause duplicate API calls")
     date_iso = datetime.strptime(date_text, "%Y%m%d").date().isoformat()
+    pending_groups = []
+    for group in groups:
+        cached = [previous_for(site["id"]) for site in group]
+        if all(isinstance(day, dict) and has_tide_data(day) and day.get("stale") is not True for day in cached):
+            for site, day in zip(group, cached):
+                result = dict(day)
+                result["refreshedAt"] = now.strftime("%Y-%m-%d %H:%M KST")
+                results[site["id"]] = result
+                success_count += 1
+                reused_count += 1
+            print(f"[{label}] {group[0]['stationCode']} {len(group)} site(s): kept successful exact-date cache", flush=True)
+        else:
+            pending_groups.append(group)
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
             executor.submit(request_prediction, api_key, group[0]["stationCode"], date_text, False, stats): group
-            for group in groups
+            for group in pending_groups
         }
         for future in as_completed(futures):
             group = futures[future]
@@ -646,7 +677,11 @@ def fetch_and_build(
                     failed_count += 1
                     previous = previous_for(site["id"])
                     if isinstance(previous, dict) and has_tide_data(previous):
-                        result = dict(previous, stale=True, error=error)
+                        result = dict(previous)
+                        if result.get("stale") is True:
+                            result["error"] = error
+                        else:
+                            result["refreshError"] = error
                         reused_count += 1
                     else:
                         result = no_data(site, date_iso, error)
@@ -692,22 +727,25 @@ def build_daily_output(api_key: str, now: datetime, stats: RequestStats | None =
         results_by_date.append(results)
         counts.append((success, failed + len(missing), reused))
     results, tomorrow_results = results_by_date
+    live_success = sum(has_tide_data(s) and s.get("stale") is not True for s in results.values())
     live_station_count = len({s["stationCode"] for s in results.values() if not s.get("stale") and has_tide_data(s)})
+    fallback_count = sum(has_tide_data(s) and s.get("stale") is True for s in results.values())
+    fresh_cache_count = sum(has_tide_data(s) and s.get("stale") is not True and s.get("cacheReused") is True for s in results.values())
     month_count = sum(s.get("fallbackSource") == "tide_month" for s in results.values())
     for site_id, result in results.items():
         result["tomorrow"] = tomorrow_results[site_id]
-        if tomorrow_results[site_id].get("stale") and has_tide_data(tomorrow_results[site_id]):
-            result.setdefault("staleDaily", True)
-            result.setdefault("staleDailyDate", "")
     success, failed, reused = counts[0]
     tomorrow_success, tomorrow_failed, tomorrow_reused = counts[1]
+    tomorrow_live_success = sum(has_tide_data(s) and s.get("stale") is not True for s in tomorrow_results.values())
+    tomorrow_fallback_count = sum(has_tide_data(s) and s.get("stale") is True for s in tomorrow_results.values())
     output = {
         "date": dates[0], "tomorrowDate": dates[1], "updated": now.strftime("%Y-%m-%d %H:%M KST"),
         "source": "KHOA Tide Forecast OpenAPI", "status": "ok" if failed == 0 else "partial",
         "targetSiteCount": len(targets), "linkedSiteCount": len(sites), "siteCount": len(results),
         "uniqueStationCount": len(groups), "plannedStationDateCount": len(groups) * 2,
-        "successCount": success, "liveSuccessCount": success - reused, "liveSuccessStationCount": live_station_count,
-        "failedCount": failed, "reusedCount": reused, "fallbackCount": reused, "monthFallbackCount": month_count,
+        "successCount": success, "liveSuccessCount": live_success, "liveSuccessStationCount": live_station_count,
+        "failedCount": failed, "reusedCount": reused, "freshCacheCount": fresh_cache_count,
+        "fallbackCount": fallback_count, "monthFallbackCount": month_count,
         "previousTomorrowFallbackCount": sum(s.get("fallbackSource") == "previous_tomorrow" for s in results.values()),
         "unavailableSiteCount": sum(not has_tide_data(s) for s in results.values()),
         "noStationCount": len(missing), "noStationSites": [{"id": s["id"], "name": s["name"]} for s in missing],
@@ -715,18 +753,48 @@ def build_daily_output(api_key: str, now: datetime, stats: RequestStats | None =
         "codeReviewSites": [{"id": t["id"], "name": t["name"], "reason": mapping_sites.get(t["id"], {}).get("reviewReason", "")}
                             for t in targets if mapping_sites.get(t["id"], {}).get("needsReview")],
         "tomorrowSuccessCount": tomorrow_success, "tomorrowFailedCount": tomorrow_failed,
-        "tomorrowLiveSuccessCount": tomorrow_success - tomorrow_reused, "tomorrowReusedCount": tomorrow_reused,
+        "tomorrowLiveSuccessCount": tomorrow_live_success, "tomorrowReusedCount": tomorrow_reused,
+        "tomorrowFallbackCount": tomorrow_fallback_count,
         "tomorrowStatus": "ok" if tomorrow_failed == 0 else "partial", "sites": results,
         **stats.snapshot(),
     }
     return output
 
 
+def daily_output_is_complete(data: Any, now: datetime) -> bool:
+    """Return True only when all today/tomorrow targets have usable exact-date data."""
+    if not isinstance(data, dict):
+        return False
+    today = now.date().isoformat()
+    tomorrow = (now + timedelta(days=1)).date().isoformat()
+    if data.get("date") != today or data.get("tomorrowDate") != tomorrow:
+        return False
+    sites = data.get("sites")
+    target_count = data.get("targetSiteCount")
+    if not isinstance(sites, dict) or not isinstance(target_count, int) or len(sites) != target_count:
+        return False
+    for day in sites.values():
+        next_day = day.get("tomorrow") if isinstance(day, dict) else None
+        if (
+            not has_tide_data(day) or day.get("date") != today or day.get("stale") is True
+            or not has_tide_data(next_day) or next_day.get("date") != tomorrow or next_day.get("stale") is True
+        ):
+            return False
+    return True
+
+
 def main() -> None:
+    now = datetime.now(KST)
+    if "--check-current" in sys.argv:
+        if daily_output_is_complete(read_optional_json(OUTPUT_PATH), now):
+            print("tide_today.json already has complete today/tomorrow predictions", flush=True)
+            return
+        print("tide_today.json needs a refresh", flush=True)
+        raise SystemExit(1)
     api_key = os.environ.get("KHOA_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("KHOA_API_KEY is not configured; existing data preserved")
-    output = build_daily_output(api_key, datetime.now(KST))
+    output = build_daily_output(api_key, now)
     temporary_path = OUTPUT_PATH.with_suffix(".json.tmp")
     temporary_path.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temporary_path.replace(OUTPUT_PATH)

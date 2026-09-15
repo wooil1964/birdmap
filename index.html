@@ -966,10 +966,25 @@ function tideTodayForSite(site){
   var daily=dailyIsToday?sites[String(site.id)]||null:null;
   // 1) 오늘 날짜 daily에 실제로 쓸 수 있는 값이 있으면 그대로 쓴다.
   if(daily&&v24TideDayEvents(daily).length)return daily;
-  // 2) daily가 없거나 자료 없음이면 같은 site의 '정확히 오늘 날짜' 월간 값만 확인한다.
+  // 2) Actions가 늦어도 전날 미리 받아 둔 '내일' 값의 날짜가 오늘이면 우선 사용한다.
+  //    조석예보는 해당 날짜의 예측값이므로 파일 날짜만 바뀌지 않았다고 버리지 않는다.
+  var stored=sites[String(site.id)]||null;
+  var prefetched=stored&&stored.tomorrow&&stored.tomorrow.date===kstDateText()&&v24TideDayEvents(stored.tomorrow).length
+    ?Object.assign({},stored.tomorrow,{prefetchedPreviousDay:true}):null;
+  if(prefetched&&prefetched.stale!==true){
+    prefetched.staleDaily=false;
+    return prefetched;
+  }
+  // 3) daily가 없거나 자료 없음이면 같은 site의 '정확히 오늘 날짜' 월간 값만 확인한다.
   var fallback=monthTideDayForSite(site);
   if(fallback)return fallback;
-  // 3) 둘 다 없으면 기존 표시를 그대로 유지한다.
+  // 4) 월간 값도 없으면 값이 있는 stale 사전예보를 참고값으로 사용한다.
+  if(prefetched){
+    prefetched.staleDaily=true;
+    prefetched.staleDailyDate=tideTodayDateText();
+    return prefetched;
+  }
+  // 5) 모두 없으면 기존 표시를 그대로 유지한다.
   if(daily)return daily;
   return dailyIsToday?null:{staleDaily:true,staleDailyDate:tideTodayDateText(),monthFallbackMissing:true};
 }

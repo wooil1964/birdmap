@@ -10,6 +10,7 @@ on:
       - ".github/scripts/build_tide_station_mapping.py"
       - ".github/scripts/tide_official_stations.json"
       - ".github/scripts/test_tide.py"
+      - ".github/scripts/test_tide_fallback.mjs"
       - "tide_station_mapping.json"
       - ".github/workflows/update-tide.yml"
       - "data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx"
@@ -18,6 +19,9 @@ on:
     - cron: "5 15 * * *"
     # Backup refresh: 21:05 UTC is 06:05 KST, preventing stale daily tide data if the midnight run is missed or conflicts.
     - cron: "5 21 * * *"
+    # Recovery refreshes: 23:35/01:35 UTC are 08:35/10:35 KST; complete data makes them no-ops.
+    - cron: "35 23 * * *"
+    - cron: "35 1 * * *"
   workflow_dispatch:
 
 permissions:
@@ -42,27 +46,47 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Decide whether scheduled recovery is needed
+        id: refresh
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" != "schedule" ]]; then
+            echo "needed=true" >> "${GITHUB_OUTPUT}"
+          elif python .github/scripts/update_tide.py --check-current; then
+            echo "needed=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "needed=true" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: Check updater syntax
+        if: steps.refresh.outputs.needed == 'true'
         run: python -m py_compile .github/scripts/build_tide_station_mapping.py .github/scripts/update_tide.py .github/scripts/audit_tide_health.py
 
       - name: Test tide reliability
-        run: python -m unittest discover -s .github/scripts -p "test_tide.py"
+        if: steps.refresh.outputs.needed == 'true'
+        run: |
+          python -m unittest discover -s .github/scripts -p "test_tide.py"
+          node --test .github/scripts/test_tide_fallback.mjs
 
       - name: Validate curated official station mapping
+        if: steps.refresh.outputs.needed == 'true'
         run: python .github/scripts/build_tide_station_mapping.py
 
       - name: Validate station mapping
+        if: steps.refresh.outputs.needed == 'true'
         run: python -m json.tool tide_station_mapping.json > /dev/null
 
       - name: Build tide_today.json
+        if: steps.refresh.outputs.needed == 'true'
         env:
           KHOA_API_KEY: ${{ secrets.KHOA_API_KEY }}
         run: python .github/scripts/update_tide.py
 
       - name: Validate tide_today.json
+        if: steps.refresh.outputs.needed == 'true'
         run: python -m json.tool tide_today.json > /dev/null
 
       - name: Check tide_today freshness
+        if: steps.refresh.outputs.needed == 'true'
         run: |
           python - <<'PY'
           import json
@@ -89,15 +113,15 @@ jobs:
           PY
 
       - name: Build tide health report
-        if: always()
+        if: steps.refresh.outputs.needed == 'true'
         run: python .github/scripts/audit_tide_health.py
 
       - name: Validate tide_health.json
-        if: always()
+        if: steps.refresh.outputs.needed == 'true'
         run: python -m json.tool tide_health.json > /dev/null
 
       - name: Upload tide diagnostics
-        if: always()
+        if: steps.refresh.outputs.needed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: tide-diagnostics
@@ -107,6 +131,7 @@ jobs:
           retention-days: 7
 
       - name: Commit updated tides
+        if: steps.refresh.outputs.needed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

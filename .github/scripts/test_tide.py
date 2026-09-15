@@ -85,10 +85,11 @@ class TideTests(unittest.TestCase):
         old["sites"]["19"]["tomorrow"]["generatedAt"] = "2026-09-05 06:00 KST"
         month = {"generatedAt": "2026-09-06 03:00 KST", "sites": {"19": {**SITE, "days": [result()]}}}
         reused = daily.fallback_for_date([SITE], "2026-09-06", old, month)["19"]
-        self.assertEqual(reused["fallbackSource"], "previous_tomorrow")
+        self.assertEqual(reused["cacheSource"], "previous_tomorrow")
         self.assertEqual(reused["generatedAt"], "2026-09-05 06:00 KST")
-        self.assertTrue(reused["stale"])
-        self.assertTrue(reused["staleDaily"])
+        self.assertFalse(reused["stale"])
+        self.assertTrue(reused["cacheReused"])
+        self.assertNotIn("staleDaily", reused)
 
     def test_month_fallback_shared_only_by_identical_code_date(self):
         month = {"generatedAt": "2026-09-05 03:00 KST", "sites": {"other": {**SITE, "days": [result()]}}}
@@ -141,6 +142,50 @@ class TideTests(unittest.TestCase):
             self.assertEqual(day["tomorrow"]["date"], "2026-09-07")
             if not day["tomorrow"].get("dataUnavailable"):
                 self.assertEqual(day["tomorrow"]["generatedAt"], "2026-09-06 10:00 KST")
+
+    def test_later_outage_cannot_downgrade_successful_same_date_predictions(self):
+        def request(key, code, date, diagnostic=False, stats=None):
+            stats.record(code, date)
+            data = payload(datetime.strptime(date, "%Y%m%d").date().isoformat())
+            for row in data["response"]["body"]["items"]["item"]:
+                row.pop("obsvtrNm")
+            return data
+
+        with patch.object(daily, "request_prediction", side_effect=request), redirect_stdout(io.StringIO()):
+            successful = daily.build_daily_output("test", NOW)
+
+        def saved(path):
+            return successful if path == daily.OUTPUT_PATH else {}
+
+        with patch.object(daily, "read_optional_json", side_effect=saved), \
+             patch.object(daily, "request_prediction", side_effect=daily.PredictionError("timeout")) as call, \
+             redirect_stdout(io.StringIO()):
+            preserved = daily.build_daily_output("test", NOW)
+
+        call.assert_not_called()
+        self.assertEqual(preserved["liveSuccessCount"], preserved["targetSiteCount"])
+        self.assertEqual(preserved["tomorrowLiveSuccessCount"], preserved["targetSiteCount"])
+        self.assertEqual(preserved["freshCacheCount"], preserved["targetSiteCount"])
+        self.assertEqual(preserved["fallbackCount"], 0)
+        self.assertEqual(preserved["apiRequestCount"], 0)
+        self.assertTrue(daily.daily_output_is_complete(preserved, NOW))
+        self.assertTrue(all(day.get("stale") is False for day in preserved["sites"].values()))
+        self.assertTrue(all(day["tomorrow"].get("stale") is False for day in preserved["sites"].values()))
+
+    def test_current_check_requires_complete_exact_today_and_tomorrow(self):
+        day = result()
+        day["tomorrow"] = result("2026-09-07")
+        data = {
+            "date": "2026-09-06", "tomorrowDate": "2026-09-07",
+            "targetSiteCount": 1, "sites": {"19": day},
+        }
+        self.assertTrue(daily.daily_output_is_complete(data, NOW))
+        stale = copy.deepcopy(data)
+        stale["sites"]["19"]["tomorrow"]["stale"] = True
+        self.assertFalse(daily.daily_output_is_complete(stale, NOW))
+        wrong_date = copy.deepcopy(data)
+        wrong_date["date"] = "2026-09-05"
+        self.assertFalse(daily.daily_output_is_complete(wrong_date, NOW))
 
     def test_all_api_failures_keep_every_site_and_true_counters(self):
         month = {"sites": {"19": {**SITE, "days": [result(), result("2026-09-07")]}}}
