@@ -16,8 +16,9 @@ on:
       - "index.html"
       - ".github/workflows/update-weather.yml"
   schedule:
-    # GitHub Actions cron uses UTC: 21/01/05/09 UTC = 06/10/14/18 KST.
-    - cron: "17 21 * * *"
+    # GitHub Actions cron uses UTC. The first run is 05:35 KST so it finishes
+    # before the 06:05 KST tide refresh that shares birdmap-data-refresh.
+    - cron: "35 20 * * *"
     - cron: "17 1 * * *"
     - cron: "17 5 * * *"
     - cron: "17 9 * * *"

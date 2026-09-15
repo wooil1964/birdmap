@@ -36,6 +36,14 @@ test('schedule deadline expires prior batch without using arbitrary age', () => 
   assert.equal(context.storedWeatherState(previous, {}, new Date('2026-09-06T05:46:00Z')).scoreEligible, true);
   assert.equal(context.storedWeatherState(previous, {}, new Date('2026-09-06T05:47:00Z')).scoreEligible, false);
 });
+
+test('05:35 KST batch becomes required at 06:05 without colliding with tide refresh', () => {
+  const beforeEarlyBatch = {...today, generatedAt: '2026-09-06 05:34 KST'};
+  const earlyBatch = {...today, generatedAt: '2026-09-06 05:40 KST'};
+  assert.equal(context.storedWeatherState(beforeEarlyBatch, {}, new Date('2026-09-05T21:04:00Z')).scoreEligible, true);
+  assert.equal(context.storedWeatherState(beforeEarlyBatch, {}, new Date('2026-09-05T21:05:00Z')).scoreEligible, false);
+  assert.equal(context.storedWeatherState(earlyBatch, {}, new Date('2026-09-05T21:05:00Z')).scoreEligible, true);
+});
 test('fresh root or live current state cannot renew an old stored score', () => {
   const old = {...today, generatedAt: '2026-08-25 18:49 KST', stale: true};
   const state = context.storedWeatherState(old, {generatedAt: today.generatedAt}, now);
