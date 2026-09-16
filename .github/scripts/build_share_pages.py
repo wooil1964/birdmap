@@ -10,8 +10,10 @@ Source of truth is the runtime siteData inside index.html, so re-running this af
 a site is added or renamed is enough - no per-site file is written by hand.
 
 Preview images: no per-site photo with confirmed copyright and source exists in this
-repository, so every card is the shared 들뫼생태연구회 design carrying only the site
-name, region and other fields already published on the map. No coordinates are drawn
+repository, so every card is the shared 들뫼생태연구회 design. The card is deliberately
+plain - the site name and the group line only - because Naver Cafe renders it large and
+trims the sides, so anything at the edges is lost and a busy card overpowers the birding
+photos around it. Everything else stays in the HTML description. No coordinates are drawn
 on the card or written into the description, so a sensitive site's exact location is
 never exposed by the preview.
 
@@ -35,6 +37,16 @@ BASE_URL = "https://wooil1964.github.io/birdmap"
 SHARE_DIR = ROOT / "share"
 IMAGE_DIR = SHARE_DIR / "og"
 IMAGE_SIZE = (1200, 630)
+# 미리보기가 좌우를 잘라도 남는 가운데 영역. 1200 중 600(50%)만 쓴다.
+# 정사각형으로 가운데를 잘라도(630px) 이름이 남는 폭이다.
+SAFE_WIDTH = 600
+NAME_SIZE_MAX = 76
+NAME_SIZE_MIN = 40
+NAME_MAX_LINES = 2
+BRAND_SIZE = 30
+# 카드 디자인이 바뀌면 올린다. 공유 주소는 그대로 두고 og:image 주소만 달라져
+# 수집기가 옛 이미지를 다시 쓰지 않는다.
+IMAGE_VERSION = "2"
 
 # 카드에는 지도에 이미 공개된 항목만 넣는다. 좌표는 넣지 않는다.
 FONT_CANDIDATES = (
@@ -76,7 +88,7 @@ def share_url(site: dict, base_url: str) -> str:
 
 
 def image_url(site: dict, base_url: str) -> str:
-    return "%s/share/og/%s.png" % (base_url, site["id"])
+    return "%s/share/og/%s.png?v=%s" % (base_url, site["id"], IMAGE_VERSION)
 
 
 def map_url(site: dict, base_url: str) -> str:
@@ -146,7 +158,7 @@ a.open{display:inline-block;padding:12px 18px;background:#2e5d34;color:#fff;bord
 <p class="brand">들뫼생태연구회 · 전국 탐조지도</p>
 <h1>%(name)s</h1>
 <p class="intro">%(description)s</p>
-<img class="card" src="../og/%(id)s.png" width="1200" height="630" alt="%(name)s 탐조지 미리보기 이미지">
+<img class="card" src="../og/%(id)s.png?v=%(image_version)s" width="1200" height="630" alt="%(name)s 탐조지 미리보기 이미지">
 <dl>%(rows)s</dl>
 <p><a class="open" href="%(relative_map)s">탐조지도 열기</a></p>
 <p class="note">잠시 후 탐조지도의 %(name)s 위치로 이동합니다. 바로 가려면 위 버튼을 누르세요.</p>
@@ -163,6 +175,7 @@ setTimeout(function(){location.replace(%(relative_map_js)s);},1200);
         "description": e(description),
         "name": e(name),
         "id": e(str(site["id"])),
+        "image_version": e(IMAGE_VERSION),
         "share_url": e(share_url(site, base_url)),
         "image_url": e(image_url(site, base_url)),
         "relative_map": e(relative_map),
@@ -182,60 +195,95 @@ def load_font(size: int):
     )
 
 
-def fit_font(draw, text: str, max_width: int, start: int, floor: int):
-    size = start
-    while size > floor:
+def wrap_name(draw, name: str, font, max_width: int) -> list[str]:
+    """공백과 가운뎃점을 우선 끊고, 그래도 넘치면 글자 단위로 나눈다."""
+    lines: list[str] = []
+    for chunk in [name]:
+        current = ""
+        for piece in split_pieces(chunk):
+            candidate = current + piece
+            if current and draw.textlength(candidate.strip(), font=font) > max_width:
+                lines.append(current.strip())
+                current = piece.lstrip()
+            else:
+                current = candidate
+        if current.strip():
+            lines.append(current.strip())
+    expanded: list[str] = []
+    for line in lines:
+        while draw.textlength(line, font=font) > max_width and len(line) > 1:
+            cut = len(line)
+            while cut > 1 and draw.textlength(line[:cut], font=font) > max_width:
+                cut -= 1
+            expanded.append(line[:cut])
+            line = line[cut:]
+        expanded.append(line)
+    return [line for line in expanded if line]
+
+
+def split_pieces(name: str) -> list[str]:
+    pieces, current = [], ""
+    for char in name:
+        current += char
+        if char in " ·":
+            pieces.append(current)
+            current = ""
+    if current:
+        pieces.append(current)
+    return pieces
+
+
+def name_layout(draw, name: str):
+    """이름이 안전 영역 안에서 최대 두 줄에 들어가는 글꼴을 고른다."""
+    size = NAME_SIZE_MAX
+    while size > NAME_SIZE_MIN:
         font = load_font(size)
-        if draw.textlength(text, font=font) <= max_width:
-            return font
+        lines = wrap_name(draw, name, font, SAFE_WIDTH)
+        if len(lines) <= NAME_MAX_LINES:
+            return font, lines
         size -= 2
-    return load_font(floor)
+    font = load_font(NAME_SIZE_MIN)
+    return font, wrap_name(draw, name, font, SAFE_WIDTH)[:NAME_MAX_LINES]
 
 
-def ellipsize(draw, text: str, font, max_width: int) -> str:
-    if draw.textlength(text, font=font) <= max_width:
-        return text
-    while text and draw.textlength(text + "…", font=font) > max_width:
-        text = text[:-1]
-    return text + "…"
+def measure_card(site: dict):
+    """그리지 않고 배치만 계산한다. 잘림 회귀 테스트가 이 값을 쓴다."""
+    from PIL import Image, ImageDraw
+
+    draw = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    font, lines = name_layout(draw, text_of(site, "name"))
+    widths = [draw.textlength(line, font=font) for line in lines] or [0]
+    return {"lines": lines, "font_size": font.size, "max_width": max(widths)}
 
 
 def card_image(site: dict):
-    """공통 디자인 카드. 좌표는 그리지 않는다."""
+    """탐조지명과 회 이름만 가운데 두는 차분한 카드.
+
+    네이버 카페처럼 미리보기가 좌우를 잘라 보여 주는 곳에서도 이름이 남도록
+    중요한 글자를 가운데 안전 영역(SAFE_WIDTH) 안에만 그린다. 소개문·조류군·
+    URL·권역 ID는 카드에서 빼고 HTML 설명에 남겨 둔다. 좌표는 그리지 않는다.
+    """
     from PIL import Image, ImageDraw
 
     width, height = IMAGE_SIZE
     image = Image.new("RGB", IMAGE_SIZE, PAPER)
     draw = ImageDraw.Draw(image)
-    draw.rectangle((0, 0, width, 104), fill=BAND)
-    draw.rectangle((0, height - 12, width, height), fill=BAND)
+    middle = width // 2
 
-    draw.text((64, 34), "들뫼생태연구회 · 전국 탐조지도", font=load_font(38), fill=(255, 255, 255))
+    font, lines = name_layout(draw, text_of(site, "name"))
+    line_height = int(font.size * 1.34)
+    block_height = line_height * len(lines)
+    # 이름·구분선·회 이름을 한 덩어리로 보고 세로 가운데에 놓는다.
+    group_height = block_height + 34 + 3 + 34 + BRAND_SIZE
+    top = (height - group_height) // 2
+    for index, line in enumerate(lines):
+        draw.text((middle, top + index * line_height), line, font=font, fill=INK, anchor="ma")
 
-    inner = width - 128
-    name = text_of(site, "name")
-    name_font = fit_font(draw, name, inner, 96, 46)
-    draw.text((64, 178), name, font=name_font, fill=INK)
+    rule_y = top + block_height + 34
+    draw.line((middle - 56, rule_y, middle + 56, rule_y), fill=BAND, width=3)
 
-    region_font = load_font(46)
-    draw.text((64, 306), ellipsize(draw, text_of(site, "region"), region_font, inner),
-              font=region_font, fill=MUTED)
-
-    meta = " · ".join(f for f in (text_of(site, "env"), text_of(site, "mainBirdGroup")) if f)
-    if meta:
-        meta_font = load_font(34)
-        draw.rectangle((64, 380, width - 64, 452), fill=ACCENT)
-        draw.text((84, 398), ellipsize(draw, meta, meta_font, inner - 40), font=meta_font, fill=INK)
-
-    intro_font = load_font(32)
-    draw.text((64, 486), ellipsize(draw, text_of(site, "oneLineIntro"), intro_font, inner),
-              font=intro_font, fill=MUTED)
-
-    foot_font = load_font(26)
-    foot = "wooil1964.github.io/birdmap"
-    draw.text((64, 560), foot, font=foot_font, fill=MUTED)
-    tag = "권역 ID %s" % site["id"]
-    draw.text((width - 64 - draw.textlength(tag, font=foot_font), 560), tag, font=foot_font, fill=MUTED)
+    draw.text((middle, rule_y + 34), "들뫼생태연구회 · 전국 탐조지도",
+              font=load_font(BRAND_SIZE), fill=MUTED, anchor="ma")
     return image
 
 

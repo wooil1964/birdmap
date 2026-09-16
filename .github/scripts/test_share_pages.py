@@ -57,7 +57,10 @@ class SharePageTests(unittest.TestCase):
             document = (ROOT / "share" / sid / "index.html").read_text(encoding="utf-8")
             self.assertIn(site["name"], meta(document, "og:title"))
             self.assertEqual(meta(document, "og:url"), "%s/share/%s/" % (BASE, sid))
-            self.assertEqual(meta(document, "og:image"), "%s/share/og/%s.png" % (BASE, sid))
+            self.assertEqual(
+                meta(document, "og:image"),
+                "%s/share/og/%s.png?v=%s" % (BASE, sid, share.IMAGE_VERSION),
+            )
             self.assertIn('href="../../?site=%s"' % sid, document)
 
     def test_absolute_urls_only_for_og_image_and_url(self):
@@ -95,6 +98,30 @@ class SharePageTests(unittest.TestCase):
         for prop in ("og:title", "og:description", "og:image", "og:url"):
             self.assertIn('"%s"' % prop, head)
         self.assertIn("location.replace('../../?site=19')", document)
+
+    def test_site_name_survives_a_centre_crop(self):
+        """네이버 카페처럼 좌우를 잘라 보여 줘도 탐조지명이 남아야 한다."""
+        widest = 0
+        for site in self.sites:
+            card = share.measure_card(site)
+            self.assertLessEqual(len(card["lines"]), share.NAME_MAX_LINES, site["name"])
+            self.assertLessEqual(card["max_width"], share.SAFE_WIDTH, site["name"])
+            widest = max(widest, card["max_width"])
+        # 선언한 안전 폭이 정사각형 가운데 잘라내기(630px)보다 좁아야 의미가 있다.
+        self.assertLessEqual(share.SAFE_WIDTH, min(share.IMAGE_SIZE))
+        self.assertLessEqual(widest, share.SAFE_WIDTH)
+
+    def test_card_shows_only_the_name_and_the_group_line(self):
+        """소개문·조류군·URL·권역 ID는 카드에서 빼고 HTML 설명에만 남긴다."""
+        site = self.by_id["19"]
+        card = share.measure_card(site)
+        self.assertEqual(card["lines"], [site["name"]])
+        drawn = "".join(card["lines"])
+        for removed in (site["oneLineIntro"], site["mainBirdGroup"], site["region"]):
+            self.assertNotIn(removed, drawn)
+        description = share.page_description(site)
+        for kept in (site["oneLineIntro"], site["mainBirdGroup"], site["region"]):
+            self.assertIn(kept, description)
 
     def test_preview_images_are_png_of_the_declared_size(self):
         for sid in CHECKED_IDS:
