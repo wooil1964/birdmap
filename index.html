@@ -966,11 +966,25 @@ function storedWeatherLabel(today){
   var label={today_saved:'오늘 저장값',today_fallback:'오늘 저장값 · 대체 API 포함',today_reference:'오늘 저장값 · 갱신 지연/재사용(참고)',previous_saved:'이전 저장값(참고)',week_forecast:'주간 저장 예보'}[state.kind];
   return label+' · 예보 '+(state.forecastTime||'시각 미확인')+' · 생성 '+(state.generatedAt||'시각 미확인');
 }
+/* 자정이 지나면 저장된 일일 자료의 날짜가 어제가 되어 오늘 적합도를 낼 수 없다.
+   그 구간에는 weather_week.json 의 오늘 날짜 예보로 대신한다. 유효한 오늘 예보가
+   없으면(자료 없음·필수값 부족) 아무 값도 만들지 않고 기존 '미확인' 표시를 그대로 둔다. */
+function todayWeatherFromWeek(site){
+  var date=weeklyTodayDateText();
+  var sample=weeklyDailyBestSample(site,date);
+  if(!sample||sample.scoreEligible!==true)return null;
+  if(sample.score===null||sample.score===undefined||sample.score===''||!Number.isFinite(Number(sample.score)))return null;
+  return weeklySampleAsWeather(site,sample,date);
+}
 function weatherTodayForSite(site){
   var sites=weatherToday&&weatherToday.sites;
-  if(!sites)return null;
-  var day=sites[String(site.id)]||sites[site.name]||null;
-  return day?Object.assign({},day,{_weatherState:storedWeatherState(day,weatherToday)}):null;
+  var day=sites?(sites[String(site.id)]||sites[site.name]||null):null;
+  var state=day?storedWeatherState(day,weatherToday):null;
+  if(!state||state.kind==='previous_saved'||state.kind==='none'){
+    var fromWeek=todayWeatherFromWeek(site);
+    if(fromWeek)return fromWeek;
+  }
+  return day?Object.assign({},day,{_weatherState:state}):null;
 }
 function tideTodayForSite(site){
   var sites=tideToday&&tideToday.sites;
