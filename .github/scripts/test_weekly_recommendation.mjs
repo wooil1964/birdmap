@@ -265,8 +265,9 @@ test('갯벌 물때 mandatory 는 기준 조위 이상에서만 충족', () => {
     const api = loadApi({ tideMonth: { sites: { [siteId]: { days: [{ date, highTide: '09:10', highTideLevel: String(level) }] } } } });
     return api.weeklyBestMudflatTide({ id: siteId }, week);
   };
-  assert.equal(check('19', 699), null, '유부도 699 미충족');
-  assert.ok(check('19', 700), '유부도 700 충족');
+  assert.equal(check('19', 709), null, '유부도 709 미충족');
+  assert.ok(check('19', 710), '유부도 710 충족');
+  assert.ok(check('19', 711), '유부도 711 충족');
   assert.equal(check('107', 849), null, '매향리 849 미충족');
   assert.ok(check('107', 850), '매향리 850 충족');
   assert.equal(check('14', 849), null, '걸매리 849 미충족');
