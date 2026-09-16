@@ -61,6 +61,7 @@ function loadApi(state = {}) {
 
 const SITE = { id: '19', name: '유부도', lat: 36.001158, lon: 126.605031 };
 const WOLPO = { id: '193', name: '월포리해변', lat: 36.05330278, lon: 126.64626389 };
+const HAERI = { id: '126', name: '해리천습지', lat: 35.51132777777778, lon: 126.49810833333333 };
 
 function sample(time, score, extra = {}) {
   return Object.assign({
@@ -221,5 +222,125 @@ test('실제 저장 파일로 자정 직후를 재현하면 유부도·월포리
     assert.equal(fixed._weatherState.kind, 'week_forecast', site.name);
     assert.equal(api.weatherScoreAllowed(fixed), true, site.name);
     assert.ok(String(fixed.forecastTime).startsWith(nextDate), site.name);
+  }
+});
+
+/* ── 오늘 날짜지만 예보 시각이 오래된 자료(갱신 지연) ────────────────────────────
+   2026-09-17 05:35 KST 예정 기상 Actions가 08:13 KST 로 밀린 동안 실제로 일어난 상황이다.
+   저장 자료의 날짜는 오늘이라 자정 분기에 걸리지 않지만, 생성 시각이 예정 갱신 시각보다
+   앞서 storedWeatherState() 가 today_reference(갱신 지연/재사용)로 판정해 점수를 숨겼다. */
+const STALE_TODAY = todayDoc('2026-09-17', '2026-09-17 03:54 KST', {
+  126: storedDay('2026-09-17', '2026-09-17 03:45 KST', '2026-09-17 03:54 KST', 92),
+  19: storedDay('2026-09-17', '2026-09-17 03:45 KST', '2026-09-17 03:54 KST', 92),
+  193: storedDay('2026-09-17', '2026-09-17 03:45 KST', '2026-09-17 03:54 KST', 92),
+});
+/* 주간 예보 점수는 일부러 92 와 다르게 둔다. 03:45 의 낡은 92 를 그대로 되살리면 실패한다. */
+const STALE_WEEK = Object.assign(weekDoc({
+  126: { '2026-09-17': [sample('2026-09-17 03:00 KST', 99), sample('2026-09-17 09:00 KST', 71), sample('2026-09-17 12:00 KST', 64)] },
+  19: { '2026-09-17': [sample('2026-09-17 03:00 KST', 99), sample('2026-09-17 09:00 KST', 58), sample('2026-09-17 12:00 KST', 66)] },
+  193: { '2026-09-17': [sample('2026-09-17 03:00 KST', 99), sample('2026-09-17 12:00 KST', 49)] },
+}), { startDate: '2026-09-17', endDate: '2026-09-23', generatedAt: '2026-09-17 03:54 KST' });
+const DELAYED_REFRESH = '2026-09-17T08:20:00+09:00'; // 05:35 예정 갱신은 지났고 새 자료는 아직 없다
+const STALE_SITES = [HAERI, SITE, WOLPO];
+
+test('오늘 날짜라도 예보 시각이 예정 갱신보다 오래되면 일일 자료만으로는 적합도를 낼 수 없다 (원인 재현)', () => {
+  const api = loadApi({ now: DELAYED_REFRESH, weatherToday: STALE_TODAY, weatherWeek: null });
+  for (const site of STALE_SITES) {
+    const today = api.weatherTodayForSite(site);
+    assert.equal(today._weatherState.kind, 'today_reference', site.name);
+    assert.equal(today._weatherState.date, '2026-09-17', site.name); // 날짜는 오늘이라 자정 분기가 아니다
+    assert.equal(api.weatherScoreAllowed(today), false, site.name);
+    assert.match(api.storedWeatherLabel(today), /^오늘 저장값 · 갱신 지연\/재사용\(참고\)/, site.name);
+  }
+});
+
+test('갱신 지연 구간에도 오늘 주간 예보가 있으면 주간 저장 예보로 대체한다', () => {
+  const api = loadApi({ now: DELAYED_REFRESH, weatherToday: STALE_TODAY, weatherWeek: STALE_WEEK });
+  const expected = { 126: { score: 71, time: '2026-09-17 09:00 KST' }, 19: { score: 66, time: '2026-09-17 12:00 KST' }, 193: { score: 49, time: '2026-09-17 12:00 KST' } };
+  for (const site of STALE_SITES) {
+    const today = api.weatherTodayForSite(site);
+    assert.equal(today._weatherState.kind, 'week_forecast', site.name);
+    assert.equal(today.score, expected[site.id].score, site.name);
+    assert.equal(today.forecastTime, expected[site.id].time, site.name);
+    assert.equal(api.weatherScoreAllowed(today), true, site.name);
+    const label = api.storedWeatherLabel(today);
+    assert.match(label, /^주간 저장 예보 · 예보 2026-09-17 /, site.name);
+    assert.match(label, /· 생성 2026-09-17 03:54 KST$/, site.name);
+    // 03:45 의 낡은 점수 92 를 현재 점수로 되살리지 않는다.
+    assert.notEqual(today.score, 92, site.name);
+    assert.doesNotMatch(label, /예보 2026-09-17 03:45/, site.name);
+  }
+});
+
+test('갱신 지연이어도 오늘 주간 예보가 없거나 쓸 수 없으면 미확인을 유지한다', () => {
+  const cases = {
+    '주간 문서 자체가 없음': null,
+    '오늘 날짜가 없음': weekDoc({ 126: { '2026-09-18': [sample('2026-09-18 09:00 KST', 71)] } }),
+    'samples 비어 있음': weekDoc({ 126: { '2026-09-17': [] } }),
+    '필수값 부족(scoreEligible=false)': weekDoc({ 126: { '2026-09-17': [sample('2026-09-17 09:00 KST', 71, { scoreEligible: false, missingScoreFields: ['visibilityKm'] })] } }),
+    '점수 없음': weekDoc({ 126: { '2026-09-17': [sample('2026-09-17 09:00 KST', null)] } }),
+    '남은 예보가 모두 지난 시각': weekDoc({ 126: { '2026-09-17': [sample('2026-09-17 06:00 KST', 71)] } }),
+  };
+  for (const [name, week] of Object.entries(cases)) {
+    const api = loadApi({ now: DELAYED_REFRESH, weatherToday: STALE_TODAY, weatherWeek: week });
+    const today = api.weatherTodayForSite(HAERI);
+    assert.equal(today._weatherState.kind, 'today_reference', name);
+    assert.equal(api.weatherScoreAllowed(today), false, name);
+    assert.match(api.storedWeatherLabel(today), /^오늘 저장값 · 갱신 지연\/재사용\(참고\)/, name);
+  }
+});
+
+test('늦은 일일 자료가 도착하면 갱신 지연 대체에서 오늘 저장값으로 되돌아온다', () => {
+  // 실제로 08:13 KST 에 도착한 run 과 같은 구조다.
+  const refreshed = todayDoc('2026-09-17', '2026-09-17 08:13 KST', {
+    126: storedDay('2026-09-17', '2026-09-17 08:00 KST', '2026-09-17 08:13 KST', 55),
+    19: storedDay('2026-09-17', '2026-09-17 08:00 KST', '2026-09-17 08:13 KST', 63),
+    193: storedDay('2026-09-17', '2026-09-17 08:15 KST', '2026-09-17 08:13 KST', 47),
+  });
+  const api = loadApi({ now: '2026-09-17T08:25:00+09:00', weatherToday: refreshed, weatherWeek: STALE_WEEK });
+  const expected = { 126: 55, 19: 63, 193: 47 };
+  for (const site of STALE_SITES) {
+    const today = api.weatherTodayForSite(site);
+    assert.equal(today._weatherState.kind, 'today_saved', site.name);
+    assert.equal(today.score, expected[site.id], site.name);
+    assert.equal(api.weatherScoreAllowed(today), true, site.name);
+    assert.match(api.storedWeatherLabel(today), /^오늘 저장값 · 예보 2026-09-17 08:/, site.name);
+  }
+});
+
+test('실제 저장 파일을 갱신 지연 시각으로 되돌리면 해리천습지·유부도·월포리해변이 미확인에서 벗어난다', () => {
+  const real = JSON.parse(readFileSync(join(ROOT, 'weather_today.json'), 'utf8'));
+  const week = JSON.parse(readFileSync(join(ROOT, 'weather_week.json'), 'utf8'));
+  const date = real.date;
+  const sites = [HAERI, SITE, WOLPO];
+  if (sites.some(function (s) { return !real.sites[s.id] || !week.sites[s.id] || !week.sites[s.id].days[date]; })) {
+    return; // 저장 파일이 세 탐조지의 오늘 자료를 담고 있지 않은 시점이면 검증 대상이 아니다.
+  }
+  // 05:35 KST 예정 갱신보다 먼저 만들어진 상태로 되돌려 실제 장애 구간을 재현한다.
+  const stale = JSON.parse(JSON.stringify(real));
+  stale.generatedAt = stale.updated = date + ' 03:54 KST';
+  for (const site of sites) {
+    const day = stale.sites[site.id];
+    day.generatedAt = day.refreshedAt = date + ' 03:54 KST';
+    day.forecastTime = date + ' 03:45 KST';
+  }
+  const now = date + 'T08:20:00+09:00';
+  const api = loadApi({ now: now, weatherToday: stale, weatherWeek: week });
+  const withoutWeek = loadApi({ now: now, weatherToday: stale, weatherWeek: null });
+  for (const site of sites) {
+    const before = withoutWeek.weatherTodayForSite(site);
+    assert.equal(before._weatherState.kind, 'today_reference', site.name + ' 수정 전 재현');
+    assert.equal(withoutWeek.weatherScoreAllowed(before), false, site.name + ' 수정 전 재현');
+    const fixed = api.weatherTodayForSite(site);
+    if (!api.todayWeatherFromWeek(site)) {
+      // 08:20 이후 주간(일출~일몰) 표본이 남아 있지 않은 날이면 미확인 유지가 정상이다.
+      assert.equal(api.weatherScoreAllowed(fixed), false, site.name);
+      continue;
+    }
+    assert.equal(fixed._weatherState.kind, 'week_forecast', site.name);
+    assert.equal(api.weatherScoreAllowed(fixed), true, site.name);
+    assert.ok(String(fixed.forecastTime).startsWith(date), site.name);
+    assert.ok(fixed.forecastTime > date + ' 08:20', site.name + ' 지난 시각 예보를 쓰지 않는다');
+    assert.match(api.storedWeatherLabel(fixed), /^주간 저장 예보 · 예보 /, site.name);
   }
 });
