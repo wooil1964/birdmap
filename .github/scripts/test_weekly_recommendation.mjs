@@ -500,7 +500,7 @@ test('물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 
 });
 
 test('원거리 섬 제외/봄 정책과 structured notice linkage 유지', () => {
-  const api=loadApi({siteData:RUNTIME,notices:[{content:'교동도 추천'},{siteId:15},{sites:['새만금']},{siteIds:[7]}]});
+  const api=loadApi({siteData:RUNTIME,notices:[{content:'교동도 추천'},{siteId:15},{sites:['군산새만금']},{siteIds:[7]}]});
   for(const name of ['백령도','외연도','어청도'])assert.equal(api.todayIsAutumnRemoteIsland({name}),true);
   assert.equal(loadApi({month:4}).todayIsAutumnRemoteIsland({name:'어청도'}),false);
   assert.ok(loadApi({month:4}).todaySpringIslandReason({weatherRuleKey:'island_migrant'}));
@@ -747,7 +747,7 @@ test('겨울 추천 달 경계와 전역 가을/이동기 정의 독립',()=>{
 
 test('겨울 실제 핵심 들판 5곳과 습지/해안 복합환경 유지',()=>{
  const api=loadApi(),saved=JSON.stringify(RUNTIME);
- const core={39:['한탄강두루미탐조대','농경지·하천'],15:['천수만 간월호','간척호·농경지'],10:['강화도','갯벌·농경지'],7:['교동도','간척지·갯벌'],20:['새만금','간척지·갯벌']};
+ const core={39:['한탄강두루미탐조대','농경지·하천'],15:['천수만 간월호','간척호·농경지'],10:['강화도','갯벌·농경지'],7:['교동도','간척지·갯벌'],20:['군산새만금','간척지·갯벌']};
  for(const [id,[name,env]] of Object.entries(core)){
   const s=RUNTIME.find(s=>String(s.id)===id);assert.equal(s.name,name);assert.equal(s.env,env);
   assert.equal(api.winterBirdingAxes(s).field,true);assert.equal(api.winterBirdingAxes(s).excludedReason,'');
