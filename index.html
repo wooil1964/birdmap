@@ -1494,7 +1494,10 @@ function showYubudoAccessMap(){
 }
 /* 탐조지 공유 링크(?site=<ID>). 팝업 버튼은 v23ButtonsFromLegacy 한 곳에서만 만든다. */
 function birdmapShareUrl(site){
-  return location.href.split('#')[0].split('?')[0]+'?site='+encodeURIComponent(site.id);
+  /* 미리보기 수집기가 읽을 수 있는 탐조지별 정적 페이지를 복사한다.
+     기존 ?site=<ID> 주소도 계속 동작하므로 이미 공유된 링크는 그대로 열린다. */
+  var base=location.href.split('#')[0].split('?')[0].replace(/[^\/]*$/,'');
+  return base+'share/'+encodeURIComponent(site.id)+'/';
 }
 function birdmapLegacyCopy(text){
   try{
