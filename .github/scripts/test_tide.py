@@ -215,7 +215,7 @@ class TideTests(unittest.TestCase):
             self.assertTrue(report["apiLiveWarning"])
             self.assertEqual(report["liveSuccessCount"], 0)
             self.assertEqual(report["reusedCount"], data["reusedCount"])
-            self.assertEqual(report["siteCount"], 99)
+            self.assertEqual(report["siteCount"], 100)
 
     def test_timeout_retry_counts_actual_attempts(self):
         stats = daily.RequestStats()
