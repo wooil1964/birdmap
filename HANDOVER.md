@@ -14,6 +14,14 @@
 
 ## 최근 완료 작업
 
+- 유부도 갯벌 물때 mandatory 기준 710cm 보정(2026-09-16, 기준 main `feaf024e`): 「이번주 어디갈까」의 가을 9~10월 갯벌 물때 mandatory 기준 중 유부도만 700cm → 710cm로 바꿨다. 매향리 850cm·걸매리 850cm는 유지했다. `index.html`의 기존 `TODAY_MUDFLAT_TIDE_RULES`에서 ID 19의 `minHighTideCm` 값 1개만 수정했고, 새 상수나 별도 로직을 만들지 않았다.
+  - `weeklyBestMudflatTide()`·`weeklyRecommendationForSite()`·`todayMandatoryReason()` 등 판정 로직은 변경하지 않았다. 이미 `event.level>=rule.minHighTideCm` 구조이며, 테스트도 `index.html`에서 규칙 블록을 그대로 꺼내 쓰므로 중복 기준값이 없다.
+  - 경계 검증: 유부도 709 불충족 / 710 충족 / 711 충족. 매향리 849 불충족 / 850 충족, 걸매리 849 불충족 / 850 충족은 기존 assertion 그대로 유지된다. `index.html`을 700으로 되돌리면 이 테스트가 실패하는 것도 확인했다.
+  - rolling 7일 주간 창, 계절 추천 비율, 가을 4/3/1/2 구조, 기상 점수, 동풍 mandatory, 선상 안전 기준, `weeklyRecommendationIsSafe()` 등 안전 판정, 공지 우선순위, 조석일과 기상일의 구분 표시, UI/CSS는 변경하지 않았다. 기준 미달 탐조지도 기존처럼 일반 기상 점수로는 후보에 남는다(물때 mandatory 여부만 결정하는 기준이다).
+  - 무결성: siteData 187개·ID 중복 0·좌표 해시 완전 동일. `weather-proxy/src/sites.js`·`tide_station_mapping.json`·`notices.json`·`tide_month.json`·`tide_today.json`·`weather_today.json`·`weather_week.json`·자동 생성 스크립트는 무변경이다. 현재 `tide_month.json` 기준 2026-09-16~09-22 주간에 유부도의 700~709cm 만조는 0건이라 이번 주 추천 결과 변동은 없다.
+  - 검증: 주간 추천 83개 중 80 통과, 조석 fallback 21/21, 공지 KST 9/9, 해석 월 5/5, Worker 34/34. 주간 추천의 C01 선상 3개는 `python3` 미설치, `test_notice_close_hit.mjs` 7개와 월간 조석 UI 7개는 Chromium 미설치로 실행되지 않았다. 수정 전 main에서도 동일한 결과라 이번 변경으로 인한 신규 회귀는 확인되지 않았다.
+  - 변경 파일은 `index.html`·`.github/scripts/test_weekly_recommendation.mjs`뿐이다.
+
 - 천수만·화성 호곡리 맹금류 이슈 및 주간 편집 목록(2026-09-14, 기준 main `779a4a7`): notices.json의 '이번 주 탐조 포인트'만 제거하고 사용자 지정 맹금류 도착 문장을 첫 공지로 추가했다. 다른 공지 3건은 그대로 보존했다. 기간 제한 없는 공지의 weeklyRecommendations에 천수만(ID15)·화성 호곡리(ID108)를 1·2번으로, 기존 10곳 중 청림운동장·솔개공원을 제외한 8곳(112·7·8·10·107·48·75·76)을 기존 순서로 기록했다.
   - index.html의 주간 패널만 게시된 공지의 편집 목록을 우선 사용한다. 표시명·사유만 별도로 적용하며 원본 siteData 이름·좌표·지도/팝업·기상/조석 함수·점수·CSS는 무변경이다. 기존 후보 적격성·안전 판정을 유지하므로 부적격 장소는 제외될 수 있고, 편집 목록은 날짜로 만료되지 않는다. 처음 임의로 추가했던 9/14~9/20 기간과 공지 만료에 따른 자동 추천 복귀 연결은 사용자 확인 요청에 따라 제거했다. 기존 공지 날짜 판정과 자동 추천 엔진 자체는 그대로다.
   - PC 1366×768/모바일 390×844에서 첫 공지·지정 10곳/순서/사유·가로 넘침 0 확인. JSON/inline JS 정상, siteData 187개·좌표·다른 공지 완전 동일. 공지 UI 회귀에 편집 순서·표시명·원본명 유지·부적격/중복/미등록 제외·날짜 경과 후 편집 목록 유지 검증을 추가했다. 운영 청림 공지 존재를 가정하던 주간 회귀 1개는 테스트 전용 공지를 명시하도록 바꿨으며 assertion은 유지했다. 주간 83·공지 KST 9·공지 UI 7, 총 99/99 통과.
