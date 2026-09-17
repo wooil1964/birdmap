@@ -2403,23 +2403,51 @@ function weeklyHighTideEvents(day){
   });
   return times.map(function(time,index){return {time:time,level:levels[index]};}).filter(function(event){return Number.isFinite(event.level);});
 }
+/* 물때 기준이 있는 갯벌 탐조지(TODAY_MUDFLAT_TIDE_RULES: 유부도 710cm, 매향리·걸매리 850cm)의
+   '적합한 만조'. 기준 물높이 이상(경계값 포함)이면서, 지금 이후 ~ 이번 주 추천 기간 끝 사이에
+   있고, 일출~일몰 사이인 만조만 센다. 이미 지난 만조와 야간 만조는 적합으로 보지 않는다.
+   규칙이 없는 탐조지는 null(= 이 관문 대상 아님)이고, 규칙은 있는데 조석 자료가 없거나
+   기준을 못 넘으면 빈 배열이다. 자료 미확인을 적합 판정으로 바꾸지 않는다.
+   일출·일몰은 주간 추천이 이미 쓰는 weeklySunTimes 를, 시각 파싱은 v24TideMinutesOfDay 를 그대로 쓴다. */
+function weeklyQualifyingHighTides(site,week){
+  var rule=TODAY_MUDFLAT_TIDE_RULES[String(site&&site.id)];
+  if(!rule)return null;
+  var siteMonth=monthTideForSite(site&&site.id);
+  var days=siteMonth&&Array.isArray(siteMonth.days)?siteMonth.days:[];
+  var today=weeklyTodayDateText(), nowMinutes=weeklyNowKstMinutes(), found=[];
+  days.forEach(function(day){
+    if(!day||String(day.date)<today||!weeklyDateInRange(day.date,week))return;
+    var sun=weeklySunTimes(Number(site.lat),Number(site.lon),day.date);
+    if(!sun)return;
+    weeklyHighTideEvents(day).forEach(function(event){
+      if(!(event.level>=rule.minHighTideCm))return;
+      var minutes=v24TideMinutesOfDay(event.time);
+      if(minutes===null||minutes<sun.riseMin||minutes>sun.setMin)return;
+      if(String(day.date)===today&&minutes<=nowMinutes)return;
+      found.push({date:day.date,day:day,time:event.time,level:event.level,minutes:minutes});
+    });
+  });
+  found.sort(function(a,b){return String(a.date).localeCompare(String(b.date))||a.minutes-b.minutes;});
+  return found;
+}
+/* 물때 관문: 기준을 충족하는 만조가 확인될 때만 추천 후보가 된다.
+   weeklyRecommendationForSite 한 곳에서만 부르므로 고정 추천·자동 추천·공지 연계가 모두 지난다. */
+function weeklyMudflatTideGateOpen(site,week){
+  var tides=weeklyQualifyingHighTides(site,week);
+  return tides===null||tides.length>0;
+}
 function weeklyBestMudflatTide(site,week){
   var rule=TODAY_MUDFLAT_TIDE_RULES[String(site&&site.id)];
   if(!rule)return null;
-  var siteMonth=monthTideForSite(site.id);
-  var days=siteMonth&&Array.isArray(siteMonth.days)?siteMonth.days:[];
-  var candidates=[];
-  days.forEach(function(day){
-    if(!weeklyDateInRange(day.date,week)||rule.months.indexOf(weeklyMonthForDate(day.date))<0)return;
-    var highs=weeklyHighTideEvents(day).filter(function(event){return event.level>=rule.minHighTideCm;});
-    if(!highs.length)return;
-    highs.sort(function(a,b){return b.level-a.level;});
-    candidates.push({date:day.date,day:day,best:highs[0],qualified:highs});
-  });
-  if(!candidates.length)return null;
-  candidates.sort(function(a,b){return b.best.level-a.best.level||String(a.date).localeCompare(String(b.date));});
-  var best=candidates[0], extras=candidates.slice(1,3).map(function(item){return weeklyDateLabel(item.date)+' '+item.best.time+' · '+item.best.level+'cm';});
-  return {date:best.date,reason:rule.reason,tideText:'만조 '+best.best.time+' · '+best.best.level+'cm',extraText:extras.length?'그 밖의 좋은 날: '+extras.join(' / '):'',cautionText:(best.day.stale===true&&best.day.fallbackSource!=='monthly_cache')?'※ 이전 조석 자료':'',sortLevel:best.best.level};
+  // 추천 사유 문구는 기존대로 이동기(rule.months)에만 붙인다. 관문 자체는 월과 무관하다.
+  var tides=(weeklyQualifyingHighTides(site,week)||[]).filter(function(tide){return rule.months.indexOf(weeklyMonthForDate(tide.date))>=0;});
+  if(!tides.length)return null;
+  var byDate={};
+  tides.forEach(function(tide){if(!byDate[tide.date]||tide.level>byDate[tide.date].level)byDate[tide.date]=tide;});
+  var candidates=Object.keys(byDate).map(function(date){return byDate[date];});
+  candidates.sort(function(a,b){return b.level-a.level||String(a.date).localeCompare(String(b.date));});
+  var best=candidates[0], extras=candidates.slice(1,3).map(function(item){return weeklyDateLabel(item.date)+' '+item.time+' · '+item.level+'cm';});
+  return {date:best.date,reason:rule.reason,tideText:'만조 '+best.time+' · '+best.level+'cm',extraText:extras.length?'그 밖의 좋은 날: '+extras.join(' / '):'',cautionText:(best.day.stale===true&&best.day.fallbackSource!=='monthly_cache')?'※ 이전 조석 자료':'',sortLevel:best.level};
 }
 function todayIsEastWindDirection(direction){
   var value=String(direction||'').trim().toUpperCase().replace(/\s*[0-9.]+\s*M\/S.*$/,'').trim();
@@ -2545,6 +2573,9 @@ function weeklySeasonalBestWeatherDay(site,week){
   return best;
 }
 function weeklyRecommendationForSite(site,week){
+  /* 물때 기준이 있는 갯벌 탐조지는 적합한 만조가 없으면 공지·기상·동풍 등 어떤 사유로도
+     추천에 들어오지 않는다. 고정 추천·자동 추천·공지 연계가 모두 이 함수를 지난다. */
+  if(!weeklyMudflatTideGateOpen(site,week))return null;
   var seasonalBest=weeklySeasonalBestWeatherDay(site,week);
   var bestWeather=seasonalBest?{date:seasonalBest.date,sample:seasonalBest.sample}:null;
   var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);
@@ -2570,7 +2601,9 @@ function weeklyRecommendationForSite(site,week){
   var priority=issueReason?1:(tideRec?2:(windRec?3:4));
   if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;
   var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';
-  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather)date=bestWeather.date;
+  // 물때가 추천 사유인 탐조지는 기상 최적일로 날짜를 옮기지 않는다. 카드의 사유 날짜와
+  // 표시되는 만조 날짜가 어긋나지 않게 한다.
+  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather&&!tideRec)date=bestWeather.date;
   /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */
   var dayBest=(weatherEntry&&weatherEntry.fromWeek)?weeklyDailyBestSample(site,date,sampleFilter):null;
   var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(weatherEntry&&weatherEntry.date===date?weatherEntry.weather:null);
