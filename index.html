@@ -1858,7 +1858,7 @@ function toggleTodayPanel(force){
     hideBirdmapPanelOnMobile();
     if(n)n.style.display='none';
     renderTodayPanel();
-    if(!weatherWeek)loadWeatherWeek();
+    if(!weatherWeek)loadWeatherWeek().then(function(changed){if(changed)refreshTodayPanelIfOpen();});
     if(!recommendationWeatherRules)loadRecommendationWeatherRules();
     loadTideMonth().then(function(){refreshTodayPanelIfOpen();}).catch(function(){refreshTodayPanelIfOpen();});
   }
@@ -2845,17 +2845,46 @@ function kstDateText(){
   var values={};parts.forEach(function(part){values[part.type]=part.value;});
   return values.year+'-'+values.month+'-'+values.day;
 }
-function loadWeatherToday(){
-  return fetch('./weather_today.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
-    if(!r.ok)throw new Error();
+/* ── 저장 자료 읽기·자동 새로고침 ─────────────────────────────────────────────
+   지도를 열어 둔 채로 GitHub Pages 에 새 JSON 이 올라와도 최초 로드 값이 남아 있었다.
+   같은 파일을 다시 읽되 아래를 지킨다.
+   - cache:'no-cache' : 매번 서버에 재검증을 요청하므로 낡은 파일을 그대로 쓰지 않는다.
+     내용이 같으면 304 로 끝나 3.4MB weather_week.json 을 다시 내려받지 않는다.
+   - 파일별 요청 일련번호 : 늦게 도착한 응답이 더 최신 자료를 덮어쓰지 못하게 버린다.
+   - 발행 시각(stamp) 비교 : 같은 자료면 반영도 다시 그리기도 하지 않아 깜빡이지 않는다.
+   - 실패·잘못된 JSON : 마지막으로 정상 수신한 자료를 그대로 둔다.
+   기상 적합도·주간 예보 대체·조석 판정 규칙 자체는 건드리지 않는다. 화면을 그릴 때
+   기존 함수들이 새 전역값을 읽어 KST 날짜와 today_reference 규칙을 그대로 적용한다. */
+var birdmapDataSeq={};
+
+/* 파일이 발행된 시점. weather_today·weather_week·tide_today 모두 generatedAt 또는 updated 를 갖는다. */
+function birdmapDataStamp(data){
+  if(!data)return '';
+  return [data.generatedAt,data.updated,data.date,data.startDate].filter(Boolean).join('|');
+}
+
+/* 반영했으면 true, 같은 자료거나 실패했으면 false 로 끝난다(그리기는 호출한 쪽에서 한 번만). */
+function loadBirdmapData(key,url,currentStamp,apply,onMissing){
+  var seq=birdmapDataSeq[key]=(birdmapDataSeq[key]||0)+1;
+  return fetch(url,{cache:'no-cache'}).then(function(r){
+    if(!r.ok)throw new Error(url+' '+r.status);
     return r.json();
   }).then(function(data){
-    if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
-    weatherToday=data;
-    refreshOpenBirdPopup();
+    if(!data||!data.sites||typeof data.sites!=='object')throw new Error(url+' invalid');
+    if(seq!==birdmapDataSeq[key])return false;
+    if(birdmapDataStamp(data)===currentStamp())return false;
+    return apply(data);
   }).catch(function(){
-    weatherToday={updated:'',source:'',sites:{}};
+    // 아직 한 번도 못 받은 상태에서만 대체 경로를 탄다. 그 외에는 직전 정상 자료를 유지한다.
+    if(onMissing&&!currentStamp())return onMissing();
+    return false;
   });
+}
+
+function loadWeatherToday(){
+  return loadBirdmapData('weatherToday','./weather_today.json',
+    function(){return birdmapDataStamp(weatherToday);},
+    function(data){weatherToday=data;return true;});
 }
 function loadRecommendationWeatherRules(){
   if(recommendationRulesRequest)return recommendationRulesRequest;
@@ -2870,37 +2899,53 @@ function loadRecommendationWeatherRules(){
 }
 function loadWeatherWeek(){
   if(!recommendationWeatherRules)loadRecommendationWeatherRules();
-  return fetch('./weather_week.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
-    if(!r.ok)throw new Error();
-    return r.json();
-  }).then(function(data){
-    if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
-    weatherWeek=data;
-    refreshTodayPanelIfOpen();
-  }).catch(function(){
-    weatherWeek=null;
-  });
+  return loadBirdmapData('weatherWeek','./weather_week.json',
+    function(){return birdmapDataStamp(weatherWeek);},
+    function(data){weatherWeek=data;return true;});
 }
 function loadTideToday(){
-  return fetch('./tide_today.json?v='+Date.now(),{cache:'no-store'}).then(function(r){
-    if(!r.ok)throw new Error();
-    return r.json();
-  }).then(function(data){
-    if(!data||!data.sites||typeof data.sites!=='object')throw new Error();
-    tideToday=data;
-    if(!tideTodayIsCurrent()){
-      return loadTideMonth().catch(function(){return null;}).then(function(){
-        refreshOpenBirdPopup();
-      });
-    }
-    refreshOpenBirdPopup();
-  }).catch(function(){
-    tideToday={updated:'',source:'',sites:{}};
-    // daily를 못 받아도 오늘 날짜 월간 자료가 있으면 쓸 수 있으므로 기존 loader로 한 번 확인한다.
-    return loadTideMonth().catch(function(){return null;}).then(function(){
-      refreshOpenBirdPopup();
+  return loadBirdmapData('tideToday','./tide_today.json',
+    function(){return birdmapDataStamp(tideToday);},
+    function(data){
+      tideToday=data;
+      // 새 daily가 오늘 날짜가 아니면 기존대로 월간 자료로 보완한다.
+      if(tideTodayIsCurrent())return true;
+      return loadTideMonth().catch(function(){return null;}).then(function(){return true;});
+    },
+    function(){
+      // daily를 한 번도 못 받아도 오늘 날짜 월간 자료가 있으면 쓸 수 있으므로 기존 loader로 확인한다.
+      return loadTideMonth().then(function(){return true;}).catch(function(){return false;});
     });
+}
+
+/* 탭이 보이는 동안 10분마다, 그리고 탭으로 돌아올 때 세 파일을 함께 확인한다.
+   실제로 달라진 파일이 하나라도 있을 때만 열려 있는 팝업과 주간 추천을 한 번 다시 그린다.
+   지도 중심·확대, 검색어, 필터 선택과 접힘 상태는 건드리지 않는다. */
+var BIRDMAP_REFRESH_MS=10*60*1000;
+var BIRDMAP_REFRESH_MIN_GAP_MS=30*1000;
+var birdmapRefreshTimer=null, birdmapLastDataCheck=0, birdmapDataStarted=false;
+
+function refreshBirdmapData(initial){
+  if(initial)birdmapDataStarted=true;
+  else{
+    // 최초 로드(load 이벤트 뒤 300ms)보다 focus 가 먼저 와서 같은 파일을 두 번 읽던 문제를 막는다.
+    if(!birdmapDataStarted)return Promise.resolve(false);
+    if(document.hidden)return Promise.resolve(false);
+    // 탭 전환 때 focus 와 visibilitychange 가 잇달아 오므로 짧은 간격의 중복 요청을 막는다.
+    if(Date.now()-birdmapLastDataCheck<BIRDMAP_REFRESH_MIN_GAP_MS)return Promise.resolve(false);
+  }
+  birdmapLastDataCheck=Date.now();
+  return Promise.all([loadWeatherToday(),loadWeatherWeek(),loadTideToday()]).then(function(results){
+    var changed=results.indexOf(true)>=0;
+    if(changed){refreshOpenBirdPopup();refreshTodayPanelIfOpen();}
+    return changed;
   });
+}
+
+function scheduleBirdmapRefresh(){
+  if(birdmapRefreshTimer){clearInterval(birdmapRefreshTimer);birdmapRefreshTimer=null;}
+  if(document.hidden)return; // 숨겨진 동안에는 주기 요청을 걸지 않는다
+  birdmapRefreshTimer=setInterval(refreshBirdmapData,BIRDMAP_REFRESH_MS);
 }
 
 
@@ -2910,8 +2955,13 @@ window.addEventListener('load',function(){
   updateMapTitleSiteCount();
   hideBirdmapPanelOnMobile();
   updateMobileUiMetrics();
-  setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);openSharedSiteFromUrl();loadNotices();loadWeatherToday();loadWeatherWeek();loadTideToday();},300);
+  setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);openSharedSiteFromUrl();loadNotices();refreshBirdmapData(true);scheduleBirdmapRefresh();},300);
 });
+document.addEventListener('visibilitychange',function(){
+  scheduleBirdmapRefresh();
+  if(!document.hidden)refreshBirdmapData();
+});
+window.addEventListener('focus',function(){refreshBirdmapData();});
 window.addEventListener('resize',function(){
   rebuildMarkerRegistry();
   applyResponsiveMarkerSizes();

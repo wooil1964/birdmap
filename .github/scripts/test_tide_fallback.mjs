@@ -36,7 +36,7 @@ const NAMES = [
   'kstDateText', 'tideTodayDateText', 'tideTodayIsCurrent',
   'v24TideParts', 'v24TideMinutesOfDay', 'v24TideDayEvents',
   'monthTideForSite', 'monthTideDayForSite', 'tideTodayForSite',
-  'loadTideMonth', 'loadTideToday',
+  'birdmapDataStamp', 'loadBirdmapData', 'loadTideMonth', 'loadTideToday',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 실제 함수를 평가한다. */
@@ -58,7 +58,7 @@ function loadApi(state = {}) {
     'ctx', 'Date', 'fetch',
     'var tideToday=ctx.tideToday||{updated:"",source:"",sites:{}};' +
     'var tideMonth=ctx.tideMonth||null;var tideMonthPending=null;' +
-    'var popupRefreshCount=0;' +
+    'var popupRefreshCount=0;var birdmapDataSeq={};' +
     'function refreshOpenBirdPopup(){popupRefreshCount++;}' +
     NAMES.map(functionSource).join('\n') + '\n' +
     'return {' + NAMES.join(',') +
