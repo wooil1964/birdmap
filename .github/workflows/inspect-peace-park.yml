@@ -6,29 +6,28 @@ on:
     paths:
       - .github/workflows/inspect-peace-park.yml
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect nearby runtime sites and assertions
+      - name: Inspect park templates and dynamic marker code
         run: |
           python3 - <<'PY'
-          import sys,math,re
+          import sys,re
           sys.path.insert(0,'.github/scripts')
-          from site_data import load_runtime_sites,load_worker_sites
-          sites=load_runtime_sites(); worker=load_worker_sites()
-          print('SITE_COUNT',len(sites),'WORKER_COUNT',len(worker),'MAX_ID',max(int(s['id']) for s in sites))
-          lat,lon=37.5642583333,126.8920861111
-          near=sorted(sites,key=lambda s:(float(s['lat'])-lat)**2+(float(s['lon'])-lon)**2)
-          for s in near[:7]:
-            print('NEARBY',repr(s))
-          index=open('index.html',encoding='utf-8').read()
-          for key in ('var siteData=','siteData=siteData.concat(','var siteSpotData=','function syncSiteSpots('):
-            start=index.find(key);print('INDEX_ANCHOR',repr(key),start,repr(index[start:start+450]))
-          for path in ('.github/scripts/test_weather.py','.github/scripts/test_tide.py','.github/scripts/test_weekly_recommendation.mjs'):
-            text=open(path,encoding='utf-8').read().splitlines()
-            for i,line in enumerate(text):
-              if any(k in line for k in ('189','188','siteCount','commonIdCount','unavailableSiteCount')):
-                print('TEST_ASSERT',path,i+1,line[:240])
+          from site_data import load_runtime_sites
+          sites=load_runtime_sites();byid={s['id']:s for s in sites}
+          for sid in ['35','85','109','136','143','147','151','155']:
+            s=byid[sid];print('TEMPLATE',sid,{k:s[k] for k in ('name','env','weatherRuleKey','windyPriority','bestSeason','siteGrade','oneLineIntro','environmentBirdingLabel','mainBirdGroup','birdingFeature','recommendedLensReason')})
+          text=open('index.html',encoding='utf-8').read()
+          for needle in ['function markerKey(', 'function buildSiteMarker(', 'markerRegistry[', 'siteData.forEach(function(s)', 'siteData=siteData.concat(', 'var siteSpotData=', 'function syncSiteSpots(']:
+            for m in list(re.finditer(re.escape(needle),text))[:3]: print('INDEX',needle,m.start(),repr(text[max(m.start()-130,0):m.start()+750]))
+          for path,needles in [('.github/scripts/test_weekly_recommendation.mjs',['189','188']),('.github/scripts/test_weather.py',['189','188']),('.github/scripts/test_tide.py',['100'])]:
+            lines=open(path,encoding='utf-8').read().splitlines()
+            for i,line in enumerate(lines):
+              if any(re.search(r'(?<!\d)'+x+r'(?!\d)',line) for x in needles):
+                print('GUARD',path,i+1,repr('\n'.join(lines[max(0,i-1):i+2])))
           PY
