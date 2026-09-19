@@ -14,6 +14,14 @@
 
 ## 최근 완료 작업
 
+- 평화의공원(ID 195) 신규 탐조지와 출현 지점 2곳(2026-09-19, 등록 커밋 `f4efbf4`, 기준 main `9f35587`): 서울 마포구 평화의공원을 ID 195로 추가해 탐조지가 189 → **190**이 됐다. 본 탐조지 좌표는 `37.5642583333, 126.8920861111`이고 대표종에 **붉은양진이·흰꼬리딱새**를 포함한다. 인접 도심공원 탐조지(ID 147 맥도생태공원)와 같은 `env: 공원`·`weatherRuleKey: forest_songbird`·`공원탐조` 조합을 쓴다. 확인되지 않은 관찰 날짜·출현 빈도는 만들지 않았고 편의시설은 ID 193 선례대로 '미확인'으로 뒀다.
+  - **조석·파고 미사용.** `tideUse 아니오`·`tideSensitive`/`waveSensitive 아니오`·`showTide`/`showWave false`이며 `tide_station_mapping.json`과 `update_tide.py`의 `ADDITIONAL_TIDE_SITES`는 건드리지 않았다. 조석 대상 수는 100 그대로다.
+  - 출현 지점(빨간 원)은 김제새만금(ID 21)용으로 먼저 만든 `siteSpotData`/`syncSiteSpots()` 구조를 그대로 재사용한 2건이다(구조 도입 커밋 `62bb142`). 빨간 원 1 `37.5632527778, 126.8969333333` 큰덤불해오라기·붉은등때까치, 빨간 원 2 `37.5675583333, 126.8912222222` 동박새·흰눈썹황색새·큰유리새·쇠솔새. 원에는 권역 번호·기상·조석·적합도를 연결하지 않으며, 부모 탐조지가 검색·필터에서 빠지면 원도 함께 사라진다. **`흰눈썹황색새`는 사용자 지정 표기이므로 임의로 고치지 말 것.**
+  - 신규 탐조지 체크리스트 반영분: `weather-proxy/src/sites.js`에 195 등록(190곳), `test_weather.py`의 `runtimeSiteCount`·`commonIdCount`·`siteCount` 189 → 190과 `unavailableSiteCount` 188 → 189(총계 − 재사용 1), `test_weekly_recommendation.mjs`의 실데이터 개수 가드 4곳 189 → 190. `worker["188"]`과 `test_tide.py`의 99/100은 탐조지 ID·조석 대상 수라 그대로 뒀다.
+  - **기상 연동 완료**: [run 35437436060](https://github.com/wooil1964/birdmap/actions/runs/35437436060) 전 스텝 success. `weather_today.json` `siteCount 190`·`status ok`이고 ID 195는 92점 ★★★★★·`ruleKey forest_songbird`·`scoreEligible true`·`wave null`이다. `weather_week.json`도 `siteCount 190`에 ID 195 7일치가 들어 있다(생성 커밋 `9f35587`).
+  - 실행한 테스트: inline `<script>` 8개 파싱 실패 0, `node --check weather-proxy/src/sites.js` 통과, `node --test .github/scripts/*.mjs` 160 통과/10 실패/7 스킵(실패 10건은 Chromium·Python 미설치로 인한 환경 실패이며 변경 전 main과 동일), CI의 `test_weather.py` 통과, runtime↔Worker 190/190 불일치 0, 기존 189곳 레코드 JSON 완전 동일·좌표 변경 0. 라이브에서 마커 190개·빨간 원 3개·헤더 190개 권역, 김제새만금의 기상·조석·한 달 조석 유지를 확인했다.
+  - **공유 페이지는 아직 만들지 못했다.** `share/195/index.html`·`share/og/195.png`가 없고 `test_share_pages.py`도 실행하지 못했다. 아래 '진행 중 / 보류 사항'을 볼 것.
+
 - 신규 탐조지 추가가 기상·조석 Actions를 멈춘 장애와 복구, 헤더 권역 수 자동화(2026-09-16, 기준 main `6983897`): 월포리해변(ID 193) 추가(`47f3c04`)로 탐조지가 187 → 188이 되자 **기상·조석 두 Actions가 모두 실패**했다. 원인은 테스트의 개체 수 전제와 조석 매핑 필수 조건이다. 복구 커밋은 `6983897`이며 두 워크플로 모두 성공했다.
   - 기상 실패: [run 35082497795](https://github.com/wooil1964/birdmap/actions/runs/35082497795)(schedule, `47f3c04`)이 `Check updater syntax`에서 멈췄고 생성·검증·커밋 단계는 skip됐다. 원문은 `test_weather.py`의 `AssertionError: 188 != 187` 3건(30행 `runtimeSiteCount`, 86행 `siteCount`, 238행 주간 `siteCount`)이다. 그래서 `weather_today.json`이 187곳인 채 ID 193 없이 남았고 지도에 '오늘 적합도 미확인'이 떴다.
   - 조석 실패: [run 35082203922](https://github.com/wooil1964/birdmap/actions/runs/35082203922)(push, `47f3c04`)도 같은 날 실패해 있었다. `test_tide.py` 218행 `siteCount` 99 기대와, `build_tide_station_mapping.py`의 `validate_mapping()`이 낸 `RuntimeError: Mapping must cover every tide-enabled site exactly once`다. ID 193을 `update_tide.py`의 `ADDITIONAL_TIDE_SITES`에만 등록하고 `tide_station_mapping.json`에는 넣지 않았기 때문이다.
@@ -378,6 +386,10 @@
 ## 진행 중 / 보류 사항
 
 > **[현재]** 이 절만 현재 미해결 상태를 뜻합니다.
+
+- **평화의공원(ID 195)의 공유 페이지가 없다(2026-09-19 실측).** `share/`에는 189곳분만 있어 `https://wooil1964.github.io/birdmap/share/195/`와 `https://wooil1964.github.io/birdmap/share/og/195.png`가 모두 **HTTP 404**다(같은 시각 ID 194는 200). 그래서 지도 팝업의 '공유 링크 복사'로 받은 ID 195 링크는 아직 열리지 않고, `test_share_pages.py`의 "모든 탐조지에 페이지와 OG 이미지가 있어야 한다"도 통과하지 못한다. 이 테스트는 push로 실행되지 않으므로 기상·조석 Actions는 계속 성공한다.
+  - 해결은 Actions 탭에서 **Rebuild share pages**를 브랜치 `main`, `site_ids`에 `195`를 넣어 수동 실행하는 것이다. 전체를 생성·검증하되 커밋은 지정한 ID만 담는 구조라 다른 탐조지 카드는 바뀌지 않는다.
+  - **로컬 생성은 하지 말 것.** 작업 PC에는 실제 Python이 없고(`python`/`python3`는 WindowsApps의 Microsoft Store 스텁, `pip`도 없음) `build_share_pages.py`를 돌릴 수 없다. 카드 PNG는 워크플로가 설치하는 `fonts-noto-cjk`/`fonts-nanum`으로 그려야 하므로 다른 글꼴로 만들면 기존 카드와 어긋난다.
 
 - **현재 미반영은 5곳(ID 161·166·171·177·184)뿐이다.** 과거에 '보류 24개(ID 161, 164~186)'로 적혀 있던 후보 중
   **19곳(ID 164·165·167·168·169·170·172·173·174·175·176·178·179·180·181·182·183·185·186)은 이미 runtime `siteData`와
