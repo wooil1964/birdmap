@@ -309,6 +309,12 @@ siteData=siteData.concat([
   {"id":"194","name":"천수만 강당리","country":"대한민국","region":"충남 서산","sido":"충남","sigungu":"서산","env":"간척호·농경지","birds":"기러기류·오리류·맹금류 저어새, 노랑부리백로, 알락꼬리마도요, 붉은가슴도요, 큰뒷부리도요, 검은머리갈매기, 큰고니, 파랑새, 벌매, 줄기러기,쇠개개비,흰기러기,쇠재두루미,황새,캐나다기러기,캐나다두루미,시베리아흰두루미,민댕기물떼새","searchText":"194 천수만 강당리 대한민국 충남 서산 간척호·농경지 기러기류·오리류·맹금류 저어새, 노랑부리백로, 알락꼬리마도요, 붉은가슴도요, 큰뒷부리도요, 검은머리갈매기, 큰고니, 파랑새, 벌매, 줄기러기,쇠개개비,흰기러기,쇠재두루미,황새,캐나다기러기,캐나다두루미,시베리아흰두루미,민댕기물떼새 겨울철새;오리류;맹금;들뫼추천 봄·가을·겨울 mudflat_shorebird","seasons":["봄","가을","겨울"],"rare":false,"mijo":false,"island":false,"pelagic":false,"publicTransitHigh":false,"recommend5":true,"overseas":false,"lat":36.6386361111,"lon":126.409875,"markerVar":"marker_birdmap_site_194","habitatType":"간척호·농경지","birdingFeature":"겨울철새;오리류;맹금;들뫼추천","mainBirdGroup":"기러기류·오리류·맹금류","bestSeason":"겨울·이동기","bestMonth":"겨울;봄;가을","siteGrade":"★★★★★","oneLineIntro":"한파 뒤 결빙·개수면 집중 확인","weatherRuleKey":"mudflat_shorebird","windyPriority":"temp;wind;rain","tideSensitive":"아니오","waveSensitive":"아니오","bestTime":"오전","lensRecommend":"400~800mm","photoDistance":"원거리","carBirding":"가능","walkingLevel":"짧음~중간","parkingV23":"가능","restroomV23":"가능","difficulty":"","dataConfidence":"","lastReviewDate":"","dataSource":"","aiSummary":"","aiTip":"","recommendedLensAuto":"400~800mm","recommendedLensReason":"갯벌·하구는 도요·물떼새와 갈매기류 원거리 관찰이 많습니다.","environmentBirdingLabel":"호수탐조","seasonTags":"봄·가을·겨울","tideUse":"아니오","tideStationName":"","tideStationCode":"","showTide":false,"showWave":false,"localTipUse":false,"localTipSiteKey":"","localDeparturePoint":"","localBirdingTip":"","ebirdHotspotUrl":"","naverMapUrl":"https://map.naver.com/v5/search/%EC%B2%9C%EC%88%98%EB%A7%8C%20%EA%B0%95%EB%8B%B9%EB%A6%AC","kakaoMapUrl":"https://map.kakao.com/link/map/%EC%B2%9C%EC%88%98%EB%A7%8C%20%EA%B0%95%EB%8B%B9%EB%A6%AC,36.6386361111,126.409875","windyUrl":"https://www.windy.com/36.6386361111/126.409875?36.6386361111,126.409875,10","ksaUrl":""}
 ]);
 var markerRegistry={};
+/* 탐조지 내부 출현 지점. 탐조지(siteData)와 분리해 한 탐조지에 여러 지점을 둘 수 있다.
+   siteId는 siteData의 id, species는 해당 지점에서 확인된 종. 날짜·빈도는 확인된 값만 넣는다. */
+var siteSpotData=[
+  {"siteId":"21","lat":35.8512861,"lon":126.6761694,"species":["긴부리도요","학도요","꺅도요"]}
+];
+var siteSpotLayers={};
 /* eBird 버튼 비노출 실험(임시): true로 바꾸면 eBird 버튼이 다시 생성됨. 데이터(ebirdHotspotUrl)는 그대로 유지 */
 var SHOW_EBIRD_BUTTON=false;
 var FIELD_INFO_BY_SITE={
@@ -567,6 +573,22 @@ function ensureMasterDbMarkers(){
       +(site.ksaUrl?'<a class="ksa" target="_blank" href="'+escapeHtml(site.ksaUrl)+'">KSA</a>':'');
     var popup='<div><h4>'+escapeHtml(site.name)+'</h4><b>대표종:</b> '+escapeHtml(site.birds)+'<br><b>주차:</b> 정보 없음<br><b>화장실:</b> 정보 없음<br><b>숙박:</b> 정보 없음<br><b>선박정보:</b> 정보 없음<br><b>주의사항:</b> 정보 없음<br>'+links+'</div>';
     window[site.markerVar]=L.marker([site.lat,site.lon]).addTo(map_7010a44f6ac2025090f0fe07508ed485).bindPopup(popup,{maxWidth:500}).bindTooltip(escapeHtml(site.name),{sticky:true});
+  });
+}
+
+/* 부모 탐조지가 필터를 통과할 때만 그 탐조지의 출현 지점을 표시한다. */
+function syncSiteSpots(site,show){
+  siteSpotData.forEach(function(spot,i){
+    if(String(spot.siteId)!==String(site.id))return;
+    if(!siteSpotLayers[i]){
+      var species=(spot.species||[]).map(escapeHtml).join(' · ');
+      siteSpotLayers[i]=L.circleMarker([spot.lat,spot.lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85})
+        .bindPopup('<div style="width:min(190px,calc(100vw - 80px))"><b>'+escapeHtml(site.name)+' 출현 지점</b><br>'+species+'</div>',{maxWidth:260})
+        .bindTooltip(species,{sticky:true});
+    }
+    var layer=siteSpotLayers[i],on=map_7010a44f6ac2025090f0fe07508ed485.hasLayer(layer);
+    if(show&&!on)layer.addTo(map_7010a44f6ac2025090f0fe07508ed485);
+    else if(!show&&on)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(layer);
   });
 }
 
@@ -1809,7 +1831,9 @@ function applyFilters(fitAfter){
   siteData.forEach(function(s){
     var mk=markerRegistry[markerKey(s)];
     if(!mk)return;
-    if(sitePasses(s)){
+    var pass=sitePasses(s);
+    syncSiteSpots(s,pass);
+    if(pass){
       if(!map_7010a44f6ac2025090f0fe07508ed485.hasLayer(mk))mk.addTo(map_7010a44f6ac2025090f0fe07508ed485);
       c++;
       v.push(s);
