@@ -14,7 +14,7 @@ import {
   ipHash,
   jsonResponse,
   preflightResponse,
-  publicSpots,
+  publicPayload,
   validateReport,
   verifyTurnstile,
 } from "./shared.js";
@@ -89,8 +89,8 @@ async function handleSubmit(request, env) {
       .prepare(
         `INSERT INTO reports
            (id, status, species, lat, lon, observed_on, received_at,
-            bird_count, reporter, note, ip_hash, dedupe_hash)
-         VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`,
+            bird_count, reporter, note, ip_hash, dedupe_hash, name_public)
+         VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)`,
       )
       .bind(
         id,
@@ -104,6 +104,7 @@ async function handleSubmit(request, env) {
         report.note,
         hash,
         await dedupeHash(report),
+        report.namePublic,
       )
       .run();
   } catch (error) {
@@ -125,16 +126,17 @@ async function handleApproved(request, env) {
   const db = database(env);
   const { results } = await db
     .prepare(
-      // merged_into 가 있는 행은 다른 지점에 종을 합친 기록이므로 점을 따로 찍지 않는다.
-      `SELECT id, species, lat, lon, public_lat, public_lon
-         FROM reports WHERE status = 'approved' AND merged_into IS NULL
-        ORDER BY received_at`,
+      // spot_key 가 있는 행은 다른 지점의 이력으로만 붙고 자기 점을 갖지 않는다.
+      `SELECT id, species, lat, lon, public_lat, public_lon,
+              observed_on, reporter, name_public, spot_key
+         FROM reports WHERE status = 'approved'
+        ORDER BY observed_on DESC, received_at DESC`,
     )
     .all();
   return jsonResponse(
     request,
     env,
-    { ok: true, generatedAt: new Date().toISOString(), spots: publicSpots(results) },
+    { ok: true, generatedAt: new Date().toISOString(), ...publicPayload(results) },
     200,
     { "Cache-Control": "public, max-age=60" },
   );

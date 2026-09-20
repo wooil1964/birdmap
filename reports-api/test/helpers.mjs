@@ -1,120 +1,44 @@
-// 테스트용 D1 대역. 실제 SQL 엔진이 아니라 이 Worker 가 쓰는 질의 모양만 흉내 낸다.
-// 질의를 추가하면 여기에도 분기를 추가해야 한다.
+// 테스트용 D1 대역. Node 내장 SQLite 로 실제 schema.sql 을 올려 두고,
+// D1 의 prepare/bind/all/first/run/batch 모양만 맞춘다.
+// 손으로 만든 질의 분기 대신 진짜 SQL 이 돌기 때문에 UNIQUE 인덱스와 LIKE 조건까지 그대로 검증된다.
+import { DatabaseSync } from "node:sqlite";
+import { readFileSync } from "node:fs";
+
+const SCHEMA = readFileSync(new URL("../schema.sql", import.meta.url), "utf8");
+
+function insertRow(db, row) {
+  const full = {
+    id: row.id,
+    status: row.status ?? "pending",
+    species: row.species,
+    lat: row.lat,
+    lon: row.lon,
+    public_lat: row.public_lat ?? null,
+    public_lon: row.public_lon ?? null,
+    observed_on: row.observed_on ?? "2026-09-19",
+    received_at: row.received_at ?? new Date().toISOString(),
+    decided_at: row.decided_at ?? null,
+    bird_count: row.bird_count ?? null,
+    reporter: row.reporter ?? null,
+    note: row.note ?? null,
+    admin_note: row.admin_note ?? null,
+    site_id: row.site_id ?? null,
+    name_public: row.name_public ?? 0,
+    spot_key: row.spot_key ?? null,
+    ip_hash: row.ip_hash ?? "hash",
+    dedupe_hash: row.dedupe_hash ?? "dedupe-" + row.id,
+  };
+  const cols = Object.keys(full);
+  const marks = cols.map((_, i) => "?" + (i + 1)).join(", ");
+  db.prepare(
+    `INSERT INTO reports (${cols.join(", ")}) VALUES (${marks})`,
+  ).run(...cols.map((c) => full[c]));
+}
 
 export function fakeDb(initialRows = []) {
-  const rows = initialRows.map((row) => ({ ...row }));
-
-  function select(sql, params) {
-    if (sql.includes("SUM(CASE WHEN")) {
-      const [hash, windowStart, dayStart] = params;
-      const mine = rows.filter(
-        (row) => row.ip_hash === hash && row.received_at >= dayStart,
-      );
-      return [
-        {
-          recent: mine.filter((row) => row.received_at >= windowStart).length,
-          daily: mine.length,
-        },
-      ];
-    }
-    if (sql.includes("status = 'approved' AND merged_into IS NULL")) {
-      return rows.filter(
-        (row) => row.status === "approved" && !row.merged_into,
-      );
-    }
-    if (sql.includes("WHERE id = ?1")) {
-      return rows.filter((row) => row.id === params[0]);
-    }
-    if (sql.includes("WHERE status = ?1")) {
-      return rows.filter((row) => row.status === params[0]);
-    }
-    if (sql.includes("FROM reports ORDER BY")) return rows.slice();
-    throw new Error("대역이 모르는 SELECT: " + sql);
-  }
-
-  function mutate(sql, params) {
-    if (sql.startsWith("INSERT")) {
-      const [
-        id,
-        species,
-        lat,
-        lon,
-        observed_on,
-        received_at,
-        bird_count,
-        reporter,
-        note,
-        ip_hash,
-        dedupe_hash,
-      ] = params;
-      if (rows.some((row) => row.dedupe_hash === dedupe_hash)) {
-        throw new Error("UNIQUE constraint failed: reports.dedupe_hash");
-      }
-      rows.push({
-        id,
-        status: "pending",
-        species,
-        lat,
-        lon,
-        public_lat: null,
-        public_lon: null,
-        observed_on,
-        received_at,
-        decided_at: null,
-        bird_count,
-        reporter,
-        note,
-        admin_note: null,
-        site_id: null,
-        merged_into: null,
-        ip_hash,
-        dedupe_hash,
-      });
-      return;
-    }
-    if (sql.includes("SET status='rejected'")) {
-      assign(params[0], { status: "rejected", decided_at: params[1], admin_note: params[2] });
-      return;
-    }
-    if (sql.includes("SET status='pending'")) {
-      assign(params[0], { status: "pending", decided_at: params[1], admin_note: params[2] });
-      return;
-    }
-    if (sql.includes("SET species=?2, decided_at=?3")) {
-      assign(params[0], { species: params[1], decided_at: params[2] });
-      return;
-    }
-    if (sql.includes("SET status='approved', merged_into=?2")) {
-      assign(params[0], {
-        status: "approved",
-        merged_into: params[1],
-        decided_at: params[2],
-        admin_note: params[3],
-      });
-      return;
-    }
-    if (sql.includes("SET status='approved', species=?2")) {
-      assign(params[0], {
-        status: "approved",
-        species: params[1],
-        lat: params[2],
-        lon: params[3],
-        public_lat: params[4],
-        public_lon: params[5],
-        site_id: params[6],
-        merged_into: null,
-        decided_at: params[7],
-        admin_note: params[8],
-      });
-      return;
-    }
-    throw new Error("대역이 모르는 UPDATE: " + sql);
-  }
-
-  function assign(id, patch) {
-    const row = rows.find((entry) => entry.id === id);
-    if (row) Object.assign(row, patch);
-  }
+  const db = new DatabaseSync(":memory:");
+  db.exec(SCHEMA);
+  for (const row of initialRows) insertRow(db, row);
 
   function prepare(sql) {
     let params = [];
@@ -124,13 +48,13 @@ export function fakeDb(initialRows = []) {
         return statement;
       },
       async all() {
-        return { results: select(sql, params) };
+        return { results: db.prepare(sql).all(...params) };
       },
       async first() {
-        return select(sql, params)[0] ?? null;
+        return db.prepare(sql).get(...params) ?? null;
       },
       async run() {
-        mutate(sql, params);
+        db.prepare(sql).run(...params);
         return { success: true };
       },
     };
@@ -143,7 +67,10 @@ export function fakeDb(initialRows = []) {
       for (const statement of statements) await statement.run();
       return [];
     },
-    rows,
+    // 테스트에서 저장 결과를 확인할 때 쓴다. 매번 현재 상태를 읽어 온다.
+    get rows() {
+      return db.prepare("SELECT * FROM reports ORDER BY received_at").all();
+    },
   };
 }
 

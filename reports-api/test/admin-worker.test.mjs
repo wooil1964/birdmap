@@ -214,7 +214,7 @@ test("공개 취소는 그 제보만 대기로 되돌린다", async () => {
   assert.equal(db.rows[1].species, "개개비");
 });
 
-test("기존 지점에 합쳐도 기존 출현종은 남는다", async () => {
+test("기존 지점에 연결해도 원본 종 목록을 고쳐 쓰지 않는다", async () => {
   const target = pendingRow({
     id: "33333333-3333-4333-8333-333333333333",
     status: "approved",
@@ -233,14 +233,81 @@ test("기존 지점에 합쳐도 기존 출현종은 남는다", async () => {
     handleRequest(
       adminRequest(`/admin/api/reports/${incoming.id}`, token, {
         method: "POST",
-        body: JSON.stringify({ action: "merge", targetId: target.id }),
+        body: JSON.stringify({ action: "link", spotKey: target.id }),
       }),
       adminEnv(db),
     ),
   );
-  // 기존 종은 그대로 두고 없는 종만 덧붙인다.
-  assert.equal(db.rows[0].species, "동박새 · 큰유리새 · 쇠솔새");
-  assert.equal(db.rows[1].merged_into, target.id);
+  const rows = db.rows;
+  const saved = rows.find((r) => r.id === target.id);
+  const linked = rows.find((r) => r.id === incoming.id);
+  // 대상 지점의 종 목록은 한 글자도 바뀌지 않는다.
+  assert.equal(saved.species, "동박새 · 큰유리새");
+  // 연결된 제보도 자기 종을 그대로 유지하고 고유 ID 로 남는다.
+  assert.equal(linked.species, "쇠솔새 · 동박새");
+  assert.equal(linked.spot_key, target.id);
+  assert.equal(linked.status, "approved");
+});
+
+test("수동 붉은 점 키에도 연결할 수 있고 형식을 검사한다", async () => {
+  const db = fakeDb([pendingRow()]);
+  const { sign, claims, jwksFetch } = await accessFixture();
+  const token = await sign(claims());
+  await withJwks(jwksFetch, async () => {
+    const bad = await handleRequest(
+      adminRequest(`/admin/api/reports/${db.rows[0].id}`, token, {
+        method: "POST",
+        body: JSON.stringify({ action: "link", spotKey: "아무거나" }),
+      }),
+      adminEnv(db),
+    );
+    assert.equal(bad.status, 400);
+    const good = await handleRequest(
+      adminRequest(`/admin/api/reports/${db.rows[0].id}`, token, {
+        method: "POST",
+        body: JSON.stringify({ action: "link", spotKey: "fixed:21:0" }),
+      }),
+      adminEnv(db),
+    );
+    assert.equal(good.status, 200);
+  });
+  assert.equal(db.rows[0].spot_key, "fixed:21:0");
+});
+
+test("이름 공개 철회는 제보를 지우지 않고 공개만 거둔다", async () => {
+  const db = fakeDb([pendingRow({ status: "approved", reporter: "홍길동", name_public: 1 })]);
+  const { sign, claims, jwksFetch } = await accessFixture();
+  const token = await sign(claims());
+  await withJwks(jwksFetch, () =>
+    handleRequest(
+      adminRequest(`/admin/api/reports/${db.rows[0].id}`, token, {
+        method: "POST",
+        body: JSON.stringify({ action: "consent", namePublic: false }),
+      }),
+      adminEnv(db),
+    ),
+  );
+  assert.equal(db.rows[0].name_public, 0);
+  assert.equal(db.rows[0].reporter, "홍길동", "이름은 비공개로 보존된다");
+  assert.equal(db.rows[0].status, "approved");
+});
+
+test("종별 이력 조회는 부분 일치로 다른 종을 끌어오지 않는다", async () => {
+  const db = fakeDb([
+    pendingRow({ id: "55555555-5555-4555-8555-555555555555", species: "동박새 · 쇠솔새", dedupe_hash: "d5" }),
+    pendingRow({ id: "66666666-6666-4666-8666-666666666666", species: "한국동박새", dedupe_hash: "d6" }),
+  ]);
+  const { sign, claims, jwksFetch } = await accessFixture();
+  const token = await sign(claims());
+  const response = await withJwks(jwksFetch, () =>
+    handleRequest(
+      adminRequest("/admin/api/reports?species=" + encodeURIComponent("동박새"), token),
+      adminEnv(db),
+    ),
+  );
+  const body = await response.json();
+  assert.equal(body.reports.length, 1);
+  assert.equal(body.reports[0].species, "동박새 · 쇠솔새");
 });
 
 test("모르는 처리 이름은 거부한다", async () => {

@@ -5,7 +5,7 @@ import {
   normalizeCoordinate,
   normalizeObservedOn,
   normalizeSpecies,
-  publicSpots,
+  publicPayload,
   parseAdminEmails,
   validateReport,
 } from "../src/shared.js";
@@ -105,8 +105,8 @@ test("정상 제보를 저장 가능한 형태로 바꾼다", () => {
   assert.equal(report.birdCount, 2);
 });
 
-test("공개 출력에는 종과 좌표만 담기고 개인정보는 빠진다", () => {
-  const spots = publicSpots([
+test("공개 출력에는 비공개 항목이 빠지고 공개 좌표가 쓰인다", () => {
+  const { spots } = publicPayload([
     {
       id: "a",
       species: "동박새 · 쇠솔새",
@@ -114,28 +114,84 @@ test("공개 출력에는 종과 좌표만 담기고 개인정보는 빠진다",
       lon: 127.1,
       public_lat: 37.2,
       public_lon: 127.2,
-      reporter: "홍길동",
-      note: "설명",
       observed_on: "2026-09-19",
+      reporter: "홍길동",
+      name_public: 0,
+      note: "설명",
       bird_count: 3,
       admin_note: "메모",
       ip_hash: "hash",
+      spot_key: null,
     },
   ]);
-  assert.deepEqual(spots, [
-    { id: "a", lat: 37.2, lon: 127.2, species: ["동박새", "쇠솔새"] },
-  ]);
+  assert.equal(spots.length, 1);
+  assert.equal(spots[0].lat, 37.2);
+  assert.equal(spots[0].lon, 127.2);
+  assert.deepEqual(spots[0].species, ["동박새", "쇠솔새"]);
+  // 관찰일은 이력에 들어가지만 이름·설명·메모·IP 해시·개체수는 어디에도 없다.
+  assert.equal(spots[0].history[0].date, "2026-09-19");
+  assert.equal("reporter" in spots[0].history[0], false);
   const serialized = JSON.stringify(spots);
-  for (const leak of ["홍길동", "설명", "2026-09-19", "메모", "hash"]) {
+  for (const leak of ["홍길동", "설명", "메모", "hash", "\"bird_count\""]) {
     assert.equal(serialized.includes(leak), false, leak);
   }
 });
 
 test("공개 좌표가 없으면 실제 좌표를 쓴다", () => {
-  const spots = publicSpots([
-    { id: "b", species: "개개비", lat: 37.3, lon: 127.3, public_lat: null, public_lon: null },
+  const { spots } = publicPayload([
+    { id: "b", species: "개개비", lat: 37.3, lon: 127.3, public_lat: null, public_lon: null, observed_on: "2026-09-19", spot_key: null },
   ]);
-  assert.deepEqual(spots[0], { id: "b", lat: 37.3, lon: 127.3, species: ["개개비"] });
+  assert.equal(spots[0].lat, 37.3);
+  assert.equal(spots[0].lon, 127.3);
+});
+
+test("이름 공개에 동의한 제보만 제보자 이름을 내보낸다", () => {
+  const rows = [
+    { id: "y", species: "큰노랑발도요", lat: 35.4, lon: 126.5, observed_on: "2026-09-13", reporter: "홍길동", name_public: 1, spot_key: null },
+    { id: "n", species: "큰노랑발도요", lat: 35.4, lon: 126.5, observed_on: "2026-03-15", reporter: "김철수", name_public: 0, spot_key: "y" },
+  ];
+  const { spots } = publicPayload(rows);
+  const history = spots[0].history;
+  assert.equal(history.length, 2);
+  // 최근 관찰일이 먼저 온다.
+  assert.equal(history[0].date, "2026-09-13");
+  assert.equal(history[0].reporter, "홍길동");
+  // 동의하지 않은 제보는 이름 필드 자체가 없다(화면에서 익명 제보로 표시된다).
+  assert.equal(history[1].date, "2026-03-15");
+  assert.equal("reporter" in history[1], false);
+  assert.equal(JSON.stringify(spots).includes("김철수"), false);
+});
+
+test("같은 종이 다른 날짜로 제보되면 두 건이 모두 남는다", () => {
+  const rows = [
+    { id: "a", species: "큰노랑발도요", lat: 35.4, lon: 126.5, observed_on: "2026-09-13", name_public: 0, spot_key: null },
+    { id: "b", species: "큰노랑발도요", lat: 35.4, lon: 126.5, observed_on: "2026-03-15", name_public: 0, spot_key: "a" },
+  ];
+  const { spots } = publicPayload(rows);
+  assert.equal(spots.length, 1);
+  assert.deepEqual(spots[0].history.map((h) => h.date), ["2026-09-13", "2026-03-15"]);
+  assert.deepEqual(spots[0].history.map((h) => h.id), ["a", "b"]);
+});
+
+test("지점에 연결해도 기존 종은 남고 새 종만 더해진다", () => {
+  const rows = [
+    { id: "base", species: "동박새 · 큰유리새", lat: 37.5, lon: 126.9, observed_on: "2026-05-01", name_public: 0, spot_key: null },
+    { id: "add", species: "쇠솔새 · 동박새", lat: 37.5, lon: 126.9, observed_on: "2026-05-02", name_public: 0, spot_key: "base" },
+  ];
+  const { spots } = publicPayload(rows);
+  assert.equal(spots.length, 1, "연결된 제보는 자기 점을 갖지 않는다");
+  assert.deepEqual(spots[0].species, ["동박새", "큰유리새", "쇠솔새"]);
+  assert.equal(spots[0].history.length, 2);
+});
+
+test("수동 붉은 점에 붙인 이력은 fixedSpots 로 따로 나간다", () => {
+  const { spots, fixedSpots } = publicPayload([
+    { id: "r1", species: "꺅도요", lat: 35.85, lon: 126.67, observed_on: "2026-09-20", reporter: "관찰자", name_public: 1, spot_key: "fixed:21:0" },
+  ]);
+  assert.deepEqual(spots, [], "연결된 제보는 새 점을 만들지 않는다");
+  assert.equal(fixedSpots["fixed:21:0"].history.length, 1);
+  assert.equal(fixedSpots["fixed:21:0"].history[0].reporter, "관찰자");
+  assert.deepEqual(fixedSpots["fixed:21:0"].history[0].species, ["꺅도요"]);
 });
 
 test("관리자 이메일 목록을 정규화한다", () => {

@@ -140,6 +140,22 @@ test("같은 종·좌표·관찰일의 중복 제보를 막는다", async () => 
   assert.equal(db.rows.length, 1);
 });
 
+test("제보할 때 이름 공개 동의를 함께 저장한다", async () => {
+  const db = fakeDb();
+  await withTurnstile(true, async () => {
+    await handleRequest(submitRequest(validBody({ reporter: "홍길동", namePublic: true })), publicEnv(db));
+    await handleRequest(
+      submitRequest(validBody({ species: "쇠솔새", reporter: "김철수" })),
+      publicEnv(db),
+    );
+  });
+  const agreed = db.rows.find((r) => r.reporter === "홍길동");
+  const notAgreed = db.rows.find((r) => r.reporter === "김철수");
+  assert.equal(agreed.name_public, 1);
+  // 동의 항목을 보내지 않으면 비공개가 기본값이다.
+  assert.equal(notAgreed.name_public, 0);
+});
+
 test("승인된 제보만, 종과 공개 좌표만 내보낸다", async () => {
   const db = fakeDb([
     {
@@ -150,9 +166,10 @@ test("승인된 제보만, 종과 공개 좌표만 내보낸다", async () => {
       lon: 126.89,
       public_lat: null,
       public_lon: null,
-      merged_into: null,
+      spot_key: null,
       received_at: "2026-09-19T00:00:00Z",
       reporter: "홍길동",
+      name_public: 0,
       note: "메모",
       observed_on: "2026-09-19",
     },
@@ -162,7 +179,7 @@ test("승인된 제보만, 종과 공개 좌표만 내보낸다", async () => {
       species: "동박새",
       lat: 37.5,
       lon: 126.8,
-      merged_into: null,
+      spot_key: null,
       received_at: "2026-09-19T01:00:00Z",
     },
     {
@@ -171,21 +188,24 @@ test("승인된 제보만, 종과 공개 좌표만 내보낸다", async () => {
       species: "쇠솔새",
       lat: 37.4,
       lon: 126.7,
-      merged_into: "a",
+      spot_key: "a",
+      observed_on: "2026-09-18",
       received_at: "2026-09-19T02:00:00Z",
     },
   ]);
   const response = await handleRequest(approvedRequest(), publicEnv(db));
   const body = await response.json();
-  assert.deepEqual(body.spots, [
-    {
-      id: "a",
-      lat: 37.56,
-      lon: 126.89,
-      species: ["큰덤불해오라기", "붉은등때까치"],
-    },
-  ]);
+  assert.equal(body.spots.length, 1);
+  assert.equal(body.spots[0].id, "a");
+  assert.equal(body.spots[0].lat, 37.56);
+  assert.equal(body.spots[0].lon, 126.89);
+  // 연결된 제보의 종이 더해지되 기존 종은 그대로다.
+  assert.deepEqual(body.spots[0].species, ["큰덤불해오라기", "붉은등때까치", "쇠솔새"]);
+  // 승인 대기 건은 이력에도 들어가지 않는다.
+  assert.deepEqual(body.spots[0].history.map((h) => h.id), ["a", "c"]);
+  // 이름 미동의·설명·관리자 메모는 어디에도 없다.
   assert.equal(JSON.stringify(body).includes("홍길동"), false);
+  assert.equal(JSON.stringify(body).includes("메모"), false);
 });
 
 test("공개 Worker 에는 승인 기능이 없다", async () => {

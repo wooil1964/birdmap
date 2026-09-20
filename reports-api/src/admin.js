@@ -7,13 +7,21 @@ import {
   errorResponse,
   jsonResponse,
   normalizeCoordinate,
+  normalizeObservedOn,
   normalizeSpecies,
   parseAdminEmails,
   verifyAccessJwt,
 } from "./shared.js";
 import { ADMIN_PAGE } from "./admin-page.js";
 
-const ACTIONS = ["approve", "reject", "unpublish", "merge"];
+// link  : 이 제보의 이력을 다른 지점에 붙인다(종 목록은 읽을 때 합치므로 원본을 고쳐 쓰지 않는다).
+// unlink: 연결을 끊어 다시 자기 점을 갖게 한다.
+// consent: 제보자 이름 공개 여부만 바꾼다(공개 철회 처리).
+const ACTIONS = ["approve", "reject", "unpublish", "link", "unlink", "consent"];
+
+// index.html 의 수동 붉은 점은 "fixed:<siteId>:<n>" 키로 가리킨다.
+const FIXED_SPOT_KEY = /^fixed:[0-9]{1,6}:[0-9]{1,3}$/;
+const REPORT_ID = /^[0-9a-f-]{36}$/;
 
 function database(env) {
   if (!env?.REPORTS_DB) {
@@ -49,6 +57,33 @@ async function readJson(request) {
 async function listReports(request, env, url) {
   const db = database(env);
   const status = url.searchParams.get("status") || "pending";
+  const species = (url.searchParams.get("species") || "").trim();
+  const spotKey = (url.searchParams.get("spotKey") || "").trim();
+
+  // 종별 이력: 이어 붙인 문자열에서 구분자를 포함해 정확히 한 종만 고른다.
+  if (species) {
+    const { results } = await db
+      .prepare(
+        `SELECT * FROM reports
+          WHERE (' · ' || species || ' · ') LIKE ('% · ' || ?1 || ' · %')
+          ORDER BY observed_on DESC, received_at DESC`,
+      )
+      .bind(species)
+      .all();
+    return jsonResponse(request, env, { ok: true, reports: results || [] });
+  }
+
+  // 지점별 이력: 그 지점에 붙은 제보와 지점 자신을 함께 본다.
+  if (spotKey) {
+    const { results } = await db
+      .prepare(
+        `SELECT * FROM reports WHERE spot_key = ?1 OR id = ?1
+          ORDER BY observed_on DESC, received_at DESC`,
+      )
+      .bind(spotKey)
+      .all();
+    return jsonResponse(request, env, { ok: true, reports: results || [] });
+  }
   const statement =
     status === "all"
       ? db.prepare(
@@ -125,46 +160,69 @@ async function applyAction(request, env, id, admin) {
     return jsonResponse(request, env, { ok: true, id, status: "pending" });
   }
 
-  if (action === "merge") {
-    // 좌표가 가깝다는 이유로 자동 병합하지 않는다. 관리자가 지정한 지점에만 합친다.
-    const targetId = String(body.targetId || "");
-    if (!targetId || targetId === id) {
-      throw new WorkerError("TARGET_INVALID", "합칠 지점을 선택해 주세요.", 400);
+  if (action === "consent") {
+    // 제보자가 이름 공개를 철회하면 여기서 비공개로 되돌린다. 제보 자체는 남는다.
+    const namePublic = body.namePublic === true || body.namePublic === 1 ? 1 : 0;
+    await db
+      .prepare(`UPDATE reports SET name_public=?2, admin_note=?3 WHERE id=?1`)
+      .bind(id, namePublic, adminNote)
+      .run();
+    return jsonResponse(request, env, { ok: true, id, namePublic });
+  }
+
+  if (action === "unlink") {
+    await db
+      .prepare(`UPDATE reports SET spot_key=NULL, admin_note=?2 WHERE id=?1`)
+      .bind(id, adminNote)
+      .run();
+    return jsonResponse(request, env, { ok: true, id, spotKey: null });
+  }
+
+  if (action === "link") {
+    // 좌표가 가깝다는 이유로 자동 연결하지 않는다. 관리자가 지정한 지점에만 붙인다.
+    const spotKey = String(body.spotKey || "");
+    if (!spotKey || spotKey === id) {
+      throw new WorkerError("TARGET_INVALID", "연결할 지점을 선택해 주세요.", 400);
     }
-    const target = await loadReport(db, targetId);
-    const existing = String(target.species || "").split(" · ").filter(Boolean);
-    const incoming = String(row.species || "").split(" · ").filter(Boolean);
-    // 기존 출현종은 지우지 않고 없는 종만 뒤에 덧붙인다.
-    const merged = existing.concat(
-      incoming.filter((name) => !existing.includes(name)),
-    );
-    await db.batch([
-      db
-        .prepare(`UPDATE reports SET species=?2, decided_at=?3 WHERE id=?1`)
-        .bind(targetId, merged.join(" · "), now),
-      db
-        .prepare(
-          `UPDATE reports SET status='approved', merged_into=?2, decided_at=?3, admin_note=?4 WHERE id=?1`,
-        )
-        .bind(id, targetId, now, adminNote),
-    ]);
-    return jsonResponse(request, env, {
-      ok: true,
-      id,
-      status: "approved",
-      mergedInto: targetId,
-      species: merged,
-    });
+    if (FIXED_SPOT_KEY.test(spotKey)) {
+      // index.html 의 수동 붉은 점. 그 점의 좌표와 출현종은 건드리지 않고 이력만 붙인다.
+    } else if (REPORT_ID.test(spotKey)) {
+      const target = await loadReport(db, spotKey);
+      if (target.spot_key) {
+        throw new WorkerError(
+          "TARGET_INVALID",
+          "이미 다른 지점에 연결된 제보에는 붙일 수 없습니다.",
+          400,
+        );
+      }
+    } else {
+      throw new WorkerError("TARGET_INVALID", "지점 키 형식이 올바르지 않습니다.", 400);
+    }
+    // 연결해도 원본 종 목록은 그대로 둔다. 공개 API 가 읽을 때 합집합으로 계산한다.
+    await db
+      .prepare(
+        `UPDATE reports SET status='approved', spot_key=?2, decided_at=?3, admin_note=?4 WHERE id=?1`,
+      )
+      .bind(id, spotKey, now, adminNote)
+      .run();
+    return jsonResponse(request, env, { ok: true, id, status: "approved", spotKey });
   }
 
   const { species, coordinate, publicCoordinate } = editedFields(body, row);
   const siteId = body.siteId === undefined ? row.site_id : String(body.siteId || "") || null;
+  // 관찰일도 고칠 수 있다. 값을 보내지 않으면 접수된 날짜를 그대로 둔다(임의로 채우지 않는다).
+  const observedOn = body.observedOn === undefined
+    ? String(row.observed_on)
+    : normalizeObservedOn(body.observedOn);
+  const namePublic = body.namePublic === undefined
+    ? Number(row.name_public) === 1 ? 1 : 0
+    : body.namePublic === true || body.namePublic === 1 ? 1 : 0;
   await db
     .prepare(
       `UPDATE reports
           SET status='approved', species=?2, lat=?3, lon=?4,
               public_lat=?5, public_lon=?6, site_id=?7,
-              merged_into=NULL, decided_at=?8, admin_note=?9
+              observed_on=?8, name_public=?9, decided_at=?10, admin_note=?11
         WHERE id=?1`,
     )
     .bind(
@@ -175,6 +233,8 @@ async function applyAction(request, env, id, admin) {
       publicCoordinate.lat,
       publicCoordinate.lon,
       siteId,
+      observedOn,
+      namePublic,
       now,
       adminNote,
     )

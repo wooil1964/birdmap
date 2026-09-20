@@ -18,7 +18,29 @@ nav{display:flex;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px sol
 nav button{padding:6px 12px;border:1px solid #bcc6cc;background:#fff;border-radius:6px;cursor:pointer;font-size:13px}
 nav button[aria-pressed="true"]{background:#2f7d4f;color:#fff;border-color:#2f7d4f}
 main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;padding:14px 16px;align-items:start}
-@media(max-width:860px){main{grid-template-columns:1fr}#map{height:260px}}
+@media(max-width:860px){main{grid-template-columns:1fr}#map{height:260px;position:static}}
+/* 폰 폭에서는 PC 화면을 줄이지 않고 세로로 다시 배치한다. */
+@media(max-width:560px){
+  header{padding:10px 12px}
+  header h1{font-size:15px}
+  nav{padding:8px 12px;gap:5px;overflow-x:auto;flex-wrap:nowrap}
+  nav button{flex:0 0 auto;min-height:40px}
+  main{padding:10px 12px;gap:10px}
+  #map{height:220px}
+  .card{padding:10px}
+  .row{grid-template-columns:1fr}
+  input,textarea,select{font-size:16px;min-height:42px}
+  .actions{gap:8px}
+  .actions button{flex:1 1 calc(50% - 4px);min-height:44px}
+}
+.histBox{margin-top:8px;padding:8px 10px;background:#f6f7f8;border:1px solid #e3e8eb;border-radius:6px}
+.histBox h3{margin:0 0 5px;font-size:12px;color:#5a666e}
+.histBox ul{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.6}
+.histBox li{padding:4px 0;border-bottom:1px dotted #e3e8eb}
+.histBox li:last-child{border-bottom:0}
+.consentRow{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:13px;min-height:44px}
+.consentRow input{width:20px;height:20px}
+.dupWarn{margin-top:7px;padding:6px 9px;border-radius:6px;background:#fff7e6;border:1px solid #d99b16;color:#8a5f00;font-size:12px}
 #map{height:420px;border:1px solid #dde2e6;border-radius:8px;position:sticky;top:14px}
 .card{background:#fff;border:1px solid #dde2e6;border-radius:8px;padding:12px;margin-bottom:10px}
 .card.selected{border-color:#2f7d4f;box-shadow:0 0 0 2px rgba(47,125,79,.15)}
@@ -52,6 +74,8 @@ textarea{min-height:52px;resize:vertical}
   <button type="button" data-status="approved" aria-pressed="false">승인됨</button>
   <button type="button" data-status="rejected" aria-pressed="false">반려됨</button>
   <button type="button" data-status="all" aria-pressed="false">전체</button>
+  <input id="speciesQuery" placeholder="종명으로 이력 검색" style="max-width:190px;min-height:36px">
+  <button type="button" id="speciesSearchBtn">종별 이력</button>
 </nav>
 <main>
   <div id="list"><div class="empty">불러오는 중입니다.</div></div>
@@ -64,6 +88,12 @@ var map=L.map('map').setView([36.5,127.8],7);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
 var markerLayer=L.layerGroup().addTo(map);
 var currentStatus='pending', reports=[], approved=[];
+// index.html 의 수동 붉은 점. 좌표·출현종은 그쪽이 정본이고 여기서는 연결 키로만 쓴다.
+var FIXED_SPOTS=[
+  {key:'fixed:21:0',label:'김제새만금 출현 지점 (35.85129, 126.67617)'},
+  {key:'fixed:195:0',label:'평화의공원 출현 지점 1 (37.56325, 126.89693)'},
+  {key:'fixed:195:1',label:'평화의공원 출현 지점 2 (37.56756, 126.89122)'}
+];
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function toast(message,ok){var el=document.getElementById('status');el.textContent=message;el.style.background=ok?'#1d5c37':'#8d2418';el.style.display='block';setTimeout(function(){el.style.display='none';},3200);}
@@ -88,9 +118,38 @@ function select(id){
   if(card)card.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 
+// 같은 종·같은 관찰일이 이미 있으면 중복일 수 있다고 알린다. 자동으로 지우거나 합치지 않는다.
+function duplicateHint(r){
+  var mine=String(r.species||'').split(' · ').filter(Boolean);
+  var hits=reports.concat(approved).filter(function(o){
+    if(o.id===r.id)return false;
+    if(String(o.observed_on)!==String(r.observed_on))return false;
+    return String(o.species||'').split(' · ').some(function(n){return mine.indexOf(n)>=0;});
+  });
+  var ids={};hits=hits.filter(function(o){if(ids[o.id])return false;ids[o.id]=1;return true;});
+  return hits.length?'<div class="dupWarn">같은 관찰일·같은 종의 다른 제보가 '+hits.length+'건 있습니다. 중복인지 직접 확인하세요.</div>':'';
+}
+
+function historyHtml(r){
+  var key=r.spot_key||r.id;
+  var list=reports.concat(approved).filter(function(o){
+    return o.id===key||o.spot_key===key;
+  });
+  var ids={};list=list.filter(function(o){if(ids[o.id])return false;ids[o.id]=1;return true;});
+  list.sort(function(a,b){return String(b.observed_on).localeCompare(String(a.observed_on));});
+  if(list.length<2)return '';
+  var items=list.map(function(o){
+    var who=Number(o.name_public)===1&&o.reporter?esc(o.reporter):'익명 제보';
+    return '<li>'+esc(o.observed_on)+' · '+esc(o.species)+' · 제보자: '+who
+      +(o.id===r.id?' <b>(이 제보)</b>':'')+' · '+esc(o.status)+'</li>';
+  }).join('');
+  return '<div class="histBox"><h3>이 지점의 출현 이력 '+list.length+'건 (최근순)</h3><ul>'+items+'</ul></div>';
+}
+
 function cardHtml(r){
-  var mergeOptions=approved.filter(function(a){return a.id!==r.id&&!a.merged_into;})
+  var linkOptions=approved.filter(function(a){return a.id!==r.id&&!a.spot_key;})
     .map(function(a){return '<option value="'+esc(a.id)+'">'+esc(a.species)+' ('+Number(a.lat).toFixed(4)+', '+Number(a.lon).toFixed(4)+')</option>';}).join('');
+  var fixedOptions=FIXED_SPOTS.map(function(f){return '<option value="'+esc(f.key)+'">'+esc(f.label)+'</option>';}).join('');
   return '<div class="card" data-id="'+esc(r.id)+'">'
     +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(r.status)+'</span>'
     +(r.merged_into?' <span class="badge approved">다른 지점에 합침</span>':'')+'</h2>'
@@ -100,17 +159,26 @@ function cardHtml(r){
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')
     +(r.note?'<br>설명 '+esc(r.note):'')+'</div>'
     +'<label>출현종 (쉼표 또는 · 로 구분)</label><input class="f-species" value="'+esc(r.species)+'">'
+    +'<label>관찰일 (YYYY-MM-DD)</label><input class="f-observed" value="'+esc(r.observed_on)+'">'
     +'<div class="row"><div><label>위도</label><input class="f-lat" value="'+esc(r.lat)+'"></div>'
     +'<div><label>경도</label><input class="f-lon" value="'+esc(r.lon)+'"></div></div>'
     +'<div class="row"><div><label>공개 위도 (민감지는 조정)</label><input class="f-plat" value="'+esc(r.public_lat==null?'':r.public_lat)+'"></div>'
     +'<div><label>공개 경도</label><input class="f-plon" value="'+esc(r.public_lon==null?'':r.public_lon)+'"></div></div>'
     +'<label>관리자 메모 (공개되지 않음)</label><textarea class="f-note">'+esc(r.admin_note||'')+'</textarea>'
-    +(mergeOptions?'<label>기존 승인 지점에 종 추가</label><select class="f-target"><option value="">— 별도 지점으로 등록 —</option>'+mergeOptions+'</select>':'')
+    +'<label class="consentRow"><input type="checkbox" class="f-consent"'+(Number(r.name_public)===1?' checked':'')+'> 제보자 이름 공개 동의</label>'
+    +'<label>기존 지점에 이력 연결</label><select class="f-target"><option value="">— 연결하지 않고 자기 점으로 —</option>'
+    +'<optgroup label="지도에 고정된 붉은 점">'+fixedOptions+'</optgroup>'
+    +(linkOptions?'<optgroup label="승인된 제보 지점">'+linkOptions+'</optgroup>':'')+'</select>'
+    +(r.spot_key?'<div class="meta">현재 연결: '+esc(r.spot_key)+'</div>':'')
+    +duplicateHint(r)
+    +historyHtml(r)
     +'<div class="actions">'
     +'<button type="button" class="approve" data-act="approve">승인</button>'
     +'<button type="button" class="reject" data-act="reject">반려</button>'
     +(r.status==='approved'?'<button type="button" class="unpublish" data-act="unpublish">공개 취소</button>':'')
-    +(mergeOptions?'<button type="button" class="merge" data-act="merge">선택 지점에 합치기</button>':'')
+    +'<button type="button" class="merge" data-act="link">선택 지점에 연결</button>'
+    +(r.spot_key?'<button type="button" class="merge" data-act="unlink">연결 해제</button>':'')
+    +'<button type="button" class="unpublish" data-act="consent">이름 공개 반영</button>'
     +'</div></div>';
 }
 
@@ -148,15 +216,20 @@ document.getElementById('list').addEventListener('click',async function(event){
   var payload={action:act,adminNote:card.querySelector('.f-note').value};
   if(act==='approve'){
     payload.species=card.querySelector('.f-species').value;
+    payload.observedOn=card.querySelector('.f-observed').value;
     payload.lat=Number(card.querySelector('.f-lat').value);
     payload.lon=Number(card.querySelector('.f-lon').value);
     payload.publicLat=numberOrNull(card.querySelector('.f-plat').value);
     payload.publicLon=numberOrNull(card.querySelector('.f-plon').value);
+    payload.namePublic=card.querySelector('.f-consent').checked;
   }
-  if(act==='merge'){
+  if(act==='consent'){
+    payload.namePublic=card.querySelector('.f-consent').checked;
+  }
+  if(act==='link'){
     var target=card.querySelector('.f-target');
-    payload.targetId=target?target.value:'';
-    if(!payload.targetId){toast('합칠 지점을 먼저 고르세요.',false);return;}
+    payload.spotKey=target?target.value:'';
+    if(!payload.spotKey){toast('연결할 지점을 먼저 고르세요.',false);return;}
   }
   button.disabled=true;
   try{
@@ -170,6 +243,20 @@ document.getElementById('list').addEventListener('click',async function(event){
     toast(error.message,false);
     button.disabled=false;
   }
+});
+
+document.getElementById('speciesSearchBtn').addEventListener('click',async function(){
+  var name=document.getElementById('speciesQuery').value.trim();
+  if(!name){toast('종명을 입력하세요.',false);return;}
+  document.getElementById('list').innerHTML='<div class="empty">불러오는 중입니다.</div>';
+  try{
+    var response=await fetch('/admin/api/reports?species='+encodeURIComponent(name),{cache:'no-store'});
+    var body=await response.json();
+    if(!body.ok)throw new Error((body.error&&body.error.message)||'불러오지 못했습니다.');
+    reports=body.reports;
+    render();
+    toast(name+' 이력 '+reports.length+'건',true);
+  }catch(error){ toast(error.message,false); }
 });
 
 document.querySelector('nav').addEventListener('click',function(event){

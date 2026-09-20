@@ -143,6 +143,8 @@
       <div class="reportOptional">
         <label for="reportReporter">제보자 이름 또는 닉네임 <span class="reportOptionalTag">선택</span></label>
         <input id="reportReporter" name="reporter" maxlength="40" autocomplete="off">
+        <label class="reportConsent" for="reportNamePublic"><input type="checkbox" id="reportNamePublic" name="namePublic"> 제보자 이름 또는 닉네임을 탐조지도에 공개하는 데 동의합니다.</label>
+        <div class="reportConsentNote">동의하지 않으면 지도에 '익명 제보'로 표시됩니다. 이름은 공개 동의한 경우에만 지도에 나갑니다.</div>
         <label for="reportCount">관찰 개체수 <span class="reportOptionalTag">선택</span></label>
         <input id="reportCount" name="birdCount" type="number" min="1" max="100000" inputmode="numeric">
         <label for="reportNote">참고 설명 <span class="reportOptionalTag">선택</span></label>
@@ -230,6 +232,21 @@ a.ebird,.btn.ebird{display:none !important}
 .reportCoord.ready{border-style:solid;border-color:#2f7d4f;background:#eefbf1;color:#1d5c37;font-weight:bold}
 .reportPick{margin-top:6px;padding:6px 10px;border:1px solid #2d6f9f;background:#fff;color:#174d6f;border-radius:6px;cursor:pointer;font-size:12px}
 .reportOptional{margin-top:4px;padding-top:4px;border-top:1px solid #e3e8eb}
+.reportConsent{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-weight:normal;line-height:1.5;min-height:44px;cursor:pointer}
+.reportConsent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
+.reportConsentNote{margin-top:2px;font-size:12px;color:#5a666e;line-height:1.5}
+.spotPopup{font-size:13px;line-height:1.6}
+.spotUndated{margin-top:4px;font-size:12px;color:#5a666e}
+.spotHistory{margin-top:8px;padding-top:7px;border-top:1px solid #dde2e6}
+.spotHistoryHead{font-size:12px;font-weight:bold;color:#5a666e;margin-bottom:5px}
+.spotHistoryList{list-style:none;margin:0;padding:0}
+.spotHistoryItem{padding:5px 0;border-bottom:1px dotted #e3e8eb}
+.spotHistoryItem:last-child{border-bottom:0}
+.spotHistoryHidden{display:none}
+.spotHistoryDate{display:block;font-weight:bold;color:#1c2226}
+.spotHistoryName{display:block}
+.spotHistoryBy{display:block;font-size:12px;color:#5a666e}
+.spotHistoryMore{display:block;width:100%;margin-top:7px;padding:9px 10px;min-height:40px;border:1px solid #bcc6cc;border-radius:6px;background:#f6f7f8;color:#33424c;font:inherit;font-size:12px;cursor:pointer}
 .reportCaptcha{margin-top:12px;min-height:0}
 .reportMessage{display:none;margin-top:10px;padding:8px 10px;border-radius:6px;line-height:1.5}
 .reportMessage.error{display:block;background:#fdecec;border:1px solid #c0392b;color:#8d2418}
@@ -336,6 +353,10 @@ body.monthTideOpen{overflow:hidden}
   .mobilePopupRow b{color:#111}
   .mobilePopupButtons{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid #ddd}
   .mobilePopupButtons .btn,.leaflet-popup-content .btn{display:inline-flex;align-items:center;min-height:36px;box-sizing:border-box;padding:6px 8px;font-size:11px}
+  /* 손가락으로 읽고 누르기 좋은 크기. 이력이 길면 팝업 안에서만 스크롤된다. */
+  .spotPopup{font-size:14px}
+  .spotHistoryItem{padding:8px 0}
+  .spotHistoryMore{min-height:44px;font-size:13px}
   .yubudoAccessLabel{font-size:11px;padding:1px 4px}
   .v23WeatherToggle{min-height:40px;padding:4px 2px}
   .v24BriefingGrid,.v24ProfileGrid{grid-template-columns:1fr}
@@ -370,10 +391,12 @@ var markerRegistry={};
 /* 탐조지 내부 출현 지점. 탐조지(siteData)와 분리해 한 탐조지에 여러 지점을 둘 수 있다.
    siteId는 siteData의 id, species는 해당 지점에서 확인된 종. 날짜·빈도는 확인된 값만 넣는다. */
 var siteSpotData=[
-  {"siteId":"21","lat":35.8512861,"lon":126.6761694,"species":["긴부리도요","학도요","꺅도요"]},
-  {"siteId":"195","lat":37.5632527778,"lon":126.8969333333,"species":["큰덤불해오라기","붉은등때까치"]},
-  {"siteId":"195","lat":37.5675583333,"lon":126.8912222222,"species":["동박새","흰눈썹황색새","큰유리새","쇠솔새"]}
+  {"id":"fixed:21:0","siteId":"21","lat":35.8512861,"lon":126.6761694,"species":["긴부리도요","학도요","꺅도요"]},
+  {"id":"fixed:195:0","siteId":"195","lat":37.5632527778,"lon":126.8969333333,"species":["큰덤불해오라기","붉은등때까치"]},
+  {"id":"fixed:195:1","siteId":"195","lat":37.5675583333,"lon":126.8912222222,"species":["동박새","흰눈썹황색새","큰유리새","쇠솔새"]}
 ];
+/* 승인된 제보에서 온 지점별 출현 이력. 수동 점의 좌표·출현종은 바꾸지 않고 이력만 덧붙인다. */
+var reportFixedHistory={};
 var siteSpotLayers={};
 /* eBird 버튼 비노출 실험(임시): true로 바꾸면 eBird 버튼이 다시 생성됨. 데이터(ebirdHotspotUrl)는 그대로 유지 */
 var SHOW_EBIRD_BUTTON=false;
@@ -642,10 +665,51 @@ function ensureMasterDbMarkers(){
 
 /* 출현 지점 붉은 점. 기존 탐조지 지점과 승인된 제보가 같은 크기·색·팝업 형식을 쓴다.
    팝업에는 지점 이름과 출현종만 넣는다(제보자·관찰일·개체수·메모는 넣지 않는다). */
-function birdmapSpotMarker(lat,lon,title,species){
+var SPOT_HISTORY_VISIBLE=5;
+
+/* 출현 이력 한 덩어리. 최근 관찰일부터 SPOT_HISTORY_VISIBLE 건을 보이고 나머지는 '더 보기'로 편다.
+   종명과 제보자 이름은 모두 escapeHtml 을 거친다. 이름은 공개에 동의한 건만 서버가 내려준다. */
+function spotHistoryHtml(history){
+  if(!history||!history.length)return '';
+  var items=history.map(function(entry,index){
+    var date=String(entry.date||'').replace(/-/g,'.');
+    var names=(entry.species||[]).map(escapeHtml).join(' · ');
+    var who=entry.reporter?escapeHtml(entry.reporter):'익명 제보';
+    return '<li class="spotHistoryItem'+(index>=SPOT_HISTORY_VISIBLE?' spotHistoryHidden':'')+'">'
+      +'<span class="spotHistoryDate">'+escapeHtml(date)+'</span>'
+      +'<span class="spotHistoryName">'+names+'</span>'
+      +'<span class="spotHistoryBy">제보자: '+who+'</span></li>';
+  }).join('');
+  var rest=history.length-SPOT_HISTORY_VISIBLE;
+  var more=rest>0?'<button type="button" class="spotHistoryMore" onclick="birdmapShowAllSpotHistory(this)">더 보기 ('+rest+'건)</button>':'';
+  return '<div class="spotHistory"><div class="spotHistoryHead">출현 이력 · 과거 관찰 기록</div>'
+    +'<ul class="spotHistoryList">'+items+'</ul>'+more+'</div>';
+}
+
+function birdmapShowAllSpotHistory(button){
+  var box=button.parentNode;
+  if(box)Array.prototype.forEach.call(box.querySelectorAll('.spotHistoryHidden'),function(item){
+    item.className=item.className.replace(' spotHistoryHidden','');
+  });
+  button.parentNode.removeChild(button);
+  // 펼친 뒤 팝업 크기와 위치를 다시 잡는다.
+  var map=map_7010a44f6ac2025090f0fe07508ed485;
+  if(map&&map._popup&&map._popup.update)map._popup.update();
+}
+
+/* 출현 지점 팝업 본문. 기존 '이름 + 출현종' 형식을 그대로 두고 이력만 아래에 붙인다. */
+function spotPopupHtml(title,species,history,undatedNote){
+  var names=(species||[]).map(escapeHtml).join(' · ');
+  var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))';
+  return '<div class="spotPopup" style="width:'+width+'"><b>'+escapeHtml(title)+'</b><br>'+names
+    +(undatedNote?'<div class="spotUndated">관찰일 미확인</div>':'')
+    +spotHistoryHtml(history)+'</div>';
+}
+
+function birdmapSpotMarker(lat,lon,title,species,history,undatedNote){
   var names=(species||[]).map(escapeHtml).join(' · ');
   return L.circleMarker([lat,lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85})
-    .bindPopup('<div style="width:min(190px,calc(100vw - 80px))"><b>'+escapeHtml(title)+'</b><br>'+names+'</div>',{maxWidth:260})
+    .bindPopup(spotPopupHtml(title,species,history,undatedNote),{maxWidth:300})
     .bindTooltip(names,{sticky:true});
 }
 
@@ -653,10 +717,26 @@ function birdmapSpotMarker(lat,lon,title,species){
 function syncSiteSpots(site,show){
   siteSpotData.forEach(function(spot,i){
     if(String(spot.siteId)!==String(site.id))return;
-    if(!siteSpotLayers[i])siteSpotLayers[i]=birdmapSpotMarker(spot.lat,spot.lon,site.name+' 출현 지점',spot.species);
+    if(!siteSpotLayers[i]){
+      // 수동 등록 점에는 관찰일 자료가 없다. 임의로 만들지 않고 '관찰일 미확인'으로 구분한다.
+      siteSpotLayers[i]=birdmapSpotMarker(spot.lat,spot.lon,site.name+' 출현 지점',spot.species,
+        reportFixedHistory[spot.id],true);
+    }
     var layer=siteSpotLayers[i],on=map_7010a44f6ac2025090f0fe07508ed485.hasLayer(layer);
     if(show&&!on)layer.addTo(map_7010a44f6ac2025090f0fe07508ed485);
     else if(!show&&on)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(layer);
+  });
+}
+
+/* 승인된 제보 이력이 새로 들어오면 이미 만들어 둔 수동 점의 팝업만 다시 그린다.
+   좌표·출현종·레이어는 그대로 둔다. */
+function refreshFixedSpotPopups(){
+  siteSpotData.forEach(function(spot,i){
+    var layer=siteSpotLayers[i];
+    if(!layer||!layer.setPopupContent)return;
+    var site=siteData.find(function(s){return String(s.id)===String(spot.siteId);});
+    layer.setPopupContent(spotPopupHtml((site?site.name:'')+' 출현 지점',spot.species,
+      reportFixedHistory[spot.id],true));
   });
 }
 
@@ -3122,7 +3202,13 @@ function loadApprovedReports(){
     return r.json();
   }).then(function(data){
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('reports invalid');
+    reportFixedHistory=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
+    // fixedSpots 는 {키:{history:[…]}} 형태라 이력 배열만 꺼내 둔다.
+    Object.keys(reportFixedHistory).forEach(function(key){
+      reportFixedHistory[key]=(reportFixedHistory[key]&&reportFixedHistory[key].history)||[];
+    });
     renderApprovedReports(data.spots);
+    refreshFixedSpotPopups();
     return true;
   }).catch(function(){return false;});
 }
@@ -3137,7 +3223,7 @@ function renderApprovedReports(spots){
     var existing=reportSpotLayers[id];
     if(existing)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(existing);
     // 종이나 좌표가 바뀌었을 수 있으므로 매번 현재 값으로 다시 만든다.
-    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species)
+    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false)
       .addTo(map_7010a44f6ac2025090f0fe07508ed485);
   });
   // 관리자가 공개를 취소한 점만 사라진다. 기존 탐조지와 그 출현 지점은 건드리지 않는다.
@@ -3297,6 +3383,7 @@ function submitReport(event){
     lon:reportPicked.lon,
     observedOn:observedOn,
     reporter:document.getElementById('reportReporter').value.trim(),
+    namePublic:document.getElementById('reportNamePublic').checked,
     birdCount:count===''?null:Number(count),
     note:document.getElementById('reportNote').value.trim(),
     turnstileToken:reportTurnstileToken

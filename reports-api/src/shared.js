@@ -252,6 +252,8 @@ export function validateReport(input, now = new Date()) {
     birdCount: normalizeBirdCount(input.birdCount),
     reporter: optionalText(input.reporter, MAX_REPORTER_LENGTH, "제보자 이름", false),
     note: optionalText(input.note, MAX_NOTE_LENGTH, "참고 설명", true),
+    // 이름 공개는 명시적으로 동의한 경우에만 1 이다. 값이 없으면 비공개로 본다.
+    namePublic: input.namePublic === true || input.namePublic === 1 ? 1 : 0,
   };
 }
 
@@ -441,13 +443,66 @@ export function parseAdminEmails(raw) {
 
 // 공개 지도에 내보내는 값은 종과 좌표뿐이다.
 // 제보자·관찰일·개체수·설명·관리자 메모는 API 응답에 넣지 않는다.
-export function publicSpots(rows) {
-  return (rows || []).map((row) => ({
+export function splitSpecies(text) {
+  return String(text || "")
+    .split(" · ")
+    .filter(Boolean);
+}
+
+// 이력 한 줄. 이름은 공개에 동의했고 실제로 입력된 경우에만 넣는다.
+// 동의하지 않았거나 이름이 없으면 필드 자체를 만들지 않아 화면에서 '익명 제보'가 된다.
+function historyEntry(row) {
+  const entry = {
     id: row.id,
-    lat: row.public_lat ?? row.lat,
-    lon: row.public_lon ?? row.lon,
-    species: String(row.species || "")
-      .split(" · ")
-      .filter(Boolean),
-  }));
+    date: row.observed_on,
+    species: splitSpecies(row.species),
+  };
+  if (Number(row.name_public) === 1 && row.reporter) entry.reporter = row.reporter;
+  return entry;
+}
+
+function newestFirst(a, b) {
+  return String(b.date).localeCompare(String(a.date));
+}
+
+// 승인된 행들로 공개 지도가 쓸 값을 만든다.
+// spot_key 가 없는 제보는 자기 점을 갖고, 있는 제보는 그 지점의 이력으로만 붙는다.
+// 원본 행을 고쳐 쓰지 않으므로 개별 이력 조회와 공개 취소가 그대로 가능하다.
+export function publicPayload(rows) {
+  const all = rows || [];
+  const byKey = new Map();
+  for (const row of all) {
+    if (!row.spot_key) continue;
+    if (!byKey.has(row.spot_key)) byKey.set(row.spot_key, []);
+    byKey.get(row.spot_key).push(row);
+  }
+
+  const spots = all
+    .filter((row) => !row.spot_key)
+    .map((row) => {
+      const attached = byKey.get(row.id) || [];
+      // 연결된 제보의 종을 뒤에 더한다. 기존 종은 지우지 않는다.
+      const species = splitSpecies(row.species);
+      for (const extra of attached) {
+        for (const name of splitSpecies(extra.species)) {
+          if (!species.includes(name)) species.push(name);
+        }
+      }
+      return {
+        id: row.id,
+        lat: row.public_lat ?? row.lat,
+        lon: row.public_lon ?? row.lon,
+        species,
+        history: [row, ...attached].map(historyEntry).sort(newestFirst),
+      };
+    });
+
+  // index.html 에 손으로 등록된 붉은 점에 붙는 이력. 그 점의 좌표·출현종은 건드리지 않는다.
+  const fixedSpots = {};
+  for (const [key, list] of byKey) {
+    if (!key.startsWith("fixed:")) continue;
+    fixedSpots[key] = { history: list.map(historyEntry).sort(newestFirst) };
+  }
+
+  return { spots, fixedSpots };
 }
