@@ -94,7 +94,16 @@ test("시크릿이 없으면 접수를 열지 않고 닫는다", async () => {
     publicEnv(db, { TURNSTILE_SECRET_KEY: "", REPORT_IP_SALT: "" }),
   );
   assert.equal(response.status, 503);
-  assert.equal((await response.json()).error.code, "NOT_CONFIGURED");
+  assert.equal((await response.json()).error.code, "NOT_CONFIGURED_SALT");
+  assert.equal(db.rows.length, 0);
+
+  // 어느 설정이 빠졌는지 코드로 구분된다(운영 중 진단용).
+  const captchaOnly = await handleRequest(
+    submitRequest(validBody()),
+    publicEnv(db, { TURNSTILE_SECRET_KEY: "" }),
+  );
+  assert.equal(captchaOnly.status, 503);
+  assert.equal((await captchaOnly.json()).error.code, "NOT_CONFIGURED_CAPTCHA");
   assert.equal(db.rows.length, 0);
 });
 

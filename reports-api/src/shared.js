@@ -271,7 +271,7 @@ export async function sha256Hex(text) {
 export function ipHash(ip, salt) {
   if (!salt) {
     throw new WorkerError(
-      "NOT_CONFIGURED",
+      "NOT_CONFIGURED_SALT",
       "제보 접수가 아직 설정되지 않았습니다.",
       503,
     );
@@ -295,7 +295,7 @@ export function dedupeHash(report) {
 export async function verifyTurnstile(token, ip, secret, fetchImpl = fetch) {
   if (!secret) {
     throw new WorkerError(
-      "NOT_CONFIGURED",
+      "NOT_CONFIGURED_CAPTCHA",
       "제보 접수가 아직 설정되지 않았습니다.",
       503,
     );
