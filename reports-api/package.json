@@ -1,0 +1,12 @@
+{
+  "name": "birdmap-reports-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "dev:public": "npx wrangler@latest dev -c wrangler.public.toml",
+    "dev:admin": "npx wrangler@latest dev -c wrangler.admin.toml",
+    "deploy:public": "npx wrangler@latest deploy -c wrangler.public.toml",
+    "deploy:admin": "npx wrangler@latest deploy -c wrangler.admin.toml"
+  }
+}

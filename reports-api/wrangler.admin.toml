@@ -1,0 +1,24 @@
+# 관리자 승인 Worker. 공개 접수 Worker 와 URL 이 완전히 분리되어 있고,
+# 이 workers.dev 주소에는 Cloudflare Access 를 걸어 로그인을 강제한다.
+# Worker 자신도 Access 가 발급한 JWT 를 다시 검증하므로, Access 가 빠지면 열리는 것이 아니라 닫힌다.
+#
+#   npx wrangler deploy -c wrangler.admin.toml
+#
+name = "birdmap-reports-admin"
+main = "src/admin.js"
+compatibility_date = "2026-07-03"
+
+[vars]
+ENVIRONMENT = "production"
+# Access 팀 도메인. 예: "wooil" 이면 https://wooil.cloudflareaccess.com 의 공개키로 검증한다.
+ACCESS_TEAM_DOMAIN = ""
+# Access 애플리케이션의 Audience(AUD) 태그.
+ACCESS_AUD = ""
+# 승인 권한을 가진 이메일 목록(쉼표 구분). 비어 있으면 모든 요청을 거부한다.
+ADMIN_EMAILS = ""
+
+# 공개 Worker 와 같은 데이터베이스를 본다.
+[[d1_databases]]
+binding = "REPORTS_DB"
+database_name = "birdmap-reports"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"

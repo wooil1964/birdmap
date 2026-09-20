@@ -1,0 +1,21 @@
+# 공개 제보 접수 Worker. 로그인 없이 누구나 호출하므로 Cloudflare Access 를 걸지 않는다.
+# 관리자 기능은 이 Worker 에 없다(wrangler.admin.toml 참조).
+#
+#   npx wrangler deploy -c wrangler.public.toml
+#
+name = "birdmap-reports"
+main = "src/public.js"
+compatibility_date = "2026-07-03"
+
+[vars]
+ENVIRONMENT = "production"
+
+# 제보 데이터베이스. id 는 `wrangler d1 create birdmap-reports` 가 출력한 값으로 바꾼다.
+[[d1_databases]]
+binding = "REPORTS_DB"
+database_name = "birdmap-reports"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# 시크릿(저장소에 커밋하지 않는다. `wrangler secret put -c wrangler.public.toml <이름>`):
+#   TURNSTILE_SECRET_KEY  자동 등록 방지 토큰 검증용
+#   REPORT_IP_SALT        IP 해시 솔트. 원본 IP 는 저장하지 않는다.

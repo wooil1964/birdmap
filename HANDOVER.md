@@ -14,6 +14,15 @@
 
 ## 최근 완료 작업
 
+- 출현종 제보 기능(2026-09-20, 기준 main `5e255dc`): 로그인 없이 누구나 제보하고 **관리자 승인 뒤에만** 기존 붉은 점으로 표시되는 기능을 추가했다. 지도 엔진을 바꾸지 않았고 기상·조석·추천·공지 코드는 건드리지 않았다.
+  - 저장소는 GitHub Pages(정적)이므로 서버가 필요했다. Google Apps Script 를 먼저 검토했으나 **`doPost(e)` 에 클라이언트 IP 가 없어 서버 측 제출 횟수 제한을 만들 수 없고**(CORS 도 preflight 미지원으로 취약) 부적합으로 판단했다. 대신 이미 운영 중인 Cloudflare 계정에 **새 Worker 2개**를 만들었다(`reports-api/`). 기존 `weather-proxy` 는 한 줄도 바꾸지 않았다.
+  - **접수와 승인을 서로 다른 Worker·주소로 분리**했다. Cloudflare Access 는 workers.dev 주소 단위로 걸리므로, 한 Worker 에 두 기능을 두면 공개 접수까지 로그인을 요구하게 된다. 공개 Worker(`birdmap-reports`)에는 승인 코드가 아예 없고, 관리자 Worker(`birdmap-reports-admin`)만 Access 뒤에 둔다. Worker 안에서 Access JWT(서명·발급자·AUD·만료·이메일 허용 목록)를 한 번 더 검증하며, 설정값이 비면 열리지 않고 503 으로 닫힌다.
+  - 공개 API 는 `status='approved'` 이고 `merged_into` 가 없는 행만 읽고, **종과 공개 좌표만** 내보낸다. 제보자·관찰일·개체수·설명·관리자 메모는 응답에 담기지 않는다. 민감지는 관리자가 `public_lat`/`public_lon` 을 따로 지정해 실제 지점을 가릴 수 있다. 원본 IP 는 저장하지 않고 솔트 섞은 SHA-256 해시만 남긴다.
+  - `index.html` 은 **추가만** 했다: `#topBtnRow` 에 '📍 출현종 제보하기' 버튼 1개, 제보 모달·배너 HTML, CSS 블록, 제보 JS 블록, `load` 핸들러의 `initReportFeature()` 호출 1줄. 기존 붉은 점 생성 코드는 공용 `birdmapSpotMarker()` 로 묶어 승인 제보와 같은 크기·색·팝업 형식을 쓰게 했고, `siteSpotData`·`applyFilters()` 는 수정하지 않았다. 승인된 제보 점은 특정 탐조지에 속하지 않을 수 있어 **필터와 무관하게 항상 표시**한다.
+  - 작업 중 실제로 발견해 고친 것 2건: ① 제보 모드에서 **기존 마커 위를 클릭하면 Leaflet 이 지도 click 을 삼켜 위치를 찍을 수 없었다** → 제보 모드일 때만 지도 컨테이너의 capture 단계에서 가로채도록 했다(제보 모드가 아니면 아무 동작도 하지 않아 기존 팝업은 그대로다). ② `.reportActions button` 이 `.reportSubmit` 보다 우선순위가 높아 **제보 버튼이 흰 바탕에 흰 글씨**가 됐다 → 선택자를 `.reportActions .reportSubmit` 으로 올렸다.
+  - **기본값은 꺼짐이다.** `REPORTS_API_URL` 과 `REPORTS_TURNSTILE_SITE_KEY` 가 비어 있으면 버튼이 생기지 않고 요청도 나가지 않는다. 외부 설정(D1·Turnstile·Access)이 끝나기 전에 접수를 열지 않기 위한 것이므로 **설정 전에 이 값을 채우지 말 것.** 절차는 `reports-api/README.md` 에 있다.
+  - 실행한 테스트: 신규 `reports-api` 32/32 통과(승인 전 비공개·권한 분리·Access JWT 위조 거부·IP 제한·중복 차단·개인정보 미노출 포함, Access JWT 는 실제 RS256 키로 서명해 검증 경로를 그대로 지난다), 기존 기상 Worker 34/34 통과, 기존 지도 스위트 160 통과/10 실패/7 스킵(실패 10건은 Chromium·Python 미설치 환경 실패로 변경 전과 동일), inline `<script>` 파싱 실패 0. 로컬에서 실제 Worker 코드를 띄워 제보→저장(pending)→승인→붉은 점 표시→팝업 종만 표시→공개 취소까지 브라우저로 확인했고, 승인 전 공개 목록이 빈 배열임을 확인했다. `siteData` 190곳은 JSON 기준 완전 동일하고 `siteSpotData` 도 무변경이다.
+
 - 평화의공원(ID 195) 신규 탐조지와 출현 지점 2곳(2026-09-19, 등록 커밋 `f4efbf4`, 기준 main `9f35587`): 서울 마포구 평화의공원을 ID 195로 추가해 탐조지가 189 → **190**이 됐다. 본 탐조지 좌표는 `37.5642583333, 126.8920861111`이고 대표종에 **붉은양진이·흰꼬리딱새**를 포함한다. 인접 도심공원 탐조지(ID 147 맥도생태공원)와 같은 `env: 공원`·`weatherRuleKey: forest_songbird`·`공원탐조` 조합을 쓴다. 확인되지 않은 관찰 날짜·출현 빈도는 만들지 않았고 편의시설은 ID 193 선례대로 '미확인'으로 뒀다.
   - **조석·파고 미사용.** `tideUse 아니오`·`tideSensitive`/`waveSensitive 아니오`·`showTide`/`showWave false`이며 `tide_station_mapping.json`과 `update_tide.py`의 `ADDITIONAL_TIDE_SITES`는 건드리지 않았다. 조석 대상 수는 100 그대로다.
   - 출현 지점(빨간 원)은 김제새만금(ID 21)용으로 먼저 만든 `siteSpotData`/`syncSiteSpots()` 구조를 그대로 재사용한 2건이다(구조 도입 커밋 `62bb142`). 빨간 원 1 `37.5632527778, 126.8969333333` 큰덤불해오라기·붉은등때까치, 빨간 원 2 `37.5675583333, 126.8912222222` 동박새·흰눈썹황색새·큰유리새·쇠솔새. 원에는 권역 번호·기상·조석·적합도를 연결하지 않으며, 부모 탐조지가 검색·필터에서 빠지면 원도 함께 사라진다. **`흰눈썹황색새`는 사용자 지정 표기이므로 임의로 고치지 말 것.**
@@ -387,8 +396,9 @@
 
 > **[현재]** 이 절만 현재 미해결 상태를 뜻합니다.
 
-- **평화의공원(ID 195)의 공유 페이지가 없다(2026-09-19 실측).** `share/`에는 189곳분만 있어 `https://wooil1964.github.io/birdmap/share/195/`와 `https://wooil1964.github.io/birdmap/share/og/195.png`가 모두 **HTTP 404**다(같은 시각 ID 194는 200). 그래서 지도 팝업의 '공유 링크 복사'로 받은 ID 195 링크는 아직 열리지 않고, `test_share_pages.py`의 "모든 탐조지에 페이지와 OG 이미지가 있어야 한다"도 통과하지 못한다. 이 테스트는 push로 실행되지 않으므로 기상·조석 Actions는 계속 성공한다.
-  - 해결은 Actions 탭에서 **Rebuild share pages**를 브랜치 `main`, `site_ids`에 `195`를 넣어 수동 실행하는 것이다. 전체를 생성·검증하되 커밋은 지정한 ID만 담는 구조라 다른 탐조지 카드는 바뀌지 않는다.
+- **출현종 제보 기능은 아직 꺼져 있다.** `index.html`의 `REPORTS_API_URL`·`REPORTS_TURNSTILE_SITE_KEY`가 빈 문자열이라 제보 버튼이 보이지 않고 요청도 나가지 않는다. 켜려면 저장소 관리자가 **D1 생성 → Turnstile 발급 → 두 Worker 배포 → 관리자 Worker에 Cloudflare Access 적용** 순서로 설정한 뒤 두 값을 채워야 한다. 절차는 `reports-api/README.md`에 있다. **Access 설정이 끝나기 전에 값을 채우지 말 것**(승인 없이 접수만 열리는 상태가 된다).
+  - 완전한 스팸 차단은 구조적으로 불가능하다. Turnstile은 사람이 손으로 넣는 허위 제보를 막지 못하고 IP 제한은 공유 IP·VPN 앞에서 약해진다. 실질적 방어선은 '관리자 승인 전 비공개'다.
+- **[해소됨] 평화의공원(ID 195) 공유 페이지**는 2026-09-19 `5e255dc chore: rebuild share pages`로 생성됐다. `share/195/index.html`·`share/og/195.png` 2개 파일만 커밋됐고 두 URL 모두 HTTP 200을 확인했다. 앞으로 탐조지를 추가한 뒤에도 같은 워크플로를 `site_ids`에 해당 ID만 넣어 돌릴 것.
   - **로컬 생성은 하지 말 것.** 작업 PC에는 실제 Python이 없고(`python`/`python3`는 WindowsApps의 Microsoft Store 스텁, `pip`도 없음) `build_share_pages.py`를 돌릴 수 없다. 카드 PNG는 워크플로가 설치하는 `fonts-noto-cjk`/`fonts-nanum`으로 그려야 하므로 다른 글꼴로 만들면 기존 카드와 어긋난다.
 
 - **현재 미반영은 5곳(ID 161·166·171·177·184)뿐이다.** 과거에 '보류 24개(ID 161, 164~186)'로 적혀 있던 후보 중

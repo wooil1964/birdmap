@@ -65,6 +65,7 @@
 <button id="togglePanelBtn" type="button" aria-expanded="false" aria-controls="birdmapPanel" onclick="toggleBirdmapPanel()">☰ 필터 열기</button>
 <button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
 <button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 이번주 어디 갈까</button>
+<button id="reportToggleBtn" type="button" hidden aria-pressed="false" onclick="toggleReportMode()">📍 출현종 제보하기</button>
 </div>
 </div>
 <div id="birdmapPanel">
@@ -124,6 +125,36 @@
     <div class="monthTideHeader"><strong id="monthTideTitle">한 달 조석</strong><button type="button" onclick="closeMonthTideModal()">닫기</button></div>
     <div id="monthTideMeta" class="monthTideMeta"></div>
     <div id="monthTideContent" class="monthTideContent">월간 조석 자료를 불러오는 중입니다.</div>
+  </div>
+</div>
+<div id="reportPickBanner">지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.</div>
+<div id="reportModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="reportTitle" onclick="if(event.target===this)closeReportModal()">
+  <div class="monthTideDialog reportDialog">
+    <div class="monthTideHeader"><strong id="reportTitle">출현종 제보</strong><button type="button" onclick="closeReportModal()">닫기</button></div>
+    <form id="reportForm" class="reportBody" onsubmit="return submitReport(event)">
+      <p class="reportHint">관리자 확인을 거친 뒤에만 지도에 표시됩니다. 확인되지 않은 내용은 공개되지 않습니다.</p>
+      <label for="reportSpecies">출현종 <span class="reportRequired">필수</span></label>
+      <input id="reportSpecies" name="species" required maxlength="200" placeholder="예: 동박새, 큰유리새" autocomplete="off">
+      <label for="reportObservedOn">관찰 날짜 <span class="reportRequired">필수</span></label>
+      <input id="reportObservedOn" name="observedOn" type="date" required>
+      <label>선택한 위치 <span class="reportRequired">필수</span></label>
+      <div id="reportCoord" class="reportCoord">지도를 클릭해 위치를 선택하세요.</div>
+      <button type="button" class="reportPick" onclick="pickReportLocationAgain()">지도에서 다시 선택</button>
+      <div class="reportOptional">
+        <label for="reportReporter">제보자 이름 또는 닉네임 <span class="reportOptionalTag">선택</span></label>
+        <input id="reportReporter" name="reporter" maxlength="40" autocomplete="off">
+        <label for="reportCount">관찰 개체수 <span class="reportOptionalTag">선택</span></label>
+        <input id="reportCount" name="birdCount" type="number" min="1" max="100000" inputmode="numeric">
+        <label for="reportNote">참고 설명 <span class="reportOptionalTag">선택</span></label>
+        <textarea id="reportNote" name="note" maxlength="500" rows="3"></textarea>
+      </div>
+      <div id="reportCaptcha" class="reportCaptcha"></div>
+      <div id="reportMessage" class="reportMessage" role="status" aria-live="polite"></div>
+      <div class="reportActions">
+        <button type="button" onclick="closeReportModal()">취소</button>
+        <button type="submit" id="reportSubmitBtn" class="reportSubmit">제보 신청</button>
+      </div>
+    </form>
   </div>
 </div>
 <div id="jinhoSeal">眞<br>井</div>
@@ -187,6 +218,31 @@ a.ebird,.btn.ebird{display:none !important}
 .todayIssueMapBtn{display:inline-block;margin:4px 4px 0 0;padding:4px 7px;border:1px solid #2d6f9f;border-radius:5px;background:#eef7ff;color:#174d6f;font-weight:bold;font-size:11px;cursor:pointer}
 .todayAllIssuesBtn{display:block;width:100%;margin-top:7px;padding:7px 9px;border:1px solid #a67800;border-radius:6px;background:#fff7db;color:#533500;font-weight:bold;cursor:pointer}
 .panelHeader{display:flex;justify-content:space-between;border-bottom:1px solid #b7d3e6;padding-bottom:7px}
+.reportDialog{width:min(430px,100%)}
+.reportBody{padding:12px 14px;overflow-y:auto;font-size:13px}
+.reportHint{margin:0 0 10px;padding:8px 10px;background:#f2f7fb;border:1px solid #b7d3e6;border-radius:6px;color:#174d6f;line-height:1.5}
+.reportBody label{display:block;margin:10px 0 3px;font-weight:bold;color:#33424c}
+.reportRequired{display:inline-block;margin-left:4px;padding:0 6px;border-radius:999px;background:#fdecec;border:1px solid #c0392b;color:#8d2418;font-size:11px;font-weight:normal}
+.reportOptionalTag{display:inline-block;margin-left:4px;padding:0 6px;border-radius:999px;background:#f2f4f5;border:1px solid #bcc6cc;color:#5a666e;font-size:11px;font-weight:normal}
+.reportBody input,.reportBody textarea{width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid #bcc6cc;border-radius:6px;font:inherit;font-size:14px}
+.reportBody textarea{resize:vertical}
+.reportCoord{padding:8px 10px;border:1px dashed #bcc6cc;border-radius:6px;color:#5a666e;background:#fafbfb}
+.reportCoord.ready{border-style:solid;border-color:#2f7d4f;background:#eefbf1;color:#1d5c37;font-weight:bold}
+.reportPick{margin-top:6px;padding:6px 10px;border:1px solid #2d6f9f;background:#fff;color:#174d6f;border-radius:6px;cursor:pointer;font-size:12px}
+.reportOptional{margin-top:4px;padding-top:4px;border-top:1px solid #e3e8eb}
+.reportCaptcha{margin-top:12px;min-height:0}
+.reportMessage{display:none;margin-top:10px;padding:8px 10px;border-radius:6px;line-height:1.5}
+.reportMessage.error{display:block;background:#fdecec;border:1px solid #c0392b;color:#8d2418}
+.reportMessage.ok{display:block;background:#eefbf1;border:1px solid #2f7d4f;color:#1d5c37}
+.reportActions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.reportActions button{padding:8px 14px;border-radius:6px;border:1px solid #bcc6cc;background:#fff;cursor:pointer;font-size:13px}
+.reportActions .reportSubmit{background:#2f7d4f;border-color:#2f7d4f;color:#fff;font-weight:bold}
+.reportActions .reportSubmit[disabled]{opacity:.6;cursor:progress}
+#reportToggleBtn{position:fixed;top:170px;right:52px;z-index:10001;padding:8px 11px;background:#fdf1f1;border:2px solid #c0392b;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#8d2418;cursor:pointer}
+#reportToggleBtn[aria-pressed="true"]{background:#c0392b;color:#fff}
+body.reportPicking .folium-map{cursor:crosshair}
+#reportPickBanner{display:none;position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:10002;padding:10px 16px;border-radius:999px;background:rgba(28,34,38,.92);color:#fff;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 14px rgba(0,0,0,.35);max-width:92vw;text-align:center}
+body.reportPicking #reportPickBanner{display:block}
 .monthTideModal{display:none;position:fixed;inset:0;z-index:11000;padding:28px;background:rgba(0,0,0,.5);box-sizing:border-box;align-items:center;justify-content:center;font-family:Arial,'Malgun Gothic',sans-serif}
 .monthTideDialog{width:min(760px,100%);max-height:calc(100vh - 56px);overflow:hidden;background:white;border:2px solid #2d6f9f;border-radius:10px;box-shadow:0 5px 24px rgba(0,0,0,.4);display:flex;flex-direction:column}
 .monthTideHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #b7d3e6;color:#174d6f;font-size:17px}
@@ -254,7 +310,8 @@ body.monthTideOpen{overflow:hidden}
   #topBtnRow button{position:static;pointer-events:auto;font-size:12px;padding:6px 9px}
   /* 손가락으로 누르기 쉽도록 최소 44px 높이를 준다. */
   #togglePanelBtn{grid-column:1;grid-row:1;justify-self:start;min-height:44px;padding:6px 14px}
-  #noticeToggleBtn,#todayToggleBtn{grid-column:2;justify-self:end}
+  #noticeToggleBtn,#todayToggleBtn,#reportToggleBtn{grid-column:2;justify-self:end}
+  #reportToggleBtn{position:static;grid-row:3;margin-top:4px}
   #noticeToggleBtn{grid-row:1}
   #todayToggleBtn{grid-row:2}
   html,body{overflow-x:hidden}
@@ -416,6 +473,10 @@ var tideMonthPending=null;
 var monthTideReturnFocus=null;
 var LIVE_WEATHER_ENABLED=true;
 var LIVE_WEATHER_WORKER_URL='https://birdmap-weather-proxy.wooil-birdmap.workers.dev';
+/* 출현종 제보. 두 값이 모두 채워졌을 때만 제보 버튼이 생기고 승인된 제보를 읽는다.
+   비어 있으면 기능 전체가 꺼진 채로 남는다(설정 전에 접수를 열지 않는다). */
+var REPORTS_API_URL='';
+var REPORTS_TURNSTILE_SITE_KEY='';
 var LIVE_WEATHER_CACHE_TTL_MS=15*60*1000;
 var LIVE_WEATHER_REQUEST_TIMEOUT_MS=12000;
 var liveWeatherCache=new Map();
@@ -579,16 +640,20 @@ function ensureMasterDbMarkers(){
   });
 }
 
+/* 출현 지점 붉은 점. 기존 탐조지 지점과 승인된 제보가 같은 크기·색·팝업 형식을 쓴다.
+   팝업에는 지점 이름과 출현종만 넣는다(제보자·관찰일·개체수·메모는 넣지 않는다). */
+function birdmapSpotMarker(lat,lon,title,species){
+  var names=(species||[]).map(escapeHtml).join(' · ');
+  return L.circleMarker([lat,lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85})
+    .bindPopup('<div style="width:min(190px,calc(100vw - 80px))"><b>'+escapeHtml(title)+'</b><br>'+names+'</div>',{maxWidth:260})
+    .bindTooltip(names,{sticky:true});
+}
+
 /* 부모 탐조지가 필터를 통과할 때만 그 탐조지의 출현 지점을 표시한다. */
 function syncSiteSpots(site,show){
   siteSpotData.forEach(function(spot,i){
     if(String(spot.siteId)!==String(site.id))return;
-    if(!siteSpotLayers[i]){
-      var species=(spot.species||[]).map(escapeHtml).join(' · ');
-      siteSpotLayers[i]=L.circleMarker([spot.lat,spot.lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85})
-        .bindPopup('<div style="width:min(190px,calc(100vw - 80px))"><b>'+escapeHtml(site.name)+' 출현 지점</b><br>'+species+'</div>',{maxWidth:260})
-        .bindTooltip(species,{sticky:true});
-    }
+    if(!siteSpotLayers[i])siteSpotLayers[i]=birdmapSpotMarker(spot.lat,spot.lon,site.name+' 출현 지점',spot.species);
     var layer=siteSpotLayers[i],on=map_7010a44f6ac2025090f0fe07508ed485.hasLayer(layer);
     if(show&&!on)layer.addTo(map_7010a44f6ac2025090f0fe07508ed485);
     else if(!show&&on)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(layer);
@@ -3010,13 +3075,264 @@ function scheduleBirdmapRefresh(){
 }
 
 
+
+/* ══ 출현종 제보 ═══════════════════════════════════════════════════════════
+   공개 지도는 승인된 제보만 읽는다. 접수는 별도 Worker 가 받고, 승인은 또 다른
+   Worker(Cloudflare Access 뒤)에서만 할 수 있다. 여기에는 승인 기능이 없다.
+   REPORTS_API_URL 또는 사이트키가 비어 있으면 버튼도 만들지 않고 요청도 보내지 않는다.
+   기상·조석·추천·공지 코드는 이 블록과 공유하지 않는다. */
+var reportSpotLayers={};          // 승인된 제보 점 (id -> circleMarker)
+var reportPickMarker=null;        // 제보 모드의 임시 점. 지도에 저장하지 않는다.
+var reportPicked=null;            // {lat,lon}
+var reportPicking=false;
+var reportTurnstileId=null;
+var reportTurnstileToken='';
+var REPORTS_REFRESH_MS=10*60*1000;
+
+function reportsConfigured(){
+  return !!(REPORTS_API_URL&&REPORTS_TURNSTILE_SITE_KEY);
+}
+
+function reportMapClick(e){
+  if(!reportPicking)return;
+  // 확대/축소 등 지도 컨트롤 위의 클릭은 위치 선택으로 보지 않는다.
+  if(e.target&&e.target.closest&&e.target.closest('.leaflet-control'))return;
+  // 마커 위를 클릭해도 위치를 찍을 수 있어야 하므로 Leaflet 보다 먼저 가로챈다.
+  e.stopPropagation();
+  e.preventDefault();
+  var point=map_7010a44f6ac2025090f0fe07508ed485.mouseEventToLatLng(e);
+  setReportLocation(point.lat,point.lng);
+  openReportModal();
+}
+
+function initReportFeature(){
+  if(!reportsConfigured())return;
+  var button=document.getElementById('reportToggleBtn');
+  if(button)button.hidden=false;
+  map_7010a44f6ac2025090f0fe07508ed485.getContainer().addEventListener('click',reportMapClick,true);
+  loadApprovedReports();
+  setInterval(loadApprovedReports,REPORTS_REFRESH_MS);
+}
+
+/* 승인된 제보만 내려온다. 실패하면 직전 상태를 그대로 두고 조용히 넘어간다. */
+function loadApprovedReports(){
+  if(!reportsConfigured())return Promise.resolve(false);
+  return fetch(REPORTS_API_URL+'/reports/approved',{cache:'no-cache'}).then(function(r){
+    if(!r.ok)throw new Error('reports '+r.status);
+    return r.json();
+  }).then(function(data){
+    if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('reports invalid');
+    renderApprovedReports(data.spots);
+    return true;
+  }).catch(function(){return false;});
+}
+
+function renderApprovedReports(spots){
+  var seen={};
+  spots.forEach(function(spot){
+    if(!spot||!isFinite(spot.lat)||!isFinite(spot.lon))return;
+    var id=String(spot.id||'');
+    if(!id)return;
+    seen[id]=true;
+    var existing=reportSpotLayers[id];
+    if(existing)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(existing);
+    // 종이나 좌표가 바뀌었을 수 있으므로 매번 현재 값으로 다시 만든다.
+    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species)
+      .addTo(map_7010a44f6ac2025090f0fe07508ed485);
+  });
+  // 관리자가 공개를 취소한 점만 사라진다. 기존 탐조지와 그 출현 지점은 건드리지 않는다.
+  Object.keys(reportSpotLayers).forEach(function(id){
+    if(seen[id])return;
+    map_7010a44f6ac2025090f0fe07508ed485.removeLayer(reportSpotLayers[id]);
+    delete reportSpotLayers[id];
+  });
+}
+
+/* ── 위치 선택 ─────────────────────────────────────────────────────────── */
+
+function setReportLocation(lat,lon){
+  reportPicked={lat:Number(lat.toFixed(6)),lon:Number(lon.toFixed(6))};
+  if(reportPickMarker)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(reportPickMarker);
+  // 임시 점은 점선 테두리로 확정된 점과 구분한다. 어떤 경우에도 저장하지 않는다.
+  reportPickMarker=L.circleMarker([reportPicked.lat,reportPicked.lon],
+    {radius:7,color:'#d32f2f',weight:2,dashArray:'3,3',fillColor:'#d32f2f',fillOpacity:.35})
+    .bindTooltip('선택한 위치',{sticky:true})
+    .addTo(map_7010a44f6ac2025090f0fe07508ed485);
+  var box=document.getElementById('reportCoord');
+  if(box){
+    box.textContent='위도 '+reportPicked.lat+' · 경도 '+reportPicked.lon;
+    box.className='reportCoord ready';
+  }
+  stopReportPicking();
+}
+
+function startReportPicking(){
+  reportPicking=true;
+  document.body.classList.add('reportPicking');
+  var button=document.getElementById('reportToggleBtn');
+  if(button)button.setAttribute('aria-pressed','true');
+  hideBirdmapPanelOnMobile();
+}
+
+function stopReportPicking(){
+  reportPicking=false;
+  document.body.classList.remove('reportPicking');
+  var button=document.getElementById('reportToggleBtn');
+  if(button)button.setAttribute('aria-pressed','false');
+}
+
+function clearReportPick(){
+  if(reportPickMarker){
+    map_7010a44f6ac2025090f0fe07508ed485.removeLayer(reportPickMarker);
+    reportPickMarker=null;
+  }
+  reportPicked=null;
+}
+
+function toggleReportMode(){
+  if(!reportsConfigured())return;
+  if(reportPicking){stopReportPicking();return;}
+  closeReportModal(true);
+  clearReportPick();
+  startReportPicking();
+}
+
+/* 모달을 연 채로 위치만 다시 고른다. 입력한 내용은 지우지 않는다. */
+function pickReportLocationAgain(){
+  var modal=document.getElementById('reportModal');
+  if(modal)modal.style.display='none';
+  startReportPicking();
+}
+
+/* ── 입력 모달 ─────────────────────────────────────────────────────────── */
+
+function openReportModal(){
+  var modal=document.getElementById('reportModal');
+  if(!modal)return;
+  var date=document.getElementById('reportObservedOn');
+  if(date){
+    date.max=kstDateText();
+    if(!date.value)date.value=kstDateText();
+  }
+  setReportMessage('','');
+  modal.style.display='flex';
+  ensureReportCaptcha();
+  var species=document.getElementById('reportSpecies');
+  if(species&&!species.value)setTimeout(function(){species.focus();},60);
+}
+
+function closeReportModal(keepPick){
+  var modal=document.getElementById('reportModal');
+  if(modal)modal.style.display='none';
+  if(!keepPick){
+    clearReportPick();
+    stopReportPicking();
+  }
+}
+
+function setReportMessage(text,kind){
+  var box=document.getElementById('reportMessage');
+  if(!box)return;
+  box.textContent=text;
+  box.className='reportMessage'+(kind?' '+kind:'');
+}
+
+/* 자동 등록 방지 위젯은 제보 모달을 처음 열 때만 불러온다. */
+function ensureReportCaptcha(){
+  if(reportTurnstileId!==null)return;
+  var host=document.getElementById('reportCaptcha');
+  if(!host)return;
+  function render(){
+    if(reportTurnstileId!==null||!window.turnstile)return;
+    reportTurnstileId=window.turnstile.render(host,{
+      sitekey:REPORTS_TURNSTILE_SITE_KEY,
+      callback:function(token){reportTurnstileToken=token;},
+      'expired-callback':function(){reportTurnstileToken='';},
+      'error-callback':function(){reportTurnstileToken='';}
+    });
+  }
+  if(window.turnstile){render();return;}
+  if(document.getElementById('turnstileScript')){
+    var wait=setInterval(function(){if(window.turnstile){clearInterval(wait);render();}},200);
+    return;
+  }
+  var script=document.createElement('script');
+  script.id='turnstileScript';
+  script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.async=true;
+  script.defer=true;
+  script.onload=render;
+  script.onerror=function(){setReportMessage('자동 등록 방지 확인을 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.','error');};
+  document.head.appendChild(script);
+}
+
+function resetReportCaptcha(){
+  reportTurnstileToken='';
+  if(reportTurnstileId!==null&&window.turnstile)window.turnstile.reset(reportTurnstileId);
+}
+
+/* ── 전송 ──────────────────────────────────────────────────────────────── */
+
+function submitReport(event){
+  if(event)event.preventDefault();
+  if(!reportsConfigured())return false;
+  var species=document.getElementById('reportSpecies').value.trim();
+  var observedOn=document.getElementById('reportObservedOn').value;
+  if(!species){setReportMessage('출현종을 입력해 주세요.','error');return false;}
+  if(!observedOn){setReportMessage('관찰 날짜를 입력해 주세요.','error');return false;}
+  if(!reportPicked){setReportMessage('지도에서 관찰 위치를 선택해 주세요.','error');return false;}
+  if(!reportTurnstileToken){setReportMessage('자동 등록 방지 확인을 완료해 주세요.','error');return false;}
+
+  var count=document.getElementById('reportCount').value;
+  var payload={
+    species:species,
+    lat:reportPicked.lat,
+    lon:reportPicked.lon,
+    observedOn:observedOn,
+    reporter:document.getElementById('reportReporter').value.trim(),
+    birdCount:count===''?null:Number(count),
+    note:document.getElementById('reportNote').value.trim(),
+    turnstileToken:reportTurnstileToken
+  };
+  var button=document.getElementById('reportSubmitBtn');
+  button.disabled=true;
+  setReportMessage('전송 중입니다...','');
+
+  fetch(REPORTS_API_URL+'/reports',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(response){
+    return response.json().catch(function(){return null;}).then(function(body){
+      return {ok:response.ok,body:body};
+    });
+  }).then(function(result){
+    // 서버가 저장했다고 답한 경우에만 접수 완료로 처리한다.
+    if(!result.ok||!result.body||result.body.ok!==true){
+      var message=result.body&&result.body.error&&result.body.error.message;
+      throw new Error(message||'제보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+    setReportMessage('제보가 접수되었습니다. 관리자 확인 뒤 지도에 표시됩니다.','ok');
+    document.getElementById('reportForm').reset();
+    resetReportCaptcha();
+    setTimeout(function(){closeReportModal();},2200);
+  }).catch(function(error){
+    // 실패하면 입력 내용을 그대로 둔다.
+    setReportMessage(error.message||'전송에 실패했습니다. 연결을 확인해 주세요.','error');
+    resetReportCaptcha();
+  }).finally(function(){
+    button.disabled=false;
+  });
+  return false;
+}
+
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMonthTideModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMonthTideModal();closeReportModal();}});
 window.addEventListener('load',function(){
   updateMapTitleSiteCount();
   hideBirdmapPanelOnMobile();
   updateMobileUiMetrics();
-  setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);openSharedSiteFromUrl();loadNotices();refreshBirdmapData(true);scheduleBirdmapRefresh();},300);
+  setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);openSharedSiteFromUrl();loadNotices();refreshBirdmapData(true);scheduleBirdmapRefresh();initReportFeature();},300);
 });
 document.addEventListener('visibilitychange',function(){
   scheduleBirdmapRefresh();
