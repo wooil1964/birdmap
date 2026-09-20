@@ -843,7 +843,16 @@ function setupResponsivePopups(){
     var popup=e.popup,marker=popup._source;
     applyMobilePopupAutoPan(popup);
     var site=siteData.find(function(s){return window[s.markerVar]===marker;});
-    if(!site)return;
+    if(!site){
+      /* 출현 지점 팝업. 탐조지 팝업은 아래 setContent 뒤 update() 에서 여백이 적용되지만
+         여기는 그 경로를 타지 않아 모바일에서 팝업 위쪽이 화면 밖으로 잘렸다. */
+      popup.update();
+      if(popup._birdmapSettleTimer)clearTimeout(popup._birdmapSettleTimer);
+      popup._birdmapSettleTimer=setTimeout(function(){
+        if(map.hasLayer(popup))popup.update();
+      },650);
+      return;
+    }
     if(!popup._birdmapDesktopContent)popup._birdmapDesktopContent=popup.getContent();
     popup.setContent(v23PopupContent(site,popup._birdmapDesktopContent));
     popup._birdmapV23Active=true;
