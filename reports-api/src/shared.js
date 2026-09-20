@@ -324,6 +324,14 @@ export async function verifyTurnstile(token, ip, secret, fetchImpl = fetch) {
     );
   }
   if (!payload?.success) {
+    // 클라이언트 응답에는 넣지 않는다. 설정 진단은 `wrangler tail` 로만 본다.
+    console.log(
+      "turnstile_failed " +
+        JSON.stringify({
+          codes: payload?.["error-codes"] ?? [],
+          hostname: payload?.hostname ?? null,
+        }),
+    );
     throw new WorkerError(
       "CAPTCHA_FAILED",
       "자동 등록 방지 확인에 실패했습니다.",
