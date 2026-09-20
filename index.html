@@ -320,6 +320,32 @@ body.monthTideOpen{overflow:hidden}
 .v23WeatherCheck:checked~.v23WeatherDetailsContent{display:block}
 .resultFeature{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#406020;font-size:11px}
 #jinhoSeal{position:fixed;bottom:10px;left:10px;z-index:8000;width:30px;height:38px;border:2px solid #b40000;color:#b40000;background:rgba(255,255,255,.72);font-family:'Noto Serif CJK KR','Malgun Gothic',serif;font-weight:bold;font-size:15px;line-height:1.05;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);opacity:.9;pointer-events:none}
+
+/* 마커 크기 45% 축소(JS 의 MARKER_BASE_SCALE 과 같은 비율).
+   아이콘 상자·앵커는 JS 에서 줄이고, 여기서는 마커 그림(720x46 스프라이트)과
+   내부 아이콘 글리프를 같은 비율로 줄인다. 색별 배경 위치도 모두 0.45 배 값이다. */
+.awesome-marker{background-size:324px 20.7px}
+.awesome-marker-shadow{background-size:16.2px 7.2px}
+.awesome-marker i{font-size:6.3px;margin-top:4.5px}
+.awesome-marker-icon-red{background-position:0 0}
+.awesome-marker-icon-orange{background-position:-16.2px 0}
+.awesome-marker-icon-green{background-position:-32.4px 0}
+.awesome-marker-icon-blue{background-position:-48.6px 0}
+.awesome-marker-icon-purple{background-position:-64.8px 0}
+.awesome-marker-icon-darkred{background-position:-81px 0}
+.awesome-marker-icon-darkblue{background-position:-97.2px 0}
+.awesome-marker-icon-darkgreen{background-position:-113.4px 0}
+.awesome-marker-icon-darkpurple{background-position:-129.6px 0}
+.awesome-marker-icon-cadetblue{background-position:-145.8px 0}
+.awesome-marker-icon-lightred{background-position:-162px 0}
+.awesome-marker-icon-beige{background-position:-178.2px 0}
+.awesome-marker-icon-lightgreen{background-position:-194.4px 0}
+.awesome-marker-icon-lightblue{background-position:-210.6px 0}
+.awesome-marker-icon-pink{background-position:-226.8px 0}
+.awesome-marker-icon-white{background-position:-258.3px 0}
+.awesome-marker-icon-lightgray{background-position:-275.4px 0}
+.awesome-marker-icon-gray{background-position:-291.6px 0}
+.awesome-marker-icon-black{background-position:-306.9px 0}
 @media(max-width:700px){
   #topUiWrap{position:fixed;top:8px;left:8px;right:8px;z-index:10001;pointer-events:none}
   #mapTitleBox{position:static;pointer-events:auto;padding:8px 10px}
@@ -741,6 +767,21 @@ function refreshFixedSpotPopups(){
       reportFixedHistory[spot.id],true));
   });
 }
+
+/* 마커 크기 축소 비율. 실제 좌표는 그대로 두고 아이콘 상자와 앵커만 같은 비율로 줄인다.
+   folium 마커(AwesomeMarkers)와 마스터 DB 보충 마커(기본 아이콘)가 프로토타입 기본값을
+   공유하므로 한 곳에서 줄이면 모든 색 마커에 같이 적용된다.
+   마커 그림과 내부 아이콘 글리프는 .awesome-marker CSS 가 같은 비율로 줄인다. */
+var MARKER_BASE_SCALE=.45;
+(function(scale){
+  var iconOptions=[L.AwesomeMarkers.Icon.prototype.options,L.Icon.Default.prototype.options];
+  ['iconSize','iconAnchor','popupAnchor','shadowSize','shadowAnchor','tooltipAnchor'].forEach(function(key){
+    iconOptions.forEach(function(options){
+      var point=options[key];
+      if(point)options[key]=[Math.round(point[0]*scale),Math.round(point[1]*scale)];
+    });
+  });
+})(MARKER_BASE_SCALE);
 
 function markerPoint(point){
   return point?L.point(point):null;
