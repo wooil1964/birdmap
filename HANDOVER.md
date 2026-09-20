@@ -14,6 +14,25 @@
 
 ## 최근 완료 작업
 
+- 출현종 제보 시스템 가동(2026-09-20, 기준 main `5905018`, 활성화 커밋 `39a204e`): Cloudflare 설정을 마치고 공개 지도에서 제보 기능을 켰다. **누구나 로그인 없이 제보할 수 있고, 관리자가 승인한 제보만 기존 붉은 점으로 표시된다.** 접수 → 승인 → 지도 표시 → 공개 취소 전 과정을 실제 운영 환경에서 검증했다.
+  - **운영 구성**
+
+    | 구성요소 | 주소 / 상태 |
+    |---|---|
+    | 공개 접수 Worker | `https://birdmap-reports.wooil-birdmap.workers.dev` — Access 없음(익명 제보). 시크릿 `TURNSTILE_SECRET_KEY`·`REPORT_IP_SALT` 등록됨 |
+    | 관리자 승인 화면 | `https://birdmap-reports-admin.wooil-birdmap.workers.dev/admin` — Cloudflare Access(팀 `soft-fire-24b1`) 뒤 |
+    | 저장소 | Cloudflare D1 `birdmap-reports` (id 는 `reports-api/wrangler.*.toml` 참조) |
+    | 지도 연결값 | `index.html` 의 `REPORTS_API_URL`·`REPORTS_TURNSTILE_SITE_KEY` 두 줄 |
+
+  - **Turnstile 인증 정상 작동**: 사이트 키는 `index.html` 에 공개값으로 두고 비밀 키는 `wrangler secret` 으로만 넣었다. 실제 브라우저에서 챌린지를 통과한 제보가 접수되는 것과, 가짜 토큰이 `403 CAPTCHA_FAILED` 로 거부되고 DB 에 저장되지 않는 것을 모두 확인했다.
+  - **Cloudflare Access 관리자 인증 완료**: 관리자 Worker 의 모든 경로(`/`, `/admin`, `/admin/api/*`)가 인증 없이는 Access 로그인으로 302 되고, 위조 JWT 를 헤더에 붙여도 마찬가지다. Worker 안에서도 Access JWT 를 다시 검증하므로 Access 설정이 빠지면 열리는 것이 아니라 503 으로 닫힌다. 공개 접수 Worker 와 기상 Worker 에는 Access 가 걸려 있지 않다.
+  - **전체 흐름 검증 완료**: 실제 브라우저 제보 → D1 에 `pending` 저장(원본 IP 미저장, 솔트 섞은 SHA-256 해시 64자만) → 승인 전 공개 API 가 빈 배열이고 지도에도 점 없음 → 관리자 승인 후 붉은 점 표시(팝업에 출현종만) → 공개 취소 후 그 점만 사라짐.
+  - **시험 데이터 정리 완료**: 시험 제보 `68348a74-…c2a497` 1건만 ID 를 명시해 영구 삭제했다(삭제 전 전체 1건·대상 1건·보존 0건 확인, `changes: 1`). 삭제 후 `reports` 0건이고 테이블과 인덱스 3개는 그대로다.
+  - **기존 기능 유지 확인**: 기존 붉은 점 3개가 좌표·출현종 그대로다(`35.851286/126.676169` 김제새만금, `37.563253/126.896933`·`37.567558/126.891222` 평화의공원). 탐조지 190곳·마커 190개·헤더 190, 김제새만금과 유부도의 기상·조석·한 달 조석, 평화의공원의 조석 미사용, 이번주 자동 추천 패널, 공지 4건 모두 정상이다. `siteData`·`siteSpotData`·`applyFilters()`·기상·조석·추천·공지 코드는 무변경이다.
+  - **설정 중 실제로 고친 것 2건**(둘 다 추측이 아니라 실측으로 원인을 특정했다)
+    - 서버 검증 실패의 원인을 알 수 없었다. `NOT_CONFIGURED` 를 세 곳이 공유하고 siteverify 의 `error-codes` 를 버리고 있었다. 코드를 `NOT_CONFIGURED_SALT`/`NOT_CONFIGURED_CAPTCHA` 로 나누고 siteverify 응답을 Worker 로그로 남기게 한 뒤 `wrangler tail` 로 **`invalid-input-secret`** 을 확인해, 등록된 Turnstile 비밀 키가 이 위젯의 것이 아님을 특정했다. 비밀 키를 다시 넣자 같은 가짜 토큰에 대해 `invalid-input-response` 로 바뀌었다(토큰 없이도 키 짝을 판정할 수 있는 방법이다).
+    - 챌린지가 뜨지 않으면 빈 상자만 남고 안내가 없었다. `error-callback` 이 Turnstile 오류 코드를 표시하게 하고, 모달을 열 때와 토큰 만료 시 위젯을 `reset()` 해 새 챌린지를 받게 했다. 한때 "8초 안에 iframe 이 없으면 경고" 가드를 넣었다가(`c63f498`) **되돌렸다**(`31a20cf`) — Turnstile 은 UI 를 closed shadow root 에 그려서 정상 렌더 상태에서도 문서 전체 `iframe` 이 0개이고, "렌더됐지만 아직 안 푼 상태" 와 "렌더 실패" 를 페이지에서 구분할 수 없다. 같은 방식의 감지를 다시 만들지 말 것.
+
 - 출현종 제보 기능(2026-09-20, 기준 main `5e255dc`): 로그인 없이 누구나 제보하고 **관리자 승인 뒤에만** 기존 붉은 점으로 표시되는 기능을 추가했다. 지도 엔진을 바꾸지 않았고 기상·조석·추천·공지 코드는 건드리지 않았다.
   - 저장소는 GitHub Pages(정적)이므로 서버가 필요했다. Google Apps Script 를 먼저 검토했으나 **`doPost(e)` 에 클라이언트 IP 가 없어 서버 측 제출 횟수 제한을 만들 수 없고**(CORS 도 preflight 미지원으로 취약) 부적합으로 판단했다. 대신 이미 운영 중인 Cloudflare 계정에 **새 Worker 2개**를 만들었다(`reports-api/`). 기존 `weather-proxy` 는 한 줄도 바꾸지 않았다.
   - **접수와 승인을 서로 다른 Worker·주소로 분리**했다. Cloudflare Access 는 workers.dev 주소 단위로 걸리므로, 한 Worker 에 두 기능을 두면 공개 접수까지 로그인을 요구하게 된다. 공개 Worker(`birdmap-reports`)에는 승인 코드가 아예 없고, 관리자 Worker(`birdmap-reports-admin`)만 Access 뒤에 둔다. Worker 안에서 Access JWT(서명·발급자·AUD·만료·이메일 허용 목록)를 한 번 더 검증하며, 설정값이 비면 열리지 않고 503 으로 닫힌다.
@@ -396,8 +415,16 @@
 
 > **[현재]** 이 절만 현재 미해결 상태를 뜻합니다.
 
-- **출현종 제보 기능은 아직 꺼져 있다.** `index.html`의 `REPORTS_API_URL`·`REPORTS_TURNSTILE_SITE_KEY`가 빈 문자열이라 제보 버튼이 보이지 않고 요청도 나가지 않는다. 켜려면 저장소 관리자가 **D1 생성 → Turnstile 발급 → 두 Worker 배포 → 관리자 Worker에 Cloudflare Access 적용** 순서로 설정한 뒤 두 값을 채워야 한다. 절차는 `reports-api/README.md`에 있다. **Access 설정이 끝나기 전에 값을 채우지 말 것**(승인 없이 접수만 열리는 상태가 된다).
-  - 완전한 스팸 차단은 구조적으로 불가능하다. Turnstile은 사람이 손으로 넣는 허위 제보를 막지 못하고 IP 제한은 공유 IP·VPN 앞에서 약해진다. 실질적 방어선은 '관리자 승인 전 비공개'다.
+- **[미해결] 기상 Worker 의 상류 기상청 API 가 403 을 돌려준다.** `https://birdmap-weather-proxy.wooil-birdmap.workers.dev/weather?siteId=…` 가 `{"code":"KMA_HTTP_ERROR","message":"KMA returned HTTP 403"}` 로 502 를 낸다(2026-09-20 실측). Worker 자체는 정상 응답하며 `KMA_SERVICE_KEY` 만료·차단이 의심되지만 **확인하지 않았고 이번 작업에서 손대지 않았다.**
+  - 영향 범위는 팝업의 '실시간 기상' 경로뿐이다. 저장 자료(`weather_today.json`)는 Actions 가 Windy·Open-Meteo 로 정상 생성하고 있어(190곳, `status: ok`) 지도 표시에는 문제가 없고, 그래서 눈에 띄지 않았다.
+  - 제보 기능과 무관한 별건이다. 조치할 때 `weather-proxy/` 외의 파일을 함께 바꾸지 말 것.
+- **출현종 제보 시스템 운영·유지보수 메모**(기능 자체는 가동 중이며 보류 사항이 아니다).
+  - **승인 작업**: `https://birdmap-reports-admin.wooil-birdmap.workers.dev/admin` 접속 → Cloudflare Access 로그인(허용 이메일은 `reports-api/wrangler.admin.toml` 의 `ADMIN_EMAILS`) → 상태 탭에서 대기 건 확인 → 종명·좌표·공개 좌표·관리자 메모를 고쳐 `승인`, 또는 `반려`·`공개 취소`·`선택 지점에 합치기`. 합치기는 관리자가 고른 지점에만 적용되고 기존 출현종을 지우지 않는다. 좌표가 가깝다는 이유로 자동 병합하지 않는다.
+  - **민감지**: 희귀조 번식지 등은 승인할 때 공개 위도·경도를 따로 넣으면 실제 지점 대신 그 좌표만 공개된다.
+  - **데이터 확인**: `cd reports-api && npx wrangler d1 execute birdmap-reports --remote -c wrangler.public.toml --command "…"`. 실시간 로그는 `npx wrangler tail -c wrangler.public.toml --format json` 이며, siteverify 실패 시 `turnstile_failed {"codes":[…]}` 가 찍힌다.
+  - **시크릿 교체**: `npx wrangler secret put <이름> -c wrangler.public.toml` 을 사람이 직접 실행한다. 파이프로 넣으면 빈 값이 저장될 수 있으니(실제로 겪었다) 넣은 뒤 반드시 가짜 토큰으로 오류 코드를 확인할 것. 비밀 키와 솔트는 저장소에 넣지 않는다.
+  - **코드 수정 후 배포**: `npx wrangler deploy -c wrangler.public.toml` / `-c wrangler.admin.toml`. 배포는 수동이며 Actions 가 하지 않는다. 테스트는 `cd reports-api && node --test test/*.test.mjs`.
+  - **한계**: 완전한 스팸 차단은 구조적으로 불가능하다. Turnstile 은 사람이 손으로 넣는 허위 제보를 막지 못하고 IP 기준 제한은 공유 IP·VPN 앞에서 약해진다. 실질적 방어선은 '관리자 승인 전 비공개'다.
 - **[해소됨] 평화의공원(ID 195) 공유 페이지**는 2026-09-19 `5e255dc chore: rebuild share pages`로 생성됐다. `share/195/index.html`·`share/og/195.png` 2개 파일만 커밋됐고 두 URL 모두 HTTP 200을 확인했다. 앞으로 탐조지를 추가한 뒤에도 같은 워크플로를 `site_ids`에 해당 ID만 넣어 돌릴 것.
   - **로컬 생성은 하지 말 것.** 작업 PC에는 실제 Python이 없고(`python`/`python3`는 WindowsApps의 Microsoft Store 스텁, `pip`도 없음) `build_share_pages.py`를 돌릴 수 없다. 카드 PNG는 워크플로가 설치하는 `fonts-noto-cjk`/`fonts-nanum`으로 그려야 하므로 다른 글꼴로 만들면 기존 카드와 어긋난다.
 
