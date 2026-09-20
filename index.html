@@ -348,10 +348,7 @@ body.monthTideOpen{overflow:hidden}
 .awesome-marker-icon-black{background-position:-306.9px 0}
 @media(max-width:700px){
   #topUiWrap{position:fixed;top:8px;left:8px;right:8px;z-index:10001;pointer-events:none}
-  /* 글자 크기·줄간격은 PC 와 같게 두고 박스만 줄인다. 내용 폭에 맞춰 좁히고 여백을 최소화하며,
-     업데이트 문구의 버전 설명(.titleDetail)은 모바일에서만 감춰 한 줄에 들어오게 한다. */
-  #mapTitleBox{position:static;pointer-events:auto;padding:3px 7px;width:max-content;max-width:100%;box-sizing:border-box}
-  #mapTitleBox .titleDetail{display:none}
+  #mapTitleBox{position:static;pointer-events:auto;padding:8px 10px}
   #topBtnRow{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:6px;pointer-events:none;align-items:start}
   #topBtnRow button{position:static;pointer-events:auto;font-size:12px;padding:6px 9px}
   /* 손가락으로 누르기 쉽도록 최소 44px 높이를 준다. */
@@ -406,6 +403,15 @@ body.monthTideOpen{overflow:hidden}
   .monthTideContent{padding:9px}
   .monthTideDays{grid-template-columns:1fr;gap:7px}
   .monthTideButton{width:100%;min-height:38px}
+}
+
+/* 모바일 제목 박스 축소. 가로 화면은 폭이 700px 를 넘어 위 @media(max-width:700px) 에 걸리지
+   않으므로, 화면 폭이 아니라 터치 기기 조건(hover 불가 + 굵은 포인터)으로 판별한다.
+   마우스를 쓰는 PC 는 창을 아무리 좁혀도 이 조건에 걸리지 않아 제목 박스가 그대로 유지된다.
+   글자 크기·문구는 그대로 두고 여백과 폭만 줄이며, 긴 버전 설명만 감춘다. */
+@media (hover:none) and (pointer:coarse){
+  #mapTitleBox{padding:3px 7px;width:max-content;max-width:100%;box-sizing:border-box}
+  #mapTitleBox .titleDetail{display:none}
 }
 </style>
 <script>
