@@ -2057,6 +2057,20 @@ function searchSite(){
   if(!siteData.filter(sitePasses).length)alert('검색 결과가 없습니다.');
 }
 
+/* 첫 화면과 필터 초기화 화면. 백령도·제주·울릉도·독도까지 담는 최소 범위로 맞춘다.
+   정수 배율만 쓰면 한 단계 낮은 배율로 떨어져 중국·일본이 넓게 남으므로, 맞출 때만 0.05 단위
+   배율을 허용하고 이후 사용자 확대·축소는 다시 정수 배율로 돌아가게 되돌린다.
+   모바일은 상단 UI가 지도를 덮는 높이만큼 중심을 아래로 옮긴다(배율은 화면 폭이 결정). */
+var KOREA_VIEW_BOUNDS=[[32.9,124.5],[38.75,132.0]];
+function fitKoreaView(){
+  /* 이동 애니메이션은 첫 화면 이동을 도중에 취소할 수 있어 즉시 이동한다. */
+  var map=map_7010a44f6ac2025090f0fe07508ed485,occlusion=updateMobileUiMetrics(),options={animate:false};
+  if(occlusion){options.paddingTopLeft=L.point(0,occlusion);options.paddingBottomRight=L.point(0,0);}
+  map.options.zoomSnap=.05;
+  map.fitBounds(KOREA_VIEW_BOUNDS,options);
+  map.options.zoomSnap=1;
+}
+
 function resetFilters(){
   clearRouteLine();
   document.querySelectorAll('.seasonFilter').forEach(function(b){b.checked=true;});
@@ -2066,7 +2080,7 @@ function resetFilters(){
   activeSearch='';
   activeTerms=[];
   applyFilters(false);
-  map_7010a44f6ac2025090f0fe07508ed485.fitBounds([[32.8,124.0],[39.2,132.2]]);
+  fitKoreaView();
 }
 
 
@@ -3540,10 +3554,7 @@ window.addEventListener('resize',function(){
             tile_layer_62315ff8219cb818078bbef8d2f68bcb.addTo(map_7010a44f6ac2025090f0fe07508ed485);
         
     
-            map_7010a44f6ac2025090f0fe07508ed485.fitBounds(
-                [[32.8, 124.0], [39.2, 132.2]],
-                {}
-            );
+            fitKoreaView();
         
     
             L.control.fullscreen(
