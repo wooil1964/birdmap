@@ -681,20 +681,19 @@ function spotHistoryHtml(history){
       +'<span class="spotHistoryBy">제보자: '+who+'</span></li>';
   }).join('');
   var rest=history.length-SPOT_HISTORY_VISIBLE;
-  var more=rest>0?'<button type="button" class="spotHistoryMore" onclick="birdmapShowAllSpotHistory(this)">더 보기 ('+rest+'건)</button>':'';
+  var more=rest>0?'<button type="button" class="spotHistoryMore" onclick="birdmapShowAllSpotHistory(this,event)">더 보기 ('+rest+'건)</button>':'';
   return '<div class="spotHistory"><div class="spotHistoryHead">출현 이력 · 과거 관찰 기록</div>'
     +'<ul class="spotHistoryList">'+items+'</ul>'+more+'</div>';
 }
 
-function birdmapShowAllSpotHistory(button){
+function birdmapShowAllSpotHistory(button,event){
+  // 버튼을 DOM 에서 지우면 클릭 이벤트가 지도까지 새어 팝업이 닫힌다. 숨기기만 한다.
+  if(event&&event.stopPropagation)event.stopPropagation();
   var box=button.parentNode;
   if(box)Array.prototype.forEach.call(box.querySelectorAll('.spotHistoryHidden'),function(item){
     item.className=item.className.replace(' spotHistoryHidden','');
   });
-  button.parentNode.removeChild(button);
-  // 펼친 뒤 팝업 크기와 위치를 다시 잡는다.
-  var map=map_7010a44f6ac2025090f0fe07508ed485;
-  if(map&&map._popup&&map._popup.update)map._popup.update();
+  button.style.display='none';
 }
 
 /* 출현 지점 팝업 본문. 기존 '이름 + 출현종' 형식을 그대로 두고 이력만 아래에 붙인다. */
