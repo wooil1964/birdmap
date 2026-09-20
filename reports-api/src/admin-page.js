@@ -152,9 +152,12 @@ function cardHtml(r){
   var fixedOptions=FIXED_SPOTS.map(function(f){return '<option value="'+esc(f.key)+'">'+esc(f.label)+'</option>';}).join('');
   return '<div class="card" data-id="'+esc(r.id)+'">'
     +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(r.status)+'</span>'
-    +(r.merged_into?' <span class="badge approved">다른 지점에 합침</span>':'')+'</h2>'
+    +(r.merged_into?' <span class="badge approved">다른 지점에 합침</span>':'')
+    +(r.status==='pending'?' <span class="badge '+(Number(r.pending_public)===1?'approved':'rejected')+'">'
+      +(Number(r.pending_public)===1?'황색 마커 공개 중':'공개 보류')+'</span>':'')+'</h2>'
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
     +'<br>좌표 '+Number(r.lat).toFixed(6)+', '+Number(r.lon).toFixed(6)
+    +(r.approx_lat!=null?'<br>승인 전 공개 좌표(대략) '+Number(r.approx_lat).toFixed(5)+', '+Number(r.approx_lon).toFixed(5):'')
     +(r.bird_count?'<br>개체수 '+esc(r.bird_count):'')
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')
     +(r.note?'<br>설명 '+esc(r.note):'')+'</div>'
@@ -178,6 +181,9 @@ function cardHtml(r){
     +(r.status==='approved'?'<button type="button" class="unpublish" data-act="unpublish">공개 취소</button>':'')
     +'<button type="button" class="merge" data-act="link">선택 지점에 연결</button>'
     +(r.spot_key?'<button type="button" class="merge" data-act="unlink">연결 해제</button>':'')
+    +(r.status==='pending'?(Number(r.pending_public)===1
+      ?'<button type="button" class="unpublish" data-act="visibility" data-public="0">황색 마커 내리기</button>'
+      :'<button type="button" class="merge" data-act="visibility" data-public="1">황색 마커로 공개</button>'):'')
     +'<button type="button" class="unpublish" data-act="consent">이름 공개 반영</button>'
     +'</div></div>';
 }
@@ -225,6 +231,9 @@ document.getElementById('list').addEventListener('click',async function(event){
   }
   if(act==='consent'){
     payload.namePublic=card.querySelector('.f-consent').checked;
+  }
+  if(act==='visibility'){
+    payload.public=button.dataset.public==='1';
   }
   if(act==='link'){
     var target=card.querySelector('.f-target');

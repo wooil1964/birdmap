@@ -326,3 +326,76 @@ test("모르는 처리 이름은 거부한다", async () => {
   assert.equal(response.status, 400);
   assert.equal(db.rows[0].status, "pending");
 });
+
+/* ── 승인 전 황색 마커 공개 ─────────────────────────────────────────── */
+
+async function actAsAdmin(db, id, payload) {
+  const { sign, claims, jwksFetch } = await accessFixture();
+  const token = await sign(claims());
+  return withJwks(jwksFetch, () =>
+    handleRequest(
+      adminRequest(`/admin/api/reports/${id}`, token, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+      adminEnv(db),
+    ),
+  );
+}
+
+test("공개 취소하면 황색 마커로도 다시 올라오지 않는다", async () => {
+  const db = fakeDb([pendingRow({ status: "approved", pending_public: 1 })]);
+  const response = await actAsAdmin(db, db.rows[0].id, { action: "unpublish" });
+  assert.equal(response.status, 200);
+  assert.equal(db.rows[0].status, "pending");
+  // 대기로 돌아가도 공개 플래그가 내려가 있어야 황색 마커로 되살아나지 않는다.
+  assert.equal(db.rows[0].pending_public, 0);
+});
+
+test("반려하면 황색 마커 공개도 함께 꺼진다", async () => {
+  const db = fakeDb([pendingRow({ pending_public: 1 })]);
+  const response = await actAsAdmin(db, db.rows[0].id, { action: "reject" });
+  assert.equal(response.status, 200);
+  assert.equal(db.rows[0].status, "rejected");
+  assert.equal(db.rows[0].pending_public, 0);
+});
+
+test("관리자는 대기 제보의 황색 공개를 켜고 끌 수 있다", async () => {
+  const db = fakeDb([pendingRow()]);
+  const id = db.rows[0].id;
+
+  const open = await actAsAdmin(db, id, { action: "visibility", public: true });
+  assert.equal(open.status, 200);
+  assert.equal(db.rows[0].pending_public, 1);
+  assert.equal(db.rows[0].status, "pending");
+  // 대략 좌표가 없던 기존 자료라도 켤 때 한 번 만들어 둔다.
+  assert.ok(Number.isFinite(db.rows[0].approx_lat));
+  assert.notEqual(db.rows[0].approx_lat, db.rows[0].lat);
+
+  const close = await actAsAdmin(db, id, { action: "visibility", public: false });
+  assert.equal(close.status, 200);
+  assert.equal(db.rows[0].pending_public, 0);
+});
+
+test("승인된 제보는 황색 마커로 되돌릴 수 없다", async () => {
+  const db = fakeDb([pendingRow({ status: "approved" })]);
+  const response = await actAsAdmin(db, db.rows[0].id, {
+    action: "visibility",
+    public: true,
+  });
+  assert.equal(response.status, 400);
+  assert.equal(db.rows[0].pending_public, 0);
+});
+
+test("관리자가 아니면 황색 공개도 바꿀 수 없다", async () => {
+  const db = fakeDb([pendingRow()]);
+  const response = await handleRequest(
+    adminRequest(`/admin/api/reports/${db.rows[0].id}`, null, {
+      method: "POST",
+      body: JSON.stringify({ action: "visibility", public: true }),
+    }),
+    adminEnv(db),
+  );
+  assert.equal(response.status, 403);
+  assert.equal(db.rows[0].pending_public, 0);
+});

@@ -1,10 +1,15 @@
 // 공개 제보 접수 Worker.
-// - POST /reports          로그인 없이 누구나 제보한다. 항상 status='pending' 으로만 들어간다.
-// - GET  /reports/approved 승인된 제보의 종과 공개 좌표만 내보낸다.
+// - POST /reports              로그인 없이 누구나 제보한다. 항상 status='pending' 으로만 들어간다.
+// - GET  /reports/approved     승인된 제보의 종과 공개 좌표만 내보낸다(붉은 점).
+// - GET  /reports/pending      공개가 허용된 승인 대기 제보의 종과 대략 좌표만 내보낸다(황색 마커).
+// - GET  /reports/<id>/status  제보자가 자기 접수 상태만 확인한다(종·좌표는 돌려주지 않는다).
 // 승인·수정·반려 기능은 이 Worker 에 없다. 관리자 API 는 별도 Worker(admin.js)에 있다.
 
 import {
   WorkerError,
+  approximateCoordinate,
+  isSensitiveReport,
+  pendingPayload,
   RATE_DAY_MAX,
   RATE_WINDOW_MAX,
   RATE_WINDOW_MINUTES,
@@ -84,13 +89,18 @@ async function handleSubmit(request, env) {
   await verifyTurnstile(body?.turnstileToken, ip, env.TURNSTILE_SECRET_KEY);
 
   const id = crypto.randomUUID();
+  // 승인 전 지도에 올릴 대략 좌표. 실제 좌표는 관리자만 본다.
+  const approx = approximateCoordinate(report.lat, report.lon);
+  // 둥지·번식지와 보호종은 관리자가 확인할 때까지 지도에 올리지 않는다.
+  const pendingPublic = isSensitiveReport(report) ? 0 : 1;
   try {
     await db
       .prepare(
         `INSERT INTO reports
            (id, status, species, lat, lon, observed_on, received_at,
-            bird_count, reporter, note, ip_hash, dedupe_hash, name_public)
-         VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)`,
+            bird_count, reporter, note, ip_hash, dedupe_hash, name_public,
+            approx_lat, approx_lon, pending_public)
+         VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)`,
       )
       .bind(
         id,
@@ -105,6 +115,9 @@ async function handleSubmit(request, env) {
         hash,
         await dedupeHash(report),
         report.namePublic,
+        approx.lat,
+        approx.lon,
+        pendingPublic,
       )
       .run();
   } catch (error) {
@@ -118,8 +131,90 @@ async function handleSubmit(request, env) {
     throw error;
   }
 
-  // 접수만 알린다. 승인 전에는 어떤 경로로도 공개되지 않는다.
-  return jsonResponse(request, env, { ok: true, id, status: "pending" }, 201);
+  // 공개가 허용된 건만 지도에 바로 올릴 값을 함께 돌려준다.
+  // 보류된 건은 좌표를 돌려주지 않으므로 화면에서도 황색 마커를 만들 수 없다.
+  const accepted = {
+    ok: true,
+    id,
+    status: "pending",
+    publicVisibility: pendingPublic ? "approximate" : "withheld",
+  };
+  if (pendingPublic) {
+    accepted.spot = {
+      id,
+      status: "pending",
+      lat: approx.lat,
+      lon: approx.lon,
+      approximate: true,
+      species: report.species,
+      date: report.observedOn,
+    };
+  }
+  return jsonResponse(request, env, accepted, 201);
+}
+
+// 승인 대기 제보 중 공개가 허용된 건만 내보낸다.
+// 승인된 제보는 여기에 절대 섞이지 않는다(상태 구분은 서버에서만 한다).
+async function handlePending(request, env) {
+  const db = database(env);
+  const { results } = await db
+    .prepare(
+      `SELECT id, species, observed_on, approx_lat, approx_lon
+         FROM reports
+        WHERE status = 'pending' AND pending_public = 1
+          AND approx_lat IS NOT NULL AND approx_lon IS NOT NULL
+        ORDER BY observed_on DESC, received_at DESC`,
+    )
+    .all();
+  return jsonResponse(
+    request,
+    env,
+    {
+      ok: true,
+      generatedAt: new Date().toISOString(),
+      spots: pendingPayload(results),
+    },
+    200,
+    { "Cache-Control": "public, max-age=60" },
+  );
+}
+
+// 제보자가 접수 번호로 자기 제보의 처리 상태만 확인한다.
+// 종·좌표·제보자·메모는 돌려주지 않는다.
+async function handleStatus(request, env, id) {
+  const db = database(env);
+  const row = await db
+    .prepare(
+      `SELECT status, pending_public, received_at, decided_at
+         FROM reports WHERE id = ?1`,
+    )
+    .bind(id)
+    .first();
+  if (!row) {
+    throw new WorkerError("NOT_FOUND", "접수 번호를 찾을 수 없습니다.", 404);
+  }
+  const visibility =
+    row.status === "approved"
+      ? "approved"
+      : row.status === "rejected"
+        ? "not_published"
+        : Number(row.pending_public) === 1
+          ? "approximate"
+          : "withheld";
+  return jsonResponse(
+    request,
+    env,
+    {
+      ok: true,
+      id,
+      status: row.status,
+      publicVisibility: visibility,
+      receivedAt: row.received_at,
+      decidedAt: row.decided_at,
+    },
+    200,
+    { "Cache-Control": "no-store" },
+  );
 }
 
 async function handleApproved(request, env) {
@@ -158,10 +253,33 @@ export async function handleRequest(request, env) {
     if (request.method === "GET" && url.pathname === "/reports/approved") {
       return await handleApproved(request, env);
     }
+    if (request.method === "GET" && url.pathname === "/reports/pending") {
+      return await handlePending(request, env);
+    }
+    const status = /^\/reports\/([0-9a-f-]{36})\/status$/.exec(url.pathname);
+    if (status) {
+      if (request.method !== "GET") {
+        return jsonResponse(
+          request,
+          env,
+          {
+            ok: false,
+            error: { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" },
+          },
+          405,
+          { Allow: "GET, OPTIONS" },
+        );
+      }
+      return await handleStatus(request, env, status[1]);
+    }
     if (request.method === "POST" && url.pathname === "/reports") {
       return await handleSubmit(request, env);
     }
-    if (url.pathname !== "/reports" && url.pathname !== "/reports/approved") {
+    if (
+      url.pathname !== "/reports" &&
+      url.pathname !== "/reports/approved" &&
+      url.pathname !== "/reports/pending"
+    ) {
       throw new WorkerError("NOT_FOUND", "Unknown endpoint", 404);
     }
     return jsonResponse(

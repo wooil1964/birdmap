@@ -4,6 +4,7 @@
 
 import {
   WorkerError,
+  approximateCoordinate,
   errorResponse,
   jsonResponse,
   normalizeCoordinate,
@@ -17,7 +18,16 @@ import { ADMIN_PAGE } from "./admin-page.js";
 // link  : 이 제보의 이력을 다른 지점에 붙인다(종 목록은 읽을 때 합치므로 원본을 고쳐 쓰지 않는다).
 // unlink: 연결을 끊어 다시 자기 점을 갖게 한다.
 // consent: 제보자 이름 공개 여부만 바꾼다(공개 철회 처리).
-const ACTIONS = ["approve", "reject", "unpublish", "link", "unlink", "consent"];
+// visibility: 승인 전 황색 마커 공개 여부를 켜고 끈다(민감지 보류·해제).
+const ACTIONS = [
+  "approve",
+  "reject",
+  "unpublish",
+  "link",
+  "unlink",
+  "consent",
+  "visibility",
+];
 
 // index.html 의 수동 붉은 점은 "fixed:<siteId>:<n>" 키로 가리킨다.
 const FIXED_SPOT_KEY = /^fixed:[0-9]{1,6}:[0-9]{1,3}$/;
@@ -139,9 +149,11 @@ async function applyAction(request, env, id, admin) {
   const adminNote = body.adminNote === undefined ? row.admin_note : String(body.adminNote || "").slice(0, 1000);
 
   if (action === "reject") {
+    // 반려하면 황색 마커도 즉시 사라져야 한다.
     await db
       .prepare(
-        `UPDATE reports SET status='rejected', decided_at=?2, admin_note=?3 WHERE id=?1`,
+        `UPDATE reports SET status='rejected', pending_public=0,
+             decided_at=?2, admin_note=?3 WHERE id=?1`,
       )
       .bind(id, now, adminNote)
       .run();
@@ -150,10 +162,13 @@ async function applyAction(request, env, id, admin) {
 
   if (action === "unpublish") {
     // 공개만 거둔다. 대기 상태로 되돌려 다시 승인할 수 있게 둔다.
+    // 이때 pending_public 을 반드시 0 으로 내린다. 그러지 않으면 공개를 취소한 제보가
+    // 승인 대기 목록을 타고 황색 마커로 되살아난다.
     // 기존 탐조지와 그 출현종은 별도 데이터라 여기서 건드리지 않는다.
     await db
       .prepare(
-        `UPDATE reports SET status='pending', decided_at=?2, admin_note=?3 WHERE id=?1`,
+        `UPDATE reports SET status='pending', pending_public=0,
+             decided_at=?2, admin_note=?3 WHERE id=?1`,
       )
       .bind(id, now, adminNote)
       .run();
@@ -168,6 +183,31 @@ async function applyAction(request, env, id, admin) {
       .bind(id, namePublic, adminNote)
       .run();
     return jsonResponse(request, env, { ok: true, id, namePublic });
+  }
+
+  if (action === "visibility") {
+    // 승인과는 별개다. 켜도 상태는 'pending' 그대로이고 황색 마커로만 보인다.
+    const open = body.public === true || body.public === 1 ? 1 : 0;
+    if (open && row.status !== "pending") {
+      throw new WorkerError(
+        "ACTION_INVALID",
+        "승인 대기 중인 제보만 황색 마커로 공개할 수 있습니다.",
+        400,
+      );
+    }
+    // 공개를 켤 때 대략 좌표가 없으면(이 기능 이전 자료) 이때 한 번 만든다.
+    const approx =
+      open && (row.approx_lat == null || row.approx_lon == null)
+        ? approximateCoordinate(row.lat, row.lon)
+        : { lat: row.approx_lat, lon: row.approx_lon };
+    await db
+      .prepare(
+        `UPDATE reports SET pending_public=?2, approx_lat=?3, approx_lon=?4,
+             admin_note=?5 WHERE id=?1`,
+      )
+      .bind(id, open, approx.lat, approx.lon, adminNote)
+      .run();
+    return jsonResponse(request, env, { ok: true, id, pendingPublic: open });
   }
 
   if (action === "unlink") {

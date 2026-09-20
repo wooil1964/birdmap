@@ -257,6 +257,70 @@ export function validateReport(input, now = new Date()) {
   };
 }
 
+/* ── 승인 전 공개(황색 마커) ────────────────────────────────────────── */
+
+// 승인 전 제보는 실제 좌표를 절대 내보내지 않는다. 접수 때 실제 지점에서
+// 1.5~4.5km 떨어진 점을 한 번 만들어 저장하고, 공개 API 는 그 점만 쓴다.
+// 반올림(소수점 자르기)은 쓰지 않는다. 격자 위에 놓여 원래 지점이 좁혀지기 때문이다.
+// 매 요청마다 다시 계산하지 않는 이유도 같다. 여러 번 받아 평균 내면 실제 지점이 드러난다.
+export const APPROX_MIN_METERS = 1500;
+export const APPROX_MAX_METERS = 4500;
+
+function randomUnitPair() {
+  const values = new Uint32Array(2);
+  crypto.getRandomValues(values);
+  return [values[0] / 2 ** 32, values[1] / 2 ** 32];
+}
+
+export function approximateCoordinate(lat, lon, randomPair) {
+  const [angleSeed, radiusSeed] = randomPair || randomUnitPair();
+  const bearing = angleSeed * 2 * Math.PI;
+  // 면적 기준으로 고르게 퍼뜨린다. 거리만 균등하게 뽑으면 안쪽에 몰린다.
+  const near = APPROX_MIN_METERS ** 2;
+  const far = APPROX_MAX_METERS ** 2;
+  const distance = Math.sqrt(near + radiusSeed * (far - near));
+  const metersPerLat = 111320;
+  const metersPerLon = Math.max(1, metersPerLat * Math.cos((lat * Math.PI) / 180));
+  const movedLat = lat + (distance * Math.cos(bearing)) / metersPerLat;
+  const movedLon = lon + (distance * Math.sin(bearing)) / metersPerLon;
+  // 국내 범위를 벗어나면 지도 밖에 찍히므로 경계로 되돌린다.
+  return {
+    lat: Number(Math.min(LAT_MAX, Math.max(LAT_MIN, movedLat)).toFixed(5)),
+    lon: Number(Math.min(LON_MAX, Math.max(LON_MIN, movedLon)).toFixed(5)),
+  };
+}
+
+// 둥지·번식지와 보호종은 승인 전 공개를 보류한다. 관리자가 확인한 뒤에만 지도에 올린다.
+// ponytail: 종명·낱말 목록으로만 판정한다. 규칙이 복잡해지면 관리자 설정값으로 옮긴다.
+export const SENSITIVE_KEYWORDS = ['둥지', '번식', '포란', '육추', '새끼', '영소'];
+export const SENSITIVE_SPECIES = [
+  '저어새', '노랑부리저어새', '노랑부리백로', '황새', '먹황새', '따오기',
+  '두루미', '재두루미', '흑두루미', '검독수리', '참수리', '흰꼬리수리',
+  '매', '참매', '수리부엉이', '올빼미', '팔색조', '뿔쇠오리', '넓적부리도요',
+];
+
+export function isSensitiveReport(report) {
+  const haystack = [report?.note || '', report?.speciesText || ''].join(' ');
+  if (SENSITIVE_KEYWORDS.some((word) => haystack.includes(word))) return true;
+  return (report?.species || []).some((name) => SENSITIVE_SPECIES.includes(name));
+}
+
+// 승인 전 공개 목록. 종·관찰일·대략 좌표만 내보낸다.
+// 제보자·개체수·설명·실제 좌표·관리자 메모는 어떤 경우에도 넣지 않는다.
+export function pendingPayload(rows) {
+  return (rows || [])
+    .filter((row) => Number.isFinite(row.approx_lat) && Number.isFinite(row.approx_lon))
+    .map((row) => ({
+      id: row.id,
+      status: 'pending',
+      lat: row.approx_lat,
+      lon: row.approx_lon,
+      approximate: true,
+      species: splitSpecies(row.species),
+      date: row.observed_on,
+    }));
+}
+
 /* ── 해시 ───────────────────────────────────────────────────────────── */
 
 export async function sha256Hex(text) {

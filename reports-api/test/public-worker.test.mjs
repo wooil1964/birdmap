@@ -237,3 +237,148 @@ test("본문이 너무 크면 거부한다", async () => {
   );
   assert.equal(response.status, 413);
 });
+
+/* ── 승인 전 황색 마커 ──────────────────────────────────────────────── */
+
+function pendingListRequest() {
+  return new Request("https://reports.example/reports/pending", { headers: ORIGIN });
+}
+
+test("접수하면 대략 좌표를 만들어 저장하고 실제 좌표는 공개하지 않는다", async () => {
+  const db = fakeDb();
+  const response = await withTurnstile(true, () =>
+    handleRequest(submitRequest(validBody()), publicEnv(db)),
+  );
+  const body = await response.json();
+  assert.equal(body.publicVisibility, "approximate");
+  assert.equal(body.spot.approximate, true);
+
+  const row = db.rows[0];
+  assert.equal(row.pending_public, 1);
+  assert.notEqual(row.approx_lat, row.lat);
+  assert.notEqual(row.approx_lon, row.lon);
+  // 응답에도 실제 좌표는 들어가지 않는다.
+  assert.equal(body.spot.lat, row.approx_lat);
+  assert.equal(body.spot.lon, row.approx_lon);
+  assert.equal(JSON.stringify(body).includes(String(row.lat)), false);
+
+  // 실제 지점에서 1.5km 이상 떨어져 있다.
+  const meters = Math.hypot(
+    (row.approx_lat - row.lat) * 111320,
+    (row.approx_lon - row.lon) * 111320 * Math.cos((row.lat * Math.PI) / 180),
+  );
+  assert.ok(meters >= 1400 && meters <= 4700, `거리 ${meters}m`);
+});
+
+test("둥지·번식 제보와 보호종은 승인 전 공개를 보류한다", async () => {
+  for (const body of [
+    validBody({ note: "둥지를 확인했습니다" }),
+    validBody({ species: "저어새" }),
+  ]) {
+    const db = fakeDb();
+    const response = await withTurnstile(true, () =>
+      handleRequest(submitRequest(body), publicEnv(db)),
+    );
+    const payload = await response.json();
+    assert.equal(payload.ok, true);
+    assert.equal(payload.publicVisibility, "withheld");
+    assert.equal(payload.spot, undefined);
+    assert.equal(db.rows[0].pending_public, 0);
+  }
+});
+
+test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async () => {
+  const db = fakeDb([
+    // 이 기능 이전에 쌓인 대기 제보. pending_public 기본값 0 이라 공개되지 않는다.
+    { id: "old-pending", species: "흰물떼새", lat: 37.1, lon: 126.4 },
+    // 공개가 허용된 대기 제보.
+    {
+      id: "new-pending",
+      species: "넓적부리도요",
+      lat: 37.2,
+      lon: 126.5,
+      approx_lat: 37.23,
+      approx_lon: 126.53,
+      pending_public: 1,
+      reporter: "홍길동",
+      note: "관찰 메모",
+      bird_count: 3,
+    },
+    // 승인된 제보는 대기 목록에 섞이지 않는다.
+    {
+      id: "approved-one",
+      status: "approved",
+      species: "저어새",
+      lat: 37.3,
+      lon: 126.6,
+      pending_public: 1,
+    },
+  ]);
+  const response = await handleRequest(pendingListRequest(), publicEnv(db));
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.deepEqual(body.spots.map((spot) => spot.id), ["new-pending"]);
+
+  const spot = body.spots[0];
+  assert.equal(spot.status, "pending");
+  assert.equal(spot.approximate, true);
+  assert.equal(spot.lat, 37.23);
+  assert.deepEqual(spot.species, ["넓적부리도요"]);
+
+  // 실제 좌표·제보자·개체수·메모는 어떤 경우에도 나가지 않는다.
+  const raw = JSON.stringify(body);
+  for (const secret of ["37.2,", "126.5,", "홍길동", "관찰 메모", "3"]) {
+    if (secret === "3") continue;
+    assert.equal(raw.includes(secret), false, secret);
+  }
+  assert.equal(raw.includes("bird_count"), false);
+});
+
+test("승인된 제보 목록에는 대기 제보가 섞이지 않는다", async () => {
+  const db = fakeDb([
+    { id: "new-pending", species: "넓적부리도요", lat: 37.2, lon: 126.5, approx_lat: 37.23, approx_lon: 126.53, pending_public: 1 },
+    { id: "approved-one", status: "approved", species: "저어새", lat: 37.3, lon: 126.6 },
+  ]);
+  const response = await handleRequest(approvedRequest(), publicEnv(db));
+  const body = await response.json();
+  assert.deepEqual(body.spots.map((spot) => spot.id), ["approved-one"]);
+});
+
+test("제보자는 접수 번호로 상태만 확인한다", async () => {
+  const id = "11111111-1111-4111-8111-111111111111";
+  const db = fakeDb([
+    { id, species: "넓적부리도요", lat: 37.2, lon: 126.5, reporter: "홍길동", pending_public: 0 },
+  ]);
+  const response = await handleRequest(
+    new Request(`https://reports.example/reports/${id}/status`, { headers: ORIGIN }),
+    publicEnv(db),
+  );
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.status, "pending");
+  assert.equal(body.publicVisibility, "withheld");
+  const raw = JSON.stringify(body);
+  assert.equal(raw.includes("홍길동"), false);
+  assert.equal(raw.includes("넓적부리도요"), false);
+  assert.equal(raw.includes("37.2"), false);
+
+  const missing = await handleRequest(
+    new Request("https://reports.example/reports/22222222-2222-4222-8222-222222222222/status", { headers: ORIGIN }),
+    publicEnv(fakeDb()),
+  );
+  assert.equal(missing.status, 404);
+});
+
+test("공개 Worker 에는 승인 기능이 없다", async () => {
+  const db = fakeDb([{ id: "new-pending", species: "저어새", lat: 37.2, lon: 126.5, pending_public: 1 }]);
+  const response = await handleRequest(
+    new Request("https://reports.example/reports/pending", {
+      method: "POST",
+      headers: { ...ORIGIN, "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "approve" }),
+    }),
+    publicEnv(db),
+  );
+  assert.equal(response.status, 405);
+  assert.equal(db.rows[0].status, "pending");
+});

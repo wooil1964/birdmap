@@ -12,6 +12,10 @@ CREATE TABLE IF NOT EXISTS reports (
   lon            REAL NOT NULL,
   public_lat     REAL,                       -- 민감지 보호용 공개 좌표(비면 lat/lon 을 그대로 공개)
   public_lon     REAL,
+  approx_lat     REAL,                       -- 승인 전 황색 마커용 대략 좌표. 접수 때 한 번 만들어 고정한다.
+  approx_lon     REAL,                       -- 실제 좌표는 관리자만 본다.
+  pending_public INTEGER NOT NULL DEFAULT 0, -- 1 이면 승인 전에도 황색 마커로 공개한다.
+                                             -- 기본값 0 이라 이 기능 이전에 쌓인 대기 제보는 계속 비공개다.
   observed_on    TEXT NOT NULL,              -- 관찰일 YYYY-MM-DD (KST)
   received_at    TEXT NOT NULL,              -- 접수 시각 ISO8601 UTC
   decided_at     TEXT,                       -- 승인/반려/공개취소 시각
@@ -32,6 +36,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS reports_dedupe ON reports (dedupe_hash);
 
 -- 공개 지도는 승인된 행만 읽는다.
 CREATE INDEX IF NOT EXISTS reports_status ON reports (status);
+
+-- 승인 전 황색 마커 목록을 뽑을 때 쓴다.
+CREATE INDEX IF NOT EXISTS reports_pending_public ON reports (pending_public, status);
 
 -- 지점별 출현 이력을 모을 때 쓴다.
 CREATE INDEX IF NOT EXISTS reports_spot_key ON reports (spot_key);
