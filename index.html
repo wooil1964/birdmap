@@ -235,6 +235,20 @@ a.ebird,.btn.ebird{display:none !important}
 .reportConsent{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-weight:normal;line-height:1.5;min-height:44px;cursor:pointer}
 .reportConsent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
 .reportConsentNote{margin-top:2px;font-size:12px;color:#5a666e;line-height:1.5}
+/* 정리한 탐조지 프로필. 확인된 값만 한 줄씩 보여 준다. */
+.v27Region{margin:0 0 5px;font-size:12px;color:#5a666e}
+.v27Row{margin-top:3px}
+.v27Species{margin:1px 0 2px;font-size:12px;color:#33424a;line-height:1.55}
+.v27Caution{margin-top:6px;padding:5px 7px;border-radius:5px;background:#fff6f6;border:1px solid #f0d2d2}
+/* 탐조지별 출현 이력(승인된 제보만) */
+.siteHistoryBox{margin-top:9px;padding-top:7px;border-top:1px solid #dde2e6}
+.siteHistoryTitle{font-size:12px;font-weight:bold;color:#5a666e;margin-bottom:5px}
+.siteHistoryEntry{margin-bottom:5px;padding:5px 7px;border-radius:5px;background:#f6f8f9;border:1px solid #e3e8eb}
+.siteHistoryDate{font-size:12px;font-weight:bold;color:#2f4f62}
+.siteHistoryName{font-size:12px;color:#22333c}
+.siteHistoryBy{font-size:11px;color:#6b7a83}
+.siteHistoryEmpty{font-size:12px;color:#6b7a83}
+.siteHistoryMoreBtn{margin-top:2px;padding:4px 9px;border:1px solid #bcc6cc;border-radius:5px;background:#fff;font:inherit;font-size:12px;cursor:pointer}
 .spotPopup{font-size:13px;line-height:1.6}
 .spotUndated{margin-top:4px;font-size:12px;color:#5a666e}
 /* 승인 대기 제보(황색 마커) 팝업. 승인된 붉은 점과 눈에 띄게 구분한다. */
@@ -738,11 +752,25 @@ function birdmapShowAllSpotHistory(button,event){
   button.style.display='none';
 }
 
+/* 이력이 이미 날짜별로 종을 보여 주면 위쪽 종 목록은 같은 내용을 두 번 쓰는 셈이다.
+   이력이 모든 종을 담고 있을 때만 위 줄을 생략한다. 이력 자체는 지우지 않는다. */
+function spotSpeciesCoveredByHistory(species,history){
+  if(!history||!history.length)return false;
+  var inHistory={};
+  history.forEach(function(entry){
+    (entry.species||[]).forEach(function(name){inHistory[name]=true;});
+  });
+  var list=species||[];
+  return list.length>0&&list.every(function(name){return inHistory[name];});
+}
+
 /* 출현 지점 팝업 본문. 기존 '이름 + 출현종' 형식을 그대로 두고 이력만 아래에 붙인다. */
 function spotPopupHtml(title,species,history,undatedNote){
   var names=(species||[]).map(escapeHtml).join(' · ');
   var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))';
-  return '<div class="spotPopup" style="width:'+width+'"><b>'+escapeHtml(title)+'</b><br>'+names
+  var showNames=!spotSpeciesCoveredByHistory(species,history);
+  return '<div class="spotPopup" style="width:'+width+'"><b>'+escapeHtml(title)+'</b>'
+    +(showNames?'<br>'+names:'')
     +(undatedNote?'<div class="spotUndated">관찰일 미확인</div>':'')
     +spotHistoryHtml(history)+'</div>';
 }
@@ -938,6 +966,7 @@ function setupResponsivePopups(){
     popup.setContent(v23PopupContent(site,popup._birdmapDesktopContent));
     popup._birdmapV23Active=true;
     popup.update();
+    initSiteHistory(site,popup);
     requestLiveWeatherForPopup(site,popup);
     /* setView/줌 애니메이션이 autoPan 결과를 되돌릴 수 있어 안정화 후 한 번 더 위치 보정 */
     if(popup._birdmapSettleTimer)clearTimeout(popup._birdmapSettleTimer);
@@ -1882,20 +1911,175 @@ function directCoastalPopupContent(site,desktopContent){
   var source=popupContentElement(desktopContent);
   return '<div style="width:min(440px,calc(100vw - 80px));font-family:Arial,\'Malgun Gothic\',sans-serif">'+
     '<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
-    '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
-    '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
-    '<b>환경유형:</b> '+escapeHtml(site.habitatType)+'<br>'+
-    '<b>추천계절:</b> '+escapeHtml(site.bestSeason)+'<br>'+
-    '<b>계절태그:</b> '+escapeHtml(site.seasons.join(', '))+'<br>'+
-    '<b>대표조류군:</b> '+escapeHtml(site.mainBirdGroup)+'<br>'+
-    '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site))+'<hr style="margin:8px 0">'+
-    '<b>섬탐조:</b> 아니오 / <b>선상탐조:</b> 아니오<br>'+
-    '<b>접근난이도:</b> 미확인 / <b>대중교통:</b> 미확인<br>'+
-    '<b>주차:</b> 미확인 / <b>화장실:</b> 미확인 / <b>숙박:</b> 미확인<br>'+
-    '<b>선박정보:</b> 해당 없음<br>'+
-    '<b>주의사항:</b> 태풍·강풍 후 바다새 관찰 가능성이 높아질 수 있으며, 강풍과 높은 파도 시 안전에 유의'+
-    v23TodayWeatherHtml(site,true)+v23ButtonsFromLegacy(source,site)+'</div>';
+    siteProfileHtml(site,source,'태풍·강풍 후 바다새 관찰 가능성이 높아질 수 있으며, 강풍과 높은 파도 시 안전에 유의')+
+    v23TodayWeatherHtml(site,true)+siteHistoryContainerHtml(site)+v23ButtonsFromLegacy(source,site)+'</div>';
 }
+/* ══ 탐조지 프로필(공통 출력) ═══════════════════════════════════════════
+   기존 팝업은 권역 ID·계절태그·대표조류군처럼 겹치는 값을 한 줄씩 나열했다.
+   여기서 화면 표시만 정리한다. siteData 원본과 folium 팝업 데이터는 건드리지 않는다.
+   미확인 값은 '없음'으로 바꾸지 않고 줄 자체를 만들지 않는다. */
+var PROFILE_UNKNOWN=/^(정보\s*없음|미확인|확인\s*필요|해당\s*없음|없음|미정|-|n\/a)$/i;
+
+function profileKnown(value){
+  var text=String(value===undefined||value===null?'':value).trim();
+  return (!text||PROFILE_UNKNOWN.test(text))?'':text;
+}
+
+function profileFirstKnown(){
+  for(var i=0;i<arguments.length;i++){
+    var value=profileKnown(arguments[i]);
+    if(value)return value;
+  }
+  return '';
+}
+
+function profileRow(label,value,className){
+  var text=profileKnown(value);
+  if(!text)return '';
+  return '<div class="v27Row'+(className?' '+className:'')+'"><b>'+label+':</b> '+escapeHtml(text)+'</div>';
+}
+
+/* 추천계절과 계절태그는 같은 내용을 두 번 쓰는 경우가 많다. 겹치지 않는 값만 덧붙인다. */
+function profileSeasonText(site){
+  var best=profileKnown(site.bestSeason);
+  var tags=(site.seasons||[]).map(function(tag){return String(tag).trim();}).filter(Boolean);
+  var extra=tags.filter(function(tag){return best.indexOf(tag)<0;});
+  if(!best)return extra.join(', ');
+  return extra.length?best+' ('+extra.join(', ')+')':best;
+}
+
+/* 대표조류군은 대표종 문자열의 앞머리로 들어 있다(183곳 모두 같은 구조).
+   조류군을 앞줄에 두고 종 목록을 아래에 따로 보여 같은 값을 두 번 쓰지 않는다. */
+function profileTargetHtml(site){
+  var group=profileKnown(site.mainBirdGroup);
+  var species=profileKnown(v25SpeciesText(site));
+  if(!group&&!species)return '';
+  return '<div class="v27Row"><b>주요 관찰 대상:</b> '+escapeHtml(group||species)+'</div>'
+    +(group&&species?'<div class="v27Species">'+escapeHtml(species)+'</div>':'');
+}
+
+/* 섬탐조·선상탐조는 해당하는 곳에만 붙인다. */
+function profileTagText(site){
+  var tags=[];
+  if(site.island)tags.push('섬탐조');
+  if(site.pelagic)tags.push('선상탐조');
+  return tags.join(' · ');
+}
+
+function profileAccessText(site,source){
+  var parts=[];
+  var difficulty=profileFirstKnown(site.difficulty,popupField(source,'접근난이도'));
+  var transit=profileKnown(popupField(source,'대중교통'));
+  var walking=profileKnown(site.walkingLevel);
+  if(difficulty)parts.push('난이도 '+difficulty);
+  if(transit)parts.push('대중교통 '+transit);
+  if(walking)parts.push('도보 '+walking);
+  return parts.join(' · ');
+}
+
+function profileFacilityText(site,source){
+  var parts=[];
+  var parking=profileFirstKnown(site.parkingV23,popupField(source,'주차'));
+  var restroom=profileFirstKnown(site.restroomV23,popupField(source,'화장실'));
+  var stay=profileKnown(popupField(source,'숙박'));
+  if(parking)parts.push('주차 '+parking);
+  if(restroom)parts.push('화장실 '+restroom);
+  if(stay)parts.push('숙박 '+stay);
+  return parts.join(' · ');
+}
+
+/* 이름 아래에 들어가는 공통 프로필. 권역 ID 는 화면에서 숨기고 siteData 에는 그대로 둔다. */
+function siteProfileHtml(site,source,cautionFallback){
+  var environment=profileFirstKnown(site.habitatType,site.env,popupField(source,'환경유형'));
+  var tags=profileTagText(site);
+  var region=[profileKnown(site.country),profileKnown(site.region)].filter(Boolean).join(' · ');
+  return (region?'<div class="v27Region">'+escapeHtml(region)+'</div>':'')
+    +profileRow('탐조 환경',environment)
+    +profileRow('추천 시기',profileSeasonText(site))
+    +(tags?'<div class="v27Row"><b>탐조 유형:</b> '+escapeHtml(tags)+'</div>':'')
+    +profileTargetHtml(site)
+    +profileRow('접근',profileAccessText(site,source))
+    +profileRow('편의',profileFacilityText(site,source))
+    +profileRow('선박 정보',popupField(source,'선박정보'))
+    +profileRow('탐조 시 주의사항',profileFirstKnown(popupField(source,'주의사항'),cautionFallback),'v27Caution');
+}
+
+/* ── 탐조지별 출현 이력 ────────────────────────────────────────────────
+   관리자가 site_id 로 지정한 승인 제보만 서버에서 내려온다. 좌표는 응답에 없다.
+   API 가 응답하지 않으면 이 블록만 조용히 사라지고 나머지 프로필은 그대로 보인다. */
+var SITE_HISTORY_PAGE=5;
+
+function siteHistoryContainerHtml(site){
+  if(!reportsConfigured())return '';
+  return '<div class="siteHistoryBox" data-site="'+escapeHtml(String(site.id))+'">'
+    +'<div class="siteHistoryTitle">최근 출현 이력</div>'
+    +'<div class="siteHistoryList siteHistoryEmpty">불러오는 중입니다.</div></div>';
+}
+
+function siteHistoryEntryHtml(entry){
+  var names=(entry.species||[]).map(escapeHtml).join(' · ');
+  var who=entry.reporter?escapeHtml(entry.reporter):'익명 제보';
+  return '<div class="siteHistoryEntry">'
+    +'<div class="siteHistoryDate">'+escapeHtml(String(entry.date||'').replace(/-/g,'.'))+'</div>'
+    +'<div class="siteHistoryName">출현종: '+names+'</div>'
+    +'<div class="siteHistoryBy">제보자: '+who+'</div></div>';
+}
+
+function fetchSiteHistory(site,offset){
+  return fetch(REPORTS_API_URL+'/reports/site/'+encodeURIComponent(site.id)
+      +'?limit='+SITE_HISTORY_PAGE+'&offset='+offset,{cache:'no-cache'})
+    .then(function(response){
+      if(!response.ok)throw new Error('site history '+response.status);
+      return response.json();
+    }).then(function(data){
+      if(!data||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
+      return data;
+    }).catch(function(){return null;});
+}
+
+function renderSiteHistory(box,site,data,popup){
+  var list=box.querySelector('.siteHistoryList');
+  box._birdmapLoaded=(box._birdmapLoaded||[]).concat(data.history);
+  var loaded=box._birdmapLoaded;
+  if(!loaded.length){
+    list.className='siteHistoryList siteHistoryEmpty';
+    list.textContent='등록된 출현 이력이 없습니다.';
+    if(popup&&popup.update)popup.update();
+    return;
+  }
+  var rest=data.total-loaded.length;
+  list.className='siteHistoryList';
+  list.innerHTML=loaded.map(siteHistoryEntryHtml).join('')
+    +(rest>0?'<button type="button" class="siteHistoryMoreBtn">전체 이력 보기 ('+rest+'건 더)</button>':'');
+  var more=list.querySelector('.siteHistoryMoreBtn');
+  if(more)more.addEventListener('click',function(event){
+    // 팝업 안의 클릭이 지도까지 새어 팝업이 닫히는 것을 막는다.
+    if(event&&event.stopPropagation)event.stopPropagation();
+    more.disabled=true;
+    fetchSiteHistory(site,loaded.length).then(function(next){
+      if(!next){more.disabled=false;return;}
+      renderSiteHistory(box,site,next,popup);
+    });
+  });
+  if(popup&&popup.update)popup.update();
+}
+
+function initSiteHistory(site,popup){
+  var root=popup&&popup.getElement&&popup.getElement();
+  var box=root&&root.querySelector('.siteHistoryBox');
+  if(!box)return;
+  fetchSiteHistory(site,0).then(function(data){
+    if(!document.body.contains(box))return;
+    if(!data){
+      // 이력 API 가 없거나 실패하면 이 블록만 없애고 기존 프로필은 그대로 둔다.
+      if(box.parentNode)box.parentNode.removeChild(box);
+      if(popup&&popup.update)popup.update();
+      return;
+    }
+    renderSiteHistory(box,site,data,popup);
+  });
+}
+
 function v23PopupContent(site,desktopContent){
   if(site.id==='189'||site.id==='190')return directCoastalPopupContent(site,desktopContent);
   var source=popupContentElement(desktopContent);
@@ -1904,19 +2088,14 @@ function v23PopupContent(site,desktopContent){
   var root=document.createElement('div');
   root.style.cssText="width:min(440px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
   root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
-    '<b>권역 ID:</b> '+escapeHtml(site.id)+'<br>'+
-    '<b>국가/지역:</b> '+escapeHtml(site.country)+' / '+escapeHtml(site.region)+'<br>'+
-    '<b>대표종:</b> '+escapeHtml(v25SpeciesText(site)||'정보 없음')+v23TodayWeatherHtml(site)+fieldInfoHtml(site)+
+    siteProfileHtml(site,source)+v23TodayWeatherHtml(site)+siteHistoryContainerHtml(site)+fieldInfoHtml(site)+
     '<details class="popup-extra-info popup-profile-info"><summary>탐조지 프로필 보기</summary><div class="v23InfoBox"><div class="v24ProfileGrid">'+
     '<div class="v24ProfileWide"><b>환경 안내:</b> '+escapeHtml(v252ProfileEnvironmentSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>대표 탐조:</b> '+escapeHtml(v252ProfileBirdSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>탐조 특성:</b> '+escapeHtml(v252ProfileFeatureSentence(site))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 시간:</b> '+escapeHtml(v25DisplayBestTime(site))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 장비:</b> '+escapeHtml(gear.lens)+(gear.reason?'<br><span class="smallText">'+escapeHtml(gear.reason)+'</span>':'')+'</div>'+
-    '<div><b>난이도:</b> '+escapeHtml(v23Value(site.difficulty,''))+'</div>'+
-    '<div><b>주차:</b> '+escapeHtml(v23Value(site.parkingV23,popupField(source,'주차')))+'</div>'+
-    '<div><b>화장실:</b> '+escapeHtml(v23Value(site.restroomV23,popupField(source,'화장실')))+'</div>'+
-    '<div class="v24ProfileWide"><b>도보 거리:</b> '+escapeHtml(v23Value(site.walkingLevel,''))+'</div></div></div></details>'+
+    '</div></div></details>'+
     v23ButtonsFromLegacy(source,site)+
     (cafe?'<a href="'+escapeHtml(cafe.href)+'" target="_blank" class="cafe">📷 들뫼 탐조 보기</a>':'');
   return root;

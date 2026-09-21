@@ -515,7 +515,8 @@ export function splitSpecies(text) {
 
 // 이력 한 줄. 이름은 공개에 동의했고 실제로 입력된 경우에만 넣는다.
 // 동의하지 않았거나 이름이 없으면 필드 자체를 만들지 않아 화면에서 '익명 제보'가 된다.
-function historyEntry(row) {
+// 지점별 이력(publicPayload)과 탐조지별 이력(/reports/site/<id>)이 같은 규칙을 쓴다.
+export function historyEntry(row) {
   const entry = {
     id: row.id,
     date: row.observed_on,

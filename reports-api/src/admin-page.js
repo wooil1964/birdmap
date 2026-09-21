@@ -95,6 +95,42 @@ var FIXED_SPOTS=[
   {key:'fixed:195:1',label:'평화의공원 출현 지점 2 (37.56756, 126.89122)'}
 ];
 
+// 탐조 지역 목록. index.html 의 siteData 가 정본이라 여기에 복사해 두지 않고 읽어 온다.
+// ponytail: 지도 페이지를 한 번 받아 siteData 줄만 파싱한다. 실패하면 ID 직접 입력으로 넘어간다.
+var SITE_LIST_URL='https://wooil1964.github.io/birdmap/index.html';
+var siteList=[];
+
+async function loadSiteList(){
+  try{
+    var response=await fetch(SITE_LIST_URL,{cache:'no-cache'});
+    var text=await response.text();
+    var line=text.split('\\n').find(function(row){return row.indexOf('var siteData=')===0;});
+    if(!line)throw new Error('siteData 를 찾지 못했습니다.');
+    var parsed=JSON.parse(line.replace(/^var siteData=/,'').replace(/;\\s*$/,''));
+    siteList=parsed.map(function(site){return {id:String(site.id),name:site.name,region:site.region||''};});
+  }catch(error){
+    siteList=[];
+  }
+}
+
+function siteLabel(id){
+  var found=siteList.find(function(site){return site.id===String(id);});
+  return found?found.name+(found.region?' ('+found.region+')':''):String(id);
+}
+
+function siteSelectHtml(r){
+  if(!siteList.length){
+    return '<label>탐조 지역 ID (목록을 불러오지 못해 직접 입력)</label>'
+      +'<input class="f-site" value="'+esc(r.site_id==null?'':r.site_id)+'" placeholder="예: 19">';
+  }
+  var options=siteList.map(function(site){
+    return '<option value="'+esc(site.id)+'"'+(String(r.site_id||'')===site.id?' selected':'')+'>'
+      +esc(site.id+' · '+site.name+(site.region?' ('+site.region+')':''))+'</option>';
+  }).join('');
+  return '<label>탐조 지역 (이 제보를 어느 탐조지의 출현 이력으로 볼지)</label>'
+    +'<select class="f-site"><option value="">— 지정하지 않음(독립 출현 지점) —</option>'+options+'</select>';
+}
+
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function toast(message,ok){var el=document.getElementById('status');el.textContent=message;el.style.background=ok?'#1d5c37':'#8d2418';el.style.display='block';setTimeout(function(){el.style.display='none';},3200);}
 function coords(r){return [r.public_lat==null?r.lat:r.public_lat, r.public_lon==null?r.lon:r.public_lon];}
@@ -154,7 +190,9 @@ function cardHtml(r){
     +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(r.status)+'</span>'
     +(r.merged_into?' <span class="badge approved">다른 지점에 합침</span>':'')
     +(r.status==='pending'?' <span class="badge '+(Number(r.pending_public)===1?'approved':'rejected')+'">'
-      +(Number(r.pending_public)===1?'황색 마커 공개 중':'공개 보류')+'</span>':'')+'</h2>'
+      +(Number(r.pending_public)===1?'황색 마커 공개 중':'공개 보류')+'</span>':'')
+    +' <span class="badge '+(r.site_id?'approved':'rejected')+'">'
+      +(r.site_id?'탐조 지역: '+esc(siteLabel(r.site_id)):'탐조 지역 미연결')+'</span></h2>'
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
     +'<br>좌표 '+Number(r.lat).toFixed(6)+', '+Number(r.lon).toFixed(6)
     +(r.approx_lat!=null?'<br>승인 전 공개 좌표(대략) '+Number(r.approx_lat).toFixed(5)+', '+Number(r.approx_lon).toFixed(5):'')
@@ -169,7 +207,8 @@ function cardHtml(r){
     +'<div><label>공개 경도</label><input class="f-plon" value="'+esc(r.public_lon==null?'':r.public_lon)+'"></div></div>'
     +'<label>관리자 메모 (공개되지 않음)</label><textarea class="f-note">'+esc(r.admin_note||'')+'</textarea>'
     +'<label class="consentRow"><input type="checkbox" class="f-consent"'+(Number(r.name_public)===1?' checked':'')+'> 제보자 이름 공개 동의</label>'
-    +'<label>기존 지점에 이력 연결</label><select class="f-target"><option value="">— 연결하지 않고 자기 점으로 —</option>'
+    +siteSelectHtml(r)
+    +'<label>기존 지점에 이력 연결 (같은 붉은 점으로 묶을 때만)</label><select class="f-target"><option value="">— 연결하지 않고 자기 점으로 —</option>'
     +'<optgroup label="지도에 고정된 붉은 점">'+fixedOptions+'</optgroup>'
     +(linkOptions?'<optgroup label="승인된 제보 지점">'+linkOptions+'</optgroup>':'')+'</select>'
     +(r.spot_key?'<div class="meta">현재 연결: '+esc(r.spot_key)+'</div>':'')
@@ -184,6 +223,7 @@ function cardHtml(r){
     +(r.status==='pending'?(Number(r.pending_public)===1
       ?'<button type="button" class="unpublish" data-act="visibility" data-public="0">황색 마커 내리기</button>'
       :'<button type="button" class="merge" data-act="visibility" data-public="1">황색 마커로 공개</button>'):'')
+    +'<button type="button" class="merge" data-act="site">탐조 지역 저장</button>'
     +'<button type="button" class="unpublish" data-act="consent">이름 공개 반영</button>'
     +'</div></div>';
 }
@@ -197,6 +237,7 @@ function render(){
 
 async function load(){
   document.getElementById('list').innerHTML='<div class="empty">불러오는 중입니다.</div>';
+  if(!siteList.length)await loadSiteList();
   try{
     var approvedResponse=await fetch('/admin/api/reports?status=approved',{cache:'no-store'});
     var approvedBody=await approvedResponse.json();
@@ -220,6 +261,10 @@ document.getElementById('list').addEventListener('click',async function(event){
   if(!button){select(card.dataset.id);return;}
   var act=button.dataset.act;
   var payload={action:act,adminNote:card.querySelector('.f-note').value};
+  if(act==='approve'||act==='site'){
+    var siteField=card.querySelector('.f-site');
+    payload.siteId=siteField?siteField.value.trim():'';
+  }
   if(act==='approve'){
     payload.species=card.querySelector('.f-species').value;
     payload.observedOn=card.querySelector('.f-observed').value;

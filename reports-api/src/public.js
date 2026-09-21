@@ -2,12 +2,14 @@
 // - POST /reports              로그인 없이 누구나 제보한다. 항상 status='pending' 으로만 들어간다.
 // - GET  /reports/approved     승인된 제보의 종과 공개 좌표만 내보낸다(붉은 점).
 // - GET  /reports/pending      공개가 허용된 승인 대기 제보의 종과 대략 좌표만 내보낸다(황색 마커).
+// - GET  /reports/site/<id>    그 탐조지에 연결된 승인 제보의 출현 이력만 내보낸다(좌표 없음).
 // - GET  /reports/<id>/status  제보자가 자기 접수 상태만 확인한다(종·좌표는 돌려주지 않는다).
 // 승인·수정·반려 기능은 이 Worker 에 없다. 관리자 API 는 별도 Worker(admin.js)에 있다.
 
 import {
   WorkerError,
   approximateCoordinate,
+  historyEntry,
   isSensitiveReport,
   pendingPayload,
   RATE_DAY_MAX,
@@ -25,6 +27,12 @@ import {
 } from "./shared.js";
 
 const MAX_BODY_BYTES = 4096;
+// 탐조지별 출현 이력을 한 번에 가져올 건수. 화면은 5건부터 보여 준다.
+const SITE_HISTORY_DEFAULT = 5;
+const SITE_HISTORY_MAX = 50;
+const SITE_HISTORY_PATH = "/reports/site/";
+// siteData 의 탐조지 id 형식.
+const SITE_ID = /^[0-9A-Za-z_-]{1,16}$/;
 
 function database(env) {
   if (!env?.REPORTS_DB) {
@@ -179,6 +187,50 @@ async function handlePending(request, env) {
   );
 }
 
+// 탐조지(siteData.id)에 연결된 승인 제보의 출현 이력.
+// 관리자가 site_id 를 지정한 제보만 나온다. 좌표는 한 건도 내보내지 않으므로
+// 민감종의 지점이 지역별 이력을 통해 간접 노출되지 않는다.
+// 전체를 한 번에 주지 않고 limit/offset 으로 필요한 범위만 준다.
+async function handleSiteHistory(request, env, siteId, url) {
+  const db = database(env);
+  const limit = Math.min(
+    SITE_HISTORY_MAX,
+    Math.max(1, Number(url.searchParams.get("limit")) || SITE_HISTORY_DEFAULT),
+  );
+  const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
+  const total = await db
+    .prepare(
+      `SELECT COUNT(*) AS n FROM reports WHERE status = 'approved' AND site_id = ?1`,
+    )
+    .bind(siteId)
+    .first();
+  const { results } = await db
+    .prepare(
+      // 같은 관찰일이면 접수 시각과 id 로 순서를 고정한다(페이지가 밀리지 않는다).
+      `SELECT id, species, observed_on, reporter, name_public
+         FROM reports
+        WHERE status = 'approved' AND site_id = ?1
+        ORDER BY observed_on DESC, received_at DESC, id DESC
+        LIMIT ?2 OFFSET ?3`,
+    )
+    .bind(siteId, limit, offset)
+    .all();
+  return jsonResponse(
+    request,
+    env,
+    {
+      ok: true,
+      siteId,
+      total: Number(total?.n || 0),
+      limit,
+      offset,
+      history: (results || []).map(historyEntry),
+    },
+    200,
+    { "Cache-Control": "public, max-age=60" },
+  );
+}
+
 // 제보자가 접수 번호로 자기 제보의 처리 상태만 확인한다.
 // 종·좌표·제보자·메모는 돌려주지 않는다.
 async function handleStatus(request, env, id) {
@@ -255,6 +307,25 @@ export async function handleRequest(request, env) {
     }
     if (request.method === "GET" && url.pathname === "/reports/pending") {
       return await handlePending(request, env);
+    }
+    if (url.pathname.startsWith(SITE_HISTORY_PATH)) {
+      const siteId = decodeURIComponent(url.pathname.slice(SITE_HISTORY_PATH.length));
+      if (!SITE_ID.test(siteId)) {
+        throw new WorkerError("SITE_ID_INVALID", "탐조지 ID 형식이 아닙니다.", 400);
+      }
+      if (request.method !== "GET") {
+        return jsonResponse(
+          request,
+          env,
+          {
+            ok: false,
+            error: { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" },
+          },
+          405,
+          { Allow: "GET, OPTIONS" },
+        );
+      }
+      return await handleSiteHistory(request, env, siteId, url);
     }
     const status = /^\/reports\/([0-9a-f-]{36})\/status$/.exec(url.pathname);
     if (status) {

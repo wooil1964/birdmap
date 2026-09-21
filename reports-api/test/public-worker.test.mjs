@@ -382,3 +382,99 @@ test("공개 Worker 에는 승인 기능이 없다", async () => {
   assert.equal(response.status, 405);
   assert.equal(db.rows[0].status, "pending");
 });
+
+/* ── 탐조지별 출현 이력 ─────────────────────────────────────────────── */
+
+function siteRequest(siteId, query = "") {
+  return new Request(`https://reports.example/reports/site/${siteId}${query}`, {
+    headers: ORIGIN,
+  });
+}
+
+function siteRows() {
+  return [
+    // 같은 탐조지(19), 서로 다른 좌표
+    { id: "s19-a", status: "approved", site_id: "19", species: "넓적부리도요", lat: 36.001, lon: 126.601, observed_on: "2026-09-21", received_at: "2026-09-21T01:00:00Z", reporter: "홍길동", name_public: 1, dedupe_hash: "d1" },
+    { id: "s19-b", status: "approved", site_id: "19", species: "저어새 · 알락꼬리마도요", lat: 36.050, lon: 126.650, observed_on: "2026-09-20", received_at: "2026-09-20T01:00:00Z", reporter: "비공개희망", name_public: 0, dedupe_hash: "d2" },
+    // 같은 날짜 두 건(정렬 안정성 확인)
+    { id: "s19-c", status: "approved", site_id: "19", species: "청다리도요사촌", lat: 36.060, lon: 126.660, observed_on: "2026-09-21", received_at: "2026-09-21T00:00:00Z", dedupe_hash: "d3" },
+    // 다른 탐조지
+    { id: "s21-a", status: "approved", site_id: "21", species: "고대갈매기", lat: 35.85, lon: 126.67, observed_on: "2026-09-19", dedupe_hash: "d4" },
+    // 승인 대기 / 반려 / 지역 미연결
+    { id: "p19", status: "pending", site_id: "19", species: "흰물떼새", lat: 36.01, lon: 126.61, pending_public: 1, dedupe_hash: "d5" },
+    { id: "r19", status: "rejected", site_id: "19", species: "장다리물떼새", lat: 36.02, lon: 126.62, dedupe_hash: "d6" },
+    { id: "free", status: "approved", species: "쇠제비갈매기", lat: 36.03, lon: 126.63, observed_on: "2026-09-18", dedupe_hash: "d7" },
+  ];
+}
+
+test("탐조지별 이력은 그 지역에 연결된 승인 제보만 최신순으로 준다", async () => {
+  const db = fakeDb(siteRows());
+  const response = await handleRequest(siteRequest("19"), publicEnv(db));
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.siteId, "19");
+  assert.equal(body.total, 3);
+  // 관찰일 최신순, 같은 날짜는 접수 시각 역순으로 고정된다.
+  assert.deepEqual(body.history.map((h) => h.id), ["s19-a", "s19-c", "s19-b"]);
+  assert.deepEqual(body.history[0].species, ["넓적부리도요"]);
+  assert.deepEqual(body.history[2].species, ["저어새", "알락꼬리마도요"]);
+
+  // 다른 지역·대기·반려·미연결 제보는 섞이지 않는다.
+  const ids = body.history.map((h) => h.id).join(",");
+  for (const excluded of ["s21-a", "p19", "r19", "free"]) {
+    assert.equal(ids.includes(excluded), false, excluded);
+  }
+});
+
+test("탐조지별 이력에는 좌표와 비공개 항목이 들어가지 않는다", async () => {
+  const db = fakeDb(siteRows());
+  const response = await handleRequest(siteRequest("19"), publicEnv(db));
+  const raw = JSON.stringify(await response.json());
+  for (const secret of ["36.001", "126.601", "36.05", "lat", "lon", "ip_hash", "admin_note", "비공개희망"]) {
+    assert.equal(raw.includes(secret), false, secret);
+  }
+  // 원본 행의 좌표는 그대로 남아 있다(지역 연결이 좌표를 바꾸지 않는다).
+  const row = db.rows.find((r) => r.id === "s19-a");
+  assert.equal(row.lat, 36.001);
+  assert.equal(row.lon, 126.601);
+});
+
+test("이름 공개 동의만 제보자 이름을 내보낸다", async () => {
+  const db = fakeDb(siteRows());
+  const body = await (await handleRequest(siteRequest("19"), publicEnv(db))).json();
+  const byId = Object.fromEntries(body.history.map((h) => [h.id, h]));
+  assert.equal(byId["s19-a"].reporter, "홍길동");
+  assert.equal(byId["s19-b"].reporter, undefined);
+  assert.equal(byId["s19-c"].reporter, undefined);
+});
+
+test("필요한 범위만 조회한다(limit·offset)", async () => {
+  const db = fakeDb(siteRows());
+  const first = await (await handleRequest(siteRequest("19", "?limit=2"), publicEnv(db))).json();
+  assert.equal(first.history.length, 2);
+  assert.equal(first.total, 3);
+  assert.deepEqual(first.history.map((h) => h.id), ["s19-a", "s19-c"]);
+
+  const second = await (
+    await handleRequest(siteRequest("19", "?limit=2&offset=2"), publicEnv(db))
+  ).json();
+  assert.deepEqual(second.history.map((h) => h.id), ["s19-b"]);
+
+  // 상한을 넘겨도 최대 50건까지만 준다.
+  const capped = await (await handleRequest(siteRequest("19", "?limit=999"), publicEnv(db))).json();
+  assert.equal(capped.limit, 50);
+});
+
+test("이력이 없는 탐조지는 빈 배열을 준다", async () => {
+  const db = fakeDb(siteRows());
+  const body = await (await handleRequest(siteRequest("999"), publicEnv(db))).json();
+  assert.equal(body.total, 0);
+  assert.deepEqual(body.history, []);
+});
+
+test("탐조지 ID 형식이 아니면 거부한다", async () => {
+  const db = fakeDb(siteRows());
+  const response = await handleRequest(siteRequest("19%20OR%201=1"), publicEnv(db));
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, "SITE_ID_INVALID");
+});

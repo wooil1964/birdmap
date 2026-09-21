@@ -19,6 +19,7 @@ import { ADMIN_PAGE } from "./admin-page.js";
 // unlink: 연결을 끊어 다시 자기 점을 갖게 한다.
 // consent: 제보자 이름 공개 여부만 바꾼다(공개 철회 처리).
 // visibility: 승인 전 황색 마커 공개 여부를 켜고 끈다(민감지 보류·해제).
+// site: 탐조 지역(siteData.id)만 지정·해제한다. 승인 상태와 좌표는 건드리지 않는다.
 const ACTIONS = [
   "approve",
   "reject",
@@ -27,7 +28,11 @@ const ACTIONS = [
   "unlink",
   "consent",
   "visibility",
+  "site",
 ];
+
+// siteData 의 탐조지 id 형식.
+const SITE_ID = /^[0-9A-Za-z_-]{1,16}$/;
 
 // index.html 의 수동 붉은 점은 "fixed:<siteId>:<n>" 키로 가리킨다.
 const FIXED_SPOT_KEY = /^fixed:[0-9]{1,6}:[0-9]{1,3}$/;
@@ -208,6 +213,21 @@ async function applyAction(request, env, id, admin) {
       .bind(id, open, approx.lat, approx.lon, adminNote)
       .run();
     return jsonResponse(request, env, { ok: true, id, pendingPublic: open });
+  }
+
+  if (action === "site") {
+    // 탐조 지역만 저장한다. 개별 출현 지점(spot_key)·실제 좌표·승인 상태는 그대로 둔다.
+    // 좌표가 가깝다는 이유로 자동 배정하지 않는다. 관리자가 고른 값만 들어간다.
+    const raw =
+      body.siteId === undefined || body.siteId === null ? "" : String(body.siteId).trim();
+    if (raw && !SITE_ID.test(raw)) {
+      throw new WorkerError("SITE_ID_INVALID", "탐조지 ID 형식이 아닙니다.", 400);
+    }
+    await db
+      .prepare(`UPDATE reports SET site_id=?2, admin_note=?3 WHERE id=?1`)
+      .bind(id, raw || null, adminNote)
+      .run();
+    return jsonResponse(request, env, { ok: true, id, siteId: raw || null });
   }
 
   if (action === "unlink") {

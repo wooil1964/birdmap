@@ -399,3 +399,48 @@ test("관리자가 아니면 황색 공개도 바꿀 수 없다", async () => {
   assert.equal(response.status, 403);
   assert.equal(db.rows[0].pending_public, 0);
 });
+
+/* ── 탐조 지역 지정 ─────────────────────────────────────────────────── */
+
+test("관리자는 승인된 제보의 탐조 지역만 따로 지정·해제한다", async () => {
+  const db = fakeDb([pendingRow({ status: "approved", lat: 37.5, lon: 126.8 })]);
+  const id = db.rows[0].id;
+
+  const set = await actAsAdmin(db, id, { action: "site", siteId: "19" });
+  assert.equal(set.status, 200);
+  assert.equal(db.rows[0].site_id, "19");
+  // 승인 상태·좌표·종·spot_key 는 그대로다.
+  assert.equal(db.rows[0].status, "approved");
+  assert.equal(db.rows[0].lat, 37.5);
+  assert.equal(db.rows[0].lon, 126.8);
+  assert.equal(db.rows[0].species, "동박새");
+  assert.equal(db.rows[0].spot_key, null);
+
+  const clear = await actAsAdmin(db, id, { action: "site", siteId: "" });
+  assert.equal(clear.status, 200);
+  assert.equal(db.rows[0].site_id, null);
+  assert.equal(db.rows[0].status, "approved");
+});
+
+test("탐조 지역 ID 형식이 아니면 저장하지 않는다", async () => {
+  const db = fakeDb([pendingRow({ status: "approved" })]);
+  const response = await actAsAdmin(db, db.rows[0].id, {
+    action: "site",
+    siteId: "19; DROP TABLE reports",
+  });
+  assert.equal(response.status, 400);
+  assert.equal(db.rows[0].site_id, null);
+});
+
+test("관리자가 아니면 탐조 지역도 바꿀 수 없다", async () => {
+  const db = fakeDb([pendingRow({ status: "approved" })]);
+  const response = await handleRequest(
+    adminRequest(`/admin/api/reports/${db.rows[0].id}`, null, {
+      method: "POST",
+      body: JSON.stringify({ action: "site", siteId: "19" }),
+    }),
+    adminEnv(db),
+  );
+  assert.equal(response.status, 403);
+  assert.equal(db.rows[0].site_id, null);
+});
