@@ -58,6 +58,28 @@ function siteRegion(site){
   return site.region||[site.sido,site.sigungu].filter(Boolean).join(' ');
 }
 
+// 검색창과 따로 두는 '선택된 탐조지역' 표시용 이름. 목록의 option 과 같은 형식이다.
+function siteChoiceLabel(id){
+  var wanted=String(id||'');
+  if(!wanted)return '';
+  var found=siteList.find(function(site){return String(site.id)===wanted;});
+  if(!found)return '';
+  var region=siteRegion(found);
+  return found.name+(region?' — '+region:'');
+}
+
+// 고른 값과 서버에 저장된 값을 함께 보여 준다.
+// 검색어만 남고 무엇을 골랐는지 알 수 없던 문제를 여기서 드러낸다.
+function sitePickText(selectedId,savedId){
+  var selected=String(selectedId||''), saved=String(savedId||'');
+  var name=siteChoiceLabel(selected);
+  var body=selected?(name||selected):'지정하지 않음(독립 출현 지점)';
+  var mark=selected===saved
+    ? '<span class="pickSaved">저장됨</span>'
+    : '<span class="pickDirty">저장 전 · [탐조 지역 저장]을 누르세요</span>';
+  return '선택된 탐조지역: <b>'+esc(body)+'</b> '+mark;
+}
+
 // index.html 의 haversineKm 과 같은 식이다. 별도 문서라 함수를 그대로 가져다 쓸 수 없어 같은 계산을 둔다.
 function haversineKm(a,b){
   var rad=Math.PI/180, dLat=(b.lat-a.lat)*rad, dLon=(b.lon-a.lon)*rad;

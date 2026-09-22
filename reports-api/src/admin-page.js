@@ -56,6 +56,10 @@ label{display:block;font-size:12px;color:#5a666e;margin:8px 0 2px}
 input,textarea,select{width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #bcc6cc;border-radius:6px;font:inherit;font-size:13px}
 textarea{min-height:52px;resize:vertical}
 .f-siteq{margin-bottom:4px}
+.sitePick{margin-top:6px;padding:7px 9px;border-radius:6px;background:#f6f7f8;border:1px solid #e3e8eb;font-size:13px;line-height:1.5}
+.sitePick b{color:#1c2226}
+.pickSaved{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;border:1px solid #2f7d4f;background:#eefbf1;color:#1d5c37}
+.pickDirty{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;border:1px solid #d99b16;background:#fff7e6;color:#8a5f00}
 select.f-site option{padding:3px 2px}
 select.f-site optgroup{font-size:12px;color:#5a666e}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -136,11 +140,22 @@ function siteSelectHtml(r){
     return '<label>탐조 지역 ID (목록을 불러오지 못해 직접 입력)</label>'
       +'<input class="f-site" value="'+esc(r.site_id==null?'':r.site_id)+'" placeholder="예: 19">';
   }
+  var saved=r.site_id==null?'':String(r.site_id);
   return '<label>탐조 지역 (이 제보를 어느 탐조지의 출현 이력으로 볼지)</label>'
     +'<input class="f-siteq" placeholder="지역명·행정구역으로 검색 (예: 유부도, 서천)" autocomplete="off">'
     +'<select class="f-site" size="6">'
-    +siteOptionsHtml(r,'',r.site_id==null?'':r.site_id)
-    +'</select>';
+    +siteOptionsHtml(r,'',saved)
+    +'</select>'
+    // 검색어와 따로 지금 무엇을 골랐는지 보여 준다. data-saved 는 서버에 저장된 값이다.
+    +'<div class="sitePick" data-saved="'+esc(saved)+'">'+sitePickText(saved,saved)+'</div>';
+}
+
+// 고른 값이 바뀔 때마다 '선택된 탐조지역' 표시를 다시 쓴다.
+function refreshSitePick(card){
+  var select=card.querySelector('select.f-site');
+  var box=card.querySelector('.sitePick');
+  if(!select||!box)return;
+  box.innerHTML=sitePickText(select.value,box.getAttribute('data-saved'));
 }
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -266,6 +281,21 @@ async function load(){
 
 function numberOrNull(value){var text=String(value||'').trim();return text===''?null:Number(text);}
 
+// 무엇이 처리됐는지 이름으로 알린다. 탐조 지역 저장은 어느 탐조지인지까지 적는다.
+function doneMessage(act,payload){
+  if(act==='site'||act==='approve'){
+    var picked=String(payload.siteId||'');
+    var where=picked?(siteChoiceLabel(picked)||('ID '+picked)):'지정하지 않음(독립 출현 지점)';
+    return act==='site'
+      ? '탐조 지역을 저장했습니다 — '+where
+      : '승인했습니다 · 탐조 지역 '+where;
+  }
+  var labels={reject:'반려했습니다.',unpublish:'공개를 취소했습니다.',
+    link:'선택한 지점에 연결했습니다.',unlink:'연결을 해제했습니다.',
+    consent:'이름 공개 설정을 반영했습니다.',visibility:'황색 마커 공개 설정을 반영했습니다.'};
+  return labels[act]||('처리했습니다: '+act);
+}
+
 document.getElementById('list').addEventListener('click',async function(event){
   var button=event.target.closest('button[data-act]');
   var card=event.target.closest('.card');
@@ -303,7 +333,7 @@ document.getElementById('list').addEventListener('click',async function(event){
       method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     var body=await response.json();
     if(!body.ok)throw new Error(body.error&&body.error.message||'처리하지 못했습니다.');
-    toast('처리했습니다: '+act,true);
+    toast(doneMessage(act,payload),true);
     await load();
   }catch(error){
     toast(error.message,false);
@@ -322,6 +352,15 @@ document.getElementById('list').addEventListener('input',function(event){
   var report=reports.find(function(x){return x.id===card.dataset.id;});
   if(!report)return;
   select.innerHTML=siteOptionsHtml(report,field.value,select.value);
+  refreshSitePick(card);
+});
+
+// 목록에서 탐조지를 고르는 즉시 선택 표시를 갱신한다(마우스 클릭·키보드 모두).
+document.getElementById('list').addEventListener('change',function(event){
+  var select=event.target;
+  if(select.tagName!=='SELECT'||!select.classList||!select.classList.contains('f-site'))return;
+  var card=select.closest('.card');
+  if(card)refreshSitePick(card);
 });
 
 document.getElementById('speciesSearchBtn').addEventListener('click',async function(){

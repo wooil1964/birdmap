@@ -33,7 +33,8 @@ const SITES = [
 function picker(siteList = SITES) {
   const body =
     SITE_PICKER_JS +
-    "\nreturn {siteRegion,haversineKm,nearestSites,siteOptionsHtml,parseSiteData,siteDataArrays};";
+    "\nreturn {siteRegion,haversineKm,nearestSites,siteOptionsHtml,parseSiteData,siteDataArrays," +
+    "siteChoiceLabel,sitePickText};";
   return new Function("esc", "siteList", body)(esc, siteList);
 }
 
@@ -273,6 +274,73 @@ test("임곡항 근처에서 제보하면 임곡항이 가까운 탐조지로 �
   const near = nearestSites({ lat: imgok.lat + 0.002, lon: imgok.lon + 0.002 }, 5);
   assert.equal(near[0].site.id, "190");
   assert.ok(near[0].km < 1, `거리가 너무 멀다: ${near[0].km}`);
+});
+
+// --- 선택된 탐조지역 표시 ---
+
+test("고른 탐조지를 이름과 행정구역으로 보여 준다", () => {
+  const { siteChoiceLabel } = picker();
+  assert.equal(siteChoiceLabel("19"), "유부도 — 충남 서천");
+  assert.equal(siteChoiceLabel(19), "유부도 — 충남 서천");
+  assert.equal(siteChoiceLabel(""), "");
+  assert.equal(siteChoiceLabel("없는id"), "");
+});
+
+test("저장된 값과 같으면 저장됨, 다르면 저장 전으로 표시한다", () => {
+  const { sitePickText } = picker();
+  const saved = sitePickText("19", "19");
+  assert.match(saved, /선택된 탐조지역: <b>유부도 — 충남 서천<\/b>/);
+  assert.match(saved, /pickSaved/);
+  assert.ok(!/pickDirty/.test(saved));
+
+  const dirty = sitePickText("107", "19");
+  assert.match(dirty, /선택된 탐조지역: <b>매향리 — 경기 화성<\/b>/);
+  assert.match(dirty, /pickDirty/);
+  assert.ok(!/pickSaved/.test(dirty));
+});
+
+test("아무것도 고르지 않은 상태를 문구로 알린다", () => {
+  const { sitePickText } = picker();
+  assert.match(sitePickText("", ""), /지정하지 않음\(독립 출현 지점\)/);
+  assert.match(sitePickText("", ""), /pickSaved/);
+  // 연결을 풀었지만 아직 저장하지 않은 상태.
+  assert.match(sitePickText("", "19"), /pickDirty/);
+});
+
+test("목록에 없는 ID 는 번호라도 보여 준다", () => {
+  const { sitePickText } = picker();
+  assert.match(sitePickText("999", "999"), /<b>999<\/b>/);
+});
+
+test("선택 표시에 들어가는 이름도 이스케이프된다", () => {
+  const { sitePickText } = picker([
+    { id: "1", name: '<img src=x>', region: "전북 군산", sido: "전북", sigungu: "군산", lat: 36, lon: 126 },
+  ]);
+  const html = sitePickText("1", "1");
+  assert.ok(!html.includes("<img"));
+  assert.match(html, /&lt;img/);
+});
+
+test("실제 index.html 기준으로 임곡항 선택 표시가 만들어진다", () => {
+  const { parseSiteData } = picker();
+  const siteList = parseSiteData(fs.readFileSync(INDEX_HTML, "utf8")).map((s) => ({
+    id: String(s.id), name: s.name, region: s.region || "",
+    sido: s.sido || "", sigungu: s.sigungu || "", lat: s.lat, lon: s.lon,
+  }));
+  const { sitePickText, siteChoiceLabel } = picker(siteList);
+  assert.equal(siteChoiceLabel("190"), "임곡항 — 경북 포항");
+  assert.match(sitePickText("190", ""), /선택된 탐조지역: <b>임곡항 — 경북 포항<\/b>/);
+  assert.match(sitePickText("190", ""), /pickDirty/);
+  assert.match(sitePickText("190", "190"), /pickSaved/);
+});
+
+test("승인 화면에 선택 표시 영역과 갱신 코드가 들어 있다", () => {
+  assert.ok(ADMIN_PAGE.includes('class="sitePick"'));
+  assert.ok(ADMIN_PAGE.includes("function refreshSitePick("));
+  // 마우스 클릭·키보드 선택 모두 change 로 잡는다.
+  assert.ok(ADMIN_PAGE.includes("addEventListener('change'"));
+  // 저장 결과 문구.
+  assert.ok(ADMIN_PAGE.includes("탐조 지역을 저장했습니다"));
 });
 
 test("승인 화면에 탐조 지역 검색창과 목록 코드가 들어 있다", () => {
