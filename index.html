@@ -188,7 +188,11 @@ a.ebird,.btn.ebird{display:none !important}
 .smallText{font-size:11px;color:#555;margin-top:4px}#resultCount{margin-top:7px;font-weight:bold;color:#7a0000}
 #searchResults{margin-top:6px;max-height:190px;overflow-y:auto;font-size:12px}
 .resultItem{display:block;width:100%;text-align:left;margin:3px 0;padding:6px 7px;border:1px solid #ddd;border-radius:5px;background:#fafafa;cursor:pointer;line-height:1.3}
-.resultItem:hover{background:#eef7ff;border-color:#7fb2d9}.resultName{font-weight:bold;color:#222}.resultMeta{font-size:11px;color:#666}.routeSummary{font-size:12px;color:#333;margin:6px 0;line-height:1.45;white-space:pre-line}.routeBtn{display:inline-block;margin:3px 4px 3px 0;padding:6px 8px;border-radius:5px;text-decoration:none;font-weight:bold;border:1px solid #777;background:#f7f7f7;color:#222}.routeKakao{background:#fff8cc;color:#6b5600;border-color:#c8a800}.routeNaver{background:#e8f5e9;color:#087f23;border-color:#5a9b63}
+.resultItem:hover{background:#eef7ff;border-color:#7fb2d9}.resultName{font-weight:bold;color:#222}.resultMeta{font-size:11px;color:#666}
+.resultSection{margin:7px 0 3px;font-size:11px;font-weight:bold;color:#7a0000;border-bottom:1px solid #e3e8eb;padding-bottom:2px}
+.resultItem.reportResult{background:#fff8ec;border-color:#e3c898}
+.resultItem.reportResult:hover{background:#fdeecf;border-color:#c8a35a}
+.resultItem.reportResult .resultName{color:#7a3b00}.routeSummary{font-size:12px;color:#333;margin:6px 0;line-height:1.45;white-space:pre-line}.routeBtn{display:inline-block;margin:3px 4px 3px 0;padding:6px 8px;border-radius:5px;text-decoration:none;font-weight:bold;border:1px solid #777;background:#f7f7f7;color:#222}.routeKakao{background:#fff8cc;color:#6b5600;border-color:#c8a800}.routeNaver{background:#e8f5e9;color:#087f23;border-color:#5a9b63}
 #noticeToggleBtn{position:fixed;top:86px;right:52px;z-index:10001;padding:8px 11px;background:#fff7db;border:2px solid #a67800;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #noticeBadge{display:inline-block;min-width:17px;height:17px;line-height:17px;margin-left:4px;padding:0 3px;border-radius:10px;background:#a30000;color:white;font-size:10px;text-align:center}
 #noticePanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
@@ -607,6 +611,100 @@ function siteText(site){
 
 function siteMatchesTerm(site,term){
   return siteText(site).indexOf(term)>=0;
+}
+
+/* ── 승인 제보 검색 ────────────────────────────────────────────────────
+   /reports/approved 로 이미 받아 둔 공개 자료만 쓴다. 검색할 때 따로 받아 오지 않고,
+   승인 제보가 갱신되면 loadApprovedReports 가 이 목록을 다시 만든다.
+   좌표는 서버가 public_lat/public_lon 으로 바꿔 내려보낸 공개 좌표뿐이라
+   민감 관찰지의 실제 좌표는 이 목록에도, 화면에도 들어오지 않는다.
+   승인 대기·반려 제보는 이 API 에 아예 나오지 않으므로 검색에도 잡히지 않는다. */
+var reportSearchIndex=[];
+
+function buildReportSearchIndex(spots){
+  var out=[];
+  // 독립 붉은 점: 지점마다 자기 이력을 갖는다.
+  (spots||[]).forEach(function(spot){
+    // isFinite(null) 은 true 라 숫자인지 먼저 본다. 그러지 않으면 좌표 없는 제보가
+    // (0, 0) 으로 들어가 클릭했을 때 엉뚱한 바다로 이동한다.
+    if(!spot||typeof spot.lat!=='number'||!isFinite(spot.lat))return;
+    if(typeof spot.lon!=='number'||!isFinite(spot.lon))return;
+    var id=String(spot.id||'');
+    if(!id)return;
+    (spot.history||[]).forEach(function(entry){
+      out.push({kind:'spot',spotId:id,date:String(entry.date||''),
+        species:entry.species||[],reporter:entry.reporter||'',lat:spot.lat,lon:spot.lon});
+    });
+  });
+  // 지도에 고정된 붉은 점에 연결된 제보. 좌표·출현종은 siteSpotData 가 정본이라 그대로 쓴다.
+  Object.keys(reportFixedHistory).forEach(function(key){
+    var fixed=null;
+    siteSpotData.forEach(function(spot){if(spot.id===key)fixed=spot;});
+    if(!fixed)return;
+    (reportFixedHistory[key]||[]).forEach(function(entry){
+      out.push({kind:'fixed',spotId:key,date:String(entry.date||''),
+        species:entry.species||[],reporter:entry.reporter||'',lat:fixed.lat,lon:fixed.lon});
+    });
+  });
+  // 실제 관찰일 최신순. 같은 날짜면 종 이름으로 순서를 고정한다.
+  out.sort(function(a,b){
+    var byDate=String(b.date).localeCompare(String(a.date));
+    return byDate!==0?byDate:String(a.species.join()).localeCompare(String(b.species.join()));
+  });
+  reportSearchIndex=out;
+}
+
+function reportEntryMatches(entry,term){
+  return normalizeQuery((entry.species||[]).join(' ')).indexOf(term)>=0;
+}
+
+function searchReportEntries(terms){
+  if(!terms.length||!reportSearchIndex.length)return [];
+  return reportSearchIndex.filter(function(entry){
+    return terms.some(function(term){return reportEntryMatches(entry,term);});
+  });
+}
+
+/* 결과에 적을 위치 이름. 고정 점은 탐조지명을 쓰고,
+   독립 점은 공개 좌표만 적는다(실제 좌표가 아니다). */
+function reportEntryPlace(entry){
+  if(entry.kind==='fixed'){
+    var fixed=null;
+    siteSpotData.forEach(function(spot){if(spot.id===entry.spotId)fixed=spot;});
+    var site=fixed&&siteData.find(function(s){return String(s.id)===String(fixed.siteId);});
+    return (site?site.name+' ':'')+'출현 지점';
+  }
+  return '공개 관찰 위치 '+Number(entry.lat).toFixed(3)+', '+Number(entry.lon).toFixed(3);
+}
+
+/* 새 마커를 만들지 않고 이미 지도에 있는 점을 그대로 연다. */
+function openReportEntry(entry){
+  var map=map_7010a44f6ac2025090f0fe07508ed485,layer=null;
+  if(entry.kind==='spot'){
+    layer=reportSpotLayers[entry.spotId];
+  }else{
+    var index=-1;
+    siteSpotData.forEach(function(spot,i){if(spot.id===entry.spotId)index=i;});
+    if(index>=0){
+      var fixed=siteSpotData[index];
+      if(!siteSpotLayers[index]){
+        var site=siteData.find(function(s){return String(s.id)===String(fixed.siteId);});
+        siteSpotLayers[index]=birdmapSpotMarker(fixed.lat,fixed.lon,
+          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true);
+      }
+      layer=siteSpotLayers[index];
+      // 부모 탐조지가 필터에서 빠져 있어도 클릭한 점은 보여 준다.
+      if(!map.hasLayer(layer))layer.addTo(map);
+    }
+  }
+  // 검색 직후의 fitBounds 애니메이션이 아직 돌고 있으면 그것이 이 이동을 덮어쓴다.
+  if(map.stop)map.stop();
+  map.setView([entry.lat,entry.lon],13);
+  if(layer&&layer.openPopup){
+    layer.openPopup();
+    /* setView 애니메이션이 popup autoPan 결과를 되돌리므로 이동 완료 후 보정한다. */
+    map.once('moveend',function(){var p=map._popup;if(p&&map.hasLayer(p))p.update();});
+  }
 }
 
 function orderSitesByTerms(sites){
@@ -2237,11 +2335,55 @@ function renderRouteTools(sites){
   buttons.appendChild(nb);
 }
 
+function resultSectionTitle(text){
+  var head=document.createElement('div');
+  head.className='resultSection';
+  head.textContent=text;
+  return head;
+}
+
+/* 승인된 제보를 탐조지 결과 아래에 따로 묶어 보여 준다.
+   한 지점에서 여러 번 관찰했으면 관찰일마다 한 줄씩, 최신순으로 나온다. */
+function renderReportResults(box,entries){
+  if(!entries.length)return;
+  box.appendChild(resultSectionTitle('출현종 제보 '+entries.length+'건'));
+  entries.slice(0,80).forEach(function(entry){
+    var button=document.createElement('button');
+    button.className='resultItem reportResult';
+    button.onclick=function(){openReportEntry(entry);};
+    var name=document.createElement('div');
+    name.className='resultName';
+    name.textContent=(entry.species||[]).join(' · ');
+    var meta=document.createElement('div');
+    meta.className='resultMeta';
+    meta.textContent=(entry.date?String(entry.date).replace(/-/g,'.'):'관찰일 미확인')
+      +' · '+reportEntryPlace(entry)
+      +' · 제보자: '+(entry.reporter||'익명 제보');
+    button.appendChild(name);
+    button.appendChild(meta);
+    box.appendChild(button);
+  });
+  if(entries.length>80){
+    var more=document.createElement('div');
+    more.className='resultMeta';
+    more.textContent='제보는 상위 80건만 표시합니다.';
+    box.appendChild(more);
+  }
+}
+
 function renderResults(sites){
   var box=document.getElementById('searchResults');
   if(!box)return;
   box.innerHTML='';
-  if(!sites.length){box.textContent='표시할 결과가 없습니다.';renderRouteTools([]);return;}
+  var reports=searchReportEntries(activeTerms);
+  if(!sites.length){
+    if(!reports.length){box.textContent='표시할 결과가 없습니다.';renderRouteTools([]);return;}
+    // 탐조지는 걸리지 않고 제보만 걸린 경우에도 제보 결과는 보여 준다.
+    renderReportResults(box,reports);
+    renderRouteTools([]);
+    return;
+  }
+  if(reports.length)box.appendChild(resultSectionTitle('탐조지 '+sites.length+'곳'));
   var list=sites.slice(0,80);
   list.forEach(function(s,i){
     var b=document.createElement('button');
@@ -2276,6 +2418,7 @@ function renderResults(sites){
     more.textContent='상위 80개만 표시합니다.';
     box.appendChild(more);
   }
+  renderReportResults(box,reports);
   renderRouteTools(sites);
 }
 
@@ -2302,7 +2445,9 @@ function applyFilters(fitAfter){
     }
   });
   var ordered=orderSitesByTerms(v);
-  document.getElementById('resultCount').innerText=(activeSearch?'검색 결과: '+activeSearch+' · ':'표시 중: ')+c+' / '+siteData.length+'개 권역';
+  var reportHits=searchReportEntries(activeTerms).length;
+  document.getElementById('resultCount').innerText=(activeSearch?'검색 결과: '+activeSearch+' · ':'표시 중: ')+c+' / '+siteData.length+'개 권역'
+    +(reportHits?' · 출현종 제보 '+reportHits+'건':'');
   renderResults(ordered);
   if(fitAfter)fitToSites(ordered);
 }
@@ -2314,7 +2459,8 @@ function searchSite(){
   activeSearch=activeTerms.join(' + ');
   if(!activeTerms.length)return;
   applyFilters(true);
-  if(!siteData.filter(sitePasses).length)alert('검색 결과가 없습니다.');
+  // 탐조지가 없어도 제보가 걸렸으면 결과가 있는 것이다.
+  if(!siteData.filter(sitePasses).length&&!searchReportEntries(activeTerms).length)alert('검색 결과가 없습니다.');
 }
 
 /* 첫 화면과 필터 초기화 화면. 백령도·제주·울릉도·독도까지 담는 최소 범위로 맞춘다.
@@ -3537,6 +3683,8 @@ function loadApprovedReports(){
     Object.keys(reportFixedHistory).forEach(function(key){
       reportFixedHistory[key]=(reportFixedHistory[key]&&reportFixedHistory[key].history)||[];
     });
+    // 검색 대상도 같은 자료로 다시 만든다. 따로 받아 오지 않는다.
+    buildReportSearchIndex(data.spots);
     renderApprovedReports(data.spots);
     refreshFixedSpotPopups();
     return true;
