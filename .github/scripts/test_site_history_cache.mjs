@@ -183,6 +183,32 @@ test('응답이 오지 않으면 시간을 끊는다', async () => {
 /* 팝업 본문을 문자열로 돌려주면 Leaflet 의 popup.update() 가 본문을 다시 만들어 붙이고,
    이력을 그리려고 잡아 둔 칸이 DOM 에서 떨어져 나가 '불러오는 중입니다.'가 남는다.
    임곡항·도구해수욕장이 쓰는 경로가 그랬다. 두 경로 모두 요소를 돌려줘야 한다. */
+/* 이력은 접이식 한 칸이고, 팝업을 열 때마다 본문을 새로 만들므로 늘 접힌 상태로 시작한다.
+   details 에 open 을 붙이면 처음부터 펼쳐져 이 조건이 깨진다. */
+test('이력 칸은 접이식이고 기본은 접힌 상태다', () => {
+  const source = functionSource('siteHistoryContainerHtml');
+  assert.match(source, /<details class="siteHistoryBox"/, '접이식(details)이어야 한다');
+  assert.match(source, /<summary class="siteHistoryTitle"/, '제목이 summary 여야 클릭으로 펼친다');
+  assert.equal(/<details[^>]*\sopen/.test(source), false, '처음부터 펼쳐지면 안 된다');
+  // 항목마다 따로 상자를 만들지 않고 한 칸 안에 담는다.
+  assert.match(source, /siteHistoryList/);
+});
+
+test('제목 옆에 승인된 이력 건수를 적는다', () => {
+  assert.match(functionSource('siteHistoryContainerHtml'), /siteHistoryCount/);
+  const setter = functionSource('setSiteHistoryCount');
+  assert.match(setter, /\.siteHistoryCount/);
+  // 서버가 준 total 을 쓴다('더 보기'로 아직 받지 않은 몫까지 센다).
+  assert.match(functionSource('renderSiteHistory'), /setSiteHistoryCount\(box,data\.total\)/);
+});
+
+test("'더 보기'와 이력 조회 방식은 그대로 둔다", () => {
+  const render = functionSource('renderSiteHistory');
+  assert.match(render, /siteHistoryMoreBtn/, '더 보기 버튼이 남아 있어야 한다');
+  assert.match(render, /fetchSiteHistory\(site,loaded\.length\)/, '페이지별 추가 불러오기 유지');
+  assert.match(render, /stopPropagation/, '팝업이 닫히지 않게 전파를 막는 처리 유지');
+});
+
 test('팝업 본문 함수는 문자열이 아니라 요소를 돌려준다', () => {
   for (const name of ['directCoastalPopupContent', 'v23PopupContent']) {
     const source = functionSource(name);

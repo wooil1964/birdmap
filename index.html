@@ -245,9 +245,18 @@ a.ebird,.btn.ebird{display:none !important}
 .v27Species{margin:1px 0 2px;font-size:12px;color:#33424a;line-height:1.55}
 .v27Caution{margin-top:6px;padding:5px 7px;border-radius:5px;background:#fff6f6;border:1px solid #f0d2d2}
 /* 탐조지별 출현 이력(승인된 제보만) */
-.siteHistoryBox{margin-top:9px;padding-top:7px;border-top:1px solid #dde2e6}
-.siteHistoryTitle{font-size:12px;font-weight:bold;color:#5a666e;margin-bottom:5px}
-.siteHistoryEntry{margin-bottom:5px;padding:5px 7px;border-radius:5px;background:#f6f8f9;border:1px solid #e3e8eb}
+/* 이력은 접이식 한 칸이다. 안쪽 항목은 따로 상자를 두지 않고 줄로만 구분한다. */
+.siteHistoryBox{margin-top:9px;border:1px solid #dde2e6;border-radius:8px;padding:7px 10px;background:#f8fafb}
+/* summary 가 display:block 이면 브라우저 기본 삼각형이 그려지지 않아 직접 붙인다. */
+.siteHistoryTitle{font-size:12px;font-weight:bold;color:#5a666e;cursor:pointer;list-style:none}
+.siteHistoryTitle::-webkit-details-marker{display:none}
+.siteHistoryTitle::after{content:'▼';margin-left:5px;font-size:10px;color:#8a97a0}
+.siteHistoryBox[open] .siteHistoryTitle::after{content:'▲'}
+.siteHistoryBox[open] .siteHistoryTitle{margin-bottom:6px}
+.siteHistoryCount{font-weight:normal;color:#2f7d4f}
+.siteHistoryList{max-height:190px;overflow-y:auto;overscroll-behavior:contain}
+.siteHistoryEntry{padding:5px 0;border-bottom:1px dotted #dde2e6}
+.siteHistoryEntry:last-of-type{border-bottom:0}
 .siteHistoryDate{font-size:12px;font-weight:bold;color:#2f4f62}
 .siteHistoryName{font-size:12px;color:#22333c}
 .siteHistoryBy{font-size:11px;color:#6b7a83}
@@ -2114,11 +2123,13 @@ function siteProfileHtml(site,source,cautionFallback){
    API 가 응답하지 않으면 이 블록만 조용히 사라지고 나머지 프로필은 그대로 보인다. */
 var SITE_HISTORY_PAGE=5;
 
+/* 이력은 접이식 한 칸으로 보여 준다. details 를 쓰므로 PC·모바일 모두 따로 손댈 것이 없고,
+   팝업은 열 때마다 본문을 새로 만들기 때문에 다시 열면 언제나 접힌 상태로 시작한다. */
 function siteHistoryContainerHtml(site){
   if(!reportsConfigured())return '';
-  return '<div class="siteHistoryBox" data-site="'+escapeHtml(String(site.id))+'">'
-    +'<div class="siteHistoryTitle">최근 출현 이력</div>'
-    +'<div class="siteHistoryList siteHistoryEmpty">불러오는 중입니다.</div></div>';
+  return '<details class="siteHistoryBox" data-site="'+escapeHtml(String(site.id))+'">'
+    +'<summary class="siteHistoryTitle">최근 출현 이력<span class="siteHistoryCount"></span></summary>'
+    +'<div class="siteHistoryList siteHistoryEmpty">불러오는 중입니다.</div></details>';
 }
 
 function siteHistoryEntryHtml(entry){
@@ -2171,10 +2182,18 @@ function fetchSiteHistory(site,offset){
     .then(function(result){if(timer)clearTimeout(timer);return result;});
 }
 
+/* 제목 옆에 승인된 이력 건수를 적는다. 서버가 준 total 이라 '더 보기'로 아직
+   받지 않은 몫까지 포함한다. */
+function setSiteHistoryCount(box,total){
+  var badge=box.querySelector('.siteHistoryCount');
+  if(badge)badge.textContent=' '+Number(total||0)+'건';
+}
+
 function renderSiteHistory(box,site,data,popup){
   var list=box.querySelector('.siteHistoryList');
   box._birdmapLoaded=(box._birdmapLoaded||[]).concat(data.history);
   var loaded=box._birdmapLoaded;
+  setSiteHistoryCount(box,data.total);
   if(!loaded.length){
     list.className='siteHistoryList siteHistoryEmpty';
     list.textContent='등록된 출현 이력이 없습니다.';
