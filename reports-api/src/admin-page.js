@@ -109,9 +109,9 @@ async function loadSiteList(){
   try{
     var response=await fetch(SITE_LIST_URL,{cache:'no-cache'});
     var text=await response.text();
-    var line=text.split('\\n').find(function(row){return row.indexOf('var siteData=')===0;});
-    if(!line)throw new Error('siteData 를 찾지 못했습니다.');
-    var parsed=JSON.parse(line.replace(/^var siteData=/,'').replace(/;\\s*$/,''));
+    // 최초 선언과 뒤에 이어 붙는 concat 블록을 모두 읽는다(임곡항 같은 추가 탐조지 누락 방지).
+    var parsed=parseSiteData(text);
+    if(!parsed.length)throw new Error('siteData 를 찾지 못했습니다.');
     // 좌표는 가까운 탐조지 계산에만 쓰고, 행정구역은 검색과 표시에 쓴다. 정본은 siteData 그대로다.
     siteList=parsed.map(function(site){return {
       id:String(site.id),name:site.name,region:site.region||'',

@@ -5,6 +5,55 @@
 //
 // 탐조지 정본은 index.html 의 siteData 다. 여기서는 읽어 오기만 하고 이름·좌표를 만들지 않는다.
 export const SITE_PICKER_JS = `
+// index.html 은 탐조지를 한 번에 선언하지 않는다. 최초 배열 뒤에
+// siteData=siteData.concat([...]) 블록이 이어 붙고, 그 블록은 여러 줄에 걸쳐 있다.
+// 선언과 concat 을 모두 찾아 합치므로 앞으로 블록이 늘어도 그대로 따라온다.
+// 대괄호 짝을 직접 세는 이유는 블록이 한 줄이 아니라 줄 단위로는 자를 수 없기 때문이다.
+function matchingBracket(text,open){
+  var depth=0, inString=false;
+  for(var i=open;i<text.length;i++){
+    var c=text.charAt(i);
+    if(inString){
+      // 역슬래시(92)는 다음 글자를 묶어 읽는다. 문자열 안의 따옴표를 끝으로 착각하지 않게 한다.
+      if(c.charCodeAt(0)===92){i++;continue;}
+      if(c==='"')inString=false;
+      continue;
+    }
+    if(c==='"'){inString=true;continue;}
+    if(c==='[')depth++;
+    else if(c===']'){depth--;if(depth===0)return i;}
+  }
+  return -1;
+}
+
+function siteDataArrays(text){
+  var found=[];
+  var re=/(?:var\\s+siteData\\s*=\\s*|siteData\\s*=\\s*siteData[.]concat[(]\\s*)[[]/g;
+  var match;
+  while((match=re.exec(text))!==null){
+    var open=re.lastIndex-1;
+    var close=matchingBracket(text,open);
+    if(close<0)continue;
+    found.push(text.slice(open,close+1));
+    re.lastIndex=close+1;
+  }
+  return found;
+}
+
+// 같은 id 가 두 번 나오면 뒤에 온 것을 버린다(지도의 siteData 순서를 그대로 따른다).
+function parseSiteData(text){
+  var sites=[], seen={};
+  siteDataArrays(text).forEach(function(source){
+    JSON.parse(source).forEach(function(site){
+      var id=String(site.id);
+      if(seen[id])return;
+      seen[id]=1;
+      sites.push(site);
+    });
+  });
+  return sites;
+}
+
 function siteRegion(site){
   return site.region||[site.sido,site.sigungu].filter(Boolean).join(' ');
 }

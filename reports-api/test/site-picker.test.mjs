@@ -2,9 +2,14 @@
 // 화면에 들어가는 원본(SITE_PICKER_JS)을 그대로 평가해서 확인한다.
 import assert from "node:assert/strict";
 import test from "node:test";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 
 import { SITE_PICKER_JS } from "../src/site-picker.js";
 import { ADMIN_PAGE } from "../src/admin-page.js";
+
+// 실제 서비스 파일. 탐조지 정본이라 여기서 읽어 검증한다.
+const INDEX_HTML = fileURLToPath(new URL("../../index.html", import.meta.url));
 
 // 화면과 같은 이스케이프 함수. 목록 문자열이 그대로 HTML 로 들어가므로 같이 검증한다.
 const esc = (v) =>
@@ -28,7 +33,7 @@ const SITES = [
 function picker(siteList = SITES) {
   const body =
     SITE_PICKER_JS +
-    "\nreturn {siteRegion,haversineKm,nearestSites,siteOptionsHtml};";
+    "\nreturn {siteRegion,haversineKm,nearestSites,siteOptionsHtml,parseSiteData,siteDataArrays};";
   return new Function("esc", "siteList", body)(esc, siteList);
 }
 
@@ -145,6 +150,129 @@ test("거리 계산이 index.html 의 haversineKm 과 같은 값을 낸다", () 
   const km = haversineKm({ lat: 36.0, lon: 126.68 }, { lat: 37.06, lon: 126.72 });
   assert.ok(Math.abs(km - 118) < 2, "got " + km);
   assert.equal(haversineKm({ lat: 36, lon: 126 }, { lat: 36, lon: 126 }), 0);
+});
+
+// --- siteData 파싱: 뒤에 이어 붙는 concat 블록 누락 방지 ---
+
+test("최초 선언과 concat 블록의 탐조지를 모두 읽는다", () => {
+  const { parseSiteData } = picker();
+  const text = [
+    "var junk=1;",
+    'var siteData=[{"id":"1","name":"어청도"},{"id":"2","name":"외연도"}];',
+    "var between=2;",
+    "siteData=siteData.concat([",
+    '  {"id":"189","name":"도구해수욕장"},',
+    '  {"id":"190","name":"임곡항"}',
+    "]);",
+    // 앞으로 블록이 더 늘어도 자동으로 따라와야 한다.
+    "siteData = siteData.concat([",
+    '  {"id":"196","name":"새로 추가된 곳"}',
+    "]);",
+  ].join("\n");
+  const sites = parseSiteData(text);
+  assert.deepEqual(sites.map((s) => s.id), ["1", "2", "189", "190", "196"]);
+});
+
+test("문자열 안의 대괄호를 배열 끝으로 착각하지 않는다", () => {
+  const { parseSiteData } = picker();
+  const text =
+    'var siteData=[{"id":"1","name":"어청도","note":"괄호 ] 와 [ 가 든 설명"}];\n' +
+    "siteData=siteData.concat([\n" +
+    '  {"id":"190","name":"임곡항","note":"따옴표 \\" 와 대괄호 ] 포함"}\n' +
+    "]);";
+  const sites = parseSiteData(text);
+  assert.deepEqual(sites.map((s) => s.id), ["1", "190"]);
+  assert.equal(sites[1].name, "임곡항");
+});
+
+test("concat 블록이 없어도 최초 배열만으로 동작한다", () => {
+  const { parseSiteData } = picker();
+  const sites = parseSiteData('var siteData=[{"id":"1","name":"어청도"}];');
+  assert.deepEqual(sites.map((s) => s.id), ["1"]);
+});
+
+test("siteData 가 없는 문서에서는 빈 배열을 돌려준다", () => {
+  const { parseSiteData } = picker();
+  assert.deepEqual(parseSiteData("<html>탐조지 목록이 없는 문서</html>"), []);
+});
+
+test("같은 id 가 다시 나와도 한 번만 넣는다", () => {
+  const { parseSiteData } = picker();
+  const text =
+    'var siteData=[{"id":"1","name":"어청도"}];\n' +
+    'siteData=siteData.concat([{"id":"1","name":"어청도 중복"}]);';
+  const sites = parseSiteData(text);
+  assert.deepEqual(sites.map((s) => s.id), ["1"]);
+  assert.equal(sites[0].name, "어청도");
+});
+
+// --- 실제 index.html 대조: 이 검증이 이번 결함의 재발을 막는다 ---
+
+test("실제 index.html 의 탐조지를 빠짐없이 읽는다 (임곡항 190 포함)", () => {
+  const { parseSiteData } = picker();
+  const text = fs.readFileSync(INDEX_HTML, "utf8");
+  const sites = parseSiteData(text);
+
+  // 최초 배열만 읽던 예전 방식과 비교해 실제로 더 읽는지 확인한다.
+  const firstLine = text.split("\n").find((r) => r.indexOf("var siteData=") === 0);
+  const firstOnly = JSON.parse(firstLine.replace(/^var siteData=/, "").replace(/;\s*$/, ""));
+  assert.ok(
+    sites.length > firstOnly.length,
+    `concat 으로 더해진 탐조지를 읽지 못했다 (${sites.length} vs ${firstOnly.length})`,
+  );
+
+  const ids = sites.map((s) => String(s.id));
+  assert.equal(new Set(ids).size, ids.length, "탐조지 id 가 중복됐다");
+
+  const imgok = sites.find((s) => String(s.id) === "190");
+  assert.ok(imgok, "임곡항(190)을 찾지 못했다");
+  assert.equal(imgok.name, "임곡항");
+  assert.equal(imgok.region, "경북 포항");
+  assert.equal(typeof imgok.lat, "number");
+  assert.equal(typeof imgok.lon, "number");
+
+  // concat 블록에 든 나머지 탐조지도 모두 들어와야 한다.
+  for (const id of ["189", "190", "191", "192", "193", "194", "195"]) {
+    assert.ok(ids.includes(id), `concat 블록의 탐조지 ${id} 가 빠졌다`);
+  }
+});
+
+test("실제 index.html 로 만든 목록에서 임곡항이 검색된다", () => {
+  const { parseSiteData } = picker();
+  const text = fs.readFileSync(INDEX_HTML, "utf8");
+  const siteList = parseSiteData(text).map((site) => ({
+    id: String(site.id), name: site.name, region: site.region || "",
+    sido: site.sido || "", sigungu: site.sigungu || "", lat: site.lat, lon: site.lon,
+  }));
+  const { siteOptionsHtml } = picker(siteList);
+
+  const byName = options(siteOptionsHtml({ lat: 36, lon: 126.7 }, "임곡", ""))
+    .filter((o) => o.value);
+  assert.deepEqual(byName.map((o) => o.value), ["190"]);
+  assert.equal(byName[0].label, "임곡항 — 경북 포항");
+
+  // 행정구역으로도 걸려야 한다.
+  const byRegion = options(siteOptionsHtml({ lat: 36, lon: 126.7 }, "포항", ""))
+    .filter((o) => o.value);
+  assert.ok(byRegion.some((o) => o.value === "190"));
+
+  // 검색어가 없을 때 전체 목록에도 들어 있어야 한다.
+  const all = options(siteOptionsHtml({ lat: 36, lon: 126.7 }, "", "")).filter((o) => o.value);
+  assert.ok(all.some((o) => o.value === "190"));
+});
+
+test("임곡항 근처에서 제보하면 임곡항이 가까운 탐조지로 뜬다", () => {
+  const { parseSiteData } = picker();
+  const text = fs.readFileSync(INDEX_HTML, "utf8");
+  const siteList = parseSiteData(text).map((site) => ({
+    id: String(site.id), name: site.name, region: site.region || "",
+    sido: site.sido || "", sigungu: site.sigungu || "", lat: site.lat, lon: site.lon,
+  }));
+  const imgok = siteList.find((s) => s.id === "190");
+  const { nearestSites } = picker(siteList);
+  const near = nearestSites({ lat: imgok.lat + 0.002, lon: imgok.lon + 0.002 }, 5);
+  assert.equal(near[0].site.id, "190");
+  assert.ok(near[0].km < 1, `거리가 너무 멀다: ${near[0].km}`);
 });
 
 test("승인 화면에 탐조 지역 검색창과 목록 코드가 들어 있다", () => {
