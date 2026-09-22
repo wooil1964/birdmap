@@ -55,7 +55,7 @@ test("국내 범위를 벗어난 좌표를 거부한다", () => {
   });
 });
 
-test("관찰 날짜는 형식·미래·오래된 값을 검사한다", () => {
+test("관찰 날짜는 형식과 미래·없는 날짜를 검사한다", () => {
   assert.equal(normalizeObservedOn("2026-09-19", NOW), "2026-09-19");
   assert.throws(() => normalizeObservedOn("2026-9-19", NOW), {
     code: "OBSERVED_ON_REQUIRED",
@@ -66,9 +66,38 @@ test("관찰 날짜는 형식·미래·오래된 값을 검사한다", () => {
   assert.throws(() => normalizeObservedOn("2026-09-21", NOW), {
     code: "OBSERVED_ON_FUTURE",
   });
-  assert.throws(() => normalizeObservedOn("2020-01-01", NOW), {
-    code: "OBSERVED_ON_TOO_OLD",
+});
+
+// 지난 탐조 자료를 쌓는 것이 목적이라 과거 방향 제한은 두지 않는다.
+test("오래된 관찰 날짜도 실제 날짜 그대로 받는다", () => {
+  assert.equal(normalizeObservedOn("2017-05-03", NOW), "2017-05-03");
+  assert.equal(normalizeObservedOn("2020-01-01", NOW), "2020-01-01");
+  assert.equal(normalizeObservedOn("1998-11-30", NOW), "1998-11-30");
+  // 오늘(KST)도 그대로 통과한다.
+  assert.equal(normalizeObservedOn("2026-09-20", NOW), "2026-09-20");
+});
+
+test("오래된 날짜여도 미래·없는 날짜 검사는 그대로다", () => {
+  assert.throws(() => normalizeObservedOn("2017-02-29", NOW), {
+    code: "OBSERVED_ON_INVALID",
   });
+  assert.throws(() => normalizeObservedOn("2017-13-01", NOW), {
+    code: "OBSERVED_ON_INVALID",
+  });
+  assert.throws(() => normalizeObservedOn("2030-01-01", NOW), {
+    code: "OBSERVED_ON_FUTURE",
+  });
+  // 윤년의 실제 날짜는 받는다.
+  assert.equal(normalizeObservedOn("2020-02-29", NOW), "2020-02-29");
+});
+
+test("과거 관찰 자료의 관찰일을 오늘로 바꾸지 않는다", () => {
+  const report = validateReport(
+    { species: "재두루미", lat: 37.5, lon: 126.9, observedOn: "2017-05-03" },
+    NOW,
+  );
+  assert.equal(report.observedOn, "2017-05-03", "관찰일은 입력한 날짜 그대로여야 한다");
+  assert.notEqual(report.observedOn, "2026-09-20", "오늘 날짜로 덮으면 안 된다");
 });
 
 test("선택 항목의 길이와 태그 문자를 검사한다", () => {

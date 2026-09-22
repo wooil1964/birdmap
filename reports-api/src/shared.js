@@ -14,7 +14,9 @@ export const MAX_SPECIES_LENGTH = 30;
 export const MAX_REPORTER_LENGTH = 40;
 export const MAX_NOTE_LENGTH = 500;
 export const MAX_BIRD_COUNT = 100000;
-export const MAX_OBSERVED_AGE_DAYS = 730;
+// 관찰 날짜에 과거 방향 상한은 두지 않는다. 지도가 최근 출현만이 아니라
+// 지난 탐조 자료도 쌓는 곳이라 2017년·2020년 관찰도 실제 날짜 그대로 등록한다.
+// 미래 날짜와 없는 날짜는 계속 막는다(normalizeObservedOn 참조).
 
 // 서버 측 제출 횟수 제한. 완전한 차단이 아니라 관리자가 검토할 양을 줄이는 장치다.
 export const RATE_WINDOW_MINUTES = 10;
@@ -211,15 +213,8 @@ export function normalizeObservedOn(raw, now = new Date()) {
       400,
     );
   }
-  const oldest = new Date(parsed.getTime());
-  oldest.setUTCDate(oldest.getUTCDate() + MAX_OBSERVED_AGE_DAYS);
-  if (kstDateString(oldest) < today) {
-    throw new WorkerError(
-      "OBSERVED_ON_TOO_OLD",
-      `관찰 날짜는 최근 ${MAX_OBSERVED_AGE_DAYS}일 이내여야 합니다.`,
-      400,
-    );
-  }
+  // 과거 방향 제한은 없다. 지난 탐조 자료를 실제 관찰 날짜 그대로 남기기 위해서다.
+  // 접수 시각(received_at)은 따로 저장되므로 관찰일과 섞이지 않는다.
   return text;
 }
 

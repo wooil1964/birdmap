@@ -426,6 +426,114 @@ test("탐조지별 이력은 그 지역에 연결된 승인 제보만 최신순�
   }
 });
 
+/* ── 과거 관찰 자료 접수 ──────────────────────────────────────────────
+   지도가 지난 탐조 자료도 쌓는 곳이라 관찰일에 과거 방향 제한을 두지 않는다.
+   미래·없는 날짜는 계속 막고, 관찰일과 접수일은 따로 남는다. */
+
+test("2017년 관찰 자료를 실제 날짜 그대로 접수한다", async () => {
+  const db = fakeDb();
+  const response = await withTurnstile(true, () =>
+    handleRequest(submitRequest(validBody({ observedOn: "2017-05-03" })), publicEnv(db)),
+  );
+  assert.equal(response.status, 201);
+  assert.equal((await response.json()).ok, true);
+  const row = db.rows[0];
+  assert.equal(row.observed_on, "2017-05-03", "관찰일을 오늘로 바꾸면 안 된다");
+  // 접수일은 오늘이고 관찰일과 섞이지 않는다.
+  assert.equal(String(row.received_at).slice(0, 4), String(new Date().getUTCFullYear()));
+  assert.notEqual(String(row.received_at).slice(0, 10), row.observed_on);
+  // 승인 전이므로 공개되지 않는다.
+  assert.equal(row.status, "pending");
+});
+
+test("2020년 관찰 자료도 접수된다", async () => {
+  const db = fakeDb();
+  const response = await withTurnstile(true, () =>
+    handleRequest(submitRequest(validBody({ observedOn: "2020-01-01" })), publicEnv(db)),
+  );
+  assert.equal(response.status, 201);
+  assert.equal(db.rows[0].observed_on, "2020-01-01");
+});
+
+test("오늘 관찰 자료도 그대로 접수된다", async () => {
+  const db = fakeDb();
+  const today = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const response = await withTurnstile(true, () =>
+    handleRequest(submitRequest(validBody({ observedOn: today })), publicEnv(db)),
+  );
+  assert.equal(response.status, 201);
+  assert.equal(db.rows[0].observed_on, today);
+});
+
+test("미래 날짜는 계속 거부한다", async () => {
+  const db = fakeDb();
+  const future = new Date(Date.now() + 9 * 60 * 60 * 1000 + 3 * 86400000)
+    .toISOString().slice(0, 10);
+  const response = await withTurnstile(true, () =>
+    handleRequest(submitRequest(validBody({ observedOn: future })), publicEnv(db)),
+  );
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).error.code, "OBSERVED_ON_FUTURE");
+  assert.equal(db.rows.length, 0, "거부한 제보는 저장되지 않는다");
+});
+
+test("없는 날짜는 계속 거부한다", async () => {
+  for (const bad of ["2017-02-29", "2017-13-01", "2017-00-10", "2017-5-3"]) {
+    const db = fakeDb();
+    const response = await withTurnstile(true, () =>
+      handleRequest(submitRequest(validBody({ observedOn: bad })), publicEnv(db)),
+    );
+    assert.equal(response.status, 400, bad);
+    assert.equal(db.rows.length, 0, bad);
+  }
+  // 윤년의 실제 날짜는 받는다.
+  const leap = fakeDb();
+  const ok = await withTurnstile(true, () =>
+    handleRequest(submitRequest(validBody({ observedOn: "2020-02-29" })), publicEnv(leap)),
+  );
+  assert.equal(ok.status, 201);
+  assert.equal(leap.rows[0].observed_on, "2020-02-29");
+});
+
+test("과거 자료를 넣어도 최근 출현이 뒤로 밀리지 않는다", async () => {
+  // 나중에 접수했지만 관찰일은 2017년인 자료를 섞는다.
+  const rows = siteRows().concat([
+    {
+      id: "old-2017", status: "approved", species: "재두루미",
+      lat: 36.0, lon: 126.6, site_id: "19",
+      observed_on: "2017-05-03",
+      received_at: "2026-09-22T00:00:00.000Z", // 접수는 가장 최근
+    },
+  ]);
+  const db = fakeDb(rows);
+  const body = await (await handleRequest(siteRequest("19"), publicEnv(db))).json();
+  assert.equal(body.total, 4);
+  // 관찰일 최신순이라 과거 자료는 맨 뒤다. 접수일이 최신이어도 앞으로 오지 않는다.
+  assert.deepEqual(body.history.map((h) => h.id), ["s19-a", "s19-c", "s19-b", "old-2017"]);
+  assert.equal(body.history[body.history.length - 1].date, "2017-05-03");
+  // 날짜는 내림차순이다.
+  const dates = body.history.map((h) => h.date);
+  assert.deepEqual(dates, [...dates].sort().reverse());
+});
+
+test("과거 자료가 섞여도 '더 보기' 페이지가 어긋나지 않는다", async () => {
+  const rows = siteRows().concat([
+    { id: "old-2017", status: "approved", species: "재두루미", lat: 36, lon: 126.6,
+      site_id: "19", observed_on: "2017-05-03", received_at: "2026-09-22T00:00:00.000Z" },
+    { id: "old-2020", status: "approved", species: "흑두루미", lat: 36, lon: 126.6,
+      site_id: "19", observed_on: "2020-01-01", received_at: "2026-09-22T00:00:01.000Z" },
+  ]);
+  const db = fakeDb(rows);
+  const page1 = await (await handleRequest(siteRequest("19", "?limit=2&offset=0"), publicEnv(db))).json();
+  const page2 = await (await handleRequest(siteRequest("19", "?limit=2&offset=2"), publicEnv(db))).json();
+  const page3 = await (await handleRequest(siteRequest("19", "?limit=2&offset=4"), publicEnv(db))).json();
+  assert.equal(page1.total, 5);
+  assert.equal(page3.total, 5);
+  const all = [...page1.history, ...page2.history, ...page3.history].map((h) => h.id);
+  assert.equal(new Set(all).size, all.length, "겹치는 항목이 없어야 한다");
+  assert.deepEqual(all, ["s19-a", "s19-c", "s19-b", "old-2020", "old-2017"]);
+});
+
 // 건수와 목록을 한 질의로 받게 바꾼 뒤에도 total 과 정렬이 예전과 같아야 한다.
 test("limit 으로 잘라 받아도 total 은 전체 건수를 준다", async () => {
   const db = fakeDb(siteRows());

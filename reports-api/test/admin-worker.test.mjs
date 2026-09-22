@@ -195,6 +195,63 @@ test("관리자는 종명과 좌표를 고쳐 승인할 수 있다", async () =>
   assert.equal(db.rows[0].admin_note, "번식지라 좌표를 옮김");
 });
 
+// 과거 관찰 자료도 관리자 승인과 공개가 평소처럼 되어야 한다.
+test("과거 관찰 자료도 관찰일 그대로 승인·공개된다", async () => {
+  const db = fakeDb([pendingRow({ observed_on: "2017-05-03" })]);
+  const { sign, claims, jwksFetch } = await accessFixture();
+  const token = await sign(claims());
+  await withJwks(jwksFetch, async () => {
+    const response = await handleRequest(
+      adminRequest(`/admin/api/reports/${db.rows[0].id}`, token, {
+        method: "POST",
+        body: JSON.stringify({ action: "approve", siteId: "19" }),
+      }),
+      adminEnv(db),
+    );
+    assert.equal(response.status, 200);
+  });
+  assert.equal(db.rows[0].status, "approved");
+  // 승인이 관찰일을 오늘로 덮지 않는다. 접수일도 그대로 남는다.
+  assert.equal(db.rows[0].observed_on, "2017-05-03");
+  assert.equal(db.rows[0].received_at, "2026-09-19T00:00:00Z");
+  assert.equal(db.rows[0].site_id, "19");
+  // 결정 시각만 새로 찍힌다(관찰일과 별개).
+  assert.ok(db.rows[0].decided_at, "승인 시각은 기록된다");
+  assert.notEqual(String(db.rows[0].decided_at).slice(0, 10), db.rows[0].observed_on);
+});
+
+test("관리자가 관찰일을 과거로 고쳐 승인할 수 있다", async () => {
+  const db = fakeDb([pendingRow()]);
+  const { sign, claims, jwksFetch } = await accessFixture();
+  const token = await sign(claims());
+  await withJwks(jwksFetch, async () => {
+    const response = await handleRequest(
+      adminRequest(`/admin/api/reports/${db.rows[0].id}`, token, {
+        method: "POST",
+        body: JSON.stringify({ action: "approve", observedOn: "2020-01-01" }),
+      }),
+      adminEnv(db),
+    );
+    assert.equal(response.status, 200);
+  });
+  assert.equal(db.rows[0].observed_on, "2020-01-01");
+
+  // 미래 날짜는 관리자도 넣을 수 없다.
+  const future = fakeDb([pendingRow()]);
+  await withJwks(jwksFetch, async () => {
+    const response = await handleRequest(
+      adminRequest(`/admin/api/reports/${future.rows[0].id}`, token, {
+        method: "POST",
+        body: JSON.stringify({ action: "approve", observedOn: "2099-01-01" }),
+      }),
+      adminEnv(future),
+    );
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).error.code, "OBSERVED_ON_FUTURE");
+  });
+  assert.equal(future.rows[0].status, "pending", "거부되면 상태도 그대로다");
+});
+
 test("공개 취소는 그 제보만 대기로 되돌린다", async () => {
   const other = pendingRow({ id: "22222222-2222-4222-8222-222222222222", status: "approved", species: "개개비", dedupe_hash: "dedupe-2" });
   const db = fakeDb([pendingRow({ status: "approved" }), other]);
