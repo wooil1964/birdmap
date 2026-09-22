@@ -180,6 +180,26 @@ test('응답이 오지 않으면 시간을 끊는다', async () => {
   assert.match(source, /SITE_HISTORY_TIMEOUT/, '정해 둔 시간으로 끊어야 한다');
 });
 
+/* 팝업 본문을 문자열로 돌려주면 Leaflet 의 popup.update() 가 본문을 다시 만들어 붙이고,
+   이력을 그리려고 잡아 둔 칸이 DOM 에서 떨어져 나가 '불러오는 중입니다.'가 남는다.
+   임곡항·도구해수욕장이 쓰는 경로가 그랬다. 두 경로 모두 요소를 돌려줘야 한다. */
+test('팝업 본문 함수는 문자열이 아니라 요소를 돌려준다', () => {
+  for (const name of ['directCoastalPopupContent', 'v23PopupContent']) {
+    const source = functionSource(name);
+    assert.match(source, /document\.createElement\(/, name + ' 이 요소를 만들지 않는다');
+    assert.match(source, /return root;/, name + ' 이 요소를 돌려주지 않는다');
+    assert.equal(/return\s*'<div/.test(source), false, name + ' 이 문자열을 돌려준다');
+  }
+});
+
+test('이력을 그릴 때 칸을 다시 찾는다', () => {
+  const init = functionSource('initSiteHistory');
+  // 받아 오기 전에 잡아 둔 칸만 믿으면 다시 그려진 팝업에서 이력이 영영 안 나온다.
+  assert.match(init, /siteHistoryBoxIn\(popup\)/, '그릴 때 칸을 다시 찾아야 한다');
+  const boxIn = functionSource('siteHistoryBoxIn');
+  assert.match(boxIn, /document\.body\.contains\(box\)/, '떨어져 나간 칸은 걸러야 한다');
+});
+
 test('서버가 쓰는 캐시 시간과 같은 값을 쓴다', () => {
   const { api } = loadApi();
   const worker = readFileSync(join(ROOT, 'reports-api', 'src', 'public.js'), 'utf8');

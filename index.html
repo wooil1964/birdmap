@@ -1907,12 +1907,19 @@ function v23ButtonsFromLegacy(source,site){
     +'<div class="shareBox"><button type="button" class="btn share" onclick="return copyShareLink(this,&#39;'+escapeHtml(String(site.id).replace(/[^0-9A-Za-z_-]/g,''))+'&#39;)">🔗 공유 링크 복사</button></div>'
     +(isGukhwado?'<div class="smallText">국화도는 카카오맵 섬 직행 길찾기가 제한될 수 있어 장고항 기준으로 안내합니다.<br>배편은 현장 운항 정보를 확인하세요.</div>':'');
 }
+/* 다른 탐조지 팝업과 같이 문자열이 아니라 요소를 돌려준다.
+   문자열을 넘기면 Leaflet 의 popup.update() 가 그때마다 본문을 다시 만들어 붙이는데,
+   그러면 출현 이력을 받아 그리려고 잡아 둔 칸이 DOM 에서 떨어져 나가
+   '불러오는 중입니다.'가 끝내 그대로 남았다(임곡항·도구해수욕장 두 곳이 이 경로를 쓴다).
+   markup 은 예전 그대로이고 담는 그릇만 바꾼다. */
 function directCoastalPopupContent(site,desktopContent){
   var source=popupContentElement(desktopContent);
-  return '<div style="width:min(440px,calc(100vw - 80px));font-family:Arial,\'Malgun Gothic\',sans-serif">'+
-    '<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
+  var root=document.createElement('div');
+  root.style.cssText="width:min(440px,calc(100vw - 80px));font-family:Arial,'Malgun Gothic',sans-serif";
+  root.innerHTML='<h4 style="margin:0 0 6px">'+escapeHtml(site.name)+'</h4>'+
     siteProfileHtml(site,source,'태풍·강풍 후 바다새 관찰 가능성이 높아질 수 있으며, 강풍과 높은 파도 시 안전에 유의')+
-    v23TodayWeatherHtml(site,true)+siteHistoryContainerHtml(site)+v23ButtonsFromLegacy(source,site)+'</div>';
+    v23TodayWeatherHtml(site,true)+siteHistoryContainerHtml(site)+v23ButtonsFromLegacy(source,site);
+  return root;
 }
 /* ══ 탐조지 프로필(공통 출력) ═══════════════════════════════════════════
    기존 팝업은 권역 ID·계절태그·대표조류군처럼 겹치는 값을 한 줄씩 나열했다.
@@ -2093,12 +2100,20 @@ function renderSiteHistory(box,site,data,popup){
   if(popup&&popup.update)popup.update();
 }
 
-function initSiteHistory(site,popup){
+function siteHistoryBoxIn(popup){
   var root=popup&&popup.getElement&&popup.getElement();
   var box=root&&root.querySelector('.siteHistoryBox');
-  if(!box)return;
+  return (box&&document.body.contains(box))?box:null;
+}
+
+function initSiteHistory(site,popup){
+  if(!siteHistoryBoxIn(popup))return;
   fetchSiteHistory(site,0).then(function(data){
-    if(!document.body.contains(box))return;
+    // 받아 오는 사이에 팝업이 다시 그려졌을 수 있어 그릴 때 칸을 다시 찾는다.
+    // 처음 잡아 둔 칸만 믿으면 떨어져 나간 칸에 그리고 끝나, 화면에는
+    // '불러오는 중입니다.'가 그대로 남는다.
+    var box=siteHistoryBoxIn(popup);
+    if(!box)return;
     if(!data){
       // 이력 API 가 없거나 실패하면 이 블록만 없애고 기존 프로필은 그대로 둔다.
       if(box.parentNode)box.parentNode.removeChild(box);
