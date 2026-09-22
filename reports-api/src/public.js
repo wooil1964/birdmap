@@ -198,16 +198,14 @@ async function handleSiteHistory(request, env, siteId, url) {
     Math.max(1, Number(url.searchParams.get("limit")) || SITE_HISTORY_DEFAULT),
   );
   const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
-  const total = await db
-    .prepare(
-      `SELECT COUNT(*) AS n FROM reports WHERE status = 'approved' AND site_id = ?1`,
-    )
-    .bind(siteId)
-    .first();
+  // 건수와 목록을 한 번에 가져온다. COUNT(*) OVER() 는 WHERE 를 거친 전체 행을 세고
+  // LIMIT 은 그 뒤에 걸리므로, 따로 COUNT 질의를 보내던 때와 같은 값이 나온다.
+  // D1 왕복이 둘에서 하나로 줄어 팝업이 이력을 더 빨리 받는다.
+  // 정렬과 내보내는 항목은 예전 그대로다(같은 관찰일이면 접수 시각과 id 로 고정).
   const { results } = await db
     .prepare(
-      // 같은 관찰일이면 접수 시각과 id 로 순서를 고정한다(페이지가 밀리지 않는다).
-      `SELECT id, species, observed_on, reporter, name_public
+      `SELECT id, species, observed_on, reporter, name_public,
+              COUNT(*) OVER () AS total_count
          FROM reports
         WHERE status = 'approved' AND site_id = ?1
         ORDER BY observed_on DESC, received_at DESC, id DESC
@@ -215,16 +213,29 @@ async function handleSiteHistory(request, env, siteId, url) {
     )
     .bind(siteId, limit, offset)
     .all();
+  const rows = results || [];
+  // 가져온 행이 없으면 창 함수도 값을 주지 못한다. offset 이 끝을 넘어선 경우에만
+  // 건수를 따로 물어본다(첫 페이지가 비면 그냥 0건이다).
+  let total = rows.length ? Number(rows[0].total_count) : 0;
+  if (!rows.length && offset > 0) {
+    const counted = await db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM reports WHERE status = 'approved' AND site_id = ?1`,
+      )
+      .bind(siteId)
+      .first();
+    total = Number(counted?.n || 0);
+  }
   return jsonResponse(
     request,
     env,
     {
       ok: true,
       siteId,
-      total: Number(total?.n || 0),
+      total,
       limit,
       offset,
-      history: (results || []).map(historyEntry),
+      history: rows.map(historyEntry),
     },
     200,
     { "Cache-Control": "public, max-age=60" },

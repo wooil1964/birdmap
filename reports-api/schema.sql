@@ -43,5 +43,9 @@ CREATE INDEX IF NOT EXISTS reports_pending_public ON reports (pending_public, st
 -- 지점별 출현 이력을 모을 때 쓴다.
 CREATE INDEX IF NOT EXISTS reports_spot_key ON reports (spot_key);
 
+-- 탐조지별 출현 이력(/reports/site/<id>)의 조회·정렬 모양을 그대로 따른다.
+CREATE INDEX IF NOT EXISTS reports_site_history
+  ON reports (site_id, status, observed_on DESC, received_at DESC, id DESC);
+
 -- 서버 측 제출 횟수 제한에서 최근 접수 건을 세는 데 쓴다.
 CREATE INDEX IF NOT EXISTS reports_ip_recent ON reports (ip_hash, received_at);

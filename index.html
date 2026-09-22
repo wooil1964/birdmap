@@ -2025,16 +2025,45 @@ function siteHistoryEntryHtml(entry){
     +'<div class="siteHistoryBy">제보자: '+who+'</div></div>';
 }
 
+/* 같은 탐조지를 다시 열 때 첫 페이지를 다시 받아 오지 않도록 잠깐 기억해 둔다.
+   서버가 이미 Cache-Control: max-age=60 을 주므로 같은 60초를 쓴다.
+   새로 승인된 제보는 ① 60초가 지나면, ② 10분마다 도는 승인 제보 갱신이 돌면,
+   ③ 새로고침하면 반영된다(기억은 메모리에만 둔다).
+   '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다. 자주 여는 화면이 아니다. */
+var SITE_HISTORY_TTL=60*1000;
+var SITE_HISTORY_TIMEOUT=6000;
+var siteHistoryCache={};
+
+function clearSiteHistoryCache(){siteHistoryCache={};}
+
+function cachedSiteHistory(key){
+  var hit=siteHistoryCache[key];
+  if(!hit)return null;
+  if(Date.now()-hit.at>SITE_HISTORY_TTL){delete siteHistoryCache[key];return null;}
+  return hit.data;
+}
+
 function fetchSiteHistory(site,offset){
+  var key=String(site.id);
+  if(!offset){
+    var hit=cachedSiteHistory(key);
+    // 기억해 둔 값이 있으면 네트워크를 타지 않고 그대로 그린다.
+    if(hit)return Promise.resolve(hit);
+  }
+  // 응답이 늦어도 '불러오는 중입니다.'가 남지 않도록 시간을 끊는다.
+  var controller=(typeof AbortController!=='undefined')?new AbortController():null;
+  var timer=controller?setTimeout(function(){controller.abort();},SITE_HISTORY_TIMEOUT):0;
   return fetch(REPORTS_API_URL+'/reports/site/'+encodeURIComponent(site.id)
-      +'?limit='+SITE_HISTORY_PAGE+'&offset='+offset,{cache:'no-cache'})
+      +'?limit='+SITE_HISTORY_PAGE+'&offset='+offset,controller?{signal:controller.signal}:{})
     .then(function(response){
       if(!response.ok)throw new Error('site history '+response.status);
       return response.json();
     }).then(function(data){
       if(!data||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
+      if(!offset)siteHistoryCache[key]={at:Date.now(),data:data};
       return data;
-    }).catch(function(){return null;});
+    }).catch(function(){return null;})
+    .then(function(result){if(timer)clearTimeout(timer);return result;});
 }
 
 function renderSiteHistory(box,site,data,popup){
@@ -3486,6 +3515,8 @@ function loadApprovedReports(){
     return r.json();
   }).then(function(data){
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('reports invalid');
+    // 승인 제보가 새로 내려왔으니 탐조지별 이력 기억도 버린다(새 승인 건이 바로 보이게).
+    clearSiteHistoryCache();
     reportFixedHistory=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
     // fixedSpots 는 {키:{history:[…]}} 형태라 이력 배열만 꺼내 둔다.
     Object.keys(reportFixedHistory).forEach(function(key){

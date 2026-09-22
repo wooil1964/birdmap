@@ -426,6 +426,58 @@ test("탐조지별 이력은 그 지역에 연결된 승인 제보만 최신순�
   }
 });
 
+// 건수와 목록을 한 질의로 받게 바꾼 뒤에도 total 과 정렬이 예전과 같아야 한다.
+test("limit 으로 잘라 받아도 total 은 전체 건수를 준다", async () => {
+  const db = fakeDb(siteRows());
+  const response = await handleRequest(siteRequest("19", "?limit=2&offset=0"), publicEnv(db));
+  const body = await response.json();
+  assert.equal(body.total, 3, "잘라 받아도 전체 건수는 3");
+  assert.equal(body.limit, 2);
+  assert.equal(body.history.length, 2);
+  assert.deepEqual(body.history.map((h) => h.id), ["s19-a", "s19-c"]);
+});
+
+test("이어받기(offset)도 같은 순서로 나머지를 준다", async () => {
+  const db = fakeDb(siteRows());
+  const first = await (await handleRequest(siteRequest("19", "?limit=2&offset=0"), publicEnv(db))).json();
+  const next = await (await handleRequest(siteRequest("19", "?limit=2&offset=2"), publicEnv(db))).json();
+  assert.equal(next.total, 3);
+  assert.equal(next.offset, 2);
+  assert.deepEqual(next.history.map((h) => h.id), ["s19-b"]);
+  // 두 페이지를 이으면 한 번에 받았을 때와 같다(겹치거나 빠지지 않는다).
+  const joined = first.history.concat(next.history).map((h) => h.id);
+  assert.deepEqual(joined, ["s19-a", "s19-c", "s19-b"]);
+});
+
+test("offset 이 끝을 넘어가도 total 은 그대로 준다", async () => {
+  const db = fakeDb(siteRows());
+  const body = await (await handleRequest(siteRequest("19", "?limit=5&offset=10"), publicEnv(db))).json();
+  assert.equal(body.ok, true);
+  assert.deepEqual(body.history, []);
+  assert.equal(body.total, 3, "빈 페이지에서도 전체 건수를 알려 줘야 '더 보기'가 어긋나지 않는다");
+});
+
+test("이력 응답에 내부 집계 열이 새지 않는다", async () => {
+  const db = fakeDb(siteRows());
+  const body = await (await handleRequest(siteRequest("19"), publicEnv(db))).json();
+  assert.equal(JSON.stringify(body).includes("total_count"), false);
+  // 각 항목은 예전과 같은 열만 갖는다.
+  for (const entry of body.history) {
+    const keys = Object.keys(entry).sort();
+    assert.deepEqual(
+      keys.filter((k) => !["id", "date", "species", "reporter"].includes(k)),
+      [],
+      `예상 밖 항목: ${keys.join(",")}`,
+    );
+  }
+});
+
+test("이력 응답은 60초 캐시를 그대로 알린다", async () => {
+  const db = fakeDb(siteRows());
+  const response = await handleRequest(siteRequest("19"), publicEnv(db));
+  assert.equal(response.headers.get("Cache-Control"), "public, max-age=60");
+});
+
 test("탐조지별 이력에는 좌표와 비공개 항목이 들어가지 않는다", async () => {
   const db = fakeDb(siteRows());
   const response = await handleRequest(siteRequest("19"), publicEnv(db));
