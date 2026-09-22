@@ -697,9 +697,9 @@ function openReportEntry(entry){
       if(!map.hasLayer(layer))layer.addTo(map);
     }
   }
-  // 검색 직후의 fitBounds 애니메이션이 아직 돌고 있으면 그것이 이 이동을 덮어쓴다.
-  if(map.stop)map.stop();
-  map.setView([entry.lat,entry.lon],13);
+  /* animate:false 로 즉시 이동한다. 애니메이션으로 옮기면 검색 직후의 fitBounds 나
+     첫 화면 맞춤이 아직 돌고 있을 때 이 이동이 묻혀 지도가 그대로 남는다. */
+  map.setView([entry.lat,entry.lon],13,{animate:false});
   if(layer&&layer.openPopup){
     layer.openPopup();
     /* setView 애니메이션이 popup autoPan 결과를 되돌리므로 이동 완료 후 보정한다. */
