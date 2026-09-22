@@ -401,7 +401,7 @@ test('선상 분류는 pelagic true만 사용하며 독도를 제외', () => {
   const api=loadApi();
   assert.equal(api.autumnBirdingAxes({pelagic:true,seasons:['봄','겨울']}).pelagic,true);
   assert.equal(api.autumnBirdingAxes({pelagic:false,birdingFeature:'선상탐조',name:'항구 앞바다 해안'}).pelagic,false);
-  for(const name of ['독도','호미곶','청림운동장']) {
+  for(const name of ['독도','호미곶','청림해변']) {
     const site=RUNTIME.find(s=>s.name===name);assert.ok(site);
     assert.equal(api.autumnBirdingAxes(site).pelagic,false);
   }
@@ -629,7 +629,7 @@ test('실데이터 caution 전후 비교와 동풍·공지 보존',()=>{
 });
 
 test('동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충',()=>{
- const date=futureDate(1),site={...POHANG,id:50,name:'청림운동장',env:'해안·갯벌'};
+ const date=futureDate(1),site={...POHANG,id:50,name:'청림해변',env:'해안·갯벌'};
  const others=[501,502,503].map(id=>({...SITE,id,name:'안전 갯벌 '+id,env:'갯벌'}));
  const doc=weekDoc(site.id,{[date]:[sample(`${date} 09:00 KST`,65,{windSpeed:8,waveM:2.2})]});
  for(const s of others)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(`${date} 09:00 KST`,60,{waveM:1})]}).sites);

@@ -275,7 +275,7 @@ test('정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하�
   try {
     const result = await page.evaluate(`(function(){
       siteData=[{id:'126',name:'해리천습지'},{id:'107',name:'매향리'},
-        {id:'19',name:'유부도'},{id:'50',name:'청림운동장'}];
+        {id:'19',name:'유부도'},{id:'50',name:'청림해변'}];
       PINNED_BIRDING_ISSUES=[];
       loadedNotices=[{title:'연계 공지',siteIds:[126,107,19,50]},
         {title:'중복 공지',siteIds:[126]},
@@ -310,7 +310,7 @@ test('주간 편집 목록은 지정 순서·표시명과 기존 적격성을 �
   try {
     const result = await page.evaluate(`(function(){
       siteData=[{id:'15',name:'천수만 간월호'},{id:'108',name:'호곡리'},
-        {id:'50',name:'청림운동장'},{id:'134',name:'솔개공원'}];
+        {id:'50',name:'청림해변'},{id:'134',name:'솔개공원'}];
       PINNED_BIRDING_ISSUES=[];
       loadedNotices=[{weeklyRecommendations:[{siteId:15,name:'천수만',reason:'맹금류'},
         {siteId:108,name:'화성 호곡리'},{siteId:15},{siteId:50},{siteId:134},{siteId:999}]}];
