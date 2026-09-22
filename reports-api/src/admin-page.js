@@ -1,5 +1,7 @@
 // 관리자 승인 화면. 이 Worker 가 직접 서빙하므로 Cloudflare Access 뒤에 놓인다.
 // 공개 지도(index.html)에는 이 화면으로 가는 링크를 두지 않는다.
+import { SITE_PICKER_JS } from "./site-picker.js";
+
 export const ADMIN_PAGE = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -53,6 +55,9 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;padding:14p
 label{display:block;font-size:12px;color:#5a666e;margin:8px 0 2px}
 input,textarea,select{width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #bcc6cc;border-radius:6px;font:inherit;font-size:13px}
 textarea{min-height:52px;resize:vertical}
+.f-siteq{margin-bottom:4px}
+select.f-site option{padding:3px 2px}
+select.f-site optgroup{font-size:12px;color:#5a666e}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .actions button{padding:7px 12px;border-radius:6px;border:1px solid transparent;cursor:pointer;font-size:13px}
@@ -107,15 +112,23 @@ async function loadSiteList(){
     var line=text.split('\\n').find(function(row){return row.indexOf('var siteData=')===0;});
     if(!line)throw new Error('siteData 를 찾지 못했습니다.');
     var parsed=JSON.parse(line.replace(/^var siteData=/,'').replace(/;\\s*$/,''));
-    siteList=parsed.map(function(site){return {id:String(site.id),name:site.name,region:site.region||''};});
+    // 좌표는 가까운 탐조지 계산에만 쓰고, 행정구역은 검색과 표시에 쓴다. 정본은 siteData 그대로다.
+    siteList=parsed.map(function(site){return {
+      id:String(site.id),name:site.name,region:site.region||'',
+      sido:site.sido||'',sigungu:site.sigungu||'',lat:site.lat,lon:site.lon
+    };});
   }catch(error){
     siteList=[];
   }
 }
 
+${SITE_PICKER_JS}
+
 function siteLabel(id){
   var found=siteList.find(function(site){return site.id===String(id);});
-  return found?found.name+(found.region?' ('+found.region+')':''):String(id);
+  if(!found)return String(id);
+  var region=siteRegion(found);
+  return found.name+(region?' ('+region+')':'');
 }
 
 function siteSelectHtml(r){
@@ -123,12 +136,11 @@ function siteSelectHtml(r){
     return '<label>탐조 지역 ID (목록을 불러오지 못해 직접 입력)</label>'
       +'<input class="f-site" value="'+esc(r.site_id==null?'':r.site_id)+'" placeholder="예: 19">';
   }
-  var options=siteList.map(function(site){
-    return '<option value="'+esc(site.id)+'"'+(String(r.site_id||'')===site.id?' selected':'')+'>'
-      +esc(site.id+' · '+site.name+(site.region?' ('+site.region+')':''))+'</option>';
-  }).join('');
   return '<label>탐조 지역 (이 제보를 어느 탐조지의 출현 이력으로 볼지)</label>'
-    +'<select class="f-site"><option value="">— 지정하지 않음(독립 출현 지점) —</option>'+options+'</select>';
+    +'<input class="f-siteq" placeholder="지역명·행정구역으로 검색 (예: 유부도, 서천)" autocomplete="off">'
+    +'<select class="f-site" size="6">'
+    +siteOptionsHtml(r,'',r.site_id==null?'':r.site_id)
+    +'</select>';
 }
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -297,6 +309,19 @@ document.getElementById('list').addEventListener('click',async function(event){
     toast(error.message,false);
     button.disabled=false;
   }
+});
+
+// 탐조 지역 검색. 고른 값(탐조지 ID)은 그대로 두고 보이는 목록만 다시 만든다.
+document.getElementById('list').addEventListener('input',function(event){
+  var field=event.target;
+  if(!field.classList||!field.classList.contains('f-siteq'))return;
+  var card=field.closest('.card');
+  if(!card)return;
+  var select=card.querySelector('select.f-site');
+  if(!select)return;
+  var report=reports.find(function(x){return x.id===card.dataset.id;});
+  if(!report)return;
+  select.innerHTML=siteOptionsHtml(report,field.value,select.value);
 });
 
 document.getElementById('speciesSearchBtn').addEventListener('click',async function(){
