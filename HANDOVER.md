@@ -14,6 +14,12 @@
 
 ## 최근 완료 작업
 
+- 기상 Worker(`weather-proxy`) 실시간 기상 복구(2026-09-23, 코드 커밋 `719d43e`, 운영 Worker version `814b64b4-da6d-4d4c-b8c0-a293774498b1`).
+  - **KMA 403 해결**: 2026-09-06 공공데이터포털 인증키 재발급 뒤에도 Worker 의 `KMA_SERVICE_KEY` 가 기존 키로 남아 있었다. 2026-09-23 새 **Decoding** 인증키로 secret 을 교체해 실제 KMA 호출이 정상 복구됐다. 코드는 `URLSearchParams` 로 키를 한 번 인코딩하므로 secret 에는 반드시 Decoding 키를 넣는다(Encoding 키를 넣으면 이중 인코딩으로 다시 403).
+  - **탐조지 193~195 Worker 반영**: 193 월포리해변·194 천수만 강당리·195 평화의공원. 최신 Worker 재배포 뒤 세 곳 모두 기상 조회 정상.
+  - **`KMA_IDENTITY_MISMATCH` 해결**: `getUltraSrtFcst` 는 실제 최신 HH30 발표분을 돌려주지만 item 의 `baseTime` 을 같은 시각의 HH00 으로 표기한다(운영 실측: 2130 요청 → 2100 표기·첫 예보 2200, 2230 요청 → 2200 표기·첫 예보 2300). `validateKmaItems()` 에서 **이 API 에 한해** HH30 요청에 같은 시각 HH00 표기를 허용하되, baseDate·nx·ny 는 엄격 검증을 유지하고 가장 이른 fcstDate/fcstTime 이 요청 발표시각 +30분(자정 넘김 포함)인지 추가로 확인한다. `getUltraSrtNcst`·`getVilageFcst` 검증은 그대로다. 이 검증은 `842a8d1`(2026-09-06)에서 들어왔지만 같은 날 키가 무효가 되어 timeout·403 에 가려 있다가 키 교체 뒤 드러났다.
+  - 검증: `weather-proxy` 테스트 36/36 통과. 운영 siteId 1·92·193·194·195 모두 `status=ok`(source KMA, 실황·초단기예보·내일 예보 정상, 격자 일치). 임시 진단 로그는 최종 코드에서 제거했다.
+
 - 출현종·제보자 이력 관리와 모바일 지원(2026-09-20, 최종 커밋 `3d38e09`): 승인된 제보를 **날짜별 이력**으로 보존하고 지도 팝업에서 조회하게 했다. 로그인 없는 제보, 관리자 승인 뒤 공개, Turnstile, Cloudflare Access 는 그대로다.
   - 관련 커밋: `4b8653d` 이력 저장·표시 본체 → `821ca73` 더 보기 결함 수정 → `50f9d83` 모바일 팝업 잘림 수정 → `3d38e09` 모바일 제보 버튼 고정.
 
@@ -430,9 +436,10 @@
 
 > **[현재]** 이 절만 현재 미해결 상태를 뜻합니다.
 
-- **[미해결] 기상 Worker 의 상류 기상청 API 가 403 을 돌려준다.** `https://birdmap-weather-proxy.wooil-birdmap.workers.dev/weather?siteId=…` 가 `{"code":"KMA_HTTP_ERROR","message":"KMA returned HTTP 403"}` 로 502 를 낸다(2026-09-20 실측). Worker 자체는 정상 응답하며 `KMA_SERVICE_KEY` 만료·차단이 의심되지만 **확인하지 않았고 이번 작업에서 손대지 않았다.**
-  - 영향 범위는 팝업의 '실시간 기상' 경로뿐이다. 저장 자료(`weather_today.json`)는 Actions 가 Windy·Open-Meteo 로 정상 생성하고 있어(190곳, `status: ok`) 지도 표시에는 문제가 없고, 그래서 눈에 띄지 않았다.
-  - 제보 기능과 무관한 별건이다. 조치할 때 `weather-proxy/` 외의 파일을 함께 바꾸지 말 것.
+- **[해소됨] 기상 Worker 의 KMA 403** 은 2026-09-23 `KMA_SERVICE_KEY` 를 재발급된 Decoding 키로 교체해 해결됐다. 같은 날 `KMA_IDENTITY_MISMATCH` 도 해결됐다(위 '최근 완료 작업' 참조).
+- **[미해결] 기상 Worker 의 `KMA_TIMEOUT` 이 간헐적으로 발생한다.** 상류 KMA 응답이 8초(`UPSTREAM_TIMEOUT_MS`·`TOMORROW_TIMEOUT_MS`) 안에 오지 않는 경우다. 2026-09-23 진단 중 193·194·195 등에서 발생했고, 최종 운영 확인에서는 siteId 1 에서 한 번 발생한 뒤 재조회로 성공했다.
+  - timeout 값과 retry 로직은 이번 작업에서 **변경하지 않았다.** 빈도·API별 분포·시간대 등 별도 조사가 필요하다.
+  - 영향 범위는 팝업의 '실시간 기상' 경로뿐이며, 요청 일부만 실패하면 `status: partial` 로 나머지 값은 유지된다. 저장 자료(`weather_today.json`)는 Actions 가 Windy·Open-Meteo 로 생성하므로 영향이 없다. 조치할 때 `weather-proxy/` 외의 파일을 함께 바꾸지 말 것.
 - **출현종 제보 시스템 운영·유지보수 메모**(기능 자체는 가동 중이며 보류 사항이 아니다).
   - **승인 작업**: `https://birdmap-reports-admin.wooil-birdmap.workers.dev/admin` 접속 → Cloudflare Access 로그인(허용 이메일은 `reports-api/wrangler.admin.toml` 의 `ADMIN_EMAILS`) → 상태 탭에서 대기 건 확인 → 종명·좌표·공개 좌표·관리자 메모를 고쳐 `승인`, 또는 `반려`·`공개 취소`·`선택 지점에 합치기`. 합치기는 관리자가 고른 지점에만 적용되고 기존 출현종을 지우지 않는다. 좌표가 가깝다는 이유로 자동 병합하지 않는다.
   - **민감지**: 희귀조 번식지 등은 승인할 때 공개 위도·경도를 따로 넣으면 실제 지점 대신 그 좌표만 공개된다.
