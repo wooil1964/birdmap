@@ -12,7 +12,8 @@ function mockFetch(failures) {
     const p = url.searchParams;
     const base = {baseDate: p.get('base_date'), baseTime: p.get('base_time'), nx: p.get('nx'), ny: p.get('ny')};
     const items = method === 'getUltraSrtNcst' ? [{...base, category: 'T1H', obsrValue: '25'}] :
-      method === 'getUltraSrtFcst' ? [{...base, category: 'T1H', fcstValue: '26', fcstDate: '20260906', fcstTime: '1800'}] :
+      // 실제 KMA 처럼 1630 발표분을 baseTime 1600 으로 표기하고 첫 예보는 1700 이다.
+      method === 'getUltraSrtFcst' ? [{...base, baseTime: base.baseTime.slice(0, 2) + '00', category: 'T1H', fcstValue: '26', fcstDate: '20260906', fcstTime: '1700'}] :
       ['0900', '1500'].map(fcstTime => ({...base, category: 'TMP', fcstValue: '25', fcstDate: '20260907', fcstTime}));
     return new Response(JSON.stringify(payload(items)));
   };
@@ -39,6 +40,51 @@ test('rejects wrong response grid/date and empty payload', () => {
     assert.throws(() => validateKmaItems(payload([item]), base, grid), {code: 'KMA_IDENTITY_MISMATCH'});
   }
   assert.throws(() => validateKmaItems(payload([]), base, grid), {code: 'KMA_EMPTY_DATA'});
+});
+const fcstItem = (baseDate, baseTime, fcstDate, fcstTime, extra = {}) =>
+  ({baseDate, baseTime, nx: 43, ny: 95, category: 'T1H', fcstValue: '20', fcstDate, fcstTime, ...extra});
+test('ultra-short forecast accepts the HH00 label only for the latest HH30 issuance', () => {
+  const grid = {nx: 43, ny: 95};
+  const accepted = [
+    [{date: '20260923', time: '2130'}, fcstItem('20260923', '2100', '20260923', '2200')],
+    [{date: '20260923', time: '2230'}, fcstItem('20260923', '2200', '20260923', '2300')],
+    [{date: '20260923', time: '2330'}, fcstItem('20260923', '2300', '20260924', '0000')],
+    [{date: '20260923', time: '2130'}, fcstItem('20260923', '2130', '20260923', '2200')],
+  ];
+  for (const [base, item] of accepted) {
+    // 뒤 시각 item 을 앞에 두어도 가장 이른 예보시각으로 판단하는지 본다.
+    const later = {...item, fcstDate: '20260930'};
+    assert.equal(validateKmaItems(payload([later, item]), base, grid, 'getUltraSrtFcst').length, 2);
+  }
+  const base = {date: '20260923', time: '2130'};
+  const rejected = [
+    fcstItem('20260923', '2030', '20260923', '2200'),
+    fcstItem('20260923', '2000', '20260923', '2200'),
+    fcstItem('20260923', '2100', '20260923', '2100'),
+    fcstItem('20260922', '2100', '20260923', '2200'),
+    fcstItem('20260923', '2100', '20260923', '2200', {nx: 44}),
+    fcstItem('20260923', '2100', '20260923', '2200', {ny: 96}),
+  ];
+  for (const item of rejected) {
+    assert.throws(() => validateKmaItems(payload([item]), base, grid, 'getUltraSrtFcst'), {code: 'KMA_IDENTITY_MISMATCH'});
+  }
+  // 한 item 이라도 어긋나면 전체를 거부한다.
+  assert.throws(() => validateKmaItems(payload([fcstItem('20260923', '2100', '20260923', '2200'),
+    fcstItem('20260923', '2030', '20260923', '2300')]), base, grid, 'getUltraSrtFcst'), {code: 'KMA_IDENTITY_MISMATCH'});
+});
+test('observation and village forecast keep exact base time matching', () => {
+  const grid = {nx: 43, ny: 95};
+  const ncst = {date: '20260923', time: '2100'};
+  assert.equal(validateKmaItems(payload([{baseDate: '20260923', baseTime: '2100', nx: 43, ny: 95}]), ncst, grid, 'getUltraSrtNcst').length, 1);
+  assert.throws(() => validateKmaItems(payload([{baseDate: '20260923', baseTime: '2000', nx: 43, ny: 95}]), ncst, grid, 'getUltraSrtNcst'), {code: 'KMA_IDENTITY_MISMATCH'});
+  const village = {date: '20260923', time: '2000'};
+  assert.equal(validateKmaItems(payload([{baseDate: '20260923', baseTime: '2000', nx: 43, ny: 95}]), village, grid, 'getVilageFcst').length, 1);
+  assert.throws(() => validateKmaItems(payload([{baseDate: '20260923', baseTime: '1700', nx: 43, ny: 95}]), village, grid, 'getVilageFcst'), {code: 'KMA_IDENTITY_MISMATCH'});
+  // HH30 예외는 초단기예보 전용이다.
+  const half = {date: '20260923', time: '2130'};
+  for (const api of ['getUltraSrtNcst', 'getVilageFcst', undefined]) {
+    assert.throws(() => validateKmaItems(payload([{baseDate: '20260923', baseTime: '2100', nx: 43, ny: 95}]), half, grid, api), {code: 'KMA_IDENTITY_MISMATCH'});
+  }
 });
 test('188 lookup succeeds; Dokdo remains marine primary; complete tomorrow requires usable values', async () => {
   const request = id => handleRequest(new Request('https://worker.example/weather?siteId=' + id), {});

@@ -428,12 +428,39 @@ export function hasCompleteTomorrow(body) {
     period?.forecastTime && (hasCurrentValues(period) || period.rainProbability !== null && period.rainProbability !== undefined || period.sky));
 }
 
-export function validateKmaItems(payload, base, grid) {
+// 초단기예보는 HH30 발표분을 돌려주면서 item 의 baseTime 을 같은 시각의 HH00 으로 표기한다
+// (2026-09-23 운영 실측: 2130 요청 → baseTime 2100, 첫 예보 2200). 그래서 이 API 만
+// HH00 표기를 받아 주되, 첫 예보시각이 요청 발표시각 +30분인지로 최신 발표분임을 확인한다.
+function acceptedBaseTimes(api, base) {
+  return api === "getUltraSrtFcst" && base.time.endsWith("30")
+    ? [base.time, `${base.time.slice(0, 2)}00`]
+    : [base.time];
+}
+
+function firstForecastKey(base) {
+  const start = new Date(Date.UTC(
+    Number(base.date.slice(0, 4)),
+    Number(base.date.slice(4, 6)) - 1,
+    Number(base.date.slice(6, 8)),
+    Number(base.time.slice(0, 2)),
+    Number(base.time.slice(2, 4)) + 30,
+  ));
+  return `${start.getUTCFullYear()}${pad(start.getUTCMonth() + 1)}${pad(start.getUTCDate())}${pad(start.getUTCHours())}${pad(start.getUTCMinutes())}`;
+}
+
+export function validateKmaItems(payload, base, grid, api) {
   const items = kmaItems(payload);
-  if (items.some((item) => item.baseDate !== base.date || item.baseTime !== base.time ||
+  const baseTimes = acceptedBaseTimes(api, base);
+  if (items.some((item) => item.baseDate !== base.date || !baseTimes.includes(item.baseTime) ||
       (item.nx !== undefined && Number(item.nx) !== grid.nx) ||
       (item.ny !== undefined && Number(item.ny) !== grid.ny))) {
     throw new WorkerError("KMA_IDENTITY_MISMATCH", "KMA response date/grid mismatch", 502);
+  }
+  if (api === "getUltraSrtFcst") {
+    const first = items.map((item) => `${item.fcstDate}${item.fcstTime}`).sort()[0];
+    if (first !== firstForecastKey(base)) {
+      throw new WorkerError("KMA_IDENTITY_MISMATCH", "KMA response date/grid mismatch", 502);
+    }
   }
   return items;
 }
@@ -455,7 +482,7 @@ export async function requestKmaWeather(siteId, site, env, now) {
     ),
     TOMORROW_TIMEOUT_MS,
   )
-    .then((payload) => normalizeTomorrowForecast(validateKmaItems(payload, baseTimes.village, grid), now)),
+    .then((payload) => normalizeTomorrowForecast(validateKmaItems(payload, baseTimes.village, grid, "getVilageFcst"), now)),
     fetchJsonWithTimeout(
       kmaUrl(
         "getUltraSrtNcst",
@@ -464,7 +491,7 @@ export async function requestKmaWeather(siteId, site, env, now) {
         baseTimes.observation,
       ),
     ).then((payload) => {
-      const value = normalizeObservation(validateKmaItems(payload, baseTimes.observation, grid));
+      const value = normalizeObservation(validateKmaItems(payload, baseTimes.observation, grid, "getUltraSrtNcst"));
       if (!hasCurrentValues(value)) throw new WorkerError("KMA_EMPTY_DATA", "No usable current observation", 502);
       return value;
     }),
@@ -476,7 +503,7 @@ export async function requestKmaWeather(siteId, site, env, now) {
         baseTimes.forecast,
       ),
     ).then((payload) => {
-      const items = validateKmaItems(payload, baseTimes.forecast, grid);
+      const items = validateKmaItems(payload, baseTimes.forecast, grid, "getUltraSrtFcst");
       const nowKey = kmaDate(kstParts(now)) + pad(kstParts(now).hour) + pad(kstParts(now).minute);
       const end = kstParts(new Date(now.getTime() + 6 * 60 * 60 * 1000));
       const endKey = kmaDate(end) + pad(end.hour) + pad(end.minute);
