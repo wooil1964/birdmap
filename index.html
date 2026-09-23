@@ -114,7 +114,7 @@
   </div>
 </div>
 
-<!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면에서만 보인다.
+<!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면과 모바일 화면(작은 크기)에서 보인다.
      자료는 마커를 그릴 때 이미 받아 둔 /reports/approved 를 그대로 쓴다(추가 호출 없음). -->
 <div id="recentReportsBox">
   <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span></div>
@@ -202,7 +202,7 @@ a.ebird,.btn.ebird{display:none !important}
 .resultItem.reportResult{background:#fff8ec;border-color:#e3c898}
 .resultItem.reportResult:hover{background:#fdeecf;border-color:#c8a35a}
 .resultItem.reportResult .resultName{color:#7a3b00}.routeSummary{font-size:12px;color:#333;margin:6px 0;line-height:1.45;white-space:pre-line}.routeBtn{display:inline-block;margin:3px 4px 3px 0;padding:6px 8px;border-radius:5px;text-decoration:none;font-weight:bold;border:1px solid #777;background:#f7f7f7;color:#222}.routeKakao{background:#fff8cc;color:#6b5600;border-color:#c8a800}.routeNaver{background:#e8f5e9;color:#087f23;border-color:#5a9b63}
-/* 최근 출현 제보 목록. 기본은 숨김이고 PC 폭에서만 켠다(모바일·태블릿은 자리도 차지하지 않는다).
+/* 최근 출현 제보 목록. PC 폭(900px 이상)은 기본 크기, 그보다 좁으면 축소형으로 켠다.
    오른쪽 아래에 두어 왼쪽의 필터 버튼·필터 패널과 완전히 떨어뜨리고,
    Leaflet attribution 위로 띄워 하단 컨트롤도 가리지 않는다.
    z-index 는 이슈·이번주·필터 패널(9999~10000)보다 낮춰, 그 패널을 열면 위를 덮게 둔다. */
@@ -224,6 +224,18 @@ a.ebird,.btn.ebird{display:none !important}
 .recentReportMeta{font-size:11px;color:#6b7a83;margin-top:2px;white-space:normal;word-break:keep-all}
 .recentReportEmpty{padding:10px 11px;font-size:12px;color:#6b7a83}
 @media(min-width:900px){#recentReportsBox{display:flex}}
+/* PC 폭(900px) 미만: 같은 상자·목록·클릭 동작을 그대로 쓰고 크기만 줄인다.
+   위 min-width:900px 의 바로 아래 구간이라 중간에 박스가 사라지는 폭이 없다.
+   bottom 은 오른쪽 아래 Leaflet attribution 줄 위로 띄운 값이다. */
+@media(max-width:899px){
+  #recentReportsBox{display:flex;right:8px;bottom:24px;width:190px;max-height:140px}
+  #recentReportsTitle{padding:5px 8px;font-size:12px}
+  #recentReportsCount{margin-left:4px;font-size:11px}
+  .recentReportItem{padding:5px 8px}
+  .recentReportSpecies{font-size:11px}
+  .recentReportMeta{font-size:10px;margin-top:1px}
+  .recentReportEmpty{padding:6px 8px;font-size:11px}
+}
 /* 오른쪽 패널이 열려 있는 동안에는 가려지므로 숨긴다(선택자가 더 구체적이라 위 규칙을 이긴다). */
 body.rightPanelOpen #recentReportsBox{display:none}
 #noticeToggleBtn{position:fixed;top:86px;right:52px;z-index:10001;padding:8px 11px;background:#fff7db;border:2px solid #a67800;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
@@ -389,31 +401,57 @@ body.monthTideOpen{overflow:hidden}
 .resultFeature{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#406020;font-size:11px}
 #jinhoSeal{position:fixed;bottom:10px;left:10px;z-index:8000;width:30px;height:38px;border:2px solid #b40000;color:#b40000;background:rgba(255,255,255,.72);font-family:'Noto Serif CJK KR','Malgun Gothic',serif;font-weight:bold;font-size:15px;line-height:1.05;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);opacity:.9;pointer-events:none}
 
-/* 마커 크기 45% 축소(JS 의 MARKER_BASE_SCALE 과 같은 비율).
+/* 마커 크기 49.5% 축소(JS 의 MARKER_BASE_SCALE 과 같은 비율, 기존 45% 에서 1.1배).
    아이콘 상자·앵커는 JS 에서 줄이고, 여기서는 마커 그림(720x46 스프라이트)과
-   내부 아이콘 글리프를 같은 비율로 줄인다. 색별 배경 위치도 모두 0.45 배 값이다. */
-.awesome-marker{background-size:324px 20.7px}
-.awesome-marker-shadow{background-size:16.2px 7.2px}
-.awesome-marker i{font-size:6.3px;margin-top:4.5px}
+   내부 아이콘 글리프를 같은 비율로 줄인다. 색별 배경 위치도 모두 0.495 배 값이다. */
+.awesome-marker{background-size:356.4px 22.77px}
+.awesome-marker-shadow{background-size:17.82px 7.92px}
+.awesome-marker i{font-size:6.93px;margin-top:4.95px}
 .awesome-marker-icon-red{background-position:0 0}
-.awesome-marker-icon-orange{background-position:-16.2px 0}
-.awesome-marker-icon-green{background-position:-32.4px 0}
-.awesome-marker-icon-blue{background-position:-48.6px 0}
-.awesome-marker-icon-purple{background-position:-64.8px 0}
-.awesome-marker-icon-darkred{background-position:-81px 0}
-.awesome-marker-icon-darkblue{background-position:-97.2px 0}
-.awesome-marker-icon-darkgreen{background-position:-113.4px 0}
-.awesome-marker-icon-darkpurple{background-position:-129.6px 0}
-.awesome-marker-icon-cadetblue{background-position:-145.8px 0}
-.awesome-marker-icon-lightred{background-position:-162px 0}
-.awesome-marker-icon-beige{background-position:-178.2px 0}
-.awesome-marker-icon-lightgreen{background-position:-194.4px 0}
-.awesome-marker-icon-lightblue{background-position:-210.6px 0}
-.awesome-marker-icon-pink{background-position:-226.8px 0}
-.awesome-marker-icon-white{background-position:-258.3px 0}
-.awesome-marker-icon-lightgray{background-position:-275.4px 0}
-.awesome-marker-icon-gray{background-position:-291.6px 0}
-.awesome-marker-icon-black{background-position:-306.9px 0}
+.awesome-marker-icon-orange{background-position:-17.82px 0}
+.awesome-marker-icon-green{background-position:-35.64px 0}
+.awesome-marker-icon-blue{background-position:-53.46px 0}
+.awesome-marker-icon-purple{background-position:-71.28px 0}
+.awesome-marker-icon-darkred{background-position:-89.1px 0}
+.awesome-marker-icon-darkblue{background-position:-106.92px 0}
+.awesome-marker-icon-darkgreen{background-position:-124.74px 0}
+.awesome-marker-icon-darkpurple{background-position:-142.56px 0}
+.awesome-marker-icon-cadetblue{background-position:-160.38px 0}
+.awesome-marker-icon-lightred{background-position:-178.2px 0}
+.awesome-marker-icon-beige{background-position:-196.02px 0}
+.awesome-marker-icon-lightgreen{background-position:-213.84px 0}
+.awesome-marker-icon-lightblue{background-position:-231.66px 0}
+.awesome-marker-icon-pink{background-position:-249.48px 0}
+.awesome-marker-icon-white{background-position:-284.13px 0}
+.awesome-marker-icon-lightgray{background-position:-302.94px 0}
+.awesome-marker-icon-gray{background-position:-320.76px 0}
+.awesome-marker-icon-black{background-position:-337.59px 0}
+/* 모바일(700px 이하)은 applyResponsiveMarkerSizes() 가 아이콘 상자·앵커를 0.74 배로 줄이므로
+   마커 그림·글리프·색별 배경 위치도 같은 0.74 배로 줄여 그림이 상자 밖으로 잘리지 않게 한다.
+   그림자는 JS 가 PC 크기 그대로 두므로 여기서도 건드리지 않는다. */
+@media(max-width:700px){
+  .awesome-marker:not(.awesome-marker-shadow){background-size:263.736px 16.85px}
+  .awesome-marker i{font-size:5.128px;margin-top:3.663px}
+  .awesome-marker-icon-red{background-position:0 0}
+  .awesome-marker-icon-orange{background-position:-13.187px 0}
+  .awesome-marker-icon-green{background-position:-26.374px 0}
+  .awesome-marker-icon-blue{background-position:-39.56px 0}
+  .awesome-marker-icon-purple{background-position:-52.747px 0}
+  .awesome-marker-icon-darkred{background-position:-65.934px 0}
+  .awesome-marker-icon-darkblue{background-position:-79.121px 0}
+  .awesome-marker-icon-darkgreen{background-position:-92.308px 0}
+  .awesome-marker-icon-darkpurple{background-position:-105.494px 0}
+  .awesome-marker-icon-cadetblue{background-position:-118.681px 0}
+  .awesome-marker-icon-lightred{background-position:-131.868px 0}
+  .awesome-marker-icon-beige{background-position:-145.055px 0}
+  .awesome-marker-icon-lightgreen{background-position:-158.242px 0}
+  .awesome-marker-icon-lightblue{background-position:-171.428px 0}
+  .awesome-marker-icon-pink{background-position:-184.615px 0}
+  .awesome-marker-icon-white{background-position:-210.256px 0}
+  .awesome-marker-icon-lightgray{background-position:-224.176px 0}
+  .awesome-marker-icon-gray{background-position:-237.362px 0}
+  .awesome-marker-icon-black{background-position:-249.817px 0}
+}
 @media(max-width:700px){
   #topUiWrap{position:fixed;top:8px;left:8px;right:8px;z-index:10001;pointer-events:none}
   #mapTitleBox{position:static;pointer-events:auto;padding:8px 10px}
@@ -1069,7 +1107,7 @@ function refreshFixedSpotPopups(){
    folium 마커(AwesomeMarkers)와 마스터 DB 보충 마커(기본 아이콘)가 프로토타입 기본값을
    공유하므로 한 곳에서 줄이면 모든 색 마커에 같이 적용된다.
    마커 그림과 내부 아이콘 글리프는 .awesome-marker CSS 가 같은 비율로 줄인다. */
-var MARKER_BASE_SCALE=.45;
+var MARKER_BASE_SCALE=.495;
 (function(scale){
   var iconOptions=[L.AwesomeMarkers.Icon.prototype.options,L.Icon.Default.prototype.options];
   ['iconSize','iconAnchor','popupAnchor','shadowSize','shadowAnchor','tooltipAnchor'].forEach(function(key){
