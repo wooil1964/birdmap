@@ -203,21 +203,29 @@ a.ebird,.btn.ebird{display:none !important}
 .resultItem.reportResult:hover{background:#fdeecf;border-color:#c8a35a}
 .resultItem.reportResult .resultName{color:#7a3b00}.routeSummary{font-size:12px;color:#333;margin:6px 0;line-height:1.45;white-space:pre-line}.routeBtn{display:inline-block;margin:3px 4px 3px 0;padding:6px 8px;border-radius:5px;text-decoration:none;font-weight:bold;border:1px solid #777;background:#f7f7f7;color:#222}.routeKakao{background:#fff8cc;color:#6b5600;border-color:#c8a800}.routeNaver{background:#e8f5e9;color:#087f23;border-color:#5a9b63}
 /* 최근 출현 제보 목록. 기본은 숨김이고 PC 폭에서만 켠다(모바일·태블릿은 자리도 차지하지 않는다).
-   왼쪽 '필터 열기' 버튼 아래에 놓아 오른쪽의 제보하기 버튼과 겹치지 않는다.
-   z-index 는 필터 패널(9999)보다 낮춰, 필터를 열면 패널이 이 목록을 덮게 둔다. */
-#recentReportsBox{display:none;position:fixed;top:124px;left:50px;z-index:9990;width:300px;box-sizing:border-box;
+   오른쪽 아래에 두어 왼쪽의 필터 버튼·필터 패널과 완전히 떨어뜨리고,
+   Leaflet attribution 위로 띄워 하단 컨트롤도 가리지 않는다.
+   z-index 는 이슈·이번주·필터 패널(9999~10000)보다 낮춰, 그 패널을 열면 위를 덮게 둔다. */
+#recentReportsBox{display:none;position:fixed;right:30px;bottom:60px;z-index:9990;width:250px;max-height:48vh;
+  flex-direction:column;box-sizing:border-box;
   background:rgba(255,255,255,.96);border:1px solid #cfd6da;border-radius:8px;
   box-shadow:0 2px 8px rgba(0,0,0,.16);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
-#recentReportsTitle{padding:8px 11px;border-bottom:1px solid #e3e8eb;background:#f6f8f9;font-size:13px;font-weight:bold;color:#2f4f62}
+#recentReportsTitle{flex:0 0 auto;padding:8px 11px;border-bottom:1px solid #e3e8eb;background:#f6f8f9;font-size:13px;font-weight:bold;color:#2f4f62}
 #recentReportsCount{margin-left:6px;font-weight:normal;font-size:12px;color:#5a7a8c}
-#recentReportsList{max-height:50vh;overflow-y:auto;overscroll-behavior:contain}
+/* 제목은 고정하고 목록만 남은 높이 안에서 스크롤한다. 건수가 적으면 내용만큼만
+   높아지고, 많아지면 상자 전체가 48vh 에서 멈춘다. */
+#recentReportsList{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 .recentReportItem{display:block;width:100%;box-sizing:border-box;text-align:left;padding:7px 11px;border:0;border-bottom:1px solid #eef2f4;background:transparent;font:inherit;cursor:pointer;line-height:1.35}
 .recentReportItem:last-child{border-bottom:0}
 .recentReportItem:hover{background:#eef7fb}
-.recentReportSpecies{font-size:13px;font-weight:bold;color:#22333c}
-.recentReportMeta{font-size:11px;color:#6b7a83;margin-top:2px}
+/* 좁은 폭에서 긴 종명이 잘리지 않게 글자를 줄이지 않고 줄바꿈한다.
+   keep-all 이라 한글 낱말 가운데가 아니라 낱말 사이에서 넘어간다. */
+.recentReportSpecies{font-size:13px;font-weight:bold;color:#22333c;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+.recentReportMeta{font-size:11px;color:#6b7a83;margin-top:2px;white-space:normal;word-break:keep-all}
 .recentReportEmpty{padding:10px 11px;font-size:12px;color:#6b7a83}
-@media(min-width:900px){#recentReportsBox{display:block}}
+@media(min-width:900px){#recentReportsBox{display:flex}}
+/* 오른쪽 패널이 열려 있는 동안에는 가려지므로 숨긴다(선택자가 더 구체적이라 위 규칙을 이긴다). */
+body.rightPanelOpen #recentReportsBox{display:none}
 #noticeToggleBtn{position:fixed;top:86px;right:52px;z-index:10001;padding:8px 11px;background:#fff7db;border:2px solid #a67800;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #noticeBadge{display:inline-block;min-width:17px;height:17px;line-height:17px;margin-left:4px;padding:0 3px;border-radius:10px;background:#a30000;color:white;font-size:10px;text-align:center}
 #noticePanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
@@ -2626,10 +2634,21 @@ function resetFilters(){
 }
 
 
+/* 오른쪽 아래의 최근 출현 제보 목록은 오른쪽 패널(탐조 이슈·이번주 어디 갈까)이
+   열려 있는 동안 가려지므로 그때만 숨긴다. 자료는 그대로 두고 보이기만 바꾼다.
+   왼쪽 필터 패널은 목록과 겹치지 않으므로 숨기지 않는다. */
+function syncRecentReportsVisibility(){
+  var notice=document.getElementById('noticePanel');
+  var today=document.getElementById('todayPanel');
+  var open=(notice&&notice.style.display==='block')||(today&&today.style.display==='block');
+  document.body.classList.toggle('rightPanelOpen',!!open);
+}
+
 function toggleNoticePanel(force){
   var p=document.getElementById('noticePanel'),d=document.getElementById('todayPanel'),o=typeof force==='boolean'?force:p.style.display!=='block';
   p.style.display=o?'block':'none';
   if(o){hideBirdmapPanelOnMobile();if(d)d.style.display='none';}
+  syncRecentReportsVisibility();
 }
 
 function toggleTodayPanel(force){
@@ -2643,6 +2662,7 @@ function toggleTodayPanel(force){
     if(!recommendationWeatherRules)loadRecommendationWeatherRules();
     loadTideMonth().then(function(){refreshTodayPanelIfOpen();}).catch(function(){refreshTodayPanelIfOpen();});
   }
+  syncRecentReportsVisibility();
 }
 
 function todayString(){
