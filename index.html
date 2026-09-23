@@ -114,6 +114,13 @@
   </div>
 </div>
 
+<!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면에서만 보인다.
+     자료는 마커를 그릴 때 이미 받아 둔 /reports/approved 를 그대로 쓴다(추가 호출 없음). -->
+<div id="recentReportsBox">
+  <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span></div>
+  <div id="recentReportsList"><div class="recentReportEmpty">불러오는 중입니다.</div></div>
+</div>
+
 <div id="noticePanel">
   <div class="panelHeader"><strong>📢 이달의 탐조 기획</strong><button onclick="toggleNoticePanel(false)">닫기</button></div>
   <div id="noticeList">현재 게시 중인 기획글이 없습니다.</div>
@@ -195,6 +202,22 @@ a.ebird,.btn.ebird{display:none !important}
 .resultItem.reportResult{background:#fff8ec;border-color:#e3c898}
 .resultItem.reportResult:hover{background:#fdeecf;border-color:#c8a35a}
 .resultItem.reportResult .resultName{color:#7a3b00}.routeSummary{font-size:12px;color:#333;margin:6px 0;line-height:1.45;white-space:pre-line}.routeBtn{display:inline-block;margin:3px 4px 3px 0;padding:6px 8px;border-radius:5px;text-decoration:none;font-weight:bold;border:1px solid #777;background:#f7f7f7;color:#222}.routeKakao{background:#fff8cc;color:#6b5600;border-color:#c8a800}.routeNaver{background:#e8f5e9;color:#087f23;border-color:#5a9b63}
+/* 최근 출현 제보 목록. 기본은 숨김이고 PC 폭에서만 켠다(모바일·태블릿은 자리도 차지하지 않는다).
+   왼쪽 '필터 열기' 버튼 아래에 놓아 오른쪽의 제보하기 버튼과 겹치지 않는다.
+   z-index 는 필터 패널(9999)보다 낮춰, 필터를 열면 패널이 이 목록을 덮게 둔다. */
+#recentReportsBox{display:none;position:fixed;top:124px;left:50px;z-index:9990;width:300px;box-sizing:border-box;
+  background:rgba(255,255,255,.96);border:1px solid #cfd6da;border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.16);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
+#recentReportsTitle{padding:8px 11px;border-bottom:1px solid #e3e8eb;background:#f6f8f9;font-size:13px;font-weight:bold;color:#2f4f62}
+#recentReportsCount{margin-left:6px;font-weight:normal;font-size:12px;color:#5a7a8c}
+#recentReportsList{max-height:50vh;overflow-y:auto;overscroll-behavior:contain}
+.recentReportItem{display:block;width:100%;box-sizing:border-box;text-align:left;padding:7px 11px;border:0;border-bottom:1px solid #eef2f4;background:transparent;font:inherit;cursor:pointer;line-height:1.35}
+.recentReportItem:last-child{border-bottom:0}
+.recentReportItem:hover{background:#eef7fb}
+.recentReportSpecies{font-size:13px;font-weight:bold;color:#22333c}
+.recentReportMeta{font-size:11px;color:#6b7a83;margin-top:2px}
+.recentReportEmpty{padding:10px 11px;font-size:12px;color:#6b7a83}
+@media(min-width:900px){#recentReportsBox{display:block}}
 #noticeToggleBtn{position:fixed;top:86px;right:52px;z-index:10001;padding:8px 11px;background:#fff7db;border:2px solid #a67800;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #noticeBadge{display:inline-block;min-width:17px;height:17px;line-height:17px;margin-left:4px;padding:0 3px;border-radius:10px;background:#a30000;color:white;font-size:10px;text-align:center}
 #noticePanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
@@ -691,6 +714,93 @@ function reportEntryPlace(entry){
     return (site?site.name+' ':'')+'출현 지점';
   }
   return '공개 관찰 위치 '+Number(entry.lat).toFixed(3)+', '+Number(entry.lon).toFixed(3);
+}
+
+/* ── 최근 출현 제보 목록 ───────────────────────────────────────────────
+   마커를 그릴 때 이미 받아 둔 승인 제보(reportSearchIndex)를 그대로 쓴다.
+   목록 때문에 같은 API 를 다시 부르지 않는다. 좌표도 그 자료의 공개 좌표만 쓴다. */
+var RECENT_REPORT_LIMIT=15;
+var RECENT_REPORT_DAYS=60;
+var recentReportsFailed=false;
+
+/* 오늘(KST)에서 며칠 전 날짜를 YYYY-MM-DD 로 돌려준다. 기준일은 기존 kstDateText() 를
+   그대로 써서 브라우저 현지시간이 아니라 KST 를 따른다. 관찰일도 같은 형식이라
+   문자열 비교로 기간을 가를 수 있다(지도의 다른 날짜 비교와 같은 방식). */
+function kstDateTextBefore(days){
+  var base=new Date(kstDateText()+'T00:00:00Z');
+  base.setUTCDate(base.getUTCDate()-days);
+  return base.toISOString().slice(0,10);
+}
+
+/* 탐조지역명은 지도에 고정된 붉은 점에 연결된 제보에서만 안전하게 얻을 수 있다.
+   그 밖의 제보는 공개 자료에 지역명이 없으므로 줄을 비워 둔다(임의로 만들지 않는다). */
+function recentReportSiteName(entry){
+  if(entry.kind!=='fixed')return '';
+  var fixed=null;
+  siteSpotData.forEach(function(spot){if(spot.id===entry.spotId)fixed=spot;});
+  var site=fixed&&siteData.find(function(s){return String(s.id)===String(fixed.siteId);});
+  return site?site.name:'';
+}
+
+/* 관찰일은 서버가 KST 기준 YYYY-MM-DD 로 준다. 올해면 9/23, 다른 해면 2025. 9. 23. */
+function recentReportDateText(date){
+  var parts=String(date||'').split('-');
+  if(parts.length!==3)return '';
+  var year=Number(parts[0]),month=Number(parts[1]),day=Number(parts[2]);
+  if(!year||!month||!day)return '';
+  var thisYear=Number(kstDateText().slice(0,4));
+  return year===thisYear?(month+'/'+day):(year+'. '+month+'. '+day+'.');
+}
+
+function renderRecentReports(){
+  var list=document.getElementById('recentReportsList');
+  var count=document.getElementById('recentReportsCount');
+  if(!list)return;
+  list.innerHTML='';
+  if(count)count.textContent='';
+  if(recentReportsFailed&&!reportSearchIndex.length){
+    // 자료가 없는 것과 못 불러온 것을 구분한다. 원인은 콘솔에 남겨 둔다.
+    list.innerHTML='<div class="recentReportEmpty">제보 목록을 불러오지 못했습니다.</div>';
+    return;
+  }
+  if(!reportSearchIndex.length){
+    list.innerHTML='<div class="recentReportEmpty">최근 승인된 제보가 없습니다.</div>';
+    return;
+  }
+  // 실제 관찰일 기준으로 최근 기간만 남긴다(등록일·승인일이 아니다).
+  var cutoff=kstDateTextBefore(RECENT_REPORT_DAYS);
+  var recent=reportSearchIndex.filter(function(entry){return entry.date&&entry.date>=cutoff;});
+  if(!recent.length){
+    list.innerHTML='<div class="recentReportEmpty">최근 '+RECENT_REPORT_DAYS+'일간 승인된 제보가 없습니다.</div>';
+    return;
+  }
+  // reportSearchIndex 는 이미 실제 관찰일 최신순이라 자른 뒤에도 순서가 그대로다.
+  var shown=recent.slice(0,RECENT_REPORT_LIMIT);
+  if(count)count.textContent=shown.length+'건';
+  shown.forEach(function(entry){
+    var item=document.createElement('button');
+    item.type='button';
+    item.className='recentReportItem';
+    item.onclick=function(){openReportEntry(entry);};
+    var species=document.createElement('div');
+    species.className='recentReportSpecies';
+    species.textContent=(entry.species||[]).join(' · ');
+    item.appendChild(species);
+    // 있는 항목만 이어 붙인다. 없는 값에 '미확인' 같은 문구를 넣지 않는다.
+    var bits=[];
+    if(entry.reporter)bits.push(entry.reporter);
+    var siteName=recentReportSiteName(entry);
+    if(siteName)bits.push(siteName);
+    var dateText=recentReportDateText(entry.date);
+    if(dateText)bits.push(dateText);
+    if(bits.length){
+      var meta=document.createElement('div');
+      meta.className='recentReportMeta';
+      meta.textContent=bits.join(' · ');
+      item.appendChild(meta);
+    }
+    list.appendChild(item);
+  });
 }
 
 /* 새 마커를 만들지 않고 이미 지도에 있는 점을 그대로 연다. */
@@ -3685,7 +3795,12 @@ function reportMapClick(e){
 }
 
 function initReportFeature(){
-  if(!reportsConfigured())return;
+  if(!reportsConfigured()){
+    // 제보 기능이 꺼져 있으면 최근 제보 목록도 띄우지 않는다.
+    var box=document.getElementById('recentReportsBox');
+    if(box)box.style.display='none';
+    return;
+  }
   var button=document.getElementById('reportToggleBtn');
   if(button)button.hidden=false;
   map_7010a44f6ac2025090f0fe07508ed485.getContainer().addEventListener('click',reportMapClick,true);
@@ -3709,12 +3824,20 @@ function loadApprovedReports(){
     Object.keys(reportFixedHistory).forEach(function(key){
       reportFixedHistory[key]=(reportFixedHistory[key]&&reportFixedHistory[key].history)||[];
     });
-    // 검색 대상도 같은 자료로 다시 만든다. 따로 받아 오지 않는다.
+    // 검색 대상과 최근 제보 목록도 같은 자료로 다시 만든다. 따로 받아 오지 않는다.
     buildReportSearchIndex(data.spots);
+    recentReportsFailed=false;
+    renderRecentReports();
     renderApprovedReports(data.spots);
     refreshFixedSpotPopups();
     return true;
-  }).catch(function(){return false;});
+  }).catch(function(error){
+    // 지도 마커는 예전처럼 직전 상태를 그대로 둔다. 목록만 '못 불러옴'으로 구분해 알린다.
+    console.error('승인 제보를 불러오지 못했습니다.',error);
+    recentReportsFailed=true;
+    renderRecentReports();
+    return false;
+  });
 }
 
 function renderApprovedReports(spots){
