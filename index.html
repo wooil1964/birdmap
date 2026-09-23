@@ -65,7 +65,10 @@
 <button id="togglePanelBtn" type="button" aria-expanded="false" aria-controls="birdmapPanel" onclick="toggleBirdmapPanel()">☰ 필터 열기</button>
 <button id="noticeToggleBtn" onclick="toggleNoticePanel()">📢 지금 볼 만한 탐조 이슈 <span id="noticeBadge">0</span></button>
 <button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 이번주 어디 갈까</button>
+<div id="reportPickWrap">
 <button id="reportToggleBtn" type="button" hidden aria-pressed="false" onclick="toggleReportMode()">📍 출현종 제보하기</button>
+<div id="reportPickBanner" role="status" aria-live="polite">지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.</div>
+</div>
 </div>
 </div>
 <div id="birdmapPanel">
@@ -127,7 +130,6 @@
     <div id="monthTideContent" class="monthTideContent">월간 조석 자료를 불러오는 중입니다.</div>
   </div>
 </div>
-<div id="reportPickBanner">지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.</div>
 <div id="reportModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="reportTitle" onclick="if(event.target===this)closeReportModal()">
   <div class="monthTideDialog reportDialog">
     <div class="monthTideHeader"><strong id="reportTitle">출현종 제보</strong><button type="button" onclick="closeReportModal()">닫기</button></div>
@@ -286,10 +288,14 @@ a.ebird,.btn.ebird{display:none !important}
 .reportActions button{padding:8px 14px;border-radius:6px;border:1px solid #bcc6cc;background:#fff;cursor:pointer;font-size:13px}
 .reportActions .reportSubmit{background:#2f7d4f;border-color:#2f7d4f;color:#fff;font-weight:bold}
 .reportActions .reportSubmit[disabled]{opacity:.6;cursor:progress}
-#reportToggleBtn{position:fixed;top:170px;right:52px;z-index:10001;padding:8px 11px;background:#fdf1f1;border:2px solid #c0392b;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#8d2418;cursor:pointer}
+/* 제보 버튼과 안내문을 한 칸에 담아 안내문이 늘 버튼 바로 아래에 붙게 한다.
+   자리잡기는 이 칸이 맡고 버튼은 그 안에서 흐른다(예전 버튼 좌표와 같은 자리다). */
+#reportPickWrap{position:fixed;top:170px;right:52px;z-index:10001;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+#reportToggleBtn{pointer-events:auto;padding:8px 11px;background:#fdf1f1;border:2px solid #c0392b;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#8d2418;cursor:pointer}
 #reportToggleBtn[aria-pressed="true"]{background:#c0392b;color:#fff}
 body.reportPicking .folium-map{cursor:crosshair}
-#reportPickBanner{display:none;position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:10002;padding:10px 16px;border-radius:999px;background:rgba(28,34,38,.92);color:#fff;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 14px rgba(0,0,0,.35);max-width:92vw;text-align:center}
+/* 지도 위를 덮지 않도록 폭을 제한하고, 클릭은 지도로 그대로 지나가게 둔다. */
+#reportPickBanner{display:none;max-width:min(300px,calc(100vw - 96px));padding:8px 12px;border-radius:8px;background:rgba(28,34,38,.92);color:#fff;font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;line-height:1.45;box-shadow:0 2px 8px rgba(0,0,0,.28);text-align:left;pointer-events:none}
 body.reportPicking #reportPickBanner{display:block}
 .monthTideModal{display:none;position:fixed;inset:0;z-index:11000;padding:28px;background:rgba(0,0,0,.5);box-sizing:border-box;align-items:center;justify-content:center;font-family:Arial,'Malgun Gothic',sans-serif}
 .monthTideDialog{width:min(760px,100%);max-height:calc(100vh - 56px);overflow:hidden;background:white;border:2px solid #2d6f9f;border-radius:10px;box-shadow:0 5px 24px rgba(0,0,0,.4);display:flex;flex-direction:column}
@@ -384,8 +390,9 @@ body.monthTideOpen{overflow:hidden}
   #topBtnRow button{position:static;pointer-events:auto;font-size:12px;padding:6px 9px}
   /* 손가락으로 누르기 쉽도록 최소 44px 높이를 준다. */
   #togglePanelBtn{grid-column:1;grid-row:1;justify-self:start;min-height:44px;padding:6px 14px}
-  #noticeToggleBtn,#todayToggleBtn,#reportToggleBtn{grid-column:2;justify-self:end}
-  #reportToggleBtn{position:static;grid-row:3;margin-top:4px}
+  #noticeToggleBtn,#todayToggleBtn,#reportPickWrap{grid-column:2;justify-self:end}
+  /* 모바일에서는 버튼 칸이 격자 안으로 들어와 안내문이 버튼 아래로 자연스럽게 흐른다. */
+  #reportPickWrap{position:static;grid-row:3;margin-top:4px;gap:4px}
   #noticeToggleBtn{grid-row:1}
   #todayToggleBtn{grid-row:2}
   html,body{overflow-x:hidden}
@@ -3780,6 +3787,16 @@ function renderPendingReports(spots){
 
 /* ── 위치 선택 ─────────────────────────────────────────────────────────── */
 
+/* 안내문은 제보 버튼 바로 아래 칸에 있고, 위치 선택 중일 때만 보인다(body.reportPicking).
+   아직 고르지 않았으면 찍으라고 하고, 이미 고른 뒤 다시 고르는 중이면 바꿀 수 있다고 알린다. */
+var REPORT_PICK_HINT='지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.';
+var REPORT_PICK_DONE_HINT='관찰 위치가 선택되었습니다. 다시 클릭하면 위치를 변경할 수 있습니다.';
+
+function updateReportPickBanner(){
+  var banner=document.getElementById('reportPickBanner');
+  if(banner)banner.textContent=reportPicked?REPORT_PICK_DONE_HINT:REPORT_PICK_HINT;
+}
+
 function setReportLocation(lat,lon){
   reportPicked={lat:Number(lat.toFixed(6)),lon:Number(lon.toFixed(6))};
   if(reportPickMarker)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(reportPickMarker);
@@ -3793,11 +3810,13 @@ function setReportLocation(lat,lon){
     box.textContent='위도 '+reportPicked.lat+' · 경도 '+reportPicked.lon;
     box.className='reportCoord ready';
   }
+  updateReportPickBanner();
   stopReportPicking();
 }
 
 function startReportPicking(){
   reportPicking=true;
+  updateReportPickBanner();
   document.body.classList.add('reportPicking');
   var button=document.getElementById('reportToggleBtn');
   if(button)button.setAttribute('aria-pressed','true');
@@ -3817,6 +3836,7 @@ function clearReportPick(){
     reportPickMarker=null;
   }
   reportPicked=null;
+  updateReportPickBanner();
 }
 
 function toggleReportMode(){
