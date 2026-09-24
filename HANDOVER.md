@@ -437,8 +437,13 @@
 > **[현재]** 이 절만 현재 미해결 상태를 뜻합니다.
 
 - **[해소됨] 기상 Worker 의 KMA 403** 은 2026-09-23 `KMA_SERVICE_KEY` 를 재발급된 Decoding 키로 교체해 해결됐다. 같은 날 `KMA_IDENTITY_MISMATCH` 도 해결됐다(위 '최근 완료 작업' 참조).
-- **[미해결] 기상 Worker 의 `KMA_TIMEOUT` 이 간헐적으로 발생한다.** 상류 KMA 응답이 8초(`UPSTREAM_TIMEOUT_MS`·`TOMORROW_TIMEOUT_MS`) 안에 오지 않는 경우다. 2026-09-23 진단 중 193·194·195 등에서 발생했고, 최종 운영 확인에서는 siteId 1 에서 한 번 발생한 뒤 재조회로 성공했다.
-  - timeout 값과 retry 로직은 이번 작업에서 **변경하지 않았다.** 빈도·API별 분포·시간대 등 별도 조사가 필요하다.
+- **[관찰 중] 기상 Worker 의 `KMA_TIMEOUT` — 간헐적 외부 지연, 현재 8초 유지·관찰.** 상류 KMA 응답이 8초(`UPSTREAM_TIMEOUT_MS`·`TOMORROW_TIMEOUT_MS`) 안에 오지 않는 경우다. 2026-09-23 진단 중 193·194·195 등에서 발생했고, 최종 운영 확인에서는 siteId 1 에서 한 번 발생한 뒤 재조회로 성공했다.
+  - **2026-09-23 야간 조사**(운영 Worker 응답만 읽기 전용 조회, 진단 빌드 없음): KMA 호출 96회 중 timeout 8건 — `getVilageFcst` 5·`getUltraSrtNcst` 2·`getUltraSrtFcst` 1. 22:59 표본에 4건이 몰렸고 23:20·23:46 은 각 1건, 00:05 는 0건. 지역·격자 패턴은 없었다.
+  - **2026-09-24 진단 완료**(임시 diagnostic Worker `400db7b1-bad6-4870-82fc-aef228922249`, 08:18·08:47·09:18·09:58 KST 4개 시간대 × 9개 사이트 1·19·50·92·140·150·193·194·195): Worker 응답 36건·실제 KMA 호출 108건, **timeout 0건**. API별 정상 latency 는 `getUltraSrtNcst` 36/36 성공·median 약 286ms·max 약 858ms, `getUltraSrtFcst` 36/36·median 약 395ms·max 약 711ms, `getVilageFcst` 36/36·median 약 1.45초·max 약 2.16초. `getVilageFcst`(1,000행)가 가장 느리지만 정상 상태에서는 8초보다 충분히 빠르다. 정상 응답의 소요시간은 대부분 headers 대기이고 body 수신은 최대 약 0.45초였다.
+  - **판단**: 일부 시간대의 간헐적 KMA 측 지연이 가장 유력하다. timeout 난 요청이 실제로 10~12초 안에 끝나는지, headers 지연인지 body 지연인지는 **확인되지 않았다**(진단 중 timeout 이 없었음).
+  - **현재 결정**: timeout 8초 유지, retry 추가하지 않음, `getVilageFcst` 만 timeout 연장하지 않음, `Promise.allSettled` 병렬 호출 구조 유지. 간헐적 외부 KMA 지연으로 관찰한다.
+  - **향후**: 야간 22:30~23:30 에 timeout 이 반복적으로 사용자에게 영향을 줄 때만 다시 측정한다. 진단 방법은 `fetchJsonWithTimeout()` 에 timing 인자를 더해 headers 수신 시각·HTTP status 를 적고, 세 KMA 호출을 감싸 API·siteId·nx/ny·시작/headers/완료 시각·time-to-headers·총 ms·결과(success/timeout/other_error)만 `console.log` 하는 것이다(키·URL·query·응답 본문은 남기지 않음). 당시 패치는 작업 세션 임시 폴더에만 있어 보존되지 않을 수 있으니 위 내용으로 다시 만들 것. 실제 timeout 요청의 headers/body 지연을 확인한 뒤 `getVilageFcst` 12초 또는 다른 대응을 검토한다.
+  - 진단 종료 후 정상 Worker 재배포 완료(version `7a9f78ad-8708-4bb0-9164-986a9bdcce02`, 코드는 `719d43e` 와 동일), diagnostic console log 제거 확인(비캐시 실요청에 로그 0줄), `weather-proxy` 테스트 36/36, git working tree clean. 진단 코드는 commit/push 하지 않았다.
   - 영향 범위는 팝업의 '실시간 기상' 경로뿐이며, 요청 일부만 실패하면 `status: partial` 로 나머지 값은 유지된다. 저장 자료(`weather_today.json`)는 Actions 가 Windy·Open-Meteo 로 생성하므로 영향이 없다. 조치할 때 `weather-proxy/` 외의 파일을 함께 바꾸지 말 것.
 - **출현종 제보 시스템 운영·유지보수 메모**(기능 자체는 가동 중이며 보류 사항이 아니다).
   - **승인 작업**: `https://birdmap-reports-admin.wooil-birdmap.workers.dev/admin` 접속 → Cloudflare Access 로그인(허용 이메일은 `reports-api/wrangler.admin.toml` 의 `ADMIN_EMAILS`) → 상태 탭에서 대기 건 확인 → 종명·좌표·공개 좌표·관리자 메모를 고쳐 `승인`, 또는 `반려`·`공개 취소`·`선택 지점에 합치기`. 합치기는 관리자가 고른 지점에만 적용되고 기존 출현종을 지우지 않는다. 좌표가 가깝다는 이유로 자동 병합하지 않는다.
