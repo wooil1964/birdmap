@@ -1,20 +1,22 @@
 # Phase 2E CHECKPOINT
 
-STAGE: PRE_FLIGHT_DONE (부분) — FINAL EXECUTION GATE: NOT READY
+STAGE: ARTIFACT_PINNED — FINAL EXECUTION GATE: READY (운영자 "Phase 2E 실행 승인" 대기)
 
-Updated: 2026-09-26T15:05Z (2026-09-27 00:05 KST)
+Updated: 2026-09-27 KST
 
-- Production mode: 기존 legacy NORMAL (변경 없음), public v57849940…, admin v1eebcf4e…
-- Production N: 23 (19/4/0)
+- current stage: PRE_FLIGHT_DONE → ARTIFACT_PINNED. RECOVERY_POINT_READY는 승인 뒤 step 1에서 기록한다.
+- Production mode: legacy NORMAL(변경 없음). public v57849940…, admin v1eebcf4e…
+- current N: 23 (19/4/0)
+- artifact: 브랜치 phase2e-cutover, 코드 커밋 183cef95bffaeaed80fe04d0b3af4e397957001d. 이후 커밋은 docs만.
 - manifest: 없음(freeze 전)
-- 완료된 migration: 없음
-- Production write: 0. commit 0, push 0.
+- completed migrations: 없음
+- remaining: [cutover-runbook.md](cutover-runbook.md) step 0–16
+- rollback option: freeze 전이면 Worker rollback 불필요 / Rollback A–D
+- Production write: 0. push 0.
 
-## 운영자 결정 대기
-1. 신규 대기 제보 공개 정책(`REPORTS_PENDING_PUBLIC` 1 / 0 / legacy 규칙 유지를 위한 코드 변경).
-2. 프론트엔드 전환 방식(cutover 뒤 push / capabilities 자동 전환 코드 / 사전 push).
+## 운영자 결정 완료
+- REPORTS_PENDING_PUBLIC=1
+- 프론트엔드 capabilities 자동 전환(push는 별도 승인이며, 실행 전에 하는 것을 권장)
 
-## 결정 뒤 남은 준비
-- production dual 설정(preview_urls=false, peer binding, gate token, PENDING_PUBLIC)
-- artifact commit(branch) + 전체 회귀 재실행
-- 정확한 명령 runbook, CUTOVER-LOG, critical path, 공식 문서 당일 재확인
+## 재개 시
+CHECKPOINT → git HEAD·status → production preflight(predestructive) → CUTOVER-LOG 마지막 단계 순으로 대조한다. 실제 상태를 우선한다.
