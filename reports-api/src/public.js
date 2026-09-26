@@ -105,10 +105,12 @@ async function handleCanonicalSubmit(request,env) {
     if(committed)return jsonResponse(request,env,committed,201);
     throw error;
   }
-  const id=body.request_id,approx=approximateCoordinate(report.lat,report.lon),pendingPublic=Number(env.REPORTS_PENDING_PUBLIC);
+  // Breeding observations are refused before this point (explicit non-breeding confirmation), so the public
+  // pending marker uses the clicked coordinate. No species/month/location based offset.
+  const id=body.request_id,approx={lat:report.lat,lon:report.lon},pendingPublic=Number(env.REPORTS_PENDING_PUBLIC);
   // Eligibility comes only from the explicit confirmation, never species/month inference.
   const accepted={ok:true,id,status:'pending',publicVisibility:pendingPublic?'approximate':'withheld'};
-  if(pendingPublic)accepted.spot={id,status:'pending',lat:approx.lat,lon:approx.lon,approximate:true,species:report.species,date:report.observedOn};
+  if(pendingPublic)accepted.spot={id,status:'pending',lat:approx.lat,lon:approx.lon,approximate:false,species:report.species,date:report.observedOn};
   const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:null,public_lon:null,
     approx_lat:approx.lat,approx_lon:approx.lon,pending_public:pendingPublic,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
     bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:await dedupeHash(report)};
@@ -202,7 +204,8 @@ async function handlePending(request, env) {
   const db = database(env);
   const { results } = await db
     .prepare(
-      `SELECT id, species, observed_on, approx_lat, approx_lon
+      `SELECT id, species, observed_on, approx_lat, approx_lon,
+              (approx_lat <> lat OR approx_lon <> lon) AS approx_offset
          FROM reports
         WHERE status = 'pending' AND pending_public = 1
           AND approx_lat IS NOT NULL AND approx_lon IS NOT NULL

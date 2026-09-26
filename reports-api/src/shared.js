@@ -321,7 +321,8 @@ export function pendingPayload(rows) {
       status: 'pending',
       lat: row.approx_lat,
       lon: row.approx_lon,
-      approximate: true,
+      // approx_offset: 공개 좌표가 실제 좌표와 다른지만 계산한 값(실제 좌표는 내보내지 않는다). 없으면 대략으로 본다.
+      approximate: row.approx_offset === undefined || row.approx_offset === null ? true : Number(row.approx_offset) === 1,
       species: splitSpecies(row.species),
       date: row.observed_on,
     }));
