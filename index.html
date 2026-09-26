@@ -159,6 +159,7 @@
         <label for="reportNote">참고 설명 <span class="reportOptionalTag">선택</span></label>
         <textarea id="reportNote" name="note" maxlength="500" rows="3"></textarea>
       </div>
+      <label id="reportNonBreedingRow" class="reportConsent" style="display:none"><input type="checkbox" id="reportNonBreedingConfirmed"> 이 제보는 둥지·포란·육추·번식지 등 번식 관련 관찰이 아닙니다.</label>
       <div id="reportCaptcha" class="reportCaptcha"></div>
       <div id="reportMessage" class="reportMessage" role="status" aria-live="polite"></div>
       <div class="reportActions">
@@ -644,6 +645,9 @@ var LIVE_WEATHER_WORKER_URL='https://birdmap-weather-proxy.wooil-birdmap.workers
 /* 출현종 제보. 두 값이 모두 채워졌을 때만 제보 버튼이 생기고 승인된 제보를 읽는다.
    비어 있으면 기능 전체가 꺼진 채로 남는다(설정 전에 접수를 열지 않는다). */
 var REPORTS_API_URL='https://birdmap-reports.wooil-birdmap.workers.dev';
+// 새 제보 형식(비번식 확인·request_id). 서버 /reports/capabilities 가 켜졌다고 알려 줄 때만 쓴다.
+// 응답이 없거나 실패하면 기존 형식 그대로 둔다.
+var REPORTS_CANONICAL_UI_ENABLED=false;
 var REPORTS_TURNSTILE_SITE_KEY='0x4AAAAAAE9q3m3dXLB7A68d';
 var LIVE_WEATHER_CACHE_TTL_MS=15*60*1000;
 var LIVE_WEATHER_REQUEST_TIMEOUT_MS=12000;
@@ -3834,6 +3838,7 @@ var reportPicked=null;            // {lat,lon}
 var reportPicking=false;
 var reportTurnstileId=null;
 var reportTurnstileToken='';
+var reportSubmissionAttempt=null;
 var REPORTS_REFRESH_MS=10*60*1000;
 
 function reportsConfigured(){
@@ -4037,9 +4042,26 @@ function pickReportLocationAgain(){
 
 /* ── 입력 모달 ─────────────────────────────────────────────────────────── */
 
+function applyReportCanonicalUi(){
+  document.getElementById('reportNonBreedingRow').style.display=REPORTS_CANONICAL_UI_ENABLED?'block':'none';
+  document.getElementById('reportNonBreedingConfirmed').required=REPORTS_CANONICAL_UI_ENABLED;
+  document.getElementById('reportCount').min=REPORTS_CANONICAL_UI_ENABLED?'0':'1';
+}
+function refreshReportCapabilities(){
+  return fetch(REPORTS_API_URL+'/reports/capabilities',{cache:'no-store'}).then(function(response){
+    return response.ok?response.json():null;
+  }).then(function(body){
+    if(!body||body.ok!==true)return;
+    REPORTS_CANONICAL_UI_ENABLED=!!(body.quickReport&&body.quickReport.nonBreedingConfirmation);
+    applyReportCanonicalUi();
+  }).catch(function(){});
+}
+
 function openReportModal(){
   var modal=document.getElementById('reportModal');
   if(!modal)return;
+  applyReportCanonicalUi();
+  refreshReportCapabilities();
   var date=document.getElementById('reportObservedOn');
   if(date){
     date.max=kstDateText();
@@ -4133,6 +4155,14 @@ function submitReport(event){
     note:document.getElementById('reportNote').value.trim(),
     turnstileToken:reportTurnstileToken
   };
+  if(REPORTS_CANONICAL_UI_ENABLED){
+    if(!document.getElementById('reportNonBreedingConfirmed').checked){setReportMessage('번식 관련 관찰이 아니라는 확인이 필요합니다.','error');return false;}
+    payload.non_breeding_confirmed=true;
+    var meaning=Object.assign({},payload);delete meaning.turnstileToken;
+    var signature=JSON.stringify(meaning);
+    if(!reportSubmissionAttempt||reportSubmissionAttempt.signature!==signature)reportSubmissionAttempt={signature:signature,id:crypto.randomUUID()};
+    payload.request_id=reportSubmissionAttempt.id;
+  }
   var button=document.getElementById('reportSubmitBtn');
   button.disabled=true;
   setReportMessage('전송 중입니다...','');
@@ -4149,16 +4179,21 @@ function submitReport(event){
     // 서버가 저장했다고 답한 경우에만 접수 완료로 처리한다.
     if(!result.ok||!result.body||result.body.ok!==true){
       var message=result.body&&result.body.error&&result.body.error.message;
+      // 창을 연 뒤 서버가 새 형식으로 바뀌었다면 확인란을 다시 띄운다.
+      if(result.body&&result.body.error&&result.body.error.code==='NON_BREEDING_CONFIRMATION_REQUIRED')refreshReportCapabilities();
       throw new Error(message||'제보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     }
     // 서버가 공개를 허용한 건만 좌표를 함께 내려보낸다. 보류된 건은 마커를 만들지 않는다.
     if(result.body.spot){
       showPendingSpot(result.body.spot);
       setReportMessage('제보가 접수되었습니다. 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.','ok');
+    }else if(REPORTS_CANONICAL_UI_ENABLED){
+      setReportMessage('접수 결과를 확인했습니다. 접수 번호: '+String(result.body.id||'')+' · 현재 상태: '+String(result.body.status||''),'ok');
     }else{
       setReportMessage('제보가 접수되었습니다. 민감한 관찰지로 분류되어 지도에는 바로 표시되지 않으며, '
         +'관리자 확인 후 반영됩니다. 접수 번호: '+String(result.body.id||''),'ok');
     }
+    reportSubmissionAttempt=null;
     document.getElementById('reportForm').reset();
     resetReportCaptcha();
     setTimeout(function(){closeReportModal();},2200);

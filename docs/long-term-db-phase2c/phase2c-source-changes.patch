@@ -1,0 +1,47 @@
+diff --git a/reports-api/src/canonical/control.js b/reports-api/src/canonical/control.js
+index 6cadbad..f89c3ba 100644
+--- a/reports-api/src/canonical/control.js
++++ b/reports-api/src/canonical/control.js
+@@ -1,7 +1,7 @@
+ import { WorkerError, jsonResponse } from '../shared.js';
+ import { rows, fingerprint, SCHEMA_VERSION } from './data.js';
+ 
+-export const BUILD_CAPABILITY='phase2b-dual-v1';
++export const BUILD_CAPABILITY='phase2c-dual-v3';
+ const MODES=new Set(['NORMAL','READ_ONLY_MAINTENANCE','CANONICAL_DUAL_WRITE']);
+ export function writeMode(env) {return env.REPORTS_WRITE_MODE===undefined?'NORMAL':env.REPORTS_WRITE_MODE;}
+ function closed(code='WRITE_MAINTENANCE') {const e=new WorkerError(code,'제보 쓰기를 잠시 중지했습니다. 잠시 후 다시 시도해 주세요.',503);e.retryAfter=60;throw e;}
+@@ -19,8 +19,10 @@ export async function capability(env,role) {
+   const configured=env.REPORTS_DUAL_WRITE_ENABLED==='true'&&env.REPORTS_CONFIRMATION_REQUIRED==='true'&&
+     env.REPORTS_SCHEMA_VERSION===SCHEMA_VERSION&&typeof env.REPORTS_ACTIVATION_ID==='string'&&env.REPORTS_ACTIVATION_ID.length>0&&
+     typeof env.REPORTS_RELEASE_ID==='string'&&env.REPORTS_RELEASE_ID.length>0&&['0','1'].includes(env.REPORTS_PENDING_PUBLIC)&&
++    typeof env.REPORTS_PEER_RELEASE_ID==='string'&&env.REPORTS_PEER_RELEASE_ID.length>0&&
++    typeof env.REPORTS_PEER?.fetch==='function'&&typeof env.REPORTS_GATE_TOKEN==='string'&&env.REPORTS_GATE_TOKEN.length>0&&
+     (env.ENVIRONMENT!=='production'||env.REPORTS_REMOTE_VERIFIED==='true');
+-  return {role,build:BUILD_CAPABILITY,mode,activation:env.REPORTS_ACTIVATION_ID||null,release:env.REPORTS_RELEASE_ID||null,
++  return {role,build:BUILD_CAPABILITY,mode,activation:env.REPORTS_ACTIVATION_ID||null,release:env.REPORTS_RELEASE_ID||null,peerRelease:env.REPORTS_PEER_RELEASE_ID||null,
+     schema:SCHEMA_VERSION,ready:configured&&await schemaReady(env.REPORTS_DB)};
+ }
+ export async function internalCapability(request,env,role) {
+@@ -41,7 +43,7 @@ export async function assertWriteGate(env,role) {
+     const response=await env.REPORTS_PEER.fetch(new Request('https://reports-gate.internal/_internal/reports-capability',{headers:{'X-Reports-Gate':env.REPORTS_GATE_TOKEN},signal:AbortSignal.timeout(3000)}));
+     if(!response.ok)closed('ROLLOUT_NOT_READY');peer=await response.json();
+   } catch {closed('ROLLOUT_NOT_READY');}
+-  if(!peer.ready||peer.role!==(role==='public'?'admin':'public')||peer.mode!==mode||peer.build!==BUILD_CAPABILITY||peer.schema!==own.schema||peer.activation!==own.activation||peer.release!==env.REPORTS_PEER_RELEASE_ID)closed('ROLLOUT_NOT_READY');
++  if(!peer.ready||peer.role!==(role==='public'?'admin':'public')||peer.mode!==mode||peer.build!==BUILD_CAPABILITY||peer.schema!==own.schema||peer.activation!==own.activation||peer.release!==env.REPORTS_PEER_RELEASE_ID||peer.peerRelease!==own.release)closed('ROLLOUT_NOT_READY');
+   return true;
+ }
+ export function publicCapability(request,env) {
+diff --git a/reports-api/src/canonical/purge.js b/reports-api/src/canonical/purge.js
+index 9536c8a..3938b76 100644
+--- a/reports-api/src/canonical/purge.js
++++ b/reports-api/src/canonical/purge.js
+@@ -10,7 +10,7 @@ export async function purgeForbidden(env,actor,input) {
+   const own=await capability(env,'admin');
+   if(!own.ready||!env.REPORTS_PEER?.fetch||!env.REPORTS_GATE_TOKEN)fail('PURGE_NOT_READY','유지보수 준비 상태를 확인할 수 없습니다.',503);
+   let peer;try{const response=await env.REPORTS_PEER.fetch(new Request('https://reports-gate.internal/_internal/reports-capability',{headers:{'X-Reports-Gate':env.REPORTS_GATE_TOKEN},signal:AbortSignal.timeout(3000)}));if(!response.ok)throw Error();peer=await response.json();}catch{fail('PURGE_NOT_READY','상대 Worker가 준비되지 않았습니다.',503);}
+-  if(!peer.ready||peer.role!=='public'||peer.build!==BUILD_CAPABILITY||peer.mode!==own.mode||peer.schema!==own.schema||peer.activation!==own.activation||peer.release!==env.REPORTS_PEER_RELEASE_ID)fail('PURGE_NOT_READY','상대 Worker가 준비되지 않았습니다.',503);
++  if(!peer.ready||peer.role!=='public'||peer.build!==BUILD_CAPABILITY||peer.mode!==own.mode||peer.schema!==own.schema||peer.activation!==own.activation||peer.release!==env.REPORTS_PEER_RELEASE_ID||peer.peerRelease!==own.release)fail('PURGE_NOT_READY','상대 Worker가 준비되지 않았습니다.',503);
+   const id=requestId(input.id),operation=requestId(input.request_id),expected=revision(input.expected_revision),db=env.REPORTS_DB;
+   const tombstone=await first(db,"SELECT request_id FROM audit_log WHERE action='forbidden_content_purged' AND target_id=?",id);
+   if(tombstone){if(tombstone.request_id!==operation)fail('REPORT_PURGED','이미 제거된 자료입니다.',410);return {ok:true,id,purged:true};}

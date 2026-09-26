@@ -7,15 +7,33 @@
 name = "birdmap-reports-admin"
 main = "src/admin.js"
 compatibility_date = "2026-07-03"
+workers_dev = true
+preview_urls = false
 
+# 운영 기본값은 정본(dual-write) 모드다. 단계 전환은 배포 시 --var 로만 덮어쓴다.
+# REPORTS_OPS_ENABLED(seed/backfill 경로)는 여기에 두지 않는다. cutover 중에만 --var 로 켠다.
+# 시크릿: REPORTS_GATE_TOKEN(공개 Worker 와 같은 값)
 [vars]
 ENVIRONMENT = "production"
+REPORTS_WRITE_MODE = "CANONICAL_DUAL_WRITE"
+REPORTS_DUAL_WRITE_ENABLED = "true"
+REPORTS_CONFIRMATION_REQUIRED = "true"
+REPORTS_SCHEMA_VERSION = "phase2a-0001"
+REPORTS_ACTIVATION_ID = "phase2e-cutover-1"
+REPORTS_RELEASE_ID = "admin-phase2e-1"
+REPORTS_PEER_RELEASE_ID = "public-phase2e-1"
+REPORTS_PENDING_PUBLIC = "1"
+REPORTS_REMOTE_VERIFIED = "true"
 # Access 팀 도메인. 예: "wooil" 이면 https://wooil.cloudflareaccess.com 의 공개키로 검증한다.
 ACCESS_TEAM_DOMAIN = "soft-fire-24b1"
 # Access 애플리케이션의 Audience(AUD) 태그.
 ACCESS_AUD = "b7bc4549f5bca2ddb544f21c91cc099c57cf7c62e3d5a393a7b3a0d01dc51263"
 # 승인 권한을 가진 이메일 목록(쉼표 구분). 비어 있으면 모든 요청을 거부한다.
 ADMIN_EMAILS = "wooil2000@gmail.com"
+
+[[services]]
+binding = "REPORTS_PEER"
+service = "birdmap-reports"
 
 # 공개 Worker 와 같은 데이터베이스를 본다.
 [[d1_databases]]

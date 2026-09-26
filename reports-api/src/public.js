@@ -22,9 +22,15 @@ import {
   jsonResponse,
   preflightResponse,
   publicPayload,
+  rethrowIfFrozen,
+  sha256Hex,
   validateReport,
   verifyTurnstile,
 } from "./shared.js";
+import { assertWriteGate, internalCapability, publicCapability } from "./canonical/control.js";
+import { quickInput, replayQuick, persistQuick } from "./canonical/persistence.js";
+import { applicationDb } from "./canonical/data.js";
+import { shadowRead } from "./canonical/shadow.js";
 
 const MAX_BODY_BYTES = 4096;
 // 탐조지별 출현 이력을 한 번에 가져올 건수. 화면은 5건부터 보여 준다.
@@ -83,7 +89,35 @@ async function enforceRateLimit(db, hash, now) {
   }
 }
 
-async function handleSubmit(request, env) {
+async function handleCanonicalSubmit(request,env) {
+  const binding=database(env),db=applicationDb(binding);
+  const body=await readJsonBody(request),{report,input}=quickInput(body);
+  const saved=await replayQuick(db,body.request_id,input);
+  if(saved)return jsonResponse(request,env,saved,201);
+  const now=new Date(),ip=request.headers.get('CF-Connecting-IP')||'';
+  const hash=await ipHash(ip,env.REPORT_IP_SALT);
+  try {
+    await enforceRateLimit(db,hash,now);
+    await verifyTurnstile(body.turnstileToken,ip,env.TURNSTILE_SECRET_KEY,(url,options)=>fetch(url,{...options,signal:AbortSignal.timeout(8000)}),body.request_id);
+  } catch(error) {
+    // A concurrent call may have committed while a single-use CAPTCHA was being verified.
+    const committed=await replayQuick(db,body.request_id,input);
+    if(committed)return jsonResponse(request,env,committed,201);
+    throw error;
+  }
+  const id=body.request_id,approx=approximateCoordinate(report.lat,report.lon),pendingPublic=Number(env.REPORTS_PENDING_PUBLIC);
+  // Eligibility comes only from the explicit confirmation, never species/month inference.
+  const accepted={ok:true,id,status:'pending',publicVisibility:pendingPublic?'approximate':'withheld'};
+  if(pendingPublic)accepted.spot={id,status:'pending',lat:approx.lat,lon:approx.lon,approximate:true,species:report.species,date:report.observedOn};
+  const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:null,public_lon:null,
+    approx_lat:approx.lat,approx_lon:approx.lon,pending_public:pendingPublic,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
+    bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:await dedupeHash(report)};
+  // Only the hash of the verified token reaches the database (redemption guard, same batch as the write).
+  return jsonResponse(request,env,await persistQuick(binding,row,input,accepted,await sha256Hex(body.turnstileToken)),201);
+}
+
+async function handleSubmit(request, env, dual=false) {
+  if(dual)return handleCanonicalSubmit(request,env);
   const db = database(env);
   const now = new Date();
   const body = await readJsonBody(request);
@@ -129,6 +163,7 @@ async function handleSubmit(request, env) {
       )
       .run();
   } catch (error) {
+    rethrowIfFrozen(error);
     if (/UNIQUE|constraint/i.test(String(error?.message))) {
       throw new WorkerError(
         "DUPLICATE_REPORT",
@@ -300,8 +335,9 @@ async function handleApproved(request, env) {
   );
 }
 
-export async function handleRequest(request, env) {
+export async function handleLegacyRequest(request, env) {
   try {
+    if(request.method==='GET'&&new URL(request.url).pathname==='/_internal/reports-capability')return await internalCapability(request,env,'public');
     if (!allowedOrigin(request, env)) {
       throw new WorkerError(
         "ORIGIN_NOT_ALLOWED",
@@ -313,6 +349,7 @@ export async function handleRequest(request, env) {
       return preflightResponse(request, env, "GET, POST, OPTIONS");
     }
     const url = new URL(request.url);
+    if(request.method==='GET'&&url.pathname==='/reports/capabilities')return publicCapability(request,env);
     if (request.method === "GET" && url.pathname === "/reports/approved") {
       return await handleApproved(request, env);
     }
@@ -355,7 +392,7 @@ export async function handleRequest(request, env) {
       return await handleStatus(request, env, status[1]);
     }
     if (request.method === "POST" && url.pathname === "/reports") {
-      return await handleSubmit(request, env);
+      return await handleSubmit(request, env, await assertWriteGate(env,'public'));
     }
     if (
       url.pathname !== "/reports" &&
@@ -377,6 +414,16 @@ export async function handleRequest(request, env) {
   } catch (error) {
     return errorResponse(request, env, error);
   }
+}
+
+export async function handleRequest(request,env,ctx) {
+  const response=await handleLegacyRequest(request,env);
+  const path=new URL(request.url).pathname;
+  if(request.method==='GET'&&env.REPORTS_SHADOW_READ==='true'&&(/^\/reports\/(approved|pending)$/.test(path)||path.startsWith('/reports/site/')||/^\/reports\/[0-9a-f-]{36}\/status$/.test(path))) {
+    const job=shadowRead(request.clone(),env,response.clone(),handleLegacyRequest);
+    if(ctx?.waitUntil)ctx.waitUntil(job);else await job;
+  }
+  return response;
 }
 
 export default { fetch: handleRequest };

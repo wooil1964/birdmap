@@ -1,0 +1,9 @@
+# LOCAL TEST ONLY. No production account, database ID, route or deployment entrypoint.
+name = "birdmap-phase2a-local-proof"
+compatibility_date = "2026-09-24"
+send_metrics = false
+[[d1_databases]]
+binding = "TEST_DB"
+database_name = "birdmap-phase2a-local"
+database_id = "00000000-0000-4000-8000-00000000002a"
+migrations_dir = "migrations"

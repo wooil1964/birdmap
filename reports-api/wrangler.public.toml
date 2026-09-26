@@ -6,9 +6,29 @@
 name = "birdmap-reports"
 main = "src/public.js"
 compatibility_date = "2026-07-03"
+workers_dev = true
+# 옛 version 의 preview URL 로 guard 없는 legacy 쓰기 경로에 닿지 않도록 끈다.
+preview_urls = false
 
+# 운영 기본값은 정본(dual-write) 모드다. 단계 전환은 배포 시 --var 로만 덮어쓴다.
+# NORMAL(legacy, Turnstile redemption guard 없음)로 되돌리는 배포를 하지 않는다.
 [vars]
 ENVIRONMENT = "production"
+REPORTS_WRITE_MODE = "CANONICAL_DUAL_WRITE"
+REPORTS_DUAL_WRITE_ENABLED = "true"
+REPORTS_CONFIRMATION_REQUIRED = "true"
+REPORTS_SCHEMA_VERSION = "phase2a-0001"
+REPORTS_ACTIVATION_ID = "phase2e-cutover-1"
+REPORTS_RELEASE_ID = "public-phase2e-1"
+REPORTS_PEER_RELEASE_ID = "admin-phase2e-1"
+# 비번식 확인을 거친 신규 대기 제보의 대략 좌표 마커 공개(운영자 결정 2026-09-27). 기존 자료 원값은 그대로.
+REPORTS_PENDING_PUBLIC = "1"
+REPORTS_REMOTE_VERIFIED = "true"
+
+# 관리자 Worker 와 서로의 준비 상태(release·schema·mode)를 확인한다.
+[[services]]
+binding = "REPORTS_PEER"
+service = "birdmap-reports-admin"
 
 # 제보 데이터베이스. id 는 `wrangler d1 create birdmap-reports` 가 출력한 값으로 바꾼다.
 [[d1_databases]]
@@ -19,3 +39,4 @@ database_id = "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
 # 시크릿(저장소에 커밋하지 않는다. `wrangler secret put -c wrangler.public.toml <이름>`):
 #   TURNSTILE_SECRET_KEY  자동 등록 방지 토큰 검증용
 #   REPORT_IP_SALT        IP 해시 솔트. 원본 IP 는 저장하지 않는다.
+#   REPORTS_GATE_TOKEN    두 Worker 가 공유하는 내부 준비 상태 확인용 토큰

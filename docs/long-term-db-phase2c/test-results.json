@@ -1,0 +1,1570 @@
+{
+  "status": "PHASE_2C_COMPLETE_WITH_DOCUMENTED_LIMITATIONS",
+  "generated_at": "2026-09-26T11:46:00.208Z",
+  "production_decision": "NO_GO_UNTIL_SEPARATE_REVIEW_AND_AUTHORIZATION",
+  "phase2d_started": false,
+  "resources": {
+    "account": "1d697c22a32447b386b9fac6a3538597",
+    "staging_database": "f2c65357-47fc-4f09-82c6-ad0d28f8314f",
+    "production_database": "b48201cc-0abd-4a64-bb61-9dd2a7813d21",
+    "workers": [
+      "birdmap-reports-staging-public",
+      "birdmap-reports-staging-admin"
+    ],
+    "isolated": true
+  },
+  "schema": {
+    "classification": "A_MATCH",
+    "hash": "76b07a469650dd96be326daf3bbb711922d30fd343624efe3422b67caab0ceb0",
+    "tables": 9,
+    "columns": 114,
+    "reports_columns": 22
+  },
+  "remote_checks": 95,
+  "suites": [
+    {
+      "name": "initial",
+      "file": "initial-remote-tests.json",
+      "passed": 5,
+      "tests": [
+        {
+          "name": "internet requests without staging secret rejected",
+          "result": "PASS"
+        },
+        {
+          "name": "both Workers actual D1 schema and reciprocal service binding",
+          "result": "PASS",
+          "evidence": [
+            {
+              "own": {
+                "role": "public",
+                "build": "phase2b-dual-v1",
+                "mode": "READ_ONLY_MAINTENANCE",
+                "activation": "phase2c-staging-20260926",
+                "release": "public-phase2c-v1",
+                "schema": "phase2a-0001",
+                "ready": true
+              },
+              "schemaReady": true,
+              "peer": {
+                "role": "admin",
+                "build": "phase2b-dual-v1",
+                "mode": "READ_ONLY_MAINTENANCE",
+                "activation": "phase2c-staging-20260926",
+                "release": "admin-phase2c-v1",
+                "schema": "phase2a-0001",
+                "ready": true
+              }
+            },
+            {
+              "own": {
+                "role": "admin",
+                "build": "phase2b-dual-v1",
+                "mode": "READ_ONLY_MAINTENANCE",
+                "activation": "phase2c-staging-20260926",
+                "release": "admin-phase2c-v1",
+                "schema": "phase2a-0001",
+                "ready": true
+              },
+              "schemaReady": true,
+              "peer": {
+                "role": "public",
+                "build": "phase2b-dual-v1",
+                "mode": "READ_ONLY_MAINTENANCE",
+                "activation": "phase2c-staging-20260926",
+                "release": "public-phase2c-v1",
+                "schema": "phase2a-0001",
+                "ready": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "site registry190 atomic seed and exact replay",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 0,
+              "reports": 0,
+              "raw_submissions": 0,
+              "checklists": 0,
+              "sightings": 0,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 0,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "reports": 0,
+              "raw_submissions": 0,
+              "checklists": 0,
+              "sightings": 0,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 0,
+              "transaction_assertions": 0
+            },
+            "registry_revision": "4a7aba945b6fbf245cbaca980bc073324584e8bd2c49c15483a449aed436550d",
+            "statements": 190
+          }
+        },
+        {
+          "name": "load synthetic legacy21 only",
+          "result": "PASS",
+          "evidence": {
+            "sites": 190,
+            "reports": 21,
+            "raw_submissions": 0,
+            "checklists": 0,
+            "sightings": 0,
+            "reviews": 0,
+            "audit_log": 0,
+            "backfill_runs": 0,
+            "transaction_assertions": 0
+          }
+        },
+        {
+          "name": "original backfill verifier dry-run on remote frozen synthetic source",
+          "result": "PASS",
+          "evidence": {
+            "state": "ready",
+            "added": 21
+          }
+        }
+      ],
+      "started": "2026-09-26T10:48:45.637Z"
+    },
+    {
+      "name": "Access",
+      "file": "access-maintenance-smoke.json",
+      "passed": 6,
+      "tests": [
+        {
+          "name": "real Cloudflare Access authenticated administrator HTTP list",
+          "result": "PASS",
+          "status": 200,
+          "rows": 21
+        },
+        {
+          "name": "administrator request without Access credentials denied",
+          "result": "PASS",
+          "status": 302
+        },
+        {
+          "name": "authenticated administrator mutation maintenance503 Retry-After60",
+          "result": "PASS",
+          "status": 503,
+          "retryAfter": "60"
+        },
+        {
+          "name": "public POST maintenance503 Retry-After60",
+          "result": "PASS",
+          "status": 503,
+          "retryAfter": "60"
+        },
+        {
+          "name": "legacy public GET available during maintenance",
+          "result": "PASS",
+          "status": 200
+        },
+        {
+          "name": "all authenticated read/denied-write smoke requests leave D1 unchanged",
+          "result": "PASS",
+          "before": {
+            "sites": 190,
+            "reports": 21,
+            "raw_submissions": 0,
+            "checklists": 0,
+            "sightings": 0,
+            "reviews": 0,
+            "audit_log": 0,
+            "backfill_runs": 0,
+            "transaction_assertions": 0
+          },
+          "after": {
+            "sites": 190,
+            "reports": 21,
+            "raw_submissions": 0,
+            "checklists": 0,
+            "sightings": 0,
+            "reviews": 0,
+            "audit_log": 0,
+            "backfill_runs": 0,
+            "transaction_assertions": 0
+          }
+        }
+      ],
+      "started": "2026-09-26T11:07:40.994Z"
+    },
+    {
+      "name": "backfill",
+      "file": "backfill-remote-results.json",
+      "passed": 7,
+      "tests": [
+        {
+          "name": "frozen source and registry verifier before apply",
+          "result": "PASS",
+          "evidence": {
+            "sites": 190,
+            "taxa": 0,
+            "reports": 21,
+            "raw_submissions": 0,
+            "checklists": 0,
+            "sightings": 0,
+            "reviews": 0,
+            "audit_log": 0,
+            "backfill_runs": 0,
+            "transaction_assertions": 0
+          }
+        },
+        {
+          "name": "remote actual D1 batch synthetic21 backfill",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 21,
+              "raw_submissions": 0,
+              "checklists": 0,
+              "sightings": 0,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 0,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 21,
+              "raw_submissions": 21,
+              "checklists": 21,
+              "sightings": 21,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "statements": 64
+          }
+        },
+        {
+          "name": "original whole-value verifier after remote apply",
+          "result": "PASS",
+          "evidence": {
+            "state": "verified",
+            "added": 0
+          }
+        },
+        {
+          "name": "same manifest replay inserts zero and preserves complete state",
+          "result": "PASS",
+          "evidence": {
+            "added": 0
+          }
+        },
+        {
+          "name": "changed manifest and altered provenance stop before writes",
+          "result": "PASS"
+        },
+        {
+          "name": "actual incomplete staging canonical state is rejected without automatic repair",
+          "result": "PASS",
+          "evidence": {
+            "partial_sightings": 20,
+            "automatic_inserts": 0,
+            "explicit_fixture_restored": true
+          }
+        },
+        {
+          "name": "legacy21 statuses, site NULL and known count semantics preserved",
+          "result": "PASS",
+          "evidence": {
+            "checklists": {
+              "total": 21,
+              "approved": 17,
+              "rejected": 4,
+              "site_null": 5,
+              "count_one": 13,
+              "count_null": 8
+            },
+            "sightings": {
+              "total": 21,
+              "count_one": 13,
+              "count_null": 8,
+              "accuracy_unknown": 21,
+              "taxa_null": 21
+            }
+          }
+        }
+      ],
+      "started": "2026-09-26T11:10:51.086Z",
+      "finished": "2026-09-26T11:11:28.349Z"
+    },
+    {
+      "name": "core",
+      "file": "core-remote-tests.json",
+      "passed": 28,
+      "tests": [
+        {
+          "name": "actual Access admin GET succeeds; unauthenticated request denied",
+          "result": "PASS",
+          "evidence": {
+            "authorized": 200,
+            "unauthorized": 302
+          }
+        },
+        {
+          "name": "both deployed Workers dual capability and peer agree",
+          "result": "PASS"
+        },
+        {
+          "name": "synthetic legacy21 canonical and legacy DTO/shadow equal",
+          "result": "PASS",
+          "evidence": {
+            "paths": 6,
+            "mismatches": 0
+          }
+        },
+        {
+          "name": "HTTP confirmation missing false and string true have zero writes",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 21,
+              "raw_submissions": 21,
+              "checklists": 21,
+              "sightings": 21,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 21,
+              "raw_submissions": 21,
+              "checklists": 21,
+              "sightings": 21,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "actual HTTP true confirmation commits all four tables",
+          "result": "PASS",
+          "evidence": {
+            "status": 201,
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 21,
+              "raw_submissions": 21,
+              "checklists": 21,
+              "sightings": 21,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 22,
+              "raw_submissions": 22,
+              "checklists": 22,
+              "sightings": 22,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "HTTP same request replay and different payload conflict",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 22,
+              "raw_submissions": 22,
+              "checklists": 22,
+              "sightings": 22,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 22,
+              "raw_submissions": 22,
+              "checklists": 22,
+              "sightings": 22,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "HTTP simultaneous identical quick requests commit one report",
+          "result": "PASS",
+          "evidence": {
+            "statuses": [
+              201,
+              201
+            ],
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 22,
+              "raw_submissions": 22,
+              "checklists": 22,
+              "sightings": 22,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 23,
+              "raw_submissions": 23,
+              "checklists": 23,
+              "sightings": 23,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "HTTP simultaneous different quick requests both commit",
+          "result": "PASS",
+          "evidence": {
+            "statuses": [
+              201,
+              201
+            ],
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 23,
+              "raw_submissions": 23,
+              "checklists": 23,
+              "sightings": 23,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 25,
+              "raw_submissions": 25,
+              "checklists": 25,
+              "sightings": 25,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "actual D1 quick batch middle and late failures roll back; synthetic IP",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 25,
+              "raw_submissions": 25,
+              "checklists": 25,
+              "sightings": 25,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 25,
+              "raw_submissions": 25,
+              "checklists": 25,
+              "sightings": 25,
+              "reviews": 0,
+              "audit_log": 0,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "NULL zero one and shared multiple-species counts; synthetic IP",
+          "result": "PASS"
+        },
+        {
+          "name": "actual Access HTTP admin approve projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 2,
+            "reviews": 2,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin reject projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 3,
+            "reviews": 3,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin unpublish projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 4,
+            "reviews": 4,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin visibility projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 5,
+            "reviews": 5,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin site projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 6,
+            "reviews": 6,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin consent projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 7,
+            "reviews": 7,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin link projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 8,
+            "reviews": 8,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual Access HTTP admin unlink projection and replay",
+          "result": "PASS",
+          "evidence": {
+            "revision": 9,
+            "reviews": 9,
+            "legacy_semantics": true,
+            "protected_fields_unchanged": true
+          }
+        },
+        {
+          "name": "actual HTTP stale admin revision rolls back every table",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 29,
+              "raw_submissions": 29,
+              "checklists": 29,
+              "sightings": 29,
+              "reviews": 9,
+              "audit_log": 8,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 29,
+              "raw_submissions": 29,
+              "checklists": 29,
+              "sightings": 29,
+              "reviews": 9,
+              "audit_log": 8,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "actual D1 admin batch injected failure rolls back",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 29,
+              "raw_submissions": 29,
+              "checklists": 29,
+              "sightings": 29,
+              "reviews": 9,
+              "audit_log": 8,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 29,
+              "raw_submissions": 29,
+              "checklists": 29,
+              "sightings": 29,
+              "reviews": 9,
+              "audit_log": 8,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "same revision actual HTTP concurrent admin mutations one commit",
+          "result": "PASS",
+          "evidence": {
+            "statuses": [
+              200,
+              409
+            ],
+            "revision": 10
+          }
+        },
+        {
+          "name": "actual D1 UPDATE then changes normal stale and concurrency",
+          "result": "PASS",
+          "evidence": {
+            "changes": 1,
+            "concurrentCommits": 1
+          }
+        },
+        {
+          "name": "multiple sightings reviews per request sequence and replay",
+          "result": "PASS",
+          "evidence": {
+            "sequence": [
+              1,
+              2,
+              3
+            ],
+            "event_index": [
+              0,
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "name": "real remote composite review uniqueness and site FK reject",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 31,
+              "raw_submissions": 31,
+              "checklists": 31,
+              "sightings": 32,
+              "reviews": 13,
+              "audit_log": 10,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 31,
+              "raw_submissions": 31,
+              "checklists": 31,
+              "sightings": 32,
+              "reviews": 13,
+              "audit_log": 10,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "invalid site fails before any writes",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 31,
+              "raw_submissions": 31,
+              "checklists": 31,
+              "sightings": 32,
+              "reviews": 13,
+              "audit_log": 10,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 31,
+              "raw_submissions": 31,
+              "checklists": 31,
+              "sightings": 32,
+              "reviews": 13,
+              "audit_log": 10,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "append-only application denial and exact database trigger errors",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 31,
+              "raw_submissions": 31,
+              "checklists": 31,
+              "sightings": 32,
+              "reviews": 13,
+              "audit_log": 10,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 31,
+              "raw_submissions": 31,
+              "checklists": 31,
+              "sightings": 32,
+              "reviews": 13,
+              "audit_log": 10,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            }
+          }
+        },
+        {
+          "name": "post-mutation DTO and shadow parity",
+          "result": "PASS"
+        },
+        {
+          "name": "final remote FK and transaction assertions empty",
+          "result": "PASS",
+          "evidence": {
+            "sites": 190,
+            "taxa": 0,
+            "reports": 31,
+            "raw_submissions": 31,
+            "checklists": 31,
+            "sightings": 32,
+            "reviews": 13,
+            "audit_log": 10,
+            "backfill_runs": 1,
+            "transaction_assertions": 0
+          }
+        }
+      ],
+      "started": "2026-09-26T11:13:18.139Z",
+      "finished": "2026-09-26T11:14:54.201Z",
+      "scope": "remote Workers and real D1; actual Access JWT; official Turnstile dummy; injected IP cases labelled"
+    },
+    {
+      "name": "rollout_v3",
+      "file": "rollout-v3-remote-tests.json",
+      "passed": 14,
+      "tests": [
+        {
+          "name": "aligned v3 reciprocal gate opens",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 200
+            },
+            {
+              "role": "admin",
+              "status": 200
+            }
+          ]
+        },
+        {
+          "name": "admin release changed closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "public release changed closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "expected peer release changed closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "expected peer release missing closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "new public old admin closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "old public new admin closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "activation mismatch closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "schema version invalid closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "public peer disconnected closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "admin peer disconnected closes both",
+          "result": "PASS",
+          "evidence": [
+            {
+              "role": "public",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            },
+            {
+              "role": "admin",
+              "status": 503,
+              "code": "ROLLOUT_NOT_READY"
+            }
+          ]
+        },
+        {
+          "name": "NORMAL public writer requires external freeze",
+          "result": "PASS",
+          "evidence": {
+            "oldCodeHasNoPeerGate": true,
+            "externalFreezeRequired": true
+          }
+        },
+        {
+          "name": "NORMAL admin writer requires external freeze",
+          "result": "PASS",
+          "evidence": {
+            "oldCodeHasNoPeerGate": true,
+            "externalFreezeRequired": true
+          }
+        },
+        {
+          "name": "maintenance permits reads and denies actual authenticated writes",
+          "result": "PASS",
+          "evidence": {
+            "dataUnchanged": true
+          }
+        }
+      ],
+      "started": "2026-09-26T11:31:32.567Z",
+      "finished": "2026-09-26T11:35:17.745Z"
+    },
+    {
+      "name": "purge",
+      "file": "purge-remote-tests.json",
+      "passed": 13,
+      "tests": [
+        {
+          "name": "real HTTP synthetic native and Access approve fixture",
+          "result": "PASS"
+        },
+        {
+          "name": "purge requires maintenance",
+          "result": "PASS",
+          "evidence": {
+            "status": 403,
+            "code": "PURGE_FORBIDDEN",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "authorized actor",
+          "result": "PASS",
+          "evidence": {
+            "status": 403,
+            "code": "PURGE_FORBIDDEN",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "confirmation",
+          "result": "PASS",
+          "evidence": {
+            "status": 403,
+            "code": "PURGE_FORBIDDEN",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "revision",
+          "result": "PASS",
+          "evidence": {
+            "status": 400,
+            "code": "REVISION_REQUIRED",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "stale revision",
+          "result": "PASS",
+          "evidence": {
+            "status": 409,
+            "code": "PURGE_CONFLICT",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "legacy explicit decision",
+          "result": "PASS",
+          "evidence": {
+            "status": 409,
+            "code": "PURGE_LEGACY_DECISION_REQUIRED",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "middle batch rollback",
+          "result": "PASS",
+          "evidence": {
+            "status": 409,
+            "code": "PURGE_CONFLICT",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "tombstone insert rollback",
+          "result": "PASS",
+          "evidence": {
+            "status": 409,
+            "code": "PURGE_CONFLICT",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "purge reciprocal peer readiness",
+          "result": "PASS",
+          "evidence": {
+            "status": 503,
+            "code": "PURGE_NOT_READY",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "purge deletes all target payload and preserves unrelated rows",
+          "result": "PASS",
+          "evidence": {
+            "targetCounts": {
+              "reports": 0,
+              "raw_submissions": 0,
+              "checklists": 0,
+              "sightings": 0,
+              "reviews": 0
+            },
+            "originalResidue": {
+              "reports": 0,
+              "raw_submissions": 0,
+              "checklists": 0,
+              "sightings": 0,
+              "reviews": 0,
+              "audit_log": 0
+            },
+            "markerRows": 0,
+            "tombstoneValid": true,
+            "unrelatedRowsUnchanged": true
+          }
+        },
+        {
+          "name": "same purge replay and different operation conflict",
+          "result": "PASS",
+          "evidence": {
+            "status": 410,
+            "code": "REPORT_PURGED",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "purged original quick request returns410",
+          "result": "PASS",
+          "evidence": {
+            "status": 410
+          }
+        }
+      ],
+      "started": "2026-09-26T11:36:22.370Z",
+      "finished": "2026-09-26T11:37:59.671Z",
+      "scope": "synthetic native only; actual quick/admin HTTP; purge via privileged internal staging harness"
+    },
+    {
+      "name": "Turnstile",
+      "file": "turnstile-remote-tests.json",
+      "passed": 3,
+      "tests": [
+        {
+          "name": "official fail rejects before write",
+          "result": "PASS",
+          "evidence": {
+            "status": 403,
+            "code": "CAPTCHA_FAILED",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "official spent rejects before write",
+          "result": "PASS",
+          "evidence": {
+            "status": 403,
+            "code": "CAPTCHA_FAILED",
+            "unchanged": true
+          }
+        },
+        {
+          "name": "concurrent pass and already-spent request commit once; retry replays",
+          "result": "PASS",
+          "evidence": {
+            "concurrentStatuses": [
+              201,
+              201
+            ],
+            "replayStatus": 201,
+            "insertedReports": 1
+          }
+        }
+      ],
+      "started": "2026-09-26T11:38:11.226Z",
+      "finished": "2026-09-26T11:38:41.892Z",
+      "scope": "official pass/fail/already-spent testing secrets; actual Siteverify; actual D1; synthetic test IP; not browser-minted real single-use token"
+    },
+    {
+      "name": "cutover",
+      "file": "cutover-rehearsal.json",
+      "passed": 14,
+      "tests": [
+        {
+          "n": 1,
+          "name": "external writer freeze",
+          "result": "PASS",
+          "evidence": {
+            "boundary": "staging wrapper, not production firewall"
+          }
+        },
+        {
+          "n": 2,
+          "name": "maintenance capability convergence",
+          "result": "PASS"
+        },
+        {
+          "n": 3,
+          "name": "legacy GET remains healthy",
+          "result": "PASS"
+        },
+        {
+          "n": 4,
+          "name": "official migration already applied no-op",
+          "result": "PASS",
+          "evidence": {
+            "newMigrations": 0
+          }
+        },
+        {
+          "n": 5,
+          "name": "sites seed exact replay",
+          "result": "PASS",
+          "evidence": {
+            "sites": 190,
+            "newRows": 0
+          }
+        },
+        {
+          "n": 6,
+          "name": "frozen synthetic legacy21 source still exact",
+          "result": "PASS",
+          "evidence": {
+            "sourceRows": 21,
+            "manifest": "3d45dc675a06aba6081d949853b859a891fca135ab65546441b36aeea8baa101"
+          }
+        },
+        {
+          "n": 7,
+          "name": "already completed backfill cohort exact verification",
+          "result": "PASS",
+          "evidence": {
+            "cohortRows": 21,
+            "newInserts": 0,
+            "method": "cohort full-value verification, not rerunning whole-database backfill after native writes"
+          }
+        },
+        {
+          "n": 8,
+          "name": "integrity and schema readiness",
+          "result": "PASS"
+        },
+        {
+          "n": 9,
+          "name": "both new builds deployed under external freeze",
+          "result": "PASS",
+          "evidence": {
+            "build": "phase2c-dual-v3"
+          }
+        },
+        {
+          "n": 10,
+          "name": "reciprocal gate ready",
+          "result": "PASS"
+        },
+        {
+          "n": 11,
+          "name": "shadow read before external reopening",
+          "result": "PASS"
+        },
+        {
+          "n": 12,
+          "name": "dual writes enabled while ordinary HTTP stays frozen",
+          "result": "PASS"
+        },
+        {
+          "n": 13,
+          "name": "internal synthetic smoke under freeze",
+          "result": "PASS",
+          "evidence": {
+            "scope": "real handler/D1, synthetic IP/actor internal test boundary"
+          }
+        },
+        {
+          "n": 14,
+          "name": "reopen actual HTTP and authenticated admin smoke",
+          "result": "PASS",
+          "evidence": {
+            "quickReplay": 201,
+            "actualAccessMutation": 200,
+            "revision": 3,
+            "exactExpectedCounts": true,
+            "legacy21Unchanged": true
+          }
+        }
+      ],
+      "started": "2026-09-26T11:39:20.132Z",
+      "finished": "2026-09-26T11:40:21.809Z",
+      "scope": "existing staging schema; prior applied schema/seed/backfill verified, never overwritten; external test wrapper freeze; synthetic observations only"
+    },
+    {
+      "name": "recovery",
+      "file": "recovery-remote-tests.json",
+      "passed": 4,
+      "tests": [
+        {
+          "name": "bookmark available at requested creation-plus-one-minute timestamp",
+          "result": "PASS",
+          "evidence": {
+            "databaseCreated": "2026-09-26T10:27:04.772Z",
+            "requestedTimestamp": "2026-09-26T10:28:04.772Z",
+            "bookmarkAvailable": true,
+            "planRetentionNotInferredFromNewDatabase": true
+          }
+        },
+        {
+          "name": "real staging Time Travel restores full application state after one probe",
+          "result": "PASS",
+          "evidence": {
+            "before": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 33,
+              "raw_submissions": 33,
+              "checklists": 33,
+              "sightings": 34,
+              "reviews": 15,
+              "audit_log": 13,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "after": {
+              "sites": 190,
+              "taxa": 0,
+              "reports": 33,
+              "raw_submissions": 33,
+              "checklists": 33,
+              "sightings": 34,
+              "reviews": 15,
+              "audit_log": 13,
+              "backfill_runs": 1,
+              "transaction_assertions": 0
+            },
+            "allApplicationDataEqual": true,
+            "schemaEqual": true,
+            "ledgerEqual": true,
+            "probeRows": 0,
+            "fkErrors": 0,
+            "purgeTombstonePreserved": true
+          }
+        },
+        {
+          "name": "restored purge tombstone still returns410 with dual gate",
+          "result": "PASS",
+          "evidence": {
+            "status": 410,
+            "dataUnchanged": true
+          }
+        },
+        {
+          "name": "both staging Workers rollback to verified maintenance versions",
+          "result": "PASS",
+          "evidence": {
+            "deployed": {
+              "public": {
+                "version": "c8ff615b-4190-4cc7-9aec-14820229cc80",
+                "deployment": "df703b5e-7e39-4114-8059-f8b52503c181",
+                "stagingBindingsConfirmed": true
+              },
+              "admin": {
+                "version": "77a57a9c-51f6-4bed-90b2-2a1ac0af330c",
+                "deployment": "1f0eb667-913d-4b2e-8003-d0551cdd1175",
+                "stagingBindingsConfirmed": true
+              }
+            },
+            "dataUnchanged": true,
+            "maintenanceHttpVerified": true
+          }
+        }
+      ],
+      "started": "2026-09-26T11:40:43.817Z",
+      "finished": "2026-09-26T11:41:44.349Z",
+      "scope": "staging only; all other test writers finished; application10tables + schema + migration ledger; Cloudflare internal metadata excluded"
+    }
+  ],
+  "local": {
+    "phase2b": 32,
+    "legacy": 106,
+    "phase2a": 17,
+    "protocol": 5,
+    "focused_gate": 13,
+    "all_passed": true,
+    "legacy_count_note": "105 assertions + helpers.mjs file execution = historical106"
+  },
+  "remote_main": {
+    "checked_at": "2026-09-26T11:45:10.621Z",
+    "head": "d39bf4bf2d7e147b246f867f56567f814eddd4b9",
+    "remote_main": "15c9b192d2b24faaffb9f44a625dcd43d0e30710",
+    "ahead": 16,
+    "behind": 0,
+    "files": [
+      "tide_health.json",
+      "tide_month.json",
+      "tide_today.json",
+      "weather_today.json",
+      "weather_week.json"
+    ],
+    "status": "WEATHER_TIDE_DATA_ONLY",
+    "unexpected": [],
+    "fetch_pull_merge": false
+  },
+  "preservation": {
+    "at": "2026-09-26T11:45:01.388Z",
+    "baseline": "2026-09-26T10:26:51.618Z",
+    "files_checked": 511,
+    "changed": [
+      {
+        "path": "reports-api/src/canonical/control.js",
+        "state": "CHANGED"
+      },
+      {
+        "path": "reports-api/src/canonical/purge.js",
+        "state": "CHANGED"
+      }
+    ],
+    "head": "d39bf4bf2d7e147b246f867f56567f814eddd4b9",
+    "branch": "main",
+    "local_origin_main": "6bf58a583391b174ccd15117ddeaef233010e1ee",
+    "status": "M index.html\n M reports-api/src/admin-page.js\n M reports-api/src/admin.js\n M reports-api/src/public.js\n M reports-api/src/shared.js\n?? docs/\n?? reports-api/local-test/\n?? reports-api/src/admin-actions.js\n?? reports-api/src/canonical/\n?? reports-api/tools/",
+    "head_unchanged": true,
+    "authorized_source_changes": [
+      {
+        "path": "reports-api/src/canonical/control.js",
+        "state": "CHANGED"
+      },
+      {
+        "path": "reports-api/src/canonical/purge.js",
+        "state": "CHANGED"
+      }
+    ],
+    "unexpected": []
+  },
+  "final_staging": {
+    "at": "2026-09-26T11:45:10.710Z",
+    "workers": [
+      {
+        "name": "birdmap-reports-staging-public",
+        "activeVersions": [
+          {
+            "version_id": "c8ff615b-4190-4cc7-9aec-14820229cc80",
+            "percentage": 100
+          }
+        ],
+        "stagingBinding": true,
+        "stagingPeer": true,
+        "mode": "READ_ONLY_MAINTENANCE",
+        "build": "phase2c-dual-v3",
+        "readStatus": 200,
+        "writeStatus": 503,
+        "retryAfter": 60
+      },
+      {
+        "name": "birdmap-reports-staging-admin",
+        "activeVersions": [
+          {
+            "version_id": "77a57a9c-51f6-4bed-90b2-2a1ac0af330c",
+            "percentage": 100
+          }
+        ],
+        "stagingBinding": true,
+        "stagingPeer": true,
+        "mode": "READ_ONLY_MAINTENANCE",
+        "build": "phase2c-dual-v3",
+        "readStatus": 200,
+        "writeStatus": 503,
+        "retryAfter": 60
+      }
+    ],
+    "state": {
+      "counts": {
+        "sites": 190,
+        "taxa": 0,
+        "reports": 33,
+        "raw_submissions": 33,
+        "checklists": 33,
+        "sightings": 34,
+        "reviews": 15,
+        "audit_log": 13,
+        "backfill_runs": 1,
+        "transaction_assertions": 0
+      },
+      "digest": "eeae9d158058a0a3b1935f329f26ea0d021c86820005c383823a7ac3b59399d0",
+      "schemaDigest": "b94bb3e09dd63c73342ff4358cdfd13edbdcac5e0e6b3f6eea41c36226005699",
+      "ledgerDigest": "a7de050cf75ddd8122c51180331fb55080ba37a8d54415f4d7ee52d57de85ce1",
+      "assertions": [],
+      "fk": []
+    }
+  },
+  "production": {
+    "checked_at": "2026-09-26T11:45:09.753Z",
+    "workers_equal_start": true,
+    "counts": {
+      "total": 23,
+      "approved": 19,
+      "rejected": 4,
+      "pending": 0
+    }
+  },
+  "limits": {
+    "at": "2026-09-26T11:37:57.915Z",
+    "actualSuccessfulBatches": {
+      "sites": 190,
+      "synthetic21Backfill": 64
+    },
+    "maxBoundParameters": 38,
+    "maxStatementBytes": 570,
+    "maxTextBytes": 516,
+    "maxSerializedRowBytes": 1033,
+    "official": {
+      "queryInvocationFree": 50,
+      "queryInvocationPaid": 1000,
+      "boundParameters": 100,
+      "statementBytes": 100000,
+      "rowBytes": 2000000,
+      "batchTimeoutSeconds": 30,
+      "simultaneousConnections": 6,
+      "timeTravelFreeDays": 7,
+      "timeTravelPaidDays": 30
+    },
+    "future": {
+      "formula": "3N+1 insert statements plus validation queries; with budget reserve16 => floor((Q-17)/3)",
+      "freeBudgetRows": 11,
+      "paidBudgetRows": 327,
+      "conservativeTrialRows": {
+        "free": 10,
+        "paid": 100
+      },
+      "status": "planning bound only; no production chunk implementation or large-load proof; actual plan unconfirmed; current whole-snapshot verifier intentionally rejects partial states"
+    },
+    "source": "https://developers.cloudflare.com/d1/platform/limits/"
+  },
+  "risks": [
+    "Production 적용은 승인되지 않았으며 NO-GO. 실제 외부 writer freeze·구 Worker drain·배포 책임자/중단 기준을 별도로 확정해야 한다. staging wrapper freeze는 production 방화벽 설정 검증이 아니다.",
+    "Turnstile 공식 pass/fail/already-spent Siteverify와 동시 멱등성은 통과했다. 실제 브라우저 발급 single-use token 및 CAPTCHA 실패 직후 concurrent commit 재조회 분기 실행은 원격에서 특정하지 않았다(해당 분기는 로컬 시험 통과).",
+    "새 staging DB의 생성 직후 요청 시점 bookmark와 실제 복구는 확인했다. 계정 구독에 따른 최대 7일/30일 보존 한도는 계정 수준에서 확정하지 않았다.",
+    "Time Travel의 purge 이전 이력에는 제거 자료가 남을 수 있다. 이번 복구는 purge 이후 bookmark로만 수행했다. 운영 복구 시 금지 자료 재유입 방지 절차가 필요하다.",
+    "legacy purge는 PURGE_LEGACY_DECISION_REQUIRED를 유지한다. 운영자가 보존 정책과 금지자료 삭제 예외를 결정해야 한다. 현재 purge는 권한 있는 내부 함수이며 운영용 인증 진입점을 새로 공개하지 않았다.",
+    "64/190 statement batch의 성공은 대규모 부하 증명이 아니다. 미래 chunk backfill은 현재 partial-state 거부·manifest 원칙을 유지하는 별도 설계와 한도 검증이 필요하다.",
+    "일반 DELETE 금지는 application 경계이고 직접 D1 관리자 권한에는 적용되지 않는다. Worker rollback은 DB를 되돌리지 않으며, 이번에는 안전한 maintenance 버전만 복귀했다.",
+    "이번 14단계 cutover 재연은 기설치 staging에서 migration/seed no-op 및 backfill cohort 검증으로 수행했다. 최초 빈 DB migration/backfill 성공 증거와 구분한다. production 데이터·트래픽·배포 drain을 시험한 것은 아니다."
+  ],
+  "counters": {
+    "production_d1_writes": 0,
+    "production_migrations": 0,
+    "production_worker_deploys": 0,
+    "production_route_changes": 0,
+    "production_secret_changes": 0,
+    "production_service_binding_changes": 0,
+    "production_access_changes": 0,
+    "production_exports": 0,
+    "production_restores": 0,
+    "commit": 0,
+    "push": 0
+  }
+}

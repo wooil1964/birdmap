@@ -1,0 +1,225 @@
+{
+  "recorded_at": "2026-09-26T10:01:29.5004857Z",
+  "status": "PHASE_2B_COMPLETE_WITH_ACCEPTED_EXISTING_TEST_EXCEPTION",
+  "scope": "Local synthetic data only; no production database access",
+  "local_d1": {
+    "started_at": "2026-09-26T09:42:43.418Z",
+    "scope": "local D1 only; synthetic observations; production calls 0",
+    "tests": [
+      {
+        "name": "schema contract matches exact Phase 2A tables/indexes/triggers",
+        "result": "PASS"
+      },
+      {
+        "name": "sites seed preserves 190 IDs and exact registry coordinates",
+        "result": "PASS"
+      },
+      {
+        "name": "backfill dry-run/preparation preserves known 21-row semantics, no fabricated history",
+        "result": "PASS"
+      },
+      {
+        "name": "backfill changed manifest and partial state are explicit errors",
+        "result": "PASS"
+      },
+      {
+        "name": "backfill rejects invalid dates and mismatched/incomplete registry without correction",
+        "result": "PASS"
+      },
+      {
+        "name": "confirmation missing/false/wrong type and missing coordinates cause zero writes",
+        "result": "PASS"
+      },
+      {
+        "name": "quick POST creates reports/raw/checklist/sighting atomically; NULL/0/1 distinct",
+        "result": "PASS"
+      },
+      {
+        "name": "quick same request replays original accepted response; changed payload conflicts",
+        "result": "PASS"
+      },
+      {
+        "name": "concurrent successful submit is replayed after single-use CAPTCHA failure",
+        "result": "PASS"
+      },
+      {
+        "name": "quick batch middle/late failures roll back every table",
+        "result": "PASS"
+      },
+      {
+        "name": "multiple species shared count is preserved without allocation",
+        "result": "PASS"
+      },
+      {
+        "name": "admin approve preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin reject preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin unpublish preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin visibility preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin site preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin consent preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin link preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "admin unlink preserves legacy meaning and canonical projection",
+        "result": "PASS"
+      },
+      {
+        "name": "quick replay respects reject, unpublish and pending visibility withdrawal",
+        "result": "PASS"
+      },
+      {
+        "name": "admin listing reads editable values and revisions in one snapshot without parameter expansion",
+        "result": "PASS"
+      },
+      {
+        "name": "CAS stale revision and injected admin failure roll back all state",
+        "result": "PASS"
+      },
+      {
+        "name": "admin request conflict covers changed payload, action and target",
+        "result": "PASS"
+      },
+      {
+        "name": "one admin request reviews multiple sightings, sequence and event identity",
+        "result": "PASS"
+      },
+      {
+        "name": "append-only SQL updates and ordinary application deletes rejected",
+        "result": "PASS"
+      },
+      {
+        "name": "invalid site FK fails without changing either projection",
+        "result": "PASS"
+      },
+      {
+        "name": "canonical GET DTO equals legacy for approved/pending/site/status/pagination",
+        "result": "PASS"
+      },
+      {
+        "name": "shadow comparison reports categories only; legacy response remains authoritative",
+        "result": "PASS"
+      },
+      {
+        "name": "maintenance blocks both mutations with Retry-After and keeps GET/admin list",
+        "result": "PASS"
+      },
+      {
+        "name": "mixed-version/mode/unready peer fail closed without legacy fallback",
+        "result": "PASS"
+      },
+      {
+        "name": "purge privilege, dependencies, atomic failure and data-free tombstone",
+        "result": "PASS"
+      },
+      {
+        "name": "legacy 21 source rows unchanged and final FK/assertion checks clean",
+        "result": "PASS"
+      }
+    ],
+    "synthetic21": {
+      "total": 21,
+      "approved": 17,
+      "rejected": 4,
+      "site_null": 5,
+      "count_one": 13,
+      "count_null": 8
+    },
+    "status": "PASS",
+    "finished_at": "2026-09-26T09:45:23.184Z"
+  },
+  "phase2a": {
+    "versions": {
+      "node": "v24.18.0",
+      "wrangler": "4.137.0",
+      "miniflare": "5.20260921.0-alpha"
+    },
+    "status": "PASS",
+    "local_wrangler_ledger_verified": true,
+    "original_files_modified": 0,
+    "finished_at": "2026-09-26T09:44:19.352Z",
+    "tests": 17
+  },
+  "legacy_api": {
+    "fail": 0,
+    "tests": 106,
+    "pass": 106,
+    "skipped": 0
+  },
+  "protocol_cli": {
+    "fail": 0,
+    "tests": 5,
+    "pass": 5
+  },
+  "weather_worker": {
+    "fail": 0,
+    "tests": 36,
+    "pass": 36
+  },
+  "offline_python": {
+    "fail": 0,
+    "tests": 81,
+    "pass": 80,
+    "skipped": 1
+  },
+  "frontend": {
+    "fail": 1,
+    "skipped": 0,
+    "final_tap": ".local/frontend-verified.tap",
+    "unchanged_head_same_failure": true,
+    "failure": "2026-09-17 stored tide fixture assumes max <850; current stored max is 882",
+    "pass": 203,
+    "baseline_tap": ".local/frontend-baseline.tap",
+    "tests": 204
+  },
+  "final_foreign_key_violations": 0,
+  "final_assertion_rows": 0,
+  "production_writes": 0,
+  "remote_migrations": 0,
+  "deploys": 0,
+  "commits": 0,
+  "pushes": 0,
+  "phase2c_started": false,
+  "source_sha256": {
+    "index.html": "cfde50e8f155f60399dbf17f2005c7b2bbc753316c88756ec47cef7be19d9506",
+    "reports-api/src/admin-page.js": "3dfe41626f69c945c357be8a81f16257c85088003ab83dbd3ffca3f8750a785c",
+    "reports-api/src/admin.js": "37910628633a58d57a6b2de550b0082808c364b1b90342a06661109db7c16126",
+    "reports-api/src/public.js": "b91eed3c9f7f8b5a673cec436611997f2b73bbd0db3c9fd7b9b7bfc14e147312",
+    "reports-api/src/shared.js": "1c8d48b55491eb6a9f64cc343ab98cc7cff569b569889a4071a6f0d3ccbd8259",
+    "reports-api/src/admin-actions.js": "7778695569d2daf11a45999cfe129def705fbfdf031f9004e1c3370646c2f8be",
+    "docs/long-term-db-phase2a/migrations/0001_core.sql": "8bca2ea7b8d46e44b1ef4297afbed755e522879e996e9c89cd707e2a597751d8",
+    "reports-api/src/canonical/control.js": "a9f57b608b064391fdc1570fb57d48352abdd5f42b729f3270ae759c169d1c1d",
+    "reports-api/src/canonical/data.js": "b671c9abec474f71b0c684f3fa91f2c64326f51fcfb8d54da7510dd9004864e0",
+    "reports-api/src/canonical/persistence.js": "995706d5c3a0c692107e97194a4af15b24d9284d730925617dfc5008230893bc",
+    "reports-api/src/canonical/purge.js": "5d258f9ddf4ea131edb85aab8bfd20b682613bfa07880016b7eed3078efc8940",
+    "reports-api/src/canonical/shadow.js": "5232848d6132d58c98dbd9fcba0639c0a31ffa11e76c9eeb2af653fc7450e918",
+    "reports-api/tools/backfill-lib.mjs": "ba6fa546b7d1d5b01485f23e29640d526a6a8737474a0c8558a2bd1d84708fb3",
+    "reports-api/tools/prepare-backfill.mjs": "6d5bed740fb95839833b4e8ed89d6bf3589cd8e3ec31441dfc24a2530606d555",
+    "reports-api/tools/prepare-sites.mjs": "36e4a08a7b72196959f6e2ad2df1b89340bfb7c67a28a1f4c4f1fcd382b18964",
+    "reports-api/tools/sites-seed.mjs": "9d3816662c0997e71353889fe9ca861ea0af8b8ae131ccc68dbf2f52bce27a56",
+    "reports-api/local-test/baseline-regression.mjs": "424f3d2fc5985ad640ad4db8d9ff73eb2229cbab6b6725c06a0337af68139099",
+    "reports-api/local-test/helpers.mjs": "c60e4361598886a93ab129d265e277f307e261f2608373f5f61521a6c0940b0b",
+    "reports-api/local-test/protocol-check.mjs": "a3424cc1ab6a40d66a91df88821be70f90ca79251d36a5fb36f9a23ec0ceb99c",
+    "reports-api/local-test/repeat-phase2a.mjs": "cab5c216ad93c829147483491b4b8c85cd6a61c41815dec24615add23aa0888d",
+    "reports-api/local-test/run.mjs": "421322cc39ad1b1c5605f4eaac96a137830a2ae22b06ce273edba950d6dda6e2"
+  },
+  "user_accepted_existing_test_exception": true
+}

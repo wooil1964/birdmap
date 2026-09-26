@@ -1,0 +1,23 @@
+// Single-purpose creation of the explicitly authorized, isolated staging D1. No production mutations.
+import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {join} from 'node:path';
+const account='1d697c22a32447b386b9fac6a3538597',production='b48201cc-0abd-4a64-bb61-9dd2a7813d21';
+const name='birdmap-reports-staging',publicWorker='birdmap-reports-staging-public',adminWorker='birdmap-reports-staging-admin';
+const state=new URL('../.local/resources.json',import.meta.url);
+if(existsSync(state))throw Error('State exists: inspect it and remote resources; do not create another database');
+const auth=readFileSync(join(process.env.APPDATA,'xdg.config/.wrangler/config/default.toml'),'utf8');
+const token=/^oauth_token\s*=\s*"([^"]+)"/m.exec(auth)?.[1];if(!token)throw Error('Login required');
+const headers={Authorization:`Bearer ${token}`,'Content-Type':'application/json'};
+const prefix=`https://api.cloudflare.com/client/v4/accounts/${account}`;
+const databases=await(await fetch(prefix+'/d1/database?per_page=100',{headers})).json();
+const workers=await(await fetch(prefix+'/workers/scripts',{headers})).json();
+if(!databases.success||!workers.success||databases.result_info.total_count>databases.result.length)throw Error('Incomplete resource inventory');
+if(databases.result.some(d=>d.name===name)||workers.result.some(w=>[publicWorker,adminWorker].includes(w.id)))throw Error('Staging name collision: do not overwrite');
+if([publicWorker,adminWorker].some(n=>['birdmap-reports','birdmap-reports-admin'].includes(n))||name==='birdmap-reports')throw Error('Production name guard');
+console.log(JSON.stringify({action:'CREATE_STAGING_D1_ONLY',account,name,publicWorker,adminWorker,production_id_excluded:production}));
+const response=await fetch(prefix+'/d1/database',{method:'POST',headers,body:JSON.stringify({name})});
+const data=await response.json();if(!response.ok||!data.success)throw Error('Staging create failed: '+JSON.stringify((data.errors||[]).map(e=>({code:e.code,message:e.message}))));
+const result={created_at:new Date().toISOString(),account_id:account,database_name:name,database_id:data.result.uuid,public_worker:publicWorker,admin_worker:adminWorker,production_database_id:production,production_workers:['birdmap-reports','birdmap-reports-admin'],routes:[],custom_domains:[],ownership:'Current user-authorized Phase 2C isolated synthetic validation',production_changed:false};
+writeFileSync(state,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+if(!result.database_id||result.database_id===production)throw Error('STOP: invalid or production database ID; no migration permitted');
+console.log(JSON.stringify(result,null,2));

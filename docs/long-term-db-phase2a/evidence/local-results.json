@@ -1,0 +1,228 @@
+{
+  "started_at": "2026-09-25T22:09:23.654Z",
+  "scope": "isolated local D1; synthetic only; no production calls",
+  "versions": {
+    "node": "v24.18.0",
+    "wrangler": "4.137.0",
+    "miniflare": "5.20260921.0-alpha"
+  },
+  "tests": [
+    {
+      "number": 1,
+      "name": "schema executes in local D1 and Wrangler ledger is idempotent",
+      "result": "PASS"
+    },
+    {
+      "number": 2,
+      "name": "foreign_key_check and enforcement",
+      "result": "PASS"
+    },
+    {
+      "number": 3,
+      "name": "21-row synthetic backfill, permanent IDs and complete source snapshots",
+      "result": "PASS"
+    },
+    {
+      "number": 4,
+      "name": "approved 17 and rejected 4",
+      "result": "PASS"
+    },
+    {
+      "number": 5,
+      "name": "site NULL 5",
+      "result": "PASS"
+    },
+    {
+      "number": 6,
+      "name": "count 1 remains 13, accuracy unknown",
+      "result": "PASS"
+    },
+    {
+      "number": 7,
+      "name": "count NULL remains 8, accuracy unknown; zero distinguished",
+      "result": "PASS"
+    },
+    {
+      "number": 8,
+      "name": "public NULL coordinate pairs preserved for all 21",
+      "result": "PASS"
+    },
+    {
+      "number": 9,
+      "name": "approved pending_public residue 15 retained",
+      "result": "PASS"
+    },
+    {
+      "number": 10,
+      "name": "species source strings preserved exactly",
+      "result": "PASS"
+    },
+    {
+      "number": 11,
+      "name": "same backfill adds zero; changed manifest or partial state rejected",
+      "result": "PASS"
+    },
+    {
+      "number": 12,
+      "name": "dual-write mid-batch and stale CAS roll back all tables",
+      "result": "PASS"
+    },
+    {
+      "number": 13,
+      "name": "multiple sighting reviews per request and exact retry identity",
+      "result": "PASS"
+    },
+    {
+      "number": 14,
+      "name": "site-only coordinates allowed; partial, absent site and invalid FK rejected",
+      "result": "PASS"
+    },
+    {
+      "number": 15,
+      "name": "quick submissions require finite actual coordinate pair before storage",
+      "result": "PASS"
+    },
+    {
+      "number": 16,
+      "name": "explicit true non-breeding confirmation required before storage",
+      "result": "PASS"
+    },
+    {
+      "number": 17,
+      "name": "current public API and canonical compatibility DTO regression",
+      "result": "PASS"
+    }
+  ],
+  "wrangler": {
+    "first_apply": "PASS",
+    "second_apply": "no additional migration",
+    "ledger": [
+      {
+        "id": 1,
+        "name": "0001_core.sql",
+        "applied_at": "2026-09-25 22:09:25"
+      }
+    ],
+    "first_reported_success": true,
+    "second_reported_no_pending": true
+  },
+  "source_sha256": {
+    "migrations/0001_core.sql": "8bca2ea7b8d46e44b1ef4297afbed755e522879e996e9c89cd707e2a597751d8",
+    "proof/fixture.mjs": "78483741bbc7766aac5fc487bd767231da4c5575de416ccf0b56967ebaffd1cf",
+    "proof/model.mjs": "ae5c754f538ba422b1f47460aa6d5c9ee32fcbaf66afb933ea1e7d7aee84440b",
+    "proof/run.mjs": "bbb5d001e5f7fff0744c8d5d04c09fbbb8c89f80bb2196fe0bf3db96f663e01b",
+    "wrangler.local.toml": "6f3dc9ecbff3563feb36d3cdc73782833c144d6817b6fb945ecd12cfc29701f5"
+  },
+  "schema": {
+    "tables": [
+      "audit_log",
+      "backfill_runs",
+      "checklists",
+      "raw_submissions",
+      "reports",
+      "reviews",
+      "sightings",
+      "sites",
+      "taxa",
+      "transaction_assertions"
+    ],
+    "columns": {
+      "audit_log": 9,
+      "backfill_runs": 6,
+      "checklists": 38,
+      "raw_submissions": 12,
+      "reports": 22,
+      "reviews": 16,
+      "sightings": 13,
+      "sites": 9,
+      "taxa": 9,
+      "transaction_assertions": 2
+    },
+    "new_tables": 9,
+    "new_columns": 114
+  },
+  "backfill": {
+    "added": 21,
+    "manifest": "ef4bb1d70c393358fab839bce18a865a56c87690290c4699069a963a27286587"
+  },
+  "synthetic_counts": {
+    "reports": 21,
+    "raw": 21,
+    "checklists": 21,
+    "sightings": 21,
+    "approved": 17,
+    "rejected": 4,
+    "site_null": 5,
+    "count_one": 13,
+    "count_null": 8,
+    "public_null_pairs": 21,
+    "approved_pending_public_one": 15,
+    "rerun_added": 0
+  },
+  "api_comparison": [
+    {
+      "path": "/reports/approved",
+      "status": 200
+    },
+    {
+      "path": "/reports/pending",
+      "status": 200
+    },
+    {
+      "path": "/reports/site/1",
+      "status": 200
+    },
+    {
+      "path": "/reports/site/1?limit=2&offset=1",
+      "status": 200
+    },
+    {
+      "path": "/reports/site/1?offset=999",
+      "status": 200
+    },
+    {
+      "path": "/reports/site/unknown",
+      "status": 200
+    },
+    {
+      "path": "/reports/site/%21",
+      "status": 400
+    },
+    {
+      "path": "/reports/00000000-0000-4000-8000-000000000001/status",
+      "status": 200
+    },
+    {
+      "path": "/reports/00000000-0000-4000-8000-000000000018/status",
+      "status": 200
+    },
+    {
+      "path": "/reports/00000000-0000-4000-8000-000000000104/status",
+      "status": 200
+    },
+    {
+      "path": "/reports/00000000-0000-4000-8000-000000000105/status",
+      "status": 200
+    },
+    {
+      "path": "/reports/00000000-0000-4000-8000-000000000106/status",
+      "status": 200
+    },
+    {
+      "path": "/reports/00000000-0000-4000-8000-000000000999/status",
+      "status": 404
+    }
+  ],
+  "existing_suite": [
+    "# tests 106",
+    "# suites 0",
+    "# pass 106",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0"
+  ],
+  "final_foreign_key_check": 0,
+  "final_assertion_rows": 0,
+  "status": "PASS",
+  "finished_at": "2026-09-25T22:10:31.080Z"
+}

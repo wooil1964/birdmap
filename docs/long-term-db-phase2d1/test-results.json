@@ -1,0 +1,915 @@
+{
+  "generated_at": "2026-09-26T14:45:52.867Z",
+  "verdict": "PHASE 2E PRODUCTION CUTOVER: GO",
+  "blocking": [],
+  "local_proof": [
+    {
+      "name": "NORMAL: HEAD legacy binary and new build write normally",
+      "result": "PASS"
+    },
+    {
+      "name": "freeze: one UPDATE flips mode and advances generation",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen: HEAD legacy binary cannot write (public insert, admin update); DB unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen: new build returns 503 WRITE_MAINTENANCE + Retry-After 60 on every write path",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen: public GET and admin GET keep working",
+      "result": "PASS"
+    },
+    {
+      "name": "system_state: invalid transitions and delete are rejected",
+      "result": "PASS"
+    },
+    {
+      "name": "unfreeze: writes reopen for HEAD legacy, new NORMAL and dual-write",
+      "result": "PASS"
+    },
+    {
+      "name": "fail closed: missing system_state row blocks writes",
+      "result": "PASS"
+    },
+    {
+      "name": "backfill dynamic N (22/23/24/37/300): single batch 3N+3, constant queries, idempotent, partial/manifest refused",
+      "result": "PASS"
+    },
+    {
+      "name": "backfill aborts: not frozen, generation/source change, shared multi-species count, purged resurrected",
+      "result": "PASS"
+    }
+  ],
+  "staging_freeze_basic": [
+    {
+      "name": "NORMAL: real public POST /reports and Access admin mutation succeed",
+      "result": "PASS"
+    },
+    {
+      "name": "freeze via REST tool: changes=1, generation+1, snapshot in same batch",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen: POST /reports and all 8 admin actions blocked 503 + Retry-After 60, DB unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen: public and admin GET keep working",
+      "result": "PASS"
+    },
+    {
+      "name": "frozen: ops routes are operator steps that write canonical tables only; invalid manifest rejected, no write",
+      "result": "PASS"
+    },
+    {
+      "name": "drain: gate present, generation fixed, reports+canonical digests identical over 4 rounds / 60 s",
+      "result": "PASS"
+    },
+    {
+      "name": "drain negative: wrong generation is NOT drained",
+      "result": "PASS"
+    },
+    {
+      "name": "double freeze refused (transition requires NORMAL)",
+      "result": "PASS"
+    },
+    {
+      "name": "unfreeze + reopen smoke: public POST 201, admin 200, GET 200",
+      "result": "PASS"
+    }
+  ],
+  "staging_race": [
+    {
+      "round": 1,
+      "generation": 3,
+      "public_committed": 6,
+      "public_blocked": 6,
+      "admin_committed": 3,
+      "admin_blocked": 3,
+      "final_equals_frozen_snapshot": true
+    },
+    {
+      "round": 2,
+      "generation": 5,
+      "public_committed": 6,
+      "public_blocked": 6,
+      "admin_committed": 3,
+      "admin_blocked": 3,
+      "final_equals_frozen_snapshot": true
+    },
+    {
+      "round": 3,
+      "generation": 7,
+      "public_committed": 6,
+      "public_blocked": 6,
+      "admin_committed": 3,
+      "admin_blocked": 3,
+      "final_equals_frozen_snapshot": true
+    },
+    {
+      "round": 1,
+      "generation": 9,
+      "public_committed": 2,
+      "public_blocked": 10,
+      "admin_committed": 1,
+      "admin_blocked": 5,
+      "final_equals_frozen_snapshot": true
+    },
+    {
+      "round": 2,
+      "generation": 11,
+      "public_committed": 3,
+      "public_blocked": 9,
+      "admin_committed": 0,
+      "admin_blocked": 6,
+      "final_equals_frozen_snapshot": true
+    }
+  ],
+  "staging_dual": [
+    {
+      "name": "dual: NORMAL gate open -> quick 201 (4 tables), admin 200",
+      "result": "PASS"
+    },
+    {
+      "name": "dual frozen: quick and admin batches rejected 503, reports+canonical unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "dual unfreeze: quick 201 and admin 200 again",
+      "result": "PASS"
+    }
+  ],
+  "staging_backfill": {
+    "cohorts": [
+      {
+        "n": 22,
+        "apply_ms": 4322,
+        "statements": 69,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      },
+      {
+        "n": 23,
+        "apply_ms": 4412,
+        "statements": 72,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      },
+      {
+        "n": 24,
+        "apply_ms": 3793,
+        "statements": 75,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      },
+      {
+        "n": 37,
+        "apply_ms": 5207,
+        "statements": 114,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      },
+      {
+        "n": 400,
+        "apply_ms": 5654,
+        "statements": 1203,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      },
+      {
+        "n": 1000,
+        "apply_ms": 6447,
+        "statements": 3003,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      }
+    ],
+    "aborts": [
+      {
+        "name": "tampered manifest refused",
+        "result": "PASS"
+      },
+      {
+        "name": "source + freeze generation change refused",
+        "result": "PASS",
+        "fields": [
+          "source_row_count",
+          "rejected_count",
+          "source_digest",
+          "freeze_generation"
+        ]
+      },
+      {
+        "name": "partial target state detected and not overwritten",
+        "result": "PASS"
+      },
+      {
+        "name": "prepare on partial target reports state (does not write)",
+        "result": "PASS",
+        "target_state": "MANIFEST_OR_PARTIAL_STATE"
+      },
+      {
+        "name": "shared multi-species count aborts dry-run and prepare, no manifest",
+        "result": "PASS"
+      },
+      {
+        "name": "Production writes refused without Phase 2E approval (guard unit, no network)",
+        "result": "PASS"
+      }
+    ],
+    "after_dynamic_import": [
+      {
+        "n": 23,
+        "apply_ms": 6700,
+        "statements": 72,
+        "prepare_reads": 18,
+        "manifest_fields": 18,
+        "result": "PASS"
+      }
+    ]
+  },
+  "restore_rehearsal": {
+    "kinds": [
+      "legacy_reports_only",
+      "native_dual",
+      "legacy_backfilled"
+    ],
+    "purge_all_clean": true,
+    "barrier_probes": [
+      [
+        200,
+        200
+      ],
+      [
+        200,
+        404
+      ],
+      [
+        200,
+        404
+      ],
+      [
+        200,
+        404
+      ],
+      [
+        404,
+        404
+      ],
+      [
+        404,
+        404
+      ],
+      [
+        404,
+        404
+      ]
+    ],
+    "restore_bookmark": "00000012-00000006-000050f2-1d1b1d33f37ec2be6decd0ad0b0e1bcd",
+    "restored_system_state": {
+      "mode": "NORMAL",
+      "generation": 14
+    },
+    "residue_after_restore": [
+      1,
+      4,
+      4
+    ],
+    "ledger_digest_unchanged": true,
+    "repurged": 3,
+    "tombstones": 3,
+    "reopen": {
+      "approved_ids": 0,
+      "purged_resubmit": 410,
+      "smoke": 201
+    }
+  },
+  "ledger_crash": {
+    "at": "2026-09-26T13:29:55.334Z",
+    "check_before": {
+      "intents": 2,
+      "residue_events": 2
+    },
+    "reconcile": {
+      "repurged": 2,
+      "all_clean": true
+    },
+    "check_after": {
+      "intents": 0,
+      "residue_events": 0,
+      "ledger_events": 5
+    }
+  },
+  "turnstile": [
+    {
+      "name": "A fresh token: exactly one validation, 4 tables +1",
+      "result": "PASS",
+      "status": 201,
+      "delta": {
+        "reports": 1,
+        "raw_submissions": 1,
+        "checklists": 1,
+        "sightings": 1
+      }
+    },
+    {
+      "name": "B reuse of validated token rejected, DB unchanged",
+      "result": "FAIL",
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      },
+      "direct_siteverify": {
+        "success": true,
+        "codes": [],
+        "hostname": "localhost"
+      }
+    },
+    {
+      "name": "D invalid token rejected",
+      "result": "PASS",
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      },
+      "direct_siteverify": {
+        "success": false,
+        "codes": [
+          "invalid-input-response"
+        ],
+        "hostname": null
+      }
+    },
+    {
+      "name": "34 same request_id+payload replay: no insert, no token consumption",
+      "result": "FAIL",
+      "replay_status": 201,
+      "replay_body_equal": false,
+      "replay_delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      },
+      "same_token_after_replay_status": 201,
+      "after_delta": {
+        "reports": 1,
+        "raw_submissions": 1,
+        "checklists": 1,
+        "sightings": 1
+      }
+    },
+    {
+      "name": "35 idempotency_key: same key retry vs new key vs no key",
+      "result": "PASS",
+      "first_with_key": {
+        "success": true,
+        "codes": [],
+        "hostname": "localhost"
+      },
+      "retry_same_key": {
+        "success": true,
+        "codes": [],
+        "hostname": "localhost"
+      },
+      "new_key": {
+        "success": false,
+        "codes": [
+          "timeout-or-duplicate"
+        ],
+        "hostname": "localhost"
+      },
+      "no_key": {
+        "success": false,
+        "codes": [
+          "timeout-or-duplicate"
+        ],
+        "hostname": "localhost"
+      }
+    },
+    {
+      "name": "33 direct concurrent Siteverify round 1: exactly one success",
+      "result": "FAIL",
+      "successes": 5,
+      "failure_codes": []
+    },
+    {
+      "name": "33 direct concurrent Siteverify round 2: exactly one success",
+      "result": "FAIL",
+      "successes": 5,
+      "failure_codes": []
+    },
+    {
+      "name": "C expired token (never used before) rejected",
+      "result": "PASS",
+      "app_token_age_s": 310,
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      },
+      "direct_first_use_age_s": 310,
+      "direct_siteverify": {
+        "success": false,
+        "codes": [
+          "invalid-input-response"
+        ],
+        "hostname": null
+      }
+    },
+    {
+      "name": "33 app concurrent same token round 1: exactly one commit",
+      "result": "FAIL",
+      "statuses": [
+        201,
+        201,
+        201,
+        201
+      ],
+      "codes": [],
+      "delta": {
+        "reports": 4,
+        "raw_submissions": 4,
+        "checklists": 4,
+        "sightings": 4
+      }
+    },
+    {
+      "name": "33 app concurrent same token round 2: exactly one commit",
+      "result": "FAIL",
+      "statuses": [
+        201,
+        201,
+        201,
+        403
+      ],
+      "codes": [
+        "CAPTCHA_FAILED"
+      ],
+      "delta": {
+        "reports": 3,
+        "raw_submissions": 3,
+        "checklists": 3,
+        "sightings": 3
+      }
+    },
+    {
+      "name": "33 app concurrent same token round 3: exactly one commit",
+      "result": "FAIL",
+      "statuses": [
+        429,
+        429,
+        429,
+        429
+      ],
+      "codes": [
+        "RATE_LIMITED",
+        "RATE_LIMITED",
+        "RATE_LIMITED",
+        "RATE_LIMITED"
+      ],
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      }
+    }
+  ],
+  "regression": {
+    "legacy106": "PASS 106/106",
+    "local32": "PASS 32/32",
+    "protocol5": "PASS 5/5",
+    "gate13": "PASS 13/13",
+    "phase2a17": "PASS 17/17 (after dynamic-import fix; first run FAIL test17)"
+  },
+  "staging_final": {
+    "at": "2026-09-26T14:43:14.898Z",
+    "public": {
+      "mode": "READ_ONLY_MAINTENANCE",
+      "schemaReady": true,
+      "get": 200,
+      "post": 503,
+      "retryAfter": "60"
+    },
+    "admin": {
+      "mode": "READ_ONLY_MAINTENANCE",
+      "schemaReady": true,
+      "get": 200,
+      "post": 503,
+      "retryAfter": "60"
+    },
+    "counts": {
+      "sites": 190,
+      "taxa": 0,
+      "reports": 77,
+      "raw_submissions": 52,
+      "checklists": 52,
+      "sightings": 53,
+      "reviews": 17,
+      "audit_log": 20,
+      "backfill_runs": 1,
+      "transaction_assertions": 0
+    },
+    "fk": 0,
+    "assertions": 0,
+    "secrets": [
+      "PHASE2C_TEST_TOKEN",
+      "REPORTS_GATE_TOKEN",
+      "REPORT_IP_SALT",
+      "TURNSTILE_SECRET_KEY"
+    ]
+  },
+  "turnstile_retest": [
+    {
+      "name": "TEST A1 same token, 5 distinct keys, concurrent",
+      "result": "FAIL",
+      "successes": 5,
+      "failures": [],
+      "ms": [
+        60,
+        54,
+        54,
+        55,
+        55
+      ],
+      "distinct_keys": 5
+    },
+    {
+      "name": "TEST A2 same token, 5 distinct keys, concurrent",
+      "result": "FAIL",
+      "successes": 5,
+      "failures": [],
+      "ms": [
+        34,
+        48,
+        36,
+        35,
+        38
+      ],
+      "distinct_keys": 5
+    },
+    {
+      "name": "TEST B same token + same K1 retry (same logical validation)",
+      "result": "PASS",
+      "first": {
+        "success": true,
+        "codes": [],
+        "ms": 30
+      },
+      "retry_same_key": {
+        "success": true,
+        "codes": [],
+        "ms": 23
+      },
+      "note": "retry result recorded; not counted as a second use"
+    },
+    {
+      "name": "TEST C same token + new K2 rejected",
+      "result": "PASS",
+      "new_key": {
+        "success": false,
+        "codes": [
+          "timeout-or-duplicate"
+        ],
+        "ms": 15
+      },
+      "no_key_after": {
+        "success": false,
+        "codes": [
+          "timeout-or-duplicate"
+        ],
+        "ms": 14
+      }
+    },
+    {
+      "name": "TEST D1 same token, no key, concurrent",
+      "result": "FAIL",
+      "successes": 5,
+      "failures": [],
+      "ms": [
+        36,
+        35,
+        37,
+        36,
+        44
+      ],
+      "distinct_keys": 0
+    },
+    {
+      "name": "TEST D2 same token, no key, concurrent",
+      "result": "FAIL",
+      "successes": 5,
+      "failures": [],
+      "ms": [
+        46,
+        35,
+        35,
+        32,
+        36
+      ],
+      "distinct_keys": 0
+    },
+    {
+      "name": "APP distinct request_ids A/B/C/D, same token: exactly one stored",
+      "result": "FAIL",
+      "statuses": [
+        201,
+        201,
+        201,
+        201
+      ],
+      "codes": [],
+      "delta": {
+        "reports": 4,
+        "raw_submissions": 4,
+        "checklists": 4,
+        "sightings": 4
+      },
+      "siteverify_keys_sent_by_app": "none (verifyTurnstile never sets idempotency_key)"
+    },
+    {
+      "name": "APP same request_id replay: 201, no additional insert",
+      "result": "PASS",
+      "status": 201,
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      }
+    },
+    {
+      "name": "invalid token rejected",
+      "result": "PASS",
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      },
+      "direct": {
+        "success": false,
+        "codes": [
+          "invalid-input-response"
+        ],
+        "ms": 40
+      }
+    },
+    {
+      "name": "expired token (never used) rejected by app",
+      "result": "PASS",
+      "age_s": 310,
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0
+      }
+    }
+  ],
+  "turnstile_retest_root_cause": "app never sends idempotency_key; concurrent Siteverify returned success for all 5 with distinct keys and with no key; sequential reuse rejected",
+  "verdict_history": [
+    {
+      "at": "2026-09-26T14:05Z",
+      "verdict": "NO-GO",
+      "reason": "Turnstile concurrent same-token"
+    },
+    {
+      "at": "2026-09-26T14:45Z",
+      "verdict": "GO",
+      "reason": "application-level redemption guard PASS"
+    }
+  ],
+  "captcha_guard_local": [
+    {
+      "name": "A fresh token: one submission stored, one redemption, idempotency_key = request_id",
+      "result": "PASS"
+    },
+    {
+      "name": "B same token, 4 different request_ids concurrent (racy Siteverify): exactly one stored, 3 CAPTCHA_REUSED",
+      "result": "PASS"
+    },
+    {
+      "name": "C same request_id + same payload replay: 201, original result, no insert",
+      "result": "PASS"
+    },
+    {
+      "name": "D same request_id + changed payload: IDEMPOTENCY_CONFLICT, no insert",
+      "result": "PASS"
+    },
+    {
+      "name": "E invalid token: 403, redemption 0, canonical 0",
+      "result": "PASS"
+    },
+    {
+      "name": "F expired token: 403, redemption 0, canonical 0",
+      "result": "PASS"
+    },
+    {
+      "name": "G1 Siteverify success -> failure before the D1 batch: partial 0; same-request retry succeeds via same idempotency_key",
+      "result": "PASS"
+    },
+    {
+      "name": "G2 Siteverify success -> failure inside the D1 batch: full rollback incl. redemption; retry succeeds",
+      "result": "PASS"
+    },
+    {
+      "name": "H redemption PK conflict rolls back the whole batch (reports/raw/checklist/sighting 0 for loser)",
+      "result": "PASS"
+    },
+    {
+      "name": "I cleanup: redemptions older than 1 h deleted in the submit batch, recent kept",
+      "result": "PASS"
+    },
+    {
+      "name": "J captcha_redemptions never exposed by public or admin APIs",
+      "result": "PASS"
+    }
+  ],
+  "captcha_guard_browser": [
+    {
+      "name": "A fresh token: one submission + one redemption",
+      "result": "PASS",
+      "status": 201,
+      "delta": {
+        "reports": 1,
+        "raw_submissions": 1,
+        "checklists": 1,
+        "sightings": 1,
+        "captcha_redemptions": 1
+      }
+    },
+    {
+      "name": "B1 same token, 4 request_ids concurrent: exactly one canonical submission",
+      "result": "PASS",
+      "statuses": [
+        201,
+        403,
+        403,
+        403
+      ],
+      "rejected_codes": [
+        "CAPTCHA_REUSED",
+        "CAPTCHA_REUSED",
+        "CAPTCHA_REUSED"
+      ],
+      "delta": {
+        "reports": 1,
+        "raw_submissions": 1,
+        "checklists": 1,
+        "sightings": 1,
+        "captcha_redemptions": 1
+      }
+    },
+    {
+      "name": "B2 same token, 4 request_ids concurrent: exactly one canonical submission",
+      "result": "PASS",
+      "statuses": [
+        201,
+        403,
+        403,
+        403
+      ],
+      "rejected_codes": [
+        "CAPTCHA_FAILED",
+        "CAPTCHA_REUSED",
+        "CAPTCHA_REUSED"
+      ],
+      "delta": {
+        "reports": 1,
+        "raw_submissions": 1,
+        "checklists": 1,
+        "sightings": 1,
+        "captcha_redemptions": 1
+      }
+    },
+    {
+      "name": "B3 same token, 4 request_ids concurrent: exactly one canonical submission",
+      "result": "PASS",
+      "statuses": [
+        201,
+        403,
+        403,
+        403
+      ],
+      "rejected_codes": [
+        "CAPTCHA_REUSED",
+        "CAPTCHA_REUSED",
+        "CAPTCHA_REUSED"
+      ],
+      "delta": {
+        "reports": 1,
+        "raw_submissions": 1,
+        "checklists": 1,
+        "sightings": 1,
+        "captcha_redemptions": 1
+      }
+    },
+    {
+      "name": "C same request_id replay: original result, no insert",
+      "result": "PASS",
+      "status": 201,
+      "body_equal_order_insensitive": true,
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0,
+        "captcha_redemptions": 0
+      }
+    },
+    {
+      "name": "D same request_id, changed payload: rejected by idempotency policy",
+      "result": "PASS",
+      "status": 409,
+      "code": "IDEMPOTENCY_CONFLICT",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0,
+        "captcha_redemptions": 0
+      }
+    },
+    {
+      "name": "E invalid token: redemption 0, canonical 0",
+      "result": "PASS",
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0,
+        "captcha_redemptions": 0
+      }
+    },
+    {
+      "name": "J captcha_redemptions not exposed by public/admin APIs",
+      "result": "PASS",
+      "endpoints": [
+        "/reports/approved",
+        "/reports/pending",
+        "/reports/site/1",
+        "/reports/c02881c1-1938-4079-b260-0e356b883164/status",
+        "/reports/capabilities",
+        "/admin/api/reports?status=all",
+        "/admin/api/capabilities"
+      ],
+      "leaks": []
+    },
+    {
+      "name": "F expired token: redemption 0, canonical 0",
+      "result": "PASS",
+      "age_s": 310,
+      "status": 403,
+      "code": "CAPTCHA_FAILED",
+      "delta": {
+        "reports": 0,
+        "raw_submissions": 0,
+        "checklists": 0,
+        "sightings": 0,
+        "captcha_redemptions": 0
+      }
+    }
+  ],
+  "external_siteverify_observation": {
+    "at": "2026-09-26T14:37:35.180Z",
+    "successes": 5,
+    "failures": []
+  },
+  "regression_after_guard": {
+    "legacy106": "PASS",
+    "local32": "PASS",
+    "protocol5": "PASS",
+    "gate13": "PASS",
+    "phase2a17": "PASS",
+    "freeze_backfill10": "PASS"
+  }
+}

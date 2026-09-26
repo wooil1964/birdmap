@@ -1,0 +1,52 @@
+{
+  "scope": "Verification of this task's effects; not a claim that other operators made no changes",
+  "local_head": "d39bf4bf2d7e147b246f867f56567f814eddd4b9",
+  "tracked": {
+    "files": 462,
+    "start_sha256": "b5478e4ccadd7062d6d7a5341bbf2ac8706826528a80c514705ac0cdec692ac0",
+    "end_sha256": "b5478e4ccadd7062d6d7a5341bbf2ac8706826528a80c514705ac0cdec692ac0",
+    "unchanged": true,
+    "method": "git ls-files -z order; SHA256(concat(relative UTF-8 path, file bytes))"
+  },
+  "phase1": {
+    "files": 14,
+    "start_sha256": "05832a166305ba0e5416160c5fa7f750b83067be08b4162ec4434323da917754",
+    "end_sha256": "05832a166305ba0e5416160c5fa7f750b83067be08b4162ec4434323da917754",
+    "unchanged": true,
+    "method": "sorted Windows relative paths; SHA256(concat(relative UTF-8 path, file bytes)); includes existing execution-evidence.zip"
+  },
+  "remote_start": {
+    "head": "a71e7cb3ffa3d4a703b811a83198fe4a5a3675fc",
+    "ahead": 9,
+    "behind": 0
+  },
+  "remote_end": {
+    "checked_at": "2026-09-25T22:11:11.0030238Z",
+    "head": "942b194a3734e2afe54457890b9296140eb9ea22",
+    "ahead": 13,
+    "behind": 0,
+    "changed_files": [
+      "tide_health.json",
+      "tide_month.json",
+      "tide_today.json",
+      "weather_today.json",
+      "weather_week.json"
+    ],
+    "commit_subjects": "chore: update birding weather / daily birding tides / monthly tide data"
+  },
+  "operations": {
+    "production_d1_calls": 0,
+    "production_d1_writes": 0,
+    "worker_deployments": 0,
+    "production_config_changes": 0,
+    "remote_migrations": 0,
+    "exports": 0,
+    "restores": 0,
+    "commits": 0,
+    "pushes": 0,
+    "fetches": 0,
+    "pulls": 0
+  },
+  "git_status": "?? docs/",
+  "edited_scope": "Only new docs/long-term-db-phase2a artifacts and ignored local synthetic test state"
+}

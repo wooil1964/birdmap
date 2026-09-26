@@ -1,0 +1,18 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {LOCAL,ROOT,state} from './staging-control.mjs';
+import {prepareSiteSeed} from '../../../reports-api/tools/sites-seed.mjs';
+import {prepareBackfill,backfillRows} from '../../../reports-api/tools/backfill-lib.mjs';
+import {fingerprint,TRANSFORM_VERSION} from '../../../reports-api/src/canonical/data.js';
+import {baseline} from '../../long-term-db-phase2a/proof/fixture.mjs';
+state();
+const captured_at=new Date().toISOString();
+const sites=await prepareSiteSeed(readFileSync(join(ROOT,'index.html'),'utf8'),{capturedAt:captured_at});
+const plan=await prepareBackfill({reports:baseline,manifest_sha256:await fingerprint({reports:baseline}),source_count:21,transform_version:TRANSFORM_VERSION,registry_revision:sites.registry_revision,captured_at,run_id:'phase2c-synthetic21'});
+const values=await backfillRows(plan);
+writeFileSync(join(LOCAL,'sites-plan.json'),JSON.stringify(sites));
+writeFileSync(join(LOCAL,'synthetic-backfill-plan.json'),JSON.stringify(plan));
+writeFileSync(join(LOCAL,'backfill-values.json'),JSON.stringify(values));
+const summary={captured_at,scope:'synthetic observations only; unchanged public site registry',sites:sites.source_count,registry_revision:sites.registry_revision,manifest_sha256:plan.manifest_sha256,transform_version:plan.transform_version,source_count:plan.source_count,raw:values.length,checklists:values.length,sightings:values.length,approved:baseline.filter(r=>r.status==='approved').length,rejected:baseline.filter(r=>r.status==='rejected').length,site_null:baseline.filter(r=>r.site_id===null).length,count_one:baseline.filter(r=>r.bird_count===1).length,count_null:baseline.filter(r=>r.bird_count===null).length,apply_executed:false};
+writeFileSync(join(LOCAL,'backfill-preparation.json'),JSON.stringify(summary,null,2)+'\n');
+console.log(JSON.stringify(summary));

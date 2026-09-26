@@ -64,7 +64,17 @@ export function jsonResponse(request, env, body, status = 200, extra = {}) {
   });
 }
 
+// DB freeze gate (system_state trigger) rejected the write. Nothing was stored.
+export function rethrowIfFrozen(error) {
+  if (/reports_write_frozen/.test(String(error?.message))) {
+    const frozen = new WorkerError("WRITE_MAINTENANCE", "제보 쓰기를 잠시 중지했습니다. 잠시 후 다시 시도해 주세요.", 503);
+    frozen.retryAfter = 60;
+    throw frozen;
+  }
+}
+
 export function errorResponse(request, env, error) {
+  try { rethrowIfFrozen(error); } catch (frozen) { error = frozen; }
   const known = error instanceof WorkerError;
   return jsonResponse(
     request,
@@ -77,6 +87,7 @@ export function errorResponse(request, env, error) {
       },
     },
     known ? error.status : 500,
+    error?.retryAfter ? { "Retry-After": String(error.retryAfter) } : {},
   );
 }
 
@@ -353,7 +364,9 @@ export function dedupeHash(report) {
 
 /* ── 자동 등록 방지 (Turnstile) ─────────────────────────────────────── */
 
-export async function verifyTurnstile(token, ip, secret, fetchImpl = fetch) {
+// idempotencyKey: UUID of the logical submission (request_id). Retries of the same request reuse it,
+// different requests never share it. Omitted on the legacy path, which has no client request_id.
+export async function verifyTurnstile(token, ip, secret, fetchImpl = fetch, idempotencyKey) {
   if (!secret) {
     throw new WorkerError(
       "NOT_CONFIGURED_CAPTCHA",
@@ -370,6 +383,7 @@ export async function verifyTurnstile(token, ip, secret, fetchImpl = fetch) {
   }
   const body = new URLSearchParams({ secret, response: token });
   if (ip) body.set("remoteip", ip);
+  if (idempotencyKey) body.set("idempotency_key", idempotencyKey);
   let payload;
   try {
     const response = await fetchImpl(

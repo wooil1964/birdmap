@@ -296,6 +296,7 @@ function doneMessage(act,payload){
   return labels[act]||('처리했습니다: '+act);
 }
 
+var adminMutationAttempts={};
 document.getElementById('list').addEventListener('click',async function(event){
   var button=event.target.closest('button[data-act]');
   var card=event.target.closest('.card');
@@ -327,12 +328,23 @@ document.getElementById('list').addEventListener('click',async function(event){
     payload.spotKey=target?target.value:'';
     if(!payload.spotKey){toast('연결할 지점을 먼저 고르세요.',false);return;}
   }
+  var loaded=reports.find(function(r){return r.id===card.dataset.id;});
+  var attemptKey=card.dataset.id+':'+act;
+  if(loaded&&Object.prototype.hasOwnProperty.call(loaded,'revision')){
+    if(!Number.isSafeInteger(loaded.revision)){toast('정본이 준비되지 않았습니다. 관리자에게 확인해 주세요.',false);return;}
+    payload.expected_revision=loaded.revision;
+    var signature=JSON.stringify(payload);
+    var previous=adminMutationAttempts[attemptKey];
+    if(!previous||previous.signature!==signature)previous=adminMutationAttempts[attemptKey]={signature:signature,id:crypto.randomUUID()};
+    payload.request_id=previous.id;
+  }
   button.disabled=true;
   try{
     var response=await fetch('/admin/api/reports/'+encodeURIComponent(card.dataset.id),{
       method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     var body=await response.json();
     if(!body.ok)throw new Error(body.error&&body.error.message||'처리하지 못했습니다.');
+    delete adminMutationAttempts[attemptKey];
     toast(doneMessage(act,payload),true);
     await load();
   }catch(error){
