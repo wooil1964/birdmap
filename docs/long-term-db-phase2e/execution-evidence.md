@@ -37,7 +37,10 @@
   - 0002 → freeze.
   - 0001 → seed/backfill.
   - 0003 → dual-write 활성화. dual 경로는 테이블이 없으면 모든 제출이 WRITE_FAILED.
-- 세 파일은 모두 추가형이라 freeze 전에 한꺼번에 적용해도 legacy 동작에 영향이 없다(Phase 2D.1 로컬·staging 확인).
+- ~~세 파일은 모두 추가형이라~~ **정정(2026-09-27)**: 0001·0003은 새 테이블·index·새 테이블 trigger만 만든다.
+  - **0002는 `system_state` 테이블 생성, 초기 row INSERT(mode=NORMAL, generation=0), system_state trigger 2개, 그리고 기존 `reports`에 BEFORE INSERT/UPDATE trigger 2개를 만든다.**
+  - 이 trigger는 NORMAL에서는 조건이 거짓이라 동작하지 않는다.
+  - row INSERT가 reports trigger보다 먼저이므로, 중간에 끊겨도 fail-closed 상태가 생기지 않는다. 근거는 §8.
 - `wrangler migrations apply`의 파일 단위 원자성은 공식 문서에서 확인하지 못했다 → 적용 뒤 sqlite_schema로 전체 검증하고, 불일치하면 ABORT.
 
 ## 4. Legacy unguarded 경로 (분석)
@@ -83,3 +86,42 @@
   - D1 limits(갱신 2026-04-21): batch 문장별 한도, 30초, restore 10회/10분.
   - Time Travel(갱신 2026-04-21).
 - push 부작용: index.html 변경이 `update-weather`(push paths)와 Pages를 일으킨다. Worker 자동 배포 없음.
+
+## 8. 0002 적용 안전성 (Production NORMAL 상태에서 적용할 때)
+
+- SQL 원문(`migrations-main/0002_system_state.sql`) 순서:
+  1. CREATE TABLE system_state
+  2. **INSERT row (1,'NORMAL',0)**
+  3. trigger system_state_transition
+  4. trigger system_state_permanent
+  5. trigger reports_freeze_insert
+  6. trigger reports_freeze_update
+- reports trigger의 조건은 `NOT EXISTS (… mode='NORMAL')`이다. 적용 직후 row가 NORMAL이므로 조건이 거짓이고, legacy INSERT/UPDATE는 그대로 통과한다.
+- 로컬 복제 시험(`scripts/local-0002-safety.mjs`, `.local/local-0002-safety.json`):
+  - production reports의 실제 DDL(테이블과 index 5개, preflight에서 읽음)로 D1을 만들었다.
+  - 고정 migration 0001→0002→0003(35문장)을 **문장 단위로** 적용하며, 0~35문장의 **모든 중간 상태 36개**에서 HEAD(=현 production 소스) legacy를 실행했다.
+  - 결과: 매번 공개 POST 201, 관리자 action 8종(approve·reject·unpublish·consent·visibility·site·link·unlink) 모두 200. 최종 system_state NORMAL/0, reports trigger 2개. **PASS**.
+- 기존 증거:
+  - Phase 2D.1 로컬: 0002를 설치한 뒤 NORMAL에서 HEAD legacy가 201/200.
+  - staging: 0002를 적용한 뒤 NORMAL 배포에서 실제 HTTP POST 201·관리자 200.
+- 409/500은 system_state가 READ_ONLY_MAINTENANCE이거나 row가 없을 때만 생긴다. 앞의 경우는 운영자의 freeze뿐이다. 뒤의 경우는 DELETE trigger가 막고, INSERT가 trigger보다 앞서 실행되므로 생기지 않는다.
+
+## 9. push와 운영 페이지 (push 승인 뒤, 2026-09-26T22:19Z = 09-27 07:19 KST)
+
+- `git fetch`: origin/main `734cb218`, 로컬보다 20개 앞. 날씨·조석 JSON 5개뿐이고 코드 drift 0.
+- merge(rebase하지 않음, 고정 SHA 보존) → **`c65180130659df1197e7ff060580fa310990ebcb`**.
+  - `183cef95`와 비교해 reports-api·index.html·migration 차이 0이다(docs·JSON만 다름).
+- `git push origin HEAD:main`: `734cb21..c651801` fast-forward.
+- Actions:
+  - `update-weather`(push): success → 자동 JSON 커밋 `b5a6cfd2`
+  - Pages `c6518013`: success
+  - Pages `b5a6cfd2`: success
+  - **Cloudflare Worker 배포 없음**: 두 Worker version과 배포 시각이 2026-09-22 그대로.
+- 운영 페이지 확인(https://wooil1964.github.io/birdmap/):
+  - HTML이 `c6518013` index.html과 같다.
+  - siteData 190, `reportsConfigured()` true.
+  - 제보 창을 열면 `/reports/capabilities` 404 → `REPORTS_CANONICAL_UI_ENABLED=false` 유지, 비번식 확인란 숨김, 수량 최소 1(legacy 형식), Turnstile 표시.
+  - 검색(주남저수지) → 팝업·실시간 날씨·조석·최근 출현 제보 정상.
+  - 콘솔 오류는 예상된 capabilities 404 한 건뿐.
+  - 실제 제보는 제출하지 않았다.
+- Production(22:22Z 읽기): 23/19/4/0, 스키마 reports·_cf_KV, Worker 변경 0.

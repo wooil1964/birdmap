@@ -1,6 +1,8 @@
 # Phase 2E Cutover Runbook (확정 명령)
 
-- artifact: 브랜치 `phase2e-cutover`, 커밋 **`183cef95bffaeaed80fe04d0b3af4e397957001d`**. 배포는 이 커밋의 작업 트리에서만 한다.
+- artifact: 코드 커밋 **`183cef95bffaeaed80fe04d0b3af4e397957001d`**. 이 코드가 origin/main `c65180130659df1197e7ff060580fa310990ebcb`에 그대로 포함돼 push됐다. 배포 직전 `git diff 183cef95 HEAD -- reports-api index.html docs/long-term-db-phase2e/migrations-main`가 비어 있어야 한다.
+- 0002는 기존 `reports`에 trigger를 만든다. NORMAL 상태로 설치되므로 legacy에 영향이 없다(execution-evidence §8).
+- 프론트엔드(capabilities 자동 전환)는 이미 운영 중이다. step 12의 dual 배포 순간부터 운영 페이지가 새 형식으로 전환된다.
 - 모든 명령은 저장소 루트에서 실행한다. `[P]`는 Production 쓰기다. 운영자의 단 한 번의 "Phase 2E 실행 승인" 뒤 연속 실행한다.
 - Time Travel restore와 git push는 이 runbook에 포함되지 않는다(각각 별도 승인).
 
@@ -12,11 +14,11 @@ APPROVE="PHASE2E_PRODUCTION_WRITE_APPROVED=b48201cc-0abd-4a64-bb61-9dd2a7813d21"
 
 | # | 단계 | 명령 | 통과 기준 | 실패 시 |
 |---|---|---|---|---|
-| 0 | 재확인(읽기) | KST, `git rev-parse HEAD`(=183cef95), `git status`(깨끗함), `node docs/long-term-db-phase2e/scripts/production-readonly-preflight.mjs predestructive` | drift 0, Worker version 57849940/1eebcf4e 그대로 | ABORT BEFORE MUTATION |
+| 0 | 재확인(읽기) | KST, `git fetch` 뒤 origin/main 이후 변경이 JSON뿐인지, 위 artifact diff 0, `git status`(깨끗함), `node docs/long-term-db-phase2e/scripts/production-readonly-preflight.mjs predestructive` | drift 0, Worker version 57849940/1eebcf4e 그대로 | ABORT BEFORE MUTATION |
 | 1 | recovery point(읽기) | `$W d1 time-travel info birdmap-reports --json` | bookmark를 받아 CUTOVER-LOG에 B0으로 기록 | ABORT |
 | 2 | Access 토큰(운영자 브라우저) | `docs/long-term-db-phase2c/.local/cloudflared.exe access login https://birdmap-reports-admin.wooil-birdmap.workers.dev` → `node docs/long-term-db-phase2e/scripts/prod-ops.mjs access-token` | CAPTURED, 4개 검사 true | ABORT |
 | 3 | [P] safety ledger | `$W d1 create birdmap-safety-ledger` → 새 id를 `$T`의 `ledger_database_id`와 `wrangler.migrate-ledger.json`에 기록 → `$W d1 migrations apply birdmap-safety-ledger --remote -c docs/long-term-db-phase2e/wrangler.migrate-ledger.json` → `node reports-api/tools/purge-runner.mjs --check --target $T` | 0001_safety_ledger 적용, events 0. staging ledger id가 아님 | ABORT (main 무변경) |
-| 4 | [P] main migrations | `$W d1 migrations apply birdmap-reports --remote -c docs/long-term-db-phase2e/wrangler.migrate-main.json` | pending이 정확히 0001_core/0002_system_state/0003_captcha_redemptions일 때만 적용 → `node docs/long-term-db-phase2e/scripts/prod-verify.mjs schema` 전 항목 pass | ABORT. 추가형이라 DROP하지 않는다. legacy 서비스는 그대로 |
+| 4 | [P] main migrations | `$W d1 migrations apply birdmap-reports --remote -c docs/long-term-db-phase2e/wrangler.migrate-main.json` | pending이 정확히 0001_core/0002_system_state/0003_captcha_redemptions일 때만 적용 → `node docs/long-term-db-phase2e/scripts/prod-verify.mjs schema` 전 항목 pass | ABORT. DROP하지 않는다. system_state가 NORMAL이면 legacy 서비스는 그대로다(0002 부분 적용이어도 row가 trigger보다 먼저 생긴다) |
 | 5 | [P] maintenance 배포 | `cd reports-api && $W deploy -c wrangler.public.toml --var REPORTS_WRITE_MODE:READ_ONLY_MAINTENANCE` → `$W deploy -c wrangler.admin.toml --var REPORTS_WRITE_MODE:READ_ONLY_MAINTENANCE REPORTS_OPS_ENABLED:true` | 새 version ID 기록 | Worker rollback(§Rollback A) |
 | 6 | [P] gate secret | `node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))" > ../docs/long-term-db-phase2e/.local/gate.tmp` → `$W secret put REPORTS_GATE_TOKEN -c wrangler.public.toml < ../docs/long-term-db-phase2e/.local/gate.tmp` → admin도 같은 파일로 → tmp 삭제. 값은 출력하지 않는다 | `prod-verify.mjs workers READ_ONLY_MAINTENANCE`: previews off, 단일 version, secret 이름에 REPORTS_GATE_TOKEN → `prod-verify.mjs http maintenance`: GET 200, POST 503+60, 관리자 POST 503 | Rollback A |
 | 7 | [P] freeze | `env $APPROVE node reports-api/tools/freeze.mjs --freeze --reason phase2e-cutover --confirm FREEZE_WRITES --target $T` | changes=1, generation G, snapshot(N·digest) 기록 | 원인 확인. maintenance 유지 |
