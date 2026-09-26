@@ -10,7 +10,7 @@ const workers=['birdmap-reports','birdmap-reports-admin'],label=process.argv[2]|
 const root=process.cwd(),out=join(root,'docs/long-term-db-phase2e/.local');
 const git=args=>execFileSync('git',args,{encoding:'utf8',env:{...process.env,GIT_OPTIONAL_LOCKS:'0'}}).trim();
 const getGitHub=async p=>{const r=await fetch('https://api.github.com/repos/wooil1964/birdmap/'+p,{headers:{'User-Agent':'phase2e-readonly'}});if(!r.ok)throw Error('GITHUB_'+r.status);return r.json();};
-const head=git(['rev-parse','HEAD']),latest=(await getGitHub('commits/main')).sha,c=await getGitHub(`compare/${head}...${latest}`);
+const head=process.env.PREFLIGHT_BASE||git(['rev-parse','HEAD']),latest=(await getGitHub('commits/main')).sha,c=await getGitHub(`compare/${head}...${latest}`);
 const allowed=new Set(['weather_today.json','weather_week.json','tide_today.json','tide_month.json','tide_health.json']);
 const drift={checked_at:new Date().toISOString(),head,remote_main:latest,ahead:c.ahead_by,behind:c.behind_by,files:c.files.map(f=>f.filename)};drift.unexpected=drift.files.filter(p=>!allowed.has(p));
 writeFileSync(join(out,'remote-'+label+'.json'),JSON.stringify(drift,null,2)+'\n');

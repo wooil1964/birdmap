@@ -1,13 +1,17 @@
 # Phase 2E — Production Cutover
 
-**FINAL EXECUTION GATE: READY** (2026-09-27 07:2x KST 갱신). Production Worker/D1 변경 0. Phase 2E는 시작하지 않았다. 실행하려면 운영자의 "Phase 2E 실행 승인"이 필요하다.
+**PHASE 2E PRODUCTION CUTOVER: COMPLETE** (2026-09-26T22:43Z / 2026-09-27 07:43 KST)
 
-- **프론트엔드**: push 승인에 따라 이미 운영 중이다(origin/main `c6518013`, Pages 성공). legacy Worker에서는 capabilities가 404라 기존 형식이 유지된다. 운영 페이지에서 확인했다.
-- **artifact**: 코드 `183cef95…`. `c6518013`에 동일한 내용으로 포함됐다.
-- **0002**: 기존 reports에 trigger를 만들지만 NORMAL로 설치되므로 legacy에 영향이 없다. 모든 중간 상태까지 복제 시험 PASS(execution-evidence §8).
-- 운영자 결정: `REPORTS_PENDING_PUBLIC=1`, capabilities 자동 전환.
+- legacy reports 23건을 장기 관찰 정본 구조로 옮겼다(값 추정·분배·site_id 변경 없음, 22필드 투영 동일).
+- 제보·관리자는 Turnstile redemption guard가 적용된 dual-write 경로로 운영된다. legacy guard 없는 경로는 도달할 수 없다.
+- 쓰기 중단은 약 3분 40초였다. 작업 시각은 선호 window(02–04 KST) 밖인 07:3x KST였다.
+- Rollback·restore는 하지 않았다.
 
 문서:
-- [cutover-runbook.md](cutover-runbook.md)
+- [FINAL-STATE.md](FINAL-STATE.md)
+- [CUTOVER-LOG.md](CUTOVER-LOG.md)
 - [execution-evidence.md](execution-evidence.md)
-- [CHECKPOINT.md](CHECKPOINT.md), [CUTOVER-LOG.md](CUTOVER-LOG.md), [FINAL-STATE.md](FINAL-STATE.md), [rollback-evidence.md](rollback-evidence.md)
+- [cutover-runbook.md](cutover-runbook.md)
+- [rollback-evidence.md](rollback-evidence.md)
+- [CHECKPOINT.md](CHECKPOINT.md)
+- [manifest-summary.json](manifest-summary.json)
