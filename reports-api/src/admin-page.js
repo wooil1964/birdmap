@@ -71,6 +71,30 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
 .merge{background:#fff;border-color:#37618a;color:#37618a}
 #status{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);padding:9px 16px;border-radius:8px;background:#1c2226;color:#fff;font-size:13px;display:none;z-index:9999;max-width:90vw}
 .empty{padding:22px;text-align:center;color:#5a666e}
+/* 통계 탭 */
+#stats{padding:14px 16px}
+.sfilters{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:#fff;border:1px solid #dde2e6;border-radius:8px;padding:10px}
+.sfilters label{margin:0 0 2px}
+.sfilters input,.sfilters select{width:auto;min-width:120px}
+.sfilters button,.stabs button,.sback{padding:6px 12px;border:1px solid #bcc6cc;background:#fff;border-radius:6px;cursor:pointer;font-size:13px}
+.sfilters button.primary,.stabs button[aria-pressed="true"]{background:#2f7d4f;color:#fff;border-color:#2f7d4f}
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:10px 0}
+.scard{background:#fff;border:1px solid #dde2e6;border-radius:8px;padding:8px 10px}
+.scard b{display:block;font-size:20px}
+.scard span{font-size:11px;color:#5a666e}
+.stabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.snote{font-size:12px;color:#5a666e;margin:6px 0}
+.swrap{overflow-x:auto;background:#fff;border:1px solid #dde2e6;border-radius:8px}
+.stable{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}
+.stable th,.stable td{padding:6px 10px;border-bottom:1px solid #eef1f3;text-align:left}
+.stable th{background:#f6f7f8;font-weight:600}
+.stable td.n{text-align:right}
+.linkbtn{background:none;border:0;color:#37618a;text-decoration:underline;cursor:pointer;font:inherit;padding:0;text-align:left}
+@media(max-width:560px){
+  #stats{padding:10px 12px}
+  .sfilters>div{flex:1 1 calc(50% - 8px)}
+  .sfilters input,.sfilters select{width:100%;min-width:0}
+}
 </style>
 </head>
 <body>
@@ -83,6 +107,7 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <button type="button" data-status="approved" aria-pressed="false">승인됨</button>
   <button type="button" data-status="rejected" aria-pressed="false">반려됨</button>
   <button type="button" data-status="all" aria-pressed="false">전체</button>
+  <button type="button" id="statsTab" aria-pressed="false">통계</button>
   <input id="speciesQuery" placeholder="종명으로 이력 검색" style="max-width:190px;min-height:36px">
   <button type="button" id="speciesSearchBtn">종별 이력</button>
 </nav>
@@ -90,6 +115,23 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <div id="list"><div class="empty">불러오는 중입니다.</div></div>
   <div id="map"></div>
 </main>
+<section id="stats" style="display:none">
+  <form class="sfilters" id="statsForm">
+    <div><label>종명</label><input id="sfSpecies" placeholder="정확한 종명"></div>
+    <div><label>제보자</label><input id="sfReporter" placeholder="저장된 이름 그대로"></div>
+    <div><label>탐조지역</label><select id="sfSite"><option value="">전체</option></select></div>
+    <div><label>상태</label><select id="sfStatus">
+      <option value="">기본 (생태 통계는 승인만)</option><option value="approved">승인</option>
+      <option value="rejected">반려</option><option value="pending">승인 대기</option></select></div>
+    <div><label>관찰일 시작</label><input id="sfFrom" type="date"></div>
+    <div><label>관찰일 끝</label><input id="sfTo" type="date"></div>
+    <div><label>연도</label><input id="sfYear" type="number" min="1900" max="2100" placeholder="YYYY"></div>
+    <div><label>월</label><select id="sfMonth"><option value="">전체</option></select></div>
+    <div><button type="submit" class="primary">적용</button> <button type="button" id="statsReset">초기화</button></div>
+  </form>
+  <div class="scards" id="statsCards"></div>
+  <div id="statsBody"></div>
+</section>
 <div id="status" role="status" aria-live="polite"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -405,6 +447,158 @@ document.querySelector('nav').addEventListener('click',function(event){
   currentStatus=button.dataset.status;
   document.querySelectorAll('nav button').forEach(function(b){b.setAttribute('aria-pressed',String(b===button));});
   load();
+});
+
+// ---- 통계 탭 ----
+// 상태 탭(data-status)·승인 대기 배지·카드 목록과 별개로 동작한다. 이 화면은 읽기만 한다.
+var statsView='species', statsRows=[], statsDrill=null;
+var STATS_COLS={
+  species:[['species','종명',1],['total','제보'],['approved','승인'],['first_observed','최초 관찰일'],['last_observed','최근 관찰일'],['sites','지역 수'],['reporters','제보자 수']],
+  sites:[['site_name','탐조지역',1],['total','제보'],['species','종수'],['last_observed','최근 관찰일'],['reporters','제보자 수']],
+  reporters:[['reporter','제보자',1],['total','총 제보'],['approved','승인'],['rejected','반려'],['pending','대기'],['species','종수'],['sites','지역 수'],['last_observed','최근 관찰일']],
+  monthly:[['month','월'],['total','제보'],['approved','승인'],['species','종수'],['reporters','제보자 수']],
+  yearly:[['year','연도'],['total','제보'],['species','종수'],['reporters','제보자 수'],['sites','지역 수']]
+};
+var STATUS_LABEL={approved:'승인',rejected:'반려',pending:'승인 대기'};
+
+(function(){
+  var month=document.getElementById('sfMonth');
+  for(var m=1;m<=12;m++){var v=(m<10?'0':'')+m;month.insertAdjacentHTML('beforeend','<option value="'+v+'">'+m+'월</option>');}
+})();
+
+function showStats(on){
+  document.querySelector('main').style.display=on?'none':'';
+  document.getElementById('stats').style.display=on?'block':'none';
+  document.getElementById('statsTab').setAttribute('aria-pressed',String(on));
+  if(on){document.querySelectorAll('nav button[data-status]').forEach(function(b){b.setAttribute('aria-pressed','false');});}
+  else map.invalidateSize();
+}
+
+function fillSiteFilter(){
+  var select=document.getElementById('sfSite');
+  if(select.dataset.count===String(siteList.length))return;
+  select.dataset.count=String(siteList.length);
+  var html='<option value="">전체</option><option value="__none__">미연결 지역</option>';
+  siteList.slice().sort(function(a,b){return a.name.localeCompare(b.name,'ko');}).forEach(function(s){
+    html+='<option value="'+esc(s.id)+'">'+esc(siteLabel(s.id))+'</option>';
+  });
+  select.innerHTML=html;
+}
+
+function statsQuery(view,drill){
+  var p=new URLSearchParams();p.set('view',view);
+  var fields={species:'sfSpecies',reporter:'sfReporter',status:'sfStatus',from:'sfFrom',to:'sfTo',year:'sfYear',month:'sfMonth'};
+  Object.keys(fields).forEach(function(k){var v=document.getElementById(fields[k]).value;if(k!=='reporter')v=v.trim();if(v)p.set(k,v);});
+  var site=document.getElementById('sfSite').value;
+  if(site==='__none__')p.set('noSite','1');else if(site)p.set('siteId',site);
+  Object.keys(drill||{}).forEach(function(k){
+    if(k==='noSite'||k==='siteId'){p.delete('noSite');p.delete('siteId');}
+    if(k==='noReporter'||k==='reporter'){p.delete('noReporter');p.delete('reporter');}
+    p.set(k,drill[k]);
+  });
+  return '/admin/api/stats?'+p.toString();
+}
+
+function kstTime(iso){return new Date(Date.parse(iso)+9*3600*1000).toISOString().slice(0,16).replace('T',' ');}
+
+function statsName(view,r){
+  if(view==='sites')return r.site_id==null?'미연결 지역':(r.site_name||('ID '+r.site_id));
+  // 앞뒤 공백만 다른 이름은 합치지 않으므로, 화면에서도 구분되게 따옴표로 보여 준다.
+  if(view==='reporters')return r.reporter==null?'(이름 미입력)':r.reporter!==r.reporter.trim()?'"'+r.reporter+'" (앞뒤 공백 포함)':r.reporter;
+  return r.species;
+}
+
+function drillFor(view,r){
+  if(view==='species')return {species:r.species};
+  if(view==='sites')return r.site_id==null?{noSite:'1'}:{siteId:r.site_id};
+  return r.reporter==null?{noReporter:'1'}:{reporter:r.reporter};
+}
+
+function renderCards(s,basis){
+  var cards=[['총 제보',s.total],['승인',s.approved],['반려',s.rejected],['승인 대기',s.pending],
+    ['등록 종수 ('+basis+')',s.species],['참여 제보자 수',s.reporters,'이름 미입력 '+s.anonymous_reports+'건 별도'],['최근 30일 접수',s.recent30,'KST 기준']];
+  document.getElementById('statsCards').innerHTML=cards.map(function(c){
+    return '<div class="scard"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b>'+(c[2]?'<span>'+esc(c[2])+'</span>':'')+'</div>';
+  }).join('');
+}
+
+function renderTable(body){
+  var cols=STATS_COLS[statsView];
+  var basis=body.filters.status?'상태 필터: '+STATUS_LABEL[body.filters.status]:'생태 통계: 승인 제보 기준';
+  var tabs=[['species','종별'],['sites','지역별'],['reporters','제보자별'],['monthly','월별'],['yearly','연도별']].map(function(t){
+    return '<button type="button" data-view="'+t[0]+'" aria-pressed="'+(t[0]===statsView)+'">'+t[1]+'</button>';
+  }).join('');
+  var note='<div class="snote">'+esc(basis)+' · 날짜는 관찰일(observed_on) 기준'
+    +(statsView==='sites'?' · 지역 통계는 관리자 연결 탐조지역 기준':'')
+    +(statsView==='reporters'?(body.filters.status?' · 모든 수치는 선택한 상태 기준':' · 총/승인/반려/대기는 전체 제보, 종수·지역 수는 승인 제보 기준')+'. 이름은 입력값 그대로 묶음':'')+'</div>';
+  var head='<tr>'+cols.map(function(c){return '<th>'+esc(c[1])+'</th>';}).join('')+'</tr>';
+  var rows=body.rows.map(function(r,i){
+    return '<tr>'+cols.map(function(c){
+      if(c[2])return '<td><button type="button" class="linkbtn" data-row="'+i+'">'+esc(statsName(statsView,r))+'</button></td>';
+      var v=r[c[0]];return '<td'+(typeof v==='number'?' class="n"':'')+'>'+esc(v==null?'':v)+'</td>';
+    }).join('')+'</tr>';
+  }).join('');
+  document.getElementById('statsBody').innerHTML='<div class="stabs">'+tabs+'</div>'+note
+    +'<div class="swrap"><table class="stable"><thead>'+head+'</thead><tbody>'
+    +(rows||'<tr><td colspan="'+cols.length+'">해당 조건의 자료가 없습니다.</td></tr>')+'</tbody></table></div>';
+}
+
+function renderDetail(body,title){
+  var rows=body.rows.map(function(r){
+    return '<tr><td>'+esc(r.observed_on)+'</td><td>'+esc(r.species)+'</td>'
+      +'<td><span class="badge '+esc(r.status)+'">'+esc(STATUS_LABEL[r.status]||r.status)+'</span></td>'
+      +'<td>'+esc(r.site_id==null?'미연결 지역':(r.site_name||('ID '+r.site_id)))+'</td>'
+      +'<td>'+esc(r.reporter==null?'(이름 미입력)':r.reporter)+'</td><td>'+esc(kstTime(r.received_at))+'</td>'
+      +'<td><button type="button" class="linkbtn" data-card="'+esc(r.id)+'" data-rstatus="'+esc(r.status)+'">카드 열기</button></td></tr>';
+  }).join('');
+  document.getElementById('statsBody').innerHTML='<button type="button" class="sback" id="statsBack">← 통계로</button>'
+    +'<div class="snote"><b>'+esc(title)+'</b> — '+body.rows.length+'건 ('+(body.filters.status?STATUS_LABEL[body.filters.status]:'모든 상태')+', 관찰일 최신순)'
+    +(body.truncated?' · 최근 '+body.rows.length+'건까지만 표시':'')+'</div>'
+    +'<div class="swrap"><table class="stable"><thead><tr><th>관찰일</th><th>종명</th><th>상태</th><th>탐조지역</th><th>제보자</th><th>접수(KST)</th><th></th></tr></thead><tbody>'
+    +(rows||'<tr><td colspan="7">해당 조건의 제보가 없습니다.</td></tr>')+'</tbody></table></div>';
+}
+
+async function loadStats(){
+  document.getElementById('statsBody').innerHTML='<div class="empty">불러오는 중입니다.</div>';
+  try{
+    var response=await fetch(statsQuery(statsDrill?'list':statsView,statsDrill&&statsDrill.filter),{cache:'no-store'});
+    var body=await response.json();
+    if(!body.ok)throw new Error(body.error&&body.error.message||'통계를 불러오지 못했습니다.');
+    renderCards(body.summary,body.filters.status?STATUS_LABEL[body.filters.status]:'승인');
+    if(statsDrill)renderDetail(body,statsDrill.title);else{statsRows=body.rows;renderTable(body);}
+  }catch(error){
+    document.getElementById('statsBody').innerHTML='<div class="empty">'+esc(error.message)+'</div>';
+  }
+}
+
+document.getElementById('statsTab').addEventListener('click',async function(){
+  showStats(true);
+  if(!siteList.length)await loadSiteList();
+  fillSiteFilter();
+  loadStats();
+});
+// 다른 탭·종별 이력 검색을 누르면 통계 화면을 닫고 원래 목록으로 돌아간다(그쪽 처리는 기존 핸들러가 한다).
+document.querySelector('nav').addEventListener('click',function(event){
+  var button=event.target.closest('button');
+  if(button&&button.id!=='statsTab')showStats(false);
+});
+document.getElementById('statsForm').addEventListener('submit',function(event){event.preventDefault();statsDrill=null;loadStats();});
+document.getElementById('statsReset').addEventListener('click',function(){document.getElementById('statsForm').reset();statsDrill=null;loadStats();});
+document.getElementById('statsBody').addEventListener('click',async function(event){
+  var tab=event.target.closest('button[data-view]');
+  if(tab){statsView=tab.dataset.view;loadStats();return;}
+  var row=event.target.closest('button[data-row]');
+  if(row){var r=statsRows[Number(row.dataset.row)];statsDrill={filter:drillFor(statsView,r),title:statsName(statsView,r)};loadStats();return;}
+  if(event.target.closest('#statsBack')){statsDrill=null;loadStats();return;}
+  var card=event.target.closest('button[data-card]');
+  if(card){
+    // 기존 상태 탭으로 돌아가 그 제보 카드를 연다.
+    showStats(false);
+    currentStatus=card.dataset.rstatus;
+    document.querySelectorAll('nav button[data-status]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.status===currentStatus));});
+    await load();
+    select(card.dataset.card);
+  }
 });
 
 load();

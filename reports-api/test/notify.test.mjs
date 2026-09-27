@@ -2,38 +2,9 @@
 // 외부 호출은 모두 가짜다(Resend·Turnstile·Access). 운영 D1·메일은 건드리지 않는다.
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DatabaseSync } from "node:sqlite";
-import { readFileSync } from "node:fs";
 import { environments, installAuthStubs, input, post, adminPost } from "../local-test/helpers.mjs";
 import { emailText } from "../src/notify.js";
-
-const DDL = ["../schema.sql", "../../docs/long-term-db-phase2a/migrations/0001_core.sql", "../../docs/long-term-db-phase2d1/migrations/0003_captcha_redemptions.sql"]
-  .map((p) => readFileSync(new URL(p, import.meta.url), "utf8")).join("\n");
-
-// D1 모양의 SQLite 대역. batch 는 D1 처럼 한 트랜잭션으로 묶는다.
-function d1() {
-  const db = new DatabaseSync(":memory:");
-  db.exec(DDL);
-  const prepare = (sql) => {
-    let params = [];
-    const s = {
-      bind(...v) { params = v; return s; },
-      async all() { return { results: db.prepare(sql).all(...params) }; },
-      async first() { return db.prepare(sql).get(...params) ?? null; },
-      async run() { db.prepare(sql).run(...params); return { success: true }; },
-    };
-    return s;
-  };
-  return {
-    prepare,
-    async batch(list) {
-      db.exec("BEGIN");
-      try { for (const s of list) await s.run(); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; }
-      return [];
-    },
-    count: (sql) => db.prepare(sql).get().n,
-  };
-}
+import { canonicalDb } from "./helpers.mjs";
 
 const RESEND = "https://api.resend.com/emails";
 async function setup(resendResponse = () => Response.json({ id: "email-1" })) {
@@ -43,7 +14,7 @@ async function setup(resendResponse = () => Response.json({ id: "email-1" })) {
     if (String(url) === RESEND) { sent.push({ headers: options.headers, body: JSON.parse(options.body) }); return resendResponse(); }
     return authFetch(url, options);
   };
-  const db = d1(), { pub, admin } = environments(db);
+  const db = canonicalDb(), { pub, admin } = environments(db);
   Object.assign(pub, { RESEND_API_KEY: "test-key", NOTIFY_EMAIL_TO: "admin@example.test", NOTIFY_EMAIL_FROM: "bot@example.test", ADMIN_PAGE_URL: "https://admin.example/admin" });
   return { db, pub, admin, sent, token: auth.token, restore: auth.restore };
 }

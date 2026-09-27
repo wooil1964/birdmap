@@ -125,3 +125,34 @@ export function validBody(overrides = {}) {
     ...overrides,
   };
 }
+
+// 정본(dual-write) 스키마까지 올린 D1 대역(schema.sql + Phase 2A 0001 + 0003). batch 는 D1 처럼 한 트랜잭션이다.
+// sqlite 로 원본 핸들을 꺼내 시험 자료를 직접 넣을 수 있다.
+const CANONICAL_DDL = ["../schema.sql", "../../docs/long-term-db-phase2a/migrations/0001_core.sql", "../../docs/long-term-db-phase2d1/migrations/0003_captcha_redemptions.sql"]
+  .map((p) => readFileSync(new URL(p, import.meta.url), "utf8")).join("\n");
+
+export function canonicalDb() {
+  const db = new DatabaseSync(":memory:");
+  db.exec(CANONICAL_DDL);
+  const prepare = (sql) => {
+    let params = [];
+    const s = {
+      bind(...v) { params = v; return s; },
+      // D1 처럼 일반 객체로 돌려준다(node:sqlite 행은 null prototype).
+      async all() { return { results: db.prepare(sql).all(...params).map((r) => ({ ...r })) }; },
+      async first() { const r = db.prepare(sql).get(...params); return r ? { ...r } : null; },
+      async run() { db.prepare(sql).run(...params); return { success: true }; },
+    };
+    return s;
+  };
+  return {
+    prepare,
+    async batch(list) {
+      db.exec("BEGIN");
+      try { for (const s of list) await s.run(); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; }
+      return [];
+    },
+    count: (sql) => db.prepare(sql).get().n,
+    sqlite: db,
+  };
+}
