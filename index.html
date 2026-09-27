@@ -117,7 +117,7 @@
 <!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면과 모바일 화면(작은 크기)에서 보인다.
      자료는 마커를 그릴 때 이미 받아 둔 /reports/approved 를 그대로 쓴다(추가 호출 없음). -->
 <div id="recentReportsBox">
-  <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span></div>
+  <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span><span id="recentReportsHint">글을 클릭하면 지도에 보입니다.</span></div>
   <div id="recentReportsList"><div class="recentReportEmpty">불러오는 중입니다.</div></div>
 </div>
 
@@ -213,6 +213,9 @@ a.ebird,.btn.ebird{display:none !important}
   box-shadow:0 2px 8px rgba(0,0,0,.16);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
 #recentReportsTitle{flex:0 0 auto;padding:8px 11px;border-bottom:1px solid #e3e8eb;background:#f6f8f9;font-size:13px;font-weight:bold;color:#2f4f62}
 #recentReportsCount{margin-left:6px;font-weight:normal;font-size:12px;color:#5a7a8c}
+/* 제목 오른쪽 안내. 한 줄에 들어갈 폭이면 제목 옆, 좁으면 제목 아래 줄 오른쪽으로 내려간다. */
+#recentReportsTitle{display:flex;flex-wrap:wrap;align-items:baseline}
+#recentReportsHint{margin-left:auto;padding-left:6px;font-size:10px;font-weight:normal;color:#9aa5ab;white-space:nowrap}
 /* 제목은 고정하고 목록만 남은 높이 안에서 스크롤한다. 건수가 적으면 내용만큼만
    높아지고, 많아지면 상자 전체가 48vh 에서 멈춘다. */
 #recentReportsList{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
