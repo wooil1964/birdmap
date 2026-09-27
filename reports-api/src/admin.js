@@ -12,6 +12,7 @@ import {
 import { ADMIN_PAGE } from "./admin-page.js";
 import { ACTIONS, loadReport, planAction } from "./admin-actions.js";
 import { adminStats } from "./admin-stats.js";
+import { adminUsage } from "./admin-usage.js";
 import { assertWriteGate, internalCapability, capability, writeMode } from "./canonical/control.js";
 import { adminIdentity, replayAdmin, persistAdmin } from "./canonical/persistence.js";
 import { applicationDb, first } from "./canonical/data.js";
@@ -147,6 +148,9 @@ export async function handleRequest(request, env) {
     }
     if (request.method === "GET" && url.pathname === "/admin/api/stats") {
       return jsonResponse(request, env, await adminStats(database(env), url), 200, { "Cache-Control": "no-store" });
+    }
+    if (request.method === "GET" && url.pathname === "/admin/api/usage") {
+      return jsonResponse(request, env, await adminUsage({ EVENTS_DB: env.EVENTS_DB, REPORTS_DB: database(env) }), 200, { "Cache-Control": "no-store" });
     }
     // Cutover-window operator steps. Off unless the deploy explicitly sets REPORTS_OPS_ENABLED.
     const ops = /^\/admin\/api\/ops\/(seed|backfill)$/.exec(url.pathname);
