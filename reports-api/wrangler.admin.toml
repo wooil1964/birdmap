@@ -40,3 +40,9 @@ service = "birdmap-reports"
 binding = "REPORTS_DB"
 database_name = "birdmap-reports"
 database_id = "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+
+# 기능 이용 통계(events-worker 가 쓰는 별도 D1). 관리자 Worker 는 조회(SELECT)만 한다(src/admin-usage.js).
+[[d1_databases]]
+binding = "EVENTS_DB"
+database_name = "birdmap-events"
+database_id = "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"
