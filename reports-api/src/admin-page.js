@@ -79,7 +79,7 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <span class="who" id="who"></span>
 </header>
 <nav>
-  <button type="button" data-status="pending" aria-pressed="true">승인 대기</button>
+  <button type="button" data-status="pending" aria-pressed="true">승인 대기 <b id="pendingCount">-</b>건</button>
   <button type="button" data-status="approved" aria-pressed="false">승인됨</button>
   <button type="button" data-status="rejected" aria-pressed="false">반려됨</button>
   <button type="button" data-status="all" aria-pressed="false">전체</button>
@@ -274,6 +274,16 @@ async function load(){
     if(!body.ok)throw new Error(body.error&&body.error.message||'불러오지 못했습니다.');
     reports=body.reports;
     render();
+    // 승인 대기 건수. 승인·반려 뒤에도 load() 가 다시 불리므로 그때마다 새로 센다.
+    // 건수 조회가 실패해도 이미 그린 목록은 그대로 둔다(배지만 이전 값 유지).
+    var pending=reports;
+    if(currentStatus!=='pending'){
+      try{
+        var pendingBody=await (await fetch('/admin/api/reports?status=pending',{cache:'no-store'})).json();
+        pending=pendingBody.ok?pendingBody.reports:null;
+      }catch(e){pending=null;}
+    }
+    if(pending)document.getElementById('pendingCount').textContent=pending.length;
   }catch(error){
     document.getElementById('list').innerHTML='<div class="empty">'+esc(error.message)+'</div>';
   }

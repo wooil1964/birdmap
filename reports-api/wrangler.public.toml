@@ -24,6 +24,11 @@ REPORTS_PEER_RELEASE_ID = "admin-phase2e-1"
 # 비번식 확인을 거친 신규 대기 제보의 대략 좌표 마커 공개(운영자 결정 2026-09-27). 기존 자료 원값은 그대로.
 REPORTS_PENDING_PUBLIC = "1"
 REPORTS_REMOTE_VERIFIED = "true"
+# 새 제보 관리자 메일 알림(src/notify.js). RESEND_API_KEY 시크릿이 없으면 보내지 않고 건너뛴다.
+# 도메인 인증 전에는 보내는 주소가 onboarding@resend.dev, 받는 주소는 Resend 계정 이메일만 가능하다.
+NOTIFY_EMAIL_TO = "wooil2000@gmail.com"
+NOTIFY_EMAIL_FROM = "들뫼 탐조지도 <onboarding@resend.dev>"
+ADMIN_PAGE_URL = "https://birdmap-reports-admin.wooil-birdmap.workers.dev/admin"
 
 # 관리자 Worker 와 서로의 준비 상태(release·schema·mode)를 확인한다.
 [[services]]
@@ -40,3 +45,4 @@ database_id = "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
 #   TURNSTILE_SECRET_KEY  자동 등록 방지 토큰 검증용
 #   REPORT_IP_SALT        IP 해시 솔트. 원본 IP 는 저장하지 않는다.
 #   REPORTS_GATE_TOKEN    두 Worker 가 공유하는 내부 준비 상태 확인용 토큰
+#   RESEND_API_KEY        새 제보 관리자 메일 알림(없으면 알림만 건너뛰고 접수는 그대로)

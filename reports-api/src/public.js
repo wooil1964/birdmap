@@ -31,6 +31,7 @@ import { assertWriteGate, internalCapability, publicCapability } from "./canonic
 import { quickInput, replayQuick, persistQuick } from "./canonical/persistence.js";
 import { applicationDb } from "./canonical/data.js";
 import { shadowRead } from "./canonical/shadow.js";
+import { notifyNewReport } from "./notify.js";
 
 const MAX_BODY_BYTES = 4096;
 // 탐조지별 출현 이력을 한 번에 가져올 건수. 화면은 5건부터 보여 준다.
@@ -89,7 +90,7 @@ async function enforceRateLimit(db, hash, now) {
   }
 }
 
-async function handleCanonicalSubmit(request,env) {
+async function handleCanonicalSubmit(request,env,ctx) {
   const binding=database(env),db=applicationDb(binding);
   const body=await readJsonBody(request),{report,input}=quickInput(body);
   const saved=await replayQuick(db,body.request_id,input);
@@ -115,11 +116,18 @@ async function handleCanonicalSubmit(request,env) {
     approx_lat:approx.lat,approx_lon:approx.lon,pending_public:pendingPublic,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
     bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:await dedupeHash(report)};
   // Only the hash of the verified token reaches the database (redemption guard, same batch as the write).
-  return jsonResponse(request,env,await persistQuick(binding,row,input,accepted,await sha256Hex(body.turnstileToken)),201);
+  const result=await persistQuick(binding,row,input,accepted,await sha256Hex(body.turnstileToken));
+  // persistQuick returns this same object only when this call committed the row; replays build a new object.
+  // So the admin alert fires once per report id, after the save, and never delays or fails the receipt.
+  if(result===accepted) {
+    const job=notifyNewReport(row,env);
+    if(ctx?.waitUntil)ctx.waitUntil(job);else await job;
+  }
+  return jsonResponse(request,env,result,201);
 }
 
-async function handleSubmit(request, env, dual=false) {
-  if(dual)return handleCanonicalSubmit(request,env);
+async function handleSubmit(request, env, dual=false, ctx) {
+  if(dual)return handleCanonicalSubmit(request,env,ctx);
   const db = database(env);
   const now = new Date();
   const body = await readJsonBody(request);
@@ -338,7 +346,7 @@ async function handleApproved(request, env) {
   );
 }
 
-export async function handleLegacyRequest(request, env) {
+export async function handleLegacyRequest(request, env, ctx) {
   try {
     if(request.method==='GET'&&new URL(request.url).pathname==='/_internal/reports-capability')return await internalCapability(request,env,'public');
     if (!allowedOrigin(request, env)) {
@@ -395,7 +403,7 @@ export async function handleLegacyRequest(request, env) {
       return await handleStatus(request, env, status[1]);
     }
     if (request.method === "POST" && url.pathname === "/reports") {
-      return await handleSubmit(request, env, await assertWriteGate(env,'public'));
+      return await handleSubmit(request, env, await assertWriteGate(env,'public'), ctx);
     }
     if (
       url.pathname !== "/reports" &&
@@ -420,7 +428,7 @@ export async function handleLegacyRequest(request, env) {
 }
 
 export async function handleRequest(request,env,ctx) {
-  const response=await handleLegacyRequest(request,env);
+  const response=await handleLegacyRequest(request,env,ctx);
   const path=new URL(request.url).pathname;
   if(request.method==='GET'&&env.REPORTS_SHADOW_READ==='true'&&(/^\/reports\/(approved|pending)$/.test(path)||path.startsWith('/reports/site/')||/^\/reports\/[0-9a-f-]{36}\/status$/.test(path))) {
     const job=shadowRead(request.clone(),env,response.clone(),handleLegacyRequest);
