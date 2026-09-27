@@ -1,0 +1,21 @@
+# 탐조지도 기능 이용 통계 Worker. 제보 Worker(reports-api)·제보 DB 와 분리된 별도 Worker·별도 D1 이다.
+#
+# 처음 한 번(사용자 승인 후):
+#   npx wrangler d1 create birdmap-events            # 출력된 database_id 를 아래에 넣는다
+#   npx wrangler d1 execute birdmap-events --remote -c wrangler.toml --file=schema.sql
+#   npx wrangler deploy -c wrangler.toml
+#
+name = "birdmap-events"
+main = "src/index.js"
+compatibility_date = "2026-07-03"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# 이벤트를 받을 페이지 Origin(쉼표 구분). 그 밖의 Origin 은 403.
+ALLOWED_ORIGINS = "https://wooil1964.github.io"
+
+[[d1_databases]]
+binding = "EVENTS_DB"
+database_name = "birdmap-events"
+database_id = "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"

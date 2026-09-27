@@ -108,6 +108,7 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <button type="button" data-status="rejected" aria-pressed="false">반려됨</button>
   <button type="button" data-status="all" aria-pressed="false">전체</button>
   <button type="button" id="statsTab" aria-pressed="false">통계</button>
+  <button type="button" id="usageTab" aria-pressed="false">이용 통계</button>
   <input id="speciesQuery" placeholder="종명으로 이력 검색" style="max-width:190px;min-height:36px">
   <button type="button" id="speciesSearchBtn">종별 이력</button>
 </nav>
@@ -131,6 +132,10 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   </form>
   <div class="scards" id="statsCards"></div>
   <div id="statsBody"></div>
+</section>
+<section id="usage" style="display:none">
+  <div class="scards" id="usageCards"></div>
+  <div id="usageBody"><div class="empty">불러오는 중입니다.</div></div>
 </section>
 <div id="status" role="status" aria-live="polite"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -466,13 +471,17 @@ var STATUS_LABEL={approved:'승인',rejected:'반려',pending:'승인 대기'};
   for(var m=1;m<=12;m++){var v=(m<10?'0':'')+m;month.insertAdjacentHTML('beforeend','<option value="'+v+'">'+m+'월</option>');}
 })();
 
-function showStats(on){
-  document.querySelector('main').style.display=on?'none':'';
-  document.getElementById('stats').style.display=on?'block':'none';
-  document.getElementById('statsTab').setAttribute('aria-pressed',String(on));
-  if(on){document.querySelectorAll('nav button[data-status]').forEach(function(b){b.setAttribute('aria-pressed','false');});}
+// 카드 목록(main)·출현종 통계·이용 통계 중 하나만 보인다. name: null | 'stats' | 'usage'
+function showSection(name){
+  document.querySelector('main').style.display=name?'none':'';
+  document.getElementById('stats').style.display=name==='stats'?'block':'none';
+  document.getElementById('usage').style.display=name==='usage'?'block':'none';
+  document.getElementById('statsTab').setAttribute('aria-pressed',String(name==='stats'));
+  document.getElementById('usageTab').setAttribute('aria-pressed',String(name==='usage'));
+  if(name){document.querySelectorAll('nav button[data-status]').forEach(function(b){b.setAttribute('aria-pressed','false');});}
   else map.invalidateSize();
 }
+function showStats(on){showSection(on?'stats':null);}
 
 function fillSiteFilter(){
   var select=document.getElementById('sfSite');
@@ -580,7 +589,7 @@ document.getElementById('statsTab').addEventListener('click',async function(){
 // 다른 탭·종별 이력 검색을 누르면 통계 화면을 닫고 원래 목록으로 돌아간다(그쪽 처리는 기존 핸들러가 한다).
 document.querySelector('nav').addEventListener('click',function(event){
   var button=event.target.closest('button');
-  if(button&&button.id!=='statsTab')showStats(false);
+  if(button&&button.id!=='statsTab'&&button.id!=='usageTab')showStats(false);
 });
 document.getElementById('statsForm').addEventListener('submit',function(event){event.preventDefault();statsDrill=null;loadStats();});
 document.getElementById('statsReset').addEventListener('click',function(){document.getElementById('statsForm').reset();statsDrill=null;loadStats();});
@@ -598,6 +607,54 @@ document.getElementById('statsBody').addEventListener('click',async function(eve
     document.querySelectorAll('nav button[data-status]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.status===currentStatus));});
     await load();
     select(card.dataset.card);
+  }
+});
+
+// ---- 이용 통계 탭 (birdmap-events 일별 합계 + 실제 제보 수). 읽기만 한다. ----
+var USAGE_LABEL={report_button_click:'출현종 제보하기 버튼',recent_report_click:'최근 출현 제보 카드',
+  birdsite_popup_open:'탐조지 팝업(상세) 열기',report_spot_popup_open:'제보 지점 팝업 열기',weekly_panel_open:'이번주 어디 갈까 열기',
+  weekly_recommendation_click:'추천 탐조지 클릭',notice_panel_open:'탐조 이슈 패널 열기',search_use:'검색',
+  external_link_click:'외부 링크(지도·Windy·eBird 등)',route_toggle:'루트 보기'};
+
+function usageRate(v){return v==null?'—':v+'%';}
+
+function renderUsage(body){
+  var cards=document.getElementById('usageCards'),out=document.getElementById('usageBody');
+  if(!body.configured){
+    cards.innerHTML='';
+    out.innerHTML='<div class="empty">이용 통계 DB(birdmap-events)가 아직 연결되지 않았습니다. 방문 수는 Cloudflare Web Analytics 대시보드에서 봅니다.</div>';
+    return;
+  }
+  var s=body.summary;
+  cards.innerHTML=[['최근 7일 기능 클릭',s.clicks7],['최근 30일 기능 클릭',s.clicks30],
+    ['제보하기 클릭 7일 / 30일',s.reportClicks7+' / '+s.reportClicks30],['실제 제보 제출 7일 / 30일',s.submitted7+' / '+s.submitted30],
+    ['클릭 대비 제출 7일 / 30일',usageRate(s.submitRate7)+' / '+usageRate(s.submitRate30)]
+  ].map(function(c){return '<div class="scard"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></div>';}).join('');
+  var events=body.events.map(function(e){
+    return '<tr><td>'+esc(USAGE_LABEL[e.event]||e.event)+'</td><td class="n">'+esc(e.d7)+'</td><td class="n">'+esc(e.d30)+'</td></tr>';
+  }).join('');
+  var sites=body.sites.map(function(r){
+    return '<tr><td>'+esc(r.site_name||('ID '+r.site_id))+'</td><td>'+esc(r.site_id)+'</td><td class="n">'+esc(r.d7)+'</td><td class="n">'+esc(r.d30)+'</td>'
+      +'<td class="n">'+esc(r.mobile)+'</td><td class="n">'+esc(r.desktop)+'</td><td class="n">'+esc(r.tablet)+'</td><td class="n">'+esc(r.other)+'</td></tr>';
+  }).join('');
+  out.innerHTML='<div class="snote">수집 시작 '+esc(body.trackingSince||'—')+' · 7일은 '+esc(body.window.day7)+'부터, 30일은 '+esc(body.window.day30)+'부터(KST). '
+      +'제출 수는 제보 DB의 실제 접수 건수(수집 시작 이후만). 방문 수는 Cloudflare Web Analytics 대시보드에서 봅니다.</div>'
+    +'<h3 class="snote"><b>기능별</b></h3><div class="swrap"><table class="stable"><thead><tr><th>기능</th><th>7일</th><th>30일</th></tr></thead><tbody>'
+    +(events||'<tr><td colspan="3">아직 기록이 없습니다.</td></tr>')+'</tbody></table></div>'
+    +'<h3 class="snote"><b>탐조지별</b> — 탐조지 팝업(상세) 열기 기준, 기기 구분은 30일 합계</h3>'
+    +'<div class="swrap"><table class="stable"><thead><tr><th>탐조지</th><th>ID</th><th>7일</th><th>30일</th><th>모바일</th><th>PC</th><th>태블릿</th><th>기타</th></tr></thead><tbody>'
+    +(sites||'<tr><td colspan="8">아직 기록이 없습니다.</td></tr>')+'</tbody></table></div>';
+}
+
+document.getElementById('usageTab').addEventListener('click',async function(){
+  showSection('usage');
+  document.getElementById('usageBody').innerHTML='<div class="empty">불러오는 중입니다.</div>';
+  try{
+    var body=await (await fetch('/admin/api/usage',{cache:'no-store'})).json();
+    if(!body.ok)throw new Error(body.error&&body.error.message||'이용 통계를 불러오지 못했습니다.');
+    renderUsage(body);
+  }catch(error){
+    document.getElementById('usageBody').innerHTML='<div class="empty">'+esc(error.message)+'</div>';
   }
 });
 

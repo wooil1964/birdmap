@@ -53,11 +53,11 @@ export function parseStatsQuery(url) {
   return { view, filters: f };
 }
 
-// KST 오늘을 포함한 30일(오늘-29일 00:00 KST)의 시작 시각을 UTC ISO 로 돌려준다.
+// KST 오늘을 포함한 days 일(오늘-(days-1)일 00:00 KST)의 시작 시각을 UTC ISO 로 돌려준다.
 // received_at 은 항상 toISOString() 형식이라 문자열 비교로 충분하다.
-export function recentCutoff(now = new Date()) {
+export function recentCutoff(now = new Date(), days = 30) {
   const today = new Date(now.getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10);
-  return new Date(Date.parse(today + "T00:00:00+09:00") - 29 * 86400 * 1000).toISOString();
+  return new Date(Date.parse(today + "T00:00:00+09:00") - (days - 1) * 86400 * 1000).toISOString();
 }
 
 // 공통 CTE.

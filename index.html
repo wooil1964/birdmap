@@ -653,6 +653,90 @@ var REPORTS_API_URL='https://birdmap-reports.wooil-birdmap.workers.dev';
 var REPORTS_CANONICAL_UI_ENABLED=false;
 var REPORTS_TURNSTILE_SITE_KEY='0x4AAAAAAE9q3m3dXLB7A68d';
 var LIVE_WEATHER_CACHE_TTL_MS=15*60*1000;
+/* usage:start — 기능 이용 통계(birdmap-events Worker). 쿠키·localStorage·식별자를 쓰지 않는다.
+   클릭마다 보내지 않고 메모리에 (이벤트·필드) 합계만 모았다가, 화면을 숨기거나 떠날 때 한 번에 보낸다.
+   전송·집계 실패는 모두 조용히 무시하고 다시 보내지 않는다(지도·날씨·제보 기능과 무관).
+   EVENTS_API_URL 이 비어 있으면 아무것도 모으지도 보내지도 않는다. */
+var EVENTS_API_URL='';
+var birdmapUsage=(function(){
+  var MAX_KEYS=20,MAX_N=50,FIELDS=['site_id','source','link_type','result_count'];
+  var counts={},order=[],nextSource='',nextTimer=null;
+  function track(event,params){
+    try{
+      if(!EVENTS_API_URL)return;
+      var item={event:String(event)};
+      FIELDS.forEach(function(k){if(params&&params[k]!=null&&params[k]!=='')item[k]=String(params[k]);});
+      var key=JSON.stringify(item);
+      if(!Object.prototype.hasOwnProperty.call(counts,key)){if(order.length>=MAX_KEYS)return;counts[key]=0;order.push(key);}
+      if(counts[key]<MAX_N)counts[key]++;
+    }catch(e){}
+  }
+  function flush(){
+    try{
+      if(!EVENTS_API_URL||!order.length)return;
+      var body=JSON.stringify({events:order.map(function(k){var o=JSON.parse(k);o.n=counts[k];return o;})});
+      counts={};order=[];
+      // 문자열 본문은 text/plain 이라 사전 요청(preflight) 없이 한 번만 나간다.
+      var sent=false;
+      try{sent=!!(navigator.sendBeacon&&navigator.sendBeacon(EVENTS_API_URL,body));}catch(e){}
+      if(!sent&&typeof fetch==='function')fetch(EVENTS_API_URL,{method:'POST',body:body,keepalive:true,mode:'no-cors',credentials:'omit'}).catch(function(){});
+    }catch(e){}
+  }
+  function bucket(n){return n<=0?'0':n===1?'1':n<=5?'2_5':'6_plus';}
+  // 팝업이 어디서 열렸는지 잠깐 기억한다(곧바로 열리지 않으면 잊는다).
+  function hint(source){nextSource=source;clearTimeout(nextTimer);nextTimer=setTimeout(function(){nextSource='';},1500);}
+  function take(allowed){var s=nextSource;nextSource='';return allowed.indexOf(s)>=0?s:'marker';}
+  function linkType(href){
+    var u;try{u=new URL(href,location.href);}catch(e){return '';}
+    if(!/^https?:$/.test(u.protocol)||u.host===location.host)return '';
+    var h=u.hostname;
+    return /(^|\.)kakao\.com$/.test(h)?'kakao':/(^|\.)naver\.com$/.test(h)?'naver':/(^|\.)windy\.com$/.test(h)?'windy'
+      :/(^|\.)ebird\.org$/.test(h)?'ebird':/(^|\.)theksa\.co\.kr$/.test(h)?'ksa':'other';
+  }
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flush();});
+  window.addEventListener('pagehide',flush);
+  return {track:track,flush:flush,bucket:bucket,hint:hint,take:take,linkType:linkType};
+})();
+(function(){
+  var openSiteId='';
+  // capture 단계: 원래 클릭 처리보다 먼저, 팝업 출처만 기억한다.
+  document.addEventListener('click',function(e){
+    try{
+      var t=e.target;if(!t||!t.closest)return;
+      if(t.closest('#searchResults'))birdmapUsage.hint('search');
+      else if(t.closest('.recentReportItem'))birdmapUsage.hint('recent');
+    }catch(err){}
+  },true);
+  // bubble 단계: 기존 onclick 이 패널·모드를 바꾼 뒤에 열린 경우만 센다.
+  document.addEventListener('click',function(e){
+    try{
+      var t=e.target,u=birdmapUsage;if(!t||!t.closest)return;
+      var shown=function(id){var el=document.getElementById(id);return !!el&&el.style.display==='block';};
+      if(t.closest('#reportToggleBtn')){if(t.closest('#reportToggleBtn').getAttribute('aria-pressed')==='true')u.track('report_button_click');return;}
+      if(t.closest('.recentReportItem')){u.track('recent_report_click');return;}
+      if(t.closest('#noticeToggleBtn')){if(shown('noticePanel'))u.track('notice_panel_open');return;}
+      if(t.closest('#todayToggleBtn')){if(shown('todayPanel'))u.track('weekly_panel_open');return;}
+      if(t.closest('#routeToggleBtn')){u.track('route_toggle');return;}
+      var a=t.closest('a[href]'),type=a?u.linkType(a.href):'';
+      if(type)u.track('external_link_click',{link_type:type,site_id:a.closest('.leaflet-popup')?openSiteId:''});
+    }catch(err){}
+  });
+  window.addEventListener('load',function(){
+    try{
+      if(/[?&]site=/.test(location.search))birdmapUsage.hint('share');
+      var map=map_7010a44f6ac2025090f0fe07508ed485;
+      map.on('popupopen',function(ev){
+        try{
+          var marker=ev.popup._source,site=siteData.find(function(s){return window[s.markerVar]===marker;});
+          if(site){openSiteId=String(site.id);birdmapUsage.track('birdsite_popup_open',{site_id:site.id,source:birdmapUsage.take(['marker','search','weekly','share'])});}
+          else{openSiteId='';birdmapUsage.track('report_spot_popup_open',{source:birdmapUsage.take(['marker','search','recent'])});}
+        }catch(err){}
+      });
+      map.on('popupclose',function(){openSiteId='';});
+    }catch(err){}
+  });
+})();
+/* usage:end */
 var LIVE_WEATHER_REQUEST_TIMEOUT_MS=12000;
 var liveWeatherCache=new Map();
 var liveWeatherPending=new Map();
@@ -2647,7 +2731,10 @@ function searchSite(){
   activeTerms=parseSearchTerms(raw);
   activeSearch=activeTerms.join(' + ');
   if(!activeTerms.length)return;
+  birdmapUsage.hint('search');  // 결과가 한 곳이면 applyFilters 가 바로 팝업을 연다.
   applyFilters(true);
+  // 검색어는 보내지 않는다. 결과 수도 구간(0/1/2_5/6_plus)으로만.
+  birdmapUsage.track('search_use',{result_count:birdmapUsage.bucket(siteData.filter(sitePasses).length+searchReportEntries(activeTerms).length)});
   // 탐조지가 없어도 제보가 걸렸으면 결과가 있는 것이다.
   if(!siteData.filter(sitePasses).length&&!searchReportEntries(activeTerms).length)alert('검색 결과가 없습니다.');
 }
@@ -3521,6 +3608,8 @@ function weeklyWeatherCoverageText(week){
 function goToSiteFromTodayPanel(siteId){
   var site=siteData.find(function(s){return String(s.id)===String(siteId);});
   if(!site)return;
+  birdmapUsage.track('weekly_recommendation_click',{site_id:site.id});
+  birdmapUsage.hint('weekly');
   toggleTodayPanel(false);
   moveToSite(site);
 }
@@ -4235,6 +4324,11 @@ window.addEventListener('resize',function(){
 
 
 
+<!-- Cloudflare Web Analytics(방문 통계). 쿠키·localStorage 를 쓰지 않는 공식 스니펫이며 defer 라 지도 로딩을 막지 않는다.
+     Cloudflare 대시보드 > Web Analytics > 사이트 추가(wooil1964.github.io)에서 받은 token 으로 아래 한 줄의
+     YOUR_TOKEN 을 바꾸고 주석을 풀면 된다. token 은 페이지에 그대로 드러나는 공개값이다(secret 아님).
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_TOKEN"}'></script>
+-->
 </body>
 <script>
     

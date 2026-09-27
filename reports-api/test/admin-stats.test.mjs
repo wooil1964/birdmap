@@ -158,5 +158,7 @@ test("관리자 화면: 통계 탭은 상태 탭과 분리되고 배지·기존 
   assert.match(ADMIN_PAGE, /<button type="button" id="statsTab" aria-pressed="false">통계<\/button>/, "통계 탭에는 data-status 가 없다");
   assert.ok(!/data-status="'\s*\+/.test(ADMIN_PAGE), "통계 목록 버튼이 data-status 를 쓰지 않는다");
   assert.ok(ADMIN_PAGE.includes("document.getElementById('pendingCount').textContent=pending.length"), "배지 갱신 코드 유지");
-  assert.ok(ADMIN_PAGE.includes("document.querySelector('main').style.display=on?'none':''"), "통계를 열면 카드 목록을 숨긴다");
+  assert.ok(ADMIN_PAGE.includes("document.querySelector('main').style.display=name?'none':''"), "통계를 열면 카드 목록을 숨긴다");
+  assert.match(ADMIN_PAGE, /<button type="button" id="usageTab" aria-pressed="false">이용 통계<\/button>/, "이용 통계 탭에도 data-status 가 없다");
+  assert.ok(ADMIN_PAGE.includes("button.id!=='statsTab'&&button.id!=='usageTab'"), "두 통계 탭은 서로를 닫지 않는다");
 });
