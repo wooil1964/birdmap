@@ -32,8 +32,13 @@ function browser({ beacon = () => true, fetchImpl, withBeacon = true, withFetch 
   return { ctx, calls, fire, click, elements, sent: () => calls.beacon.concat(calls.fetch).map((c) => JSON.parse(c.body ?? c.init.body)) };
 }
 
+test("배포본의 EVENTS_API_URL 은 승인된 수집 주소 하나뿐이다", () => {
+  assert.equal(browser().ctx.EVENTS_API_URL, "https://birdmap-events.wooil-birdmap.workers.dev/events");
+});
+
 test("EVENTS_API_URL 이 비어 있으면 모으지도 보내지도 않는다", () => {
   const b = browser();
+  b.ctx.EVENTS_API_URL = "";
   b.ctx.birdmapUsage.track("route_toggle");
   b.ctx.birdmapUsage.flush();
   b.fire("window:pagehide");
