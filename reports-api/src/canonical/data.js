@@ -52,7 +52,8 @@ export function checklistFromReport(r,rawId,capturedAt,native=false) {
   const c={};for(const key of REPORT_COLUMNS)c[FIELD_MAP[key]||key]=r[key];
   return {...c,raw_id:rawId,source_type:native?'native':'legacy_reports',source_id:r.id,
     record_mode:native?'quick_report':'legacy_report',start_time:null,timezone:null,duration_minutes:null,distance_m:null,observer_count:null,protocol:null,complete_list:null,
-    coordinate_uncertainty_m:null,coordinate_policy:native?'actual':'legacy_fallback',created_at:capturedAt,revision:1,updated_at:capturedAt};
+    // A native report with a public coordinate (위치 가리기) is 'explicit', the same policy the admin path sets.
+    coordinate_uncertainty_m:null,coordinate_policy:native?(r.public_lat!=null&&r.public_lon!=null?'explicit':'actual'):'legacy_fallback',created_at:capturedAt,revision:1,updated_at:capturedAt};
 }
 export function initialSighting(r,capturedAt,native=false) {
   const multiple=/[·,;\n/]/.test(r.species);

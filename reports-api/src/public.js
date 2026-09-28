@@ -10,6 +10,7 @@ import {
   WorkerError,
   approximateCoordinate,
   historyEntry,
+  LOCATION_HIDDEN_SQL,
   isSensitiveReport,
   pendingPayload,
   RATE_DAY_MAX,
@@ -108,11 +109,13 @@ async function handleCanonicalSubmit(request,env,ctx) {
   }
   // Breeding observations are refused before this point (explicit non-breeding confirmation), so the public
   // pending marker uses the clicked coordinate. No species/month/location based offset.
-  const id=body.request_id,approx={lat:report.lat,lon:report.lon},pendingPublic=Number(env.REPORTS_PENDING_PUBLIC);
+  // Exception: the reporter ticked 위치 가리기. Then one offset point is made here and used for both the pending
+  // (approx_*) and approved (public_*) marker; the actual lat/lon is stored unchanged and never published.
+  const id=body.request_id,hide=report.hideLocation,approx=hide?approximateCoordinate(report.lat,report.lon):{lat:report.lat,lon:report.lon},pendingPublic=Number(env.REPORTS_PENDING_PUBLIC);
   // Eligibility comes only from the explicit confirmation, never species/month inference.
   const accepted={ok:true,id,status:'pending',publicVisibility:pendingPublic?'approximate':'withheld'};
-  if(pendingPublic)accepted.spot={id,status:'pending',lat:approx.lat,lon:approx.lon,approximate:false,species:report.species,date:report.observedOn};
-  const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:null,public_lon:null,
+  if(pendingPublic)accepted.spot={id,status:'pending',lat:approx.lat,lon:approx.lon,approximate:hide,species:report.species,date:report.observedOn,...(hide?{locationHidden:true}:{})};
+  const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:hide?approx.lat:null,public_lon:hide?approx.lon:null,
     approx_lat:approx.lat,approx_lon:approx.lon,pending_public:pendingPublic,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
     bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:await dedupeHash(report)};
   // Only the hash of the verified token reaches the database (redemption guard, same batch as the write).
@@ -151,8 +154,8 @@ async function handleSubmit(request, env, dual=false, ctx) {
         `INSERT INTO reports
            (id, status, species, lat, lon, observed_on, received_at,
             bird_count, reporter, note, ip_hash, dedupe_hash, name_public,
-            approx_lat, approx_lon, pending_public)
-         VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)`,
+            approx_lat, approx_lon, pending_public, public_lat, public_lon)
+         VALUES (?1, 'pending', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17)`,
       )
       .bind(
         id,
@@ -170,6 +173,9 @@ async function handleSubmit(request, env, dual=false, ctx) {
         approx.lat,
         approx.lon,
         pendingPublic,
+        // 위치 가리기: 승인 뒤에도 같은 대략 좌표를 쓰도록 공개 좌표로도 저장한다.
+        report.hideLocation ? approx.lat : null,
+        report.hideLocation ? approx.lon : null,
       )
       .run();
   } catch (error) {
@@ -202,6 +208,7 @@ async function handleSubmit(request, env, dual=false, ctx) {
       species: report.species,
       date: report.observedOn,
     };
+    if (report.hideLocation) accepted.spot.locationHidden = true;
   }
   return jsonResponse(request, env, accepted, 201);
 }
@@ -213,7 +220,8 @@ async function handlePending(request, env) {
   const { results } = await db
     .prepare(
       `SELECT id, species, observed_on, approx_lat, approx_lon,
-              (approx_lat <> lat OR approx_lon <> lon) AS approx_offset
+              (approx_lat <> lat OR approx_lon <> lon) AS approx_offset,
+              ${LOCATION_HIDDEN_SQL} AS location_hidden
          FROM reports
         WHERE status = 'pending' AND pending_public = 1
           AND approx_lat IS NOT NULL AND approx_lon IS NOT NULL

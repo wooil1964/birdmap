@@ -249,6 +249,9 @@ export function validateReport(input, now = new Date()) {
   }
   const species = normalizeSpecies(input.species);
   const { lat, lon } = normalizeCoordinate(input.lat, input.lon);
+  if (input.hideLocation !== undefined && typeof input.hideLocation !== "boolean") {
+    throw new WorkerError("HIDE_LOCATION_INVALID", "위치 가리기 값이 올바르지 않습니다.", 400);
+  }
   return {
     species,
     speciesText: species.join(" · "),
@@ -260,6 +263,8 @@ export function validateReport(input, now = new Date()) {
     note: optionalText(input.note, MAX_NOTE_LENGTH, "참고 설명", true),
     // 이름 공개는 명시적으로 동의한 경우에만 1 이다. 값이 없으면 비공개로 본다.
     namePublic: input.namePublic === true || input.namePublic === 1 ? 1 : 0,
+    // 위치 가리기는 제보자가 체크한 경우에만 참이다. 기본은 정확한 위치 공개.
+    hideLocation: input.hideLocation === true,
   };
 }
 
@@ -316,16 +321,41 @@ export function isSensitiveReport(report) {
 export function pendingPayload(rows) {
   return (rows || [])
     .filter((row) => Number.isFinite(row.approx_lat) && Number.isFinite(row.approx_lon))
-    .map((row) => ({
-      id: row.id,
-      status: 'pending',
-      lat: row.approx_lat,
-      lon: row.approx_lon,
-      // approx_offset: 공개 좌표가 실제 좌표와 다른지만 계산한 값(실제 좌표는 내보내지 않는다). 없으면 대략으로 본다.
-      approximate: row.approx_offset === undefined || row.approx_offset === null ? true : Number(row.approx_offset) === 1,
-      species: splitSpecies(row.species),
-      date: row.observed_on,
-    }));
+    .map((row) => {
+      const spot = {
+        id: row.id,
+        status: 'pending',
+        lat: row.approx_lat,
+        lon: row.approx_lon,
+        // approx_offset: 공개 좌표가 실제 좌표와 다른지만 계산한 값(실제 좌표는 내보내지 않는다). 없으면 대략으로 본다.
+        approximate: row.approx_offset === undefined || row.approx_offset === null ? true : Number(row.approx_offset) === 1,
+        species: splitSpecies(row.species),
+        date: row.observed_on,
+      };
+      if (Number(row.location_hidden) === 1) spot.locationHidden = true;
+      return spot;
+    });
+}
+
+/* ── 위치 가리기 ────────────────────────────────────────────────────── */
+
+// 위치 가리기 = public_lat/lon 에 실제와 다른 공개 좌표가 들어 있는 상태(제보자 요청이든 관리자 지정이든).
+// 공개 API 는 이 여부(참/거짓)만 내보내고, 실제 좌표는 어떤 경우에도 함께 보내지 않는다.
+export const LOCATION_HIDDEN_SQL =
+  "(public_lat IS NOT NULL AND public_lon IS NOT NULL AND (public_lat <> lat OR public_lon <> lon))";
+
+export function isLocationHidden(row) {
+  return row?.public_lat != null && row?.public_lon != null &&
+    (Number(row.public_lat) !== Number(row.lat) || Number(row.public_lon) !== Number(row.lon));
+}
+
+// 가릴 때 쓸 공개 좌표. 이미 밖에 나간 대략 좌표가 있으면 그 점을 그대로 쓴다.
+// 새 점을 또 만들면 여러 점을 모아 실제 위치를 좁힐 수 있기 때문이다(approximateCoordinate 참조).
+export function hiddenCoordinate(row) {
+  const moved = (lat, lon) => lat != null && lon != null && (Number(lat) !== Number(row.lat) || Number(lon) !== Number(row.lon));
+  if (moved(row.public_lat, row.public_lon)) return { lat: row.public_lat, lon: row.public_lon };
+  if (moved(row.approx_lat, row.approx_lon)) return { lat: row.approx_lat, lon: row.approx_lon };
+  return approximateCoordinate(row.lat, row.lon);
 }
 
 /* ── 해시 ───────────────────────────────────────────────────────────── */
@@ -563,13 +593,15 @@ export function publicPayload(rows) {
           if (!species.includes(name)) species.push(name);
         }
       }
-      return {
+      const spot = {
         id: row.id,
         lat: row.public_lat ?? row.lat,
         lon: row.public_lon ?? row.lon,
         species,
         history: [row, ...attached].map(historyEntry).sort(newestFirst),
       };
+      if (isLocationHidden(row)) spot.locationHidden = true;
+      return spot;
     });
 
   // index.html 에 손으로 등록된 붉은 점에 붙는 이력. 그 점의 좌표·출현종은 건드리지 않는다.

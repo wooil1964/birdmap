@@ -208,6 +208,14 @@ function refreshSitePick(card){
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function toast(message,ok){var el=document.getElementById('status');el.textContent=message;el.style.background=ok?'#1d5c37':'#8d2418';el.style.display='block';setTimeout(function(){el.style.display='none';},3200);}
 function coords(r){return [r.public_lat==null?r.lat:r.public_lat, r.public_lon==null?r.lon:r.public_lon];}
+// 위치 가리기: 공개 좌표가 실제 좌표와 다르면 가려진 상태다(제보자 요청이든 관리자 지정이든).
+function locationHidden(r){return r.public_lat!=null&&r.public_lon!=null&&(Number(r.public_lat)!==Number(r.lat)||Number(r.public_lon)!==Number(r.lon));}
+function locationHtml(r){
+  var hidden=locationHidden(r),asked=Number(r.hide_requested)===1;
+  return '<br><b>위치 공개: '+(hidden?(asked?'가림 요청(제보자)':'가림(관리자 지정)'):(asked?'공개(제보자 가림 요청을 관리자가 해제)':'공개'))+'</b>'
+    +'<br>실제 좌표 '+Number(r.lat).toFixed(6)+', '+Number(r.lon).toFixed(6)
+    +(hidden?'<br>공개 좌표 '+Number(r.public_lat).toFixed(6)+', '+Number(r.public_lon).toFixed(6):'');
+}
 
 function drawMarkers(){
   markerLayer.clearLayers();
@@ -268,7 +276,7 @@ function cardHtml(r){
     +' <span class="badge '+(r.site_id?'approved':'rejected')+'">'
       +(r.site_id?'탐조 지역: '+esc(siteLabel(r.site_id)):'탐조 지역 미연결')+'</span></h2>'
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
-    +'<br>좌표 '+Number(r.lat).toFixed(6)+', '+Number(r.lon).toFixed(6)
+    +locationHtml(r)
     +(r.approx_lat!=null?'<br>승인 전 공개 좌표(대략) '+Number(r.approx_lat).toFixed(5)+', '+Number(r.approx_lon).toFixed(5):'')
     +(r.bird_count?'<br>개체수 '+esc(r.bird_count):'')
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')
@@ -297,6 +305,9 @@ function cardHtml(r){
     +(r.status==='pending'?(Number(r.pending_public)===1
       ?'<button type="button" class="unpublish" data-act="visibility" data-public="0">황색 마커 내리기</button>'
       :'<button type="button" class="merge" data-act="visibility" data-public="1">황색 마커로 공개</button>'):'')
+    +(locationHidden(r)
+      ?'<button type="button" class="merge" data-act="hide" data-hide="0">위치 공개로 되돌리기</button>'
+      :'<button type="button" class="unpublish" data-act="hide" data-hide="1">위치 가리기</button>')
     +'<button type="button" class="merge" data-act="site">탐조 지역 저장</button>'
     +'<button type="button" class="unpublish" data-act="consent">이름 공개 반영</button>'
     +'</div></div>';
@@ -349,7 +360,8 @@ function doneMessage(act,payload){
   }
   var labels={reject:'반려했습니다.',unpublish:'공개를 취소했습니다.',
     link:'선택한 지점에 연결했습니다.',unlink:'연결을 해제했습니다.',
-    consent:'이름 공개 설정을 반영했습니다.',visibility:'황색 마커 공개 설정을 반영했습니다.'};
+    consent:'이름 공개 설정을 반영했습니다.',visibility:'황색 마커 공개 설정을 반영했습니다.',
+    hide:payload.hide?'위치를 가렸습니다. 지도에는 대략 좌표만 표시됩니다.':'위치 가리기를 해제했습니다. 실제 좌표가 공개됩니다.'};
   return labels[act]||('처리했습니다: '+act);
 }
 
@@ -379,6 +391,10 @@ document.getElementById('list').addEventListener('click',async function(event){
   }
   if(act==='visibility'){
     payload.public=button.dataset.public==='1';
+  }
+  if(act==='hide'){
+    payload.hide=button.dataset.hide==='1';
+    if(!payload.hide&&!confirm('위치 가리기를 해제하면 실제 관찰 좌표가 공개 지도에 표시됩니다. 계속할까요?'))return;
   }
   if(act==='link'){
     var target=card.querySelector('.f-target');

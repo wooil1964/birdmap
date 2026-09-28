@@ -1,6 +1,6 @@
 // Pure action plan extracted from the existing admin handler. Both writers share it.
-import { WorkerError, approximateCoordinate, normalizeCoordinate, normalizeObservedOn, normalizeSpecies } from './shared.js';
-export const ACTIONS=['approve','reject','unpublish','link','unlink','consent','visibility','site'];
+import { WorkerError, approximateCoordinate, hiddenCoordinate, normalizeCoordinate, normalizeObservedOn, normalizeSpecies } from './shared.js';
+export const ACTIONS=['approve','reject','unpublish','link','unlink','consent','visibility','site','hide'];
 export async function loadReport(db,id) {
   const row=await db.prepare('SELECT * FROM reports WHERE id = ?1').bind(id).first();
   if(!row)throw new WorkerError('NOT_FOUND','제보를 찾을 수 없습니다.',404);
@@ -24,6 +24,13 @@ export async function planAction(db,body,row,admin,now) {
     if(open&&row.status!=='pending')throw new WorkerError('ACTION_INVALID','승인 대기 중인 제보만 황색 마커로 공개할 수 있습니다.',400);
     const approx=open&&(row.approx_lat==null||row.approx_lon==null)?approximateCoordinate(row.lat,row.lon):{lat:row.approx_lat,lon:row.approx_lon};
     return {patch:{pending_public:open,approx_lat:approx.lat,approx_lon:approx.lon,admin_note},result:{...base,pendingPublic:open}};
+  }
+  // 관리자 위치 보호: 제보자 선택과 별개로 공개 좌표를 대략 좌표로 바꾸거나(hide) 실제 좌표 공개로 되돌린다.
+  // 실제 lat/lon 과 승인 상태는 건드리지 않는다. 황색·붉은 마커가 같은 점을 쓰도록 approx 도 함께 맞춘다.
+  if(action==='hide') {
+    const on=body.hide===true||body.hide===1;
+    const point=on?hiddenCoordinate(row):{lat:null,lon:null},marker=on?point:{lat:row.lat,lon:row.lon};
+    return {patch:{public_lat:point.lat,public_lon:point.lon,approx_lat:marker.lat,approx_lon:marker.lon,admin_note},result:{...base,locationHidden:on}};
   }
   if(action==='site') {
     const raw=body.siteId===undefined||body.siteId===null?'':String(body.siteId).trim();

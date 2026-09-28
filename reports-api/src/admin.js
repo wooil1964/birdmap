@@ -60,7 +60,8 @@ async function listReports(request, env, url) {
   let selection='*';
   if(writeMode(env)!=='NORMAL') {
     const exists=await first(db,"SELECT name FROM sqlite_schema WHERE type='table' AND name='checklists'");
-    selection=exists?'reports.*,(SELECT revision FROM checklists WHERE checklist_id=reports.id) AS revision':'reports.*,NULL AS revision';
+    // hide_requested: 제보자가 접수 때 위치 가리기를 체크했는지(변경되지 않는 원자료 기준). 관리자 지정과 구분해 보여 준다.
+    selection=exists?"reports.*,(SELECT revision FROM checklists WHERE checklist_id=reports.id) AS revision,(SELECT json_extract(payload_json,'$.input.hideLocation') FROM raw_submissions WHERE raw_id='raw:'||reports.id) AS hide_requested":'reports.*,NULL AS revision';
   }
   const status = url.searchParams.get("status") || "pending";
   const species = (url.searchParams.get("species") || "").trim();

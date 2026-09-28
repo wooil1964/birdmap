@@ -1,7 +1,7 @@
-import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen } from '../shared.js';
+import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL } from '../shared.js';
 import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
 
-const INPUT_KEYS=['species','lat','lon','observedOn','birdCount','reporter','namePublic','note','non_breeding_confirmed'];
+const INPUT_KEYS=['species','lat','lon','observedOn','birdCount','reporter','namePublic','note','non_breeding_confirmed','hideLocation'];
 export function quickInput(body) {
   if(body?.non_breeding_confirmed!==true)fail('NON_BREEDING_CONFIRMATION_REQUIRED','번식 관련 관찰이 아니라는 명시적 확인이 필요합니다.',400);
   requestId(body.request_id);
@@ -20,12 +20,12 @@ export async function replayQuick(db,id,input) {
   if(raw.source_type!=='native_submission'||raw.source_id!==id||await fingerprint(saved.input)!==await fingerprint(input))fail('IDEMPOTENCY_CONFLICT','같은 요청 식별자에 다른 내용이 전송되었습니다.');
   if(raw.source_fingerprint!==await fingerprint(saved)||!saved.accepted)fail('IDEMPOTENCY_STATE_INVALID','저장된 요청을 검증할 수 없습니다.');
   const c=await first(db,'SELECT raw_id FROM checklists WHERE checklist_id=?',id);
-  const live=await first(db,'SELECT status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,species,observed_on FROM reports WHERE id=?',id);
+  const live=await first(db,'SELECT status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,'+LOCATION_HIDDEN_SQL+' AS location_hidden,species,observed_on FROM reports WHERE id=?',id);
   if(c?.raw_id!==raw.raw_id||!live)fail('IDEMPOTENCY_STATE_INVALID','저장 결과가 불완전합니다.');
   // Replay the successful receipt, subject to current publication consent. Never resurrect a withdrawn marker.
   const accepted={...saved.accepted,status:live.status,publicVisibility:live.status==='approved'?'approved':live.status==='rejected'?'not_published':Number(live.pending_public)===1?'approximate':'withheld'};
   delete accepted.spot;
-  if(live.status==='pending'&&Number(live.pending_public)===1&&live.approx_lat!==null&&live.approx_lon!==null)accepted.spot={id,status:'pending',lat:live.approx_lat,lon:live.approx_lon,approximate:Number(live.approx_offset)===1,species:splitSpecies(live.species),date:live.observed_on};
+  if(live.status==='pending'&&Number(live.pending_public)===1&&live.approx_lat!==null&&live.approx_lon!==null)accepted.spot={id,status:'pending',lat:live.approx_lat,lon:live.approx_lon,approximate:Number(live.approx_offset)===1,species:splitSpecies(live.species),date:live.observed_on,...(Number(live.location_hidden)===1?{locationHidden:true}:{})};
   return accepted;
 }
 // Redemptions older than this are removed in the same batch (tokens themselves expire after 300 s).
@@ -50,7 +50,7 @@ export async function persistQuick(binding,row,input,accepted,tokenHash) {
   }
   return accepted;
 }
-const ADMIN_KEYS=['action','expected_revision','adminNote','species','lat','lon','publicLat','publicLon','siteId','observedOn','namePublic','public','spotKey','sightingReviews'];
+const ADMIN_KEYS=['action','expected_revision','adminNote','species','lat','lon','publicLat','publicLon','siteId','observedOn','namePublic','public','hide','spotKey','sightingReviews'];
 export async function adminIdentity(body,id,actor) {
   requestId(body.request_id);revision(body.expected_revision);
   const input=Object.fromEntries(ADMIN_KEYS.filter(k=>body[k]!==undefined).map(k=>[k,body[k]]));

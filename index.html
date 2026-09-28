@@ -149,6 +149,10 @@
       <label>선택한 위치 <span class="reportRequired">필수</span></label>
       <div id="reportCoord" class="reportCoord">지도를 클릭해 위치를 선택하세요.</div>
       <button type="button" class="reportPick" onclick="pickReportLocationAgain()">지도에서 다시 선택</button>
+      <div id="reportHideLocationBox" style="display:none">
+        <label class="reportConsent" for="reportHideLocation"><input type="checkbox" id="reportHideLocation"> 위치 가리기</label>
+        <div class="reportConsentNote">체크하면 정확한 위치는 공개되지 않고 주변의 대략적인 위치만 표시됩니다. 실제 관찰 위치는 관리자 확인용으로만 저장됩니다.</div>
+      </div>
       <div class="reportOptional">
         <label for="reportReporter">제보자 이름 또는 닉네임 <span class="reportOptionalTag">선택</span></label>
         <input id="reportReporter" name="reporter" maxlength="40" autocomplete="off">
@@ -313,6 +317,7 @@ body.rightPanelOpen #recentReportsBox{display:none}
 .siteHistoryMoreBtn{margin-top:2px;padding:4px 9px;border:1px solid #bcc6cc;border-radius:5px;background:#fff;font:inherit;font-size:12px;cursor:pointer}
 .spotPopup{font-size:13px;line-height:1.6}
 .spotUndated{margin-top:4px;font-size:12px;color:#5a666e}
+.spotHiddenNote{margin-top:4px;font-size:11px;color:#5a666e;line-height:1.4}
 /* 승인 대기 제보(황색 마커) 팝업. 승인된 붉은 점과 눈에 띄게 구분한다. */
 .pendingPopup b{color:#8a5a00}
 .pendingRow{margin-top:3px}
@@ -651,6 +656,8 @@ var REPORTS_API_URL='https://birdmap-reports.wooil-birdmap.workers.dev';
 // 새 제보 형식(비번식 확인·request_id). 서버 /reports/capabilities 가 켜졌다고 알려 줄 때만 쓴다.
 // 응답이 없거나 실패하면 기존 형식 그대로 둔다.
 var REPORTS_CANONICAL_UI_ENABLED=false;
+// 위치 가리기. 서버가 지원한다고 알려 줄 때만 체크란을 보인다(모르는 서버는 이 값을 버리고 정확한 위치를 공개하기 때문).
+var REPORTS_HIDE_LOCATION_UI_ENABLED=false;
 var REPORTS_TURNSTILE_SITE_KEY='0x4AAAAAAE9q3m3dXLB7A68d';
 var LIVE_WEATHER_CACHE_TTL_MS=15*60*1000;
 /* usage:start — 기능 이용 통계(birdmap-events Worker). 쿠키·localStorage·식별자를 쓰지 않는다.
@@ -1126,20 +1133,21 @@ function spotSpeciesCoveredByHistory(species,history){
 }
 
 /* 출현 지점 팝업 본문. 기존 '이름 + 출현종' 형식을 그대로 두고 이력만 아래에 붙인다. */
-function spotPopupHtml(title,species,history,undatedNote){
+function spotPopupHtml(title,species,history,undatedNote,locationHidden){
   var names=(species||[]).map(escapeHtml).join(' · ');
   var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))';
   var showNames=!spotSpeciesCoveredByHistory(species,history);
   return '<div class="spotPopup" style="width:'+width+'"><b>'+escapeHtml(title)+'</b>'
     +(showNames?'<br>'+names:'')
     +(undatedNote?'<div class="spotUndated">관찰일 미확인</div>':'')
+    +(locationHidden?'<div class="spotHiddenNote">위치 보호 요청으로 대략적인 위치만 표시됩니다.</div>':'')
     +spotHistoryHtml(history)+'</div>';
 }
 
-function birdmapSpotMarker(lat,lon,title,species,history,undatedNote){
+function birdmapSpotMarker(lat,lon,title,species,history,undatedNote,locationHidden){
   var names=(species||[]).map(escapeHtml).join(' · ');
   return L.circleMarker([lat,lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85})
-    .bindPopup(spotPopupHtml(title,species,history,undatedNote),{maxWidth:300})
+    .bindPopup(spotPopupHtml(title,species,history,undatedNote,locationHidden),{maxWidth:300})
     .bindTooltip(names,{sticky:true});
 }
 
@@ -1153,7 +1161,8 @@ function pendingPopupHtml(spot){
     +'<div class="pendingRow">출현종: '+names+'</div>'
     +'<div class="pendingRow">관찰일: '+escapeHtml(date)+'</div>'
     +'<div class="pendingRow">상태: 승인 대기</div>'
-    +(spot.approximate?'<div class="pendingRow">위치: 대략적인 위치</div>':'')
+    +(spot.locationHidden?'<div class="spotHiddenNote">위치 보호 요청으로 대략적인 위치만 표시됩니다.</div>'
+      :spot.approximate?'<div class="pendingRow">위치: 대략적인 위치</div>':'')
     +'<div class="pendingNote">※ 이 정보는 제보자가 등록한 내용으로, 아직 관리자가 확인하지 않았습니다.</div>'
     +'</div>';
 }
@@ -4005,7 +4014,7 @@ function renderApprovedReports(spots){
     var existing=reportSpotLayers[id];
     if(existing)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(existing);
     // 종이나 좌표가 바뀌었을 수 있으므로 매번 현재 값으로 다시 만든다.
-    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false)
+    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false,spot.locationHidden===true)
       .addTo(map_7010a44f6ac2025090f0fe07508ed485);
   });
   // 관리자가 공개를 취소한 점만 사라진다. 기존 탐조지와 그 출현 지점은 건드리지 않는다.
@@ -4138,6 +4147,7 @@ function applyReportCanonicalUi(){
   document.getElementById('reportNonBreedingRow').style.display=REPORTS_CANONICAL_UI_ENABLED?'block':'none';
   document.getElementById('reportNonBreedingConfirmed').required=REPORTS_CANONICAL_UI_ENABLED;
   document.getElementById('reportCount').min=REPORTS_CANONICAL_UI_ENABLED?'0':'1';
+  document.getElementById('reportHideLocationBox').style.display=REPORTS_HIDE_LOCATION_UI_ENABLED?'block':'none';
 }
 function refreshReportCapabilities(){
   return fetch(REPORTS_API_URL+'/reports/capabilities',{cache:'no-store'}).then(function(response){
@@ -4145,6 +4155,7 @@ function refreshReportCapabilities(){
   }).then(function(body){
     if(!body||body.ok!==true)return;
     REPORTS_CANONICAL_UI_ENABLED=!!(body.quickReport&&body.quickReport.nonBreedingConfirmation);
+    REPORTS_HIDE_LOCATION_UI_ENABLED=REPORTS_CANONICAL_UI_ENABLED&&!!body.quickReport.hideLocation;
     applyReportCanonicalUi();
   }).catch(function(){});
 }
@@ -4247,6 +4258,11 @@ function submitReport(event){
     note:document.getElementById('reportNote').value.trim(),
     turnstileToken:reportTurnstileToken
   };
+  if(document.getElementById('reportHideLocation').checked){
+    // 가리기를 골랐는데 서버가 지원하지 않으면 보내지 않는다(정확한 위치가 공개되는 것을 막는다).
+    if(!REPORTS_HIDE_LOCATION_UI_ENABLED){setReportMessage('지금은 위치 가리기를 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.','error');return false;}
+    payload.hideLocation=true;
+  }
   if(REPORTS_CANONICAL_UI_ENABLED){
     if(!document.getElementById('reportNonBreedingConfirmed').checked){setReportMessage('번식 관련 관찰이 아니라는 확인이 필요합니다.','error');return false;}
     payload.non_breeding_confirmed=true;
@@ -4278,7 +4294,9 @@ function submitReport(event){
     // 서버가 공개를 허용한 건만 좌표를 함께 내려보낸다. 보류된 건은 마커를 만들지 않는다.
     if(result.body.spot){
       showPendingSpot(result.body.spot);
-      setReportMessage('제보가 접수되었습니다. 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.','ok');
+      setReportMessage(result.body.spot.locationHidden
+        ?'제보가 접수되었습니다. 위치 가리기에 따라 대략적인 위치에 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.'
+        :'제보가 접수되었습니다. 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.','ok');
     }else if(REPORTS_CANONICAL_UI_ENABLED){
       setReportMessage('접수 결과를 확인했습니다. 접수 번호: '+String(result.body.id||'')+' · 현재 상태: '+String(result.body.status||''),'ok');
     }else{

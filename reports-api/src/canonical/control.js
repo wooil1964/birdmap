@@ -48,5 +48,5 @@ export async function assertWriteGate(env,role) {
 }
 export function publicCapability(request,env) {
   const enabled=writeMode(env)==='CANONICAL_DUAL_WRITE'&&env.REPORTS_CONFIRMATION_REQUIRED==='true';
-  return jsonResponse(request,env,{ok:true,quickReport:{nonBreedingConfirmation:enabled,requestId:enabled},maintenance:writeMode(env)==='READ_ONLY_MAINTENANCE'},200,{'Cache-Control':'no-store'});
+  return jsonResponse(request,env,{ok:true,quickReport:{nonBreedingConfirmation:enabled,requestId:enabled,hideLocation:enabled},maintenance:writeMode(env)==='READ_ONLY_MAINTENANCE'},200,{'Cache-Control':'no-store'});
 }
