@@ -3738,6 +3738,8 @@ function todayIssueCard(notice,linkedTop5Ids){
 }
 
 // 명시한 편집 목록은 날짜로 만료시키지 않으며, 기존 기상 적격성 판정을 재사용한다.
+// 이 목록은 추천 순위를 정하지 않는다. weeklyPanelRecommendations 가 자동 추천에 뽑힌 장소에
+// 편집 사유를 덧붙일 때만 쓴다.
 function weeklyEditorialRecommendations(week){
   var notice=loadedNotices.find(function(item){return item.published!==false&&Array.isArray(item.weeklyRecommendations);});
   if(!notice)return null;
@@ -3753,6 +3755,18 @@ function weeklyEditorialRecommendations(week){
   }).filter(Boolean).slice(0,10);
 }
 
+/* '이번주 어디 갈까' 목록은 항상 자동 추천(rankScore·유형별 정원·안전 판정) 순서다.
+   편집 목록(notices.json weeklyRecommendations)에 있는 장소가 자동 추천에 뽑혔을 때만
+   그 편집 사유를 카드에 덧붙인다. 편집 목록은 장소를 넣거나 빼거나 순서를 바꾸지 않는다. */
+function weeklyPanelRecommendations(week){
+  var editorial={};
+  (weeklyEditorialRecommendations(week)||[]).forEach(function(entry){editorial[String(entry.site.id)]=entry;});
+  return todayRecommendedSites().map(function(entry){
+    var picked=editorial[String(entry.site.id)];
+    return picked?Object.assign({},entry,{reasons:picked.reasons,editorialPick:true}):entry;
+  });
+}
+
 function renderTodayPanel(){
   var body=document.getElementById('todayPanelBody');
   if(!body)return;
@@ -3763,7 +3777,7 @@ function renderTodayPanel(){
   linkedIdsByNotice.forEach(function(ids){ids.forEach(function(id){linkedIdSet[id]=true;});});
 
   var week=weeklyInfo();
-  var top=weeklyEditorialRecommendations(week)||todayRecommendedSites();
+  var top=weeklyPanelRecommendations(week);
   var topTitle=document.createElement('div');
   topTitle.className='todaySectionTitle';
   topTitle.textContent='🧭 이번 주 추천 '+top.length+'곳';

@@ -61,7 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak',
+  'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -1739,4 +1739,55 @@ test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천
   const plain = loadApi({ month: 10, siteData: sites, weatherToday }).todayRecommendedSites();
   assert.ok(plain.length > 0);
   assert.ok(plain.every((e) => !e.recentReport && e.rankScore === e.score));
+});
+
+/* ── 편집 목록은 순위를 정하지 않는다(R02) ──────────────────────────── */
+function panelFixture(extra = {}, count = 6) {
+  const sites = recentFieldSites(count);
+  const base = loadApi({ month: 10, siteData: sites });
+  const weatherToday = todayWeatherFor(base, sites);
+  const ids = (list) => list.map((e) => e.site.id);
+  return { sites, base, weatherToday, ids, api: (state) => loadApi(Object.assign({ month: 10, siteData: sites, weatherToday }, extra, state)) };
+}
+
+test('R02 A·D 편집 목록이 있어도 자동 rankScore 순서이고, 탈락한 편집 장소를 끼워 넣지 않는다', () => {
+  const f = panelFixture({}, 13);
+  const recent = { 405: { latestDate: recentDaysAgo(f.base, 2), species: ['캐나다기러기'] } };
+  const auto = f.api({ recentSiteSightings: recent }).todayRecommendedSites();
+  assert.equal(auto.length, 10);
+  assert.ok(!f.ids(auto).includes(412), '412 는 자동 추천 정원 밖');
+  // 편집 목록: 자동 순서와 다르고, 정원 밖(412)과 없는 장소(999)를 맨 앞에 둔다.
+  const notices = [{ published: true, weeklyRecommendations: [{ siteId: 412, name: '편집이름', reason: '편집 사유' }, { siteId: 999 }, { siteId: 403 }, { siteId: 400, reason: '맹금류' }] }];
+  const api = f.api({ recentSiteSightings: recent, notices });
+  assert.ok(api.weeklyEditorialRecommendations(api.weeklyInfo()).some((e) => e.site.id === 412), '412 는 편집 목록상 적격');
+  const panel = api.weeklyPanelRecommendations(api.weeklyInfo());
+  assert.deepEqual(f.ids(panel), f.ids(auto), '순서·구성이 자동 추천과 같다');
+  assert.equal(panel[0].site.id, 405, '최근 출현 가점 장소가 들판 1위 그대로');
+  assert.ok(!f.ids(panel).includes(412), '편집 목록에 있어도 자동 추천에서 빠지면 넣지 않는다');
+  assert.equal(panel.find((e) => e.site.id === 400).reasons[0], '맹금류', '뽑힌 편집 장소는 사유 표시');
+  assert.equal(panel.length, auto.length);
+});
+
+test('R02 B·E 편집 목록이 없으면 자동 추천 그대로이고, 출현 자료가 없으면 기존 결과와 같다', () => {
+  const f = panelFixture();
+  const api = f.api({});
+  const panel = api.weeklyPanelRecommendations(api.weeklyInfo());
+  assert.deepEqual(f.ids(panel), f.ids(api.todayRecommendedSites()));
+  assert.deepEqual(f.ids(panel.filter((e) => e.selectedAxis === 'field')), [400, 401, 402, 403], '기존 안정 순서');
+  assert.ok(panel.every((e) => !e.editorialPick && !e.recentReport && e.rankScore === e.score));
+});
+
+test('R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙이고 점수·순위는 그대로다', () => {
+  const f = panelFixture();
+  const notices = [{ published: true, weeklyRecommendations: [{ siteId: 402, name: '편집이름', reason: '맹금류 도착' }] }];
+  const api = f.api({ notices });
+  const plain = f.api({}).weeklyPanelRecommendations(api.weeklyInfo());
+  const panel = api.weeklyPanelRecommendations(api.weeklyInfo());
+  const picked = panel.find((e) => e.site.id === 402);
+  assert.equal(picked.editorialPick, true);
+  assert.equal(picked.reasons[0], '맹금류 도착');
+  assert.equal(picked.score, 92);
+  assert.equal(picked.displayName, undefined, '편집 표시명으로 장소 이름을 바꾸지 않는다');
+  assert.deepEqual(f.ids(panel), f.ids(plain), '편집 사유가 붙어도 순위는 같다');
+  assert.ok(panel.filter((e) => e.site.id !== 402).every((e) => !e.editorialPick));
 });

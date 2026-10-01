@@ -14,6 +14,11 @@
 
 ## 최근 완료 작업
 
+- '이번주 어디 갈까' 동적 추천(2026-10-01, 공개 제보 Worker version `ba4c0f25-82a1-4acb-85f4-cb3b692a615b`, `CANONICAL_DUAL_WRITE` 유지).
+  - **원인**: 기상 점수는 `baseScore 92` 에서 감점만 하는 구조라 무난한 날씨면 92점에 모인다(10/01 기준 190곳 중 144곳이 주간 최고 92). 동점은 siteData 순서로 갈려 유명지가 고정됐다. 최근 출현 제보는 화면에만 보이고 점수에 쓰이지 않았다. 게다가 `notices.json` 의 `weeklyRecommendations` 편집 목록이 있으면 패널이 자동 추천 대신 그 고정 목록을 보여 줬다.
+  - **변경**: 공개 Worker 에 읽기 전용 `GET /reports/recent-sites?days=14`(승인 + site_id 지정 + 위치 가림·`isSensitiveReport` 제외, siteId·최근 관찰일·고유 종만) 추가. 프런트는 최근성(0~1일 +12, 2~3일 +9, 4~7일 +5, 8~14일 +2)과 고유 종수(2~3종 +2, 4종 이상 +4) 가점을 상한 16 으로 더한 내부 `rankScore` 로만 정렬한다. 화면 기상 점수·별점·안전 제외·선상 기준·유형별 정원은 그대로다. 편집 목록은 순위를 정하지 않고, 자동 추천에 뽑힌 장소에 편집 사유만 덧붙인다(`weeklyPanelRecommendations`). 하단 문구는 실제 추천 개수를 쓴다.
+  - **API 실패**: 직전 자료를 유지하고, 처음부터 실패하면 가점 없이 기존 기상 추천과 같다.
+
 - 기상 Worker(`weather-proxy`) 실시간 기상 복구(2026-09-23, 코드 커밋 `719d43e`, 운영 Worker version `814b64b4-da6d-4d4c-b8c0-a293774498b1`).
   - **KMA 403 해결**: 2026-09-06 공공데이터포털 인증키 재발급 뒤에도 Worker 의 `KMA_SERVICE_KEY` 가 기존 키로 남아 있었다. 2026-09-23 새 **Decoding** 인증키로 secret 을 교체해 실제 KMA 호출이 정상 복구됐다. 코드는 `URLSearchParams` 로 키를 한 번 인코딩하므로 secret 에는 반드시 Decoding 키를 넣는다(Encoding 키를 넣으면 이중 인코딩으로 다시 403).
   - **탐조지 193~195 Worker 반영**: 193 월포리해변·194 천수만 강당리·195 평화의공원. 최신 Worker 재배포 뒤 세 곳 모두 기상 조회 정상.
@@ -435,6 +440,8 @@
 ## 진행 중 / 보류 사항
 
 > **[현재]** 이 절만 현재 미해결 상태를 뜻합니다.
+
+- **[향후 검토] 추천 가점용 제보 판정 분리.** 현재 `/reports/recent-sites` 는 공개 보호용 판정 `isSensitiveReport()`(번식 낱말 + 보호종 목록)를 그대로 써서, 저어새·두루미 같은 보호종의 일반 출현도 추천 가점에서 빠진다. 향후 `isSensitiveReport`(위치/공개 보호용)와 `isRecommendationEligibleReport`(추천 반영 판단용)로 나누는 것을 검토한다. 바꿀 때도 위치 가림·번식 제보는 계속 제외하고, 개인정보·민감 위치 보호 로직은 건드리지 않는다.
 
 - **[해소됨] 기상 Worker 의 KMA 403** 은 2026-09-23 `KMA_SERVICE_KEY` 를 재발급된 Decoding 키로 교체해 해결됐다. 같은 날 `KMA_IDENTITY_MISMATCH` 도 해결됐다(위 '최근 완료 작업' 참조).
 - **[관찰 중] 기상 Worker 의 `KMA_TIMEOUT` — 간헐적 외부 지연, 현재 8초 유지·관찰.** 상류 KMA 응답이 8초(`UPSTREAM_TIMEOUT_MS`·`TOMORROW_TIMEOUT_MS`) 안에 오지 않는 경우다. 2026-09-23 진단 중 193·194·195 등에서 발생했고, 최종 운영 확인에서는 siteId 1 에서 한 번 발생한 뒤 재조회로 성공했다.
