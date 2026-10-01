@@ -12,7 +12,9 @@ import {
   historyEntry,
   LOCATION_HIDDEN_SQL,
   isSensitiveReport,
+  kstDateString,
   pendingPayload,
+  splitSpecies,
   RATE_DAY_MAX,
   RATE_WINDOW_MAX,
   RATE_WINDOW_MINUTES,
@@ -354,6 +356,52 @@ async function handleApproved(request, env) {
   );
 }
 
+// '이번주 어디 갈까' 추천 가점용. 관리자가 site_id 를 지정한 최근 승인 제보를
+// 탐조지별로 묶어 가장 최근 관찰일과 고유 종 목록만 내보낸다.
+// 위치를 가린 제보와 둥지·번식·보호종 제보(isSensitiveReport)는 넣지 않는다.
+// 좌표·제보자·설명은 내보내지 않는다. 메모(note)는 번식 판정에만 쓰고 응답에 넣지 않는다.
+const RECENT_SITES_DEFAULT_DAYS = 14;
+const RECENT_SITES_MAX_DAYS = 30;
+
+async function handleRecentSites(request, env, url) {
+  const db = database(env);
+  const days = Math.min(
+    RECENT_SITES_MAX_DAYS,
+    Math.max(1, Math.floor(Number(url.searchParams.get("days")) || RECENT_SITES_DEFAULT_DAYS)),
+  );
+  const now = new Date();
+  const today = kstDateString(now);
+  const since = kstDateString(new Date(now.getTime() - days * 86400000));
+  const { results } = await db
+    .prepare(
+      `SELECT site_id, species, observed_on, note
+         FROM reports
+        WHERE status = 'approved' AND site_id IS NOT NULL AND site_id <> ''
+          AND observed_on >= ?1 AND observed_on <= ?2
+          AND NOT ${LOCATION_HIDDEN_SQL}
+        ORDER BY observed_on DESC, received_at DESC, id DESC`,
+    )
+    .bind(since, today)
+    .all();
+  const bySite = new Map();
+  for (const row of results || []) {
+    const species = splitSpecies(row.species);
+    if (isSensitiveReport({ note: row.note, speciesText: row.species, species })) continue;
+    const siteId = String(row.site_id);
+    if (!bySite.has(siteId)) bySite.set(siteId, { siteId, latestDate: row.observed_on, species: [] });
+    const site = bySite.get(siteId);
+    // 최신순이라 첫 행이 가장 최근 관찰일이다. 같은 종 반복 제보는 한 번만 센다.
+    for (const name of species) if (!site.species.includes(name)) site.species.push(name);
+  }
+  return jsonResponse(
+    request,
+    env,
+    { ok: true, days, since, today, sites: [...bySite.values()] },
+    200,
+    { "Cache-Control": "public, max-age=60" },
+  );
+}
+
 export async function handleLegacyRequest(request, env, ctx) {
   try {
     if(request.method==='GET'&&new URL(request.url).pathname==='/_internal/reports-capability')return await internalCapability(request,env,'public');
@@ -374,6 +422,9 @@ export async function handleLegacyRequest(request, env, ctx) {
     }
     if (request.method === "GET" && url.pathname === "/reports/pending") {
       return await handlePending(request, env);
+    }
+    if (request.method === "GET" && url.pathname === "/reports/recent-sites") {
+      return await handleRecentSites(request, env, url);
     }
     if (url.pathname.startsWith(SITE_HISTORY_PATH)) {
       const siteId = decodeURIComponent(url.pathname.slice(SITE_HISTORY_PATH.length));
@@ -416,7 +467,8 @@ export async function handleLegacyRequest(request, env, ctx) {
     if (
       url.pathname !== "/reports" &&
       url.pathname !== "/reports/approved" &&
-      url.pathname !== "/reports/pending"
+      url.pathname !== "/reports/pending" &&
+      url.pathname !== "/reports/recent-sites"
     ) {
       throw new WorkerError("NOT_FOUND", "Unknown endpoint", 404);
     }
