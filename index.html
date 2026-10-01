@@ -2980,8 +2980,8 @@ function weeklyPelagicSafety(sample){
   });
 }
 function autumnFieldRank(a,b){
-  var as=Number.isFinite(a.score)?a.score:-Infinity, bs=Number.isFinite(b.score)?b.score:-Infinity;
-  return (bs-as)||(Number(AUTUMN_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(AUTUMN_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
+  var as=weeklyRankScore(a), bs=weeklyRankScore(b);
+  return (bs-as)||weeklyRecentTieBreak(a,b)||(Number(AUTUMN_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(AUTUMN_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
     String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
     ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
 }
@@ -2992,7 +2992,7 @@ function weeklySeasonQuotaEntries(entries,season){
 }
 function autumnBalancedRecommendations(entries){
   var selected=[], selectedIds=new Set(), pelagicCount=0, quota=weeklySeasonQuotaEntries(entries,'autumn');
-  function rank(a,b){return (a.priority-b.priority)||(b.score??-Infinity)-(a.score??-Infinity)||(b.sortLevel||0)-(a.sortLevel||0)||(a.stableOrder-b.stableOrder)||Number(a.site.id)-Number(b.site.id);}
+  function rank(a,b){return (a.priority-b.priority)||(weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||(b.sortLevel||0)-(a.sortLevel||0)||(a.stableOrder-b.stableOrder)||Number(a.site.id)-Number(b.site.id);}
   function add(entry,axis){
     var id=String(entry.site.id);
     if(selected.length>=10||selectedIds.has(id)||(entry.axes.pelagic&&pelagicCount>=1))return false;
@@ -3005,10 +3005,10 @@ function autumnBalancedRecommendations(entries){
   }
   take(quota.filter(function(e){return e.axes.field&&!e.axes.pelagic;}).sort(autumnFieldRank),4,'field');
   take(quota.filter(function(e){return e.axes.mudflat&&!e.axes.pelagic;}).sort(rank),3,'mudflat');
-  take(quota.filter(function(e){return e.axes.pelagic;}).sort(function(a,b){return (b.score-a.score)||String(a.recommendationDate).localeCompare(String(b.recommendationDate))||a.stableOrder-b.stableOrder;}),1,'pelagic');
+  take(quota.filter(function(e){return e.axes.pelagic;}).sort(function(a,b){return (weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||String(a.recommendationDate).localeCompare(String(b.recommendationDate))||a.stableOrder-b.stableOrder;}),1,'pelagic');
   take(quota.filter(function(e){return !e.axes.field&&!e.axes.mudflat&&!e.axes.pelagic;}).sort(rank),2,'other');
   // 부족 슬롯은 전체 점수순으로 채운다. 한 장소에는 한 슬롯만 배정한다.
-  take(entries.slice().sort(function(a,b){return ((b.score??-Infinity)-(a.score??-Infinity))||rank(a,b);}),10,'fill');
+  take(entries.slice().sort(function(a,b){return (weeklyRankScore(b)-weeklyRankScore(a))||rank(a,b);}),10,'fill');
   return selected;
 }
 /* 카드 표시도 추천 날짜의 계절을 따른다. 계절 정보가 없는 기존 호출은 종전대로 오늘 기준이다. */
@@ -3051,8 +3051,8 @@ function winterBirdingAxes(site){
   return axes;
 }
 function winterRecommendationRank(a,b){
-  var as=Number.isFinite(a.score)?a.score:-Infinity,bs=Number.isFinite(b.score)?b.score:-Infinity;
-  return (bs-as)||(Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
+  var as=weeklyRankScore(a),bs=weeklyRankScore(b);
+  return (bs-as)||weeklyRecentTieBreak(a,b)||(Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
     String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
     ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
 }
@@ -3129,8 +3129,8 @@ function springIslandRainWindCondition(site,sample){
   });
 }
 function springRecommendationRank(a,b){
-  var as=Number.isFinite(a.score)?a.score:-Infinity,bs=Number.isFinite(b.score)?b.score:-Infinity;
-  return (bs-as)||String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
+  var as=weeklyRankScore(a),bs=weeklyRankScore(b);
+  return (bs-as)||weeklyRecentTieBreak(a,b)||String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
     ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
 }
 function springBalancedRecommendations(entries){
@@ -3146,7 +3146,7 @@ function springBalancedRecommendations(entries){
       selected.push(Object.assign({},entry,{selectedAxis:axis}));added++;
     });
   }
-  take('island',4,function(a,b){return ((b.score??-Infinity)-(a.score??-Infinity))||Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(b.site.id)))-Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(a.site.id)))||springRecommendationRank(a,b);});
+  take('island',4,function(a,b){return (weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(b.site.id)))-Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(a.site.id)))||springRecommendationRank(a,b);});
   take('mudflat',3,function(a,b){return Number(!!b.springGeolmaeriPriority)-Number(!!a.springGeolmaeriPriority)||springRecommendationRank(a,b);});
   take('pelagic',1);take('other',2);take('fill',10);
   return selected;
@@ -3594,7 +3594,59 @@ function weeklyRecommendationForSite(site,week){
     recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',
     tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?'주간 3시간 예보 기준':(weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel};
   if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;
+  // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.
+  entry.recentReport=weeklyRecentReportBonus(site);
+  entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;
   return entry;
+}
+/* 최근 출현 추천 가점. /reports/recent-sites 가 관리자가 site_id 를 지정한 승인 제보만
+   (위치 가림·번식·보호종 제외) 탐조지별 최근 관찰일과 고유 종으로 묶어 준다.
+   가점은 순위(rankScore)에만 쓰고 화면의 기상 점수·별점은 그대로 둔다.
+   못 불러오면 빈 자료로 두어 기존 기상 추천과 같게 동작한다. */
+var recentSiteSightings={};
+function loadRecentSiteSightings(){
+  if(!reportsConfigured())return Promise.resolve(false);
+  return fetch(REPORTS_API_URL+'/reports/recent-sites?days=14',{cache:'no-cache'}).then(function(r){
+    if(!r.ok)throw new Error('recent-sites '+r.status);
+    return r.json();
+  }).then(function(data){
+    if(!data||data.ok!==true||!Array.isArray(data.sites))throw new Error('recent-sites invalid');
+    var next={};
+    data.sites.forEach(function(item){
+      if(item&&item.siteId&&/^\d{4}-\d{2}-\d{2}$/.test(String(item.latestDate||''))&&Array.isArray(item.species))
+        next[String(item.siteId)]={latestDate:String(item.latestDate),species:item.species.map(String)};
+    });
+    recentSiteSightings=next;
+    refreshTodayPanelIfOpen();
+    return true;
+  }).catch(function(error){
+    // 직전 자료를 그대로 둔다. 처음부터 실패하면 빈 자료라 가점 없이 기존 추천이 나온다.
+    console.warn('최근 출현 추천 가점 자료를 불러오지 못했습니다.',error);
+    return false;
+  });
+}
+var WEEKLY_RECENT_BONUS_MAX=16;
+function weeklyRecentReportBonus(site,todayText){
+  var item=recentSiteSightings[String(site&&site.id)];
+  var today=weeklyDateFromText(todayText||weeklyTodayDateText()), seen=item&&weeklyDateFromText(item.latestDate);
+  if(!today||!seen)return null;
+  var ageDays=Math.round((today-seen)/86400000);
+  if(ageDays<0||ageDays>14)return null;
+  var species=item.species.filter(function(name,index,list){return name&&list.indexOf(name)===index;}).length;
+  if(!species)return null;
+  var recency=ageDays<=1?12:ageDays<=3?9:ageDays<=7?5:2;
+  var variety=species>=4?4:species>=2?2:0;
+  return {ageDays:ageDays,speciesCount:species,bonus:Math.min(WEEKLY_RECENT_BONUS_MAX,recency+variety)};
+}
+/* 정렬용 점수. 기상 점수가 없으면(조석 기준 추천 등) 기존처럼 점수 없이 둔다. */
+function weeklyRankScore(entry){
+  if(Number.isFinite(entry&&entry.rankScore))return entry.rankScore;
+  return Number.isFinite(entry&&entry.score)?entry.score:-Infinity;
+}
+/* rankScore 동점일 때: 더 최근 출현 → 고유 종수. 출현이 없는 곳끼리는 0 이라 기존 순서가 그대로다. */
+function weeklyRecentTieBreak(a,b){
+  var ar=a&&a.recentReport, br=b&&b.recentReport;
+  return ((ar?ar.ageDays:Infinity)-(br?br.ageDays:Infinity)||0)||((br?br.speciesCount:0)-(ar?ar.speciesCount:0));
 }
 function weeklyRecommendationIsSafe(entry){
   // 카드에 표시하는 동일 날짜/시각의 기상만 검사한다. 미확인은 안전 판정이 아니다.
@@ -3619,8 +3671,8 @@ function todayRecommendedSites(){
   if(autumnRecommendationSeason())return autumnBalancedRecommendations(mandatory.concat(general));
   function rank(a,b){
     var ap=a.priority||4, bp=b.priority||4;
-    var as=Number.isFinite(a.score)?a.score:-Infinity, bs=Number.isFinite(b.score)?b.score:-Infinity;
-    return (ap-bp)||(bs-as)||((b.sortLevel||0)-(a.sortLevel||0))||Number(a.site.id)-Number(b.site.id);
+    var as=weeklyRankScore(a), bs=weeklyRankScore(b);
+    return (ap-bp)||(bs-as)||weeklyRecentTieBreak(a,b)||((b.sortLevel||0)-(a.sortLevel||0))||Number(a.site.id)-Number(b.site.id);
   }
   mandatory.sort(rank);general.sort(rank);
   mandatory.concat(general).forEach(function(entry){
@@ -3751,6 +3803,13 @@ function renderTodayPanel(){
     score.className='todayRankScore';
     score.textContent=entry.today?v251ScoreDisplayText(entry.today):'조석 기준 추천';
     item.appendChild(score);
+    // 기상 점수와 섞지 않고 따로 적는다. 가점은 순위에만 쓰였다.
+    if(entry.recentReport&&Number.isFinite(entry.rankScore)){
+      var recent=document.createElement('div');
+      recent.className='todayMandatoryReason';
+      recent.textContent='🐦 최근 출현 '+(entry.recentReport.ageDays===0?'오늘':entry.recentReport.ageDays+'일 전')+' · '+entry.recentReport.speciesCount+'종 · 추천 가점 +'+entry.recentReport.bonus;
+      item.appendChild(recent);
+    }
     var recDate=document.createElement('div');
     recDate.className='todayRankMeta';
     recDate.textContent='📅 추천: '+weeklyRecommendationDateLabel(entry)+(entry.recommendationTime?' · 낮 시간 대표':'');
@@ -3824,7 +3883,7 @@ function renderTodayPanel(){
     if(!extraIssueTitle){
       extraIssueTitle=document.createElement('div');
       extraIssueTitle.className='todaySectionTitle';
-      extraIssueTitle.textContent='📢 추천 10곳 외 탐조 이슈 연계 장소';
+      extraIssueTitle.textContent='📢 추천 '+top.length+'곳 외 탐조 이슈 연계 장소';
       body.appendChild(extraIssueTitle);
     }
     extraSites.forEach(function(site){shownIssueIds.add(String(site.id));});
@@ -4004,7 +4063,8 @@ function initReportFeature(){
   map_7010a44f6ac2025090f0fe07508ed485.getContainer().addEventListener('click',reportMapClick,true);
   loadApprovedReports();
   loadPendingReports();
-  setInterval(function(){loadApprovedReports();loadPendingReports();},REPORTS_REFRESH_MS);
+  loadRecentSiteSightings();
+  setInterval(function(){loadApprovedReports();loadPendingReports();loadRecentSiteSightings();},REPORTS_REFRESH_MS);
 }
 
 /* 승인된 제보만 내려온다. 실패하면 직전 상태를 그대로 두고 조용히 넘어간다. */

@@ -61,6 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
+  'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -73,13 +74,14 @@ function loadApi(state = {}) {
     'var siteData=ctx.siteData||[],weatherToday=ctx.weatherToday||null;' +
     'var loadedNotices=ctx.notices||[],PINNED_BIRDING_ISSUES=[];' +
     'var recommendationWeatherRules=ctx.rules;' +
+    'var recentSiteSightings=ctx.recentSiteSightings||{};' + HTML.match(/var WEEKLY_RECENT_BONUS_MAX=.*?;/)[0] +
     HTML.match(/var AUTUMN_CORE_FIELD_SITE_IDS=.*?;/)[0] +
     [...HTML.matchAll(/var (?:WINTER|SPRING)_[A-Z_]+=new Set\(.*?;/g)].map(m=>m[0]).join('\n') +
     HTML.match(/var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES=.*?;/)[0] +
     'function monthTideForSite(id){return tideMonth&&tideMonth.sites?tideMonth.sites[String(id)]||null:null;}' +
     'function todayKstMonth(){return ctx.month||9;}' +
     tideRules + '\n' + source + '\n' +
-    'return {' + NAMES.join(',') + ',setWeek:function(w){weatherWeek=w;}};'
+    'return {' + NAMES.join(',') + ',setWeek:function(w){weatherWeek=w;},setSightings:function(v){recentSiteSightings=v;}};'
   );
   const Clock=state.now?class extends Date {constructor(...args){super(...(args.length?args:[state.now]));} static now(){return new Date(state.now).getTime();}}:Date;
   return factory(Object.assign({rules:RULES},state),Clock);
@@ -1598,4 +1600,143 @@ test('실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지�
   assert.ok(api.v24TideMinutesOfDay(excludedAfterSunset.time) > sun.setMin, '공지가 일몰 후로 제외한 만조는 코드에서도 일몰 후다');
   const later = loadApi({ month: 9, now: excludedAfterSunset.date + 'T06:00:00+09:00', siteData: [site], weatherWeek: null, tideMonth: tideMonth });
   assert.equal(later.weeklyMudflatTideGateOpen(site, later.weeklyInfo()), false, '일몰 후 만조만 남은 주에는 후보가 아니다');
+});
+
+/* ── 최근 출현 추천 가점(R01) ─────────────────────────────────────────
+   /reports/recent-sites 자료(탐조지별 최근 관찰일·고유 종)로 순위에만 가점을 준다.
+   화면 기상 점수(entry.score)는 바꾸지 않고 rankScore 로만 정렬한다. */
+function recentDaysAgo(api, days) {
+  const today = api.weeklyDateFromText(api.weeklyTodayDateText());
+  return api.weeklyDateTextFromUtc(new Date(today.getTime() - days * 86400000));
+}
+function recentFieldSites(count) {
+  return Array.from({ length: count }, (_, i) => ({ ...SITE, id: 400 + i, name: '들판' + i, env: '농경지' }));
+}
+function todayWeatherFor(api, sites, scoreOf = () => 92, extra = () => ({})) {
+  const date = api.weeklyTodayDateText();
+  return { sites: Object.fromEntries(sites.map((s, i) => [s.id, Object.assign({ date, forecastTime: date + ' 12:00 KST', score: scoreOf(s, i), wind: '북풍 3m/s', wave: '0.5m', rain: '강수 없음' }, extra(s, i))])) };
+}
+
+test('R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16', () => {
+  const api = loadApi({ month: 10 });
+  const site = { id: '15' };
+  const bonusAt = (days, species) => {
+    api.setSightings({ 15: { latestDate: recentDaysAgo(api, days), species } });
+    const r = api.weeklyRecentReportBonus(site);
+    return r ? r.bonus : 0;
+  };
+  assert.deepEqual([0, 1, 2, 3, 4, 7, 8, 14, 15].map((d) => bonusAt(d, ['a'])), [12, 12, 9, 9, 5, 5, 2, 2, 0]);
+  assert.equal(bonusAt(-1, ['a']), 0, '미래 관찰일은 가점 없음');
+  assert.equal(bonusAt(2, ['a', 'b']), 11);
+  assert.equal(bonusAt(2, ['a', 'b', 'c']), 11);
+  assert.equal(bonusAt(2, ['a', 'b', 'c', 'd']), 13);
+  assert.equal(bonusAt(1, ['a', 'b', 'c', 'd', 'e']), 16, '12+4 = 상한 16');
+  api.setSightings({});
+  assert.equal(api.weeklyRecentReportBonus(site), null);
+});
+
+test('R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점', () => {
+  const api = loadApi({ month: 10 });
+  api.setSightings({ 15: { latestDate: recentDaysAgo(api, 2), species: Array(5).fill('캐나다기러기') } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, speciesCount: 1, bonus: 9 });
+  api.setSightings({ 15: { latestDate: recentDaysAgo(api, 2), species: ['캐나다기러기', '쇠기러기', '큰기러기', '흰이마기러기'] } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, speciesCount: 4, bonus: 13 });
+});
+
+test('R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다', () => {
+  const sites = recentFieldSites(6);
+  const base = loadApi({ month: 10, siteData: sites });
+  const weatherToday = todayWeatherFor(base, sites);
+  const without = loadApi({ month: 10, siteData: sites, weatherToday });
+  const before = without.todayRecommendedSites().filter((e) => e.selectedAxis === 'field').map((e) => e.site.id);
+  assert.deepEqual(before, [400, 401, 402, 403], '출현 자료가 없으면 기존 안정 순서 그대로');
+  const api = loadApi({ month: 10, siteData: sites, weatherToday, recentSiteSightings: { 405: { latestDate: recentDaysAgo(base, 2), species: ['캐나다기러기'] } } });
+  const top = api.todayRecommendedSites();
+  const field = top.filter((e) => e.selectedAxis === 'field');
+  assert.equal(field[0].site.id, 405, '2일 전 출현 장소가 들판 1위');
+  assert.equal(field[0].score, 92, '화면 기상 점수 유지');
+  assert.equal(field[0].rankScore, 101);
+  assert.deepEqual(field[0].recentReport, { ageDays: 2, speciesCount: 1, bonus: 9 });
+  assert.deepEqual(field.slice(1).map((e) => e.site.id), [400, 401, 402], '나머지는 기존 순서');
+  assert.ok(top.every((e) => e.score <= 100));
+});
+
+test('R01 동점 tie-break: rankScore 같으면 더 최근 출현, 그다음 고유 종수', () => {
+  const api = loadApi({ month: 10 });
+  const entry = (id, rankScore, recentReport) => ({ site: { id, name: String(id) }, axes: { field: true }, score: 92, rankScore, recentReport, recommendationDate: '2026-10-02', stableOrder: id, priority: 4 });
+  const newer = entry(9, 97, { ageDays: 4, speciesCount: 1, bonus: 5 });
+  const older = entry(1, 97, { ageDays: 6, speciesCount: 1, bonus: 5 });
+  assert.ok(api.autumnFieldRank(newer, older) < 0);
+  const more = entry(9, 97, { ageDays: 4, speciesCount: 3, bonus: 5 });
+  const less = entry(1, 97, { ageDays: 4, speciesCount: 1, bonus: 5 });
+  assert.ok(api.springRecommendationRank(more, less) < 0);
+  assert.ok(api.winterRecommendationRank(more, less) < 0);
+  assert.equal(api.weeklyRecentTieBreak(entry(1, 92, null), entry(2, 92, null)), 0, '출현 없는 곳끼리는 기존 정렬에 맡긴다');
+});
+
+test('R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외되고, 큰 감점은 가점으로 뒤집히지 않는다', () => {
+  const sites = recentFieldSites(6);
+  const base = loadApi({ month: 10, siteData: sites });
+  const weatherToday = todayWeatherFor(base, sites, (s) => (s.id === 401 ? 62 : 92), (s) => (s.id === 400 ? { rain: '3시간 강수 12.0mm' } : {}));
+  const recent = { latestDate: recentDaysAgo(base, 0), species: ['a', 'b', 'c', 'd'] };
+  const api = loadApi({ month: 10, siteData: sites, weatherToday, recentSiteSightings: { 400: recent, 401: recent } });
+  const top = api.todayRecommendedSites();
+  assert.ok(!top.some((e) => e.site.id === 400), '폭우(10mm 이상) 장소는 가점이 있어도 제외');
+  const rainy = top.find((e) => e.site.id === 401);
+  assert.equal(rainy && rainy.rankScore, 78, '62 + 상한 16');
+  assert.ok(top.filter((e) => e.selectedAxis === 'field').every((e) => e.site.id !== 401), '맑은 92점 장소보다 아래');
+});
+
+test('R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다', () => {
+  const date = futureDate(1);
+  const boat = { ...SITE, id: 48, name: '대진항', pelagic: true, env: '외해·선상', lat: 38.5, lon: 128.4 };
+  const recent = { 48: { latestDate: recentDaysAgo(loadApi({ month: 10 }), 1), species: ['슴새', '바다쇠오리', '흰배슴새', '검은바람까마귀'] } };
+  const high = loadApi({ month: 10, siteData: [boat], weatherWeek: weekDoc(48, { [date]: [sample(date + ' 12:00 KST', 92, { windSpeed: 3, waveM: 1.2 })] }), recentSiteSightings: recent });
+  assert.equal(high.weeklyRecommendationForSite(boat, high.weeklyInfo()), null, '파고 1.2m > 0.7m 이면 후보가 아니다');
+  const calm = loadApi({ month: 10, siteData: [boat], weatherWeek: weekDoc(48, { [date]: [sample(date + ' 12:00 KST', 92, { windSpeed: 3, waveM: 0.5 })] }), recentSiteSightings: recent });
+  const entry = calm.weeklyRecommendationForSite(boat, calm.weeklyInfo());
+  assert.ok(entry && entry.axes.pelagic);
+  assert.equal(entry.score, 92);
+  assert.ok(entry.rankScore > entry.score, '안전 기준을 통과한 경우에만 가점');
+});
+
+test('R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 점수 + 출현 가점이다', () => {
+  const forest = { ...SITE, id: 81, name: '지리산', env: '산림·고산' };
+  const base = loadApi({ month: 10, siteData: [forest] });
+  const weatherToday = todayWeatherFor(base, [forest], () => 92, () => ({ wave: null }));
+  const none = loadApi({ month: 10, siteData: [forest], weatherToday, tideMonth: null });
+  const plain = none.weeklyRecommendationForSite(forest, none.weeklyInfo());
+  assert.equal(plain.rankScore, 92, '조석 없음 = 0 감점');
+  const api = loadApi({ month: 10, siteData: [forest], weatherToday, tideMonth: null, recentSiteSightings: { 81: { latestDate: recentDaysAgo(base, 8), species: ['들꿩'] } } });
+  const entry = api.weeklyRecommendationForSite(forest, api.weeklyInfo());
+  assert.equal(entry.score, 92);
+  assert.equal(entry.rankScore, 94);
+});
+
+test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로', async () => {
+  const loader = functionSource('loadRecentSiteSightings');
+  async function run(fetchImpl, previous) {
+    const box = { sightings: previous, refreshed: 0, warned: 0 };
+    const fn = new Function('box', 'fetch', 'console',
+      'var recentSiteSightings=box.sightings;var REPORTS_API_URL="https://reports.example";' +
+      'function reportsConfigured(){return true;}function refreshTodayPanelIfOpen(){box.refreshed++;}' +
+      loader + ';return loadRecentSiteSightings().then(function(ok){box.sightings=recentSiteSightings;return ok;});');
+    const ok = await fn(box, fetchImpl, { warn: () => { box.warned++; } });
+    return { ok, ...box };
+  }
+  const failed = await run(() => Promise.reject(new Error('network')), {});
+  assert.deepEqual([failed.ok, failed.sightings, failed.refreshed], [false, {}, 0]);
+  const broken = await run(() => Promise.resolve({ ok: true, json: async () => ({ ok: true, sites: 'x' }) }), { 15: { latestDate: '2026-09-29', species: ['a'] } });
+  assert.equal(broken.ok, false);
+  assert.deepEqual(broken.sightings, { 15: { latestDate: '2026-09-29', species: ['a'] } }, '직전 자료 유지');
+  const good = await run(() => Promise.resolve({ ok: true, json: async () => ({ ok: true, sites: [{ siteId: '15', latestDate: '2026-09-29', species: ['캐나다기러기'] }, { siteId: '', latestDate: 'bad', species: [] }] }) }), {});
+  assert.deepEqual([good.ok, good.sightings, good.refreshed], [true, { 15: { latestDate: '2026-09-29', species: ['캐나다기러기'] } }, 1]);
+
+  // 자료가 비면(=실패 직후) 추천은 출현 가점이 없는 기존 결과와 같다.
+  const sites = recentFieldSites(6);
+  const base = loadApi({ month: 10, siteData: sites });
+  const weatherToday = todayWeatherFor(base, sites);
+  const plain = loadApi({ month: 10, siteData: sites, weatherToday }).todayRecommendedSites();
+  assert.ok(plain.length > 0);
+  assert.ok(plain.every((e) => !e.recentReport && e.rankScore === e.score));
 });
