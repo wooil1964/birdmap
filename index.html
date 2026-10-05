@@ -68,7 +68,9 @@
 <div id="reportPickWrap">
 <button id="reportToggleBtn" type="button" hidden aria-pressed="false" onclick="toggleReportMode()">📍 출현종 제보하기</button>
 <button id="reportGpsPickBtn" type="button" class="reportGpsBtn" onclick="useCurrentReportLocation()">현재 위치 사용</button>
-<div id="reportPickBanner" role="status" aria-live="polite">지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.</div>
+<div id="reportPickBanner" role="status" aria-live="polite">제보할 위치를 현재 위치로 지정하거나 지도에서 선택해 주세요.</div>
+<div id="reportPickGpsInfo" role="status" aria-live="polite"></div>
+<button id="reportConfirmBtn" type="button" hidden onclick="confirmReportLocation()">이 위치로 제보</button>
 </div>
 </div>
 </div>
@@ -309,6 +311,11 @@ body.rightPanelOpen #recentReportsBox{display:none}
 .reportGpsBtn[disabled]{opacity:.6;cursor:wait}
 #reportGpsPickBtn{display:none;pointer-events:auto;min-height:44px;min-width:44px;padding:8px 11px;background:#fff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#174d6f;cursor:pointer}
 body.reportPicking #reportGpsPickBtn{display:block}
+#reportPickGpsInfo{display:none;max-width:min(300px,calc(100vw - 96px));padding:8px 12px;border-radius:8px;background:rgba(28,34,38,.92);color:#fff;font-family:Arial,'Malgun Gothic',sans-serif;font-size:12px;line-height:1.45;white-space:pre-line;text-align:left;pointer-events:none}
+body.reportPicking #reportPickGpsInfo:not(:empty){display:block}
+#reportConfirmBtn{pointer-events:auto;min-height:44px;min-width:44px;padding:8px 11px;background:#c0392b;border:2px solid #c0392b;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#fff;cursor:pointer}
+#reportConfirmBtn[hidden]{display:none}
+body:not(.reportPicking) #reportConfirmBtn{display:none}
 .reportOptional{margin-top:4px;padding-top:4px;border-top:1px solid #e3e8eb}
 .reportConsent{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-weight:normal;line-height:1.5;min-height:44px;cursor:pointer}
 .reportConsent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
@@ -4076,7 +4083,7 @@ function reportMapClick(e){
   e.preventDefault();
   var point=map_7010a44f6ac2025090f0fe07508ed485.mouseEventToLatLng(e);
   setReportLocation(point.lat,point.lng);
-  openReportModal();
+  startReportPicking();   // 위치를 계속 고칠 수 있게 선택 모드를 유지한다. 모달은 '이 위치로 제보'에서만 연다.
 }
 
 function initReportFeature(){
@@ -4198,12 +4205,14 @@ function renderPendingReports(spots){
 
 /* 안내문은 제보 버튼 바로 아래 칸에 있고, 위치 선택 중일 때만 보인다(body.reportPicking).
    아직 고르지 않았으면 찍으라고 하고, 이미 고른 뒤 다시 고르는 중이면 바꿀 수 있다고 알린다. */
-var REPORT_PICK_HINT='지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.';
+var REPORT_PICK_HINT='제보할 위치를 현재 위치로 지정하거나 지도에서 선택해 주세요.';
 var REPORT_PICK_DONE_HINT='관찰 위치가 선택되었습니다. 다시 클릭하면 위치를 변경할 수 있습니다.';
 
 function updateReportPickBanner(){
   var banner=document.getElementById('reportPickBanner');
   if(banner)banner.textContent=reportPicked?REPORT_PICK_DONE_HINT:REPORT_PICK_HINT;
+  var confirmButton=document.getElementById('reportConfirmBtn');
+  if(confirmButton)confirmButton.hidden=!reportPicked;
 }
 
 function setReportGpsInfo(text,kind){
@@ -4211,6 +4220,8 @@ function setReportGpsInfo(text,kind){
   if(!box)return;
   box.textContent=text||'';
   box.className='reportGpsInfo'+(kind?' '+kind:'');
+  var pickBox=document.getElementById('reportPickGpsInfo');
+  if(pickBox)pickBox.textContent=text||'';
 }
 
 function setReportLocation(lat,lon){
@@ -4282,18 +4293,25 @@ function useCurrentReportLocation(){
   if(reportGpsBusy||!reportsConfigured())return;
   if(!navigator.geolocation){reportGpsFail(REPORT_GPS_MESSAGES[2]);return;}
   setReportGpsBusy(true);
+  setReportGpsInfo('','');
   navigator.geolocation.getCurrentPosition(function(position){
     setReportGpsBusy(false);
     var c=position.coords,accuracy=Math.round(c.accuracy);
     setReportLocation(c.latitude,c.longitude);
     map_7010a44f6ac2025090f0fe07508ed485.setView([reportPicked.lat,reportPicked.lon],16,{animate:false});
     var modal=document.getElementById('reportModal');
-    if(!modal||modal.style.display!=='flex')openReportModal();
+    if(!modal||modal.style.display!=='flex')startReportPicking();
     setReportGpsInfo('현재 위치 확인 완료 · 예상 오차 약 '+accuracy+'m'+(accuracy>=100?'\n현재 GPS 정확도가 낮습니다. 잠시 후 다시 시도하거나 지도에서 위치를 조정해 주세요.':''),accuracy>=100?'warn':'');
   },function(error){
     setReportGpsBusy(false);
     reportGpsFail(REPORT_GPS_MESSAGES[error&&error.code]||REPORT_GPS_MESSAGES[2]);
   },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+}
+
+function confirmReportLocation(){
+  if(!reportPicked)return;
+  stopReportPicking();
+  openReportModal();
 }
 
 function toggleReportMode(){
