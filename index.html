@@ -67,6 +67,7 @@
 <button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 이번주 어디 갈까</button>
 <div id="reportPickWrap">
 <button id="reportToggleBtn" type="button" hidden aria-pressed="false" onclick="toggleReportMode()">📍 출현종 제보하기</button>
+<button id="reportGpsPickBtn" type="button" class="reportGpsBtn" onclick="useCurrentReportLocation()">현재 위치 사용</button>
 <div id="reportPickBanner" role="status" aria-live="polite">지도를 클릭해 관찰 위치를 찍어 주세요. 다시 클릭하면 위치가 바뀝니다.</div>
 </div>
 </div>
@@ -148,7 +149,11 @@
       <input id="reportObservedOn" name="observedOn" type="date" required>
       <label>선택한 위치 <span class="reportRequired">필수</span></label>
       <div id="reportCoord" class="reportCoord">지도를 클릭해 위치를 선택하세요.</div>
-      <button type="button" class="reportPick" onclick="pickReportLocationAgain()">지도에서 다시 선택</button>
+      <div id="reportGpsInfo" class="reportGpsInfo" role="status" aria-live="polite"></div>
+      <div class="reportPickRow">
+        <button type="button" class="reportPick reportGpsBtn" onclick="useCurrentReportLocation()">현재 위치 사용</button>
+        <button type="button" class="reportPick" onclick="pickReportLocationAgain()">지도에서 다시 선택</button>
+      </div>
       <div id="reportHideLocationBox" style="display:none">
         <label class="reportConsent" for="reportHideLocation"><input type="checkbox" id="reportHideLocation"> 위치 가리기</label>
         <div class="reportConsentNote">체크하면 정확한 위치는 공개되지 않고 주변의 대략적인 위치만 표시됩니다. 실제 관찰 위치는 관리자 확인용으로만 저장됩니다.</div>
@@ -295,6 +300,15 @@ body.rightPanelOpen #recentReportsBox{display:none}
 .reportCoord{padding:8px 10px;border:1px dashed #bcc6cc;border-radius:6px;color:#5a666e;background:#fafbfb}
 .reportCoord.ready{border-style:solid;border-color:#2f7d4f;background:#eefbf1;color:#1d5c37;font-weight:bold}
 .reportPick{margin-top:6px;padding:6px 10px;border:1px solid #2d6f9f;background:#fff;color:#174d6f;border-radius:6px;cursor:pointer;font-size:12px}
+.reportPickRow{display:flex;flex-wrap:wrap;gap:6px}
+.reportPickRow .reportPick{min-height:44px;min-width:44px;flex:1 1 130px}
+.reportGpsInfo{white-space:pre-line;margin-top:6px;font-size:12px;line-height:1.45;color:#1d5c37}
+.reportGpsInfo.warn{color:#8d5a00}
+.reportGpsInfo.error{color:#8d2418}
+.reportGpsInfo:empty{display:none}
+.reportGpsBtn[disabled]{opacity:.6;cursor:wait}
+#reportGpsPickBtn{display:none;pointer-events:auto;min-height:44px;min-width:44px;padding:8px 11px;background:#fff;border:2px solid #2d6f9f;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#174d6f;cursor:pointer}
+body.reportPicking #reportGpsPickBtn{display:block}
 .reportOptional{margin-top:4px;padding-top:4px;border-top:1px solid #e3e8eb}
 .reportConsent{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-weight:normal;line-height:1.5;min-height:44px;cursor:pointer}
 .reportConsent input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
@@ -4192,7 +4206,15 @@ function updateReportPickBanner(){
   if(banner)banner.textContent=reportPicked?REPORT_PICK_DONE_HINT:REPORT_PICK_HINT;
 }
 
+function setReportGpsInfo(text,kind){
+  var box=document.getElementById('reportGpsInfo');
+  if(!box)return;
+  box.textContent=text||'';
+  box.className='reportGpsInfo'+(kind?' '+kind:'');
+}
+
 function setReportLocation(lat,lon){
+  setReportGpsInfo('','');
   reportPicked={lat:Number(lat.toFixed(6)),lon:Number(lon.toFixed(6))};
   if(reportPickMarker)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(reportPickMarker);
   // 임시 점은 점선 테두리로 확정된 점과 구분한다. 어떤 경우에도 저장하지 않는다.
@@ -4231,7 +4253,47 @@ function clearReportPick(){
     reportPickMarker=null;
   }
   reportPicked=null;
+  setReportGpsInfo('','');
   updateReportPickBanner();
+}
+
+/* '현재 위치 사용': 버튼을 누른 순간 한 번만 위치를 읽는다(watchPosition 없음).
+   결과는 기존 setReportLocation 에만 넘겨 reportPicked 로 들어가며, 서버로는 제보 신청 때 기존 경로로만 나간다.
+   번식·민감 보호는 서버/제출 단계(번식 아님 확인, 위치 가리기)가 그대로 맡는다. */
+var reportGpsBusy=false;
+var REPORT_GPS_MESSAGES={
+  1:'현재 위치 권한이 허용되지 않았습니다. 브라우저의 위치 권한을 허용하거나 지도에서 직접 위치를 지정해 주세요.',
+  3:'현재 위치를 확인하지 못했습니다. 다시 시도하거나 지도에서 직접 위치를 지정해 주세요.',
+  2:'현재 기기에서 위치 정보를 사용할 수 없습니다. 지도에서 직접 위치를 지정해 주세요.'
+};
+function setReportGpsBusy(busy){
+  reportGpsBusy=busy;
+  Array.prototype.forEach.call(document.querySelectorAll('.reportGpsBtn'),function(button){
+    button.disabled=busy;
+    button.textContent=busy?'현재 위치 확인 중...':'현재 위치 사용';
+  });
+}
+function reportGpsFail(text){
+  var modal=document.getElementById('reportModal');
+  if(modal&&modal.style.display==='flex')setReportGpsInfo(text,'error');
+  else{var banner=document.getElementById('reportPickBanner');if(banner)banner.textContent=text;}
+}
+function useCurrentReportLocation(){
+  if(reportGpsBusy||!reportsConfigured())return;
+  if(!navigator.geolocation){reportGpsFail(REPORT_GPS_MESSAGES[2]);return;}
+  setReportGpsBusy(true);
+  navigator.geolocation.getCurrentPosition(function(position){
+    setReportGpsBusy(false);
+    var c=position.coords,accuracy=Math.round(c.accuracy);
+    setReportLocation(c.latitude,c.longitude);
+    map_7010a44f6ac2025090f0fe07508ed485.setView([reportPicked.lat,reportPicked.lon],16,{animate:false});
+    var modal=document.getElementById('reportModal');
+    if(!modal||modal.style.display!=='flex')openReportModal();
+    setReportGpsInfo('현재 위치 확인 완료 · 예상 오차 약 '+accuracy+'m'+(accuracy>=100?'\n현재 GPS 정확도가 낮습니다. 잠시 후 다시 시도하거나 지도에서 위치를 조정해 주세요.':''),accuracy>=100?'warn':'');
+  },function(error){
+    setReportGpsBusy(false);
+    reportGpsFail(REPORT_GPS_MESSAGES[error&&error.code]||REPORT_GPS_MESSAGES[2]);
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
 
 function toggleReportMode(){
