@@ -127,7 +127,19 @@
      자료는 마커를 그릴 때 이미 받아 둔 /reports/approved 를 그대로 쓴다(추가 호출 없음). -->
 <div id="recentReportsBox">
   <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span><span id="recentReportsHint">글을 클릭하면 지도에 보입니다.</span></div>
-  <div id="recentReportsList"><div class="recentReportEmpty">불러오는 중입니다.</div></div>
+  <div id="recentTabs" role="tablist" aria-label="최근 출현 제보 보기">
+    <button id="recentTabReports" type="button" role="tab" aria-selected="true" aria-controls="recentReportsList" onclick="selectRecentTab('reports')">최근 제보</button>
+    <button id="recentTabContributors" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="recentContributors" onclick="selectRecentTab('contributors')">이번 달 기여자</button>
+  </div>
+  <div id="recentReportsList" role="tabpanel" aria-labelledby="recentTabReports"><div class="recentReportEmpty">불러오는 중입니다.</div></div>
+  <div id="recentContributors" role="tabpanel" aria-labelledby="recentTabContributors" hidden></div>
+</div>
+<div id="contributorsModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="contributorsTitle" onclick="if(event.target===this)closeContributorsModal()">
+  <div class="monthTideDialog">
+    <div class="monthTideHeader"><strong id="contributorsTitle">기여자</strong><button type="button" onclick="closeContributorsModal()">닫기</button></div>
+    <div id="contributorsMeta" class="monthTideMeta"></div>
+    <div id="contributorsContent" class="monthTideContent"></div>
+  </div>
 </div>
 
 <div id="noticePanel">
@@ -233,6 +245,20 @@ a.ebird,.btn.ebird{display:none !important}
 /* 제목 오른쪽 안내. 한 줄에 들어갈 폭이면 제목 옆, 좁으면 제목 아래 줄 오른쪽으로 내려간다. */
 #recentReportsTitle{display:flex;flex-wrap:wrap;align-items:baseline}
 #recentReportsHint{margin-left:auto;padding-left:6px;font-size:10px;font-weight:normal;color:#9aa5ab;white-space:nowrap}
+/* 최근 제보 | 이번 달 기여자 탭. 상자는 그대로 두고 제목 아래 한 줄만 더한다. */
+#recentTabs{flex:0 0 auto;display:flex;border-bottom:1px solid #e3e8eb;background:#fff}
+#recentTabs button{flex:1 1 0;min-width:0;padding:6px 4px;border:0;border-bottom:2px solid transparent;background:transparent;font:inherit;font-size:12px;color:#6b7a83;cursor:pointer;white-space:nowrap}
+#recentTabs button[aria-selected="true"]{border-bottom-color:#2d6f9f;color:#174d6f;font-weight:bold}
+#recentTabs button:focus-visible{outline:2px solid #2d6f9f;outline-offset:-2px}
+#recentReportsBox.contribMode #recentReportsCount,#recentReportsBox.contribMode #recentReportsHint{display:none}
+#recentContributors{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#recentContributors[hidden],#recentReportsList[hidden]{display:none}
+.contribSummary{padding:7px 11px 3px;font-size:12px;color:#2f4f62;line-height:1.45}
+.contribRow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 11px;font-size:13px;color:#22333c}
+.contribName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:bold}
+.contribCount{flex:0 0 auto;white-space:nowrap;color:#31576f}
+.contribMore{display:block;margin:4px 11px 8px;padding:5px 10px;border:1px solid #2d6f9f;border-radius:6px;background:#fff;color:#174d6f;font:inherit;font-size:12px;cursor:pointer}
+.contribMore:focus-visible{outline:2px solid #2d6f9f;outline-offset:1px}
 /* 제목은 고정하고 목록만 남은 높이 안에서 스크롤한다. 건수가 적으면 내용만큼만
    높아지고, 많아지면 상자 전체가 48vh 에서 멈춘다. */
 #recentReportsList{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
@@ -249,13 +275,18 @@ a.ebird,.btn.ebird{display:none !important}
    위 min-width:900px 의 바로 아래 구간이라 중간에 박스가 사라지는 폭이 없다.
    bottom 은 오른쪽 아래 Leaflet attribution 줄 위로 띄운 값이다. */
 @media(max-width:899px){
-  #recentReportsBox{display:flex;right:8px;bottom:24px;width:190px;max-height:140px}
+  #recentReportsBox{display:flex;right:8px;bottom:24px;width:190px;max-height:166px}
+  #recentReportsBox.contribMode{max-height:210px}
   #recentReportsTitle{padding:5px 8px;font-size:12px}
   #recentReportsCount{margin-left:4px;font-size:11px}
   .recentReportItem{padding:5px 8px}
   .recentReportSpecies{font-size:11px}
   .recentReportMeta{font-size:10px;margin-top:1px}
   .recentReportEmpty{padding:6px 8px;font-size:11px}
+  #recentTabs button{padding:4px 2px;font-size:11px}
+  .contribSummary{padding:5px 8px 2px;font-size:11px}
+  .contribRow{padding:3px 8px;font-size:11px}
+  .contribMore{margin:3px 8px 6px;padding:4px 8px;font-size:11px}
 }
 /* 오른쪽 패널이 열려 있는 동안에는 가려지므로 숨긴다(선택자가 더 구체적이라 위 규칙을 이긴다). */
 body.rightPanelOpen #recentReportsBox{display:none}
@@ -994,6 +1025,150 @@ function renderRecentReports(){
     }
     list.appendChild(item);
   });
+}
+
+/* ── 이번 달 기여자 ────────────────────────────────────────────────────
+   /contributors/monthly 가 내려주는 월간 집계(month, approvedReports, publicContributors,
+   contributors[{name,count}])만 쓴다. 순서는 서버가 정한 그대로이고 순위를 다시 매기지 않는다.
+   성공한 응답만 메모리에 두며 새로고침하면 다시 부른다. 실패는 저장하지 않아 탭을 다시 열면 재시도한다. */
+var CONTRIBUTORS_LIMIT_MOBILE=3;
+var CONTRIBUTORS_LIMIT_DESKTOP=5;
+var contributorsData=null;
+var contributorsLoading=false;
+var recentTab='reports';
+
+function contributorsPayload(data){
+  if(!data||typeof data!=='object'||!/^\d{4}-(0[1-9]|1[0-2])$/.test(String(data.month||'')))return null;
+  if(!Array.isArray(data.contributors)||typeof data.approvedReports!=='number'||typeof data.publicContributors!=='number')return null;
+  var rows=data.contributors;
+  for(var i=0;i<rows.length;i++){
+    if(!rows[i]||typeof rows[i].name!=='string'||typeof rows[i].count!=='number')return null;
+  }
+  return {month:data.month,approvedReports:data.approvedReports,publicContributors:data.publicContributors,
+    contributors:rows.map(function(row){return {name:row.name,count:row.count};})};
+}
+function contributorsVisible(contributors,mobile){
+  var limit=mobile?CONTRIBUTORS_LIMIT_MOBILE:CONTRIBUTORS_LIMIT_DESKTOP;
+  return {rows:contributors.slice(0,limit),more:contributors.length>limit};
+}
+function contributorsMonthParts(month){
+  var parts=String(month).split('-');
+  return {year:Number(parts[0]),month:Number(parts[1])};
+}
+function contributorsIsMobile(){
+  return window.matchMedia('(max-width:899px)').matches;
+}
+function contributorRowElement(row){
+  var item=document.createElement('div');
+  item.className='contribRow';
+  var name=document.createElement('span');
+  name.className='contribName';
+  name.textContent=row.name;
+  name.title=row.name;
+  var count=document.createElement('span');
+  count.className='contribCount';
+  count.textContent=row.count+'건';
+  item.appendChild(name);
+  item.appendChild(count);
+  return item;
+}
+function renderContributors(){
+  var box=document.getElementById('recentContributors');
+  if(!box)return;
+  box.innerHTML='';
+  if(!contributorsData){
+    var note=document.createElement('div');
+    note.className='recentReportEmpty';
+    note.textContent=contributorsLoading?'불러오는 중입니다.':'기여자 정보를 불러오지 못했습니다.';
+    box.appendChild(note);
+    return;
+  }
+  var data=contributorsData;
+  var summary=document.createElement('div');
+  summary.className='contribSummary';
+  summary.appendChild(document.createTextNode(contributorsMonthParts(data.month).month+'월 승인 제보 '+data.approvedReports+'건'));
+  summary.appendChild(document.createElement('br'));
+  summary.appendChild(document.createTextNode('공개 기여자 '+data.publicContributors+'명'));
+  box.appendChild(summary);
+  if(!data.contributors.length){
+    var empty=document.createElement('div');
+    empty.className='recentReportEmpty';
+    empty.textContent='이번 달 공개 기여자가 없습니다.';
+    box.appendChild(empty);
+    return;
+  }
+  var view=contributorsVisible(data.contributors,contributorsIsMobile());
+  view.rows.forEach(function(row){box.appendChild(contributorRowElement(row));});
+  if(view.more){
+    var button=document.createElement('button');
+    button.type='button';
+    button.className='contribMore';
+    button.textContent='전체 보기';
+    button.onclick=openContributorsModal;
+    box.appendChild(button);
+  }
+}
+function loadContributors(){
+  if(contributorsData||contributorsLoading)return;
+  contributorsLoading=true;
+  renderContributors();
+  fetch(REPORTS_API_URL+'/contributors/monthly',{cache:'no-cache'}).then(function(response){
+    if(!response.ok)throw new Error('contributors '+response.status);
+    return response.json();
+  }).then(function(body){
+    var payload=contributorsPayload(body);
+    if(!payload)throw new Error('contributors invalid');
+    contributorsData=payload;
+  }).catch(function(error){
+    contributorsData=null;
+    console.warn('이번 달 기여자를 불러오지 못했습니다.',error);
+  }).then(function(){
+    contributorsLoading=false;
+    renderContributors();
+  });
+}
+function selectRecentTab(tab){
+  recentTab=tab==='contributors'?'contributors':'reports';
+  var onContributors=recentTab==='contributors';
+  var tabs={reports:document.getElementById('recentTabReports'),contributors:document.getElementById('recentTabContributors')};
+  Object.keys(tabs).forEach(function(key){
+    if(!tabs[key])return;
+    tabs[key].setAttribute('aria-selected',String(key===recentTab));
+    tabs[key].tabIndex=key===recentTab?0:-1;
+  });
+  document.getElementById('recentReportsBox').classList.toggle('contribMode',onContributors);
+  document.getElementById('recentReportsList').hidden=onContributors;
+  document.getElementById('recentContributors').hidden=!onContributors;
+  if(onContributors){
+    if(contributorsData)renderContributors();else loadContributors();
+  }
+}
+var contributorsReturnFocus=null;
+function openContributorsModal(){
+  if(!contributorsData)return;
+  var modal=document.getElementById('contributorsModal');
+  var parts=contributorsMonthParts(contributorsData.month);
+  document.getElementById('contributorsTitle').textContent=parts.year+'년 '+parts.month+'월 기여자';
+  var meta=document.getElementById('contributorsMeta');
+  meta.innerHTML='';
+  meta.appendChild(document.createTextNode('승인 제보 '+contributorsData.approvedReports+'건'));
+  meta.appendChild(document.createElement('br'));
+  meta.appendChild(document.createTextNode('공개 기여자 '+contributorsData.publicContributors+'명'));
+  var content=document.getElementById('contributorsContent');
+  content.innerHTML='';
+  contributorsData.contributors.forEach(function(row){content.appendChild(contributorRowElement(row));});
+  contributorsReturnFocus=document.activeElement;
+  modal.style.display='flex';
+  document.body.classList.add('monthTideOpen');
+  content.scrollTop=0;
+}
+function closeContributorsModal(){
+  var modal=document.getElementById('contributorsModal');
+  if(!modal||modal.style.display!=='flex')return;
+  modal.style.display='none';
+  document.body.classList.remove('monthTideOpen');
+  if(contributorsReturnFocus&&typeof contributorsReturnFocus.focus==='function')contributorsReturnFocus.focus();
+  contributorsReturnFocus=null;
 }
 
 /* 새 마커를 만들지 않고 이미 지도에 있는 점을 그대로 연다. */
@@ -4561,7 +4736,14 @@ function submitReport(event){
 }
 
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMonthTideModal();closeReportModal();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMonthTideModal();closeReportModal();closeContributorsModal();}});
+document.getElementById('recentTabs').addEventListener('keydown',function(e){
+  if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+  var next=recentTab==='reports'?'contributors':'reports';
+  selectRecentTab(next);
+  document.getElementById(next==='reports'?'recentTabReports':'recentTabContributors').focus();
+});
+window.matchMedia('(max-width:899px)').addEventListener('change',function(){if(contributorsData&&recentTab==='contributors')renderContributors();});
 window.addEventListener('load',function(){
   updateMapTitleSiteCount();
   hideBirdmapPanelOnMobile();
