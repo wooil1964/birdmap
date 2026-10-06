@@ -1108,11 +1108,14 @@ function renderContributors(){
     box.appendChild(button);
   }
 }
+var contributorsPromise=null;
+/* 완료되면 성공 자료(실패면 null)로 이행하는 Promise 를 돌려준다. 이미 받았거나 받는 중이면 그걸 그대로 쓴다. */
 function loadContributors(){
-  if(contributorsData||contributorsLoading)return;
+  if(contributorsData)return Promise.resolve(contributorsData);
+  if(contributorsLoading)return contributorsPromise;
   contributorsLoading=true;
   renderContributors();
-  fetch(REPORTS_API_URL+'/contributors/monthly',{cache:'no-cache'}).then(function(response){
+  contributorsPromise=fetch(REPORTS_API_URL+'/contributors/monthly',{cache:'no-cache'}).then(function(response){
     if(!response.ok)throw new Error('contributors '+response.status);
     return response.json();
   }).then(function(body){
@@ -1125,7 +1128,9 @@ function loadContributors(){
   }).then(function(){
     contributorsLoading=false;
     renderContributors();
+    return contributorsData;
   });
+  return contributorsPromise;
 }
 function selectRecentTab(tab){
   recentTab=tab==='contributors'?'contributors':'reports';
@@ -1147,7 +1152,11 @@ function selectRecentTab(tab){
    다른 값은 무시하고, 탭을 바꿔도 주소는 건드리지 않는다. 기존 ?site= 공유 링크와는 별개다. */
 function openViewFromUrl(){
   if(!reportsConfigured())return;
-  if(new URLSearchParams(location.search).get("view")==="contributors")selectRecentTab("contributors");
+  var params=new URLSearchParams(location.search);
+  if(params.get("view")!=="contributors")return;
+  selectRecentTab("contributors");
+  /* 카페용 ?view=contributors&full=1: 자료가 온 뒤에만 기존 전체 보기 모달을 연다. 실패하면 열지 않는다. */
+  if(params.get("full")==="1")loadContributors().then(function(data){if(data)openContributorsModal();});
 }
 var contributorsReturnFocus=null;
 function openContributorsModal(){
@@ -1163,8 +1172,15 @@ function openContributorsModal(){
   var content=document.getElementById('contributorsContent');
   content.innerHTML='';
   contributorsData.contributors.forEach(function(row){content.appendChild(contributorRowElement(row));});
+  if(!contributorsData.contributors.length){
+    var empty=document.createElement('div');
+    empty.className='recentReportEmpty';
+    empty.textContent='이번 달 공개 기여자가 없습니다.';
+    content.appendChild(empty);
+  }
   contributorsReturnFocus=document.activeElement;
   modal.style.display='flex';
+  modal.querySelector('.monthTideHeader button').focus();
   document.body.classList.add('monthTideOpen');
   content.scrollTop=0;
 }
