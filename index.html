@@ -67,6 +67,7 @@
 <button id="todayToggleBtn" onclick="toggleTodayPanel()">🧭 이번주 어디 갈까</button>
 <div id="reportPickWrap">
 <button id="reportToggleBtn" type="button" hidden aria-pressed="false" onclick="toggleReportMode()">📍 출현종 제보하기</button>
+<button id="fieldToggleBtn" type="button" hidden onclick="openFieldPanel()">📡 현장소식</button>
 </div>
 </div>
 </div>
@@ -79,6 +80,12 @@
     <button id="reportConfirmBtn" type="button" hidden onclick="confirmReportLocation()">이 위치로 제보</button>
     <button id="reportCancelBtn" type="button" onclick="cancelReportPicking()">취소</button>
   </div>
+</div>
+<div id="fieldPanel" role="dialog" aria-label="현장소식" hidden>
+  <div class="fieldHead"><strong id="fieldTitle">현장소식</strong><button type="button" id="fieldBack" class="fieldGhost" onclick="fieldBack()">뒤로</button><button type="button" class="fieldGhost" onclick="closeFieldPanel()">닫기</button></div>
+  <div id="fieldBody"></div>
+  <div id="fieldMsg" class="fieldMsg" role="status" aria-live="polite"></div>
+  <div id="fieldCaptcha" class="fieldCaptcha"></div>
 </div>
 <div id="birdmapPanel">
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
@@ -418,6 +425,72 @@ body.reportPicking #reportPickPanel{display:block}
 .reportPickPanelBtns button[hidden]{display:none}
 .reportPickPanelBtns button[disabled]{opacity:.6;cursor:wait}
 #reportConfirmBtn{background:#c0392b;border-color:#c0392b;color:#fff}
+/* ── 현장소식(실시간 현장 공유). 출현종 제보(빨강·황색 원)와 겹치지 않도록 파랑·청록·보라 마름모를 쓴다. ── */
+#fieldToggleBtn{pointer-events:auto;min-height:44px;padding:8px 11px;background:#e8f1fb;border:2px solid #1565c0;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#0d47a1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#fieldToggleBtn[hidden]{display:none}
+body.reportPicking #fieldToggleBtn,body.fieldMode #fieldToggleBtn{display:none!important}
+/* 현장소식 창이 열려 있는 동안은 지도와 이 창만 남긴다(숨기기만 하므로 닫으면 그대로 돌아온다). */
+body.fieldMode #noticeToggleBtn,body.fieldMode #todayToggleBtn,body.fieldMode #reportToggleBtn,
+body.fieldMode #noticePanel,body.fieldMode #todayPanel,body.fieldMode #recentReportsBox{display:none!important}
+#fieldPanel{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:10002;box-sizing:border-box;width:min(380px,calc(100vw - 16px));max-height:calc(100vh - 120px);overflow-y:auto;overscroll-behavior:contain;padding:10px 12px;background:#fff;border:2px solid #1565c0;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.35);font-family:Arial,'Malgun Gothic',sans-serif;font-size:14px;color:#33424c}
+#fieldPanel[hidden]{display:none}
+#fieldPanel.fieldCompact{max-height:none;overflow:visible}
+.fieldHead{display:flex;align-items:center;gap:6px}
+.fieldHead strong{flex:1 1 auto;font-size:15px;color:#0d47a1}
+.fieldGhost{min-height:36px;padding:4px 10px;border:1px solid #9fb6cc;border-radius:8px;background:#fff;color:#33424c;font:inherit;font-size:13px;cursor:pointer}
+.fieldGhost[hidden]{display:none}
+.fieldBigBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fieldBigBtns button,.fieldBtn{min-height:52px;padding:8px;border:2px solid #1565c0;border-radius:10px;background:#fff;color:#0d47a1;font:inherit;font-size:15px;font-weight:bold;cursor:pointer}
+.fieldBtn{min-height:44px;font-size:14px}
+.fieldBigBtns button.fieldVisible,.fieldBtn.fieldPrimary{background:#1565c0;color:#fff}
+.fieldBigBtns button.fieldSearching{border-color:#6a1b9a;color:#4a148c}
+.fieldBigBtns button.fieldNotVisible{border-color:#78909c;color:#455a64}
+.fieldBigBtns button.fieldReappeared{border-color:#00897b;color:#00695c}
+.fieldBtn[disabled],.fieldBigBtns button[disabled]{opacity:.5;cursor:not-allowed}
+.fieldRow{display:flex;gap:6px;align-items:center;margin-top:8px}
+.fieldRow>*{min-width:0}
+.fieldLabel{display:block;margin:10px 0 3px;font-weight:bold;font-size:13px;color:#33424c}
+#fieldBody input[type=text]{width:100%;box-sizing:border-box;min-height:44px;padding:8px 10px;border:1px solid #9fb6cc;border-radius:8px;font:inherit;font-size:15px}
+.fieldSuggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.fieldSuggest button{min-height:40px;padding:4px 10px;border:1px solid #1565c0;border-radius:999px;background:#f1f7fd;color:#0d47a1;font:inherit;font-size:14px;cursor:pointer}
+.fieldStep{display:flex;align-items:center;gap:8px}
+.fieldStep button{width:48px;min-height:44px;border:1px solid #1565c0;border-radius:8px;background:#fff;color:#0d47a1;font-size:22px;font-weight:bold;cursor:pointer}
+.fieldStep button.fieldGhost{width:auto;min-width:56px;padding:4px 12px;font-size:14px;font-weight:normal;white-space:nowrap}
+.fieldStep output{min-width:44px;text-align:center;font-size:20px;font-weight:bold}
+.fieldLoc{margin-top:10px;padding:8px 10px;border:1px dashed #9fb6cc;border-radius:8px;background:#fafcfe;line-height:1.5}
+.fieldLoc.fieldReady{border-style:solid;border-color:#2e7d32;background:#eefbf1;color:#1b5e20}
+.fieldWarn{color:#8d5a00}
+.fieldMsg{margin-top:8px;line-height:1.45}
+.fieldMsg:empty{display:none}
+.fieldMsg.error{color:#8d2418}
+.fieldMsg.ok{color:#1b5e20}
+.fieldCaptcha{margin-top:6px}
+.fieldCaptcha:empty{display:none}
+.fieldList{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.fieldList button{min-height:48px;text-align:left;padding:8px 10px;border:1px solid #9fb6cc;border-radius:10px;background:#fff;color:#22333c;font:inherit;font-size:14px;cursor:pointer}
+.fieldList button small{display:block;color:#6b7a83;font-size:12px}
+.fieldMore{margin-top:8px}
+.fieldMore summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:bold;font-size:13px;color:#33424c}
+.fieldHelp{margin-top:8px;color:#6b7a83;font-size:12px;line-height:1.45}
+/* 지도 마커: 파랑(지금 보여요)·청록(다시 나타남)·보라(찾는 중)·회색(안 보여요) 마름모 */
+.fieldMarkerWrap{background:transparent;border:0}
+.fieldMarker{display:block;width:22px;height:22px;margin:6px;box-sizing:border-box;border:3px solid #fff;border-radius:4px;transform:rotate(45deg);background:#1565c0;box-shadow:0 1px 5px rgba(0,0,0,.55)}
+.fieldMarker.searching{background:#6a1b9a}
+.fieldMarker.not_visible{background:#78909c}
+.fieldMarker.reappeared{background:#00897b}
+.fieldMarker.aging{opacity:.8}
+.fieldMarker.old{opacity:.45}
+.fieldMarker.picking{background:#fff;border-color:#1565c0;box-shadow:0 0 0 3px rgba(21,101,192,.35),0 1px 5px rgba(0,0,0,.55)}
+.fieldPop{min-width:190px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;line-height:1.5}
+.fieldPop h4{margin:0 0 2px;font-size:15px}
+.fieldPop .fieldState{font-weight:bold}
+.fieldPop .fieldState.visible{color:#1565c0}.fieldPop .fieldState.searching{color:#6a1b9a}.fieldPop .fieldState.not_visible{color:#546e7a}.fieldPop .fieldState.reappeared{color:#00796b}
+.fieldPop .fieldOld{color:#8d5a00;font-weight:bold}
+.fieldPop ul{margin:4px 0 0;padding-left:16px;color:#455a64;font-size:12px}
+.fieldPopBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fieldPopBtns button{min-height:44px;flex:1 1 auto;padding:6px 10px;border:2px solid #1565c0;border-radius:8px;background:#fff;color:#0d47a1;font:inherit;font-weight:bold;cursor:pointer}
+body.fieldPicking .folium-map{cursor:crosshair}
+@media(max-width:700px){#fieldPanel{bottom:16px}}
 /* GPS 위치 표시: 중심은 고정, 바깥 링만 커지며 사라진다(opacity/transform 만 써서 모바일 부담이 작다). */
 .reportPulseIcon{pointer-events:none}
 .reportPulseRing{display:block;width:24px;height:24px;border-radius:50%;border:2px solid #d32f2f;background:rgba(211,47,47,.25);box-sizing:border-box;animation:reportPulse 1.8s ease-out infinite}
@@ -4766,11 +4839,777 @@ document.getElementById('recentTabs').addEventListener('keydown',function(e){
   document.getElementById(next==='reports'?'recentTabReports':'recentTabContributors').focus();
 });
 window.matchMedia('(max-width:899px)').addEventListener('change',function(){if(contributorsData&&recentTab==='contributors')renderContributors();});
+/* ── 현장소식 ──────────────────────────────────────────────────────────
+   탐조 현장에서 '지금 보여요 / 찾는 중 / 안 보여요 / 다시 나타남'을 몇 초 만에 나누는 실시간 정보다.
+   출현종 제보(reports)와 데이터·API·마커가 모두 따로이며, 서버(/field-updates)가 응답할 때만 버튼이 나타난다.
+   GPS 는 '지금 보여요'·'찾는 중'을 고른 그 순간 한 번만 읽고(watchPosition 없음), 사용자가 확인하고 등록 버튼을
+   눌러야만 서버로 간다. 위치를 계속 따라가거나 이동 경로를 저장하는 코드는 없다. */
+var FIELD_TTL_HOURS_DEFAULT=3;         // 서버 응답의 ttlHours 가 없을 때만 쓴다
+var FIELD_AGING_MIN=30;                // 이 시간부터 '몇 분 전 정보'를 강조한다
+var FIELD_OLD_MIN=60;                  // 이 시간부터 마커를 흐리게 한다
+var FIELD_REFRESH_MS=60*1000;
+var FIELD_SAME_SPOT_METERS=300;
+var FIELD_SPECIES_PATTERN=/^[가-힣ㄱ-ㅎㅏ-ㅣA-Za-z0-9()'. -]+$/;
+var FIELD_STATUS_LABEL={visible:'지금 보여요',searching:'찾는 중',not_visible:'안 보여요',reappeared:'다시 나타남'};
+var fieldAvailable=false;
+var fieldUpdates=[];
+var fieldTtlHours=FIELD_TTL_HOURS_DEFAULT;
+var fieldClockOffset=0;                // 서버 시각 - 이 기기 시각(ms). 기기 시계가 틀려도 '몇 분 전'이 맞게 한다
+var fieldLayer=null;
+var fieldMarkers={};
+var fieldDraft=null;
+var fieldStepName='menu';
+var fieldPicking=false;
+var fieldPreview=null;
+var fieldGpsBusy=false;
+var fieldBusy=false;
+var fieldTurnstileId=null;
+var fieldTurnstileToken='';
+var fieldMemoryDevice='';
+var fieldToastTimer=null;
+
+function fieldEl(id){return document.getElementById(id);}
+function fieldMap(){return map_7010a44f6ac2025090f0fe07508ed485;}
+
+function fieldDeviceId(){
+  try{
+    var saved=localStorage.getItem('birdmapFieldDevice');
+    if(saved&&/^[A-Za-z0-9_-]{16,64}$/.test(saved))return saved;
+    var fresh=crypto.randomUUID().replace(/-/g,'');
+    localStorage.setItem('birdmapFieldDevice',fresh);
+    return fresh;
+  }catch(error){
+    if(!fieldMemoryDevice)fieldMemoryDevice=crypto.randomUUID().replace(/-/g,'');
+    return fieldMemoryDevice;
+  }
+}
+function fieldSavedNickname(){
+  try{return localStorage.getItem('birdmapFieldNickname')||'';}catch(error){return '';}
+}
+function fieldSaveNickname(name){
+  try{localStorage.setItem('birdmapFieldNickname',name);}catch(error){}
+}
+
+/* ── 시간 표시 ── */
+function fieldNowMs(){return Date.now()+fieldClockOffset;}
+function fieldClock(iso){
+  if(!iso)return '';
+  var date=new Date(iso);
+  if(isNaN(date.getTime()))return '';
+  return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);
+}
+function fieldActivityMs(update){
+  var changed=Date.parse(update.updatedAt)||0;
+  var confirmed=update.lastConfirmedAt?(Date.parse(update.lastConfirmedAt)||0):0;
+  return Math.max(changed,confirmed);
+}
+function fieldAgeMin(update){
+  return Math.max(0,Math.floor((fieldNowMs()-fieldActivityMs(update))/60000));
+}
+function fieldAgeText(minutes){
+  if(minutes<1)return '방금';
+  if(minutes<60)return minutes+'분 전';
+  var hours=Math.floor(minutes/60),rest=minutes%60;
+  return rest?hours+'시간 '+rest+'분 전':hours+'시간 전';
+}
+function fieldIsActive(update){
+  return fieldAgeMin(update)<=fieldTtlHours*60;
+}
+
+/* ── 서버 통신 ── */
+function fieldApi(path,method,payload){
+  var options={method:method,cache:'no-store'};
+  if(payload){options.headers={'Content-Type':'application/json'};options.body=JSON.stringify(payload);}
+  return fetch(REPORTS_API_URL+path,options).then(function(response){
+    return response.json().catch(function(){return null;}).then(function(body){
+      return {ok:response.ok&&body&&body.ok===true,status:response.status,body:body};
+    });
+  });
+}
+function fieldErrorText(result,fallback){
+  var message=result&&result.body&&result.body.error&&result.body.error.message;
+  return message||fallback;
+}
+function fieldValidUpdate(update){
+  return update&&typeof update.id==='string'&&typeof update.species==='string'&&FIELD_STATUS_LABEL[update.status]
+    &&typeof update.lat==='number'&&typeof update.lon==='number'&&typeof update.updatedAt==='string'
+    &&typeof update.firstSeenAt==='string'&&Array.isArray(update.history);
+}
+function loadFieldUpdates(){
+  if(!reportsConfigured())return Promise.resolve(false);
+  return fieldApi('/field-updates','GET').then(function(result){
+    if(!result.ok||!Array.isArray(result.body.updates))throw new Error('field-updates '+result.status);
+    var serverTime=Date.parse(result.body.serverTime);
+    if(!isNaN(serverTime))fieldClockOffset=serverTime-Date.now();
+    if(typeof result.body.ttlHours==='number'&&result.body.ttlHours>0)fieldTtlHours=result.body.ttlHours;
+    fieldUpdates=result.body.updates.filter(fieldValidUpdate);
+    if(!fieldAvailable){fieldAvailable=true;fieldEl('fieldToggleBtn').hidden=false;}
+    renderFieldMarkers();
+    if(!fieldEl('fieldPanel').hidden&&(fieldStepName==='pickThread'))fieldRender();
+    return true;
+  }).catch(function(){return false;});  // 서버가 아직 없거나 실패하면 버튼을 만들지 않고 조용히 넘어간다
+}
+
+/* ── 지도 마커 ── */
+function fieldMarkerClass(update){
+  return 'fieldMarker '+update.status+(fieldAgeMin(update)>FIELD_OLD_MIN?' old':'');
+}
+function fieldMarkerSignature(update){
+  return [update.status,update.updatedAt,update.lastConfirmedAt,update.confirmCount,update.count,update.lat,update.lon,update.history.length,fieldMarkerClass(update)].join('|');
+}
+function fieldFind(id){
+  for(var i=0;i<fieldUpdates.length;i++){if(fieldUpdates[i].id===id)return fieldUpdates[i];}
+  return null;
+}
+function renderFieldMarkers(){
+  var map=fieldMap();
+  if(!fieldLayer)fieldLayer=L.layerGroup().addTo(map);
+  var seen={};
+  fieldUpdates.filter(fieldIsActive).forEach(function(update){
+    seen[update.id]=true;
+    var signature=fieldMarkerSignature(update);
+    var entry=fieldMarkers[update.id];
+    var icon=L.divIcon({className:'fieldMarkerWrap',html:'<span class="'+fieldMarkerClass(update)+'"></span>',iconSize:[34,34],iconAnchor:[17,17]});
+    if(!entry){
+      var marker=L.marker([update.lat,update.lon],{icon:icon,keyboard:false,title:update.species+' · '+FIELD_STATUS_LABEL[update.status]});
+      marker.bindPopup(function(){return fieldPopupNode(fieldFind(update.id)||update);},{maxWidth:280,autoPanPadding:[20,80]});
+      marker.addTo(fieldLayer);
+      fieldMarkers[update.id]={marker:marker,signature:signature};
+    }else if(entry.signature!==signature){
+      entry.marker.setLatLng([update.lat,update.lon]);
+      entry.marker.setIcon(icon);
+      entry.signature=signature;
+      if(entry.marker.isPopupOpen())entry.marker.getPopup().setContent(fieldPopupNode(update));
+    }
+  });
+  Object.keys(fieldMarkers).forEach(function(id){
+    if(seen[id])return;
+    fieldLayer.removeLayer(fieldMarkers[id].marker);
+    delete fieldMarkers[id];
+  });
+}
+
+function fieldLine(text,className){
+  var line=document.createElement('div');
+  if(className)line.className=className;
+  line.textContent=text;
+  return line;
+}
+function fieldPopupNode(update){
+  var node=document.createElement('div');
+  node.className='fieldPop';
+  var title=document.createElement('h4');
+  title.textContent=update.species+(update.count?' · '+update.count+'개체':'');
+  node.appendChild(title);
+  var age=fieldAgeMin(update);
+  var state=fieldLine(FIELD_STATUS_LABEL[update.status],'fieldState '+update.status);
+  node.appendChild(state);
+  node.appendChild(fieldLine(fieldAgeText(age)+' 정보'+(age>=FIELD_AGING_MIN?' (시간이 지났어요)':''),age>=FIELD_AGING_MIN?'fieldOld':''));
+  node.appendChild(fieldLine('등록 '+update.nickname));
+  node.appendChild(fieldLine('최초 관찰 '+fieldClock(update.firstSeenAt)));
+  if(update.lastConfirmedAt)node.appendChild(fieldLine('최근 확인 '+fieldClock(update.lastConfirmedAt)));
+  if(update.confirmCount>0)node.appendChild(fieldLine('회원 '+update.confirmCount+'명 확인'));
+  if(update.note)node.appendChild(fieldLine('메모 · '+update.note));
+  if(update.locationHidden)node.appendChild(fieldLine('보호를 위해 대략적인 위치로 표시돼요.','fieldOld'));
+  if(update.history.length){
+    var list=document.createElement('ul');
+    update.history.forEach(function(item){
+      var li=document.createElement('li');
+      li.textContent=fieldClock(item.at)+' '+(FIELD_STATUS_LABEL[item.status]||'')+' · '+item.nickname;
+      list.appendChild(li);
+    });
+    node.appendChild(list);
+  }
+  var buttons=document.createElement('div');
+  buttons.className='fieldPopBtns';
+  function add(label,handler){
+    var button=document.createElement('button');
+    button.type='button';
+    button.textContent=label;
+    button.onclick=handler;
+    buttons.appendChild(button);
+  }
+  if(update.status==='visible'||update.status==='reappeared'){
+    add('확인',function(){fieldConfirm(update.id);});
+    add('안 보여요',function(){fieldStatusStart(update.id,'not_visible');});
+  }else if(update.status==='searching'){
+    add('지금 보여요',function(){fieldStatusStart(update.id,'visible');});
+    add('안 보여요',function(){fieldStatusStart(update.id,'not_visible');});
+  }else{
+    add('다시 나타남',function(){fieldStatusStart(update.id,'reappeared');});
+  }
+  node.appendChild(buttons);
+  return node;
+}
+
+function fieldToast(text,kind){
+  var toast=fieldEl('fieldToast');
+  if(!toast){
+    toast=document.createElement('div');
+    toast.id='fieldToast';
+    toast.setAttribute('role','status');
+    toast.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:10003;max-width:min(340px,calc(100vw - 24px));padding:10px 14px;border-radius:10px;color:#fff;font:14px/1.45 Arial,"Malgun Gothic",sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.35);text-align:center';
+    document.body.appendChild(toast);
+  }
+  toast.style.background=kind==='error'?'#8d2418':'#1b5e20';
+  toast.textContent=text;
+  toast.style.display='block';
+  clearTimeout(fieldToastTimer);
+  fieldToastTimer=setTimeout(function(){toast.style.display='none';},3500);
+}
+
+function fieldReplace(update){
+  var replaced=false;
+  fieldUpdates=fieldUpdates.map(function(item){if(item.id===update.id){replaced=true;return update;}return item;});
+  if(!replaced)fieldUpdates.unshift(update);
+  renderFieldMarkers();
+}
+
+/* ── 확인 / 상태 변경 ── */
+function fieldConfirm(id){
+  if(fieldBusy)return;
+  fieldBusy=true;
+  fieldApi('/field-updates/'+id+'/confirm','POST',{deviceId:fieldDeviceId()}).then(function(result){
+    if(result.ok&&fieldValidUpdate(result.body.update)){
+      fieldReplace(result.body.update);
+      fieldToast('확인했어요. 고마워요!');
+    }else{
+      fieldToast(fieldErrorText(result,'확인하지 못했어요. 잠시 후 다시 시도해 주세요.'),'error');
+      if(result.status===410||result.status===404)loadFieldUpdates();
+    }
+  }).catch(function(){
+    fieldToast('확인하지 못했어요. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.','error');
+  }).then(function(){fieldBusy=false;});
+}
+function fieldStatusStart(id,status){
+  var update=fieldFind(id);
+  if(!update)return;
+  fieldMap().closePopup();
+  openFieldPanel();
+  fieldDraft={mode:'status',id:id,status:status,nickname:fieldSavedNickname()};
+  fieldGo('status');
+}
+function fieldSubmitStatus(){
+  if(fieldBusy||!fieldDraft)return;
+  var update=fieldFind(fieldDraft.id);
+  if(!update)return;
+  if(!fieldTurnstileToken){fieldSay('자동 등록 방지 확인을 완료해 주세요.','error');return;}
+  var nickname=(fieldDraft.nickname||'').trim();
+  fieldSaveNickname(nickname);
+  fieldBusy=true;
+  fieldSay('등록하는 중...','');
+  fieldApi('/field-updates/'+update.id+'/status','POST',{
+    status:fieldDraft.status,nickname:nickname,deviceId:fieldDeviceId(),turnstileToken:fieldTurnstileToken
+  }).then(function(result){
+    if(result.ok&&fieldValidUpdate(result.body.update)){
+      fieldReplace(result.body.update);
+      fieldToast('‘'+FIELD_STATUS_LABEL[fieldDraft.status]+'’ 상태로 등록했어요.');
+      closeFieldPanel();
+    }else{
+      fieldSay(fieldErrorText(result,'현장소식을 등록하지 못했습니다. 잠시 후 다시 시도해 주세요.'),'error');
+      if(result.status===410||result.status===404||result.status===409)loadFieldUpdates();
+    }
+  }).catch(function(){
+    fieldSay('현장소식을 등록하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.','error');
+  }).then(function(){fieldBusy=false;fieldResetCaptcha();});
+}
+
+/* ── 자동 등록 방지(Turnstile). 출현종 제보와 같은 사이트키를 쓰되 위젯은 따로 만든다. ── */
+function fieldEnsureCaptcha(){
+  if(fieldTurnstileId!==null)return;
+  var host=fieldEl('fieldCaptcha');
+  function render(){
+    if(fieldTurnstileId!==null||!window.turnstile)return;
+    fieldTurnstileId=window.turnstile.render(host,{
+      sitekey:REPORTS_TURNSTILE_SITE_KEY,size:'flexible',
+      callback:function(token){fieldTurnstileToken=token;},
+      'expired-callback':function(){fieldTurnstileToken='';fieldResetCaptcha();},
+      'error-callback':function(){fieldTurnstileToken='';fieldSay('자동 등록 방지 확인을 표시하지 못했습니다. 새로고침 후 다시 시도해 주세요.','error');}
+    });
+  }
+  if(window.turnstile){render();return;}
+  if(document.getElementById('turnstileScript')){
+    var wait=setInterval(function(){if(window.turnstile){clearInterval(wait);render();}},200);
+    return;
+  }
+  var script=document.createElement('script');
+  script.id='turnstileScript';
+  script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.async=true;
+  script.defer=true;
+  script.onload=render;
+  document.head.appendChild(script);
+}
+function fieldResetCaptcha(){
+  fieldTurnstileToken='';
+  if(fieldTurnstileId!==null&&window.turnstile)window.turnstile.reset(fieldTurnstileId);
+}
+
+/* ── 패널 ── */
+function fieldSay(text,kind){
+  var box=fieldEl('fieldMsg');
+  if(!box)return;
+  box.textContent=text||'';
+  box.className='fieldMsg'+(kind?' '+kind:'');
+}
+function openFieldPanel(){
+  if(!fieldAvailable)return;
+  var panel=fieldEl('fieldPanel');
+  panel.hidden=false;
+  document.body.classList.add('fieldMode');
+  fieldMap().closePopup();
+  fieldDraft=null;
+  fieldGo('menu');
+}
+function closeFieldPanel(){
+  fieldStopPicking();
+  fieldClearPreview();
+  fieldDraft=null;
+  fieldEl('fieldPanel').hidden=true;
+  fieldEl('fieldPanel').classList.remove('fieldCompact');
+  document.body.classList.remove('fieldMode');
+  fieldSay('','');
+  fieldEl('fieldCaptcha').style.display='none';
+}
+function fieldGo(step){
+  fieldStepName=step;
+  fieldSay('','');
+  fieldRender();
+}
+function fieldBack(){
+  fieldStopPicking();
+  if(fieldStepName==='menu')return closeFieldPanel();
+  fieldClearPreview();
+  fieldDraft=null;
+  fieldGo('menu');
+}
+function fieldButton(label,className,handler){
+  var button=document.createElement('button');
+  button.type='button';
+  button.textContent=label;
+  if(className)button.className=className;
+  button.onclick=handler;
+  return button;
+}
+function fieldRender(){
+  var body=fieldEl('fieldBody');
+  var panel=fieldEl('fieldPanel');
+  var step=fieldStepName;
+  body.innerHTML='';
+  panel.classList.toggle('fieldCompact',step==='pick');
+  fieldEl('fieldBack').hidden=step==='menu';
+  fieldEl('fieldCaptcha').style.display=(step==='form'||step==='status')?'block':'none';
+  fieldEl('fieldTitle').textContent=step==='menu'?'현장소식':(fieldDraft&&fieldDraft.status?FIELD_STATUS_LABEL[fieldDraft.status]:'현장소식');
+  if(step==='menu')return fieldRenderMenu(body);
+  if(step==='pickThread')return fieldRenderThreads(body);
+  if(step==='form')return fieldRenderForm(body);
+  if(step==='pick')return fieldRenderPick(body);
+  if(step==='status')return fieldRenderStatus(body);
+}
+function fieldRenderMenu(body){
+  var grid=document.createElement('div');
+  grid.className='fieldBigBtns';
+  grid.appendChild(fieldButton('👀 지금 보여요','fieldVisible',function(){fieldStartForm('visible');}));
+  grid.appendChild(fieldButton('🔎 찾는 중','fieldSearching',function(){fieldStartForm('searching');}));
+  grid.appendChild(fieldButton('🚫 안 보여요','fieldNotVisible',function(){fieldStartThreads('not_visible');}));
+  grid.appendChild(fieldButton('✨ 다시 나타남','fieldReappeared',function(){fieldStartThreads('reappeared');}));
+  body.appendChild(grid);
+  var help=document.createElement('div');
+  help.className='fieldHelp';
+  help.textContent='현재 위치는 등록할 때 한 번만 확인해요. 위치를 계속 따라가지 않고, 확인한 뒤 등록을 눌러야 올라가요. 소식은 '+fieldTtlHours+'시간 뒤 자동으로 사라져요.';
+  body.appendChild(help);
+}
+
+/* '안 보여요'·'다시 나타남'은 이미 올라온 소식을 골라서 이어 붙인다. */
+function fieldStartThreads(status){
+  fieldDraft={mode:'thread',status:status};
+  fieldGo('pickThread');
+}
+function fieldRenderThreads(body){
+  var wanted=fieldDraft.status==='reappeared'?['not_visible']:['visible','reappeared','searching'];
+  var items=fieldUpdates.filter(function(update){return fieldIsActive(update)&&wanted.indexOf(update.status)>=0;});
+  var intro=document.createElement('div');
+  intro.className='fieldHelp';
+  intro.textContent=items.length?'어떤 소식인가요?':(fieldDraft.status==='reappeared'
+    ?'다시 나타났다고 알릴 소식이 없어요. 안 보여요로 올라온 소식이 있을 때 선택할 수 있어요.'
+    :'지금 올라와 있는 소식이 없어요.');
+  body.appendChild(intro);
+  var list=document.createElement('div');
+  list.className='fieldList';
+  items.forEach(function(update){
+    var button=document.createElement('button');
+    button.type='button';
+    button.textContent=update.species+(update.count?' · '+update.count+'개체':'');
+    var small=document.createElement('small');
+    small.textContent=FIELD_STATUS_LABEL[update.status]+' · '+fieldAgeText(fieldAgeMin(update))+' · '+update.nickname;
+    button.appendChild(small);
+    button.onclick=function(){fieldDraft={mode:'status',id:update.id,status:fieldDraft.status,nickname:fieldSavedNickname()};fieldGo('status');};
+    list.appendChild(button);
+  });
+  body.appendChild(list);
+}
+function fieldRenderStatus(body){
+  var update=fieldFind(fieldDraft.id);
+  if(!update){body.appendChild(fieldLine('사라졌거나 찾을 수 없는 소식이에요.','fieldHelp'));return;}
+  var question=document.createElement('div');
+  question.textContent=update.species+' 소식을 ‘'+FIELD_STATUS_LABEL[fieldDraft.status]+'’ 상태로 올릴까요?';
+  question.style.cssText='margin-top:10px;font-weight:bold;line-height:1.5';
+  body.appendChild(question);
+  var label=document.createElement('label');
+  label.className='fieldLabel';
+  label.textContent='닉네임';
+  var input=document.createElement('input');
+  input.type='text';input.maxLength=20;input.value=fieldDraft.nickname||'';input.placeholder='닉네임(없으면 익명)';
+  input.oninput=function(){fieldDraft.nickname=input.value;};
+  label.appendChild(input);
+  body.appendChild(label);
+  var row=document.createElement('div');
+  row.className='fieldRow';
+  row.appendChild(fieldButton('올리기','fieldBtn fieldPrimary',fieldSubmitStatus));
+  row.lastChild.style.flex='1 1 auto';
+  body.appendChild(row);
+  fieldEnsureCaptcha();
+}
+
+/* ── 지금 보여요 / 찾는 중 등록 ── */
+function fieldStartForm(status){
+  fieldDraft={mode:'create',status:status,species:'',count:1,countUnknown:false,note:'',nickname:fieldSavedNickname(),
+    lat:null,lon:null,source:null,accuracy:null,gps:null,gpsState:'idle',gpsMessage:'',dup:false};
+  fieldGo('form');
+  fieldRequestGps();   // 이 순간에만 GPS 권한을 요청한다. 종명을 입력하는 동안 위치를 함께 확인한다.
+}
+function fieldSpeciesPool(){
+  var pool={};
+  function add(name){
+    name=String(name||'').trim();
+    if(name.length>=2&&name.length<=15&&/^[가-힣]+$/.test(name))pool[name]=true;
+  }
+  if(typeof siteData!=='undefined')siteData.forEach(function(site){String(site.birds||'').split(/[,·\/、]+/).forEach(add);});
+  if(typeof reportSearchIndex!=='undefined')reportSearchIndex.forEach(function(entry){(entry.species||[]).forEach(add);});
+  fieldUpdates.forEach(function(update){add(update.species);});
+  return Object.keys(pool);
+}
+function fieldSuggestions(query){
+  query=String(query||'').trim();
+  if(!query)return [];
+  var pool=fieldSpeciesPool(),starts=[],contains=[];
+  pool.forEach(function(name){
+    if(name===query)return;
+    if(name.indexOf(query)===0)starts.push(name);
+    else if(name.indexOf(query)>0)contains.push(name);
+  });
+  starts.sort();contains.sort();
+  return starts.concat(contains).slice(0,6);
+}
+function fieldRenderForm(body){
+  var draft=fieldDraft;
+  var refs={};
+  var speciesLabel=document.createElement('label');
+  speciesLabel.className='fieldLabel';
+  speciesLabel.textContent='종명';
+  refs.species=document.createElement('input');
+  refs.species.type='text';refs.species.maxLength=30;refs.species.autocomplete='off';refs.species.value=draft.species;
+  refs.species.placeholder='예: 검은어깨매';
+  refs.species.setAttribute('enterkeyhint','done');
+  speciesLabel.appendChild(refs.species);
+  body.appendChild(speciesLabel);
+  refs.suggest=document.createElement('div');
+  refs.suggest.className='fieldSuggest';
+  body.appendChild(refs.suggest);
+  function showSuggest(){
+    refs.suggest.innerHTML='';
+    fieldSuggestions(draft.species).forEach(function(name){
+      refs.suggest.appendChild(fieldButton(name,'',function(){draft.species=name;refs.species.value=name;showSuggest();syncSubmit();}));
+    });
+  }
+  refs.species.oninput=function(){draft.species=refs.species.value;showSuggest();syncSubmit();};
+
+  var countLabel=document.createElement('span');
+  countLabel.className='fieldLabel';
+  countLabel.textContent='개체수';
+  body.appendChild(countLabel);
+  var stepRow=document.createElement('div');
+  stepRow.className='fieldStep';
+  refs.count=document.createElement('output');
+  function syncCount(){refs.count.textContent=draft.countUnknown?'모름':String(draft.count);}
+  stepRow.appendChild(fieldButton('−','',function(){draft.countUnknown=false;draft.count=Math.max(1,draft.count-1);syncCount();}));
+  stepRow.appendChild(refs.count);
+  stepRow.appendChild(fieldButton('+','',function(){draft.countUnknown=false;draft.count=Math.min(999,draft.count+1);syncCount();}));
+  stepRow.appendChild(fieldButton('모름','fieldGhost',function(){draft.countUnknown=!draft.countUnknown;syncCount();}));
+  body.appendChild(stepRow);
+  syncCount();
+
+  refs.loc=document.createElement('div');
+  refs.loc.className='fieldLoc';
+  body.appendChild(refs.loc);
+
+  var noteLabel=document.createElement('label');
+  noteLabel.className='fieldLabel';
+  noteLabel.textContent='메모 (선택)';
+  var note=document.createElement('input');
+  note.type='text';note.maxLength=100;note.value=draft.note;note.placeholder='예: 전봇대 위, 논 중앙, 비행 중';
+  note.oninput=function(){draft.note=note.value;};
+  noteLabel.appendChild(note);
+  // 메모와 닉네임은 접어 두어 작은 화면에서도 등록 버튼까지 한 화면에 들어오게 한다.
+  var more=document.createElement('details');
+  more.className='fieldMore';
+  var summary=document.createElement('summary');
+  summary.textContent='메모·닉네임 (선택)';
+  more.appendChild(summary);
+  more.appendChild(noteLabel);
+  body.appendChild(more);
+
+  var nickLabel=document.createElement('label');
+  nickLabel.className='fieldLabel';
+  nickLabel.textContent='닉네임';
+  var nick=document.createElement('input');
+  nick.type='text';nick.maxLength=20;nick.value=draft.nickname;nick.placeholder='닉네임(없으면 익명)';
+  nick.oninput=function(){draft.nickname=nick.value;};
+  nickLabel.appendChild(nick);
+  more.appendChild(nickLabel);
+
+  var row=document.createElement('div');
+  row.className='fieldRow';
+  refs.submit=fieldButton('이 위치로 등록','fieldBtn fieldPrimary',fieldSubmitCreate);
+  refs.submit.style.flex='1 1 auto';
+  row.appendChild(refs.submit);
+  body.appendChild(row);
+
+  function syncSubmit(){refs.submit.disabled=!(draft.species.trim()&&draft.lat!==null&&!fieldBusy);}
+  fieldFormRefs={loc:refs.loc,sync:syncSubmit};
+  fieldRenderLoc();
+  showSuggest();
+  syncSubmit();
+  fieldEnsureCaptcha();
+}
+var fieldFormRefs=null;
+
+function fieldRenderLoc(){
+  if(!fieldFormRefs||!fieldDraft||fieldStepName!=='form')return;
+  var draft=fieldDraft,box=fieldFormRefs.loc;
+  box.innerHTML='';
+  box.className='fieldLoc';
+  var text=document.createElement('div');
+  var buttons=document.createElement('div');
+  buttons.className='fieldRow';
+  function add(label,handler,primary){
+    var button=fieldButton(label,'fieldBtn'+(primary?' fieldPrimary':''),handler);
+    button.style.flex='1 1 0';
+    buttons.appendChild(button);
+  }
+  if(draft.gpsState==='pending'){
+    text.textContent='현재 위치를 확인하는 중이에요...';
+  }else if(draft.lat!==null&&draft.source==='gps'){
+    box.classList.add('fieldReady');
+    text.textContent='현재 위치를 확인했습니다 · 오차 약 '+draft.accuracy+'m';
+    if(draft.accuracy>=100){
+      var warn=document.createElement('div');
+      warn.className='fieldWarn';
+      warn.textContent='현재 GPS 정확도가 약 ±'+draft.accuracy+'m입니다. 필요하면 지도에서 새 위치를 직접 지정해 주세요.';
+      text.appendChild(warn);
+    }
+    add('새 위치 직접 지정',fieldStartMapPick,false);
+  }else if(draft.lat!==null){
+    box.classList.add('fieldReady');
+    text.textContent='지도에서 선택한 위치입니다. 마커를 끌어 옮길 수도 있어요.';
+    if(draft.gps)add('현재 위치 사용',fieldUseGps,false);else add('위치 다시 찾기',fieldRequestGps,false);
+    add('위치 다시 선택',fieldStartMapPick,false);
+  }else{
+    text.textContent=draft.gpsMessage||'위치를 지정해 주세요.';
+    add('현재 위치 사용',fieldRequestGps,true);
+    add('새 위치 직접 지정',fieldStartMapPick,false);
+  }
+  box.appendChild(text);
+  box.appendChild(buttons);
+  fieldFormRefs.sync();
+}
+
+/* ── GPS(등록하는 순간 한 번) ── */
+function fieldGpsFail(message){
+  fieldGpsBusy=false;
+  if(!fieldDraft)return;
+  fieldDraft.gpsState='fail';
+  fieldDraft.gpsMessage=message;
+  fieldRenderLoc();
+  // 등록이 막히지 않도록 곧바로 지도에서 직접 고르게 한다.
+  if(fieldDraft.lat===null&&fieldStepName==='form'){
+    fieldStartMapPick();
+    fieldSay(message,'error');
+  }
+}
+function fieldRequestGps(){
+  if(fieldGpsBusy||!fieldDraft)return;
+  if(!navigator.geolocation){fieldGpsFail('현재 위치를 확인하지 못했습니다. 지도에서 새의 위치를 직접 선택해 주세요.');return;}
+  fieldGpsBusy=true;
+  var draft=fieldDraft;
+  draft.gpsState='pending';
+  fieldRenderLoc();
+  navigator.geolocation.getCurrentPosition(function(position){
+    fieldGpsBusy=false;
+    if(fieldDraft!==draft)return;   // 그 사이 닫았거나 다른 소식으로 넘어갔으면 버린다
+    var c=position.coords;
+    draft.gps={lat:Number(c.latitude.toFixed(6)),lon:Number(c.longitude.toFixed(6)),accuracy:Math.round(c.accuracy)};
+    draft.gpsState='ok';
+    if(draft.source!=='map')fieldUseGps();
+    else fieldRenderLoc();
+  },function(){
+    if(fieldDraft!==draft){fieldGpsBusy=false;return;}
+    fieldGpsFail('현재 위치를 확인하지 못했습니다. 지도에서 새의 위치를 직접 선택해 주세요.');
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+}
+function fieldUseGps(){
+  var draft=fieldDraft;
+  if(!draft||!draft.gps)return;
+  draft.lat=draft.gps.lat;draft.lon=draft.gps.lon;draft.source='gps';draft.accuracy=draft.gps.accuracy;
+  fieldPlacePreview(draft.lat,draft.lon);
+  fieldMap().setView([draft.lat,draft.lon],Math.max(fieldMap().getZoom(),16),{animate:false});
+  fieldRenderLoc();
+}
+
+/* ── 위치 미리보기·직접 지정 ── */
+function fieldPlacePreview(lat,lon){
+  var map=fieldMap();
+  if(fieldPreview){fieldPreview.setLatLng([lat,lon]);return;}
+  fieldPreview=L.marker([lat,lon],{
+    draggable:true,keyboard:false,zIndexOffset:1000,
+    icon:L.divIcon({className:'fieldMarkerWrap',html:'<span class="fieldMarker picking"></span>',iconSize:[34,34],iconAnchor:[17,17]})
+  }).addTo(map);
+  fieldPreview.on('dragend',function(){
+    var point=fieldPreview.getLatLng();
+    if(!fieldDraft)return;
+    fieldDraft.lat=Number(point.lat.toFixed(6));fieldDraft.lon=Number(point.lng.toFixed(6));fieldDraft.source='map';
+    if(fieldStepName==='form')fieldRenderLoc();else fieldRender();
+  });
+}
+function fieldClearPreview(){
+  if(fieldPreview){fieldMap().removeLayer(fieldPreview);fieldPreview=null;}
+}
+function fieldStartMapPick(){
+  if(!fieldDraft)return;
+  fieldPicking=true;
+  document.body.classList.add('fieldPicking');
+  fieldGo('pick');
+}
+function fieldStopPicking(){
+  fieldPicking=false;
+  document.body.classList.remove('fieldPicking');
+}
+function fieldRenderPick(body){
+  var draft=fieldDraft;
+  body.appendChild(fieldLine(draft.lat===null?'지도에서 새가 있는 곳을 눌러 주세요.':'마커를 끌거나 다른 곳을 눌러 위치를 바꿀 수 있어요.','fieldHelp'));
+  var row=document.createElement('div');
+  row.className='fieldRow';
+  var done=fieldButton('이 위치로 확정','fieldBtn fieldPrimary',function(){
+    if(draft.lat===null)return;
+    fieldStopPicking();
+    fieldGo('form');
+  });
+  done.style.flex='1 1 auto';
+  done.disabled=draft.lat===null;
+  var cancel=fieldButton('취소','fieldBtn',function(){
+    fieldStopPicking();
+    fieldGo('form');
+  });
+  row.appendChild(done);row.appendChild(cancel);
+  body.appendChild(row);
+}
+function fieldMapClick(e){
+  if(!fieldPicking||!fieldDraft)return;
+  if(e.target&&e.target.closest&&e.target.closest('.leaflet-control'))return;
+  e.stopPropagation();
+  e.preventDefault();
+  var point=fieldMap().mouseEventToLatLng(e);
+  fieldDraft.lat=Number(point.lat.toFixed(6));fieldDraft.lon=Number(point.lng.toFixed(6));fieldDraft.source='map';
+  fieldPlacePreview(fieldDraft.lat,fieldDraft.lon);
+  fieldRender();
+}
+
+/* ── 등록 ── */
+function fieldDistanceMeters(aLat,aLon,bLat,bLon){
+  var rad=Math.PI/180,dLat=(bLat-aLat)*rad,dLon=(bLon-aLon)*rad;
+  var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(aLat*rad)*Math.cos(bLat*rad)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return 12742000*Math.asin(Math.sqrt(h));
+}
+function fieldNearbySame(draft){
+  var found=null;
+  fieldUpdates.forEach(function(update){
+    if(found||!fieldIsActive(update))return;
+    if(update.species!==draft.species.trim())return;
+    if(update.status!=='visible'&&update.status!=='reappeared')return;
+    if(fieldDistanceMeters(draft.lat,draft.lon,update.lat,update.lon)<=FIELD_SAME_SPOT_METERS)found=update;
+  });
+  return found;
+}
+function fieldSubmitCreate(){
+  var draft=fieldDraft;
+  if(fieldBusy||!draft)return;
+  var species=draft.species.trim();
+  if(!species){fieldSay('종명을 입력해 주세요.','error');return;}
+  if(species.length>30||!FIELD_SPECIES_PATTERN.test(species)){fieldSay('종명에 쓸 수 없는 글자가 있어요.','error');return;}
+  if(draft.lat===null){fieldSay('새의 위치를 지정해 주세요.','error');return;}
+  if(!fieldTurnstileToken){fieldSay('자동 등록 방지 확인을 완료해 주세요.','error');return;}
+  // 같은 종이 가까이에 이미 올라와 있으면 새 마커를 만들기 전에 '확인'을 권한다(자동으로 합치지는 않는다).
+  var near=draft.status==='visible'&&!draft.dup?fieldNearbySame(draft):null;
+  if(near){
+    draft.dup=true;
+    fieldOfferConfirm(near);
+    return;
+  }
+  var nickname=(draft.nickname||'').trim();
+  fieldSaveNickname(nickname);
+  fieldBusy=true;
+  fieldSay('등록하는 중...','');
+  var payload={
+    status:draft.status,species:species,lat:draft.lat,lon:draft.lon,count:draft.countUnknown?null:draft.count,
+    note:(draft.note||'').trim(),nickname:nickname,deviceId:fieldDeviceId(),locationSource:draft.source,
+    turnstileToken:fieldTurnstileToken
+  };
+  if(draft.source==='gps')payload.gpsAccuracy=draft.accuracy;
+  fieldApi('/field-updates','POST',payload).then(function(result){
+    if(result.ok&&fieldValidUpdate(result.body.update)){
+      fieldReplace(result.body.update);
+      fieldToast('현장소식을 등록했어요.');
+      closeFieldPanel();
+    }else{
+      fieldSay(fieldErrorText(result,'현장소식을 등록하지 못했습니다. 잠시 후 다시 시도해 주세요.'),'error');
+    }
+  }).catch(function(){
+    fieldSay('현장소식을 등록하지 못했습니다. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.','error');
+  }).then(function(){fieldBusy=false;fieldResetCaptcha();if(fieldFormRefs)fieldFormRefs.sync();});
+}
+function fieldOfferConfirm(near){
+  var box=fieldEl('fieldMsg');
+  box.className='fieldMsg';
+  box.innerHTML='';
+  box.appendChild(document.createTextNode('가까운 곳에 같은 새 소식이 이미 있어요('+fieldAgeText(fieldAgeMin(near))+'). 확인으로 대신할까요?'));
+  var row=document.createElement('div');
+  row.className='fieldRow';
+  var confirm=fieldButton('확인으로 대신하기','fieldBtn fieldPrimary',function(){
+    closeFieldPanel();
+    fieldConfirm(near.id);
+  });
+  confirm.style.flex='1 1 0';
+  var again=fieldButton('새로 등록하기','fieldBtn',function(){fieldSay('','');fieldSubmitCreate();});
+  again.style.flex='1 1 0';
+  row.appendChild(confirm);row.appendChild(again);
+  box.appendChild(row);
+}
+
+function initFieldUpdates(){
+  if(!reportsConfigured())return;
+  fieldMap().getContainer().addEventListener('click',fieldMapClick,true);
+  loadFieldUpdates();
+  setInterval(function(){
+    if(!fieldAvailable||document.hidden)return;
+    loadFieldUpdates();
+  },FIELD_REFRESH_MS);
+}
+
 window.addEventListener('load',function(){
   updateMapTitleSiteCount();
   hideBirdmapPanelOnMobile();
   updateMobileUiMetrics();
-  setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);openSharedSiteFromUrl();loadNotices();refreshBirdmapData(true);scheduleBirdmapRefresh();initReportFeature();openViewFromUrl();},300);
+  setTimeout(function(){ensureMasterDbMarkers();rebuildMarkerRegistry();applyResponsiveMarkerSizes();setupResponsivePopups();applyFilters(false);openSharedSiteFromUrl();loadNotices();refreshBirdmapData(true);scheduleBirdmapRefresh();initReportFeature();openViewFromUrl();initFieldUpdates();},300);
 });
 document.addEventListener('visibilitychange',function(){
   scheduleBirdmapRefresh();

@@ -35,6 +35,7 @@ import { quickInput, replayQuick, persistQuick } from "./canonical/persistence.j
 import { applicationDb } from "./canonical/data.js";
 import { shadowRead } from "./canonical/shadow.js";
 import { notifyNewReport } from "./notify.js";
+import { handleFieldUpdates } from "./field-updates.js";
 
 const MAX_BODY_BYTES = 4096;
 // 탐조지별 출현 이력을 한 번에 가져올 건수. 화면은 5건부터 보여 준다.
@@ -471,6 +472,9 @@ export async function handleLegacyRequest(request, env, ctx) {
     if (request.method === "GET" && url.pathname === "/reports/recent-sites") {
       return await handleRecentSites(request, env, url);
     }
+    // 현장소식은 reports 와 별도 테이블·별도 경로다. 경로가 맞지 않으면 null 이라 아래 기존 라우팅이 그대로 이어진다.
+    const fieldResponse = await handleFieldUpdates(request, env, url, { database, readJsonBody });
+    if (fieldResponse) return fieldResponse;
     if (request.method === "GET" && url.pathname === "/contributors/monthly") {
       return await handleMonthlyContributors(request, env, url);
     }
