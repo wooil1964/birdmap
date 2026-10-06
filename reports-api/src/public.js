@@ -402,6 +402,51 @@ async function handleRecentSites(request, env, url) {
   );
 }
 
+// '이번 달 기여자'. 관찰일(observed_on) 기준의 월간 집계만 내보낸다.
+// approvedReports 는 이름 공개 여부와 무관한 모든 승인 제보 수이고,
+// contributors 는 승인 + 이름 공개 동의 + 이름이 있는 제보만 reporter 별로 센다.
+// 종·좌표·탐조지·제보 ID·메모는 질의에도 응답에도 없다. 민감종도 건수에는 들어간다.
+const MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+async function handleMonthlyContributors(request, env, url) {
+  const raw = url.searchParams.get("month");
+  const month = raw === null ? kstDateString(new Date()).slice(0, 7) : raw;
+  if (!MONTH_PATTERN.test(month)) {
+    return jsonResponse(request, env, { error: "invalid_month" }, 400);
+  }
+  const [year, mon] = month.split("-").map(Number);
+  const start = month + "-01";
+  const end = (mon === 12 ? year + 1 + "-01" : year + "-" + String(mon + 1).padStart(2, "0")) + "-01";
+  const db = database(env);
+  const total = await db
+    .prepare(
+      "SELECT COUNT(*) AS n FROM reports WHERE status = 'approved' AND observed_on >= ?1 AND observed_on < ?2",
+    )
+    .bind(start, end)
+    .first();
+  const { results } = await db
+    .prepare(
+      "SELECT reporter, COUNT(*) AS n FROM reports " +
+        "WHERE status = 'approved' AND name_public = 1 AND reporter IS NOT NULL AND TRIM(reporter) != '' " +
+        "AND observed_on >= ?1 AND observed_on < ?2 GROUP BY reporter ORDER BY n DESC, reporter ASC",
+    )
+    .bind(start, end)
+    .all();
+  const contributors = (results || []).map((row) => ({ name: row.reporter, count: Number(row.n) }));
+  return jsonResponse(
+    request,
+    env,
+    {
+      month,
+      approvedReports: Number(total?.n || 0),
+      publicContributors: contributors.length,
+      contributors,
+    },
+    200,
+    { "Cache-Control": "public, max-age=60" },
+  );
+}
+
 export async function handleLegacyRequest(request, env, ctx) {
   try {
     if(request.method==='GET'&&new URL(request.url).pathname==='/_internal/reports-capability')return await internalCapability(request,env,'public');
@@ -425,6 +470,9 @@ export async function handleLegacyRequest(request, env, ctx) {
     }
     if (request.method === "GET" && url.pathname === "/reports/recent-sites") {
       return await handleRecentSites(request, env, url);
+    }
+    if (request.method === "GET" && url.pathname === "/contributors/monthly") {
+      return await handleMonthlyContributors(request, env, url);
     }
     if (url.pathname.startsWith(SITE_HISTORY_PATH)) {
       const siteId = decodeURIComponent(url.pathname.slice(SITE_HISTORY_PATH.length));
@@ -468,7 +516,8 @@ export async function handleLegacyRequest(request, env, ctx) {
       url.pathname !== "/reports" &&
       url.pathname !== "/reports/approved" &&
       url.pathname !== "/reports/pending" &&
-      url.pathname !== "/reports/recent-sites"
+      url.pathname !== "/reports/recent-sites" &&
+      url.pathname !== "/contributors/monthly"
     ) {
       throw new WorkerError("NOT_FOUND", "Unknown endpoint", 404);
     }
