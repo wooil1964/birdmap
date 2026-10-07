@@ -717,10 +717,15 @@ body.monthTideOpen{overflow:hidden}
   .fieldHead strong{font-size:14px}
   .fieldBigBtns{gap:6px;margin-top:7px}
   .fieldBigBtns button{min-height:44px;padding:6px}
-  .fieldBtn{min-height:38px}
+  .fieldBtn{min-height:44px}
   .fieldRow{margin-top:6px}
   .fieldLabel{margin:6px 0 2px}
-  #fieldBody input[type=text]{min-height:38px;padding:4px 10px}
+  #fieldBody input[type=text]{min-height:42px;padding:4px 10px}
+  #fieldBody>.fieldLabel:first-child{margin-top:6px}
+  .fieldLoc{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+  .fieldLoc>div:first-child{flex:1 1 150px}
+  .fieldLoc>.fieldRow{flex:0 1 auto;margin-top:0}
+  .fieldSubmitRow{position:sticky;bottom:0;z-index:1;padding:6px 0 2px;background:#fff}
   .fieldSuggest{gap:5px;margin-top:5px}
   .fieldSuggest button{min-height:36px}
   .fieldStep button{width:44px;min-height:38px}
@@ -728,7 +733,7 @@ body.monthTideOpen{overflow:hidden}
   .fieldLoc{margin-top:6px;padding:4px 9px;line-height:1.35}
   .fieldMsg{margin-top:6px}
   .fieldList button{min-height:44px;padding:6px 10px}
-  .fieldMore summary{min-height:40px}
+  .fieldMore summary{min-height:36px}
 }
 /* 지정 위치 마커(picking): 바깥 링이 커지며 사라지는 펄스. transform/opacity 만 써서 지도 부담이 작다. */
 .fieldMarker.picking{position:relative}
@@ -5479,7 +5484,7 @@ function fieldRenderStatus(body){
 
 /* ── 지금 보여요 / 찾는 중 등록 ── */
 function fieldStartForm(status){
-  fieldDraft={mode:'create',status:status,species:'',count:1,countUnknown:false,note:'',nickname:fieldSavedNickname(),
+  fieldDraft={mode:'create',status:status,species:'',note:'',nickname:fieldSavedNickname(),
     lat:null,lon:null,source:null,accuracy:null,gps:null,gpsState:'idle',gpsMessage:'',dup:false};
   fieldGo('form');
   fieldRequestGps();   // 이 순간에만 GPS 권한을 요청한다. 종명을 입력하는 동안 위치를 함께 확인한다.
@@ -5512,10 +5517,10 @@ function fieldRenderForm(body){
   var refs={};
   var speciesLabel=document.createElement('label');
   speciesLabel.className='fieldLabel';
-  speciesLabel.textContent='종명';
   refs.species=document.createElement('input');
+  refs.species.setAttribute('aria-label','새 이름');
   refs.species.type='text';refs.species.maxLength=30;refs.species.autocomplete='off';refs.species.value=draft.species;
-  refs.species.placeholder='예: 검은어깨매';
+  refs.species.placeholder='새 이름 (예: 검은어깨매)';
   refs.species.setAttribute('enterkeyhint','done');
   speciesLabel.appendChild(refs.species);
   body.appendChild(speciesLabel);
@@ -5529,21 +5534,6 @@ function fieldRenderForm(body){
     });
   }
   refs.species.oninput=function(){draft.species=refs.species.value;showSuggest();syncSubmit();};
-
-  var countLabel=document.createElement('span');
-  countLabel.className='fieldLabel';
-  countLabel.textContent='개체수';
-  body.appendChild(countLabel);
-  var stepRow=document.createElement('div');
-  stepRow.className='fieldStep';
-  refs.count=document.createElement('output');
-  function syncCount(){refs.count.textContent=draft.countUnknown?'모름':String(draft.count);}
-  stepRow.appendChild(fieldButton('−','',function(){draft.countUnknown=false;draft.count=Math.max(1,draft.count-1);syncCount();}));
-  stepRow.appendChild(refs.count);
-  stepRow.appendChild(fieldButton('+','',function(){draft.countUnknown=false;draft.count=Math.min(999,draft.count+1);syncCount();}));
-  stepRow.appendChild(fieldButton('모름','fieldGhost',function(){draft.countUnknown=!draft.countUnknown;syncCount();}));
-  body.appendChild(stepRow);
-  syncCount();
 
   refs.loc=document.createElement('div');
   refs.loc.className='fieldLoc';
@@ -5575,7 +5565,7 @@ function fieldRenderForm(body){
   more.appendChild(nickLabel);
 
   var row=document.createElement('div');
-  row.className='fieldRow';
+  row.className='fieldRow fieldSubmitRow';
   refs.submit=fieldButton('이 위치로 등록','fieldBtn fieldPrimary',fieldSubmitCreate);
   refs.submit.style.flex='1 1 auto';
   row.appendChild(refs.submit);
@@ -5607,7 +5597,7 @@ function fieldRenderLoc(){
     text.textContent='현재 위치를 확인하는 중이에요...';
   }else if(draft.lat!==null&&draft.source==='gps'){
     box.classList.add('fieldReady');
-    text.textContent='현재 위치를 확인했습니다 · 오차 약 '+draft.accuracy+'m';
+    text.textContent='현재 위치 확인됨 · 오차 약 '+draft.accuracy+'m';
     if(draft.accuracy>=100){
       var warn=document.createElement('div');
       warn.className='fieldWarn';
@@ -5617,7 +5607,7 @@ function fieldRenderLoc(){
     add('새 위치 직접 지정',fieldStartMapPick,false);
   }else if(draft.lat!==null){
     box.classList.add('fieldReady');
-    text.textContent='지도에서 선택한 위치입니다. 마커를 끌어 옮길 수도 있어요.';
+    text.textContent='지도에서 고른 위치 · 마커를 끌어 옮길 수 있어요';
     if(draft.gps)add('현재 위치 사용',fieldUseGps,false);else add('위치 다시 찾기',fieldRequestGps,false);
     add('위치 다시 선택',fieldStartMapPick,false);
   }else{
@@ -5766,7 +5756,7 @@ function fieldSubmitCreate(){
   fieldBusy=true;
   fieldSay('등록하는 중...','');
   var payload={
-    status:draft.status,species:species,lat:draft.lat,lon:draft.lon,count:draft.countUnknown?null:draft.count,
+    status:draft.status,species:species,lat:draft.lat,lon:draft.lon,count:null,
     note:(draft.note||'').trim(),nickname:nickname,deviceId:fieldDeviceId(),locationSource:draft.source,
     turnstileToken:fieldTurnstileToken
   };
