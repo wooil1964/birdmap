@@ -428,6 +428,8 @@ body.reportPicking #reportPickPanel{display:block}
 /* ── 현장소식(실시간 현장 공유). 출현종 제보(빨강·황색 원)와 겹치지 않도록 파랑·청록·보라 마름모를 쓴다. ── */
 #fieldToggleBtn{pointer-events:auto;min-height:44px;padding:8px 11px;background:#e8f1fb;border:2px solid #1565c0;border-radius:8px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;font-weight:bold;color:#0d47a1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 #fieldToggleBtn[hidden]{display:none}
+/* 현장소식은 현장용 모바일 기능: 주 입력이 마우스류(pointer:fine)인 PC에서는 화면 폭과 무관하게 숨긴다. 터치 기기(Fold 펼침 포함)는 pointer:coarse라 유지. */
+@media (pointer:fine){#fieldToggleBtn{display:none!important}}
 body.reportPicking #fieldToggleBtn,body.fieldMode #fieldToggleBtn{display:none!important}
 /* 현장소식 창이 열려 있는 동안은 지도와 이 창만 남긴다(숨기기만 하므로 닫으면 그대로 돌아온다). */
 body.fieldMode #noticeToggleBtn,body.fieldMode #todayToggleBtn,body.fieldMode #reportToggleBtn,
