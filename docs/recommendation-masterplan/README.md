@@ -7,15 +7,16 @@
 - 운영 기준: `1f0b0b5ca9d3ef887fc0bd2a159ef73429466a25` (2026-10-08 확인)
 - 기존 근거: [Issue #9](https://github.com/wooil1964/birdmap/issues/9), [P0 최종 독립 검증](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6056552946)
 - P0 병합: `eb36d1e` (PR #12), 최종 보완 `e0fc103`는 위 운영 기준의 조상이다.
+- 세션 재개 후 확인한 main: `35141c04d4fd152982b1f4683d5b7a6f4f7514e5`. 차이는 기상 JSON 두 개이며 추천 코드는 위 고정 기준과 동일하다.
 - 첫 세션 범위: 운영 기준·데이터 흐름 확정, 우선순위, 재개 문서, P1-A 점수 분포 분석 착수.
 
 ## 문서와 상태
 
 |문서|역할|현재 상태|
 |---|---|---|
-|[PROGRESS.md](PROGRESS.md)|단계별 완료/미완료|첫 체크포인트|
-|[FINDINGS.md](FINDINGS.md)|확인 사실과 미확인 질문|기준 확정|
-|P1_DESIGN.md|점수·순위 분석과 대안|P1-A 분석 후 생성|
+|[PROGRESS.md](PROGRESS.md)|단계별 완료/미완료|첫 세션 체크포인트|
+|[FINDINGS.md](FINDINGS.md)|확인 사실·데이터 흐름·근거|첫 스냅샷 조사 완료|
+|[P1_DESIGN.md](P1_DESIGN.md)|점수·순위 분석과 대안|P1-A 첫 정량 결과, 대안은 초안|
 |P2_DESIGN.md|생태·계절·조석 근거|미착수, 아직 미작성|
 |P3_DESIGN.md|맞춤 추천·모바일·개인정보|미착수, 아직 미작성|
 |P4_VALIDATION.md|비교 실험·품질 관리·롤백|미착수, 아직 미작성|
@@ -35,3 +36,21 @@ P0 안전 관문 및 기존 물높이 기준을 유지한다. 관찰 가능성·
 P1-A 측정 → P1-B 동점 반복 실험 → P1-C 제보·자료 품질 → P1-D 유형 균형 → P1 동일 입력 대안 비교. P2 문헌·현장자료·계절/서식환경 요구를 별도로 구축한 뒤 P3 필터·UX와 연결한다. P4의 재현·안전·보호 검증 기준은 각 단계 비교에 먼저 적용하고 장기 운영 설계는 후속 세션에서 확정한다.
 
 점수 분산 증가만으로 개선을 주장하지 않는다. 현 시점에는 새로운 배점·출현 확률·개선율이 확정되지 않았다.
+
+## 재현 가능한 분석 자료
+
+- [입력 manifest](_snapshots/input_manifest.json): Git blob SHA/SHA256와 제보 취득 시각·해시.
+- [190곳 전체 분석](_results/p1a_1f0b0b5_1930.json) / [요약](_results/p1a_1f0b0b5_1930_summary.json).
+- [분석 도구](_scripts/analyze_p1a.mjs): 원문 함수 추출, 고정 시계, 제보 있음/없음 대조.
+- [검증 기록](_results/validation_session1.json).
+
+```sh
+node docs/recommendation-masterplan/_scripts/analyze_p1a.mjs
+```
+
+위 명령은 최신 JSON을 재다운로드하지 않고 manifest의 Git object와 고정 공개 집계를 사용한다. `--write`는 이 분석 폴더의 결과 파일만 다시 생성한다. clone이 shallow하여 기준 커밋이 없다면 기준 SHA를 먼저 fetch해야 한다.
+
+## 첫 세션 결과의 범위
+
+현재 저장 원점수는 183/190곳이 92점이다. 저장 적격189곳에서는182곳, 추천 후보175곳에서는150곳이다. 팝업의 신선도 판정·강수 표시 보정·내부 순위 점수는 별도로 계산했다. P1-A는 단일 시점의 1차 측정이며 P1 전체 설계, 계절 예측력, 새로운 배점은 아직 완료되지 않았다.
+

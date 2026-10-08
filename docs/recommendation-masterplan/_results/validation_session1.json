@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "1f0b0b5ca9d3ef887fc0bd2a159ef73429466a25",
+  "observedMain": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "evaluationClock": "2026-10-08T19:30:00+09:00",
+  "runtime": "Node v24.18.0 / bundled Python",
+  "checks": [
+    {
+      "name": "input_git_blob_sha256",
+      "result": "pass",
+      "count": 16
+    },
+    {
+      "name": "public_report_whitelist_and_hash",
+      "result": "pass",
+      "sites": 11
+    },
+    {
+      "name": "same_input_repeat",
+      "result": "pass",
+      "comparison": "byte-identical"
+    },
+    {
+      "name": "independent_replay",
+      "result": "pass",
+      "siteRows": 190,
+      "commonFields": 22,
+      "topScenarios": 2
+    },
+    {
+      "name": "runtime_worker_registry",
+      "result": "pass",
+      "runtime": 190,
+      "worker": 190,
+      "mismatch": 0
+    },
+    {
+      "name": "weather_today_validator",
+      "result": "pass_with_partial_data_warning",
+      "eligible": 189,
+      "stale": 1
+    },
+    {
+      "name": "weather_week_validator",
+      "result": "pass_with_unavailable_site_warning",
+      "samples": 10584,
+      "unavailable": 1
+    },
+    {
+      "name": "weekly_js",
+      "result": "pass",
+      "tests": 126,
+      "passed": 126,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "weather_python",
+      "result": "pass",
+      "tests": 48,
+      "passed": 48
+    },
+    {
+      "name": "tide_python",
+      "result": "pass_with_skip",
+      "tests": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    {
+      "name": "freshness_independent_boundary",
+      "result": "pass",
+      "eligibleBefore": "2026-10-08 18:46:59 KST:189",
+      "eligibleAfter": "2026-10-08 18:47:00 KST:0"
+    }
+  ],
+  "environmentNotes": [
+    "최초Node --import 절대Windows경로 오류는 ESM file URL/상대경로로 해소.",
+    "Python stdout UTF8 미설정으로 C01 문자열 비교1 실패 후 UTF8 프로세스 어댑터를 설정하여126/126통과.",
+    "원문제품/테스트수정없음. 분석어댑터는본프로젝트 _scripts/python_runtime_preload.mjs."
+  ],
+  "tideSkipReason": "공식 샘플 날짜와 rolling 월간 저장 자료가 겹치지 않는 기존 조건",
+  "notExecuted": [
+    "이번세션브라우저/E2E",
+    "모든계절·장기성과",
+    "배열shuffle반복",
+    "개선안구현/성능비교",
+    "운영D1실데이터조회"
+  ],
+  "latestMainChange": {
+    "commit": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+    "paths": [
+      "weather_today.json",
+      "weather_week.json"
+    ],
+    "generatedAt": "2026-10-08 21:04 KST",
+    "refreshedAt": "2026-10-08 21:08 KST",
+    "codeChanged": false,
+    "usedInFixedReplay": false
+  }
+}
