@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "codeCommit": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "scope": "Actual source GET handler + schema.sql with SQLite :memory:, synthetic rows only. No POST, production D1/API, coordinates, reporter details, deployment or source mutation.",
+  "sourceHashes": {
+    "reports-api/src/public.js": "6cd83da2cae4cbed2c685ad111411d3b38813dff047b65550c0f848dc7486cbe",
+    "reports-api/src/shared.js": "573868045dda6d9a7950ad63ef9805236785accf091cd1d0024a8c45e41c7ad0",
+    "reports-api/test/helpers.mjs": "82717d2dd0022535abc1cb63fc7c6a1fd53970880713e623257393bdb63f7ca4",
+    "reports-api/schema.sql": "e51ddff8abbb9ab67069c566896b005bdad535232e2a7395f8155e3e8eb39b4b"
+  },
+  "functionsSha256": "487f9f43a300f490d3ef1d09a3247c52badc24398109a10dc78fa9294463d05d",
+  "cases": [
+    {
+      "case": "five literal duplicate rows count once",
+      "actual": {
+        "days": 14,
+        "since": "2026-09-24",
+        "today": "2026-10-08",
+        "sites": [
+          {
+            "siteId": "501",
+            "latestDate": "2026-10-08",
+            "species": [
+              "울새"
+            ]
+          }
+        ],
+        "bonus": {
+          "ageDays": 0,
+          "latestDate": "2026-10-08",
+          "speciesCount": 1,
+          "bonus": 12
+        },
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      },
+      "interpretation": "Literal duplicate rows do not increase variety; no observer or effort weighting exists in this aggregate."
+    },
+    {
+      "case": "old four literal strings only at inclusive day14 boundary",
+      "actual": {
+        "days": 14,
+        "since": "2026-09-24",
+        "today": "2026-10-08",
+        "sites": [
+          {
+            "siteId": "501",
+            "latestDate": "2026-09-24",
+            "species": [
+              "울새",
+              "노랑할미새",
+              "힝등새",
+              "솔딱새"
+            ]
+          }
+        ],
+        "bonus": {
+          "ageDays": 14,
+          "latestDate": "2026-09-24",
+          "speciesCount": 4,
+          "bonus": 6
+        },
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      }
+    },
+    {
+      "case": "new one-string row refreshes age of entire old four-string union",
+      "actual": {
+        "days": 14,
+        "since": "2026-09-24",
+        "today": "2026-10-08",
+        "sites": [
+          {
+            "siteId": "501",
+            "latestDate": "2026-10-08",
+            "species": [
+              "울새",
+              "노랑할미새",
+              "힝등새",
+              "솔딱새"
+            ]
+          }
+        ],
+        "bonus": {
+          "ageDays": 0,
+          "latestDate": "2026-10-08",
+          "speciesCount": 4,
+          "bonus": 16
+        },
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      },
+      "interpretation": "16 vs previous6 is aggregate age/union behavior, not proof that old species were seen today."
+    },
+    {
+      "case": "actual days1 SQL recomputes one-string union",
+      "actual": {
+        "days": 1,
+        "since": "2026-10-07",
+        "today": "2026-10-08",
+        "sites": [
+          {
+            "siteId": "501",
+            "latestDate": "2026-10-08",
+            "species": [
+              "울새"
+            ]
+          }
+        ],
+        "bonus": {
+          "ageDays": 0,
+          "latestDate": "2026-10-08",
+          "speciesCount": 1,
+          "bonus": 12
+        },
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      },
+      "interpretation": "Unlike client maxLatestAge filter, shorter SQL window reconstructs union from rows; operational row dates are unavailable in the frozen aggregate."
+    },
+    {
+      "case": "quantity-looking suffix produces two literal strings",
+      "actual": {
+        "days": 14,
+        "since": "2026-09-24",
+        "today": "2026-10-08",
+        "sites": [
+          {
+            "siteId": "501",
+            "latestDate": "2026-10-08",
+            "species": [
+              "울새",
+              "울새1"
+            ]
+          }
+        ],
+        "bonus": {
+          "ageDays": 0,
+          "latestDate": "2026-10-08",
+          "speciesCount": 2,
+          "bonus": 14
+        },
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      },
+      "diagnosticSuffixStripCount": 1,
+      "interpretation": "Removing suffix is diagnostic only; no verified taxonomic identity or bird count inferred. Species count2 gives variety2 and total14."
+    },
+    {
+      "case": "age15 row excluded",
+      "actual": {
+        "days": 14,
+        "since": "2026-09-24",
+        "today": "2026-10-08",
+        "sites": [],
+        "bonus": null,
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      }
+    },
+    {
+      "case": "future row excluded",
+      "actual": {
+        "days": 14,
+        "since": "2026-09-24",
+        "today": "2026-10-08",
+        "sites": [],
+        "bonus": null,
+        "rowsUnchanged": true,
+        "privateFieldsInResponse": 0
+      }
+    }
+  ],
+  "passed": 7,
+  "failed": 0,
+  "missingFromPublicAggregate": [
+    "species-specific observed_on",
+    "row-to-species relation",
+    "independent observer identity/count",
+    "observation effort",
+    "validated taxon identifiers",
+    "individual bird counts"
+  ]
+}

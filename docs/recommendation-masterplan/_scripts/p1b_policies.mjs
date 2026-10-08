@@ -1,4 +1,5 @@
 /* Three analysis-only tie policies; never imported by the application. */
+import {fileURLToPath} from 'node:url';
 import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';
 import {loadRuntime,DOCS,sha256} from './recommendation_runtime.mjs';
 import {ordersFor,metrics,compact,invariant,count} from './p1b_experiment.mjs';
@@ -55,7 +56,7 @@ export function select(api,rt,entries,policy,trace=[]){
  }
  return selected;
 }
-if(process.argv.includes('--write')){
+if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url) && process.argv.includes('--write')){
  const rt=loadRuntime('docs/recommendation-masterplan/_snapshots/input_manifest_35141c0_2240.json'),orders=ordersFor(rt.sites),results=[];
  for(const reports of [true,false]){
   const api=rt.makeApi(reports),base=api.todayRecommendedSites(),entries=rt.sites.map((s,stableOrder)=>{

@@ -67,3 +67,7 @@ node docs/recommendation-masterplan/_scripts/analyze_p1a.mjs
 - [후속 P1-C/D 재개](NEXT_SESSION.md)
 
 P1-B 분석은완료됐고운영구현은하지않았다. P1-C/D와P1전체정책·계절/장기성능검증은미완료다.
+
+## P1-C 완료
+
+[12정책](_results/p1c_reports.json), [독립 대조](_results/p1c_independent.json), [보호 표현](_results/p1c_recent_species_contract.json), [집계 시간·문자열](_results/p1c_aggregation_contract.json). 기존보호입력 결함을우선설계보완으로기록했다. 가점최적값·종별확률은미확정. 다음P1-D.

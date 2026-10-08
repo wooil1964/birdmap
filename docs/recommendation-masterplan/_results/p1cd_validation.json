@@ -1,0 +1,52 @@
+{
+  "stage": "P1-C complete; P1-D pending",
+  "analysisStart": "8bd44e3",
+  "experimentCode": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "observedMain": "4fc14b3c7ba19ad4d5b91efa305a80b3d474dc57",
+  "remoteChanges": [
+    "tide_health.json",
+    "tide_today.json",
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "policies": 12,
+  "independent190Checks": 2280,
+  "independentPermutationLists": 12000,
+  "stableA1PermutationInvariant": true,
+  "candidateCount": 176,
+  "negativeIndependentChecks": 858,
+  "negativeRootChecks": 792,
+  "regressions": [
+    {
+      "file": "p1cd_weekly.tap",
+      "tests": 126,
+      "passed": 126,
+      "failed": 0
+    },
+    {
+      "file": "p1cd_reports_api.tap",
+      "tests": 170,
+      "passed": 170,
+      "failed": 0
+    },
+    {
+      "file": "p1cd_broad_js.tap",
+      "tests": 227,
+      "passed": 227,
+      "failed": 0
+    }
+  ],
+  "privateKeysInOutput": 0,
+  "operatingTrackedFilesChanged": 0,
+  "defects": [
+    "Existing sensitive exact-species parser permits quantity/delimiter variants, synthetic GET reproduction only.",
+    "Existing weekly score=null/eligible=true coerces to0; fixed10640 invalideligible0; Python validator rejects."
+  ],
+  "limitations": [
+    "No production D1/API mutation or read in C/D.",
+    "No browser, long term ecological success/effort calibration.",
+    "Python48/tide21+skip1 historical, not new execution.",
+    "JS227/API170/weekly126 overlap and must not be added."
+  ]
+}

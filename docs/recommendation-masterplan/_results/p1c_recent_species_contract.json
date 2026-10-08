@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "sourceCheckpoint": "8bd44e39776a1c3c78dfa870d24becdeb7a4b8b2",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "scope": "Original GET handler and schema.sql, SQLite :memory: helper, synthetic rows only. No real D1 or API queried; no POST; network fail-closed. Repository and operating sources are read only.",
+  "sourceFiles": {
+    "reports-api/src/public.js": "6cd83da2cae4cbed2c685ad111411d3b38813dff047b65550c0f848dc7486cbe",
+    "reports-api/src/shared.js": "573868045dda6d9a7950ad63ef9805236785accf091cd1d0024a8c45e41c7ad0",
+    "reports-api/schema.sql": "e51ddff8abbb9ab67069c566896b005bdad535232e2a7395f8155e3e8eb39b4b",
+    "reports-api/test/helpers.mjs": "82717d2dd0022535abc1cb63fc7c6a1fd53970880713e623257393bdb63f7ca4"
+  },
+  "fixture": {
+    "path": "docs/recommendation-masterplan/_snapshots/recent_sites_20261008_193204.json",
+    "sha256": "af77014b5430d7b15d42dd77de8e4ec2a841e48b5151298a7013e3875c4757b6",
+    "sites": 11,
+    "totalRawStrings": 24,
+    "rows": [
+      {
+        "siteId": "195",
+        "latestDate": "2026-10-08",
+        "rawCount": 12,
+        "uniqueRaw": 12,
+        "suffixEntries": [
+          "쇠솔새1",
+          "노랑할미새1",
+          "솔딱새1",
+          "촉새1",
+          "힝등새1",
+          "노랑눈썹솔새1",
+          "동박새2",
+          "울새1"
+        ],
+        "diagnosticStripCount": 10,
+        "diagnosticCollisions": [
+          {
+            "key": "동박새",
+            "raw": [
+              "동박새2",
+              "동박새"
+            ]
+          },
+          {
+            "key": "울새",
+            "raw": [
+              "울새1",
+              "울새"
+            ]
+          }
+        ]
+      },
+      {
+        "siteId": "108",
+        "latestDate": "2026-10-05",
+        "rawCount": 2,
+        "uniqueRaw": 2,
+        "suffixEntries": [],
+        "diagnosticStripCount": 2,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "34",
+        "latestDate": "2026-10-03",
+        "rawCount": 2,
+        "uniqueRaw": 2,
+        "suffixEntries": [],
+        "diagnosticStripCount": 2,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "164",
+        "latestDate": "2026-10-03",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "194",
+        "latestDate": "2026-09-29",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "15",
+        "latestDate": "2026-09-29",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "16",
+        "latestDate": "2026-09-29",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "37",
+        "latestDate": "2026-09-26",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "126",
+        "latestDate": "2026-09-25",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "136",
+        "latestDate": "2026-09-25",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      },
+      {
+        "siteId": "10",
+        "latestDate": "2026-09-24",
+        "rawCount": 1,
+        "uniqueRaw": 1,
+        "suffixEntries": [],
+        "diagnosticStripCount": 1,
+        "diagnosticCollisions": []
+      }
+    ]
+  },
+  "syntheticCases": [
+    {
+      "case": "exact protected",
+      "storedSpecies": "저어새",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "numeric suffix",
+      "storedSpecies": "저어새1",
+      "returnedSpecies": [
+        "저어새1"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "spaced numeric suffix",
+      "storedSpecies": "저어새 1",
+      "returnedSpecies": [
+        "저어새 1"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "other protected suffix",
+      "storedSpecies": "흰꼬리수리1",
+      "returnedSpecies": [
+        "흰꼬리수리1"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "short protected suffix",
+      "storedSpecies": "매1",
+      "returnedSpecies": [
+        "매1"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "breeding note still excludes suffix",
+      "storedSpecies": "저어새1",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "hidden still excludes suffix",
+      "storedSpecies": "저어새1",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "canonical protected mixed row excludes ordinary co-species",
+      "storedSpecies": "저어새 · 울새",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "ordinary control",
+      "storedSpecies": "울새",
+      "returnedSpecies": [
+        "울새"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "pending still excluded",
+      "storedSpecies": "저어새1",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "unlinked still excluded",
+      "storedSpecies": "저어새1",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "outside window still excluded",
+      "storedSpecies": "저어새1",
+      "returnedSpecies": [],
+      "excluded": true,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "uncanonical legacy delimiter",
+      "storedSpecies": "저어새·울새",
+      "returnedSpecies": [
+        "저어새·울새"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    },
+    {
+      "case": "newline merges protected and ordinary species",
+      "storedSpecies": "저어새울새",
+      "returnedSpecies": [
+        "저어새울새"
+      ],
+      "excluded": false,
+      "status": 200,
+      "rowsUnchanged": true,
+      "privateFieldsInResponse": 0
+    }
+  ],
+  "additionalNormalizerDiagnostic": {
+    "input": "저어새\n울새",
+    "normalized": [
+      "저어새울새"
+    ],
+    "sensitive": false
+  },
+  "interpretation": "Numeric-suffix stripping is a diagnostic hypothesis only; no taxon identification, canonical species count, observer identity, effort or occurrence probability was inferred. The suffix limitation belongs to the existing string protection gate, not to a new recommendation bonus policy. Synthetic output does not establish a production leak."
+}

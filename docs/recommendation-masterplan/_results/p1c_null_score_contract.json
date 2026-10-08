@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "codeCommit": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "manifestPath": "docs/recommendation-masterplan/_snapshots/input_manifest_35141c0_2240.json",
+  "sourceFunctionsSha256": "487f9f43a300f490d3ef1d09a3247c52badc24398109a10dc78fa9294463d05d",
+  "scope": "Synthetic malformed weekly data only. No observed operational recommendation leak, no production reads or mutations. This pre-existing frontend contract weakness affects all tested policies and is not introduced by bonus changes.",
+  "fixedInputAudit": {
+    "totalSamples": 10640,
+    "eligibleInvalidScoreSamples": 0,
+    "invalidCategories": {
+      "null": 0,
+      "emptyString": 0,
+      "boolean": 0,
+      "nonFinite": 0
+    },
+    "tideRelevantEligibleInvalidScoreSamples": 0
+  },
+  "safetyContractViolationCount": 12,
+  "reproducedPolicies": [
+    {
+      "scenario": "reports_off",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 0,
+      "bonus": 0,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_0",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 0,
+      "bonus": 0,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_2",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 2,
+      "bonus": 2,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_4",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 4,
+      "bonus": 4,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_8",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 8,
+      "bonus": 8,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_12",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 12,
+      "bonus": 12,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_16",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 16,
+      "bonus": 16,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap_24",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 16,
+      "bonus": 16,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "visit_date_cap16",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 13,
+      "bonus": 13,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "latest_age7_cap16",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 16,
+      "bonus": 16,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "recency_only_cap16",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 12,
+      "bonus": 12,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    },
+    {
+      "scenario": "cap0_without_report_tie",
+      "inputScore": null,
+      "inputScoreEligible": true,
+      "expectedInvalidScoreExcluded": true,
+      "actualExcluded": false,
+      "entryScore": 0,
+      "rankScore": 0,
+      "bonus": 0,
+      "isMandatory": true,
+      "safeState": true,
+      "recommendedIds": [
+        "14"
+      ],
+      "safetyContractSatisfied": false
+    }
+  ],
+  "correctTodayFallback": {
+    "scoreNullExcluded": true
+  },
+  "generatorValidator": {
+    "executed": true,
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\r\n  File \"<string>\", line 5, in <module>\r\n  File \"C:\\Users\\����ȣ\\.codex\\worktrees\\recommendation-masterplan\\birdmap\\.github\\scripts\\validate_weather_week.py\", line 99, in validate\r\n    assert score is not None and sample[\"grade\"], f\"{label} is eligible without a score\"\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: 1 2026-10-08 2026-10-08 00:00 KST is eligible without a score\r\n",
+    "mutation": {
+      "siteId": "1",
+      "date": "2026-10-08",
+      "sampleIndex": 0
+    },
+    "validatorSourcePath": ".github/scripts/validate_weather_week.py"
+  },
+  "cause": "weeklyDaylightCandidates accepts Number(sample.score); Number(null) equals 0. weeklyRecommendationForSite repeats numeric coercion. A contradictory scoreEligible:true can therefore pass frontend gates although the Python generator validator rejects this input.",
+  "requiredDesign": "Reject null/undefined/empty/boolean/non-finite score before numeric conversion in candidate selection, while preserving generation validation. Implement only with approval.",
+  "metadataDiagnostic": "isPastAtGeneration is checked only for today, as documented; a true flag with a future forecast date is inconsistent metadata and was not treated as an established product defect."
+}
