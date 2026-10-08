@@ -37,3 +37,13 @@
 1. `89449c3`: 기준·기본 문서·공개 스냅샷·manifest, push 완료.
 2. 다음 체크포인트: P1-A 결과·전체 흐름·재현 도구·테스트·재개 지침을 함께 commit/push한다. 자기 커밋 SHA는 Git 이력과 Issue #9 댓글에서 확인한다.
 
+
+## P1-B 재개: 기상 자료 비교 완료
+
+이전 체크포인트 c968c6c를 이어받았다. 최신 확인 main은 35141c04d4fd152982b1f4683d5b7a6f4f7514e5이며 1f0b0b5와의 차이는 weather_today.json/weather_week.json뿐이다. 운영 함수 및 나머지 14개 입력 해시가 동일하다. 새 JSON은 분석 폴더의 무손실 gzip과 새 manifest로 보존했다. 과거 스냅샷·운영 JSON은 덮어쓰지 않았다.
+
+고정 22:40 KST·동일 19:32 공개 제보11곳으로 비교하면 후보175→176(왕숙천 복구), 후보92점150→151, 주간92점7680/10584→7722/10640이다. 제보ON/OFF 각각 top10 ID·순서는 동일하지만 굴업도 추천일10/10→10/9로 변경됐다. 핵심 추천 필드 변화는3·62·115·163 네 곳이다. 이는 기상 입력의 영향이며 알고리즘 변경은 없다.
+
+재현: node docs/recommendation-masterplan/_scripts/compare_weather_p1b.mjs --write
+결과: _results/weather_comparison_p1b_2240.json
+독립 재생과 후보수·분포·top10·변경ID가 일치했다. 배열1000회×2 및 대안3종은 다음 분석 단위다.

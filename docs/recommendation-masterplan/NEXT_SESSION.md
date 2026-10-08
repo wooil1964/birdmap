@@ -75,3 +75,11 @@ git diff --name-status 1f0b0b5 origin/main
 
 운영 추천/자동JSON/좌표 수정, main 병합, Pages/Worker 배포, D1 쓰기, 실제 제보·현장소식 등록을 하지 않는다. 민감 원위치와 개인정보를 외부 공개하지 않는다. 연구·분석 문서는 단계별 재승인 없이 진행하며 제품 변경은 구체적 설계와 검증 후 별도 승인 대상이다. 자동 재개·충전은 보장하지 않는다.
 
+
+## 재개 우선순위 변경 — P1-B 기상 비교 단위 완료
+
+새 고정 자료는 _snapshots/input_manifest_35141c0_2240.json과 두 gzip이다. 기존 _snapshots/input_manifest.json 및 P1-A 결과는 보존됐다. 최신 측정 시계는2026-10-08T22:40:00+09:00, 제보는기존19:32 집계그대로다.
+
+완료: 최신main/동일코드해시, 과거P1-A 핵심결과검사, 동일시계 신·구기상 ON/OFF 비교. 마지막 완료커밋은 이 단위 commit/push 후 git log -1로 확인한다(이전 c968c6c).
+
+다음: 실제 todayRecommendedSites에서190 siteData Fisher-Yates1000회×ON/OFF, 독립tuple선발대조, prefix동점경계통계, 세 대안 비교. P1-B 완료 후P1-C/D를 설계하며 운영파일을 수정하지 않는다.
