@@ -46,7 +46,7 @@ const NAMES = [
   'weeklyNowKstMinutes', 'weeklySampleMinutes', 'weeklySampleTimeText', 'weeklySampleDateText',
   'weeklySunTimes', 'weeklyWeekSite', 'weeklyDaySamples', 'weeklyDaylightCandidates',
   'weeklyDailyBestSample', 'weeklyBestWeatherDay', 'weeklySampleAsWeather',
-  'todayIsEastWindDirection', 'v24WaveNumber', 'todayWeatherCautionNote',
+  'todayIsEastWindDirection', 'v24WaveNumber', 'todayWeatherCautionNote', 'v251RainInfo', 'weeklyTideNearestSample', 'weeklyCautionFreeFilter', 'weeklySampleCaution', 'weeklyTideWeather', 'weeklyUsableHighTides', 'weeklyQualifyingHighTides',
   'weeklyEastWindFromWeek', 'weeklyHighTideEvents', 'v24TideMinutesOfDay',
   'weeklyQualifyingHighTides', 'weeklyMudflatTideGateOpen', 'weeklyBestMudflatTide',
   'autumnBirdingAxes', 'autumnRecommendationSeason', 'weeklyPelagicSafety',
@@ -267,7 +267,7 @@ test('갯벌 물때 mandatory 는 기준 조위 이상에서만 충족', () => {
   const week = { start: date, end: date, dates: [date] };
   // 일출~일몰 판정에 좌표가 필요하고, 이미 지난 만조는 세지 않으므로 09:10 보다 이른 시계를 쓴다.
   const check = (siteId, level) => {
-    const api = loadApi({ now: date + 'T06:00:00+09:00', tideMonth: { sites: { [siteId]: { days: [{ date, highTide: '09:10', highTideLevel: String(level) }] } } } });
+    const api = loadApi({ now: date + 'T06:00:00+09:00', weatherWeek: weekDoc(siteId, { [date]: [sample(date + ' 09:00 KST', 90)] }), tideMonth: { sites: { [siteId]: { days: [{ date, highTide: '09:10', highTideLevel: String(level) }] } } } });
     return api.weeklyBestMudflatTide({ id: siteId, lat: 36.0, lon: 126.6 }, week);
   };
   assert.equal(check('19', 709), null, '유부도 709 미충족');
@@ -495,13 +495,13 @@ test('공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 
   assert.equal(api.weeklyRecommendationForSite(site,{start:date,end:date,dates:[date]}),null);
 });
 
-test('물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않는다', () => {
+test('물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않고 추천에서 제외한다', () => {
   const a='2026-09-12',b='2026-09-13',week={start:a,end:b,dates:[a,b]};
   const api=loadApi({now:a+'T06:00:00+09:00',weatherWeek:weekDoc(SITE.id,{[b]:[sample(`${b} 09:00 KST`,92)]}),
     tideMonth:{sites:{[SITE.id]:{days:[{date:a,highTide:'03:00,15:00',highTideLevel:'650,720'}]}}}});
-  const e=api.weeklyRecommendationForSite(SITE,week);
-  assert.equal(e.recommendationDate,a);assert.equal(e.score,null);assert.equal(e.sample,null);
-  assert.ok(e.isMandatory);assert.match(e.tideText,/720cm/);
+  // 물때와 기상·안전은 모두 필수다. 만조 날짜에 유효 예보가 없으면 다른 날짜 예보로 대신하지 않고 제외한다.
+  assert.equal(api.weeklyRecommendationForSite(SITE,week),null);
+  assert.equal(api.weeklyBestMudflatTide(SITE,week),null);
 });
 
 test('원거리 섬 제외/봄 정책과 structured notice linkage 유지', () => {
@@ -599,12 +599,14 @@ test('최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 �
 
 test('물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외',()=>{
  const date=futureDate(1),s={...SITE,env:'갯벌'};
- const doc=weekDoc(s.id,{[date]:[sample(`${date} 09:00 KST`,95,{waveM:2.2})]});
+ const doc=weekDoc(s.id,{[date]:[sample(`${date} 15:00 KST`,95,{waveM:2.2})]});
  const api=loadApi({siteData:[s],weatherWeek:doc,tideMonth:{sites:{[s.id]:{days:[{date,highTide:'15:00',highTideLevel:'720'}]}}}});
- const entry=api.weeklyRecommendationForSite(s,api.weeklyInfo());
- assert.ok(entry.isMandatory);assert.match(entry.reasons.join(' '),/물때/);
+ // 만조 시각 예보가 위험하면 물때 조건을 충족해도 후보가 아니다. 안전해지면 mandatory 사유와 함께 추천된다.
+ assert.equal(api.weeklyRecommendationForSite(s,api.weeklyInfo()),null);
  assert.equal(api.todayRecommendedSites().length,0);
  doc.sites[s.id].days[date].samples[0].waveM=1;
+ const entry=api.weeklyRecommendationForSite(s,api.weeklyInfo());
+ assert.ok(entry.isMandatory);assert.match(entry.reasons.join(' '),/물때/);
  assert.equal(api.todayRecommendedSites().length,1);
 });
 
@@ -631,11 +633,11 @@ test('실데이터 caution 전후 비교와 동풍·공지 보존',()=>{
 });
 
 test('동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충',()=>{
- const date=futureDate(1),site={...POHANG,id:50,name:'청림해변',env:'해안·갯벌'};
+ const date='2026-09-10',site={...POHANG,id:50,name:'청림해변',env:'해안·갯벌'};// 9월 동풍 정책 fixture: 날짜·시계 고정
  const others=[501,502,503].map(id=>({...SITE,id,name:'안전 갯벌 '+id,env:'갯벌'}));
  const doc=weekDoc(site.id,{[date]:[sample(`${date} 09:00 KST`,65,{windSpeed:8,waveM:2.2})]});
  for(const s of others)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(`${date} 09:00 KST`,60,{waveM:1})]}).sites);
- const api=loadApi({siteData:[site,...others],weatherWeek:doc,notices:[{siteId:50}]});
+ const api=loadApi({now:SEPTEMBER_FIXTURE_NOW,siteData:[site,...others],weatherWeek:doc,notices:[{siteId:50}]});
  const entry=api.weeklyRecommendationForSite(site,api.weeklyInfo());
  assert.ok(entry.isMandatory);assert.match(entry.reasons.join(' '),/동풍/);
  const before=JSON.stringify(entry),top=api.todayRecommendedSites();
@@ -963,7 +965,11 @@ test('봄 유입 사유는 표시 sample에서만 판정, caution을 우회하�
  assert.match(e.reasons.join(' '),/봄 도서 이동기/);assert.match(e.reasons.join(' '),/가능성에 주목/);assert.equal(e.score,92);
  samples[2].score=95;e=api.todayRecommendedSites()[0];assert.equal(e.recommendationTime,'12:00');assert.ok(!e.reasons.join(' ').includes('비 뒤'));
  samples[1].score=100;samples[1].waveM=2;
- assert.equal(api.todayRecommendedSites().length,0,'강수+NW라도 표시 기상 caution이면 제외');
+ // P0-2: 위험 sample의 높은 점수가 안전한 다른 시각의 예보 선택을 막지 않는다. 위험 sample 자체는 대표가 되지 않는다.
+ e=api.todayRecommendedSites()[0];assert.ok(e&&e.recommendationTime!=='09:00'&&api.todayWeatherCautionNote(e.today)==='',
+  '위험 sample을 건너뛰고 안전 sample을 대표로 쓴다');assert.ok(!e.reasons.join(' ').includes('비 뒤'));
+ samples.forEach(s=>{s.waveM=2;});
+ assert.equal(api.todayRecommendedSites().length,0,'모든 sample이 caution이면 제외');
 });
 
 test('걸매리 5/1~10 우선은 추천일 기준이며 점수·가을 조석을 바꾸지 않는다',()=>{
@@ -1410,7 +1416,7 @@ test('M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아�
 
 test('M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다', () => {
   const autumn = h01Site('107'), winter = h01Site('7');
-  const todayDoc = (id, date, extra) => ({ sites: { [id]: Object.assign({ date: date, score: 99, wind: '북풍 3m/s', rain: '강수 없음' }, extra) } });
+  const todayDoc = (id, date, extra) => ({ sites: { [id]: Object.assign({ date: date, forecastTime: date + ' 12:00 KST', score: 99, wind: '북풍 3m/s', rain: '강수 없음' }, extra) } });
   const rows = [
     { name: '가을 explicit false', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: false }, expected: false },
     { name: '가을 explicit false + 공지', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: false }, notice: true, expected: false },
@@ -1459,7 +1465,7 @@ function gateApi(id, now, days, extra = {}) {
   const dates = weekDates(date);
   const doc = { sites: {}, startDate: dates[0], endDate: dates[dates.length - 1] };
   for (const s of sites) {
-    Object.assign(doc.sites, weekDoc(s.id, Object.fromEntries(dates.map((d) => [d, [sample(d + ' 09:00 KST', 92)]])), s.name).sites);
+    Object.assign(doc.sites, weekDoc(s.id, Object.fromEntries(dates.map((d) => [d, ['09:00', '12:00', '15:00'].map((t) => sample(d + ' ' + t + ' KST', 92))])), s.name).sites);
   }
   return loadApi(Object.assign({
     month: Number(date.slice(5, 7)), now: now, siteData: sites, weatherWeek: doc,
@@ -1559,26 +1565,29 @@ test('물때 관문: 규칙이 없는 탐조지는 영향을 받지 않는다', 
   }
 });
 
-test('실제 저장 자료로 2026-09-17 기준 매향리가 이번 주 추천에서 빠진다', () => {
-  const tideMonth = JSON.parse(readFileSync(join(ROOT, 'tide_month.json'), 'utf8'));
-  const notices = JSON.parse(readFileSync(join(ROOT, 'notices.json'), 'utf8'));
-  const api = loadApi({ month: 9, now: '2026-09-17T14:49:00+09:00', siteData: RUNTIME,
-    weatherWeek: actualWeek, tideMonth: tideMonth, notices: notices });
+/* 고정 입력(시계 2026-09-17, 가을 규칙): 갱신되는 저장 JSON을 읽지 않는다. 이번 주 최고 만조 849cm 라서 매향리는 빠지고
+   공지(siteIds [107])와 고정 추천 목록은 그대로이며 다른 탐조지(천수만 15)는 유지된다. */
+test('고정 자료 2026-09-17 기준 매향리가 이번 주 추천에서 빠진다', () => {
+  const date = '2026-09-18';
+  const sites = ['107', '15'].map((id) => RUNTIME.find((s) => s.id === id));
+  const doc = weekDoc('107', { [date]: p0Samples(date, [['09:00', 90], ['12:00', 90], ['15:00', 90]]) });
+  Object.assign(doc.sites, weekDoc('15', { [date]: p0Samples(date, [['09:00', 90], ['12:00', 90], ['15:00', 90]]) }).sites);
+  doc.sampleIntervalHours = 3;
+  const notices = [{ title: '매향리 탐조 물높이', published: true, siteIds: [107], weeklyRecommendations: [{ siteId: 107 }, { siteId: 15 }] }];
+  const api = loadApi({ month: 9, now: '2026-09-17T06:00:00+09:00', siteData: sites, weatherWeek: doc, notices,
+    tideMonth: p0Tide('107', date, '12:10', 849) });
   const week = api.weeklyInfo();
   const maehyangri = gateSite('107');
-  const days = (tideMonth.sites['107'] || {}).days || [];
-  const inWeek = days.filter((d) => d.date >= week.start && d.date <= week.end);
-  if (!inWeek.length) return; // 저장 자료가 이번 주를 담고 있지 않은 시점이면 검증 대상이 아니다
-  const best = Math.max(...inWeek.flatMap((d) => api.weeklyHighTideEvents(d).map((e) => e.level)));
-  assert.ok(best < 850, '이번 주 최고 만조가 850cm 미만이어야 이 사례가 성립한다 (실제: ' + best + 'cm)');
   assert.equal(api.weeklyIssueReason(maehyangri), '📢 지금 볼 만한 탐조 이슈', '매향리 공지는 그대로 게시 중이다');
   assert.equal(api.weeklyMudflatTideGateOpen(maehyangri, week), false);
   assert.equal(api.weeklyRecommendationForSite(maehyangri, week), null, '매향리가 추천 후보에서 빠진다');
   const editorial = (api.weeklyEditorialRecommendations(week) || []).map((e) => String(e.site.id));
-  assert.ok(editorial.length, '고정 추천 목록 자체는 유지된다');
   assert.ok(!editorial.includes('107'), '고정 추천에서 제외');
   assert.ok(!api.todayRecommendedSites().some((e) => String(e.site.id) === '107'), '자동 추천에서도 제외');
-  assert.ok(editorial.includes('15') && editorial.includes('7'), '다른 탐조지의 고정 추천은 유지된다');
+  assert.ok(editorial.includes('15'), '다른 탐조지의 고정 추천은 유지된다');
+  const ok = loadApi({ month: 9, now: '2026-09-17T06:00:00+09:00', siteData: sites, weatherWeek: doc, notices,
+    tideMonth: p0Tide('107', date, '12:10', 850) });
+  assert.ok(ok.weeklyRecommendationForSite(maehyangri, ok.weeklyInfo()), '850cm 경계는 포함');
 });
 
 test('실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지의 후보일과 일치한다', () => {
@@ -1635,28 +1644,33 @@ test('R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16', () => {
   assert.equal(api.weeklyRecentReportBonus(site), null);
 });
 
+/* R01 C/A 는 시계와 관찰일을 모두 고정한다(상대 날짜와 고정 기대값을 섞지 않는다). */
+const R01_NOW = '2026-10-08T10:12:00+09:00';
+const R01_SEEN = '2026-10-06'; // R01_NOW 의 2일 전
+
 test('R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점', () => {
-  const api = loadApi({ month: 10 });
-  api.setSightings({ 15: { latestDate: recentDaysAgo(api, 2), species: Array(5).fill('캐나다기러기') } });
-  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, speciesCount: 1, bonus: 9 });
-  api.setSightings({ 15: { latestDate: recentDaysAgo(api, 2), species: ['캐나다기러기', '쇠기러기', '큰기러기', '흰이마기러기'] } });
-  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, speciesCount: 4, bonus: 13 });
+  const api = loadApi({ month: 10, now: R01_NOW });
+  assert.equal(api.weeklyTodayDateText(), '2026-10-08');
+  api.setSightings({ 15: { latestDate: R01_SEEN, species: Array(5).fill('캐나다기러기') } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, latestDate: R01_SEEN, speciesCount: 1, bonus: 9 });
+  api.setSightings({ 15: { latestDate: R01_SEEN, species: ['캐나다기러기', '쇠기러기', '큰기러기', '흰이마기러기'] } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, latestDate: R01_SEEN, speciesCount: 4, bonus: 13 });
 });
 
 test('R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다', () => {
   const sites = recentFieldSites(6);
-  const base = loadApi({ month: 10, siteData: sites });
+  const base = loadApi({ month: 10, now: R01_NOW, siteData: sites });
   const weatherToday = todayWeatherFor(base, sites);
-  const without = loadApi({ month: 10, siteData: sites, weatherToday });
+  const without = loadApi({ month: 10, now: R01_NOW, siteData: sites, weatherToday });
   const before = without.todayRecommendedSites().filter((e) => e.selectedAxis === 'field').map((e) => e.site.id);
   assert.deepEqual(before, [400, 401, 402, 403], '출현 자료가 없으면 기존 안정 순서 그대로');
-  const api = loadApi({ month: 10, siteData: sites, weatherToday, recentSiteSightings: { 405: { latestDate: recentDaysAgo(base, 2), species: ['캐나다기러기'] } } });
+  const api = loadApi({ month: 10, now: R01_NOW, siteData: sites, weatherToday, recentSiteSightings: { 405: { latestDate: R01_SEEN, species: ['캐나다기러기'] } } });
   const top = api.todayRecommendedSites();
   const field = top.filter((e) => e.selectedAxis === 'field');
   assert.equal(field[0].site.id, 405, '2일 전 출현 장소가 들판 1위');
   assert.equal(field[0].score, 92, '화면 기상 점수 유지');
   assert.equal(field[0].rankScore, 101);
-  assert.deepEqual(field[0].recentReport, { ageDays: 2, speciesCount: 1, bonus: 9 });
+  assert.deepEqual(field[0].recentReport, { ageDays: 2, latestDate: R01_SEEN, speciesCount: 1, bonus: 9 });
   assert.deepEqual(field.slice(1).map((e) => e.site.id), [400, 401, 402], '나머지는 기존 순서');
   assert.ok(top.every((e) => e.score <= 100));
 });
@@ -1790,4 +1804,293 @@ test('R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙�
   assert.equal(picked.displayName, undefined, '편집 표시명으로 장소 이름을 바꾸지 않는다');
   assert.deepEqual(f.ids(panel), f.ids(plain), '편집 사유가 붙어도 순위는 같다');
   assert.ok(panel.filter((e) => e.site.id !== 402).every((e) => !e.editorialPick));
+});
+
+/* ===== 추천 알고리즘 P0 (2026-10-08): 만조·예보 시각 일치 / 안전 우선 대표 선택 / 강수 기준 일치 ===== */
+const P0_NOW = '2026-10-08T08:00:00+09:00';
+const P0_DATE = '2026-10-10';
+const p0Samples = (date, rows) => rows.map(([time, score, extra]) => sample(`${date} ${time} KST`, score, Object.assign({ windName: '북풍', waveM: 0.3 }, extra || {})));
+const p0Tide = (id, date, time, level) => ({ sites: { [id]: { days: [{ date, highTide: time, highTideLevel: String(level) }] } } });
+const p0Api = (site, rows, tide, extraState = {}) => {
+  const doc = weekDoc(site.id, { [P0_DATE]: p0Samples(P0_DATE, rows) });
+  doc.sampleIntervalHours = 3;
+  return loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: tide || null }, extraState));
+};
+const MUD = { 19: 710, 107: 850, 14: 850 };
+
+test('P0-1 유부도·매향리·걸매리: 만조에 가장 가까운 예보로 평가하고 하루 최고점 시각을 쓰지 않는다', () => {
+  for (const id of Object.keys(MUD)) {
+    const site = RUNTIME.find((s) => s.id === id);
+    // 06:00(95점)이 하루 최고지만 만조(13:20)와 7시간 이상 떨어져 있다. 12:00(80점)이 만조에 80분 거리다.
+    const api = p0Api(site, [['06:00', 95], ['09:00', 85], ['12:00', 80], ['15:00', 70]], p0Tide(id, P0_DATE, '13:20', MUD[id]));
+    const entry = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+    assert.ok(entry, site.name + ' 추천');
+    assert.equal(entry.recommendationTime, '12:00', site.name);
+    assert.equal(entry.score, 80, site.name + ': 만조 시각 예보 점수');
+    assert.match(entry.basisText, /만조 인접.*80분/, site.name);
+    assert.ok(entry.tideMatched);
+  }
+});
+
+test('P0-1 조석 기준값 경계: 유부도 710 / 매향리·걸매리 850 이상만 후보, 1cm 미달은 제외', () => {
+  for (const id of Object.keys(MUD)) {
+    const site = RUNTIME.find((s) => s.id === id);
+    const at = (level) => {
+      const api = p0Api(site, [['12:00', 80]], p0Tide(id, P0_DATE, '12:30', level));
+      return api.weeklyRecommendationForSite(site, api.weeklyInfo());
+    };
+    assert.ok(at(MUD[id]), site.name + ' 경계값 포함');
+    assert.equal(at(MUD[id] - 1), null, site.name + ' 1cm 미달 제외');
+  }
+  const rules = HTML.match(/var TODAY_MUDFLAT_TIDE_RULES=\{[\s\S]*?\};/)[0];
+  assert.match(rules, /'19':\{months:\[9,10\],minHighTideCm:710/);
+  assert.match(rules, /'107':\{months:\[9,10\],minHighTideCm:850/);
+  assert.match(rules, /'14':\{months:\[9,10\],minHighTideCm:850/);
+});
+
+test('P0-1 대표성: 만조와 예보 간격 절반(90분) 이내만 쓰고 넘으면 추정 없이 추천 제외', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  const run = (tideTime) => {
+    const api = p0Api(site, [['09:00', 90], ['18:00', 60]], p0Tide('14', P0_DATE, tideTime, 900));
+    return api.weeklyRecommendationForSite(site, api.weeklyInfo());
+  };
+  assert.equal(run('10:30').recommendationTime, '09:00', '정확히 90분은 대표성 있음');
+  for (const tideTime of ['10:31', '13:00']) {
+    const e = run(tideTime);
+    assert.equal(e, null, tideTime + ': 만조 시각 기상이 없으면 다른 시각 예보를 빌리지 않고 추천에서 제외');
+  }
+});
+
+test('P0-1 일출·일몰 밖 예보는 만조 평가에 쓰지 않고 유효 예보가 없으면 기존처럼 후보 제외', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  const night = p0Api(site, [['21:00', 99]], p0Tide('14', P0_DATE, '12:00', 900));
+  assert.equal(night.weeklyRecommendationForSite(site, night.weeklyInfo()), null);
+});
+
+test('P0-2 흑산도형: 위험 시각의 높은 점수가 안전한 시각 예보 선택을 막지 않는다', () => {
+  const site = { ...SITE, id: 501, name: '흑산도형', env: '갯벌' };
+  for (const [label, danger] of [['파고', { waveM: 2.2 }], ['강수', { precipitation3h: 6 }]]) {
+    const api = p0Api(site, [['09:00', 99, danger], ['12:00', 80]]);
+    const top = api.todayRecommendedSites();
+    assert.equal(top.length, 1, label + ': 안전한 12:00 예보로 후보 유지');
+    assert.equal(top[0].recommendationTime, '12:00', label);
+    assert.equal(top[0].score, 80);
+    assert.equal(api.todayWeatherCautionNote(top[0].today), '');
+  }
+  const none = p0Api(site, [['09:00', 99, { waveM: 2.2 }], ['12:00', 80, { precipitation3h: 6 }]]);
+  assert.equal(none.todayRecommendedSites().length, 0, '모든 예보가 위험이면 제외');
+});
+
+test('P0-2 부적격 예보는 승격되지 않고 선상 안전 기준(6.0m/s·0.7m·0mm·결측 제외)은 그대로다', () => {
+  const site = { ...SITE, id: 501, name: '일반', env: '갯벌' };
+  const api = p0Api(site, [['09:00', 99, { scoreEligible: false, score: null, missingScoreFields: ['wave'] }], ['12:00', 80]]);
+  assert.equal(api.todayRecommendedSites()[0].recommendationTime, '12:00');
+  const boundary = (extra) => sample('2026-10-10 09:00 KST', 90, Object.assign({ windSpeed: 6, waveM: 0.7, precipitation3h: 0 }, extra));
+  const pelagic = loadApi({ month: 10 });
+  assert.equal(pelagic.weeklyPelagicSafety(boundary()), true, '풍속 6.0·파고 0.7·강수 0 경계 포함');
+  assert.equal(pelagic.weeklyPelagicSafety(boundary({ windSpeed: 6.1 })), false);
+  assert.equal(pelagic.weeklyPelagicSafety(boundary({ waveM: 0.8 })), false);
+  assert.equal(pelagic.weeklyPelagicSafety(boundary({ precipitation3h: 0.1 })), false);
+  assert.equal(pelagic.weeklyPelagicSafety(boundary({ waveM: null })), false, '필수 자료 결측은 제외');
+});
+
+test('P0-2 최근 출현 가점·공지는 안전 제외를 우회하지 못한다', () => {
+  const site = { ...SITE, id: 501, name: '일반', env: '갯벌' };
+  const api = p0Api(site, [['09:00', 99, { waveM: 2.2 }], ['12:00', 90, { precipitation3h: 20 }]], null, {
+    recentSiteSightings: { 501: { latestDate: '2026-10-08', species: ['a', 'b', 'c', 'd'] } },
+    notices: [{ siteId: 501, published: true }] });
+  assert.equal(api.todayRecommendedSites().length, 0);
+});
+
+test('P0-3 강수 판정: 화면 카드의 비권장 기준(1mm)과 추천 안전 기준이 같고 결측은 무강수가 아니다', () => {
+  const api = loadApi({ month: 10 });
+  const weather = (rain) => api.weeklySampleAsWeather(SITE, sample('2026-10-10 12:00 KST', 80, { precipitation3h: rain }), '2026-10-10');
+  for (const [rain, cautioned] of [[0, false], [0.05, false], [0.9, false], [1, true], [5, true], [12, true]]) {
+    assert.equal(api.todayWeatherCautionNote(weather(rain)) !== '', cautioned, rain + 'mm');
+    const info = api.v251RainInfo({ rain: weather(rain).rain });
+    assert.equal(info.raining && (info.amount === null || info.amount >= 1), cautioned, '카드 기준과 동일: ' + rain);
+  }
+  const missing = weather(null);
+  assert.equal(missing.rain, null, '강수 결측은 "강수 없음"으로 바뀌지 않는다');
+  assert.equal(api.todayWeatherCautionNote(missing), '');
+  assert.equal(api.weeklyRecommendationIsSafe({ today: { wave: null, rain: null } }), null, '미확인은 안전 판정이 아니다');
+});
+
+test('P0-4 최근 출현 근거에 실제 관찰일이 포함되고 예보 자료 생성 시각이 표시된다', () => {
+  const api = loadApi({ month: 10, now: P0_NOW, recentSiteSightings: { 15: { latestDate: '2026-10-05', species: ['검은어깨매'] } } });
+  const bonus = api.weeklyRecentReportBonus({ id: 15 });
+  assert.equal(bonus.latestDate, '2026-10-05');
+  assert.equal(bonus.ageDays, 3);
+  assert.ok(HTML.includes("entry.recentReport.latestDate+' 관찰, 제보 승인 기준)"));
+  assert.ok(HTML.includes("예보 자료 생성 '+weatherWeek.generatedAt"));
+});
+
+/* ===== P0 교차 검증 지적 반영 (2026-10-08): 시계·관찰일 고정 ===== */
+const P0B_DAY2 = '2026-10-11';
+const p0Tides = (id, days) => ({ sites: { [id]: { days } } });
+
+test('P0-B1 만조 기상 미확인: 물때 조건만으로는 최종 추천에 들어오지 못한다', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  // 만조(12:00)와 가장 가까운 예보가 18:00(360분)뿐이다. 조석 조회 자체는 그대로 가능하다.
+  const api = p0Api(site, [['18:00', 90]], p0Tide('14', P0_DATE, '12:00', 900), { notices: [{ siteId: 14, published: true }] });
+  const week = api.weeklyInfo();
+  assert.equal(api.weeklyQualifyingHighTides(site, week).length, 1, '조석 기준 충족 자체는 확인된다');
+  assert.equal(api.weeklyMudflatTideGateOpen(site, week), false);
+  assert.equal(api.weeklyBestMudflatTide(site, week), null);
+  assert.equal(api.weeklyRecommendationForSite(site, week), null);
+  assert.equal(api.todayRecommendedSites().length, 0, '공지가 있어도 우회하지 못한다');
+  const none = loadApi({ now: P0_NOW, month: 10, siteData: [site], tideMonth: p0Tide('14', P0_DATE, '12:00', 900) });
+  assert.equal(none.weeklyRecommendationForSite(site, none.weeklyInfo()), null, '기상 자료가 아예 없어도 제외');
+});
+
+test('P0-B2 모든 적격 만조 검사: 첫날 900cm 위험 기상, 다음날 880cm 적격이면 다음날을 추천한다', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  const doc = weekDoc('14', {
+    [P0_DATE]: p0Samples(P0_DATE, [['12:00', 95, { waveM: 2.4 }]]),
+    [P0B_DAY2]: p0Samples(P0B_DAY2, [['12:00', 80]]),
+  });
+  doc.sampleIntervalHours = 3;
+  const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc,
+    tideMonth: p0Tides('14', [{ date: P0_DATE, highTide: '12:00', highTideLevel: '900' }, { date: P0B_DAY2, highTide: '12:00', highTideLevel: '880' }]) });
+  const e = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+  assert.ok(e, '다음날 적격 만조로 정상 추천');
+  assert.equal(e.recommendationDate, P0B_DAY2);
+  assert.match(e.tideText, /880cm/);
+  assert.ok(!/900cm/.test(e.tideText + (e.extraText || '')), '위험한 만조는 후보·보조 문구에 없다');
+  assert.equal(e.score, 80);
+  assert.equal(api.todayRecommendedSites().length, 1);
+});
+
+test('P0-B2 같은 날 두 번의 만조도 각각 검사한다', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  const api = p0Api(site, [['09:00', 95, { precipitation3h: 3 }], ['15:00', 70]],
+    p0Tide('14', P0_DATE, '08:30,15:30', '900,870'));
+  const e = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+  assert.ok(e);
+  assert.match(e.tideText, /15:30 · 870cm/, '아침 900cm는 강수로 탈락, 오후 870cm가 선택');
+  assert.equal(e.recommendationTime, '15:00');
+});
+
+test('P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다', () => {
+  const site = RUNTIME.find((s) => s.id === '107');
+  const base = { date: P0_DATE, forecastTime: P0_DATE + ' 09:00 KST', score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' };
+  const run = (tideTime, extra) => {
+    const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null,
+      weatherToday: { sites: { 107: Object.assign({}, base, extra) } }, tideMonth: p0Tide('107', P0_DATE, tideTime, 900) });
+    return api.weeklyRecommendationForSite(site, api.weeklyInfo());
+  };
+  assert.equal(run('14:00'), null, '09시 예보를 14시 만조에 쓰지 못한다');
+  assert.equal(run('10:31'), null, '91분');
+  assert.ok(run('10:30'), '정확히 90분은 허용');
+  assert.ok(run('07:30'), '앞쪽 90분도 허용');
+  assert.equal(run('10:30', { forecastTime: undefined }), null, '예보 시각 불명은 추정하지 않는다');
+  assert.equal(run('10:30', { date: '2026-10-09', forecastTime: '2026-10-09 09:00 KST' }), null, '다른 날짜 예보');
+  assert.equal(run('10:30', { scoreEligible: false }), null);
+  assert.equal(run('10:30', { stale: true }), null);
+  assert.equal(run('10:30', { rain: '3시간 강수 4.0mm' }), null, '위험 기상');
+  assert.equal(run('10:30', { wave: '2.3m' }), null, '위험 파고');
+  assert.equal(run('10:30', { score: null }), null, '점수 결측');
+});
+
+test('P0-B4 강수·파고 경계와 반올림: 원자료 1mm/2.0m 기준, 표시 반올림이 기준을 넘지 못하고 결측은 판정하지 않는다', () => {
+  const api = loadApi({ month: 10 });
+  const rain = (v) => api.weeklySampleCaution({ precipitation3h: v });
+  assert.equal(rain(0.95), false);
+  assert.equal(rain(0.96), false, '0.96mm가 표시 반올림으로 1.0mm가 되어 위험 처리되면 안 된다');
+  assert.equal(rain(0.999), false);
+  assert.equal(rain(1), true);
+  assert.equal(rain(1.04), true);
+  assert.equal(api.weeklySampleCaution({ waveM: 1.96 }), false);
+  assert.equal(api.weeklySampleCaution({ waveM: 2 }), true);
+  for (const missing of [null, undefined, NaN, '1.5']) assert.equal(rain(missing), false, '결측/비수치는 위험 판정 대상이 아님: ' + String(missing));
+  assert.equal(api.weeklySampleCaution({ waveM: null, precipitation3h: null }), false);
+  assert.equal(api.weeklySampleCaution({ waveM: 2.2, precipitation3h: null }), true, '한쪽 결측이어도 다른 쪽 위험은 잡는다');
+  assert.equal(api.weeklySampleCaution({ waveM: null, precipitation3h: 2 }), true);
+  // 표시 문자열이 반올림으로 기준을 넘어 보이지 않는다.
+  const shown = api.weeklySampleAsWeather(SITE, sample('2026-10-10 12:00 KST', 80, { precipitation3h: 0.96, waveM: 1.96 }), '2026-10-10');
+  assert.equal(api.todayWeatherCautionNote(shown), '');
+  // 추천 선택도 같은 결과: 0.96mm 최고점 예보가 대표로 유지된다.
+  const site = { ...SITE, id: 501, name: '일반', env: '갯벌' };
+  const picked = p0Api(site, [['09:00', 99, { precipitation3h: 0.96 }], ['12:00', 80]]).todayRecommendedSites();
+  assert.equal(picked.length, 1);
+  assert.equal(picked[0].recommendationTime, '09:00');
+  assert.equal(p0Api(site, [['09:00', 99, { precipitation3h: 1 }], ['12:00', 80]]).todayRecommendedSites()[0].recommendationTime, '12:00');
+});
+
+test('P0-B5 고정 입력 회귀: 최근 출현 가점·관찰일은 기준일에만 의존한다', () => {
+  const api = loadApi({ month: 10, now: P0_NOW, recentSiteSightings: { 15: { latestDate: '2026-10-07', species: ['a', 'b'] } } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 1, latestDate: '2026-10-07', speciesCount: 2, bonus: 14 });
+  const old = loadApi({ month: 10, now: P0_NOW, recentSiteSightings: { 15: { latestDate: '2026-09-20', species: ['a'] } } });
+  assert.equal(old.weeklyRecentReportBonus({ id: 15 }), null, '14일 지난 제보는 가점이 없다');
+});
+
+/* ===== P0 잔여 보완: 만조 기상 예보 90분 절대 상한 ===== */
+const B90_SITE = () => RUNTIME.find((s) => s.id === '14');
+function b90Run(interval, sampleTime, tideTime, extra = {}) {
+  const site = B90_SITE();
+  const doc = weekDoc('14', { [P0_DATE]: p0Samples(P0_DATE, [[sampleTime, 90]]) });
+  if (interval !== undefined) doc.sampleIntervalHours = interval;
+  const api = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: p0Tide('14', P0_DATE, tideTime, 900) }, extra));
+  return { api, site, entry: api.weeklyRecommendationForSite(site, api.weeklyInfo()) };
+}
+
+test('P0-C1 90분 절대 상한: 간격 3h 90분 허용·91분 제외, 6h·24h 간격은 120분 차이를 허용하지 않는다', () => {
+  assert.ok(b90Run(3, '10:30', '12:00').entry, '3h 간격, 정확히 90분');
+  assert.equal(b90Run(3, '10:29', '12:00').entry, null, '3h 간격, 91분');
+  assert.equal(b90Run(6, '10:00', '12:00').entry, null, '6h 간격(절반 180분)이어도 120분은 제외');
+  assert.ok(b90Run(6, '10:30', '12:00').entry, '6h 간격이어도 90분은 허용');
+  assert.equal(b90Run(24, '10:00', '12:00').entry, null, '24h 간격(절반 720분)이어도 120분은 제외');
+  assert.equal(b90Run(24, '10:29', '12:00').entry, null, '24h 간격, 91분');
+  assert.ok(b90Run(24, '13:30', '12:00').entry, '24h 간격, 뒤쪽 90분');
+  assert.equal(b90Run(1, '10:29', '12:00').entry, null, '1h 간격(절반 30분)은 기존대로 더 엄격');
+  assert.ok(b90Run(1, '11:30', '12:00').entry, '1h 간격, 30분');
+  assert.equal(b90Run(1, '11:00', '12:00').entry, null, '1h 간격, 60분은 간격 절반(30분) 초과');
+});
+
+test('P0-C2 잘못된 간격 metadata는 3시간(90분)으로 보고, 어떤 값도 90분을 넘기지 못한다', () => {
+  for (const bad of [undefined, null, 0, -3, NaN, 'abc', '', Infinity, 1000, '24']) {
+    assert.ok(b90Run(bad, '10:30', '12:00').entry, String(bad) + ': 90분은 허용');
+    assert.equal(b90Run(bad, '10:29', '12:00').entry, null, String(bad) + ': 91분 제외');
+  }
+});
+
+test('P0-C3 예보 시각 결측·형식 오류는 만조 기상으로 쓰지 않는다', () => {
+  const site = B90_SITE();
+  for (const bad of [null, undefined, '', '시각없음', '2026-10-10', 12]) {
+    const doc = weekDoc('14', { [P0_DATE]: [sample('x', 90, { forecastTime: bad })] });
+    doc.sampleIntervalHours = 3;
+    const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: p0Tide('14', P0_DATE, '12:00', 900) });
+    assert.equal(api.weeklyRecommendationForSite(site, api.weeklyInfo()), null, JSON.stringify(bad));
+  }
+});
+
+test('P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다', () => {
+  const extra = { notices: [{ siteIds: [14], published: true }], recentSiteSightings: { 14: { latestDate: '2026-10-08', species: ['a', 'b', 'c', 'd'] } } };
+  const { api, site, entry } = b90Run(24, '10:00', '12:00', extra);
+  assert.equal(entry, null);
+  assert.equal(api.todayRecommendedSites().length, 0);
+  const today = (time) => {
+    const fallback = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null,
+      weatherToday: { sites: { 14: { date: P0_DATE, forecastTime: P0_DATE + ' ' + time + ' KST', score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' } } },
+      tideMonth: p0Tide('14', P0_DATE, '12:00', 900) }, extra));
+    return fallback.weeklyRecommendationForSite(site, fallback.weeklyInfo());
+  };
+  assert.ok(today('10:30'), 'fallback 90분 허용');
+  assert.equal(today('10:29'), null, 'fallback 91분 제외');
+});
+
+test('P0-C5 상한을 넘는 만조는 건너뛰고 90분 안의 다른 만조(다른 날짜·같은 날 두 번째)를 쓴다', () => {
+  const site = B90_SITE();
+  const day2 = '2026-10-11';
+  const doc = weekDoc('14', { [P0_DATE]: p0Samples(P0_DATE, [['09:00', 90]]), [day2]: p0Samples(day2, [['12:00', 70]]) });
+  doc.sampleIntervalHours = 24;
+  const tides = { sites: { 14: { days: [{ date: P0_DATE, highTide: '12:00', highTideLevel: '900' }, { date: day2, highTide: '12:30', highTideLevel: '880' }] } } };
+  const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: tides });
+  const entry = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+  assert.ok(entry);
+  assert.equal(entry.recommendationDate, day2, '첫날 900cm(예보 180분 차이)는 제외하고 다음날 880cm');
+  assert.match(entry.tideText, /880cm/);
+  const same = p0Api(site, [['09:00', 90], ['15:00', 80]], p0Tide('14', P0_DATE, '12:00,15:30', '900,870'), {});
+  const e2 = same.weeklyRecommendationForSite(site, same.weeklyInfo());
+  assert.match(e2.tideText, /15:30 · 870cm/, '같은 날 첫 만조는 예보가 180분 떨어져 제외, 두 번째 만조 사용');
 });
