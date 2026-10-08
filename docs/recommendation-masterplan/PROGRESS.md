@@ -1,5 +1,8 @@
 # 진행 상태 — P1-B 완료
 
+**최신 상태 (2026-10-09): P1-C/D 분석·독립 대조와 정책 우선순위 초안 완료. C7447c38 → Dfae50b2 별도 push, Issue #9 기록·조회 확인 완료. 아래 이전 단계 표는 완료 이력이며 최종 상태·후속 작업은 문서 끝과 NEXT_SESSION을 따른다. 운영 구현·최적 배점·연중성과·P2~P4는 미완료다.**
+
+
 분석 브랜치는 `analysis/recommendation-masterplan`이다. 이전 체크포인트 `c968c6c`를 이어받았으며 P1-A를 처음부터 반복하지 않았다.
 
 |단계|상태|근거와 남은 일|
@@ -60,3 +63,14 @@ Issue #9 기록: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6061
 C:7447c38102c1832a944d5cf4281ae6ebd3b485b0 commit/push후D시작. D5정책×ON/OFF의추천/점수/분류/1900행독립일치,10,000배열불변,원문계약10대조완료. current/global/flex2211 rank합ON969/1011/989,OFF944/1000/968. 후보176변경0. 제외14는계절/축정책13+유부도조석1. global은지역집중이증가해기본안즉시채택보류.
 
 P1-A/B/C/D정량분석·정책비교·우선순위초안완료. 최적가중치/연중성과/제품정책확정/P2~P4/구현미완료. 보호표현·nullscore 입력계약보완을우선설계로남김. D별도완료commit/push후Issue9기록. main·운영소스·자동JSON·Worker·D1·원좌표수정·배포0. 정확한상태와후속작업은NEXT_SESSION.
+
+
+## 최종 저장·Issue 기록 (2026-10-09)
+
+- P1-C 완료: 7447c38102c1832a944d5cf4281ae6ebd3b485b0.
+- P1-D 완료 보고: fae50b289b74a9debae2eff0a820de13890fd73a.
+- 두 단계 모두 분석 브랜치에 별도 commit/push했다.
+- Issue #9 결과: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6071038439.
+- 게시 후 전체 댓글을 다시 조회해 ID와 본문이 저장 요청과 정확히 일치함을 확인했다.
+- 최신 확인 main: 4fc14b3c7ba19ad4d5b91efa305a80b3d474dc57. 입력·운영 변경은 없다.
+- 이 게시 확인 기록을 포함한 최신 체크포인트는 git log -1 --format='%H %s'로 확인한다.

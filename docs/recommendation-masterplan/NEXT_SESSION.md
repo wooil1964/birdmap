@@ -68,3 +68,14 @@ Python48/조석21+1skip은 이전 이력이다. 이번 브라우저·연중성�
 
 main·운영 알고리즘·자동 JSON·Pages·Worker·D1·민감 원좌표 수정·배포 금지.
 사용자 승인 없이 ID 동점·가점·정원·보호 parser·유효점수 관문을 실제 운영에 적용하지 않는다.
+
+
+## 최종 저장·Issue 기록 (2026-10-09)
+
+- P1-C 완료: 7447c38102c1832a944d5cf4281ae6ebd3b485b0.
+- P1-D 완료 보고: fae50b289b74a9debae2eff0a820de13890fd73a.
+- 두 단계 모두 분석 브랜치에 별도 commit/push했다.
+- Issue #9 결과: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6071038439.
+- 게시 후 전체 댓글을 다시 조회해 ID와 본문이 저장 요청과 정확히 일치함을 확인했다.
+- 최신 확인 main: 4fc14b3c7ba19ad4d5b91efa305a80b3d474dc57. 입력·운영 변경은 없다.
+- 이 게시 확인 기록을 포함한 최신 체크포인트는 git log -1 --format='%H %s'로 확인한다.

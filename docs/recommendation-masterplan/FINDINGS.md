@@ -1,5 +1,8 @@
 # 확인 사실과 근거
 
+**최신 상태 (2026-10-09): P1-C/D 분석·독립 대조와 정책 우선순위 초안 완료. C7447c38 → Dfae50b2 별도 push, Issue #9 기록·조회 확인 완료. 아래 이전 단계 표는 완료 이력이며 최종 상태·후속 작업은 문서 끝과 NEXT_SESSION을 따른다. 운영 구현·최적 배점·연중성과·P2~P4는 미완료다.**
+
+
 ## 기준과 자료 시각
 
 분석 코드와 저장 JSON은 `1f0b0b5ca9d3ef887fc0bd2a159ef73429466a25`의 Git object로 고정했다. P0 최종 `e0fc103`은 PR #12 merge `eb36d1e`를 통해 main에 반영됐다. [이전 P0 검증](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6056552946)과 이번 실행 결과는 별도 증거다.
