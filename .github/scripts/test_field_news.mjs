@@ -88,3 +88,12 @@ test('위치정보를 저장·전송하는 코드가 새 길안내에 없다', (
   assert.ok(block.length > 1000);
   for (const banned of ['localStorage', 'sessionStorage', 'fetch(', 'sendBeacon', 'XMLHttpRequest', 'fieldApi(']) assert.ok(!block.includes(banned), banned);
 });
+
+test('외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다', () => {
+  const block = HTML.slice(HTML.indexOf('function fieldNavExternal('), HTML.indexOf('function fieldNavManualGuide('));
+  assert.ok(!block.includes("'_blank','noopener'"), "window.open 의 'noopener' 기능 문자열은 성공해도 null 을 돌려준다");
+  assert.ok(block.includes('opened.opener=null'));
+  assert.ok(block.includes('else fieldNavChooser('));
+  const chooser = HTML.slice(HTML.indexOf('function fieldNavChooser('), HTML.indexOf('function fieldNavGuide('));
+  assert.ok(chooser.includes("link.target='_blank'") && chooser.includes("link.rel='noopener'"));
+});

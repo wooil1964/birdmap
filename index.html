@@ -5402,6 +5402,8 @@ function fieldNavChoiceClose(){
 /* GPS 를 쓸 수 없을 때: 자동 전환을 하지 않고 사용자가 고르게 한다. 방향 유도는 현재 위치가 필요하다. */
 function fieldNavChooser(update,message){
   fieldNavChoiceClose();
+  var toast=fieldEl('fieldToast');   // 같은 안내가 선택창에 있으므로 겹치지 않게 토스트는 거둔다
+  if(toast)toast.style.display='none';
   var box=document.createElement('div');
   box.id='fieldNavChoice';box.setAttribute('role','dialog');
   box.appendChild(fieldLine(message));
@@ -5432,8 +5434,10 @@ function fieldNavExternal(update,km,accuracy){
   if(!url)return;
   fieldToast(fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열어요.');
   // 위치 확인 뒤라 사용자 터치 직후가 아니어서 새 창이 막힐 수 있다. 막히면 직접 누르는 링크를 보여 준다.
-  var opened=window.open(url,'_blank','noopener');
-  if(!opened)fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열려면 ‘내비게이션’을 눌러 주세요.');
+  // 'noopener' 기능 문자열을 쓰면 성공해도 null 이 돌아와 차단으로 오판하므로, 열린 창의 opener 를 직접 끊는다.
+  var opened=window.open(url,'_blank');
+  if(opened){try{opened.opener=null;}catch(error){}}
+  else fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열려면 ‘내비게이션’을 눌러 주세요.');
 }
 function fieldNavManualGuide(id){
   var update=fieldFind(id);
