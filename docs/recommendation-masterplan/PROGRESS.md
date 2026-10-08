@@ -43,6 +43,8 @@ A1을 **배열 의존 제거를 위한 우선 도입 검토안**으로 삼는다
 |ad9d476|새 기상 보존·동일 입력 비교|
 |58e1931|ON1000회 및3대안 완료, OFF 진행 상태 보존|
 |721513a|ON/OFF 전체 실험·독립 계산·전수 검증 완료|
-|이 문서를 포함한 보고 커밋|최종 결과 통합·회귀 근거·P1-C/D 재개 지침. git log -1로 확인|
+|2c8f663 보고 커밋|최종 결과 통합·회귀 근거·P1-C/D 재개 지침. git log -1로 확인|
 
 각 완료 단위를 commit/push했다. main·운영 코드·자동 JSON·Worker·D1·원좌표는 변경하지 않았다. 다음은P1-C이며 정확한 작업은 [NEXT_SESSION.md](NEXT_SESSION.md)에 있다.
+
+Issue #9 기록: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6061997861 (게시 후 조회 확인). 완료 보고 커밋2c8f663 뒤의 재개 기록에 댓글 링크를 보존했다.
