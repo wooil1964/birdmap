@@ -130,6 +130,9 @@
   </div>
 </div>
 
+<!-- 지금 보여요·다시 나타남 현장소식 작은 박스. 해당 소식이 없으면 숨는다(JS 가 채운다). -->
+<div id="fieldNewsBox" hidden></div>
+
 <!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면과 모바일 화면(작은 크기)에서 보인다.
      자료는 마커를 그릴 때 이미 받아 둔 /reports/approved 를 그대로 쓴다(추가 호출 없음). -->
 <div id="recentReportsBox">
@@ -481,6 +484,32 @@ body.fieldMode #noticePanel,body.fieldMode #todayPanel,body.fieldMode #recentRep
 .fieldMarker.not_visible{background:#78909c}
 .fieldMarker.reappeared{background:#00897b}
 .fieldMarker.aging{opacity:.8}
+.fieldMarker.newsFocus{box-shadow:0 0 0 6px rgba(255,193,7,.95),0 1px 5px rgba(0,0,0,.55);animation:fieldNewsPulse 1s ease-in-out 3}
+@keyframes fieldNewsPulse{50%{box-shadow:0 0 0 12px rgba(255,193,7,.35),0 1px 5px rgba(0,0,0,.55)}}
+/* 현장소식 작은 박스: 왼쪽 아래(출현 제보 박스는 오른쪽 아래). 부적격 소식이 없으면 hidden. */
+#fieldNewsBox{position:fixed;left:10px;bottom:56px;z-index:9990;display:flex;flex-direction:column;box-sizing:border-box;width:270px;max-height:58vh;background:rgba(255,255,255,.97);border:2px solid #1565c0;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
+#fieldNewsBox[hidden]{display:none}
+body.fieldMode #fieldNewsBox,body.reportPicking #fieldNewsBox,body.fieldGuiding #fieldNewsBox,body.rightPanelOpen #fieldNewsBox{display:none!important}
+.fieldNewsHead{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;min-height:36px;padding:6px 10px;border:0;background:#e8f1fb;font:inherit;font-size:13px;font-weight:bold;color:#0d47a1;cursor:pointer;text-align:left}
+.fieldNewsList{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.fieldNewsItem{padding:6px 10px;border-top:1px solid #e3e8eb}
+.fieldNewsName{font-size:13px;font-weight:bold;color:#22333c;word-break:keep-all;overflow-wrap:anywhere}
+.fieldNewsState{margin-left:6px;padding:1px 6px;border-radius:9px;font-size:11px;color:#fff;background:#1565c0;white-space:nowrap}
+.fieldNewsState.reappeared{background:#00897b}
+.fieldNewsMeta{margin-top:2px;font-size:11px;color:#5a6b75;word-break:keep-all}
+.fieldNewsBtns{display:flex;gap:6px;margin-top:5px}
+.fieldNewsBtns button{flex:1 1 0;min-width:0;min-height:34px;padding:4px 6px;border:1px solid #1565c0;border-radius:6px;background:#fff;color:#0d47a1;font:inherit;font-size:12px;font-weight:bold;cursor:pointer}
+.fieldNewsBtns button[disabled]{opacity:.55;border-color:#9aa5ab;color:#6b7a83;cursor:not-allowed}
+.fieldNewsMore{display:block;width:100%;min-height:32px;border:0;border-top:1px solid #e3e8eb;background:#f6f8f9;font:inherit;font-size:12px;color:#174d6f;cursor:pointer}
+#fieldNavChoice{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:10004;box-sizing:border-box;width:min(340px,calc(100vw - 16px));padding:10px 12px;background:#fff;border:2px solid #1565c0;border-radius:10px;box-shadow:0 3px 14px rgba(0,0,0,.35);font:14px/1.45 Arial,'Malgun Gothic',sans-serif;color:#33424c}
+#fieldNavChoice .fieldNewsBtns a{flex:1 1 0;min-width:0;min-height:34px;box-sizing:border-box;padding:6px;border:1px solid #1565c0;border-radius:6px;background:#fff;color:#0d47a1;font-size:12px;font-weight:bold;text-align:center;text-decoration:none}
+@media(max-width:899px){
+  #fieldNewsBox{left:8px;bottom:56px;width:calc(100vw - 190px);max-width:230px;max-height:46vh}
+  .fieldNewsHead{min-height:34px;padding:4px 8px;font-size:12px}
+  .fieldNewsBtns button{padding:4px 2px;font-size:11px;white-space:nowrap}
+  .fieldNewsItem{padding:5px 8px}
+  .fieldNewsName{font-size:12px}
+}
 .fieldMarker.old{opacity:.45}
 .fieldMarker.picking{background:#fff;border-color:#1565c0;box-shadow:0 0 0 3px rgba(21,101,192,.35),0 1px 5px rgba(0,0,0,.55)}
 .fieldPop{min-width:190px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;line-height:1.5}
@@ -1552,11 +1581,15 @@ function spotSpeciesCoveredByHistory(species,history){
 /* 출현 지점 팝업 본문. 기존 '이름 + 출현종' 형식을 그대로 두고 이력만 아래에 붙인다. */
 /* 승인된 출현종 제보의 공개 좌표로 카카오맵 길찾기(도착지 지정)를 연다. 공식 URL: https://map.kakao.com/link/to/이름,위도,경도
    출발지는 카카오맵에서 정한다. 위치 보호(대략 좌표) 제보와 좌표가 이상한 제보에는 만들지 않는다. */
-function spotKakaoRouteHtml(dest){
+function spotKakaoRouteUrl(dest,label){
   if(!dest||!isFinite(dest.lat)||!isFinite(dest.lon))return '';
   var lat=Number(dest.lat),lon=Number(dest.lon);
   if(Math.abs(lat)>90||Math.abs(lon)>180)return '';
-  return '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/'+encodeURIComponent('출현 지점')+','+lat+','+lon+'">🚗 카카오맵 찾아가기</a>';
+  return 'https://map.kakao.com/link/to/'+encodeURIComponent(label||'출현 지점')+','+lat+','+lon;
+}
+function spotKakaoRouteHtml(dest){
+  var url=spotKakaoRouteUrl(dest);
+  return url?'<a class="spotKakaoRoute" target="_blank" rel="noopener" href="'+url+'">🚗 카카오맵 찾아가기</a>':'';
 }
 function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDest){
   var names=(species||[]).map(escapeHtml).join(' · ');
@@ -5072,6 +5105,7 @@ function renderFieldMarkers(){
     delete fieldMarkers[id];
   });
   if(fieldGuide)fieldGuideUpdate();
+  renderFieldNews();
 }
 
 function fieldLine(text,className){
@@ -5262,6 +5296,176 @@ function fieldGuideStop(){
   if(g.box.parentNode)g.box.parentNode.removeChild(g.box);
   document.body.classList.remove('fieldGuiding');
 }
+
+/* ── 현장소식 작은 박스 + 거리별 길안내 ─────────────────────────────────
+   '지금 보여요'·'다시 나타남' 이면서 기존 유효시간(fieldIsActive) 안의 소식만 모은다. 마커·팝업·방향 유도(fieldGuideStart)·
+   카카오맵 길찾기(spotKakaoRouteUrl)는 기존 것을 그대로 부르고, 위치정보는 저장하지도 서버로 보내지도 않는다.
+   서버가 locationHidden 을 내려 준 소식(민감종 대략 좌표)은 실제 위치가 아니므로 길안내를 만들지 않는다. */
+var FIELD_NEWS_PC_MAX=5, FIELD_NEWS_MOBILE_MAX=2, FIELD_NAV_GUIDE_KM=30, FIELD_NEWS_FOCUS_ZOOM=16, FIELD_NEWS_REGION_KM=15;
+var fieldNewsOpen=true, fieldNewsAll=false, fieldNewsFocusTimer=null;
+function fieldNewsList(){
+  return fieldUpdates.filter(function(update){
+    return fieldIsActive(update)&&(update.status==='visible'||update.status==='reappeared');
+  }).sort(function(a,b){return fieldActivityMs(b)-fieldActivityMs(a);});
+}
+/* 길안내에 쓸 수 있는 공개 좌표. 위치 보호 소식·비정상 좌표는 null. */
+function fieldPublicPoint(update){
+  if(!update||update.locationHidden===true)return null;
+  var lat=update.lat,lon=update.lon;
+  if(typeof lat!=='number'||typeof lon!=='number'||!isFinite(lat)||!isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return null;
+  return {lat:lat,lon:lon};
+}
+/* 30km 이하(정확히 30km 포함)는 방향 유도, 초과는 외부 길찾기. */
+function fieldNavMode(km){return km<=FIELD_NAV_GUIDE_KM?'guide':'navigate';}
+function fieldNavDistanceText(km,accuracy){
+  var text='직선 약 '+(km<10?km.toFixed(1):Math.round(km))+' km';
+  return text+(accuracy>200?' (위치 오차 ±'+Math.round(accuracy)+' m)':'');
+}
+/* 새 API 없이, 가장 가까운 기존 탐조지의 시·도(시·군·구)만 쓴다. 위치 보호 소식은 시·도까지만. */
+function fieldNewsRegion(update){
+  var best=null,bestKm=Infinity;
+  siteData.forEach(function(site){
+    var km=haversineKm({lat:update.lat,lon:update.lon},{lat:Number(site.lat),lon:Number(site.lon)});
+    if(km<bestKm){bestKm=km;best=site;}
+  });
+  if(!best||bestKm>FIELD_NEWS_REGION_KM)return '';
+  return update.locationHidden===true?String(best.sido||''):[best.sido,best.sigungu].filter(Boolean).join(' ');
+}
+function fieldNewsButton(label,handler,disabled,title){
+  var button=document.createElement('button');
+  button.type='button';button.textContent=label;
+  if(disabled){button.disabled=true;if(title)button.title=title;}else button.onclick=handler;
+  return button;
+}
+function renderFieldNews(){
+  var box=fieldEl('fieldNewsBox');
+  if(!box)return;
+  var list=fieldAvailable?fieldNewsList():[];
+  box.textContent='';
+  if(!list.length){box.hidden=true;return;}
+  box.hidden=false;
+  var max=innerWidth<900?FIELD_NEWS_MOBILE_MAX:FIELD_NEWS_PC_MAX;
+  var head=document.createElement('button');
+  head.type='button';head.className='fieldNewsHead';
+  head.setAttribute('aria-expanded',fieldNewsOpen?'true':'false');
+  head.textContent='📡 현장소식 '+list.length+'건 '+(fieldNewsOpen?'▾':'▸');
+  head.onclick=function(){fieldNewsOpen=!fieldNewsOpen;renderFieldNews();};
+  box.appendChild(head);
+  if(!fieldNewsOpen)return;
+  var body=document.createElement('div');
+  body.className='fieldNewsList';
+  (fieldNewsAll?list:list.slice(0,max)).forEach(function(update){
+    var item=document.createElement('div');
+    item.className='fieldNewsItem';
+    var name=document.createElement('div');
+    name.className='fieldNewsName';
+    name.textContent=update.species;
+    var state=document.createElement('span');
+    state.className='fieldNewsState '+update.status;
+    state.textContent=FIELD_STATUS_LABEL[update.status];
+    name.appendChild(state);
+    item.appendChild(name);
+    var region=fieldNewsRegion(update);
+    item.appendChild(fieldLine((region?region+' · ':'')+fieldAgeText(fieldAgeMin(update))+' 확인'+(update.locationHidden===true?' · 대략 위치':''),'fieldNewsMeta'));
+    var buttons=document.createElement('div');
+    buttons.className='fieldNewsBtns';
+    buttons.appendChild(fieldNewsButton('마커 보기',function(){fieldNewsShow(update.id);}));
+    buttons.appendChild(fieldNewsButton(update.locationHidden===true?'길안내 불가':'길안내',function(){fieldNewsNavigate(update.id);},update.locationHidden===true,'위치 보호 중인 소식은 길안내를 제공하지 않아요.'));
+    item.appendChild(buttons);
+    body.appendChild(item);
+  });
+  box.appendChild(body);
+  if(list.length>max){
+    var more=document.createElement('button');
+    more.type='button';more.className='fieldNewsMore';
+    more.textContent=fieldNewsAll?'접기':'전체 '+list.length+'건 보기';
+    more.onclick=function(){fieldNewsAll=!fieldNewsAll;renderFieldNews();};
+    box.appendChild(more);
+  }
+}
+/* 마커 보기: 기존 마커와 팝업을 그대로 열고 잠깐 강조한다. */
+function fieldNewsShow(id){
+  var update=fieldFind(id),entry=fieldMarkers[id],map=fieldMap();
+  if(!update||!entry){fieldToast('이 현장소식은 지도에서 찾을 수 없어요.','error');return;}
+  map.setView([update.lat,update.lon],Math.max(map.getZoom(),FIELD_NEWS_FOCUS_ZOOM));
+  entry.marker.openPopup();
+  var element=entry.marker.getElement(),mark=element&&element.querySelector('.fieldMarker');
+  if(!mark)return;
+  mark.classList.add('newsFocus');
+  clearTimeout(fieldNewsFocusTimer);
+  fieldNewsFocusTimer=setTimeout(function(){mark.classList.remove('newsFocus');},3500);
+}
+function fieldNavChoiceClose(){
+  var box=fieldEl('fieldNavChoice');
+  if(box&&box.parentNode)box.parentNode.removeChild(box);
+}
+/* GPS 를 쓸 수 없을 때: 자동 전환을 하지 않고 사용자가 고르게 한다. 방향 유도는 현재 위치가 필요하다. */
+function fieldNavChooser(update,message){
+  fieldNavChoiceClose();
+  var toast=fieldEl('fieldToast');   // 같은 안내가 선택창에 있으므로 겹치지 않게 토스트는 거둔다
+  if(toast)toast.style.display='none';
+  var box=document.createElement('div');
+  box.id='fieldNavChoice';box.setAttribute('role','dialog');
+  box.appendChild(fieldLine(message));
+  box.appendChild(fieldLine('원하는 안내 방식을 골라 주세요.','fieldNewsMeta'));
+  var row=document.createElement('div');
+  row.className='fieldNewsBtns';
+  row.appendChild(fieldNewsButton('방향 유도',function(){fieldNavManualGuide(update.id);}));
+  var url=spotKakaoRouteUrl(fieldPublicPoint(update),update.species);
+  var link=document.createElement('a');
+  link.href=url;link.target='_blank';link.rel='noopener';link.textContent='내비게이션';
+  link.onclick=fieldNavChoiceClose;
+  row.appendChild(link);
+  row.appendChild(fieldNewsButton('닫기',fieldNavChoiceClose));
+  box.appendChild(row);
+  document.body.appendChild(box);
+}
+function fieldNavGuide(update,km,accuracy){
+  fieldNavChoiceClose();
+  if(matchMedia('(pointer:fine)').matches){   // 기존 방향 유도는 터치 기기 전용이다
+    fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 방향 유도는 스마트폰 등 터치 기기에서 쓸 수 있어요.');
+    return;
+  }
+  fieldToast(fieldNavDistanceText(km,accuracy)+' · 방향 유도를 시작해요.');
+  fieldGuideStart(update.id);
+}
+function fieldNavExternal(update,km,accuracy){
+  var url=spotKakaoRouteUrl(fieldPublicPoint(update),update.species);
+  if(!url)return;
+  fieldToast(fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열어요.');
+  // 위치 확인 뒤라 사용자 터치 직후가 아니어서 새 창이 막힐 수 있다. 막히면 직접 누르는 링크를 보여 준다.
+  // 'noopener' 기능 문자열을 쓰면 성공해도 null 이 돌아와 차단으로 오판하므로, 열린 창의 opener 를 직접 끊는다.
+  var opened=window.open(url,'_blank');
+  if(opened){try{opened.opener=null;}catch(error){}}
+  else fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열려면 ‘내비게이션’을 눌러 주세요.');
+}
+function fieldNavManualGuide(id){
+  var update=fieldFind(id);
+  if(!update||!fieldPublicPoint(update))return;
+  if(matchMedia('(pointer:fine)').matches){fieldToast('방향 유도는 스마트폰 등 터치 기기에서 쓸 수 있어요.','error');return;}
+  var needed='방향 유도는 현재 위치 확인이 필요해요. 위치 권한을 허용한 뒤 다시 눌러 주세요.';
+  if(!navigator.geolocation){fieldToast(needed,'error');return;}
+  navigator.geolocation.getCurrentPosition(function(){
+    fieldNavChoiceClose();
+    fieldGuideStart(id);
+  },function(){fieldToast(needed,'error');},{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+}
+/* 길안내: 현재 위치를 한 번만 읽어 직선거리로 방향 유도/외부 길찾기를 고른다. 읽은 위치는 저장·전송하지 않는다. */
+function fieldNewsNavigate(id){
+  var update=fieldFind(id),point=fieldPublicPoint(update);
+  if(!update||!fieldIsActive(update)){fieldToast('종료된 현장소식이에요.','error');return;}
+  if(!point){fieldToast('위치 보호 중인 소식이라 길안내를 제공하지 않아요.','error');return;}
+  if(!navigator.geolocation){fieldNavChooser(update,'이 기기에서는 현재 위치를 쓸 수 없어요.');return;}
+  fieldToast('현재 위치를 확인하는 중이에요...');
+  navigator.geolocation.getCurrentPosition(function(position){
+    var km=haversineKm({lat:position.coords.latitude,lon:position.coords.longitude},point);
+    if(fieldNavMode(km)==='guide')fieldNavGuide(update,km,position.coords.accuracy);
+    else fieldNavExternal(update,km,position.coords.accuracy);
+  },function(error){
+    fieldNavChooser(update,error&&error.code===1?'위치 권한이 꺼져 있어 거리를 알 수 없어요.':'현재 위치를 확인하지 못했어요.');
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+}
+window.addEventListener('resize',function(){if(fieldAvailable)renderFieldNews();});
 
 function fieldToast(text,kind){
   var toast=fieldEl('fieldToast');
