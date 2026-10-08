@@ -3813,7 +3813,18 @@ function weeklyBestMudflatTide(site,week){
   var candidates=Object.keys(byDate).map(function(date){return byDate[date];});
   candidates.sort(function(a,b){return b.level-a.level||String(a.date).localeCompare(String(b.date));});
   var best=candidates[0], extras=candidates.slice(1,3).map(function(item){return weeklyDateLabel(item.date)+' '+item.time+' · '+item.level+'cm';});
-  return {date:best.date,reason:rule.reason,tideText:'만조 '+best.time+' · '+best.level+'cm',extraText:extras.length?'그 밖의 좋은 날: '+extras.join(' / '):'',cautionText:(best.day.stale===true&&best.day.fallbackSource!=='monthly_cache')?'※ 이전 조석 자료':'',sortLevel:best.level};
+  return {date:best.date,minutes:best.minutes,reason:rule.reason,tideText:'만조 '+best.time+' · '+best.level+'cm',extraText:extras.length?'그 밖의 좋은 날: '+extras.join(' / '):'',cautionText:(best.day.stale===true&&best.day.fallbackSource!=='monthly_cache')?'※ 이전 조석 자료':'',sortLevel:best.level};
+}
+/* 만조 시각에 가장 가까운 유효 예보(일출~일몰·적격·지난 시각 제외). 만조와의 차이가 예보 간격의 절반을
+   넘으면 그 시각을 대표하지 못하므로 null이다. 다른 시각의 예보로 대신하거나 값을 추정하지 않는다. */
+function weeklyTideNearestSample(site,tide){
+  if(!tide||!Number.isFinite(tide.minutes))return null;
+  var interval=Number(weatherWeek&&weatherWeek.sampleIntervalHours), limit=(interval>0?interval:3)*30, best=null, bestGap=Infinity;
+  weeklyDaylightCandidates(site,tide.date).forEach(function(sample){
+    var gap=Math.abs(weeklySampleMinutes(sample)-tide.minutes);
+    if(gap<bestGap){best=sample;bestGap=gap;}
+  });
+  return best&&bestGap<=limit?best:null;
 }
 function todayIsEastWindDirection(direction){
   var value=String(direction||'').trim().toUpperCase().replace(/\s*[0-9.]+\s*M\/S.*$/,'').trim();
@@ -3822,9 +3833,9 @@ function todayIsEastWindDirection(direction){
 function todayWeatherCautionNote(today){
   var wave=v24WaveNumber(today&&today.wave);
   var rainText=String(today&&today.rain||'');
-  var rainMatch=rainText.match(/([0-9.]+)\s*mm/i);
-  var rainAmount=rainMatch?Number(rainMatch[1]):null;
-  if((wave!==null&&wave>=2.0)||(rainAmount!==null&&rainAmount>=10)||/폭우|호우|강한 비/.test(rainText))return '이동기 주목 조건이지만 현장 탐조 주의';
+  // 강수는 카드의 '탐조 비권장' 판정(v251ScoreSentence)과 같은 v251RainInfo·1mm 기준을 쓴다.
+  var rain=v251RainInfo(today);
+  if((wave!==null&&wave>=2.0)||(rain.raining&&(rain.amount===null||rain.amount>=1))||/폭우|호우|강한 비/.test(rainText))return '이동기 주목 조건이지만 현장 탐조 주의';
   return '';
 }
 function todaySoutheastEastWindReason(site,today){
@@ -3912,6 +3923,13 @@ function weeklySeasonForDate(dateText){
   return weeklySummerRecommendationSeason(month)?'summer':weeklySpringRecommendationSeason(month)?'spring':
     weeklyWinterRecommendationSeason(month)?'winter':'autumn';
 }
+/* 대표 예보는 안전 조건(현장주의: 강수·파고, 선상은 추가 기준)을 통과한 예보 중에서 고른다.
+   위험한 시각의 높은 점수가 안전한 시각 예보를 가리지 않게 하기 위함이다. */
+function weeklyCautionFreeFilter(site,dateText,base){
+  return function(sample){
+    return (!base||base(sample))&&!todayWeatherCautionNote(weeklySampleAsWeather(site,sample,dateText));
+  };
+}
 function weeklyDatePolicy(site,dateText){
   // 그 날짜의 계절로 환경·제외·allowlist를 판정한다. 부적격이면 그 날짜는 후보에서 빠진다.
   var month=weeklyMonthForDate(dateText), season=weeklySeasonForDate(dateText);
@@ -3921,20 +3939,26 @@ function weeklyDatePolicy(site,dateText){
   if((summer||spring||winter)&&axes.excludedReason)return null;
   var pelagic=axes.pelagic;
   if(!summer&&!winter&&site.pelagic===true&&(!pelagic||!weeklyPelagicRecommendationSeason(month)))return null;
+  var base=pelagic?(summer?summerPelagicSafety:weeklyPelagicSafety):null;
   return {season:season,month:month,date:dateText,axes:axes,pelagic:pelagic,
     summer:summer,spring:spring,winter:winter,autumn:autumn,
-    sampleFilter:pelagic?(summer?summerPelagicSafety:weeklyPelagicSafety):null};
+    sampleFilter:base,safeFilter:weeklyCautionFreeFilter(site,dateText,base)};
 }
 /* 날짜별 계절 적격성을 먼저 확인하고, 통과한 날짜의 대표 sample 중에서만 주간 최고점을 고른다.
    다음 계절에서 부적격인 고득점 sample 때문에 현재 계절의 유효한 sample까지 사라지지 않는다. */
 function weeklySeasonalBestWeatherDay(site,week){
+  /* 현장주의 조건을 통과한 예보를 먼저 고른다. 어느 날짜에도 없을 때만 기존 대표값으로 되돌려
+     후보(공지·물때 mandatory 사유 보존)를 유지하고, 최종 선발에서 weeklyRecommendationIsSafe 가 제외한다. */
   var best=null;
-  week.dates.forEach(function(dateText){
-    var policy=weeklyDatePolicy(site,dateText);
-    if(!policy)return;
-    var sample=weeklyDailyBestSample(site,dateText,policy.sampleFilter);
-    if(!sample)return;
-    if(!best||Number(sample.score)>Number(best.sample.score))best={date:dateText,sample:sample,policy:policy};
+  ['safeFilter','sampleFilter'].forEach(function(filterName){
+    if(best)return;
+    week.dates.forEach(function(dateText){
+      var policy=weeklyDatePolicy(site,dateText);
+      if(!policy)return;
+      var sample=weeklyDailyBestSample(site,dateText,policy[filterName]);
+      if(!sample)return;
+      if(!best||Number(sample.score)>Number(best.sample.score))best={date:dateText,sample:sample,policy:policy};
+    });
   });
   return best;
 }
@@ -3971,8 +3995,10 @@ function weeklyRecommendationForSite(site,week){
   // 표시되는 만조 날짜가 어긋나지 않게 한다.
   if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather&&!tideRec)date=bestWeather.date;
   /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */
-  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?weeklyDailyBestSample(site,date,sampleFilter):null;
-  var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(weatherEntry&&weatherEntry.date===date?weatherEntry.weather:null);
+  // 물때 추천은 그 만조에 가장 가까운 예보로 평가한다. 대표성 있는 예보가 없으면 기상은 미확인으로 둔다.
+  var tideDay=!!tideRec&&date===tideRec.date&&!!weatherEntry&&weatherEntry.fromWeek===true;
+  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?weeklyTideNearestSample(site,tideRec):(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;
+  var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):((tideDay||!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather);
   var dayScore=dayBest?Number(dayBest.score):(dayWeather&&weatherEntry?weatherEntry.score:null);
   var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);
   if(spring&&axes.island){
@@ -3983,7 +4009,7 @@ function weeklyRecommendationForSite(site,week){
   if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);
   var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:Number.isFinite(dayScore)?dayScore:null,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,
     recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',
-    tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?'주간 3시간 예보 기준':(weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel};
+    tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 예보 없음 · 기상 미확인':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};
   if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;
   // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.
   entry.recentReport=weeklyRecentReportBonus(site);
@@ -4027,7 +4053,7 @@ function weeklyRecentReportBonus(site,todayText){
   if(!species)return null;
   var recency=ageDays<=1?12:ageDays<=3?9:ageDays<=7?5:2;
   var variety=species>=4?4:species>=2?2:0;
-  return {ageDays:ageDays,speciesCount:species,bonus:Math.min(WEEKLY_RECENT_BONUS_MAX,recency+variety)};
+  return {ageDays:ageDays,latestDate:item.latestDate,speciesCount:species,bonus:Math.min(WEEKLY_RECENT_BONUS_MAX,recency+variety)};
 }
 /* 정렬용 점수. 기상 점수가 없으면(조석 기준 추천 등) 기존처럼 점수 없이 둔다. */
 function weeklyRankScore(entry){
@@ -4175,7 +4201,7 @@ function renderTodayPanel(){
   body.appendChild(topTitle);
   var basisInfo=document.createElement('div');
   basisInfo.className='todayRankBasis';
-  basisInfo.textContent='추천 기간: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+' · 조석: KHOA 예측자료';
+  basisInfo.textContent='추천 기간: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+(weatherWeek&&weatherWeek.generatedAt?'(예보 자료 생성 '+weatherWeek.generatedAt+')':'')+' · 조석: KHOA 예측자료';
   body.appendChild(basisInfo);
   if(!top.length){
     var none=document.createElement('div');
@@ -4206,18 +4232,18 @@ function renderTodayPanel(){
     }
     var score=document.createElement('div');
     score.className='todayRankScore';
-    score.textContent=entry.today?v251ScoreDisplayText(entry.today):'조석 기준 추천';
+    score.textContent=entry.today?v251ScoreDisplayText(entry.today):(entry.tideText?'조석 기준 추천 · 만조 시각 기상 예보 없음(기상 미확인)':'조석 기준 추천');
     item.appendChild(score);
     // 기상 점수와 섞지 않고 따로 적는다. 가점은 순위에만 쓰였다.
     if(entry.recentReport&&Number.isFinite(entry.rankScore)){
       var recent=document.createElement('div');
       recent.className='todayMandatoryReason';
-      recent.textContent='🐦 최근 출현 '+(entry.recentReport.ageDays===0?'오늘':entry.recentReport.ageDays+'일 전')+' · '+entry.recentReport.speciesCount+'종 · 추천 가점 +'+entry.recentReport.bonus;
+      recent.textContent='🐦 최근 출현 '+(entry.recentReport.ageDays===0?'오늘':entry.recentReport.ageDays+'일 전')+'('+entry.recentReport.latestDate+' 관찰, 제보 승인 기준) · '+entry.recentReport.speciesCount+'종 · 추천 가점 +'+entry.recentReport.bonus;
       item.appendChild(recent);
     }
     var recDate=document.createElement('div');
     recDate.className='todayRankMeta';
-    recDate.textContent='📅 추천: '+weeklyRecommendationDateLabel(entry)+(entry.recommendationTime?' · 낮 시간 대표':'');
+    recDate.textContent='📅 추천: '+weeklyRecommendationDateLabel(entry)+(entry.recommendationTime?(entry.tideMatched?' · 만조 인접 예보 시각':' · 낮 시간 대표'):'');
     item.appendChild(recDate);
     var meta=document.createElement('div');
     meta.className='todayRankMeta';
