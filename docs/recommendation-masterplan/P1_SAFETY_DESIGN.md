@@ -299,3 +299,12 @@ node docs/recommendation-masterplan/_scripts/p1s2_score_matrix.mjs . docs/recomm
 미확정: 최신 공식 전체taxonomy/alias/이용허락·coverage, 일반표본 오탐, 알/산란/자유문맥의 보호 정책, canonical/approved 정확 공개의 전환 범위, field 대략좌표·메모·기여집계, legacy 신규 원문 저장 계약, public total/페이지 성능, 운영 모드·실제 표현빈도, S1+S2 공동 추천영향, 실제 모바일/PC E2E. 이것들은 설계 누락으로 숨기지 않고 **구현 승인/배포 인수 조건**으로 유지한다.
 
 사용자 승인 없이 parser·score guard·ID 동점·가점·정원·Worker/D1/Pages/main에 적용하지 않는다. Issue #9에는 재현 사실·설계모형·정책변경·미확인을 구분해 기록한다. 마지막 커밋/게시 영수증은 NEXT_SESSION.md에 남긴다.
+## P1-S 저장·게시 영수증 — 2026-10-09
+
+- S1 완료/push: 0a67229127306a2daba19013f895f0f95b2d4ef2.
+- S2 통합 설계/push: e03f686d24d758dccf1dd640bc439139e529acf0.
+- Issue #9 결과: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6071356636.
+- 게시 후 전체 댓글을 읽어 ID/본문6267자가 확정 원문과 정확히 일치함을 확인했다. p1s_issue_report.md/receipt.json 보존.
+- S1/S2 분석·설계·게시 완료. 중복 게시·A~D 재분석은 하지 않는다. 다음 단계는 사용자 구현 승인 범위 확인이다.
+- 이 게시 영수증을 포함하는 최종 체크포인트 SHA는 git log -1 --format='%H %s'로 확인한다.
+- 운영 코드/main/자동JSON/Worker/D1/Pages/raw/배점·정원·P0 변경 없음. 최종 확인main1817161, 원래checkout e0fc103 유지.

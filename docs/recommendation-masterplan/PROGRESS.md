@@ -88,3 +88,12 @@ S1 체크포인트0a67229127306a2daba19013f895f0f95b2d4ef2 commit/push 완료. S
 ### 최종 원격 재확인 (2026-10-09)
 
 최종 main은18171613923ae5cf0a72512eae805c0005037115. 35141c0와 차이는 tide_health/tide_month/tide_today/weather_today/weather_week의 자동 JSON5개이며 보호·추천 관련 소스10개는4fc14b3와 동일하다. 별도 p1s_final_main_audit.json에10136 sample/적격 raw 오류0과SHA를 보존했다. 고정자료는 변경하지 않았다. p1s_validation.json은16파일SHA/190ID·좌표유효/통합범위/현행회귀/합성결과를 요약한다.
+## P1-S 저장·게시 영수증 — 2026-10-09
+
+- S1 완료/push: 0a67229127306a2daba19013f895f0f95b2d4ef2.
+- S2 통합 설계/push: e03f686d24d758dccf1dd640bc439139e529acf0.
+- Issue #9 결과: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6071356636.
+- 게시 후 전체 댓글을 읽어 ID/본문6267자가 확정 원문과 정확히 일치함을 확인했다. p1s_issue_report.md/receipt.json 보존.
+- S1/S2 분석·설계·게시 완료. 중복 게시·A~D 재분석은 하지 않는다. 다음 단계는 사용자 구현 승인 범위 확인이다.
+- 이 게시 영수증을 포함하는 최종 체크포인트 SHA는 git log -1 --format='%H %s'로 확인한다.
+- 운영 코드/main/자동JSON/Worker/D1/Pages/raw/배점·정원·P0 변경 없음. 최종 확인main1817161, 원래checkout e0fc103 유지.
