@@ -254,3 +254,124 @@ test("20. 기존 reports API 는 영향이 없다", async () => {
   const put = await call(env, "PUT", "/field-updates", valid());
   assert.equal(put.response.status, 405);
 });
+
+// ── 등록자 삭제(소프트 삭제) ─────────────────────────────────────────────
+const del = (env, id, body, ip) => call(env, "POST", `/field-updates/${id}/delete`, body, ip);
+const fieldRows = (env) => env.REPORTS_DB.prepare("SELECT id, status, user_hash FROM field_updates").all().then((r) => r.results);
+const eventRows = (env, id) => env.REPORTS_DB.prepare("SELECT status, user_hash FROM field_update_events WHERE field_update_id = ?1 ORDER BY created_at, rowid").bind(id).all().then((r) => r.results);
+
+test("삭제 1. 등록자 본인은 삭제하고, 공개 목록에서 즉시 사라지며 행과 이력은 소프트 삭제로 남는다", async () => {
+  const { env } = setup();
+  const made = (await create(env)).body.update;
+  const other = (await create(env, { deviceId: DEVICE_B, species: "큰고니" })).body.update;
+  assert.equal((await list(env)).body.updates.length, 2);
+
+  const result = await del(env, made.id, { deviceId: DEVICE_A });
+  assert.equal(result.response.status, 200);
+  assert.equal(result.body.ok, true);
+  assert.ok(result.body.deletedAt);
+
+  const after = (await list(env)).body.updates;
+  assert.deepEqual(after.map((u) => u.id), [other.id], "삭제한 소식만 빠지고 다른 소식은 그대로");
+  assert.ok(!JSON.stringify(after).includes("deleted"));
+  const rows = await fieldRows(env);
+  assert.equal(rows.length, 2, "행은 지우지 않는다");
+  assert.equal(rows.find((r) => r.id === made.id).status, "deleted");
+  assert.equal(rows.find((r) => r.id === other.id).status, "visible");
+  const events = await eventRows(env, made.id);
+  assert.deepEqual(events.map((e) => e.status), ["visible", "deleted"], "이전 이력은 보존하고 삭제 이벤트를 더한다");
+  assert.equal(events[1].user_hash, events[0].user_hash, "삭제 이벤트는 소유자 해시로 기록");
+  assert.ok(!JSON.stringify(result.body).includes(events[0].user_hash));
+});
+
+test("삭제 2·3. 다른 기기·다른 등록자·닉네임만 같은 이용자는 삭제할 수 없다", async () => {
+  const { env } = setup();
+  const made = (await create(env, { nickname: "행복합니다" })).body.update;
+  for (const [name, deviceId] of [["다른 기기", DEVICE_B], ["다른 등록자", DEVICE_C]]) {
+    const result = await del(env, made.id, { deviceId, nickname: "행복합니다" });
+    assert.equal(result.response.status, 403, name);
+    assert.equal(result.body.error.code, "FIELD_DELETE_FORBIDDEN", name);
+  }
+  // 닉네임만 같은 이용자: 닉네임을 그대로 보내고 다른 기기에서 시도해도 거부된다(닉네임은 소유권 판단에 쓰지 않는다).
+  const sameNick = await del(env, made.id, { deviceId: DEVICE_B, nickname: made.nickname, userHash: "anything", isOwner: true, mine: true });
+  assert.equal(sameNick.response.status, 403);
+  assert.equal((await list(env)).body.updates.length, 1, "거부된 뒤에도 소식은 그대로");
+  assert.equal((await fieldRows(env))[0].status, "visible");
+  assert.equal((await eventRows(env, made.id)).length, 1, "거부는 이벤트를 남기지 않는다");
+});
+
+test("삭제 4. 존재하지 않는 ID·형식이 틀린 ID·기기값 없음은 삭제되지 않는다", async () => {
+  const { env } = setup();
+  const made = (await create(env)).body.update;
+  const missing = await del(env, "00000000-0000-0000-0000-000000000000", { deviceId: DEVICE_A });
+  assert.equal(missing.response.status, 404);
+  assert.equal(missing.body.error.code, "FIELD_NOT_FOUND");
+  const badId = await call(env, "POST", "/field-updates/not-a-uuid/delete", { deviceId: DEVICE_A });
+  assert.equal(badId.response.status, 404);
+  const sqlish = await call(env, "POST", "/field-updates/x'%20OR%201=1--/delete", { deviceId: DEVICE_A });
+  assert.equal(sqlish.response.status, 404);
+  for (const body of [{}, { deviceId: "short" }, { deviceId: "한글한글한글한글한글한글한글한글" }, undefined]) {
+    const result = await del(env, made.id, body);
+    assert.equal(result.response.status, 400, JSON.stringify(body));
+  }
+  assert.equal((await list(env)).body.updates.length, 1);
+  assert.equal((await fieldRows(env))[0].status, "visible");
+});
+
+test("삭제 5. 이미 삭제한 소식: 등록자 재삭제는 성공(멱등), 다른 사람에게는 존재하지 않는 소식", async () => {
+  const { env } = setup();
+  const made = (await create(env)).body.update;
+  assert.equal((await del(env, made.id, { deviceId: DEVICE_A })).response.status, 200);
+  const again = await del(env, made.id, { deviceId: DEVICE_A });
+  assert.equal(again.response.status, 200);
+  assert.equal(again.body.alreadyDeleted, true);
+  assert.equal((await eventRows(env, made.id)).filter((e) => e.status === "deleted").length, 1, "삭제 이벤트는 한 번만");
+  const stranger = await del(env, made.id, { deviceId: DEVICE_B });
+  assert.equal(stranger.response.status, 404);
+});
+
+test("삭제 6. 삭제한 소식은 확인·상태 변경도 할 수 없고, 상태 API 로 deleted 를 만들 수 없다", async () => {
+  const { env } = setup();
+  const made = (await create(env)).body.update;
+  const forged = await call(env, "POST", `/field-updates/${made.id}/status`, { status: "deleted", deviceId: DEVICE_A, turnstileToken: "t" });
+  assert.equal(forged.response.status, 400);
+  assert.equal(forged.body.error.code, "FIELD_STATUS_INVALID");
+  assert.equal((await fieldRows(env))[0].status, "visible");
+
+  await del(env, made.id, { deviceId: DEVICE_A });
+  const confirm = await call(env, "POST", `/field-updates/${made.id}/confirm`, { deviceId: DEVICE_B });
+  assert.equal(confirm.response.status, 404);
+  const status = await call(env, "POST", `/field-updates/${made.id}/status`, { status: "not_visible", deviceId: DEVICE_B, turnstileToken: "t" });
+  assert.equal(status.response.status, 404);
+  assert.equal((await list(env)).body.updates.length, 0);
+});
+
+test("삭제 7. 허용되지 않은 Origin·GET·DELETE 메서드로는 삭제할 수 없다", async () => {
+  const { env } = setup();
+  const made = (await create(env)).body.update;
+  const evil = await handleRequest(new Request(`https://reports.example/field-updates/${made.id}/delete`, {
+    method: "POST", headers: { Origin: "https://evil.example", "Content-Type": "application/json", "CF-Connecting-IP": "203.0.113.9" },
+    body: JSON.stringify({ deviceId: DEVICE_A }),
+  }), env);
+  assert.equal(evil.status, 403);
+  assert.equal((await evil.json()).error.code, "ORIGIN_NOT_ALLOWED");
+  const getResult = await call(env, "GET", `/field-updates/${made.id}/delete`);
+  assert.equal(getResult.response.status, 405);
+  const deleteMethod = await call(env, "DELETE", `/field-updates/${made.id}`);
+  assert.ok([404, 405].includes(deleteMethod.response.status));
+  assert.equal((await fieldRows(env))[0].status, "visible", "어느 경로로도 지워지지 않았다");
+});
+
+test("삭제 8. 삭제는 다른 소식의 상태 변경·확인·TTL 에 영향을 주지 않는다", async () => {
+  const { env } = setup();
+  const keep = (await create(env, { species: "큰고니" })).body.update;
+  const gone = (await create(env, { species: "저어새" })).body.update;
+  await del(env, gone.id, { deviceId: DEVICE_A });
+  const confirm = await call(env, "POST", `/field-updates/${keep.id}/confirm`, { deviceId: DEVICE_B });
+  assert.equal(confirm.response.status, 201);
+  const status = await call(env, "POST", `/field-updates/${keep.id}/status`, { status: "not_visible", deviceId: DEVICE_B, turnstileToken: "t" });
+  assert.equal(status.response.status, 201);
+  const now = (await list(env)).body;
+  assert.deepEqual(now.updates.map((u) => u.id), [keep.id]);
+  assert.equal(now.ttlHours, FIELD_UPDATE_TTL_HOURS);
+});

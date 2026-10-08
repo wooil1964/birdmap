@@ -97,3 +97,16 @@ test('외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(�
   const chooser = HTML.slice(HTML.indexOf('function fieldNavChooser('), HTML.indexOf('function fieldNavGuide('));
   assert.ok(chooser.includes("link.target='_blank'") && chooser.includes("link.rel='noopener'"));
 });
+
+test('내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다', () => {
+  const del = HTML.slice(HTML.indexOf('function fieldDelete('), HTML.indexOf('function fieldRemoveLocal('));
+  assert.ok(del.indexOf('window.confirm(') >= 0 && del.indexOf('window.confirm(') < del.indexOf('fieldApi('), '확인창이 요청보다 먼저');
+  assert.ok(del.includes("'/field-updates/'+id+'/delete','POST',{deviceId:fieldDeviceId()}"));
+  assert.ok(!/nickname|userHash|isOwner/.test(del), '닉네임 등으로 권한을 정하지 않는다');
+  assert.ok(del.includes('result.status===403||result.status===404'), '서버 거부 시 기록·화면을 서버 기준으로 맞춘다');
+  const popup = HTML.slice(HTML.indexOf('function fieldPopupNode('), HTML.indexOf('/* ── 현장 방향 안내'));
+  assert.ok(popup.includes('if(fieldIsMine(update.id))add(') && popup.includes('내 현장소식 삭제'));
+  const create = HTML.slice(HTML.indexOf('fieldMineAdd(result.body.update.id)') - 200, HTML.indexOf('fieldMineAdd(result.body.update.id)') + 200);
+  assert.ok(create.includes("fieldApi('/field-updates','POST',payload)") || create.includes('fieldValidUpdate'), '등록 성공 때만 내 소식으로 기록');
+  assert.equal(HTML.split('fieldMineAdd(').length - 1, 2, 'fieldMineAdd 는 정의 1곳 + 등록 성공 1곳');
+});
