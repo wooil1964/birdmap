@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "analysisBranch": "analysis/recommendation-masterplan",
+  "startingCheckpoint": "bee1359",
+  "s1Checkpoint": "0a67229127306a2daba19013f895f0f95b2d4ef2",
+  "finalMain": "18171613923ae5cf0a72512eae805c0005037115",
+  "sourceUnchanged": true,
+  "manifestCode": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "manifestHashesVerified": 16,
+  "registrySites": 190,
+  "uniqueIds": 190,
+  "invalidCoordinates": 0,
+  "recentSnapshotSha256": "af77014b5430d7b15d42dd77de8e4ec2a841e48b5151298a7013e3875c4757b6",
+  "baselineTests": {
+    "weekly": {
+      "tests": 126,
+      "pass": 126
+    },
+    "reportsApi": {
+      "tests": 170,
+      "pass": 170
+    },
+    "frontendContract": {
+      "tests": 57,
+      "pass": 57
+    },
+    "pythonWeather": {
+      "tests": 48,
+      "pass": 48
+    },
+    "pythonTide": {
+      "tests": 22,
+      "pass": 21,
+      "skip": 1
+    }
+  },
+  "protection": {
+    "inputCases": 48,
+    "readModes": 92,
+    "independentTaxonCases": 70,
+    "independentNormalCases": 17,
+    "representationFalsePositives": 0,
+    "prospectiveWithholding": {
+      "normalN": 17,
+      "sensitiveRFalsePositiveN": 0,
+      "prospectiveNormalWithheldN": 12,
+      "prospectiveNormalAllowedN": 5,
+      "unresolvedCoverageWithheldN": 11,
+      "resolvedKeywordWithheldN": 1
+    },
+    "prototypeNotProduction": true
+  },
+  "score": {
+    "matrix": 156,
+    "currentContractDifferenceRows": 80,
+    "designExpectedMatches": 156,
+    "specialExpectedMatches": 32,
+    "pythonValidatorCalls": 56,
+    "fixedCandidateCurrent": 176,
+    "fixedCandidateDesign": 176,
+    "fullTopObjectsIdentical": true,
+    "fixedInvalidEligibleRawScores": 0,
+    "latestInvalidEligibleRawScores": 0
+  },
+  "browserE2E": "Not executed; required after approved implementation",
+  "boundaries": {
+    "operatingSourceModified": false,
+    "originalCheckoutModified": false,
+    "productionReportsRead": false,
+    "workerOrD1Changed": false,
+    "mainMergeOrDeploy": false,
+    "score16OrQuotasChanged": false
+  },
+  "limitations": [
+    "Synthetic failure reproduction and prospective wrapper are not production implementation validation",
+    "S1-P privacy expansion and S2 notice-only/unknown eligibility restriction require separate policy approval",
+    "S1 full taxonomy and egg-language trial are not production-ready",
+    "Joint S1+S2 recommendation impact cannot be inferred from aggregated 11-site snapshot"
+  ]
+}

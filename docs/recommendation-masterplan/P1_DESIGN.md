@@ -481,3 +481,7 @@ flex_2211은 현행보다 ON/OFF3곳을 교체하고 rank 합이 +20/+24다. 지
 P1-A/B/C/D 정량 분석·동일 입력 정책 비교·우선순위 초안은 완료했다. 연중 정확도·생태 최적 배점/정원·제품 정책 확정·공개화면/운영 구현은 미검증이다. P2~P4는 미완료이며 구현·배포 승인은 없다.
 
 재현: [_scripts/analyze_p1d.mjs](_scripts/analyze_p1d.mjs), [_results/p1d_quotas.json](_results/p1d_quotas.json), [_results/p1d_independent.json](_results/p1d_independent.json), [_results/p1d_contract_audit.json](_results/p1d_contract_audit.json).
+
+## P1-S 안전 계약 후속 설계 (2026-10-09)
+
+보호종 표기·공개 읽기 정책과 유효점수 계약의 상세는 [P1_SAFETY_DESIGN.md](P1_SAFETY_DESIGN.md)에 기록했다. 최소안 S1-A/S2-A, 정책 변경과 방어 수정, 인수 조건, 구현 범위와 롤백을 분리했다. A~D의 동점·배점·정원 권고를 운영에 적용하지 않았다. 실제 구현은 별도 승인 대기다.

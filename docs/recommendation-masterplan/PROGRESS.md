@@ -79,3 +79,12 @@ P1-A/B/C/D정량분석·정책비교·우선순위초안완료. 최적가중치/
 ## P1-S1 체크포인트 — 2026-10-09
 
 시작bee1359, main4fc14b3. 기존A-D 반복0. S1 공개흐름·48/92 memory GET·70종명fixture·독립오탐·대안2종·인수명세 완료. P1_SAFETY_DESIGN.md 추가, S1 scripts/results/새groundtruth+officialsources 보존. 현재 회귀126/170/57/48/21+skip1통과. S2 점수행렬과통합설계/Issue9 게시가 다음 단계. 운영 파일/D1/Worker/Pages 변경 없음. 이 기록을 포함하는 정확SHA는 git log로 확인한다.
+
+
+## P1-S2 완료 — 2026-10-09
+
+S1 체크포인트0a67229127306a2daba19013f895f0f95b2d4ef2 commit/push 완료. S2 actual함수156행+특수32/Python56호출/fixed전체top·176후보 exact 실행보존. P1_SAFETY_DESIGN 13절 완성(대안2종씩8축,변경대상,회귀명세,승인·배포·롤백·미확정). 모든변경 docs/recommendation-masterplan만. S2보고commit/push 후 Issue9게시·본문확인·receipt커밋이남음. 실제구현은사용자별도승인.
+
+### 최종 원격 재확인 (2026-10-09)
+
+최종 main은18171613923ae5cf0a72512eae805c0005037115. 35141c0와 차이는 tide_health/tide_month/tide_today/weather_today/weather_week의 자동 JSON5개이며 보호·추천 관련 소스10개는4fc14b3와 동일하다. 별도 p1s_final_main_audit.json에10136 sample/적격 raw 오류0과SHA를 보존했다. 고정자료는 변경하지 않았다. p1s_validation.json은16파일SHA/190ID·좌표유효/통합범위/현행회귀/합성결과를 요약한다.

@@ -279,3 +279,12 @@ P1-A/B/C/D 정량 분석·동일 입력 정책 비교·우선순위 초안은 �
 ## P1-S1 — 2026-10-09 보호 계약 감사
 
 현재19종 exact/six keyword의 수량·줄바꿈 gap을 합성48입력/92읽기 조건으로 재현했다. 승인 후 공개와 canonical 비번식 확인은 기존 명시 정책이며 전체 read 비공개는 정책 전환으로 분리했다. hidden 자식→일반/fixed 부모 이력 연결도 합성재현. 실제 운영 유출 미확인. 독립70 fixture/정상17에서 표현보정 R 오탐0; 시험 정책P는 사전coverage11+알 의미오탐1을 보류하고 알 조사형2를 놓쳤으므로 운영채택 금지. 최신 설계는 P1_SAFETY_DESIGN.md. 기존126/API170/front57/기상48/조석21+1skip 현행 회귀통과. 운영코드·DB·배포 변경0.
+
+
+## P1-S2 — 점수 계약 독립 재현
+
+156합성행/특수32 설계모형기대 일치. 현행계약차이80행은 운영결함80건 아님. Number(null)→0과 공지-only null추천 경로를 구분. Python56회는today16/week8문서수용으로 추천적격과구분. today previous_saved false+숫자 참고보존 유지 필요. 고정10640·최신main10136에서적격 raw 타입/범위오류 각각0. 가상점수관문을선택전·최종에적용한 fixed전체top10/후보176불변. S1-P까지함께적용한영향은집계11곳만으로 미검증. 운영변경0,브라우저E2E미실행. 상세 P1_SAFETY_DESIGN.md.
+
+### 최종 원격 재확인 (2026-10-09)
+
+최종 main은18171613923ae5cf0a72512eae805c0005037115. 35141c0와 차이는 tide_health/tide_month/tide_today/weather_today/weather_week의 자동 JSON5개이며 보호·추천 관련 소스10개는4fc14b3와 동일하다. 별도 p1s_final_main_audit.json에10136 sample/적격 raw 오류0과SHA를 보존했다. 고정자료는 변경하지 않았다. p1s_validation.json은16파일SHA/190ID·좌표유효/통합범위/현행회귀/합성결과를 요약한다.

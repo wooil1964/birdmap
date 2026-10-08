@@ -54,3 +54,8 @@
 ## P1-S1 결정 — 2026-10-09
 
 S1-R(현행19/6 표현방어)와 S1-P(승인후/canonical/불확실 입력/field 포함 공개 권한 전환)를 별도 승인항목으로 둔다. 최소 변경 공유 read classifier를 우선 설계하되 recent-sites만 수정하는 안은 전체 보호 목표에 부족하다. 승인·raw·정본 이력은 보존하고 공개 union/siteId/이력/count/가점/tie 전에 필터한다. 법정 전체 목록·alias를 추정하지 않는다. 알 시험정규식과 작은fixture사전은 운영용으로 승인하지 않는다. legacy 원문 영구보존은 no-D1 읽기방어와 별도 계약. 구현·배포 승인은 아직 없음.
+
+
+## P1-S2 결정 — 2026-10-09
+
+S2-A 공통 typed0..100/finite + own eligible true + source필수자료 adapter를우선권고. 선택전/대체만조전·최종/4계절/fill 모두 적용; rank>100 허용/max16/quota4312/P0유지. 공지-only/unknown eligibility 차단은명시적계약강화. today false는참고숫자를보존해도추천불가,weekly false는기존null+사유계약. S1-A/S2-A 최소범위이나운영승인은없음. S1-P정책·전체사전/알반례는별도확정조건. 시험wrapper/prototype를 제품수정통과로보고하지않는다.
