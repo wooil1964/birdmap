@@ -1,0 +1,160 @@
+{
+  "sourceCommit": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "heldWeatherCommit": "1f0b0b5ca9d3ef887fc0bd2a159ef73429466a25",
+  "node": "v24.18.0",
+  "runs": [
+    {
+      "name": "weekly",
+      "cwd": "C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--import",
+        "file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/birdmap-masterplan-simulate/p1b/safety-tests/test-runtime-preload.mjs",
+        "--test",
+        "--test-reporter=tap",
+        ".github/scripts/test_weekly_recommendation.mjs"
+      ],
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
+      "startedAt": "2026-10-08T14:04:42.987Z",
+      "endedAt": "2026-10-08T14:04:50.538Z",
+      "elapsedMs": 7551,
+      "exit": 0,
+      "signal": null,
+      "error": null,
+      "counts": {
+        "tests": 126,
+        "suites": 0,
+        "pass": 126,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "stdoutSha256": "f6848914e83a86412ca142b6d6212f13fb0a10510068b7e88fbf6825300b9521",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "reports-api",
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\recommendation-masterplan\\birdmap\\reports-api",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "--import",
+        "file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/birdmap-masterplan-simulate/p1b/safety-tests/test-runtime-preload.mjs",
+        "--test",
+        "--test-reporter=tap"
+      ],
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      },
+      "startedAt": "2026-10-08T14:04:50.540Z",
+      "endedAt": "2026-10-08T14:04:51.608Z",
+      "elapsedMs": 1069,
+      "exit": 0,
+      "signal": null,
+      "error": null,
+      "counts": {
+        "tests": 171,
+        "suites": 0,
+        "pass": 171,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "stdoutSha256": "2d4f2ccc8358cce6c653e0a1bd5215d8676edea589dcd28e9f45fcc31150fea8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "reportsApiCountExplanation": {
+    "nodeReportedTests": 171,
+    "namedBehaviorTests": 170,
+    "helperFileLoadSubtest": 1
+  },
+  "sourceIntegrity": {
+    "hashedFileCount": 43,
+    "changedPaths": [],
+    "normalizedDifferencesAgainstPinnedSources": [],
+    "indexNormalizedSha256": "c3b0299bff1e052aa6fa0fcb3284261a80689dbd13e317c1aac11dccf1420ca0",
+    "weeklyTestGitBlobSha256": "a86de23d4e356e5f82329d26e4d035f6f49f355817ec409e8bb791b1f921fa4d",
+    "publicWorkerGitBlobSha256": "de73a7f93a6929a1ccfbc24f5907d4c6196a62580f1aa15c72edb89b3a5a0fcc",
+    "recentSitesTestGitBlobSha256": "94c02eaeba7a9d464c6b3fb414a0bd2a1b5104708be1d1c2156e6d3d45dd2703",
+    "heldWeatherNormalizedSha256": "332ada83a1ffa4c620fba56573c7cf3d0579827f4296acc57e7572ef6b1d0a8f"
+  },
+  "recentSites": {
+    "count": 4,
+    "allFoundInPassedFullSuite": true,
+    "tests": [
+      "최근 승인 제보를 탐조지별 최근 관찰일과 고유 종으로 묶는다",
+      "좌표·제보자·메모는 응답에 넣지 않는다",
+      "days 는 1~30 일로 제한한다",
+      "GET 외의 메서드는 막고 저장 자료를 바꾸지 않는다"
+    ],
+    "verifiedFixtures": "approved-only, linked-site-only, deduplicated species/latest observation date; excludes pending/rejected, hidden location, breeding note, protected species, stale observations; no coordinates/reporter/note/private data; GET-only and no local row mutation"
+  },
+  "relatedProtectionTests": [
+    "17. 보호종은 실제 좌표를 내보내지 않고 대략 좌표만 쓴다",
+    "18. 번식 관련 낱말이 있으면 저장하지 않는다",
+    "B·C·D. 위치 가리기: 실제 좌표 보존, 승인 전·후 모두 같은 대략 좌표만 공개, 공개 API 에 실제 좌표 없음",
+    "관리자 강제 위치 보호: 가리기·해제는 실제 좌표와 승인 상태를 바꾸지 않고, 다시 가려도 같은 점을 쓴다",
+    "잘못된 위치 가리기 값은 저장하지 않고 400, 공개 capability 에 hideLocation 이 켜져 있다",
+    "C. 이름 비공개는 contributors 에서 빠지고 approvedReports 에는 들어간다",
+    "E. 민감종·위치 보호 제보도 건수에 들어가지만 민감 정보는 응답에 없다",
+    "거부된 제보(번식 확인 누락)는 저장도 알림도 없다",
+    "승인 전 제보는 공개 목록에 나오지 않는다",
+    "둥지·번식 제보와 보호종은 승인 전 공개를 보류한다",
+    "대기 목록은 공개가 허용된 대기 제보만 내보낸다",
+    "탐조지별 이력에는 좌표와 비공개 항목이 들어가지 않는다",
+    "공개 출력에는 비공개 항목이 빠지고 공개 좌표가 쓰인다"
+  ],
+  "weeklySafetyTests": [
+    "공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 못한다",
+    "실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 보고",
+    "강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으며 전부 위험하면 0",
+    "봄 일반 today fallback의 null 안전 의미 유지",
+    "여름 대진항 선상 안전 경계/결측/비수치와 caution 이중 검사",
+    "C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다",
+    "C01 생성 JSON은 선상 안전판정에 필요한 원자료 precision을 잃지 않는다",
+    "C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 경계가 그대로다",
+    "물때 관문: 기준 물높이 경계값을 포함하고 미달은 제외한다",
+    "물때 관문: 오늘 이미 지난 만조는 세지 않는다",
+    "물때 관문: 일출 전·일몰 후 만조는 적합으로 세지 않는다",
+    "물때 관문: 이번 주 밖의 충족일은 세지 않고, 주 안으로 들어오면 다시 후보가 된다",
+    "물때 관문: 조석 자료가 없거나 비어 있으면 적합으로 추정하지 않는다",
+    "물때 관문: 공지·기상 어느 경로로도 우회할 수 없다",
+    "물때 관문: 고정 추천 목록도 우회하지 못한다",
+    "물때 관문: 추천 사유 날짜와 카드에 표시되는 만조가 같은 날이다",
+    "물때 관문: 규칙이 없는 탐조지는 영향을 받지 않는다",
+    "실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지의 후보일과 일치한다",
+    "R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다",
+    "P0-2 흑산도형: 위험 시각의 높은 점수가 안전한 시각 예보 선택을 막지 않는다",
+    "P0-2 부적격 예보는 승격되지 않고 선상 안전 기준(6.0m/s·0.7m·0mm·결측 제외)은 그대로다",
+    "P0-2 최근 출현 가점·공지는 안전 제외를 우회하지 못한다",
+    "P0-3 강수 판정: 화면 카드의 비권장 기준(1mm)과 추천 안전 기준이 같고 결측은 무강수가 아니다",
+    "P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다",
+    "P0-B4 강수·파고 경계와 반올림: 원자료 1mm/2.0m 기준, 표시 반올림이 기준을 넘지 못하고 결측은 판정하지 않는다",
+    "P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다"
+  ],
+  "scope": "Original repository tests, in-memory SQLite D1 substitutes and mocked external requests; analysis-only Python path/UTF-8 adapter; fail-closed unmocked fetch. No production network or D1 integration and no deployment approval implied.",
+  "priorAttempt": {
+    "weeklyCounts": {
+      "tests": 126,
+      "suites": 0,
+      "pass": 125,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "weeklyExit": 1,
+    "cause": "Windows Python stdout default cp949 was decoded as UTF-8 by the original JS fixture runner; 북풍 rendered as replacement characters. Final rerun sets PYTHONIOENCODING=utf-8 and PYTHONUTF8=1 without altering tests.",
+    "provenanceCaveat": "Initial helper git-show hashing used insufficient default maxBuffer; initial content-difference assertions were invalid. Final helper uses 16MiB and checks subprocess errors."
+  },
+  "fullResultsSha256": "ae7fda53a41f7243a794f8624d24fdf2da75342870bd1268b541e8f9d4501de0",
+  "limitations": "The original regression suite intentionally reads held P1-A 18:10/18:19 weather_week from the analysis checkout. It does not represent the latest 21:04/21:08 weather or prove ecological quality/safety beyond declared test conditions. Latest-input actual190 comparison is separately documented in p1b-independent-review.md."
+}

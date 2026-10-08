@@ -38,6 +38,7 @@ assert.deepEqual(historical.metrics.todayRaw,previous.metrics.todayRaw.distribut
 assert.deepEqual(historical.top10.map(r=>[r.id,r.rank]),previous.top10.map(r=>[r.siteId,r.rankScore]));
 const matrix=[];
 for(const rt of [old,fresh])for(const reports of [true,false])matrix.push(run(rt,NOW,reports));
+assert.deepEqual(historical.rows,matrix.find(x=>x.codeCommit===old.manifest.codeCommit&&x.reports===true).rows,'old weather clock-only candidate replay');
 const changes={};
 for(const reports of [true,false]){
  const a=matrix.find(x=>x.codeCommit===old.manifest.codeCommit&&x.reports===reports),b=matrix.find(x=>x.codeCommit===fresh.manifest.codeCommit&&x.reports===reports);
@@ -46,7 +47,7 @@ for(const reports of [true,false]){
 }
 const payload={schemaVersion:1,oldManifest:OLD,newManifest:NEW,evaluationTime:NOW,
  functionSourceSha256:fresh.functionsHash,unchangedRuntimeSha256:sha256(JSON.stringify(fresh.sites)),
- changedInputPaths:delta,reportSha256:fresh.manifest.recentSites.sha256,historicalP1AKeyAssertions:true,historical,matrix,changes,
+ changedInputPaths:delta,reportSha256:fresh.manifest.recentSites.sha256,historicalP1AKeyAssertions:true,oldWeatherClockOnlyCandidateInvariant:true,historical,matrix,changes,
  limitations:['과거 실화면 관측이 아닌 고정 자료 재생이다.','Only weather differs; old/new compared at same 22:40 clock.','Reports OFF is a control; all other inputs are identical.']};
 if(process.argv.includes('--write'))fs.writeFileSync(path.join(DOCS,'_results/weather_comparison_p1b_2240.json'),JSON.stringify(payload,null,2)+'\n');
 console.log(JSON.stringify({historical:historical.metrics,matrix:matrix.map(({rows,...x})=>x),changes},null,2));

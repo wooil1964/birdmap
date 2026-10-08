@@ -58,9 +58,9 @@ if(process.argv.includes('--run')){
   const candidates=rt.sites.map(s=>api.weeklyRecommendationForSite(s,api.weeklyInfo())).filter(e=>e&&api.weeklyRecommendationIsSafe(e)!==false);
   const dest=path.join(DOCS,'_results/p1b_permutations_'+label+'.json');
   let runs=[];
-  if(fs.existsSync(dest)){const prior=JSON.parse(fs.readFileSync(dest));assert.equal(prior.orderSha256,orderHash);assert.equal(prior.reportSha256,rt.manifest.recentSites.sha256);runs=prior.trials;}
+  if(fs.existsSync(dest)){const prior=JSON.parse(fs.readFileSync(dest));assert.equal(prior.orderSha256,orderHash);assert.equal(prior.reportSha256,rt.manifest.recentSites.sha256);assert.equal(prior.codeCommit,rt.manifest.codeCommit);assert.equal(prior.evaluationTime,rt.manifest.evaluationTime);assert.equal(prior.functionSourceSha256,rt.functionsHash);assert.equal(prior.inputManifestSha256,sha256(JSON.stringify(rt.manifest)));assert.deepEqual(prior.baseline,baseline);runs=prior.trials;}
   const save=()=>{const result={schemaVersion:1,evaluationTime:rt.manifest.evaluationTime,codeCommit:rt.manifest.codeCommit,reports,seed:SEED,prng:'xorshift32 sequential stream; Fisher-Yates descending',orderSha256:orderHash,
-   reportSha256:rt.manifest.recentSites.sha256,functionSourceSha256:rt.functionsHash,candidateCount:candidates.length,
+   inputManifestSha256:sha256(JSON.stringify(rt.manifest)),reportSha256:rt.manifest.recentSites.sha256,functionSourceSha256:rt.functionsHash,candidateCount:candidates.length,
    baseline,completed:runs.length===RUNS,invariants:{full190CandidateCallsPerTrial:true,allCandidateSignaturesIdentical:true,selectedGateTrue:true,noCoordinateFieldsInOutput:true},summary:metrics(rt,runs,baseline,candidates),trials:runs};
    fs.writeFileSync(dest,JSON.stringify(result,null,2)+'\n');};
   for(let i=runs.length;i<RUNS;i++){

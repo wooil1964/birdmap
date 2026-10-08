@@ -14,9 +14,9 @@
 
 |문서|역할|현재 상태|
 |---|---|---|
-|[PROGRESS.md](PROGRESS.md)|단계별 완료/미완료|첫 세션 체크포인트|
-|[FINDINGS.md](FINDINGS.md)|확인 사실·데이터 흐름·근거|첫 스냅샷 조사 완료|
-|[P1_DESIGN.md](P1_DESIGN.md)|점수·순위 분석과 대안|P1-A 첫 정량 결과, 대안은 초안|
+|[PROGRESS.md](PROGRESS.md)|단계별 완료/미완료|P1-B 완료 체크포인트|
+|[FINDINGS.md](FINDINGS.md)|확인 사실·데이터 흐름·근거|P1-A 및 P1-B 검증 사실|
+|[P1_DESIGN.md](P1_DESIGN.md)|점수·순위 분석과 대안|P1-A 측정·P1-B 1000회×2/동점3대안 완료|
 |P2_DESIGN.md|생태·계절·조석 근거|미착수, 아직 미작성|
 |P3_DESIGN.md|맞춤 추천·모바일·개인정보|미착수, 아직 미작성|
 |P4_VALIDATION.md|비교 실험·품질 관리·롤백|미착수, 아직 미작성|
@@ -54,3 +54,16 @@ node docs/recommendation-masterplan/_scripts/analyze_p1a.mjs
 
 현재 저장 원점수는 183/190곳이 92점이다. 저장 적격189곳에서는182곳, 추천 후보175곳에서는150곳이다. 팝업의 신선도 판정·강수 표시 보정·내부 순위 점수는 별도로 계산했다. P1-A는 단일 시점의 1차 측정이며 P1 전체 설계, 계절 예측력, 새로운 배점은 아직 완료되지 않았다.
 
+
+## P1-B 최신 완료 결과
+
+배열만 바꾼1000회×2 실험에서 상위 10 구성 변동은 제보 ON99.8%/OFF100%, 평균교체는1.795/3.863곳이었다. 독립 계산과2,000개 목록·각190곳 빈도가 일치했다. A1 안정ID, A2 관찰여건, A3 동점내다양성의세대안은 배열 변동0이지만정책효과와한계가다르다.
+
+- [새 입력 manifest](_snapshots/input_manifest_35141c0_2240.json)
+- [기상 비교](_results/weather_comparison_p1b_2240.json)
+- [ON 1000회](_results/p1b_permutations_on.json) / [OFF 1000회](_results/p1b_permutations_off.json)
+- [동점3대안](_results/p1b_alternatives.json)
+- [전체 독립 대조](_results/p1b_validation.json) / [안전·보호 회귀](_results/p1b_safety_regression.json)
+- [후속 P1-C/D 재개](NEXT_SESSION.md)
+
+P1-B 분석은완료됐고운영구현은하지않았다. P1-C/D와P1전체정책·계절/장기성능검증은미완료다.
