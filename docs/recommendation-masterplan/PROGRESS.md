@@ -47,3 +47,10 @@
 재현: node docs/recommendation-masterplan/_scripts/compare_weather_p1b.mjs --write
 결과: _results/weather_comparison_p1b_2240.json
 독립 재생과 후보수·분포·top10·변경ID가 일치했다. 배열1000회×2 및 대안3종은 다음 분석 단위다.
+## P1-B 중간 단위 — 제보ON 1,000회 및 동점 대안 완료
+
+제보ON 실제190곳 후보 생성·안전·추천 함수를 매회호출한1,000회가완료됐다. seed982451653/xorshift32 sequential/Fisher-Yates이며 상위10 구성변동998/1000, 평균교체1.795, 선택된장소37곳이다. 매회190개후보 전체서명불변, 선택10곳현행gate true·선상최대1을검사했다. 결과 p1b_permutations_on.json.
+
+세 동점대안은 각ON/OFF동일1,000순열을 적용했다. 고정실제후보pool에 분석선발기를 적용했고 각대안/시나리오4회전체원문파이프라인을호출해대조했다. 세대안 모두순열간선발/순서변동0. 결과 p1b_alternatives.json. 제품파일은수정하지않았다. 독립tuple/greedy도추천순서와SHA가일치했다.
+
+제보OFF의1,000회전체원문호출은진행중이다. 100회마다결과파일을저장하며동일명령재개시완료회차를건너뛴다. 최종전체통계와문서통합은OFF완료후다음단위에서저장한다.

@@ -83,3 +83,14 @@ git diff --name-status 1f0b0b5 origin/main
 완료: 최신main/동일코드해시, 과거P1-A 핵심결과검사, 동일시계 신·구기상 ON/OFF 비교. 마지막 완료커밋은 이 단위 commit/push 후 git log -1로 확인한다(이전 c968c6c).
 
 다음: 실제 todayRecommendedSites에서190 siteData Fisher-Yates1000회×ON/OFF, 독립tuple선발대조, prefix동점경계통계, 세 대안 비교. P1-B 완료 후P1-C/D를 설계하며 운영파일을 수정하지 않는다.
+## 진행 중 실험의 복구 명령
+
+현재완료: 기상비교ad9d476, 제보ON전체실행1000회, 세대안ON/OFF각1000회. 최신완료단위커밋은git log -1로확인한다.
+
+다음명령은저장된회차를건너뛰고OFF가미완료면이어간다:
+node docs/recommendation-masterplan/_scripts/p1b_experiment.mjs --run
+
+대안재현:
+node docs/recommendation-masterplan/_scripts/p1b_policies.mjs --write
+
+완료후permutations ON/OFF와대안의cachedOriginalTrials1000개가모두일치하는지검사하고FINDINGS/P1_DESIGN/PROGRESS/NEXT_SESSION을최종갱신한다. 그다음Issue9기록, P1-C/D재개지침. 현재P1-B의통합보고는아직미완료다.

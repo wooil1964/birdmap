@@ -44,8 +44,9 @@ export function loadRuntime(manifestPath, options={}){
  const factory=new Function('ctx','Date',
   'var weatherWeek=ctx.week,tideMonth=ctx.tide,weatherToday=ctx.today,siteData=ctx.sites;'+
   'var loadedNotices=ctx.notices,PINNED_BIRDING_ISSUES=[],recommendationWeatherRules=ctx.rules,recentSiteSightings=ctx.sightings;'+constants+'\n'+functions+
-  '\nvar originalAutumn=autumnBalancedRecommendations;'+
-  'return {'+names.join(',')+',setSites:function(s){siteData=s;},setSelector:function(fn){autumnBalancedRecommendations=fn||originalAutumn;}};');
+  '\nvar originalAutumn=autumnBalancedRecommendations,originalCandidate=weeklyRecommendationForSite,observer=null;'+
+  'weeklyRecommendationForSite=function(s,w){var e=originalCandidate(s,w);if(observer)observer(s,e);return e;};'+
+  'return {'+names.join(',')+',setSites:function(s){siteData=s;},setObserver:function(fn){observer=fn;},setSelector:function(fn){autumnBalancedRecommendations=fn||originalAutumn;}};');
  function makeApi(withReports=true, order=sites, now=options.now||manifest.evaluationTime){
   const Clock=class extends Date {constructor(...args){super(...(args.length?args:[now]));}static now(){return new Date(now).getTime();}};
   return factory({...data,sites:order,sightings:withReports?sightings:{}},Clock);
