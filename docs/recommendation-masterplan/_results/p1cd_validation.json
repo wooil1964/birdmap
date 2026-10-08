@@ -1,5 +1,5 @@
 {
-  "stage": "P1-C complete; P1-D pending",
+  "stage": "P1-C/D analysis complete; design priority draft complete; no implementation approval",
   "analysisStart": "8bd44e3",
   "experimentCode": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
   "evaluationTime": "2026-10-08T22:40:00+09:00",
@@ -48,5 +48,140 @@
     "No browser, long term ecological success/effort calibration.",
     "Python48/tide21+skip1 historical, not new execution.",
     "JS227/API170/weekly126 overlap and must not be added."
-  ]
+  ],
+  "p1cCheckpoint": "7447c38102c1832a944d5cf4281ae6ebd3b485b0",
+  "p1d": {
+    "policies": 10,
+    "independentCandidateRows": 1900,
+    "independentPermutationLists": 10000,
+    "syntheticSelectorContractChecks": 10,
+    "rootFullPipelines": 30,
+    "candidateCount": 176,
+    "selectionSlots": 100,
+    "allSelectionGateTrue": true,
+    "shipMax1": true,
+    "tideGapMax90": true,
+    "existingSourceProtectionUnmodified": true,
+    "all1900RowsMatch": true,
+    "operatingSourceOrCoordinatesChanged": 0,
+    "privateOutputFields": 0,
+    "excluded": {
+      "seasonOrAxes": 13,
+      "requiredTide": 1
+    },
+    "comparison": [
+      {
+        "reports": true,
+        "policies": [
+          {
+            "policy": "current_4312",
+            "rankSum": 969,
+            "rawSum": 936,
+            "displaySum": 936,
+            "regions": 7,
+            "rules": 3,
+            "rankGap": 42,
+            "changed": 0
+          },
+          {
+            "policy": "global_rank",
+            "rankSum": 1011,
+            "rawSum": 984,
+            "displaySum": 984,
+            "regions": 4,
+            "rules": 3,
+            "rankGap": 0,
+            "changed": 7
+          },
+          {
+            "policy": "flex_1111",
+            "rankSum": 997,
+            "rawSum": 968,
+            "displaySum": 968,
+            "regions": 5,
+            "rules": 3,
+            "rankGap": 14,
+            "changed": 5
+          },
+          {
+            "policy": "flex_2211",
+            "rankSum": 989,
+            "rawSum": 960,
+            "displaySum": 960,
+            "regions": 7,
+            "rules": 3,
+            "rankGap": 22,
+            "changed": 3
+          },
+          {
+            "policy": "quota_only_2211",
+            "rankSum": 989,
+            "rawSum": 960,
+            "displaySum": 960,
+            "regions": 7,
+            "rules": 3,
+            "rankGap": 22,
+            "changed": 3
+          }
+        ]
+      },
+      {
+        "reports": false,
+        "policies": [
+          {
+            "policy": "current_4312",
+            "rankSum": 944,
+            "rawSum": 944,
+            "displaySum": 944,
+            "regions": 6,
+            "rules": 2,
+            "rankGap": 56,
+            "changed": 0
+          },
+          {
+            "policy": "global_rank",
+            "rankSum": 1000,
+            "rawSum": 1000,
+            "displaySum": 1000,
+            "regions": 4,
+            "rules": 1,
+            "rankGap": 0,
+            "changed": 8
+          },
+          {
+            "policy": "flex_1111",
+            "rankSum": 984,
+            "rawSum": 984,
+            "displaySum": 984,
+            "regions": 5,
+            "rules": 2,
+            "rankGap": 16,
+            "changed": 5
+          },
+          {
+            "policy": "flex_2211",
+            "rankSum": 968,
+            "rawSum": 968,
+            "displaySum": 968,
+            "regions": 6,
+            "rules": 2,
+            "rankGap": 32,
+            "changed": 3
+          },
+          {
+            "policy": "quota_only_2211",
+            "rankSum": 968,
+            "rawSum": 968,
+            "displaySum": 968,
+            "regions": 6,
+            "rules": 2,
+            "rankGap": 32,
+            "changed": 3
+          }
+        ]
+      }
+    ],
+    "resultSha256": "7eeb138f49637fa3c63abf5f57f7fa163ef28de1af81f47e30b3351c5795768e"
+  },
+  "dataConsistency": "Runtime/Worker190 parity established in P1-A; git diff confirms index.html and Worker registry unchanged since1f0b0b5, including latest main. No coordinate writes."
 }

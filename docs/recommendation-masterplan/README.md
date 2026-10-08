@@ -71,3 +71,7 @@ P1-B 분석은완료됐고운영구현은하지않았다. P1-C/D와P1전체정�
 ## P1-C 완료
 
 [12정책](_results/p1c_reports.json), [독립 대조](_results/p1c_independent.json), [보호 표현](_results/p1c_recent_species_contract.json), [집계 시간·문자열](_results/p1c_aggregation_contract.json). 기존보호입력 결함을우선설계보완으로기록했다. 가점최적값·종별확률은미확정. 다음P1-D.
+
+## P1-C/D 완료
+
+[정원5정책](_results/p1d_quotas.json), [독립선발·수치상한](_results/p1d_independent.json), [실제축/제외/부족분 계약](_results/p1d_contract_audit.json), [최종정책설계](P1_DESIGN.md), [후속명세](NEXT_SESSION.md). P1정량대조와우선순위초안완료,생태최적배점/연중성능·운영구현은미완료.

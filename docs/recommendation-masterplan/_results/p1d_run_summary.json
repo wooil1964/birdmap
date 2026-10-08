@@ -1,0 +1,880 @@
+[
+  {
+    "reports": true,
+    "candidates": 176,
+    "seasons": {
+      "autumn": 176
+    },
+    "axes": {
+      "other": 114,
+      "field": 27,
+      "mudflat": 27,
+      "pelagic": 8
+    },
+    "overlap": [
+      "7",
+      "8",
+      "10",
+      "20",
+      "185"
+    ],
+    "policies": [
+      {
+        "policy": "current_4312",
+        "ids": [
+          "108",
+          "112",
+          "15",
+          "194",
+          "126",
+          "14",
+          "107",
+          "48",
+          "195",
+          "3"
+        ],
+        "summary": {
+          "rankSum": 969,
+          "rawSum": 936,
+          "displaySum": 936,
+          "bonusSum": 33,
+          "pickPhases": {
+            "field": 4,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 2
+          },
+          "primaryAxes": {
+            "field": 4,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 2
+          },
+          "regions": {
+            "경기": 2,
+            "제주": 1,
+            "충남": 3,
+            "전북": 1,
+            "강원": 1,
+            "서울": 1,
+            "인천": 1
+          },
+          "canonicalRules": {
+            "mudflat_shorebird": 7,
+            "island_migrant": 2,
+            "forest_songbird": 1
+          },
+          "env": {
+            "간척지": 1,
+            "농경지·관광지": 1,
+            "간척호·농경지": 2,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 1
+          },
+          "habitatType": {
+            "간척지": 1,
+            "농경지·관광지": 1,
+            "간척호·농경지": 2,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 1
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·맹금류": 1,
+            "통과철새·미조·해양조류": 3,
+            "기러기류·오리류·맹금류": 2,
+            "도요물떼새류·기러기류·오리류": 1,
+            "바다오리류·아비류·갈매기류": 1,
+            "산림성조류·통과철새": 1,
+            "소형참새목·미조·바닷새": 1
+          },
+          "regionCategories": 7,
+          "ruleCategories": 3,
+          "regionHHI": 0.18000000000000005,
+          "ruleHHI": 0.5399999999999999
+        },
+        "gap": 42,
+        "changed": 0,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "global_rank",
+        "ids": [
+          "195",
+          "108",
+          "3",
+          "5",
+          "6",
+          "9",
+          "35",
+          "110",
+          "111",
+          "114"
+        ],
+        "summary": {
+          "rankSum": 1011,
+          "rawSum": 984,
+          "displaySum": 984,
+          "bonusSum": 27,
+          "pickPhases": {
+            "global": 10
+          },
+          "primaryAxes": {
+            "other": 8,
+            "field": 1,
+            "mudflat": 1
+          },
+          "regions": {
+            "서울": 2,
+            "경기": 1,
+            "인천": 6,
+            "충남": 1
+          },
+          "canonicalRules": {
+            "forest_songbird": 1,
+            "mudflat_shorebird": 1,
+            "island_migrant": 8
+          },
+          "env": {
+            "공원": 1,
+            "간척지": 1,
+            "서해 도서": 6,
+            "갯벌": 1,
+            "도심하천·섬": 1
+          },
+          "habitatType": {
+            "공원": 1,
+            "간척지": 1,
+            "서해 도서": 6,
+            "갯벌": 1,
+            "도심하천·섬": 1
+          },
+          "mainBirdGroup": {
+            "산림성조류·통과철새": 1,
+            "통과철새·미조·맹금류": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1,
+            "오리류·가마우지류·도요류": 1,
+            "통과철새·미조·해양조류": 3
+          },
+          "regionCategories": 4,
+          "ruleCategories": 3,
+          "regionHHI": 0.42,
+          "ruleHHI": 0.6600000000000001
+        },
+        "gap": 0,
+        "changed": 7,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "flex_1111",
+        "ids": [
+          "108",
+          "126",
+          "48",
+          "195",
+          "3",
+          "5",
+          "6",
+          "9",
+          "35",
+          "110"
+        ],
+        "summary": {
+          "rankSum": 997,
+          "rawSum": 968,
+          "displaySum": 968,
+          "bonusSum": 29,
+          "pickPhases": {
+            "field": 1,
+            "mudflat": 1,
+            "pelagic": 1,
+            "other": 1,
+            "fill": 6
+          },
+          "primaryAxes": {
+            "field": 1,
+            "mudflat": 2,
+            "pelagic": 1,
+            "other": 6
+          },
+          "regions": {
+            "경기": 1,
+            "전북": 1,
+            "강원": 1,
+            "서울": 2,
+            "인천": 5
+          },
+          "canonicalRules": {
+            "mudflat_shorebird": 3,
+            "forest_songbird": 1,
+            "island_migrant": 6
+          },
+          "env": {
+            "간척지": 1,
+            "갯벌": 2,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 4,
+            "도심하천·섬": 1
+          },
+          "habitatType": {
+            "간척지": 1,
+            "갯벌": 2,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 4,
+            "도심하천·섬": 1
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·맹금류": 1,
+            "통과철새·미조·해양조류": 2,
+            "바다오리류·아비류·갈매기류": 1,
+            "산림성조류·통과철새": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1,
+            "오리류·가마우지류·도요류": 1
+          },
+          "regionCategories": 5,
+          "ruleCategories": 3,
+          "regionHHI": 0.32,
+          "ruleHHI": 0.45999999999999996
+        },
+        "gap": 14,
+        "changed": 5,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "flex_2211",
+        "ids": [
+          "108",
+          "112",
+          "126",
+          "14",
+          "48",
+          "195",
+          "3",
+          "5",
+          "6",
+          "9"
+        ],
+        "summary": {
+          "rankSum": 989,
+          "rawSum": 960,
+          "displaySum": 960,
+          "bonusSum": 29,
+          "pickPhases": {
+            "field": 2,
+            "mudflat": 2,
+            "pelagic": 1,
+            "other": 1,
+            "fill": 4
+          },
+          "primaryAxes": {
+            "field": 2,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 4
+          },
+          "regions": {
+            "경기": 1,
+            "제주": 1,
+            "전북": 1,
+            "충남": 1,
+            "강원": 1,
+            "서울": 1,
+            "인천": 4
+          },
+          "canonicalRules": {
+            "mudflat_shorebird": 4,
+            "island_migrant": 5,
+            "forest_songbird": 1
+          },
+          "env": {
+            "간척지": 1,
+            "농경지·관광지": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 3
+          },
+          "habitatType": {
+            "간척지": 1,
+            "농경지·관광지": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 3
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·맹금류": 1,
+            "통과철새·미조·해양조류": 2,
+            "도요물떼새류·기러기류·오리류": 1,
+            "바다오리류·아비류·갈매기류": 1,
+            "산림성조류·통과철새": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1
+          },
+          "regionCategories": 7,
+          "ruleCategories": 3,
+          "regionHHI": 0.22000000000000003,
+          "ruleHHI": 0.42000000000000004
+        },
+        "gap": 22,
+        "changed": 3,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "quota_only_2211",
+        "ids": [
+          "108",
+          "112",
+          "126",
+          "14",
+          "48",
+          "195",
+          "3",
+          "5",
+          "6",
+          "9"
+        ],
+        "summary": {
+          "rankSum": 989,
+          "rawSum": 960,
+          "displaySum": 960,
+          "bonusSum": 29,
+          "pickPhases": {
+            "field": 2,
+            "mudflat": 2,
+            "pelagic": 1,
+            "other": 1,
+            "fill": 4
+          },
+          "primaryAxes": {
+            "field": 2,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 4
+          },
+          "regions": {
+            "경기": 1,
+            "제주": 1,
+            "전북": 1,
+            "충남": 1,
+            "강원": 1,
+            "서울": 1,
+            "인천": 4
+          },
+          "canonicalRules": {
+            "mudflat_shorebird": 4,
+            "island_migrant": 5,
+            "forest_songbird": 1
+          },
+          "env": {
+            "간척지": 1,
+            "농경지·관광지": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 3
+          },
+          "habitatType": {
+            "간척지": 1,
+            "농경지·관광지": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "공원": 1,
+            "서해 도서": 3
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·맹금류": 1,
+            "통과철새·미조·해양조류": 2,
+            "도요물떼새류·기러기류·오리류": 1,
+            "바다오리류·아비류·갈매기류": 1,
+            "산림성조류·통과철새": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1
+          },
+          "regionCategories": 7,
+          "ruleCategories": 3,
+          "regionHHI": 0.22000000000000003,
+          "ruleHHI": 0.42000000000000004
+        },
+        "gap": 22,
+        "changed": 3,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      }
+    ]
+  },
+  {
+    "reports": false,
+    "candidates": 176,
+    "seasons": {
+      "autumn": 176
+    },
+    "axes": {
+      "other": 114,
+      "field": 27,
+      "mudflat": 27,
+      "pelagic": 8
+    },
+    "overlap": [
+      "7",
+      "8",
+      "10",
+      "20",
+      "185"
+    ],
+    "policies": [
+      {
+        "policy": "current_4312",
+        "ids": [
+          "112",
+          "7",
+          "8",
+          "10",
+          "126",
+          "14",
+          "107",
+          "48",
+          "3",
+          "5"
+        ],
+        "summary": {
+          "rankSum": 944,
+          "rawSum": 944,
+          "displaySum": 944,
+          "bonusSum": 0,
+          "pickPhases": {
+            "field": 4,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 2
+          },
+          "primaryAxes": {
+            "field": 4,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 2
+          },
+          "regions": {
+            "제주": 1,
+            "인천": 5,
+            "전북": 1,
+            "충남": 1,
+            "경기": 1,
+            "강원": 1
+          },
+          "canonicalRules": {
+            "island_migrant": 3,
+            "mudflat_shorebird": 7
+          },
+          "env": {
+            "농경지·관광지": 1,
+            "간척지·갯벌": 2,
+            "갯벌·농경지": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "서해 도서": 2
+          },
+          "habitatType": {
+            "농경지·관광지": 1,
+            "간척지·갯벌": 2,
+            "갯벌·농경지": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "서해 도서": 2
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·해양조류": 3,
+            "기러기류·맹금류": 1,
+            "기러기류·미조·해안조류": 1,
+            "도요물떼새류·저어새류·기러기류": 1,
+            "도요물떼새류·기러기류·오리류": 1,
+            "바다오리류·아비류·갈매기류": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1
+          },
+          "regionCategories": 6,
+          "ruleCategories": 2,
+          "regionHHI": 0.30000000000000004,
+          "ruleHHI": 0.58
+        },
+        "gap": 56,
+        "changed": 0,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "global_rank",
+        "ids": [
+          "3",
+          "5",
+          "6",
+          "9",
+          "35",
+          "110",
+          "111",
+          "114",
+          "120",
+          "156"
+        ],
+        "summary": {
+          "rankSum": 1000,
+          "rawSum": 1000,
+          "displaySum": 1000,
+          "bonusSum": 0,
+          "pickPhases": {
+            "global": 10
+          },
+          "primaryAxes": {
+            "other": 9,
+            "mudflat": 1
+          },
+          "regions": {
+            "인천": 7,
+            "서울": 1,
+            "충남": 1,
+            "경기": 1
+          },
+          "canonicalRules": {
+            "island_migrant": 10
+          },
+          "env": {
+            "서해 도서": 8,
+            "갯벌": 1,
+            "도심하천·섬": 1
+          },
+          "habitatType": {
+            "서해 도서": 8,
+            "갯벌": 1,
+            "도심하천·섬": 1
+          },
+          "mainBirdGroup": {
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1,
+            "오리류·가마우지류·도요류": 1,
+            "통과철새·미조·해양조류": 4,
+            "통과철새·번식조류": 1
+          },
+          "regionCategories": 4,
+          "ruleCategories": 1,
+          "regionHHI": 0.5199999999999999,
+          "ruleHHI": 1
+        },
+        "gap": 0,
+        "changed": 8,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "flex_1111",
+        "ids": [
+          "112",
+          "126",
+          "48",
+          "3",
+          "5",
+          "6",
+          "9",
+          "35",
+          "110",
+          "111"
+        ],
+        "summary": {
+          "rankSum": 984,
+          "rawSum": 984,
+          "displaySum": 984,
+          "bonusSum": 0,
+          "pickPhases": {
+            "field": 1,
+            "mudflat": 1,
+            "pelagic": 1,
+            "other": 1,
+            "fill": 6
+          },
+          "primaryAxes": {
+            "field": 1,
+            "mudflat": 2,
+            "pelagic": 1,
+            "other": 6
+          },
+          "regions": {
+            "제주": 1,
+            "전북": 1,
+            "강원": 1,
+            "인천": 6,
+            "서울": 1
+          },
+          "canonicalRules": {
+            "island_migrant": 8,
+            "mudflat_shorebird": 2
+          },
+          "env": {
+            "농경지·관광지": 1,
+            "갯벌": 2,
+            "외해·선상": 1,
+            "서해 도서": 5,
+            "도심하천·섬": 1
+          },
+          "habitatType": {
+            "농경지·관광지": 1,
+            "갯벌": 2,
+            "외해·선상": 1,
+            "서해 도서": 5,
+            "도심하천·섬": 1
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·해양조류": 4,
+            "바다오리류·아비류·갈매기류": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1,
+            "오리류·가마우지류·도요류": 1
+          },
+          "regionCategories": 5,
+          "ruleCategories": 2,
+          "regionHHI": 0.4,
+          "ruleHHI": 0.6800000000000002
+        },
+        "gap": 16,
+        "changed": 5,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "flex_2211",
+        "ids": [
+          "112",
+          "7",
+          "126",
+          "14",
+          "48",
+          "3",
+          "5",
+          "6",
+          "9",
+          "35"
+        ],
+        "summary": {
+          "rankSum": 968,
+          "rawSum": 968,
+          "displaySum": 968,
+          "bonusSum": 0,
+          "pickPhases": {
+            "field": 2,
+            "mudflat": 2,
+            "pelagic": 1,
+            "other": 1,
+            "fill": 4
+          },
+          "primaryAxes": {
+            "field": 2,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 4
+          },
+          "regions": {
+            "제주": 1,
+            "인천": 5,
+            "전북": 1,
+            "충남": 1,
+            "강원": 1,
+            "서울": 1
+          },
+          "canonicalRules": {
+            "island_migrant": 6,
+            "mudflat_shorebird": 4
+          },
+          "env": {
+            "농경지·관광지": 1,
+            "간척지·갯벌": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "서해 도서": 3,
+            "도심하천·섬": 1
+          },
+          "habitatType": {
+            "농경지·관광지": 1,
+            "간척지·갯벌": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "서해 도서": 3,
+            "도심하천·섬": 1
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·해양조류": 2,
+            "기러기류·맹금류": 1,
+            "도요물떼새류·기러기류·오리류": 1,
+            "바다오리류·아비류·갈매기류": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1,
+            "오리류·가마우지류·도요류": 1
+          },
+          "regionCategories": 6,
+          "ruleCategories": 2,
+          "regionHHI": 0.30000000000000004,
+          "ruleHHI": 0.52
+        },
+        "gap": 32,
+        "changed": 3,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      },
+      {
+        "policy": "quota_only_2211",
+        "ids": [
+          "112",
+          "7",
+          "126",
+          "14",
+          "48",
+          "3",
+          "5",
+          "6",
+          "9",
+          "35"
+        ],
+        "summary": {
+          "rankSum": 968,
+          "rawSum": 968,
+          "displaySum": 968,
+          "bonusSum": 0,
+          "pickPhases": {
+            "field": 2,
+            "mudflat": 2,
+            "pelagic": 1,
+            "other": 1,
+            "fill": 4
+          },
+          "primaryAxes": {
+            "field": 2,
+            "mudflat": 3,
+            "pelagic": 1,
+            "other": 4
+          },
+          "regions": {
+            "제주": 1,
+            "인천": 5,
+            "전북": 1,
+            "충남": 1,
+            "강원": 1,
+            "서울": 1
+          },
+          "canonicalRules": {
+            "island_migrant": 6,
+            "mudflat_shorebird": 4
+          },
+          "env": {
+            "농경지·관광지": 1,
+            "간척지·갯벌": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "서해 도서": 3,
+            "도심하천·섬": 1
+          },
+          "habitatType": {
+            "농경지·관광지": 1,
+            "간척지·갯벌": 1,
+            "갯벌": 2,
+            "갯벌·간척호": 1,
+            "외해·선상": 1,
+            "서해 도서": 3,
+            "도심하천·섬": 1
+          },
+          "mainBirdGroup": {
+            "통과철새·미조·해양조류": 2,
+            "기러기류·맹금류": 1,
+            "도요물떼새류·기러기류·오리류": 1,
+            "바다오리류·아비류·갈매기류": 1,
+            "소형참새목·미조·바닷새": 1,
+            "통과철새·미조·바닷새": 1,
+            "통과철새·맹금류": 1,
+            "두루미류·도요류": 1,
+            "오리류·가마우지류·도요류": 1
+          },
+          "regionCategories": 6,
+          "ruleCategories": 2,
+          "regionHHI": 0.30000000000000004,
+          "ruleHHI": 0.52
+        },
+        "gap": 32,
+        "changed": 3,
+        "exclusion": {
+          "no_season_habitat_policy": 13,
+          "selected": 10,
+          "eligible_not_selected_by_policy": 166,
+          "required_tide_gate_not_met": 1
+        }
+      }
+    ]
+  }
+]

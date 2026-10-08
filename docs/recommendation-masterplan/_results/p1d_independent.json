@@ -1,0 +1,3784 @@
+{
+  "schemaVersion": 1,
+  "rootResultMatch": {
+    "all10PolicyTop10Match": true,
+    "all10SummaryScoreGroupsMatch": true,
+    "all1900CandidateRowsMatch": true,
+    "all190Checks": 1900,
+    "listsCompared": 10,
+    "independent10000PermutationChecks": true,
+    "numericalUpperBoundMatches": true,
+    "rootPath": "docs/recommendation-masterplan/_results/p1d_quotas.json"
+  },
+  "codeCommit": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "reportSha256": "af77014b5430d7b15d42dd77de8e4ec2a841e48b5151298a7013e3875c4757b6",
+  "manifestAll16HashesVerified": true,
+  "method": "Independent original-test helper extraction; independently constructed lexicographic score/recent/core/priority/date/level tuples; no root runtime/policy selector imports.",
+  "policies": [
+    {
+      "id": "current",
+      "quota": [
+        4,
+        3,
+        1,
+        2
+      ],
+      "fill": "source"
+    },
+    {
+      "id": "global_rank",
+      "quota": null,
+      "fill": "global"
+    },
+    {
+      "id": "flex1111",
+      "quota": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "fill": "global"
+    },
+    {
+      "id": "flex2211",
+      "quota": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "fill": "global"
+    },
+    {
+      "id": "quota_only_2211",
+      "quota": [
+        2,
+        2,
+        1,
+        1
+      ],
+      "fill": "source"
+    }
+  ],
+  "orderHash": "b26c9c0332debf07098544bbb1db54690693606c3a12803f839beaebd35f7ad4",
+  "all10Policies1000PermutationInvariant": true,
+  "physicalONvsOFF190Unchanged": true,
+  "scenarios": [
+    {
+      "withReports": true,
+      "candidateCount": 176,
+      "rawDistribution": {
+        "92": 151,
+        "100": 25
+      },
+      "rankDistribution": {
+        "92": 140,
+        "94": 7,
+        "97": 1,
+        "99": 1,
+        "100": 25,
+        "103": 1,
+        "108": 1
+      },
+      "candidateRegions": {
+        "인천": 16,
+        "경기": 24,
+        "충남": 12,
+        "전북·충남": 1,
+        "전북": 6,
+        "전남": 27,
+        "부산": 7,
+        "경남": 8,
+        "서울·경기": 3,
+        "서울": 7,
+        "강원": 22,
+        "경북": 11,
+        "울산": 7,
+        "제주": 11,
+        "충북": 3,
+        "충북·경북": 1,
+        "전남·전북·경남": 1,
+        "전북·경남": 1,
+        "대전·충북": 1,
+        "세종": 2,
+        "대구": 2,
+        "중국": 2,
+        "대전": 1
+      },
+      "candidateCanonicalRules": {
+        "island_migrant": 34,
+        "mudflat_shorebird": 69,
+        "winter_waterfowl": 37,
+        "coastal_seabird": 4,
+        "pelagic_seabird": 7,
+        "raptor_migration": 17,
+        "general_birding": 1,
+        "forest_songbird": 7
+      },
+      "candidatePrimaryAxes": {
+        "other": 114,
+        "field": 27,
+        "mudflat": 27,
+        "pelagic": 8
+      },
+      "candidateAxisEligibility": {
+        "field": 27,
+        "mudflat": 32,
+        "pelagic": 8,
+        "other": 114
+      },
+      "rejectedBeforeSelection": [
+        {
+          "id": "1",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "2",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "4",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "19",
+          "name": "유부도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "52",
+          "name": "독도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "101",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "102",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "103",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "104",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "105",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "106",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "117",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "118",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "119",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        }
+      ],
+      "scoreUpperBound": {
+        "value": 1011,
+        "nonship10": 1011,
+        "nonship9PlusBestShip": 1003,
+        "method": "With at most one ship, any feasible ten-item set has zero ships or one ship; top ranked nonships attain each case upper bound. This is only a numeric rank objective."
+      },
+      "results": [
+        {
+          "policy": "current",
+          "quota": [
+            4,
+            3,
+            1,
+            2
+          ],
+          "fill": "source",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "108",
+              "name": "호곡리",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 103,
+              "bonus": 11,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "15",
+              "name": "천수만 사기리",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 94,
+              "bonus": 2,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "194",
+              "name": "천수만 강당리",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 94,
+              "bonus": 2,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 5,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 94,
+              "bonus": 2,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "14",
+              "name": "걸매리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 921
+            },
+            {
+              "position": 7,
+              "id": "107",
+              "name": "매향리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 863
+            },
+            {
+              "position": 8,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "195",
+              "name": "평화의공원",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 108,
+              "bonus": 16,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "서울",
+              "canonical": "forest_songbird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 969,
+            "rawSum": 936,
+            "displaySum": 936,
+            "regions": {
+              "경기": 2,
+              "제주": 1,
+              "충남": 3,
+              "전북": 1,
+              "강원": 1,
+              "서울": 1,
+              "인천": 1
+            },
+            "rules": {
+              "mudflat_shorebird": 7,
+              "island_migrant": 2,
+              "forest_songbird": 1
+            },
+            "primaryAxes": {
+              "field": 4,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 2
+            },
+            "stages": {
+              "field": 4,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 2
+            },
+            "env": {
+              "간척지": 1,
+              "농경지·관광지": 1,
+              "간척호·농경지": 2,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 1
+            },
+            "habitatType": {
+              "간척지": 1,
+              "농경지·관광지": 1,
+              "간척호·농경지": 2,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 1
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·맹금류": 1,
+              "통과철새·미조·해양조류": 3,
+              "기러기류·오리류·맹금류": 2,
+              "도요물떼새류·기러기류·오리류": 1,
+              "바다오리류·아비류·갈매기류": 1,
+              "산림성조류·통과철새": 1,
+              "소형참새목·미조·바닷새": 1
+            },
+            "regionCategoryCount": 7,
+            "ruleCategoryCount": 3,
+            "regionHHI": 0.18000000000000005,
+            "ruleHHI": 0.5399999999999999,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 42,
+          "replacedVsCurrent": 0,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 4,
+              "available": 27,
+              "selected": [
+                "108",
+                "112",
+                "15",
+                "194"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 3,
+              "available": 32,
+              "selected": [
+                "126",
+                "14",
+                "107"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 2,
+              "available": 114,
+              "selected": [
+                "195",
+                "3"
+              ]
+            },
+            {
+              "stage": "source_fill",
+              "limit": 10,
+              "available": 159,
+              "selected": []
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "global_rank",
+          "quota": null,
+          "fill": "global",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "195",
+              "name": "평화의공원",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 108,
+              "bonus": 16,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "서울",
+              "canonical": "forest_songbird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "108",
+              "name": "호곡리",
+              "axis": "global",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 103,
+              "bonus": 11,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "5",
+              "name": "대청도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 5,
+              "id": "6",
+              "name": "연평도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "9",
+              "name": "동검도",
+              "axis": "global",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "35",
+              "name": "한강 밤섬 하늘공원",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "서울",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "110",
+              "name": "소청도예동마을",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "111",
+              "name": "소청도등대",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "114",
+              "name": "마도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "충남",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 1011,
+            "rawSum": 984,
+            "displaySum": 984,
+            "regions": {
+              "서울": 2,
+              "경기": 1,
+              "인천": 6,
+              "충남": 1
+            },
+            "rules": {
+              "forest_songbird": 1,
+              "mudflat_shorebird": 1,
+              "island_migrant": 8
+            },
+            "primaryAxes": {
+              "other": 8,
+              "field": 1,
+              "mudflat": 1
+            },
+            "stages": {
+              "global": 10
+            },
+            "env": {
+              "공원": 1,
+              "간척지": 1,
+              "서해 도서": 6,
+              "갯벌": 1,
+              "도심하천·섬": 1
+            },
+            "habitatType": {
+              "공원": 1,
+              "간척지": 1,
+              "서해 도서": 6,
+              "갯벌": 1,
+              "도심하천·섬": 1
+            },
+            "mainBirdGroup": {
+              "산림성조류·통과철새": 1,
+              "통과철새·미조·맹금류": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1,
+              "오리류·가마우지류·도요류": 1,
+              "통과철새·미조·해양조류": 3
+            },
+            "regionCategoryCount": 4,
+            "ruleCategoryCount": 3,
+            "regionHHI": 0.42,
+            "ruleHHI": 0.6600000000000001,
+            "pelagicCount": 0
+          },
+          "rankLossToUpperBound": 0,
+          "replacedVsCurrent": 7,
+          "traces": [
+            {
+              "stage": "global",
+              "limit": 10,
+              "available": 176,
+              "selected": [
+                "195",
+                "108",
+                "3",
+                "5",
+                "6",
+                "9",
+                "35",
+                "110",
+                "111",
+                "114"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "flex1111",
+          "quota": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "fill": "global",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "108",
+              "name": "호곡리",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 103,
+              "bonus": 11,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 94,
+              "bonus": 2,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "195",
+              "name": "평화의공원",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 108,
+              "bonus": 16,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "서울",
+              "canonical": "forest_songbird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 5,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "5",
+              "name": "대청도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "6",
+              "name": "연평도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "9",
+              "name": "동검도",
+              "axis": "fill",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "35",
+              "name": "한강 밤섬 하늘공원",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "서울",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "110",
+              "name": "소청도예동마을",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 997,
+            "rawSum": 968,
+            "displaySum": 968,
+            "regions": {
+              "경기": 1,
+              "전북": 1,
+              "강원": 1,
+              "서울": 2,
+              "인천": 5
+            },
+            "rules": {
+              "mudflat_shorebird": 3,
+              "forest_songbird": 1,
+              "island_migrant": 6
+            },
+            "primaryAxes": {
+              "field": 1,
+              "mudflat": 2,
+              "pelagic": 1,
+              "other": 6
+            },
+            "stages": {
+              "field": 1,
+              "mudflat": 1,
+              "pelagic": 1,
+              "other": 1,
+              "fill": 6
+            },
+            "env": {
+              "간척지": 1,
+              "갯벌": 2,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 4,
+              "도심하천·섬": 1
+            },
+            "habitatType": {
+              "간척지": 1,
+              "갯벌": 2,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 4,
+              "도심하천·섬": 1
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·맹금류": 1,
+              "통과철새·미조·해양조류": 2,
+              "바다오리류·아비류·갈매기류": 1,
+              "산림성조류·통과철새": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1,
+              "오리류·가마우지류·도요류": 1
+            },
+            "regionCategoryCount": 5,
+            "ruleCategoryCount": 3,
+            "regionHHI": 0.32,
+            "ruleHHI": 0.45999999999999996,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 14,
+          "replacedVsCurrent": 5,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 1,
+              "available": 27,
+              "selected": [
+                "108"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 1,
+              "available": 32,
+              "selected": [
+                "126"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 1,
+              "available": 114,
+              "selected": [
+                "195"
+              ]
+            },
+            {
+              "stage": "global",
+              "limit": 10,
+              "available": 165,
+              "selected": [
+                "3",
+                "5",
+                "6",
+                "9",
+                "35",
+                "110"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "flex2211",
+          "quota": [
+            2,
+            2,
+            1,
+            1
+          ],
+          "fill": "global",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "108",
+              "name": "호곡리",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 103,
+              "bonus": 11,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 94,
+              "bonus": 2,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "14",
+              "name": "걸매리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 921
+            },
+            {
+              "position": 5,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "195",
+              "name": "평화의공원",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 108,
+              "bonus": 16,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "서울",
+              "canonical": "forest_songbird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "5",
+              "name": "대청도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "6",
+              "name": "연평도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "9",
+              "name": "동검도",
+              "axis": "fill",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 989,
+            "rawSum": 960,
+            "displaySum": 960,
+            "regions": {
+              "경기": 1,
+              "제주": 1,
+              "전북": 1,
+              "충남": 1,
+              "강원": 1,
+              "서울": 1,
+              "인천": 4
+            },
+            "rules": {
+              "mudflat_shorebird": 4,
+              "island_migrant": 5,
+              "forest_songbird": 1
+            },
+            "primaryAxes": {
+              "field": 2,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 4
+            },
+            "stages": {
+              "field": 2,
+              "mudflat": 2,
+              "pelagic": 1,
+              "other": 1,
+              "fill": 4
+            },
+            "env": {
+              "간척지": 1,
+              "농경지·관광지": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 3
+            },
+            "habitatType": {
+              "간척지": 1,
+              "농경지·관광지": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 3
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·맹금류": 1,
+              "통과철새·미조·해양조류": 2,
+              "도요물떼새류·기러기류·오리류": 1,
+              "바다오리류·아비류·갈매기류": 1,
+              "산림성조류·통과철새": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1
+            },
+            "regionCategoryCount": 7,
+            "ruleCategoryCount": 3,
+            "regionHHI": 0.22000000000000003,
+            "ruleHHI": 0.42000000000000004,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 22,
+          "replacedVsCurrent": 3,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 2,
+              "available": 27,
+              "selected": [
+                "108",
+                "112"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 2,
+              "available": 32,
+              "selected": [
+                "126",
+                "14"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 1,
+              "available": 114,
+              "selected": [
+                "195"
+              ]
+            },
+            {
+              "stage": "global",
+              "limit": 10,
+              "available": 163,
+              "selected": [
+                "3",
+                "5",
+                "6",
+                "9"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "quota_only_2211",
+          "quota": [
+            2,
+            2,
+            1,
+            1
+          ],
+          "fill": "source",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "108",
+              "name": "호곡리",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 103,
+              "bonus": 11,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 94,
+              "bonus": 2,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "14",
+              "name": "걸매리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 921
+            },
+            {
+              "position": 5,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "195",
+              "name": "평화의공원",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 108,
+              "bonus": 16,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "서울",
+              "canonical": "forest_songbird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "5",
+              "name": "대청도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "6",
+              "name": "연평도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "9",
+              "name": "동검도",
+              "axis": "fill",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 989,
+            "rawSum": 960,
+            "displaySum": 960,
+            "regions": {
+              "경기": 1,
+              "제주": 1,
+              "전북": 1,
+              "충남": 1,
+              "강원": 1,
+              "서울": 1,
+              "인천": 4
+            },
+            "rules": {
+              "mudflat_shorebird": 4,
+              "island_migrant": 5,
+              "forest_songbird": 1
+            },
+            "primaryAxes": {
+              "field": 2,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 4
+            },
+            "stages": {
+              "field": 2,
+              "mudflat": 2,
+              "pelagic": 1,
+              "other": 1,
+              "fill": 4
+            },
+            "env": {
+              "간척지": 1,
+              "농경지·관광지": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 3
+            },
+            "habitatType": {
+              "간척지": 1,
+              "농경지·관광지": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "공원": 1,
+              "서해 도서": 3
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·맹금류": 1,
+              "통과철새·미조·해양조류": 2,
+              "도요물떼새류·기러기류·오리류": 1,
+              "바다오리류·아비류·갈매기류": 1,
+              "산림성조류·통과철새": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1
+            },
+            "regionCategoryCount": 7,
+            "ruleCategoryCount": 3,
+            "regionHHI": 0.22000000000000003,
+            "ruleHHI": 0.42000000000000004,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 22,
+          "replacedVsCurrent": 3,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 2,
+              "available": 27,
+              "selected": [
+                "108",
+                "112"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 2,
+              "available": 32,
+              "selected": [
+                "126",
+                "14"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 1,
+              "available": 114,
+              "selected": [
+                "195"
+              ]
+            },
+            {
+              "stage": "source_fill",
+              "limit": 10,
+              "available": 163,
+              "selected": [
+                "3",
+                "5",
+                "6",
+                "9"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        }
+      ]
+    },
+    {
+      "withReports": false,
+      "candidateCount": 176,
+      "rawDistribution": {
+        "92": 151,
+        "100": 25
+      },
+      "rankDistribution": {
+        "92": 151,
+        "100": 25
+      },
+      "candidateRegions": {
+        "인천": 16,
+        "경기": 24,
+        "충남": 12,
+        "전북·충남": 1,
+        "전북": 6,
+        "전남": 27,
+        "부산": 7,
+        "경남": 8,
+        "서울·경기": 3,
+        "서울": 7,
+        "강원": 22,
+        "경북": 11,
+        "울산": 7,
+        "제주": 11,
+        "충북": 3,
+        "충북·경북": 1,
+        "전남·전북·경남": 1,
+        "전북·경남": 1,
+        "대전·충북": 1,
+        "세종": 2,
+        "대구": 2,
+        "중국": 2,
+        "대전": 1
+      },
+      "candidateCanonicalRules": {
+        "island_migrant": 34,
+        "mudflat_shorebird": 69,
+        "winter_waterfowl": 37,
+        "coastal_seabird": 4,
+        "pelagic_seabird": 7,
+        "raptor_migration": 17,
+        "general_birding": 1,
+        "forest_songbird": 7
+      },
+      "candidatePrimaryAxes": {
+        "other": 114,
+        "field": 27,
+        "mudflat": 27,
+        "pelagic": 8
+      },
+      "candidateAxisEligibility": {
+        "field": 27,
+        "mudflat": 32,
+        "pelagic": 8,
+        "other": 114
+      },
+      "rejectedBeforeSelection": [
+        {
+          "id": "1",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "2",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "4",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "19",
+          "name": "유부도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "52",
+          "name": "독도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "101",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "102",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "103",
+          "name": "어청도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "104",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "105",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "106",
+          "name": "외연도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "117",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "118",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        },
+        {
+          "id": "119",
+          "name": "백령도",
+          "candidate": false,
+          "gate": null
+        }
+      ],
+      "scoreUpperBound": {
+        "value": 1000,
+        "nonship10": 1000,
+        "nonship9PlusBestShip": 992,
+        "method": "With at most one ship, any feasible ten-item set has zero ships or one ship; top ranked nonships attain each case upper bound. This is only a numeric rank objective."
+      },
+      "results": [
+        {
+          "policy": "current",
+          "quota": [
+            4,
+            3,
+            1,
+            2
+          ],
+          "fill": "source",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "7",
+              "name": "교동도",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "인천",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "8",
+              "name": "석모도",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "10",
+              "name": "강화도",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "인천",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 5,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "14",
+              "name": "걸매리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 921
+            },
+            {
+              "position": 7,
+              "id": "107",
+              "name": "매향리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "경기",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 863
+            },
+            {
+              "position": 8,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "5",
+              "name": "대청도",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 944,
+            "rawSum": 944,
+            "displaySum": 944,
+            "regions": {
+              "제주": 1,
+              "인천": 5,
+              "전북": 1,
+              "충남": 1,
+              "경기": 1,
+              "강원": 1
+            },
+            "rules": {
+              "island_migrant": 3,
+              "mudflat_shorebird": 7
+            },
+            "primaryAxes": {
+              "field": 4,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 2
+            },
+            "stages": {
+              "field": 4,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 2
+            },
+            "env": {
+              "농경지·관광지": 1,
+              "간척지·갯벌": 2,
+              "갯벌·농경지": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "서해 도서": 2
+            },
+            "habitatType": {
+              "농경지·관광지": 1,
+              "간척지·갯벌": 2,
+              "갯벌·농경지": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "서해 도서": 2
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·해양조류": 3,
+              "기러기류·맹금류": 1,
+              "기러기류·미조·해안조류": 1,
+              "도요물떼새류·저어새류·기러기류": 1,
+              "도요물떼새류·기러기류·오리류": 1,
+              "바다오리류·아비류·갈매기류": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1
+            },
+            "regionCategoryCount": 6,
+            "ruleCategoryCount": 2,
+            "regionHHI": 0.30000000000000004,
+            "ruleHHI": 0.58,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 56,
+          "replacedVsCurrent": 0,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 4,
+              "available": 27,
+              "selected": [
+                "112",
+                "7",
+                "8",
+                "10"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 3,
+              "available": 29,
+              "selected": [
+                "126",
+                "14",
+                "107"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 2,
+              "available": 114,
+              "selected": [
+                "3",
+                "5"
+              ]
+            },
+            {
+              "stage": "source_fill",
+              "limit": 10,
+              "available": 159,
+              "selected": []
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "global_rank",
+          "quota": null,
+          "fill": "global",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "5",
+              "name": "대청도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "6",
+              "name": "연평도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "9",
+              "name": "동검도",
+              "axis": "global",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 5,
+              "id": "35",
+              "name": "한강 밤섬 하늘공원",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "서울",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "110",
+              "name": "소청도예동마을",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "111",
+              "name": "소청도등대",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "114",
+              "name": "마도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "충남",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "120",
+              "name": "덕적도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "156",
+              "name": "국화도",
+              "axis": "global",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "경기",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 1000,
+            "rawSum": 1000,
+            "displaySum": 1000,
+            "regions": {
+              "인천": 7,
+              "서울": 1,
+              "충남": 1,
+              "경기": 1
+            },
+            "rules": {
+              "island_migrant": 10
+            },
+            "primaryAxes": {
+              "other": 9,
+              "mudflat": 1
+            },
+            "stages": {
+              "global": 10
+            },
+            "env": {
+              "서해 도서": 8,
+              "갯벌": 1,
+              "도심하천·섬": 1
+            },
+            "habitatType": {
+              "서해 도서": 8,
+              "갯벌": 1,
+              "도심하천·섬": 1
+            },
+            "mainBirdGroup": {
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1,
+              "오리류·가마우지류·도요류": 1,
+              "통과철새·미조·해양조류": 4,
+              "통과철새·번식조류": 1
+            },
+            "regionCategoryCount": 4,
+            "ruleCategoryCount": 1,
+            "regionHHI": 0.5199999999999999,
+            "ruleHHI": 1,
+            "pelagicCount": 0
+          },
+          "rankLossToUpperBound": 0,
+          "replacedVsCurrent": 8,
+          "traces": [
+            {
+              "stage": "global",
+              "limit": 10,
+              "available": 176,
+              "selected": [
+                "3",
+                "5",
+                "6",
+                "9",
+                "35",
+                "110",
+                "111",
+                "114",
+                "120",
+                "156"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "flex1111",
+          "quota": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "fill": "global",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 5,
+              "id": "5",
+              "name": "대청도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "6",
+              "name": "연평도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "9",
+              "name": "동검도",
+              "axis": "fill",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "35",
+              "name": "한강 밤섬 하늘공원",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "서울",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "110",
+              "name": "소청도예동마을",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "111",
+              "name": "소청도등대",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 984,
+            "rawSum": 984,
+            "displaySum": 984,
+            "regions": {
+              "제주": 1,
+              "전북": 1,
+              "강원": 1,
+              "인천": 6,
+              "서울": 1
+            },
+            "rules": {
+              "island_migrant": 8,
+              "mudflat_shorebird": 2
+            },
+            "primaryAxes": {
+              "field": 1,
+              "mudflat": 2,
+              "pelagic": 1,
+              "other": 6
+            },
+            "stages": {
+              "field": 1,
+              "mudflat": 1,
+              "pelagic": 1,
+              "other": 1,
+              "fill": 6
+            },
+            "env": {
+              "농경지·관광지": 1,
+              "갯벌": 2,
+              "외해·선상": 1,
+              "서해 도서": 5,
+              "도심하천·섬": 1
+            },
+            "habitatType": {
+              "농경지·관광지": 1,
+              "갯벌": 2,
+              "외해·선상": 1,
+              "서해 도서": 5,
+              "도심하천·섬": 1
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·해양조류": 4,
+              "바다오리류·아비류·갈매기류": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1,
+              "오리류·가마우지류·도요류": 1
+            },
+            "regionCategoryCount": 5,
+            "ruleCategoryCount": 2,
+            "regionHHI": 0.4,
+            "ruleHHI": 0.6800000000000002,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 16,
+          "replacedVsCurrent": 5,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 1,
+              "available": 27,
+              "selected": [
+                "112"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 1,
+              "available": 32,
+              "selected": [
+                "126"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 1,
+              "available": 114,
+              "selected": [
+                "3"
+              ]
+            },
+            {
+              "stage": "global",
+              "limit": 10,
+              "available": 165,
+              "selected": [
+                "5",
+                "6",
+                "9",
+                "35",
+                "110",
+                "111"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "flex2211",
+          "quota": [
+            2,
+            2,
+            1,
+            1
+          ],
+          "fill": "global",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "7",
+              "name": "교동도",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "인천",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "14",
+              "name": "걸매리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 921
+            },
+            {
+              "position": 5,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "5",
+              "name": "대청도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "6",
+              "name": "연평도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "9",
+              "name": "동검도",
+              "axis": "fill",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "35",
+              "name": "한강 밤섬 하늘공원",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "서울",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 968,
+            "rawSum": 968,
+            "displaySum": 968,
+            "regions": {
+              "제주": 1,
+              "인천": 5,
+              "전북": 1,
+              "충남": 1,
+              "강원": 1,
+              "서울": 1
+            },
+            "rules": {
+              "island_migrant": 6,
+              "mudflat_shorebird": 4
+            },
+            "primaryAxes": {
+              "field": 2,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 4
+            },
+            "stages": {
+              "field": 2,
+              "mudflat": 2,
+              "pelagic": 1,
+              "other": 1,
+              "fill": 4
+            },
+            "env": {
+              "농경지·관광지": 1,
+              "간척지·갯벌": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "서해 도서": 3,
+              "도심하천·섬": 1
+            },
+            "habitatType": {
+              "농경지·관광지": 1,
+              "간척지·갯벌": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "서해 도서": 3,
+              "도심하천·섬": 1
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·해양조류": 2,
+              "기러기류·맹금류": 1,
+              "도요물떼새류·기러기류·오리류": 1,
+              "바다오리류·아비류·갈매기류": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1,
+              "오리류·가마우지류·도요류": 1
+            },
+            "regionCategoryCount": 6,
+            "ruleCategoryCount": 2,
+            "regionHHI": 0.30000000000000004,
+            "ruleHHI": 0.52,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 32,
+          "replacedVsCurrent": 3,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 2,
+              "available": 27,
+              "selected": [
+                "112",
+                "7"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 2,
+              "available": 31,
+              "selected": [
+                "126",
+                "14"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 1,
+              "available": 114,
+              "selected": [
+                "3"
+              ]
+            },
+            {
+              "stage": "global",
+              "limit": 10,
+              "available": 163,
+              "selected": [
+                "5",
+                "6",
+                "9",
+                "35"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        },
+        {
+          "policy": "quota_only_2211",
+          "quota": [
+            2,
+            2,
+            1,
+            1
+          ],
+          "fill": "source",
+          "candidateCount": 176,
+          "top10": [
+            {
+              "position": 1,
+              "id": "112",
+              "name": "알뜨르비행장",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-13",
+              "time": "09:00",
+              "sido": "제주",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 2,
+              "id": "7",
+              "name": "교동도",
+              "axis": "field",
+              "primaryAxis": "field",
+              "axes": {
+                "field": true,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "인천",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 3,
+              "id": "126",
+              "name": "해리천습지",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "전북",
+              "canonical": "mudflat_shorebird",
+              "priority": 1,
+              "sortLevel": 0
+            },
+            {
+              "position": 4,
+              "id": "14",
+              "name": "걸매리",
+              "axis": "mudflat",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-11",
+              "time": "18:00",
+              "sido": "충남",
+              "canonical": "mudflat_shorebird",
+              "priority": 2,
+              "sortLevel": 921
+            },
+            {
+              "position": 5,
+              "id": "48",
+              "name": "대진항",
+              "axis": "pelagic",
+              "primaryAxis": "pelagic",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": true
+              },
+              "raw": 92,
+              "display": 92,
+              "rank": 92,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "09:00",
+              "sido": "강원",
+              "canonical": "mudflat_shorebird",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 6,
+              "id": "3",
+              "name": "굴업도",
+              "axis": "other",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 7,
+              "id": "5",
+              "name": "대청도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "18:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 8,
+              "id": "6",
+              "name": "연평도",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 9,
+              "id": "9",
+              "name": "동검도",
+              "axis": "fill",
+              "primaryAxis": "mudflat",
+              "axes": {
+                "field": false,
+                "mudflat": true,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "15:00",
+              "sido": "인천",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            },
+            {
+              "position": 10,
+              "id": "35",
+              "name": "한강 밤섬 하늘공원",
+              "axis": "fill",
+              "primaryAxis": "other",
+              "axes": {
+                "field": false,
+                "mudflat": false,
+                "pelagic": false
+              },
+              "raw": 100,
+              "display": 100,
+              "rank": 100,
+              "bonus": 0,
+              "date": "2026-10-09",
+              "time": "12:00",
+              "sido": "서울",
+              "canonical": "island_migrant",
+              "priority": 4,
+              "sortLevel": 0
+            }
+          ],
+          "statistics": {
+            "rankSum": 968,
+            "rawSum": 968,
+            "displaySum": 968,
+            "regions": {
+              "제주": 1,
+              "인천": 5,
+              "전북": 1,
+              "충남": 1,
+              "강원": 1,
+              "서울": 1
+            },
+            "rules": {
+              "island_migrant": 6,
+              "mudflat_shorebird": 4
+            },
+            "primaryAxes": {
+              "field": 2,
+              "mudflat": 3,
+              "pelagic": 1,
+              "other": 4
+            },
+            "stages": {
+              "field": 2,
+              "mudflat": 2,
+              "pelagic": 1,
+              "other": 1,
+              "fill": 4
+            },
+            "env": {
+              "농경지·관광지": 1,
+              "간척지·갯벌": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "서해 도서": 3,
+              "도심하천·섬": 1
+            },
+            "habitatType": {
+              "농경지·관광지": 1,
+              "간척지·갯벌": 1,
+              "갯벌": 2,
+              "갯벌·간척호": 1,
+              "외해·선상": 1,
+              "서해 도서": 3,
+              "도심하천·섬": 1
+            },
+            "mainBirdGroup": {
+              "통과철새·미조·해양조류": 2,
+              "기러기류·맹금류": 1,
+              "도요물떼새류·기러기류·오리류": 1,
+              "바다오리류·아비류·갈매기류": 1,
+              "소형참새목·미조·바닷새": 1,
+              "통과철새·미조·바닷새": 1,
+              "통과철새·맹금류": 1,
+              "두루미류·도요류": 1,
+              "오리류·가마우지류·도요류": 1
+            },
+            "regionCategoryCount": 6,
+            "ruleCategoryCount": 2,
+            "regionHHI": 0.30000000000000004,
+            "ruleHHI": 0.52,
+            "pelagicCount": 1
+          },
+          "rankLossToUpperBound": 32,
+          "replacedVsCurrent": 3,
+          "traces": [
+            {
+              "stage": "field",
+              "limit": 2,
+              "available": 27,
+              "selected": [
+                "112",
+                "7"
+              ]
+            },
+            {
+              "stage": "mudflat",
+              "limit": 2,
+              "available": 31,
+              "selected": [
+                "126",
+                "14"
+              ]
+            },
+            {
+              "stage": "pelagic",
+              "limit": 1,
+              "available": 8,
+              "selected": [
+                "48"
+              ]
+            },
+            {
+              "stage": "other",
+              "limit": 1,
+              "available": 114,
+              "selected": [
+                "3"
+              ]
+            },
+            {
+              "stage": "source_fill",
+              "limit": 10,
+              "available": 163,
+              "selected": [
+                "5",
+                "6",
+                "9",
+                "35"
+              ]
+            }
+          ],
+          "permutationRuns": 1000,
+          "arrayInvariant": true,
+          "allSelectedPassExistingSafety": true,
+          "physicalSignaturesUnchanged": true
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Five quota/rank policies are design sensitivity scenarios, not ecologically validated allocation rules.",
+    "global_rank changes existing priority/core sorting as well as quotas; pure quota comparison is current versus quota_only_2211.",
+    "Recommendation axis eligibility and selection stage are kept separate from canonical weather rules and actual habitat.",
+    "The score upper bound maximizes numeric rank sum, not field success, safety quality, or ecological benefit.",
+    "Only the frozen October input is examined. No per-species persistence, independent observers, effort, production code/DB/API writes, or original coordinates were generated."
+  ]
+}
