@@ -1,0 +1,3809 @@
+{
+  "schemaVersion": 1,
+  "scope": "Independent review of standalone design prototype only. No other agent file, worktree, API, Worker, D1 or operating code modified.",
+  "prototypeSHA256": "7cb1bb7cf77e9cfa145aa41759c2293e4145303b99a6fff2aef6c5e86e5d2c28",
+  "groundtruthSHA256": "681436ec82e551914f5405e989db49bc0426a9b81f19f55378595778d7a39a2f",
+  "counts": {
+    "normalN": 17,
+    "sensitiveRFalsePositiveN": 0,
+    "prospectiveNormalWithheldN": 12,
+    "prospectiveNormalAllowedN": 5,
+    "unresolvedCoverageWithheldN": 11,
+    "resolvedKeywordWithheldN": 1
+  },
+  "normalCases": [
+    {
+      "id": "T044",
+      "species": "울새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T045",
+      "species": "동박새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "동박새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "동박새"
+        ],
+        "parsed": [
+          {
+            "raw": "동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T046",
+      "species": "한국동박새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "한국동박새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "한국동박새"
+        ],
+        "parsed": [
+          {
+            "raw": "한국동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T047",
+      "species": "괭이갈매기",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "괭이갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "괭이갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "괭이갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T048",
+      "species": "갈매기",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T049",
+      "species": "재갈매기",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "재갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "재갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "재갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T050",
+      "species": "알락오리",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "알락오리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락오리"
+        ],
+        "parsed": [
+          {
+            "raw": "알락오리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T051",
+      "species": "알락할미새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "알락할미새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락할미새"
+        ],
+        "parsed": [
+          {
+            "raw": "알락할미새",
+            "taxonName": "알락할미새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T052",
+      "species": "동박새2",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "동박새2",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "동박새2"
+        ],
+        "parsed": [
+          {
+            "raw": "동박새2",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T053",
+      "species": "울새 1",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새 1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 1"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 1",
+            "taxonName": "울새",
+            "count": 1,
+            "status": "known_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T054",
+      "species": "한국동박새 2마리",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "한국동박새 2마리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "한국동박새 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "한국동박새 2마리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T055",
+      "species": "알락오리1",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "알락오리1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락오리1"
+        ],
+        "parsed": [
+          {
+            "raw": "알락오리1",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T056",
+      "species": "괭이갈매기 2마리",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "괭이갈매기 2마리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "괭이갈매기 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "괭이갈매기 2마리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T057",
+      "species": "동박새,한국동박새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "동박새,한국동박새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "동박새",
+          "한국동박새"
+        ],
+        "parsed": [
+          {
+            "raw": "동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          },
+          {
+            "raw": "한국동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T066",
+      "species": "울새",
+      "note": "알락할미새 관찰",
+      "expectedClass": "public_normal_current_policy",
+      "group": "breeding_false_positive",
+      "reason": "알 부분문자열만으로 번식이라고 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T067",
+      "species": "울새",
+      "note": "알락오리와 함께 있음",
+      "expectedClass": "public_normal_current_policy",
+      "group": "breeding_false_positive",
+      "reason": "알 부분문자열만으로 번식이라고 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T068",
+      "species": "울새",
+      "note": "날씨를 알 수 없음",
+      "expectedClass": "public_normal_current_policy",
+      "group": "breeding_false_positive",
+      "reason": "알 부분문자열만으로 번식이라고 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    }
+  ],
+  "all70Cases": [
+    {
+      "id": "T001",
+      "species": "저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T002",
+      "species": "노랑부리저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "노랑부리저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "노랑부리저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "노랑부리저어새",
+            "taxonName": "노랑부리저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T003",
+      "species": "노랑부리백로",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "노랑부리백로",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "노랑부리백로"
+        ],
+        "parsed": [
+          {
+            "raw": "노랑부리백로",
+            "taxonName": "노랑부리백로",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T004",
+      "species": "황새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "황새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "황새"
+        ],
+        "parsed": [
+          {
+            "raw": "황새",
+            "taxonName": "황새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T005",
+      "species": "먹황새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "먹황새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "먹황새"
+        ],
+        "parsed": [
+          {
+            "raw": "먹황새",
+            "taxonName": "먹황새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T006",
+      "species": "따오기",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "따오기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "따오기"
+        ],
+        "parsed": [
+          {
+            "raw": "따오기",
+            "taxonName": "따오기",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T007",
+      "species": "두루미",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "두루미",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "두루미"
+        ],
+        "parsed": [
+          {
+            "raw": "두루미",
+            "taxonName": "두루미",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T008",
+      "species": "재두루미",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "재두루미",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "재두루미"
+        ],
+        "parsed": [
+          {
+            "raw": "재두루미",
+            "taxonName": "재두루미",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T009",
+      "species": "흑두루미",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "흑두루미",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "흑두루미"
+        ],
+        "parsed": [
+          {
+            "raw": "흑두루미",
+            "taxonName": "흑두루미",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T010",
+      "species": "검독수리",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "검독수리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "검독수리"
+        ],
+        "parsed": [
+          {
+            "raw": "검독수리",
+            "taxonName": "검독수리",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T011",
+      "species": "참수리",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "참수리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "참수리"
+        ],
+        "parsed": [
+          {
+            "raw": "참수리",
+            "taxonName": "참수리",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T012",
+      "species": "흰꼬리수리",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "흰꼬리수리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "흰꼬리수리"
+        ],
+        "parsed": [
+          {
+            "raw": "흰꼬리수리",
+            "taxonName": "흰꼬리수리",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T013",
+      "species": "매",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "매",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "매"
+        ],
+        "parsed": [
+          {
+            "raw": "매",
+            "taxonName": "매",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T014",
+      "species": "참매",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "참매",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "참매"
+        ],
+        "parsed": [
+          {
+            "raw": "참매",
+            "taxonName": "참매",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T015",
+      "species": "수리부엉이",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "수리부엉이",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "수리부엉이"
+        ],
+        "parsed": [
+          {
+            "raw": "수리부엉이",
+            "taxonName": "수리부엉이",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T016",
+      "species": "올빼미",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "올빼미",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "올빼미"
+        ],
+        "parsed": [
+          {
+            "raw": "올빼미",
+            "taxonName": "올빼미",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T017",
+      "species": "팔색조",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "팔색조",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "팔색조"
+        ],
+        "parsed": [
+          {
+            "raw": "팔색조",
+            "taxonName": "팔색조",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T018",
+      "species": "뿔쇠오리",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "뿔쇠오리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "뿔쇠오리"
+        ],
+        "parsed": [
+          {
+            "raw": "뿔쇠오리",
+            "taxonName": "뿔쇠오리",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T019",
+      "species": "넓적부리도요",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "policy_exact",
+      "reason": "현행 위치보호 리스트의 정확한 문자열이며 정책 확대가 아니다.",
+      "prototype": {
+        "rawPreserved": "넓적부리도요",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "넓적부리도요"
+        ],
+        "parsed": [
+          {
+            "raw": "넓적부리도요",
+            "taxonName": "넓적부리도요",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T020",
+      "species": "저어새1",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "저어새1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T021",
+      "species": "저어새 1",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "저어새 1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T022",
+      "species": "저어새 2마리",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "저어새 2마리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 2마리",
+            "taxonName": "저어새",
+            "count": 2,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T023",
+      "species": "흰꼬리수리1",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "흰꼬리수리1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "흰꼬리수리1"
+        ],
+        "parsed": [
+          {
+            "raw": "흰꼬리수리1",
+            "taxonName": "흰꼬리수리",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T024",
+      "species": "매1",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "매1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "매1"
+        ],
+        "parsed": [
+          {
+            "raw": "매1",
+            "taxonName": "매",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T025",
+      "species": "저어새 1",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "저어새 1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T026",
+      "species": "저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "unambiguous_representation",
+      "reason": "검증된 보호 국명과 명확한 정수 수량 표현 또는 NFC로 복원 가능한 표현이다.",
+      "prototype": {
+        "rawPreserved": "저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T027",
+      "species": "울새,저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새,저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T028",
+      "species": "울새/저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새/저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T029",
+      "species": "울새\n저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새\n저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T030",
+      "species": "울새\r\n저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새\r\n저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T031",
+      "species": "울새;저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새;저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T032",
+      "species": "울새·저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새·저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T033",
+      "species": "울새 · 저어새",
+      "note": "",
+      "expectedClass": "sensitive",
+      "group": "mixed_delimiter",
+      "reason": "한 토큰이라도 보호 대상이면 행 전체의 정확 위치·최근집계·가점을 보류한다.",
+      "prototype": {
+        "rawPreserved": "울새 · 저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새",
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T034",
+      "species": "저어새 -1",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 -1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 -1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 -1",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T035",
+      "species": "저어새 0",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 0",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 0"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 0",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T036",
+      "species": "저어새 1.5",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 1.5",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 1.5"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1.5",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T037",
+      "species": "저어새 1e3",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 1e3",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 1e3"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1e3",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T038",
+      "species": "저어새 1~3",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 1~3",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 1~3"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1~3",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T039",
+      "species": "저어새 약 2마리",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 약 2마리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 약 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 약 2마리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T040",
+      "species": "저어새?",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새?",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새?"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새?",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T041",
+      "species": "미확인종2",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "미확인종2",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "미확인종2"
+        ],
+        "parsed": [
+          {
+            "raw": "미확인종2",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T042",
+      "species": "2저어새",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "2저어새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "2저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "2저어새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T043",
+      "species": "저어새 100001",
+      "note": "",
+      "expectedClass": "review",
+      "group": "ambiguous",
+      "reason": "수량 문법 또는 명칭이 불확실하다. 원문을 보존하고 정확 위치·집계·가점을 보류하며 확정 종명/개체수를 만들지 않는다.",
+      "prototype": {
+        "rawPreserved": "저어새 100001",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "저어새 100001"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 100001",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T044",
+      "species": "울새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T045",
+      "species": "동박새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "동박새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "동박새"
+        ],
+        "parsed": [
+          {
+            "raw": "동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T046",
+      "species": "한국동박새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "한국동박새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "한국동박새"
+        ],
+        "parsed": [
+          {
+            "raw": "한국동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T047",
+      "species": "괭이갈매기",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "괭이갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "괭이갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "괭이갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T048",
+      "species": "갈매기",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T049",
+      "species": "재갈매기",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "재갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "재갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "재갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T050",
+      "species": "알락오리",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "알락오리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락오리"
+        ],
+        "parsed": [
+          {
+            "raw": "알락오리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T051",
+      "species": "알락할미새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "verified_normal",
+      "reason": "공식 문헌의 별도 국명이면서 현행 19종 목록에 없다. 알/매 부분문자열만으로 보호종이나 번식으로 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "알락할미새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락할미새"
+        ],
+        "parsed": [
+          {
+            "raw": "알락할미새",
+            "taxonName": "알락할미새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T052",
+      "species": "동박새2",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "동박새2",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "동박새2"
+        ],
+        "parsed": [
+          {
+            "raw": "동박새2",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T053",
+      "species": "울새 1",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새 1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 1"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 1",
+            "taxonName": "울새",
+            "count": 1,
+            "status": "known_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T054",
+      "species": "한국동박새 2마리",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "한국동박새 2마리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "한국동박새 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "한국동박새 2마리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T055",
+      "species": "알락오리1",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "알락오리1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락오리1"
+        ],
+        "parsed": [
+          {
+            "raw": "알락오리1",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T056",
+      "species": "괭이갈매기 2마리",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "괭이갈매기 2마리",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "괭이갈매기 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "괭이갈매기 2마리",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T057",
+      "species": "동박새,한국동박새",
+      "note": "",
+      "expectedClass": "public_normal_current_policy",
+      "group": "normal_quantity_or_mix",
+      "reason": "명확한 일반종 수량 표기/복수종 입력이다. 동박새와 한국동박새를 임의로 병합하지 않는다.",
+      "prototype": {
+        "rawPreserved": "동박새,한국동박새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "동박새",
+          "한국동박새"
+        ],
+        "parsed": [
+          {
+            "raw": "동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          },
+          {
+            "raw": "한국동박새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T058",
+      "species": "울새",
+      "note": "둥지 관찰",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T059",
+      "species": "울새",
+      "note": "새끼 동반",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T060",
+      "species": "울새",
+      "note": "육추 중",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T061",
+      "species": "울새",
+      "note": "포란 확인",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T062",
+      "species": "울새",
+      "note": "번식 장소",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T063",
+      "species": "울새",
+      "note": "영소 중",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T064",
+      "species": "울새",
+      "note": "알 2개 확인",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T065",
+      "species": "울새",
+      "note": "알을 품고 있음",
+      "expectedClass": "sensitive_breeding",
+      "group": "breeding_context",
+      "reason": "일반종이어도 번식 관련 정확 위치는 보류한다. 알은 새 정책 토큰 경계 검증 대상이다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T066",
+      "species": "울새",
+      "note": "알락할미새 관찰",
+      "expectedClass": "public_normal_current_policy",
+      "group": "breeding_false_positive",
+      "reason": "알 부분문자열만으로 번식이라고 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T067",
+      "species": "울새",
+      "note": "알락오리와 함께 있음",
+      "expectedClass": "public_normal_current_policy",
+      "group": "breeding_false_positive",
+      "reason": "알 부분문자열만으로 번식이라고 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "id": "T068",
+      "species": "울새",
+      "note": "날씨를 알 수 없음",
+      "expectedClass": "public_normal_current_policy",
+      "group": "breeding_false_positive",
+      "reason": "알 부분문자열만으로 번식이라고 판정하지 않는다.",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T069",
+      "species": "새매",
+      "note": "",
+      "expectedClass": "current_policy_outside_statutory_review",
+      "group": "policy_scope_gap",
+      "reason": "현행19정책에 없다. 공식 보호 관련 문헌에 등장하므로 정상 일반종/법정 비보호종 오탐 분모에서 제외한다.",
+      "prototype": {
+        "rawPreserved": "새매",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "새매"
+        ],
+        "parsed": [
+          {
+            "raw": "새매",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "id": "T070",
+      "species": "검은머리갈매기",
+      "note": "",
+      "expectedClass": "current_policy_outside_statutory_review",
+      "group": "policy_scope_gap",
+      "reason": "현행19정책에 없다. 공식 보호 관련 문헌에 등장하므로 정상 일반종/법정 비보호종 오탐 분모에서 제외한다.",
+      "prototype": {
+        "rawPreserved": "검은머리갈매기",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "검은머리갈매기"
+        ],
+        "parsed": [
+          {
+            "raw": "검은머리갈매기",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    }
+  ],
+  "extraBoundaryCases": [
+    {
+      "label": "normal_zero",
+      "species": "울새0",
+      "note": "",
+      "expected": "review",
+      "prototype": {
+        "rawPreserved": "울새0",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새0"
+        ],
+        "parsed": [
+          {
+            "raw": "울새0",
+            "taxonName": "울새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_max_count",
+      "species": "울새100000",
+      "note": "",
+      "expected": "normal_with_explicit_valid_count",
+      "prototype": {
+        "rawPreserved": "울새100000",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새100000"
+        ],
+        "parsed": [
+          {
+            "raw": "울새100000",
+            "taxonName": "울새",
+            "count": 100000,
+            "status": "known_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "label": "normal_over_limit",
+      "species": "울새100001",
+      "note": "",
+      "expected": "review",
+      "prototype": {
+        "rawPreserved": "울새100001",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새100001"
+        ],
+        "parsed": [
+          {
+            "raw": "울새100001",
+            "taxonName": "울새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_parenthesis",
+      "species": "울새 (1)",
+      "note": "",
+      "expected": "review_unless_parentheses_approved",
+      "prototype": {
+        "rawPreserved": "울새 (1)",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 (1)"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 (1)",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_parenthesis_unit",
+      "species": "울새 (1마리)",
+      "note": "",
+      "expected": "review_unless_parentheses_approved",
+      "prototype": {
+        "rawPreserved": "울새 (1마리)",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 (1마리)"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 (1마리)",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_negative",
+      "species": "울새 -1",
+      "note": "",
+      "expected": "review",
+      "prototype": {
+        "rawPreserved": "울새 -1",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 -1"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 -1",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_exponent",
+      "species": "울새 1e3",
+      "note": "",
+      "expected": "review",
+      "prototype": {
+        "rawPreserved": "울새 1e3",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 1e3"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 1e3",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_decimal",
+      "species": "울새 1.5",
+      "note": "",
+      "expected": "review",
+      "prototype": {
+        "rawPreserved": "울새 1.5",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새 1.5"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 1.5",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_zero_pad",
+      "species": "울새01",
+      "note": "",
+      "expected": "policy_choice_do_not_implicitly_assert_confirmed_count",
+      "prototype": {
+        "rawPreserved": "울새01",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새01"
+        ],
+        "parsed": [
+          {
+            "raw": "울새01",
+            "taxonName": "울새",
+            "count": 1,
+            "status": "known_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "label": "egg_accusative",
+      "species": "울새",
+      "note": "알을 품고 있음",
+      "expected": "breeding_withheld",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "label": "egg_nominative",
+      "species": "울새",
+      "note": "알이 있음",
+      "expected": "breeding_withheld",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    },
+    {
+      "label": "not_egg_modal",
+      "species": "울새",
+      "note": "날씨를 알 수 없음",
+      "expected": "normal_current_policy",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "egg_explicit_quantity",
+      "species": "울새",
+      "note": "알 2개 확인",
+      "expected": "breeding_withheld",
+      "prototype": {
+        "rawPreserved": "울새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      }
+    },
+    {
+      "label": "normal_taxon_egg_name",
+      "species": "알락할미새",
+      "note": "알락할미새 관찰",
+      "expected": "normal_current_policy",
+      "prototype": {
+        "rawPreserved": "알락할미새",
+        "endpoint": "report",
+        "embeddedQuantityMax": 100000,
+        "tokens": [
+          "알락할미새"
+        ],
+        "parsed": [
+          {
+            "raw": "알락할미새",
+            "taxonName": "알락할미새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      }
+    }
+  ],
+  "decisions": [
+    "The current-policy representation repair S1-R creates zero protected false positives in 17 independently grounded ordinary fixtures.",
+    "Prospective S1-P ordinary withholding must be separated from S1-R protection false positives. The limited five-normal-name registry is not a production taxonomy catalog.",
+    "Integer syntax and finite integer alone are not valid count range. Embedded quantities need explicit 1..100000 validation, separate from optional row birdCount.",
+    "Parentheses grammar is an explicit acceptance choice: keep review or approve exact name (integer/unit) grammar with boundary tests; never silently erase parentheses or digits.",
+    "Standalone egg keyword regex cannot identify Korean meaning: 알 수 없음 is a false withholding and 알을/알이 are missed breeding expressions. Include prospective policy review and adversarial sentence fixtures.",
+    "No full official taxonomy/alias catalog or licensing validated in this task. Fixture registry coverage must not be presented as complete normal-input compatibility."
+  ]
+}

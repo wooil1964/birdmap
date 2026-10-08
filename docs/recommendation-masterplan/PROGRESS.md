@@ -74,3 +74,8 @@ P1-A/B/C/D정량분석·정책비교·우선순위초안완료. 최적가중치/
 - 게시 후 전체 댓글을 다시 조회해 ID와 본문이 저장 요청과 정확히 일치함을 확인했다.
 - 최신 확인 main: 4fc14b3c7ba19ad4d5b91efa305a80b3d474dc57. 입력·운영 변경은 없다.
 - 이 게시 확인 기록을 포함한 최신 체크포인트는 git log -1 --format='%H %s'로 확인한다.
+
+
+## P1-S1 체크포인트 — 2026-10-09
+
+시작bee1359, main4fc14b3. 기존A-D 반복0. S1 공개흐름·48/92 memory GET·70종명fixture·독립오탐·대안2종·인수명세 완료. P1_SAFETY_DESIGN.md 추가, S1 scripts/results/새groundtruth+officialsources 보존. 현재 회귀126/170/57/48/21+skip1통과. S2 점수행렬과통합설계/Issue9 게시가 다음 단계. 운영 파일/D1/Worker/Pages 변경 없음. 이 기록을 포함하는 정확SHA는 git log로 확인한다.

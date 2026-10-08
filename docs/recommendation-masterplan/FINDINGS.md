@@ -274,3 +274,8 @@ flex_2211은 현행보다 ON/OFF3곳을 교체하고 rank 합이 +20/+24다. 지
 P1-A/B/C/D 정량 분석·동일 입력 정책 비교·우선순위 초안은 완료했다. 연중 정확도·생태 최적 배점/정원·제품 정책 확정·공개화면/운영 구현은 미검증이다. P2~P4는 미완료이며 구현·배포 승인은 없다.
 
 재현: [_scripts/analyze_p1d.mjs](_scripts/analyze_p1d.mjs), [_results/p1d_quotas.json](_results/p1d_quotas.json), [_results/p1d_independent.json](_results/p1d_independent.json), [_results/p1d_contract_audit.json](_results/p1d_contract_audit.json).
+
+
+## P1-S1 — 2026-10-09 보호 계약 감사
+
+현재19종 exact/six keyword의 수량·줄바꿈 gap을 합성48입력/92읽기 조건으로 재현했다. 승인 후 공개와 canonical 비번식 확인은 기존 명시 정책이며 전체 read 비공개는 정책 전환으로 분리했다. hidden 자식→일반/fixed 부모 이력 연결도 합성재현. 실제 운영 유출 미확인. 독립70 fixture/정상17에서 표현보정 R 오탐0; 시험 정책P는 사전coverage11+알 의미오탐1을 보류하고 알 조사형2를 놓쳤으므로 운영채택 금지. 최신 설계는 P1_SAFETY_DESIGN.md. 기존126/API170/front57/기상48/조석21+1skip 현행 회귀통과. 운영코드·DB·배포 변경0.

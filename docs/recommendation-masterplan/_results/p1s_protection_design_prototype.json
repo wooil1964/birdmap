@@ -1,0 +1,3187 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "4fc14b3c7ba19ad4d5b91efa305a80b3d474dc57",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "scope": "Standalone design prototype on 48 synthetic cases; not a product patch, not a deployed classifier.",
+  "assumptions": {
+    "protectedList": "Unchanged current 19 exact names",
+    "ordinaryRegistry": "Five synthetic ordinary control names only; no complete standards catalog",
+    "quantity": "Embedded positive integers only: report max100000, field max999; zero/negative/range/above-limit text is unresolved and withheld. Existing explicit canonical birdCount0 remains valid by its existing separate storage contract; no submit count policy changed",
+    "taxonomy": "No synonyms or uncertain taxa merged",
+    "eggLayingKeywords": "Measured policy extension; not silently included in S1-R"
+  },
+  "cases": [
+    {
+      "label": "protected_exact",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "protected_suffix",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새1"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새1",
+          "taxonName": "저어새",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_spaced_suffix",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새 1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새 1"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새 1",
+          "taxonName": "저어새",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새 1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새 1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_count_unit",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새 2마리",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새 2마리"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새 2마리",
+          "taxonName": "저어새",
+          "count": 2,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새 2마리",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새 2마리"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 2마리",
+            "taxonName": "저어새",
+            "count": 2,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_other_suffix",
+      "expectedClass": "protected",
+      "rawPreserved": "흰꼬리수리1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "흰꼬리수리1"
+      ],
+      "parsed": [
+        {
+          "raw": "흰꼬리수리1",
+          "taxonName": "흰꼬리수리",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "흰꼬리수리1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "흰꼬리수리1"
+        ],
+        "parsed": [
+          {
+            "raw": "흰꼬리수리1",
+            "taxonName": "흰꼬리수리",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_short_suffix",
+      "expectedClass": "protected",
+      "rawPreserved": "매1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "매1"
+      ],
+      "parsed": [
+        {
+          "raw": "매1",
+          "taxonName": "매",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "매1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "매1"
+        ],
+        "parsed": [
+          {
+            "raw": "매1",
+            "taxonName": "매",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_count_zero",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새0",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새0"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새0",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "ambiguous_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새0",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새0"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새0",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_negative_count",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새 -1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새 -1"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새 -1",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새 -1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새 -1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 -1",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_count_range",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새 1-3",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새 1-3"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새 1-3",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새 1-3",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새 1-3"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1-3",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_count_decimal",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새 1.5",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새 1.5"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새 1.5",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새 1.5",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새 1.5"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새 1.5",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_suffix_unknown",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새류",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새류"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새류",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새류",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새류"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새류",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_suffix_question",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새?",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새?"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새?",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새?",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새?"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새?",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "protected_parenthesis",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새(2)",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새(2)"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새(2)",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새(2)",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새(2)"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새(2)",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_internal_space",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저 어 새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저 어 새"
+      ],
+      "parsed": [
+        {
+          "raw": "저 어 새",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저 어 새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저 어 새"
+        ],
+        "parsed": [
+          {
+            "raw": "저 어 새",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "protected_decomposed_unicode",
+      "expectedClass": "ambiguous_protected",
+      "rawPreserved": "저어새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "mixed_comma",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새,울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새",
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        },
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새,울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새",
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          },
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "mixed_slash",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새/울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새",
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        },
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새/울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새",
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          },
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "mixed_newline",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새\n울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새",
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        },
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새\n울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새",
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          },
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "mixed_crlf",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새\r\n울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새",
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        },
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새\r\n울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새",
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          },
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "mixed_semicolon",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새;울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새",
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        },
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새;울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새",
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          },
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "mixed_middot",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새·울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새",
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새",
+          "taxonName": "저어새",
+          "count": null,
+          "status": "known_exact",
+          "protected": true
+        },
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새·울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새",
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새",
+            "taxonName": "저어새",
+            "count": null,
+            "status": "known_exact",
+            "protected": true
+          },
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "mixed_delimiters",
+      "expectedClass": "protected",
+      "rawPreserved": "울새,저어새1;박새/참새\n매1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새",
+        "저어새1",
+        "박새",
+        "참새",
+        "매1"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        },
+        {
+          "raw": "저어새1",
+          "taxonName": "저어새",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        },
+        {
+          "raw": "박새",
+          "taxonName": "박새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        },
+        {
+          "raw": "참새",
+          "taxonName": "참새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        },
+        {
+          "raw": "매1",
+          "taxonName": "매",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새,저어새1;박새/참새\n매1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새",
+          "저어새1",
+          "박새",
+          "참새",
+          "매1"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "저어새1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          },
+          {
+            "raw": "박새",
+            "taxonName": "박새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "참새",
+            "taxonName": "참새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "매1",
+            "taxonName": "매",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "ordinary_simple",
+      "expectedClass": "ordinary",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_suffix",
+      "expectedClass": "ordinary",
+      "rawPreserved": "울새1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새1"
+      ],
+      "parsed": [
+        {
+          "raw": "울새1",
+          "taxonName": "울새",
+          "count": 1,
+          "status": "known_count",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새1"
+        ],
+        "parsed": [
+          {
+            "raw": "울새1",
+            "taxonName": "울새",
+            "count": 1,
+            "status": "known_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_mixed_comma",
+      "expectedClass": "ordinary",
+      "rawPreserved": "울새,박새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새",
+        "박새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        },
+        {
+          "raw": "박새",
+          "taxonName": "박새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새,박새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새",
+          "박새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          },
+          {
+            "raw": "박새",
+            "taxonName": "박새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_similar_short",
+      "expectedClass": "ordinary",
+      "rawPreserved": "검은어깨매",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "검은어깨매"
+      ],
+      "parsed": [
+        {
+          "raw": "검은어깨매",
+          "taxonName": "검은어깨매",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "검은어깨매",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "검은어깨매"
+        ],
+        "parsed": [
+          {
+            "raw": "검은어깨매",
+            "taxonName": "검은어깨매",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_similar_other",
+      "expectedClass": "ordinary",
+      "rawPreserved": "참새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "참새"
+      ],
+      "parsed": [
+        {
+          "raw": "참새",
+          "taxonName": "참새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "참새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "참새"
+        ],
+        "parsed": [
+          {
+            "raw": "참새",
+            "taxonName": "참새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_egg_syllable",
+      "expectedClass": "ordinary",
+      "rawPreserved": "알락할미새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "알락할미새"
+      ],
+      "parsed": [
+        {
+          "raw": "알락할미새",
+          "taxonName": "알락할미새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "알락할미새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "알락할미새"
+        ],
+        "parsed": [
+          {
+            "raw": "알락할미새",
+            "taxonName": "알락할미새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": true,
+          "recentBonusAllowed": true,
+          "linkedHistoryAllowed": true,
+          "navigationAllowed": true,
+          "publicMode": "existing_public_policy"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_parenthesis",
+      "expectedClass": "ordinary",
+      "rawPreserved": "참새(2)",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "참새(2)"
+      ],
+      "parsed": [
+        {
+          "raw": "참새(2)",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "참새(2)",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "참새(2)"
+        ],
+        "parsed": [
+          {
+            "raw": "참새(2)",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": true,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_digits_inside",
+      "expectedClass": "unknown",
+      "rawPreserved": "조류2호",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "조류2호"
+      ],
+      "parsed": [
+        {
+          "raw": "조류2호",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "조류2호",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "조류2호"
+        ],
+        "parsed": [
+          {
+            "raw": "조류2호",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_ambiguous_range",
+      "expectedClass": "unknown",
+      "rawPreserved": "울새 1-3",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새 1-3"
+      ],
+      "parsed": [
+        {
+          "raw": "울새 1-3",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새 1-3",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새 1-3"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 1-3",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_count_zero",
+      "expectedClass": "ambiguous_quantity",
+      "rawPreserved": "울새0",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새0"
+      ],
+      "parsed": [
+        {
+          "raw": "울새0",
+          "taxonName": "울새",
+          "count": null,
+          "status": "ambiguous_count",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새0",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새0"
+        ],
+        "parsed": [
+          {
+            "raw": "울새0",
+            "taxonName": "울새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_negative_count",
+      "expectedClass": "ambiguous_quantity",
+      "rawPreserved": "울새 -1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새 -1"
+      ],
+      "parsed": [
+        {
+          "raw": "울새 -1",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새 -1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새 -1"
+        ],
+        "parsed": [
+          {
+            "raw": "울새 -1",
+            "taxonName": null,
+            "count": null,
+            "status": "unresolved",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_count_over_report_cap",
+      "expectedClass": "ambiguous_quantity",
+      "rawPreserved": "울새100001",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새100001"
+      ],
+      "parsed": [
+        {
+          "raw": "울새100001",
+          "taxonName": "울새",
+          "count": null,
+          "status": "ambiguous_count",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": true,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새100001",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새100001"
+        ],
+        "parsed": [
+          {
+            "raw": "울새100001",
+            "taxonName": "울새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_count_over_field_cap",
+      "expectedClass": "endpoint_quantity",
+      "rawPreserved": "울새1000",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새1000"
+      ],
+      "parsed": [
+        {
+          "raw": "울새1000",
+          "taxonName": "울새",
+          "count": 1000,
+          "status": "known_count",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": true,
+        "recentBonusAllowed": true,
+        "linkedHistoryAllowed": true,
+        "navigationAllowed": true,
+        "publicMode": "existing_public_policy"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새1000",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새1000"
+        ],
+        "parsed": [
+          {
+            "raw": "울새1000",
+            "taxonName": "울새",
+            "count": null,
+            "status": "ambiguous_count",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": true,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "breeding_nest",
+      "expectedClass": "breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "breeding_chick",
+      "expectedClass": "breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "breeding_chickfeeding",
+      "expectedClass": "breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "breeding_incubation",
+      "expectedClass": "breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "breeding_nesting",
+      "expectedClass": "breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "breeding_general",
+      "expectedClass": "breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "breeding_egg_only",
+      "expectedClass": "breeding_policy_extension",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": true,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "breeding_laying",
+      "expectedClass": "breeding_policy_extension",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": true,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": true,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "breeding_nest_spaced",
+      "expectedClass": "ambiguous_breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": true,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": true,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "breeding_chick_spaced",
+      "expectedClass": "ambiguous_breeding",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": false,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": true,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": false,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": true,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": true
+    },
+    {
+      "label": "ordinary_keyword_negated",
+      "expectedClass": "breeding_keyword_negation",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "ordinary_keyword_incidental",
+      "expectedClass": "breeding_keyword_incidental",
+      "rawPreserved": "울새",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "울새"
+      ],
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": true,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "울새",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "울새"
+        ],
+        "parsed": [
+          {
+            "raw": "울새",
+            "taxonName": "울새",
+            "count": null,
+            "status": "known_exact",
+            "protected": false
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": true,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    },
+    {
+      "label": "protected_hidden_request",
+      "expectedClass": "protected",
+      "rawPreserved": "저어새1",
+      "endpoint": "report",
+      "embeddedQuantityMax": 100000,
+      "tokens": [
+        "저어새1"
+      ],
+      "parsed": [
+        {
+          "raw": "저어새1",
+          "taxonName": "저어새",
+          "count": 1,
+          "status": "known_count",
+          "protected": true
+        }
+      ],
+      "sensitiveR": true,
+      "unresolved": false,
+      "existingBreeding": false,
+      "breedingPolicyExtension": false,
+      "spacedKnownKeyword": false,
+      "proposedP": {
+        "exactCoordinatesAllowed": false,
+        "recentBonusAllowed": false,
+        "linkedHistoryAllowed": false,
+        "navigationAllowed": false,
+        "publicMode": "withheld"
+      },
+      "fieldEndpointAssessment": {
+        "rawPreserved": "저어새1",
+        "endpoint": "field",
+        "embeddedQuantityMax": 999,
+        "tokens": [
+          "저어새1"
+        ],
+        "parsed": [
+          {
+            "raw": "저어새1",
+            "taxonName": "저어새",
+            "count": 1,
+            "status": "known_count",
+            "protected": true
+          }
+        ],
+        "sensitiveR": true,
+        "unresolved": false,
+        "existingBreeding": false,
+        "breedingPolicyExtension": false,
+        "spacedKnownKeyword": false,
+        "proposedP": {
+          "exactCoordinatesAllowed": false,
+          "recentBonusAllowed": false,
+          "linkedHistoryAllowed": false,
+          "navigationAllowed": false,
+          "publicMode": "withheld"
+        }
+      },
+      "ordinaryFixtureControl": false,
+      "currentRecentIncludes": false
+    }
+  ],
+  "summary": {
+    "cases": 48,
+    "ordinaryFixtureControls": 7,
+    "fullyResolvedOrdinaryControls": 6,
+    "ordinaryRFalsePositiveCount": 0,
+    "ordinaryRFalsePositives": [],
+    "ordinaryPWithheldExactCount": 1,
+    "ordinaryPExactWithheld": [
+      "ordinary_parenthesis"
+    ],
+    "warning": "P withholding includes unresolved normal parentheses case. This is measured conservative false withholding on a finite fixture set, not an operational false-positive rate."
+  },
+  "instructions": [
+    "Do not claim every accepted spelling has verified taxonomy. Unknown and malformed tokens retain raw source and require review.",
+    "Read-defense filtering must run before species union, latestDate, totals, history/fixedSpots joins, contributor count and pagination; a row rejected by classifier contributes no siteId, date, count, species or score signal.",
+    "Filter hidden linked child rows before attaching to a public precise parent/fixed marker. Otherwise parent navigation leaks child location context.",
+    "Non-breeding confirmation may authorize storing a report but cannot override prospective public privacy policy.",
+    "Already exposed coordinates must not be newly jittered on every read; no database mutation or synthetic approximation without an explicitly approved stable policy.",
+    "Generic report raw fields are preserved. A no-D1 immediate read defense can omit uncertain rows; retaining approximate public output requires a stable saved point/stronger de-identification policy."
+  ]
+}

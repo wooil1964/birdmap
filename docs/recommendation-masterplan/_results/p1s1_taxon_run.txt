@@ -1,0 +1,245 @@
+{
+  "cases": 70,
+  "groups": {
+    "policy_exact": {
+      "n": 19,
+      "submissionSensitiveTrue": 19,
+      "submissionSensitiveFalse": 0,
+      "submissionInvalid": 0,
+      "legacySensitiveTrue": 19,
+      "legacySensitiveFalse": 0
+    },
+    "unambiguous_representation": {
+      "n": 7,
+      "submissionSensitiveTrue": 0,
+      "submissionSensitiveFalse": 5,
+      "submissionInvalid": 2,
+      "legacySensitiveTrue": 0,
+      "legacySensitiveFalse": 7
+    },
+    "mixed_delimiter": {
+      "n": 7,
+      "submissionSensitiveTrue": 4,
+      "submissionSensitiveFalse": 2,
+      "submissionInvalid": 1,
+      "legacySensitiveTrue": 1,
+      "legacySensitiveFalse": 6
+    },
+    "ambiguous": {
+      "n": 10,
+      "submissionSensitiveTrue": 0,
+      "submissionSensitiveFalse": 8,
+      "submissionInvalid": 2,
+      "legacySensitiveTrue": 0,
+      "legacySensitiveFalse": 10
+    },
+    "verified_normal": {
+      "n": 8,
+      "submissionSensitiveTrue": 0,
+      "submissionSensitiveFalse": 8,
+      "submissionInvalid": 0,
+      "legacySensitiveTrue": 0,
+      "legacySensitiveFalse": 8
+    },
+    "normal_quantity_or_mix": {
+      "n": 6,
+      "submissionSensitiveTrue": 0,
+      "submissionSensitiveFalse": 6,
+      "submissionInvalid": 0,
+      "legacySensitiveTrue": 0,
+      "legacySensitiveFalse": 6
+    },
+    "breeding_context": {
+      "n": 8,
+      "submissionSensitiveTrue": 6,
+      "submissionSensitiveFalse": 2,
+      "submissionInvalid": 0,
+      "legacySensitiveTrue": 6,
+      "legacySensitiveFalse": 2
+    },
+    "breeding_false_positive": {
+      "n": 3,
+      "submissionSensitiveTrue": 0,
+      "submissionSensitiveFalse": 3,
+      "submissionInvalid": 0,
+      "legacySensitiveTrue": 0,
+      "legacySensitiveFalse": 3
+    },
+    "policy_scope_gap": {
+      "n": 2,
+      "submissionSensitiveTrue": 0,
+      "submissionSensitiveFalse": 2,
+      "submissionInvalid": 0,
+      "legacySensitiveTrue": 0,
+      "legacySensitiveFalse": 2
+    }
+  },
+  "interesting": [
+    {
+      "id": "T027",
+      "species": "울새,저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": [
+          "울새",
+          "저어새"
+        ],
+        "normalizedSensitive": true,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새,저어새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T028",
+      "species": "울새/저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": null,
+        "normalizedSensitive": null,
+        "normalizationError": {
+          "code": "SPECIES_INVALID",
+          "message": "종명으로 쓸 수 없는 값입니다: 울새/저어새"
+        },
+        "legacyTokens": [
+          "울새/저어새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T029",
+      "species": "울새\n저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": [
+          "울새저어새"
+        ],
+        "normalizedSensitive": false,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새\n저어새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T030",
+      "species": "울새\r\n저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": [
+          "울새저어새"
+        ],
+        "normalizedSensitive": false,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새\r\n저어새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T031",
+      "species": "울새;저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": [
+          "울새",
+          "저어새"
+        ],
+        "normalizedSensitive": true,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새;저어새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T032",
+      "species": "울새·저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": [
+          "울새",
+          "저어새"
+        ],
+        "normalizedSensitive": true,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새·저어새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T033",
+      "species": "울새 · 저어새",
+      "note": "",
+      "current": {
+        "normalizedTokens": [
+          "울새",
+          "저어새"
+        ],
+        "normalizedSensitive": true,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새",
+          "저어새"
+        ],
+        "legacySensitive": true
+      }
+    },
+    {
+      "id": "T066",
+      "species": "울새",
+      "note": "알락할미새 관찰",
+      "current": {
+        "normalizedTokens": [
+          "울새"
+        ],
+        "normalizedSensitive": false,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T067",
+      "species": "울새",
+      "note": "알락오리와 함께 있음",
+      "current": {
+        "normalizedTokens": [
+          "울새"
+        ],
+        "normalizedSensitive": false,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새"
+        ],
+        "legacySensitive": false
+      }
+    },
+    {
+      "id": "T068",
+      "species": "울새",
+      "note": "날씨를 알 수 없음",
+      "current": {
+        "normalizedTokens": [
+          "울새"
+        ],
+        "normalizedSensitive": false,
+        "normalizationError": null,
+        "legacyTokens": [
+          "울새"
+        ],
+        "legacySensitive": false
+      }
+    }
+  ]
+}

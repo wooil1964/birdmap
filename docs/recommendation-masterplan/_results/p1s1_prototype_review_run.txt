@@ -1,0 +1,310 @@
+{
+  "counts": {
+    "normalN": 17,
+    "sensitiveRFalsePositiveN": 0,
+    "prospectiveNormalWithheldN": 12,
+    "prospectiveNormalAllowedN": 5,
+    "unresolvedCoverageWithheldN": 11,
+    "resolvedKeywordWithheldN": 1
+  },
+  "extraBoundaryCases": [
+    {
+      "label": "normal_zero",
+      "expected": "review",
+      "parsed": [
+        {
+          "raw": "울새0",
+          "taxonName": "울새",
+          "count": null,
+          "status": "ambiguous_count",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_max_count",
+      "expected": "normal_with_explicit_valid_count",
+      "parsed": [
+        {
+          "raw": "울새100000",
+          "taxonName": "울새",
+          "count": 100000,
+          "status": "known_count",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": false,
+      "allow": true
+    },
+    {
+      "label": "normal_over_limit",
+      "expected": "review",
+      "parsed": [
+        {
+          "raw": "울새100001",
+          "taxonName": "울새",
+          "count": null,
+          "status": "ambiguous_count",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_parenthesis",
+      "expected": "review_unless_parentheses_approved",
+      "parsed": [
+        {
+          "raw": "울새 (1)",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_parenthesis_unit",
+      "expected": "review_unless_parentheses_approved",
+      "parsed": [
+        {
+          "raw": "울새 (1마리)",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_negative",
+      "expected": "review",
+      "parsed": [
+        {
+          "raw": "울새 -1",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_exponent",
+      "expected": "review",
+      "parsed": [
+        {
+          "raw": "울새 1e3",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_decimal",
+      "expected": "review",
+      "parsed": [
+        {
+          "raw": "울새 1.5",
+          "taxonName": null,
+          "count": null,
+          "status": "unresolved",
+          "protected": false
+        }
+      ],
+      "unresolved": true,
+      "breedingExtension": false,
+      "allow": false
+    },
+    {
+      "label": "normal_zero_pad",
+      "expected": "policy_choice_do_not_implicitly_assert_confirmed_count",
+      "parsed": [
+        {
+          "raw": "울새01",
+          "taxonName": "울새",
+          "count": 1,
+          "status": "known_count",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": false,
+      "allow": true
+    },
+    {
+      "label": "egg_accusative",
+      "expected": "breeding_withheld",
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": false,
+      "allow": true
+    },
+    {
+      "label": "egg_nominative",
+      "expected": "breeding_withheld",
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": false,
+      "allow": true
+    },
+    {
+      "label": "not_egg_modal",
+      "expected": "normal_current_policy",
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": true,
+      "allow": false
+    },
+    {
+      "label": "egg_explicit_quantity",
+      "expected": "breeding_withheld",
+      "parsed": [
+        {
+          "raw": "울새",
+          "taxonName": "울새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": true,
+      "allow": false
+    },
+    {
+      "label": "normal_taxon_egg_name",
+      "expected": "normal_current_policy",
+      "parsed": [
+        {
+          "raw": "알락할미새",
+          "taxonName": "알락할미새",
+          "count": null,
+          "status": "known_exact",
+          "protected": false
+        }
+      ],
+      "unresolved": false,
+      "breedingExtension": false,
+      "allow": true
+    }
+  ],
+  "withheldNormals": [
+    {
+      "id": "T045",
+      "species": "동박새",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T046",
+      "species": "한국동박새",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T047",
+      "species": "괭이갈매기",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T048",
+      "species": "갈매기",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T049",
+      "species": "재갈매기",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T050",
+      "species": "알락오리",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T052",
+      "species": "동박새2",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T054",
+      "species": "한국동박새 2마리",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T055",
+      "species": "알락오리1",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T056",
+      "species": "괭이갈매기 2마리",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T057",
+      "species": "동박새,한국동박새",
+      "note": "",
+      "unresolved": true
+    },
+    {
+      "id": "T068",
+      "species": "울새",
+      "note": "날씨를 알 수 없음",
+      "unresolved": false
+    }
+  ]
+}

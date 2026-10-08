@@ -1,0 +1,4164 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "4fc14b3c7ba19ad4d5b91efa305a80b3d474dc57",
+  "evaluationTime": "2026-10-08T22:40:00+09:00",
+  "sourceFiles": {
+    "reports-api/src/shared.js": {
+      "gitSha256": "4bb428fafb76f8c6871f39066d0e2c1ba7395b755f32cbfbd5780653cd6fa2ab",
+      "worktreeSha256": "573868045dda6d9a7950ad63ef9805236785accf091cd1d0024a8c45e41c7ad0",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/src/public.js": {
+      "gitSha256": "de73a7f93a6929a1ccfbc24f5907d4c6196a62580f1aa15c72edb89b3a5a0fcc",
+      "worktreeSha256": "6cd83da2cae4cbed2c685ad111411d3b38813dff047b65550c0f848dc7486cbe",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/src/field-updates.js": {
+      "gitSha256": "5f404d9d721cb659334eb4fe9cb8f4a0a2720562b61786bab80f5c7ffd2ab052",
+      "worktreeSha256": "1e23ded487f91485794a60a8d359eae6945a3acad41685a1e6313d5658973c84",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/src/admin-actions.js": {
+      "gitSha256": "dca76fd90d02d64ea3f40f8ffefbdb86d1e0cd7d59ed5edbc9cea277f7df105b",
+      "worktreeSha256": "97b4f9c7a4311d025844094bc83c3b81c020f8145c79592dde916928b6194fe9",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/src/canonical/data.js": {
+      "gitSha256": "4a37d58089e05076b37b34f5b652524370c5e15e5f8d35ef7dae4795823e30a6",
+      "worktreeSha256": "ee15126b1dd9ca14df23f2c8fcdfbcce769e6f1907a5756437965873bb0f0bfd",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/src/canonical/persistence.js": {
+      "gitSha256": "8e40615b7cce05f3f0863a9bde2f64be5afcc7422b005c293ed34488e870dcd6",
+      "worktreeSha256": "6b4c9c06f45cfb1b2211a80b4cbdcffe191f7a40e1eba25358c876f99bb8feb7",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/src/canonical/control.js": {
+      "gitSha256": "66086960e503afcb95c62cb3b0fd049a576269a001c22ce0375c524f92506dd4",
+      "worktreeSha256": "64591a86db32d989bd3ad69337fd3e7d00ff28d6ef351d32d5100bffe24deb5e",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/schema.sql": {
+      "gitSha256": "3afafa09aa1e23d2c8ea74c0c7ba1cb0a103b68bd32bb1d85ef890203dadab50",
+      "worktreeSha256": "e51ddff8abbb9ab67069c566896b005bdad535232e2a7395f8155e3e8eb39b4b",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "reports-api/test/helpers.mjs": {
+      "gitSha256": "09232a4f6b54aaebae4215004d34c45e9c2482303ec818675376e31f512b8b0a",
+      "worktreeSha256": "82717d2dd0022535abc1cb63fc7c6a1fd53970880713e623257393bdb63f7ca4",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    },
+    "index.html": {
+      "gitSha256": "c3b0299bff1e052aa6fa0fcb3284261a80689dbd13e317c1aac11dccf1420ca0",
+      "worktreeSha256": "ec43e1d76731890c596ab0d00f36a86e1583b0fbade81641e22b9ee5ad5617b6",
+      "matchesReferenceIgnoringCheckoutCRLF": true
+    }
+  },
+  "currentProtectedSpecies": [
+    "저어새",
+    "노랑부리저어새",
+    "노랑부리백로",
+    "황새",
+    "먹황새",
+    "따오기",
+    "두루미",
+    "재두루미",
+    "흑두루미",
+    "검독수리",
+    "참수리",
+    "흰꼬리수리",
+    "매",
+    "참매",
+    "수리부엉이",
+    "올빼미",
+    "팔색조",
+    "뿔쇠오리",
+    "넓적부리도요"
+  ],
+  "currentBreedingKeywords": [
+    "둥지",
+    "번식",
+    "포란",
+    "육추",
+    "새끼",
+    "영소"
+  ],
+  "constraints": {
+    "operatingCodeReadOnly": true,
+    "productionEndpointsQueried": 0,
+    "productionD1Access": 0,
+    "postHandlerCalls": 0,
+    "coordinatesInResult": false,
+    "syntheticMemorySQLiteOnly": true,
+    "networkFailClosed": true
+  },
+  "inputCases": [
+    {
+      "label": "protected_exact",
+      "input": "저어새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새",
+          "splitSpecies": [
+            "저어새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": true
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": false,
+            "locationHidden": true,
+            "navigationPermitted": false,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새",
+          "splitSpecies": [
+            "저어새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": true
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": false,
+            "locationHidden": true,
+            "navigationPermitted": false,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_suffix",
+      "input": "저어새1",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새1",
+          "splitSpecies": [
+            "저어새1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새1",
+          "splitSpecies": [
+            "저어새1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_spaced_suffix",
+      "input": "저어새 1",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새 1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새 1",
+          "splitSpecies": [
+            "저어새 1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 1",
+          "splitSpecies": [
+            "저어새 1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_count_unit",
+      "input": "저어새 2마리",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새 2마리"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새 2마리",
+          "splitSpecies": [
+            "저어새 2마리"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 2마리",
+          "splitSpecies": [
+            "저어새 2마리"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_other_suffix",
+      "input": "흰꼬리수리1",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "흰꼬리수리1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "흰꼬리수리1",
+          "splitSpecies": [
+            "흰꼬리수리1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "흰꼬리수리1",
+          "splitSpecies": [
+            "흰꼬리수리1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_short_suffix",
+      "input": "매1",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "매1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "매1",
+          "splitSpecies": [
+            "매1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "매1",
+          "splitSpecies": [
+            "매1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_count_zero",
+      "input": "저어새0",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새0"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새0",
+          "splitSpecies": [
+            "저어새0"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새0",
+          "splitSpecies": [
+            "저어새0"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_negative_count",
+      "input": "저어새 -1",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새 -1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새 -1",
+          "splitSpecies": [
+            "저어새 -1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 -1",
+          "splitSpecies": [
+            "저어새 -1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_count_range",
+      "input": "저어새 1-3",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새 1-3"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새 1-3",
+          "splitSpecies": [
+            "저어새 1-3"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 1-3",
+          "splitSpecies": [
+            "저어새 1-3"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_count_decimal",
+      "input": "저어새 1.5",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새 1.5"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새 1.5",
+          "splitSpecies": [
+            "저어새 1.5"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 1.5",
+          "splitSpecies": [
+            "저어새 1.5"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_suffix_unknown",
+      "input": "저어새류",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새류"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새류",
+          "splitSpecies": [
+            "저어새류"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새류",
+          "splitSpecies": [
+            "저어새류"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_suffix_question",
+      "input": "저어새?",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": false,
+      "normalizerOutput": null,
+      "normalizerError": "SPECIES_INVALID",
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새?",
+          "splitSpecies": [
+            "저어새?"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_parenthesis",
+      "input": "저어새(2)",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새(2)"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새(2)",
+          "splitSpecies": [
+            "저어새(2)"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새(2)",
+          "splitSpecies": [
+            "저어새(2)"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_internal_space",
+      "input": "저 어 새",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저 어 새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저 어 새",
+          "splitSpecies": [
+            "저 어 새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저 어 새",
+          "splitSpecies": [
+            "저 어 새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_decomposed_unicode",
+      "input": "저어새",
+      "note": null,
+      "expectedClass": "ambiguous_protected",
+      "normalizerAccepted": false,
+      "normalizerOutput": null,
+      "normalizerError": "SPECIES_INVALID",
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새",
+          "splitSpecies": [
+            "저어새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_comma",
+      "input": "저어새,울새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새",
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새,울새",
+          "splitSpecies": [
+            "저어새,울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 · 울새",
+          "splitSpecies": [
+            "저어새",
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 2,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_slash",
+      "input": "저어새/울새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": false,
+      "normalizerOutput": null,
+      "normalizerError": "SPECIES_INVALID",
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새/울새",
+          "splitSpecies": [
+            "저어새/울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_newline",
+      "input": "저어새\n울새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새\n울새",
+          "splitSpecies": [
+            "저어새\n울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새울새",
+          "splitSpecies": [
+            "저어새울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_crlf",
+      "input": "저어새\r\n울새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새\r\n울새",
+          "splitSpecies": [
+            "저어새\r\n울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새울새",
+          "splitSpecies": [
+            "저어새울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_semicolon",
+      "input": "저어새;울새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새",
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새;울새",
+          "splitSpecies": [
+            "저어새;울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 · 울새",
+          "splitSpecies": [
+            "저어새",
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 2,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_middot",
+      "input": "저어새·울새",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새",
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새·울새",
+          "splitSpecies": [
+            "저어새·울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새 · 울새",
+          "splitSpecies": [
+            "저어새",
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 2,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "mixed_delimiters",
+      "input": "울새,저어새1;박새/참새\n매1",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": false,
+      "normalizerOutput": null,
+      "normalizerError": "SPECIES_INVALID",
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새,저어새1;박새/참새\n매1",
+          "splitSpecies": [
+            "울새,저어새1;박새/참새\n매1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_simple",
+      "input": "울새",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_suffix",
+      "input": "울새1",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새1",
+          "splitSpecies": [
+            "울새1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새1",
+          "splitSpecies": [
+            "울새1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_mixed_comma",
+      "input": "울새,박새",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새",
+        "박새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새,박새",
+          "splitSpecies": [
+            "울새,박새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새 · 박새",
+          "splitSpecies": [
+            "울새",
+            "박새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 2,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 2,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": null,
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_similar_short",
+      "input": "검은어깨매",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "검은어깨매"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "검은어깨매",
+          "splitSpecies": [
+            "검은어깨매"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "검은어깨매",
+          "splitSpecies": [
+            "검은어깨매"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_similar_other",
+      "input": "참새",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "참새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "참새",
+          "splitSpecies": [
+            "참새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "참새",
+          "splitSpecies": [
+            "참새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_egg_syllable",
+      "input": "알락할미새",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "알락할미새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "알락할미새",
+          "splitSpecies": [
+            "알락할미새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "알락할미새",
+          "splitSpecies": [
+            "알락할미새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_parenthesis",
+      "input": "참새(2)",
+      "note": null,
+      "expectedClass": "ordinary",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "참새(2)"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "참새(2)",
+          "splitSpecies": [
+            "참새(2)"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "참새(2)",
+          "splitSpecies": [
+            "참새(2)"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_digits_inside",
+      "input": "조류2호",
+      "note": null,
+      "expectedClass": "unknown",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "조류2호"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "조류2호",
+          "splitSpecies": [
+            "조류2호"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "조류2호",
+          "splitSpecies": [
+            "조류2호"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_ambiguous_range",
+      "input": "울새 1-3",
+      "note": null,
+      "expectedClass": "unknown",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새 1-3"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새 1-3",
+          "splitSpecies": [
+            "울새 1-3"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새 1-3",
+          "splitSpecies": [
+            "울새 1-3"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_count_zero",
+      "input": "울새0",
+      "note": null,
+      "expectedClass": "ambiguous_quantity",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새0"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새0",
+          "splitSpecies": [
+            "울새0"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새0",
+          "splitSpecies": [
+            "울새0"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_negative_count",
+      "input": "울새 -1",
+      "note": null,
+      "expectedClass": "ambiguous_quantity",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새 -1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새 -1",
+          "splitSpecies": [
+            "울새 -1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새 -1",
+          "splitSpecies": [
+            "울새 -1"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_count_over_report_cap",
+      "input": "울새100001",
+      "note": null,
+      "expectedClass": "ambiguous_quantity",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새100001"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새100001",
+          "splitSpecies": [
+            "울새100001"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새100001",
+          "splitSpecies": [
+            "울새100001"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_count_over_field_cap",
+      "input": "울새1000",
+      "note": null,
+      "expectedClass": "endpoint_quantity",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새1000"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새1000",
+          "splitSpecies": [
+            "울새1000"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새1000",
+          "splitSpecies": [
+            "울새1000"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_nest",
+      "input": "울새",
+      "note": "둥지 확인",
+      "expectedClass": "breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_chick",
+      "input": "울새",
+      "note": "새끼 관찰",
+      "expectedClass": "breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_chickfeeding",
+      "input": "울새",
+      "note": "육추 중",
+      "expectedClass": "breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_incubation",
+      "input": "울새",
+      "note": "포란 중",
+      "expectedClass": "breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_nesting",
+      "input": "울새",
+      "note": "영소 중",
+      "expectedClass": "breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_general",
+      "input": "울새",
+      "note": "번식 관찰",
+      "expectedClass": "breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_egg_only",
+      "input": "울새",
+      "note": "알 2개 확인",
+      "expectedClass": "breeding_policy_extension",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_laying",
+      "input": "울새",
+      "note": "산란 확인",
+      "expectedClass": "breeding_policy_extension",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_nest_spaced",
+      "input": "울새",
+      "note": "둥 지 확인",
+      "expectedClass": "ambiguous_breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "breeding_chick_spaced",
+      "input": "울새",
+      "note": "새 끼 확인",
+      "expectedClass": "ambiguous_breeding",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": false,
+          "recentIncluded": true,
+          "recentSiteIdPresent": true,
+          "recentDatePresent": true,
+          "recentSpeciesCount": 1,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_keyword_negated",
+      "input": "울새",
+      "note": "둥지 아님",
+      "expectedClass": "breeding_keyword_negation",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "ordinary_keyword_incidental",
+      "input": "울새",
+      "note": "관찰자 별명은 새끼리",
+      "expectedClass": "breeding_keyword_incidental",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "울새"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "울새",
+          "splitSpecies": [
+            "울새"
+          ],
+          "sensitive": true,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermittedByExistingSpotFlag": true,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": true,
+            "approximate": false
+          },
+          "fieldRead": null,
+          "rowsUnchanged": true
+        }
+      ]
+    },
+    {
+      "label": "protected_hidden_request",
+      "input": "저어새1",
+      "note": null,
+      "expectedClass": "protected",
+      "normalizerAccepted": true,
+      "normalizerOutput": [
+        "저어새1"
+      ],
+      "normalizerError": null,
+      "results": [
+        {
+          "mode": "legacy_db_literal",
+          "storedSpecies": "저어새1",
+          "splitSpecies": [
+            "저어새1"
+          ],
+          "sensitive": false,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": false,
+            "locationHidden": true,
+            "navigationPermittedByExistingSpotFlag": false,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        },
+        {
+          "mode": "validated_normalize_species",
+          "storedSpecies": "저어새1",
+          "splitSpecies": [
+            "저어새1"
+          ],
+          "sensitive": false,
+          "recentIncluded": false,
+          "recentSiteIdPresent": false,
+          "recentDatePresent": false,
+          "recentSpeciesCount": 0,
+          "approved": {
+            "spotPresent": true,
+            "actualCoordinatePublished": false,
+            "locationHidden": true,
+            "navigationPermittedByExistingSpotFlag": false,
+            "speciesCount": 1,
+            "historyRows": 1
+          },
+          "siteHistory": {
+            "total": 1,
+            "rows": 1,
+            "siteIdPresent": true,
+            "coordinatesPresent": false
+          },
+          "fieldCreateDecision": {
+            "blocked": false,
+            "approximate": false
+          },
+          "fieldRead": {
+            "present": true,
+            "actualCoordinatePublished": true,
+            "locationHidden": false,
+            "navigationPermitted": true,
+            "classifiedCreatePolicyOnly": true
+          },
+          "rowsUnchanged": true
+        }
+      ]
+    }
+  ],
+  "linkedSpotCases": [
+    {
+      "spotKeyType": "report",
+      "sensitiveAttachedRowHasHiddenCoordinates": true,
+      "sensitiveSpeciesPresentInTargetSpot": true,
+      "targetActualCoordinatePublished": true,
+      "targetFlagHidden": false,
+      "navigationPermittedBySpotFlag": true,
+      "sensitiveSpeciesPresentInFixedHistory": false,
+      "siteHistoryTotal": 2,
+      "siteHistorySensitiveRowPresent": true,
+      "recentAggregateSpecies": [
+        "울새"
+      ],
+      "rowsUnchanged": true
+    },
+    {
+      "spotKeyType": "fixed",
+      "sensitiveAttachedRowHasHiddenCoordinates": true,
+      "sensitiveSpeciesPresentInTargetSpot": false,
+      "targetActualCoordinatePublished": true,
+      "targetFlagHidden": false,
+      "navigationPermittedBySpotFlag": true,
+      "sensitiveSpeciesPresentInFixedHistory": true,
+      "siteHistoryTotal": 2,
+      "siteHistorySensitiveRowPresent": true,
+      "recentAggregateSpecies": [
+        "울새"
+      ],
+      "rowsUnchanged": true
+    }
+  ],
+  "pendingPolicyCases": [
+    {
+      "raw": "저어새",
+      "mode": "legacy_policy",
+      "configuredSyntheticRowFromSourceDecision": true,
+      "pendingPublic": 0,
+      "sensitiveByExistingClassifier": true,
+      "present": false,
+      "actualCoordinatePublished": false,
+      "approximateFlag": null,
+      "rowsUnchanged": true
+    },
+    {
+      "raw": "저어새",
+      "mode": "canonical_non_breeding_policy",
+      "configuredSyntheticRowFromSourceDecision": true,
+      "pendingPublic": 1,
+      "sensitiveByExistingClassifier": true,
+      "present": true,
+      "actualCoordinatePublished": true,
+      "approximateFlag": false,
+      "rowsUnchanged": true
+    },
+    {
+      "raw": "저어새1",
+      "mode": "legacy_policy",
+      "configuredSyntheticRowFromSourceDecision": true,
+      "pendingPublic": 1,
+      "sensitiveByExistingClassifier": false,
+      "present": true,
+      "actualCoordinatePublished": false,
+      "approximateFlag": true,
+      "rowsUnchanged": true
+    },
+    {
+      "raw": "저어새1",
+      "mode": "canonical_non_breeding_policy",
+      "configuredSyntheticRowFromSourceDecision": true,
+      "pendingPublic": 1,
+      "sensitiveByExistingClassifier": false,
+      "present": true,
+      "actualCoordinatePublished": true,
+      "approximateFlag": false,
+      "rowsUnchanged": true
+    },
+    {
+      "raw": "울새",
+      "mode": "legacy_policy",
+      "configuredSyntheticRowFromSourceDecision": true,
+      "pendingPublic": 1,
+      "sensitiveByExistingClassifier": false,
+      "present": true,
+      "actualCoordinatePublished": false,
+      "approximateFlag": true,
+      "rowsUnchanged": true
+    },
+    {
+      "raw": "울새",
+      "mode": "canonical_non_breeding_policy",
+      "configuredSyntheticRowFromSourceDecision": true,
+      "pendingPublic": 1,
+      "sensitiveByExistingClassifier": false,
+      "present": true,
+      "actualCoordinatePublished": true,
+      "approximateFlag": false,
+      "rowsUnchanged": true
+    }
+  ],
+  "existingFieldReadCases": [
+    {
+      "species": "저어새",
+      "syntheticLegacyBreedingNote": true,
+      "present": true,
+      "actualCoordinatePublished": true,
+      "navigationPermitted": true
+    },
+    {
+      "species": "저어새1",
+      "syntheticLegacyBreedingNote": true,
+      "present": true,
+      "actualCoordinatePublished": true,
+      "navigationPermitted": true
+    },
+    {
+      "species": "울새",
+      "syntheticLegacyBreedingNote": true,
+      "present": true,
+      "actualCoordinatePublished": true,
+      "navigationPermitted": true
+    }
+  ],
+  "statusCases": [
+    {
+      "status": "approved",
+      "recentIncluded": true,
+      "approvedIncluded": true,
+      "siteHistoryRows": 1
+    },
+    {
+      "status": "pending",
+      "recentIncluded": false,
+      "approvedIncluded": false,
+      "siteHistoryRows": 0
+    },
+    {
+      "status": "rejected",
+      "recentIncluded": false,
+      "approvedIncluded": false,
+      "siteHistoryRows": 0
+    }
+  ],
+  "notes": [
+    "Existing APIs are tested as written. Approved/history publishing is currently administrator-mediated, not a promise to exclude every protected species.",
+    "Field create policy is evaluated via the unmodified extracted pure protection function and normalizer; GET rows are inserted directly in SQLite memory. No create POST was invoked.",
+    "Canonical pending fixture follows source policy (explicit non-breeding and configured public flag); actual write-mode configuration was not queried.",
+    "An exact name with an approved actual coordinate can appear in approved/site-history by current intent even though recent-sites excludes it.",
+    "Tests reproduce defects and existing contracts; synthetic output does not prove a production disclosure.",
+    "Egg-only and laying keywords are not on the current six-keyword list; adding them is a policy expansion requiring explicit design decision."
+  ]
+}
