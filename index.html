@@ -520,6 +520,7 @@ body.fieldMode #fieldNewsBox,body.reportPicking #fieldNewsBox,body.fieldGuiding 
 .fieldPop ul{margin:4px 0 0;padding-left:16px;color:#455a64;font-size:12px}
 .fieldPopBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .fieldPopBtns button{min-height:44px;flex:1 1 auto;padding:6px 10px;border:2px solid #1565c0;border-radius:8px;background:#fff;color:#0d47a1;font:inherit;font-weight:bold;cursor:pointer}
+.fieldPopBtns button.fieldDeleteBtn{border-color:#b3261e;color:#b3261e}
 body.fieldPicking .folium-map{cursor:crosshair}
 @media(max-width:700px){#fieldPanel{bottom:16px}}
 /* GPS 위치 표시: 중심은 고정, 바깥 링만 커지며 사라진다(opacity/transform 만 써서 모바일 부담이 작다). */
@@ -5003,6 +5004,22 @@ function fieldDeviceId(){
 function fieldSavedNickname(){
   try{return localStorage.getItem('birdmapFieldNickname')||'';}catch(error){return '';}
 }
+var FIELD_MINE_KEY='birdmapFieldMine', FIELD_MINE_MAX=50;
+function fieldMineIds(){
+  try{
+    var list=JSON.parse(localStorage.getItem(FIELD_MINE_KEY)||'[]');
+    return Array.isArray(list)?list.filter(function(id){return typeof id==='string'&&/^[0-9a-f-]{36}$/.test(id);}):[];
+  }catch(error){return [];}
+}
+function fieldMineSave(list){
+  try{localStorage.setItem(FIELD_MINE_KEY,JSON.stringify(list.slice(-FIELD_MINE_MAX)));}catch(error){}
+}
+function fieldIsMine(id){return fieldMineIds().indexOf(id)>=0;}
+function fieldMineAdd(id){
+  var list=fieldMineIds();
+  if(list.indexOf(id)<0){list.push(id);fieldMineSave(list);}
+}
+function fieldMineRemove(id){fieldMineSave(fieldMineIds().filter(function(item){return item!==id;}));}
 function fieldSaveNickname(name){
   try{localStorage.setItem('birdmapFieldNickname',name);}catch(error){}
 }
@@ -5159,6 +5176,8 @@ function fieldPopupNode(update){
   }else{
     add('다시 나타남',function(){fieldStatusStart(update.id,'reappeared');});
   }
+  // 이 브라우저에서 등록한 소식에만 보인다. 실제 삭제 가능 여부는 서버가 등록자 해시로 다시 확인한다.
+  if(fieldIsMine(update.id))add('🗑 내 현장소식 삭제',function(){fieldDelete(update.id);}).className='fieldDeleteBtn';
   node.appendChild(buttons);
   return node;
 }
@@ -5505,6 +5524,30 @@ function fieldConfirm(id){
   }).catch(function(){
     fieldToast('확인하지 못했어요. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.','error');
   }).then(function(){fieldBusy=false;});
+}
+/* 내 현장소식 삭제: 확인창에서 사용자가 승인해야만 요청을 보낸다. 성공하면 목록·마커·작은 박스·팝업에서 바로 뺀다. */
+function fieldDelete(id){
+  if(fieldBusy||!fieldFind(id))return;
+  if(!window.confirm('이 현장소식을 삭제할까요?\n삭제하면 지도와 목록에서 바로 사라지고 되돌릴 수 없어요.'))return;
+  fieldBusy=true;
+  fieldApi('/field-updates/'+id+'/delete','POST',{deviceId:fieldDeviceId()}).then(function(result){
+    if(result.ok){
+      fieldMineRemove(id);
+      fieldRemoveLocal(id);
+      fieldToast('현장소식을 삭제했어요.');
+    }else{
+      fieldToast(fieldErrorText(result,'삭제하지 못했어요. 잠시 후 다시 시도해 주세요.'),'error');
+      // 서버가 내 소식이 아니거나 이미 없다고 하면 이 브라우저의 기록과 화면도 서버에 맞춘다.
+      if(result.status===403||result.status===404){fieldMineRemove(id);loadFieldUpdates();}
+    }
+  }).catch(function(){
+    fieldToast('삭제하지 못했어요. 네트워크 연결을 확인한 뒤 다시 시도해 주세요.','error');
+  }).then(function(){fieldBusy=false;});
+}
+function fieldRemoveLocal(id){
+  fieldMap().closePopup();
+  fieldUpdates=fieldUpdates.filter(function(item){return item.id!==id;});
+  renderFieldMarkers();
 }
 function fieldStatusStart(id,status){
   var update=fieldFind(id);
@@ -5977,6 +6020,7 @@ function fieldSubmitCreate(){
   if(draft.source==='gps')payload.gpsAccuracy=draft.accuracy;
   fieldApi('/field-updates','POST',payload).then(function(result){
     if(result.ok&&fieldValidUpdate(result.body.update)){
+      fieldMineAdd(result.body.update.id);
       fieldReplace(result.body.update);
       fieldToast('현장소식을 등록했어요.');
       closeFieldPanel();

@@ -5,6 +5,10 @@
 //   POST /field-updates                새 현장소식(visible | searching) 등록
 //   POST /field-updates/<id>/status    상태 이벤트 추가(안 보여요·다시 나타남·찾았어요). 이전 이벤트는 지우지 않는다.
 //   POST /field-updates/<id>/confirm   '확인' 한 번. 같은 브라우저는 소식마다 한 번만.
+//   POST /field-updates/<id>/delete    등록한 브라우저(user_hash 일치)만 자기 소식을 지운다. 소프트 삭제(아래 참고).
+//
+// 삭제는 행을 지우지 않는다. status 를 'deleted' 로 바꾸고 field_update_events 에 'deleted' 이벤트(시각·user_hash)를 남긴다.
+// 새 컬럼이 필요 없어 기존 운영 DB 스키마를 바꾸지 않는다. 목록·확인·상태 변경은 'deleted' 를 없는 소식으로 취급한다.
 //
 // 위치 추적 기능은 없다. 좌표는 등록하는 순간 사용자가 확인한 한 점만 저장된다.
 import {
@@ -24,6 +28,8 @@ import {
 export const FIELD_UPDATE_TTL_HOURS = 3;
 
 export const FIELD_STATUSES = ["visible", "searching", "not_visible", "reappeared"];
+// 상태가 아니라 삭제 표시다. FIELD_STATUSES 에 넣지 않아 상태 변경 API 로는 만들 수 없다.
+const DELETED = "deleted";
 const CREATE_STATUSES = ["visible", "searching"];
 // 현재 상태 → 보낼 수 있는 다음 상태. '안 보여요'를 눌러도 이력은 그대로 남고 새 이벤트만 쌓인다.
 const TRANSITIONS = {
@@ -181,7 +187,7 @@ async function loadActive(db, id, now) {
     .prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`)
     .bind(id)
     .first();
-  if (!row) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
+  if (!row || row.status === DELETED) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
   if (row.last_activity_at < cutoffIso(now)) {
     throw new WorkerError("FIELD_EXPIRED", "시간이 지나 이미 사라진 현장소식이에요.", 410);
   }
@@ -194,7 +200,7 @@ async function handleList(request, env, helpers) {
   const { results } = await db
     .prepare(
       `SELECT ${COLUMNS} FROM field_updates
-        WHERE last_activity_at >= ?1 ORDER BY last_activity_at DESC LIMIT ${LIST_LIMIT}`,
+        WHERE last_activity_at >= ?1 AND status <> '${DELETED}' ORDER BY last_activity_at DESC LIMIT ${LIST_LIMIT}`,
     )
     .bind(cutoffIso(now))
     .all();
@@ -339,7 +345,38 @@ async function handleConfirm(request, env, id, helpers) {
   return jsonResponse(request, env, { ok: true, update }, 201);
 }
 
-const PATH = /^\/field-updates(?:\/([0-9a-f-]{36})\/(status|confirm))?$/;
+// 소유권은 서버가 판단한다. 요청의 deviceId 로 만든 user_hash 가 소식을 등록할 때 저장한 user_hash 와 같을 때만 지운다.
+// 닉네임·IP·화면 버튼 표시 여부는 판단에 쓰지 않는다. 이미 지운 소식을 같은 등록자가 다시 지우면 성공으로 돌려준다(멱등).
+async function handleDelete(request, env, id, helpers) {
+  const db = helpers.database(env);
+  const now = new Date();
+  const body = await helpers.readJsonBody(request);
+  const device = validateDevice(body?.deviceId);
+  const row = await db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`).bind(id).first();
+  if (!row) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
+  const user = await userHash(device, env);
+  if (user !== row.user_hash) {
+    // 지운 소식의 존재는 등록자 말고는 알 필요가 없다.
+    if (row.status === DELETED) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
+    throw new WorkerError("FIELD_DELETE_FORBIDDEN", "직접 올린 현장소식만 삭제할 수 있어요.", 403);
+  }
+  if (row.status === DELETED) return jsonResponse(request, env, { ok: true, id, alreadyDeleted: true }, 200, { "Cache-Control": "no-store" });
+  const ip = request.headers.get("CF-Connecting-IP") || "";
+  const hash = await ipHash(ip, env.REPORT_IP_SALT);
+  await enforceRate(db, "field_update_events", hash, now, WRITE_WINDOW_MAX);
+  const at = iso(now);
+  await db.batch([
+    db.prepare(
+      `INSERT INTO field_update_events (id, field_update_id, status, nickname, created_at, user_hash, ip_hash)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
+    ).bind(crypto.randomUUID(), id, DELETED, row.nickname, at, user, hash),
+    // 소유자 조건을 UPDATE 에도 한 번 더 건다(위 검사와 쓰기 사이의 경합 방어).
+    db.prepare("UPDATE field_updates SET status = ?2 WHERE id = ?1 AND user_hash = ?3 AND status <> ?2").bind(id, DELETED, user),
+  ]);
+  return jsonResponse(request, env, { ok: true, id, deletedAt: at }, 200, { "Cache-Control": "no-store" });
+}
+
+const PATH = /^\/field-updates(?:\/([0-9a-f-]{36})\/(status|confirm|delete))?$/;
 
 // /field-updates 경로가 아니면 null 을 돌려주어 호출한 쪽이 기존 라우팅을 이어가게 한다.
 export async function handleFieldUpdates(request, env, url, helpers) {
@@ -349,6 +386,7 @@ export async function handleFieldUpdates(request, env, url, helpers) {
   if (!id && request.method === "GET") return handleList(request, env, helpers);
   if (!id && request.method === "POST") return handleCreate(request, env, helpers);
   if (id && request.method === "POST") {
+    if (action === "delete") return handleDelete(request, env, id, helpers);
     return action === "status" ? handleStatus(request, env, id, helpers) : handleConfirm(request, env, id, helpers);
   }
   throw new WorkerError("METHOD_NOT_ALLOWED", "Method not allowed", 405);
