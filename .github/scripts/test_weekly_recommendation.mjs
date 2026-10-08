@@ -1644,28 +1644,33 @@ test('R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16', () => {
   assert.equal(api.weeklyRecentReportBonus(site), null);
 });
 
+/* R01 C/A 는 시계와 관찰일을 모두 고정한다(상대 날짜와 고정 기대값을 섞지 않는다). */
+const R01_NOW = '2026-10-08T10:12:00+09:00';
+const R01_SEEN = '2026-10-06'; // R01_NOW 의 2일 전
+
 test('R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점', () => {
-  const api = loadApi({ month: 10 });
-  api.setSightings({ 15: { latestDate: recentDaysAgo(api, 2), species: Array(5).fill('캐나다기러기') } });
-  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, latestDate: '2026-10-06', speciesCount: 1, bonus: 9 });
-  api.setSightings({ 15: { latestDate: recentDaysAgo(api, 2), species: ['캐나다기러기', '쇠기러기', '큰기러기', '흰이마기러기'] } });
-  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, latestDate: '2026-10-06', speciesCount: 4, bonus: 13 });
+  const api = loadApi({ month: 10, now: R01_NOW });
+  assert.equal(api.weeklyTodayDateText(), '2026-10-08');
+  api.setSightings({ 15: { latestDate: R01_SEEN, species: Array(5).fill('캐나다기러기') } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, latestDate: R01_SEEN, speciesCount: 1, bonus: 9 });
+  api.setSightings({ 15: { latestDate: R01_SEEN, species: ['캐나다기러기', '쇠기러기', '큰기러기', '흰이마기러기'] } });
+  assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 2, latestDate: R01_SEEN, speciesCount: 4, bonus: 13 });
 });
 
 test('R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다', () => {
   const sites = recentFieldSites(6);
-  const base = loadApi({ month: 10, siteData: sites });
+  const base = loadApi({ month: 10, now: R01_NOW, siteData: sites });
   const weatherToday = todayWeatherFor(base, sites);
-  const without = loadApi({ month: 10, siteData: sites, weatherToday });
+  const without = loadApi({ month: 10, now: R01_NOW, siteData: sites, weatherToday });
   const before = without.todayRecommendedSites().filter((e) => e.selectedAxis === 'field').map((e) => e.site.id);
   assert.deepEqual(before, [400, 401, 402, 403], '출현 자료가 없으면 기존 안정 순서 그대로');
-  const api = loadApi({ month: 10, siteData: sites, weatherToday, recentSiteSightings: { 405: { latestDate: recentDaysAgo(base, 2), species: ['캐나다기러기'] } } });
+  const api = loadApi({ month: 10, now: R01_NOW, siteData: sites, weatherToday, recentSiteSightings: { 405: { latestDate: R01_SEEN, species: ['캐나다기러기'] } } });
   const top = api.todayRecommendedSites();
   const field = top.filter((e) => e.selectedAxis === 'field');
   assert.equal(field[0].site.id, 405, '2일 전 출현 장소가 들판 1위');
   assert.equal(field[0].score, 92, '화면 기상 점수 유지');
   assert.equal(field[0].rankScore, 101);
-  assert.deepEqual(field[0].recentReport, { ageDays: 2, latestDate: '2026-10-06', speciesCount: 1, bonus: 9 });
+  assert.deepEqual(field[0].recentReport, { ageDays: 2, latestDate: R01_SEEN, speciesCount: 1, bonus: 9 });
   assert.deepEqual(field.slice(1).map((e) => e.site.id), [400, 401, 402], '나머지는 기존 순서');
   assert.ok(top.every((e) => e.score <= 100));
 });
@@ -2017,4 +2022,75 @@ test('P0-B5 고정 입력 회귀: 최근 출현 가점·관찰일은 기준일�
   assert.deepEqual(api.weeklyRecentReportBonus({ id: 15 }), { ageDays: 1, latestDate: '2026-10-07', speciesCount: 2, bonus: 14 });
   const old = loadApi({ month: 10, now: P0_NOW, recentSiteSightings: { 15: { latestDate: '2026-09-20', species: ['a'] } } });
   assert.equal(old.weeklyRecentReportBonus({ id: 15 }), null, '14일 지난 제보는 가점이 없다');
+});
+
+/* ===== P0 잔여 보완: 만조 기상 예보 90분 절대 상한 ===== */
+const B90_SITE = () => RUNTIME.find((s) => s.id === '14');
+function b90Run(interval, sampleTime, tideTime, extra = {}) {
+  const site = B90_SITE();
+  const doc = weekDoc('14', { [P0_DATE]: p0Samples(P0_DATE, [[sampleTime, 90]]) });
+  if (interval !== undefined) doc.sampleIntervalHours = interval;
+  const api = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: p0Tide('14', P0_DATE, tideTime, 900) }, extra));
+  return { api, site, entry: api.weeklyRecommendationForSite(site, api.weeklyInfo()) };
+}
+
+test('P0-C1 90분 절대 상한: 간격 3h 90분 허용·91분 제외, 6h·24h 간격은 120분 차이를 허용하지 않는다', () => {
+  assert.ok(b90Run(3, '10:30', '12:00').entry, '3h 간격, 정확히 90분');
+  assert.equal(b90Run(3, '10:29', '12:00').entry, null, '3h 간격, 91분');
+  assert.equal(b90Run(6, '10:00', '12:00').entry, null, '6h 간격(절반 180분)이어도 120분은 제외');
+  assert.ok(b90Run(6, '10:30', '12:00').entry, '6h 간격이어도 90분은 허용');
+  assert.equal(b90Run(24, '10:00', '12:00').entry, null, '24h 간격(절반 720분)이어도 120분은 제외');
+  assert.equal(b90Run(24, '10:29', '12:00').entry, null, '24h 간격, 91분');
+  assert.ok(b90Run(24, '13:30', '12:00').entry, '24h 간격, 뒤쪽 90분');
+  assert.equal(b90Run(1, '10:29', '12:00').entry, null, '1h 간격(절반 30분)은 기존대로 더 엄격');
+  assert.ok(b90Run(1, '11:30', '12:00').entry, '1h 간격, 30분');
+  assert.equal(b90Run(1, '11:00', '12:00').entry, null, '1h 간격, 60분은 간격 절반(30분) 초과');
+});
+
+test('P0-C2 잘못된 간격 metadata는 3시간(90분)으로 보고, 어떤 값도 90분을 넘기지 못한다', () => {
+  for (const bad of [undefined, null, 0, -3, NaN, 'abc', '', Infinity, 1000, '24']) {
+    assert.ok(b90Run(bad, '10:30', '12:00').entry, String(bad) + ': 90분은 허용');
+    assert.equal(b90Run(bad, '10:29', '12:00').entry, null, String(bad) + ': 91분 제외');
+  }
+});
+
+test('P0-C3 예보 시각 결측·형식 오류는 만조 기상으로 쓰지 않는다', () => {
+  const site = B90_SITE();
+  for (const bad of [null, undefined, '', '시각없음', '2026-10-10', 12]) {
+    const doc = weekDoc('14', { [P0_DATE]: [sample('x', 90, { forecastTime: bad })] });
+    doc.sampleIntervalHours = 3;
+    const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: p0Tide('14', P0_DATE, '12:00', 900) });
+    assert.equal(api.weeklyRecommendationForSite(site, api.weeklyInfo()), null, JSON.stringify(bad));
+  }
+});
+
+test('P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다', () => {
+  const extra = { notices: [{ siteIds: [14], published: true }], recentSiteSightings: { 14: { latestDate: '2026-10-08', species: ['a', 'b', 'c', 'd'] } } };
+  const { api, site, entry } = b90Run(24, '10:00', '12:00', extra);
+  assert.equal(entry, null);
+  assert.equal(api.todayRecommendedSites().length, 0);
+  const today = (time) => {
+    const fallback = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null,
+      weatherToday: { sites: { 14: { date: P0_DATE, forecastTime: P0_DATE + ' ' + time + ' KST', score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' } } },
+      tideMonth: p0Tide('14', P0_DATE, '12:00', 900) }, extra));
+    return fallback.weeklyRecommendationForSite(site, fallback.weeklyInfo());
+  };
+  assert.ok(today('10:30'), 'fallback 90분 허용');
+  assert.equal(today('10:29'), null, 'fallback 91분 제외');
+});
+
+test('P0-C5 상한을 넘는 만조는 건너뛰고 90분 안의 다른 만조(다른 날짜·같은 날 두 번째)를 쓴다', () => {
+  const site = B90_SITE();
+  const day2 = '2026-10-11';
+  const doc = weekDoc('14', { [P0_DATE]: p0Samples(P0_DATE, [['09:00', 90]]), [day2]: p0Samples(day2, [['12:00', 70]]) });
+  doc.sampleIntervalHours = 24;
+  const tides = { sites: { 14: { days: [{ date: P0_DATE, highTide: '12:00', highTideLevel: '900' }, { date: day2, highTide: '12:30', highTideLevel: '880' }] } } };
+  const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: doc, tideMonth: tides });
+  const entry = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+  assert.ok(entry);
+  assert.equal(entry.recommendationDate, day2, '첫날 900cm(예보 180분 차이)는 제외하고 다음날 880cm');
+  assert.match(entry.tideText, /880cm/);
+  const same = p0Api(site, [['09:00', 90], ['15:00', 80]], p0Tide('14', P0_DATE, '12:00,15:30', '900,870'), {});
+  const e2 = same.weeklyRecommendationForSite(site, same.weeklyInfo());
+  assert.match(e2.tideText, /15:30 · 870cm/, '같은 날 첫 만조는 예보가 180분 떨어져 제외, 두 번째 만조 사용');
 });

@@ -3851,10 +3851,10 @@ function weeklyBestMudflatTide(site,week){
   return {date:best.date,minutes:best.minutes,sample:best.sample,weather:best.weather,reason:rule.reason,tideText:'만조 '+best.time+' · '+best.level+'cm',extraText:extras.length?'그 밖의 좋은 날: '+extras.join(' / '):'',cautionText:(best.day.stale===true&&best.day.fallbackSource!=='monthly_cache')?'※ 이전 조석 자료':'',sortLevel:best.level};
 }
 /* 만조 시각에 가장 가까운 유효 예보(일출~일몰·적격·지난 시각 제외). 만조와의 차이가 예보 간격의 절반을
-   넘으면 그 시각을 대표하지 못하므로 null이다. 다른 시각의 예보로 대신하거나 값을 추정하지 않는다. */
+   넘으면 그 시각을 대표하지 못하므로 null이다. 간격이 길거나 잘못돼도 90분을 넘지 않는다(fallback 경로와 같은 상한). 다른 시각의 예보로 대신하거나 값을 추정하지 않는다. */
 function weeklyTideNearestSample(site,tide){
   if(!tide||!Number.isFinite(tide.minutes))return null;
-  var interval=Number(weatherWeek&&weatherWeek.sampleIntervalHours), limit=(interval>0?interval:3)*30, best=null, bestGap=Infinity;
+  var interval=Number(weatherWeek&&weatherWeek.sampleIntervalHours), limit=Math.min(90,(interval>0?interval:3)*30), best=null, bestGap=Infinity;
   weeklyDaylightCandidates(site,tide.date).forEach(function(sample){
     var gap=Math.abs(weeklySampleMinutes(sample)-tide.minutes);
     if(gap<bestGap){best=sample;bestGap=gap;}
