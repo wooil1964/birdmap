@@ -4,7 +4,7 @@
    실행: CHROME_PATH=<chrome> node --test .github/scripts/test_recommendation_card_display.mjs (Chrome 이 없으면 skip) */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -82,6 +82,10 @@ class Page {
     return result.value;
   }
 
+  async setViewport(width, height) {
+    await this.send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width <= 700 }, this.session);
+  }
+
   dispose() {
     try { this.socket.close(); } catch { /* 이미 닫힘 */ }
     this.proc.kill();
@@ -143,6 +147,7 @@ test.before(async () => {
     alternate: Object.assign(NORMAL({}), { tide: tides([['13:45', '900'], ['12:30', '870']]) }),
   };
   results = await readAll(scenarios);
+  if (process.env.R4_DUMP) writeFileSync(process.env.R4_DUMP, JSON.stringify(results, null, 1)); // 수정 전후 증거 보존용
 });
 
 const SCORE_TEXT = (grade, score) => grade + ' ' + score + '점';
@@ -215,4 +220,49 @@ test('R4-8 안전한 대체 만조: 예보와 90분을 넘는 높은 만조 대�
   assert.ok(!/900cm/.test(r.cardTide));
   assert.equal(r.cardScore, SCORE_TEXT('★★★★★', 92));
   assert.equal(r.popupScore, r.cardScore);
+});
+
+/* 344·375·768·1024·1440 폭에서 실제 패널 카드와 지도 팝업의 점수가 같고 화면 안에 있다. */
+const WIDTHS = [344, 375, 768, 1024, 1440];
+const LAYOUT = `(async function(){
+  var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
+  window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
+  weatherWeek=null; weatherToday={generatedAt:'${DATE} 10:30 KST',date:'${DATE}',sites:{14:${JSON.stringify(raw())}}};
+  tideMonth=${JSON.stringify(TIDE_NOON)}; recentSiteSightings=${JSON.stringify(BOOST)}; loadedNotices=[];
+  var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
+  /* 초기화(setTimeout) 가 끝나 마커 registry 와 탐조지 팝업 핸들러(setupResponsivePopups)가 준비될 때까지 기다린다. */
+  function popupReady(){var ev=map_7010a44f6ac2025090f0fe07508ed485._events&&map_7010a44f6ac2025090f0fe07508ed485._events.popupopen;return !!markerRegistry[markerKey(site)]&&!!ev&&ev.some(function(h){return String(h.fn).indexOf('applyMobilePopupAutoPan')>=0;});}
+  for(var tries=0;tries<100&&!popupReady();tries++)await new Promise(function(r){setTimeout(r,100);});
+  function rectOf(el){var r=el.getBoundingClientRect();return {left:Math.round(r.left),right:Math.round(r.right),top:Math.round(r.top),bottom:Math.round(r.bottom),clipped:el.scrollWidth>el.clientWidth+1};}
+  toggleTodayPanel(true);
+  await new Promise(function(r){setTimeout(r,200);});
+  var card=[].slice.call(document.querySelectorAll('#todayPanelBody .todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf('걸매리')>=0;})[0];
+  var cardScore=card.querySelector('.todayRankScore');
+  var out={vw:window.innerWidth, cardText:cardScore.textContent, cardRect:rectOf(cardScore)};
+  toggleTodayPanel(false);
+  /* moveToSite() 와 같은 동작이되 지도 이동 애니메이션만 끈다(moveend 의 popup.update() 가 렌더 시점과 겹쳐 시험이 흔들리지 않게). */
+  var leafletMap=map_7010a44f6ac2025090f0fe07508ed485; leafletMap.setView([site.lat,site.lon],11,{animate:false});
+  var marker=markerRegistry[markerKey(site)]; marker.addTo(leafletMap); marker.openPopup();
+  for(var wait=0;wait<60&&!document.querySelector('.leaflet-popup-content .v23TodayScore');wait++)await new Promise(function(r){setTimeout(r,100);});  // 팝업 기상 영역 렌더 대기
+  var popupScore=document.querySelector('.leaflet-popup-content .v23TodayScore');
+  out.popupOpen=!!document.querySelector('.leaflet-popup'); out.popupSnippet=(document.querySelector('.leaflet-popup-content')||{innerText:''}).innerText.slice(0,120);
+  out.popupText=popupScore?popupScore.textContent:null; out.popupRect=popupScore?rectOf(popupScore):null;
+  return out;
+})()`;
+
+test('R4-9 344·375·768·1024·1440px: 카드와 팝업 점수가 같고 가로로 잘리거나 화면 밖으로 나가지 않는다', { skip: SKIP }, async () => {
+  for (const width of WIDTHS) {
+    const page = await Page.open();
+    try {
+      await page.setViewport(width, 800);
+      const out = await page.evaluate(LAYOUT);
+      assert.equal(out.vw, width, 'viewport');
+      assert.equal(out.cardText, SCORE_TEXT('★★★★★', 92), width + ' 카드');
+      assert.equal(out.popupText, out.cardText, width + ' 팝업: ' + JSON.stringify(out));
+      for (const [name, rect] of [['카드', out.cardRect], ['팝업', out.popupRect]]) {
+        assert.ok(rect.left >= 0 && rect.right <= width + 1, width + ' ' + name + ' 가로 범위: ' + JSON.stringify(rect));
+        assert.equal(rect.clipped, false, width + ' ' + name + ' 가로 잘림');
+      }
+    } finally { page.dispose(); }
+  }
 });

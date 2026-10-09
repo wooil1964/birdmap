@@ -11,7 +11,9 @@
 | **R1+R3 보완** | aa4f394 | today 필수 기상값(풍속·풍향·강수·필수 파고) 검사, 비필수 wave 값 검사, own 적격 필드 |
 | **R1 Python** | 70ef08a | `validate_weather.py` 적격 항목의 실제 wind/rain/(필수)wave 검사 |
 | **R2 보완** | 362ce50 | 팝업 점수는 검증된 적격 출처에서만 표시 |
-| 증거·문서 | (마지막 커밋) | 재현 전후 matrix, 비교 결과, 이 문서 |
+| 증거·문서 | 1bd2619 | R1~R3 재현 전후 matrix, 비교 결과 (Sol 재검증: R1~R3 해결, **R4 신규 회귀 지적**) |
+| **R4 보완 코드** | 8e2ced9 | 검증된 today 만조 fallback 에 출처(`_weatherState`) 연결 → 추천 카드 점수 표시 |
+| **R4 DOM 회귀 시험** | c2e1c8e 외 | 실제 Chrome 에서 `renderTodayPanel` 카드 + 팝업 DOM 일치 시험 (344·375·768·1024·1440) |
 
 ## R1~R3 변경 요약 (모두 index.html + validate_weather.py)
 - `weeklyTodayRequiredDataValid(raw, site)`: today 저장 항목의 `wind`("북동풍 3.6m/s", 8방위), `rain`("강수 없음"/"3시간 강수 0.5mm"), `wave`("0.7m") 를 생성기 형식 그대로 검사.
@@ -33,6 +35,14 @@
 
 상속된 `scoreEligible`(Object.create) 거부는 **메모리 합성 객체의 계약 시험**이다. 실제 JSON 으로는 만들 수 없으므로 운영 공격 경로로 주장하지 않는다.
 
+## R4 (정상 today 만조 fallback 카드가 "오늘 적합도 미확인")
+- 원인: `weeklyTideWeather` 의 today 분기가 검증된 raw 를 `Object.assign({},raw)` 로만 복사해 `_weatherState`(출처)가 없었다. `weatherScoreAllowed` 는 검증된 `_weatherState.scoreEligible===true` 를 요구하므로 추천 카드(`renderTodayPanel` → `v251ScoreDisplayText(entry.today)`)만 미확인이 됐고, 팝업은 `storedWeatherState` 로 출처를 다시 계산해 정상 표시됐다.
+- 수정: `weeklyTodayWeather(site, raw, date)` 한 함수에서 `weeklyTodayRecommendable` 검증 → 통과한 것에만 `_weatherState`(scoreEligible:true, kind today_saved/today_fallback)를 붙인다.
+  `weeklyTideWeather` 와 `weeklyWeatherEntryForSite` 가 같은 함수를 쓴다. **검증되지 않은 raw 에는 출처가 붙을 수 없고, `weatherScoreAllowed` 는 변경하지 않았다.** 점수 산식·P0 90분·강수 1mm·선상·가점 16·정원 무변경.
+- 증거(`results/r4/`): 수정 전(1bd2619) 걸매리 today fallback — card `오늘 적합도 미확인` / popup `★★★★★ 92점`(0·92.5·100 도 같은 불일치), 수정 후 모두 일치(rank 108 유지).
+  카드 시험: 수정 전 6 fail/3 pass → 수정 후 9/9. 만조 90분 허용·91분 차단·대체 만조(12:30 · 870cm)·결측/적격 미확인/이전 저장 미표시(popup 은 미확인 + 참고 값)도 포함.
+  (91분 시나리오에서 카드가 없고 팝업이 92점인 것은 불일치가 아니다: 팝업은 그 장소의 오늘 기상이고, 카드는 만조 관문을 통과한 추천이다.)
+
 ## 테스트 (2026-10-09, Windows, Python 3.12, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8`, `CHROME_PATH=…/chrome.exe`)
 | 스위트 | 결과 |
 |---|---|
@@ -44,6 +54,10 @@
 | 조석 Python | 21 통과, 1 skip |
 | weather-proxy | 36/36 |
 | 합계 | **563 pass / 0 fail / 1 skip** (Sol 기준 547/0/1) |
+
+R4 보완 후(현재): 주간 추천 146(+1 R4-9), **카드 DOM 시험 9(신규)**, 그 외 동일 → JS 499 pass(reports-api 178 · weather-proxy 36 · 프런트 13파일 285) + Python 74 pass/1 skip = **573 pass / 0 fail / 1 skip**.
+Sol 행렬 재실행(`results/r4/matrix_after_r4.json`): 182/182 · 특별 21/21 · 팝업 12/12. 고정 입력(190곳·176후보) ON/OFF 전체 후보 signature·상위 10 은 35141c0 · 1bd2619 · 현재가 동일(`results/r4/compare_fixed_input.json`).
+최신 origin/main(38b4529)과 `git merge-tree` 충돌 없음, main 의 자동 JSON(2026-10-09 16:28)을 임시 worktree 에만 덮어 전체 스위트·두 validator 통과(자동 JSON 수정 없음).
 
 수정 전 실패 확인: 주간 신규 7건 실패, 자정(R2) 신규 3건 실패, Python 신규 16 subtest 실패 → 수정 후 전부 통과.
 Sol Ultra 의 실제 함수 matrix(`results/r123/review_matrix_adapted.mjs`, 원본 스크립트에서 소스 선택만 working tree 로 바꿈):
@@ -60,6 +74,11 @@ Sol Ultra 의 실제 함수 matrix(`results/r123/review_matrix_adapted.mjs`, 원
 - PC·모바일(375) 로드, 스크립트 오류 없음(운영 API CORS 차단 로그만).
 - 검증된 저장 기상 팝업: "★★★☆☆ 74점"; 같은 항목의 rain 을 메모리에서 null 로 바꾼 뒤 새 팝업: "오늘 적합도 미확인"(기온·풍향 참고 값 유지).
 - 미검증: 로컬 합성 API 를 쓴 제보·현장소식 등록/삭제/길안내 E2E, live 기상 merge 의 실제 네트워크 흐름(코드상 `mergedToday._weatherState.scoreEligible` 은 이제 검증된 stored 상태를 따른다), Cloudflare 배포 환경, 실기기.
+
+## 후속 과제 (이번 R4 와 섞지 않음 — 배포 전 위험 평가에 유지)
+- **R5 (P2)**: 숫자 400자리 같은 극단 숫자 문자열이 today 정규식(형식만 검사)과 `validate_weather.py` 를 통과하고 `Number()` 가 Infinity 가 된다. 생성기의 정상 출력(`.1f`)으로는 유입 증거 없음. 정규식 뒤 캡처 숫자의 finite/비음수 검사를 JS/Python 양쪽에 맞추는 방어 과제. 입력 집합 차이(JS trim 허용 / Python 거부, 유니코드 숫자, 비필수 `waveM` key 생략)도 같은 후속 시험으로.
+- **기존 현장소식 늦은 응답**: 오래된 응답이 삭제된 마커를 되살릴 수 있다(보호 상태 재노출 건과 같은 원인, 응답 순서 가드 없음).
+- **S1-P**: 승인된 보호종 공개 정책, 숨긴 자식의 부모/고정 지점 간접 연결.
 
 ## 별도 관리: 기존 캐시 결함 (이번 PR 에서 새로 생기지 않았고 수정하지 않음)
 `loadFieldUpdates()`(index.html)가 응답 순서·버전 확인 없이 `fieldUpdates = result.body.updates...` 로 덮어쓴다.
