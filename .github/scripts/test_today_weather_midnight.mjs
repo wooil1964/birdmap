@@ -37,7 +37,7 @@ const NAMES = [
   'storedWeatherLabel', 'weatherTodayForSite', 'todayWeatherFromWeek',
   'weeklyKstDateParts', 'weeklyDateFromText', 'weeklyDateTextFromUtc', 'weeklyTodayDateText',
   'weeklyNowKstMinutes', 'weeklySampleMinutes', 'weeklySampleDateText', 'weeklySunTimes',
-  'weeklyWeekSite', 'weeklyDaySamples', 'weeklyDaylightCandidates', 'weeklyDailyBestSample',
+  'weeklyWeekSite', 'weeklyDaySamples', 'weeklyScoreValid', 'weeklyNonNegativeNumber', 'weeklySampleRecommendable', 'weeklyDaylightCandidates', 'weeklyDailyBestSample',
   'weeklySampleAsWeather',
 ];
 

@@ -2074,14 +2074,14 @@ function storedWeatherState(day,root,now){
   var sameDay=date===today&&String(day.forecastTime||'').slice(0,10)===today;
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
   var current=hasData&&sameDay&&onSchedule&&!day.stale&&Number.isFinite(forecastMs);
-  var numeric=weeklyScoreValid(day.score);
+  var numeric=typeof day.score==='number'&&Number.isFinite(day.score)&&day.score>=0&&day.score<=100;
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
     dataCurrent:current,scoreEligible:current&&day.scoreEligible!==false&&numeric,stale:!current,
     date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
     ageMinutes:Number.isFinite(generatedMs)?Math.max(0,Math.floor((now.getTime()-generatedMs)/60000)):null};
 }
 function weatherScoreAllowed(today){
-  return !!today&&weeklyScoreValid(today.score)&&
+  return !!today&&typeof today.score==='number'&&Number.isFinite(today.score)&&today.score>=0&&today.score<=100&&
     (today._weatherState?today._weatherState.scoreEligible:storedWeatherState(today,weatherToday).scoreEligible);
 }
 function storedWeatherLabel(today){
