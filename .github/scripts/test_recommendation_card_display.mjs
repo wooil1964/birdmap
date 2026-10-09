@@ -116,6 +116,7 @@ const READ = (scenario) => `(async function(){
     cardTide:cards[0]?[].slice.call(cards[0].querySelectorAll('div')).map(function(d){return d.textContent;}).join(' | '):null,
     popupScore:popupScore?popupScore.textContent:null,
     popupText:holder.textContent,
+    bodyText:document.getElementById('todayPanelBody').innerText,
     rank:entry?weeklyRankScore(entry):null, rawScore:entry?entry.score:null};
 })()`;
 
@@ -165,6 +166,7 @@ test.before(async () => {
     gap91: Object.assign(NORMAL({}), { tide: tides([['13:31', '900']]) }),
     alternate: Object.assign(NORMAL({}), { tide: tides([['13:45', '900'], ['12:30', '870']]) }),
     ordinaryNormal: ORDINARY({}),
+    counterexample1440: NORMAL({ forecastTime: '2026-10-09 12:00 KST' }, { sightings: BOOST }),
   };
   for (const [label, scenario] of Object.entries(REFERENCE_CASES)) {
     scenarios['tide_' + label] = Object.assign({}, scenario, { today: { 14: scenario.today[14] }, tide: TIDE_NOON });
@@ -293,18 +295,29 @@ test('R4-9 344·375·768·1024·1440px: 카드와 팝업 점수가 같고 가로
 
 const UNKNOWN = '오늘 적합도 미확인';
 
-test('R6-1 참고 상태 today 6종: 만조·일반 fallback 모두 카드와 팝업이 같은 "미확인"이고 후보·순위는 그대로다', { skip: SKIP }, () => {
+const EMPTY_NOTICE = '현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.';
+
+test('R6-1 (C 정책) 참고 상태 today 6종: 만조·일반 fallback 모두 추천 후보·카드가 없고 빈 목록 안내가 나오며 팝업은 미확인+참고 값이다', { skip: SKIP }, () => {
   for (const route of ['tide', 'ordinary']) {
     for (const label of Object.keys(REFERENCE_CASES)) {
       const r = results[route + '_' + label];
-      assert.equal(r.cardCount, 1, route + ' ' + label + ': 후보 선정 정책은 변경하지 않는다');
-      assert.equal(r.cardScore, UNKNOWN, route + ' ' + label + ' 카드: ' + r.cardScore);
+      assert.equal(r.cardCount, 0, route + ' ' + label + ': 참고 자료는 추천 후보가 아니다');
+      assert.equal(r.rank, null, route + ' ' + label + ': 내부 순위 근거로도 쓰지 않는다');
       assert.equal(r.popupScore, UNKNOWN, route + ' ' + label + ' 팝업: ' + r.popupScore);
-      assert.ok(!/★/.test(r.cardScore + r.popupScore), route + ' ' + label);
-      assert.equal(r.rank, 92, route + ' ' + label + ': 내부 순위(원점수 기준)는 유지');
+      assert.ok(!/★/.test(r.popupScore), route + ' ' + label);
       assert.ok(/20\.0°C/.test(r.popupText), route + ' ' + label + ': 기온 참고 정보 유지');
+      assert.ok(r.bodyText.includes(EMPTY_NOTICE), route + ' ' + label + ': 빈 목록 안내\n' + r.bodyText);
     }
   }
+});
+
+test('R6-1b (C 정책) 예보가 하루 전이면 시·분이 만조와 같아도 제외된다(1,440분 반례의 실제 카드·팝업)', { skip: SKIP }, () => {
+  const r = results.counterexample1440;
+  assert.equal(r.cardCount, 0);
+  assert.equal(r.rank, null);
+  assert.equal(r.popupScore, UNKNOWN);
+  assert.ok(r.bodyText.includes(EMPTY_NOTICE));
+  assert.equal(results.base.cardCount, 1, '같은 조건의 정상 자료는 추천');
 });
 
 test('R6-2 정상 최신 today(10:30 생성)는 만조·일반 fallback 모두 카드와 팝업이 같은 점수를 표시한다', { skip: SKIP }, () => {
@@ -337,12 +350,13 @@ const MULTI = (cases) => `(async function(){
     var card=[].slice.call(document.querySelectorAll('#todayPanelBody .todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf('걸매리')>=0;})[0];
     var cardScore=card?card.querySelector('.todayRankScore'):null;
     var cardRect=cardScore?rectOf(cardScore):null, cardText=cardScore?cardScore.textContent:null;
+    var emptyEl=[].slice.call(document.querySelectorAll('#todayPanelBody .smallText')).filter(function(el){return el.textContent.indexOf('현재 검증된 기상자료가 없어')>=0;})[0];
     toggleTodayPanel(false);
     map.setView([site.lat,site.lon],11,{animate:false});
     var marker=markerRegistry[markerKey(site)]; marker.addTo(map); marker.openPopup();
     for(var wait=0;wait<60&&!document.querySelector('.leaflet-popup-content .v23TodayScore');wait++)await new Promise(function(r){setTimeout(r,100);});
     var popupScore=document.querySelector('.leaflet-popup-content .v23TodayScore');
-    out.rows.push({name:c.name,cardText:cardText,cardRect:cardRect,popupText:popupScore?popupScore.textContent:null,popupRect:popupScore?rectOf(popupScore):null});
+    out.rows.push({name:c.name,emptyNotice:!!emptyEl,emptyRect:emptyEl?rectOf(emptyEl):null,cardText:cardText,cardRect:cardRect,popupText:popupScore?popupScore.textContent:null,popupRect:popupScore?rectOf(popupScore):null});
   }
   return out;
 })()`;
@@ -356,13 +370,68 @@ test('R6-3 344·375·768·1024·1440px: 정상 자료는 점수, 참고 상태 6
       const out = await page.evaluate(MULTI(cases));
       assert.equal(out.vw, width);
       for (const row of out.rows) {
-        const expected = row.name === 'normal' ? SCORE_TEXT('★★★★★', 92) : UNKNOWN;
-        assert.equal(row.cardText, expected, width + ' ' + row.name + ' 카드: ' + JSON.stringify(row));
-        assert.equal(row.popupText, expected, width + ' ' + row.name + ' 팝업: ' + JSON.stringify(row));
-        for (const rect of [row.cardRect, row.popupRect]) {
+        const normal = row.name === 'normal';
+        assert.equal(row.cardText, normal ? SCORE_TEXT('★★★★★', 92) : null, width + ' ' + row.name + ' 카드(C 정책: 참고 자료는 카드 없음): ' + JSON.stringify(row));
+        assert.equal(row.popupText, normal ? SCORE_TEXT('★★★★★', 92) : UNKNOWN, width + ' ' + row.name + ' 팝업: ' + JSON.stringify(row));
+        assert.equal(row.emptyNotice, !normal, width + ' ' + row.name + ' 빈 목록 안내');
+        for (const rect of [row.cardRect, row.popupRect, row.emptyRect].filter(Boolean)) {
           assert.ok(rect.left >= 0 && rect.right <= width + 1 && rect.clipped === false, width + ' ' + row.name + ' 가로 범위: ' + JSON.stringify(rect));
         }
       }
     } finally { page.dispose(); }
   }
+});
+
+/* 추천 자료 갱신 흐름: 전부 참고 → 빈 목록 → 정상 자료 도착 → 복구, 대체 주간 예보의 뒤늦은 도착, 오류 뒤 복구, 늦은 응답.
+   실제 loadWeatherToday()/loadWeatherWeek()/refreshTodayPanelIfOpen() 을 쓰고 fetch 만 메모리 응답으로 바꾼다. */
+const LIFECYCLE = `(async function(){
+  var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
+  window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
+  var cfg=${JSON.stringify({ reference: raw({ generatedAt: DATE + ' 05:41 KST' }), normal: raw(), week: weekWith({ 14: { name: '걸매리', days: { [DATE]: { samples: [sample('12:00', 92)] } } } }), tide: TIDE_NOON })};
+  var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
+  var EMPTY='현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다';
+  function snapshot(label){
+    var body=document.getElementById('todayPanelBody');
+    var card=[].slice.call(body.querySelectorAll('.todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf('걸매리')>=0;})[0];
+    return {label:label,cards:body.querySelectorAll('.todayRankItem').length,score:card?card.querySelector('.todayRankScore').textContent:null,empty:body.innerText.indexOf(EMPTY)>=0};
+  }
+  function doc(raw,generatedAt){return {date:'${DATE}',generatedAt:generatedAt,updated:generatedAt,sites:{14:raw}};}
+  weatherWeek=null; weatherToday=doc(cfg.reference,'${DATE} 05:41 KST'); tideMonth=cfg.tide; recentSiteSightings={}; loadedNotices=[];
+  toggleTodayPanel(true);
+  var out=[]; out.push(snapshot('모두 참고 상태'));
+  var realFetch=window.fetch;
+  // 1) 네트워크 오류: 직전 자료를 유지하고 패널은 그대로 빈 목록이다.
+  window.fetch=function(){return Promise.reject(new Error('offline'));};
+  var failed=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(Object.assign(snapshot('네트워크 오류'),{applied:failed}));
+  // 2) 정상 갱신: 정상 자료가 도착하면 추천이 복구된다.
+  window.fetch=function(){return Promise.resolve({ok:true,json:function(){return Promise.resolve(doc(cfg.normal,'${DATE} 10:30 KST'));}});};
+  var applied=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(Object.assign(snapshot('정상 갱신'),{applied:applied}));
+  // 3) 늦은 응답: 먼저 보낸 요청(옛 참고 자료)이 나중에 도착해도 최신 정상 자료를 덮어쓰지 못한다.
+  var calls=0;
+  window.fetch=function(){var n=++calls;return new Promise(function(resolve){var body=n===1?doc(cfg.reference,'${DATE} 05:41 KST'):doc(cfg.normal,'${DATE} 10:31 KST');setTimeout(function(){resolve({ok:true,json:function(){return Promise.resolve(body);}});},n===1?150:0);});};
+  var first=loadWeatherToday(), second=loadWeatherToday(); await Promise.all([first,second]); await new Promise(function(r){setTimeout(r,250);}); refreshTodayPanelIfOpen();
+  out.push(Object.assign(snapshot('늦은 옛 응답 이후'),{stateKindOk:weatherToday.sites['14'].generatedAt==='${DATE} 10:30 KST'}));
+  // 4) 정상 today 가 다시 참고 상태가 되고(예: 시간 경과) 주간 대체 예보가 뒤늦게 도착하면 정상 주간 예보로 복구된다.
+  weatherToday=doc(cfg.reference,'${DATE} 05:41 KST'); refreshTodayPanelIfOpen(); out.push(snapshot('다시 참고 상태'));
+  window.fetch=function(url){return Promise.resolve({ok:true,json:function(){return Promise.resolve(cfg.week);}});};
+  var weekApplied=await loadWeatherWeek(); refreshTodayPanelIfOpen(); out.push(Object.assign(snapshot('주간 대체 예보 도착'),{applied:weekApplied}));
+  window.fetch=realFetch;
+  return out;
+})()`;
+
+test('R7 추천 자료 갱신: 전부 참고 → 빈 목록 안내, 오류 뒤에도 유지, 정상 갱신으로 복구, 늦은 옛 응답은 무시, 대체 주간 예보 도착 시 복구', { skip: SKIP }, async () => {
+  const page = await Page.open();
+  try {
+    const out = await page.evaluate(LIFECYCLE);
+    const by = Object.fromEntries(out.map((x) => [x.label, x]));
+    assert.deepEqual([by['모두 참고 상태'].cards, by['모두 참고 상태'].empty], [0, true]);
+    assert.deepEqual([by['네트워크 오류'].cards, by['네트워크 오류'].empty, by['네트워크 오류'].applied], [0, true, false], '오류는 직전 자료 유지');
+    assert.deepEqual([by['정상 갱신'].cards, by['정상 갱신'].empty, by['정상 갱신'].applied], [1, false, true]);
+    assert.equal(by['정상 갱신'].score, SCORE_TEXT('★★★★★', 92));
+    assert.equal(by['늦은 옛 응답 이후'].stateKindOk, true, '옛 응답이 최신 자료를 덮어쓰지 않는다');
+    assert.equal(by['늦은 옛 응답 이후'].cards, 1);
+    assert.deepEqual([by['다시 참고 상태'].cards, by['다시 참고 상태'].empty], [0, true]);
+    assert.equal(by['주간 대체 예보 도착'].cards, 1);
+    assert.equal(by['주간 대체 예보 도착'].score, SCORE_TEXT('★★★★★', 92));
+  } finally { page.dispose(); }
 });
