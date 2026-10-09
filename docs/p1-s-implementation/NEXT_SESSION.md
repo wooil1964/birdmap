@@ -1,54 +1,82 @@
 # P1-S 1단계 구현 체크포인트
 
-브랜치 `fix/p1-s-safety-guards` (기준 `origin/main` 1817161). **main 병합·운영 배포·Worker 배포·D1 변경은 승인되지 않았다.**
-설계: 분석 브랜치 `analysis/recommendation-masterplan` 의 `P1_SAFETY_DESIGN.md`(60bfbdb). 분석 브랜치는 변경하지 않았다.
+브랜치 `fix/p1-s-safety-guards` (PR #13). **main 병합·운영 배포·Worker 배포·D1 변경은 승인되지 않았다.**
+설계: 분석 브랜치 `analysis/recommendation-masterplan` 의 `P1_SAFETY_DESIGN.md`(60bfbdb). 분석·검증 브랜치는 변경하지 않았다.
 
-## 완료
-- **S1-R** (`reports-api/src/shared.js`, 커밋 dc6f0e5): `isSensitiveReport` 가 종명 전체 일치 → "보호종명 + 숫자(+마리/개체)" 순으로 판정. 구분자(`, ; · / CR LF`)로 다시 나눠 읽는다.
-  `normalizeSpecies` 는 줄바꿈을 제어문자 삭제 전에 구분자로 쓴다. 19종 목록·번식 6단어·알/산란·슬래시 신규 입력 허용은 변경 없음.
-- **S2-A** (`index.html`, 커밋 b0cd662): `weeklyScoreValid`·`weeklySampleRecommendable`·`weeklyTodayRecommendable` 추가.
-  표본 선택 전(`weeklyDaylightCandidates`), 만조 today fallback, 일반 today fallback, 선상 안전, entry 생성(`weeklyRecommendationForSite`), 최종 선발(`todayRecommendedSites`)에 적용.
-  점수 없는 공지·물때·동풍 전용 후보는 추천하지 않는다. 표시용 `storedWeatherState`/`weatherScoreAllowed` 의 숫자 판정만 엄격화(점수식 무변경).
-- **Python validator**: `validate_weather.py`(scoreEligible bool, 적격이면 missingScoreFields list), `validate_weather_week.py`(scoreEligible bool, missingScoreFields list). 생성기·점수식 무변경.
+## 진행 이력
+| 단계 | 커밋 | 내용 |
+|---|---|---|
+| S1-R | dc6f0e5 | 보호종 수량·구분자·줄바꿈 판정 (Sol Ultra 독립 검증 통과, 이번 보완에서 변경 없음) |
+| S2-A | b0cd662, 2892270, 56a797c, 7eb6764 | typed 점수·적격 계약, Python bool/list 검증, 비교 도구 (Sol 검증: 수정 필요 R1·R2·R3) |
+| **R1+R3 보완** | aa4f394 | today 필수 기상값(풍속·풍향·강수·필수 파고) 검사, 비필수 wave 값 검사, own 적격 필드 |
+| **R1 Python** | 70ef08a | `validate_weather.py` 적격 항목의 실제 wind/rain/(필수)wave 검사 |
+| **R2 보완** | 362ce50 | 팝업 점수는 검증된 적격 출처에서만 표시 |
+| 증거·문서 | (마지막 커밋) | 재현 전후 matrix, 비교 결과, 이 문서 |
 
-## 테스트 (2026-10-09, Windows, Python 3.12 있음, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8` 필요)
+## R1~R3 변경 요약 (모두 index.html + validate_weather.py)
+- `weeklyTodayRequiredDataValid(raw, site)`: today 저장 항목의 `wind`("북동풍 3.6m/s", 8방위), `rain`("강수 없음"/"3시간 강수 0.5mm"), `wave`("0.7m") 를 생성기 형식 그대로 검사.
+  파고는 `showWave/island/pelagic` 지역에서만 필수이며, 필수가 아니어도 값이 있으면 형식이 맞아야 한다. site 를 모르면 파고 null 을 허용하지 않는다(fail closed).
+- `weeklyTodayRecommendable(raw, site)`: own `scoreEligible===true`, own 유효 `score`, own 빈 `missingScoreFields` + 위 필수 기상값. `weeklyTideWeather`, `weeklyWeatherEntryForSite`, `storedWeatherState` 가 같은 함수를 쓴다.
+- `weeklySampleRecommendable(site, sample)`: own 필드 확인, 비필수 `waveM` 은 null/없음 또는 유한한 0 이상 숫자(주간 Python validator 와 같음).
+- `weatherScoreAllowed`: `_weatherState.scoreEligible===true` + 유효 점수만 허용(출처 없는 객체는 거부, 재추정 없음).
+  `weatherTodayForSite` → `storedWeatherState(day, root, now, site)`; 주간 파생 weather 의 `_weatherState.scoreEligible` 는 `weeklySampleRecommendable` 결과.
+  이전 저장(previous_saved)의 점수·풍속·기온 등은 참고 값으로 그대로 남고 점수·별점만 "오늘 적합도 미확인"이 된다.
+- 변경하지 않음: 점수 산식, 기본 92점, 가점 16, 유형별 정원 4/3/1/2, P0 90분·강수 1mm·선상 관문, 생성기, Worker, D1.
+
+### JS/Python 계약 정합성 (R3)
+| 항목 | 프런트 | Python |
+|---|---|---|
+| weekly 비필수 wave | null/없음 또는 유한 ≥0 | `waveM` null 또는 유한 ≥0 |
+| today 풍속·풍향·강수 | 적격 항목에 필수 | `validate_weather.py` 적격 항목에 필수(같은 정규식) |
+| today 파고 | 필수 지역 필수, 그 외 null 허용·값은 `^\d+(\.\d+)?m$` | 동일 |
+| own 적격 필드 | `hasOwnProperty` | JSON 에는 상속 개념이 없음 |
+
+상속된 `scoreEligible`(Object.create) 거부는 **메모리 합성 객체의 계약 시험**이다. 실제 JSON 으로는 만들 수 없으므로 운영 공격 경로로 주장하지 않는다.
+
+## 테스트 (2026-10-09, Windows, Python 3.12, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8`, `CHROME_PATH=…/chrome.exe`)
 | 스위트 | 결과 |
 |---|---|
-| reports-api `node --test` | 178/178 (기존 171 + 신규 7) |
-| `.github/scripts/test_weekly_recommendation.mjs` | 136/136 (기존 126 + 신규 10 S2-A1~10) |
-| 기타 프런트 `.mjs` (midnight 13, history cache 16, field news 9, report search 11, kst 9/5, contributors 8, tide fallback 21, autorefresh 14) | 전부 통과 |
-| `test_weather.py` | 50/50 (기존 48 + 신규 2) |
-| `test_tide.py` | 22 중 21 통과, 1 skip |
+| reports-api | 178/178 |
+| 주간 추천 | 145/145 (기존 136 + R1-1~7, R3-1~2 신규 9) |
+| 프런트 9파일(자정 17 포함) | 110/110 (Sol 기준 106 + R2 신규 4) |
+| Chrome 공지 닫기 7 + 월간 조석 13 | 20/20 |
+| 기상 Python | 53/53 (기존 50 + 신규 3) |
+| 조석 Python | 21 통과, 1 skip |
 | weather-proxy | 36/36 |
-| `test_notice_close_hit.mjs` 7건 | Chromium 없음 — main 에서도 동일 실패(환경) |
-| `test_month_tide_button.mjs` | 6 통과·7 skip(main 동일) |
+| 합계 | **563 pass / 0 fail / 1 skip** (Sol 기준 547/0/1) |
 
-UTF-8 환경변수 없이 실행하면 C01 이 Python 출력 인코딩(cp949) 때문에 실패한다 — 제품 결함 아님.
+수정 전 실패 확인: 주간 신규 7건 실패, 자정(R2) 신규 3건 실패, Python 신규 16 subtest 실패 → 수정 후 전부 통과.
+Sol Ultra 의 실제 함수 matrix(`results/r123/review_matrix_adapted.mjs`, 원본 스크립트에서 소스 선택만 working tree 로 바꿈):
+7eb6764 = matrix 175/182, 특별분기 14/21, 팝업 4/12 → 현재 **182/182, 21/21, 12/12**.
 
-## 기대값을 바꾼 기존 테스트 (승인된 계약 강화)
-- M02: scoreEligible 누락/null 인 today 저장값은 더 이상 추천하지 않음(2행 expected true→false), 공지 전용 후보는 추천 entry 가 되지 않음.
-- today 기상 fixture 들에 실제 `weather_today.json` 과 같은 `scoreEligible:true, missingScoreFields:[]` 추가.
-- `test_today_weather_midnight.mjs` 함수 목록에 새 헬퍼 3개 추가.
+## 고정 입력 비교 (`results/r123/compare_fixed_input.json`)
+`node .github/scripts/compare_p1s_recommendation.mjs 35141c04d4fd152982b1f4683d5b7a6f4f7514e5 7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e worktree`
+- 2026-10-08 22:40, 190곳, 후보 176, 제보 ON/OFF 모두: 세 버전의 **전체 후보 signature(점수·순위·날짜·시각·사유·조석·가점·표시 기상) 동일**, 상위 10 동일.
+  ON: 108 112 15 194 126 14 107 48 195 3 / OFF: 112 7 8 10 126 14 107 48 3 5.
+- 합성 null 점수: 35141c0 후보 176(0점 11) → 7eb6764·현재 165(0점 0).
+- 현재 `weather_today.json`(origin/main 2026-10-09 16:28 포함) 두 validator 통과, 적격 181곳이 모두 프런트 today 검사를 통과(브라우저에서 가짜 시계로 확인).
 
-## 비교 결과 (`docs/p1-s-implementation/results/compare_normal_and_synthetic.json`)
-`node .github/scripts/compare_p1s_recommendation.mjs 35141c04d4fd152982b1f4683d5b7a6f4f7514e5 worktree`
-- 정상 입력(35141c0, 2026-10-08 22:40): 후보 176→176, 상위 10곳(ID·점수·순위·날짜·시각·가점) 완전 동일 — 제보 스냅샷 있음/없음 모두.
-- 합성 오류(최근 출현 11곳의 모든 점수를 null, scoreEligible=true 유지): 기존 코드는 176 후보·0점 후보 11곳·상위 10에 126(0점) 포함, 수정 후 165 후보·0점 후보 0.
+## 로컬 화면 확인 (정적 서버 + 실제 JSON, 운영 API 변경 없음)
+- PC·모바일(375) 로드, 스크립트 오류 없음(운영 API CORS 차단 로그만).
+- 검증된 저장 기상 팝업: "★★★☆☆ 74점"; 같은 항목의 rain 을 메모리에서 null 로 바꾼 뒤 새 팝업: "오늘 적합도 미확인"(기온·풍향 참고 값 유지).
+- 미검증: 로컬 합성 API 를 쓴 제보·현장소식 등록/삭제/길안내 E2E, live 기상 merge 의 실제 네트워크 흐름(코드상 `mergedToday._weatherState.scoreEligible` 은 이제 검증된 stored 상태를 따른다), Cloudflare 배포 환경, 실기기.
 
-## 미검증
-- 로컬 합성 API 를 쓴 PC·모바일 E2E(제보·현장소식·삭제·길안내·팝업·캐시 오류). 확인한 것은 로컬 정적 서버에서 실제 JSON 으로 페이지 로드, 추천 패널 10곳 렌더, 스크립트 오류 0 뿐이다.
-- Cloudflare Worker 배포 후 실제 공개 API 동작(배포하지 않음).
+## 별도 관리: 기존 캐시 결함 (이번 PR 에서 새로 생기지 않았고 수정하지 않음)
+`loadFieldUpdates()`(index.html)가 응답 순서·버전 확인 없이 `fieldUpdates = result.body.updates...` 로 덮어쓴다.
+서버가 `locationHidden:true` 로 갱신한 뒤 **늦게 도착한 이전 응답**(`false`)이 화면에 다시 적용되면 현장소식 길안내 버튼이 되살아날 수 있다(Sol Ultra 가 실제 브라우저로 재현, main 과 동일 함수 hash).
+코드상으로도 순서/seq 가드가 없음을 확인했다. 이 상태의 좌표는 서버가 내려준 값이라 정확 원본 좌표 노출로 확인된 것은 없다 — 다만 보호 상태 재노출이므로 **S1-P 또는 별도 보안 작업의 우선 과제**다(요청 seq/updatedAt 단조 증가 확인, 보호 갱신 시 marker·popup·길안내·캐시 폐기).
+같은 패턴이 출현종 제보(`/reports/approved` 등)에도 있는지는 이번에 조사하지 않았다.
 
 ## 다음 명령
 ```
 git checkout fix/p1-s-safety-guards
 cd reports-api && node --test
-cd .. && PYTHONUTF8=1 PYTHONIOENCODING=utf-8 node --test .github/scripts/test_weekly_recommendation.mjs
+cd .. && PYTHONUTF8=1 PYTHONIOENCODING=utf-8 node --test .github/scripts/test_weekly_recommendation.mjs .github/scripts/test_today_weather_midnight.mjs
 cd .github/scripts && PYTHONUTF8=1 python -B -m unittest test_weather test_tide
 ```
 
 ## 미해결 정책 (S1-P, 이번 범위 아님)
-승인된 보호종 제보의 전면 비공개, 숨긴 자식의 부모/고정 지점 연결, site-history·approved·pending·status·월간 집계의 읽기 시 재검증, 알/산란 문맥 판정, 전체 조류 사전, field 대략 좌표 공개 여부, legacy 원문 영구 보존.
+승인된 보호종 제보의 전면 비공개, 숨긴 자식의 부모/고정 지점 연결, site-history·approved·pending·status·월간 집계의 읽기 시 재검증, 알/산란 문맥 판정, 전체 조류 사전, field 대략 좌표 공개·길안내 허용 여부, legacy 원문 영구 보존, 위 캐시 단조성.
 
 ## 운영 반영 금지 범위
-main 병합, Pages 배포, `reports-api` Worker 배포, D1 쓰기/스키마, 운영 제보·현장소식 변경, 기상 JSON 수정.
+main 병합, Pages 배포, `reports-api` Worker 배포, D1 쓰기/스키마, 운영 제보·현장소식 변경, 기상 JSON 수정. Sol Ultra 재검증 후 사용자 승인 전까지 유지.

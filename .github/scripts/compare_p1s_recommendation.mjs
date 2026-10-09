@@ -10,6 +10,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import vm from 'node:vm';
+import { createHash } from 'node:crypto';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const FIXED = '35141c04d4fd152982b1f4683d5b7a6f4f7514e5'; // P1-S 분석 기준 커밋(고정 입력)
@@ -107,9 +108,10 @@ for (const rev of revs) {
     const api = loadApi({ month: 10, now: NOW, siteData: RUNTIME, weatherWeek: actualWeek, tideMonth, notices, recentSiteSightings: recent });
     const week = api.weeklyInfo();
     const all = RUNTIME.map((s) => api.weeklyRecommendationForSite(s, week)).filter(Boolean);
+    const signature = createHash('sha256').update(JSON.stringify(all.map((e) => [e.site.id, e.score, api.weeklyRankScore(e), e.recommendationDate, e.recommendationTime, e.isMandatory, e.priority, e.reasons, e.tideText || '', e.basisText, e.recentReport ? e.recentReport.bonus : 0, e.today && e.today.wind, e.today && e.today.rain, e.today && e.today.wave]))).digest('hex');
     const unsafe = all.filter((e) => api.weeklyRecommendationIsSafe(e) === false);
     const top = api.todayRecommendedSites();
-    return { siteCount: RUNTIME.length, candidates: all.length, unsafe: unsafe.map((e) => e.site.name), safeCandidates: all.length - unsafe.length,
+    return { siteCount: RUNTIME.length, candidates: all.length, allCandidateSignature: signature, unsafe: unsafe.map((e) => e.site.name), safeCandidates: all.length - unsafe.length,
       top: top.map((e) => ({ id: e.site.id, name: e.site.name, date: e.recommendationDate, time: e.recommendationTime, score: e.score, rank: api.weeklyRankScore(e),
         bonus: e.recentReport ? e.recentReport.bonus : 0, mandatory: e.isMandatory, reasons: (e.reasons || []).join(' / '), tide: e.tideText || '', basis: e.basisText })) };
   };
