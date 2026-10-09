@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
-const names = ['weatherTimeMs', 'weatherLatestDue', 'storedWeatherState', 'weatherScoreAllowed',
+const names = ['weatherTimeMs', 'weatherLatestDue', 'weeklyScoreValid', 'weeklyOwn', 'weeklyTodayRequiredDataValid', 'weeklyTodayRecommendable', 'storedWeatherState', 'weatherScoreAllowed',
   'liveWeatherComponents', 'liveWeatherResponseCurrent', 'v251EffectiveScore'];
 const context = vm.createContext({weatherToday: {}, LIVE_WEATHER_CACHE_TTL_MS: 900000,
   LIVE_WEATHER_REQUEST_TIMEOUT_MS: 12000, v251RainInfo: () => ({raining: true, amount: 5})});
@@ -15,7 +15,7 @@ for (const name of names) {
 }
 const now = new Date('2026-09-06T08:00:00Z');
 const today = {date: '2026-09-06', forecastTime: '2026-09-06 17:00 KST',
-  generatedAt: '2026-09-06 14:30 KST', wind: '0m/s', rain: '강수 없음', score: 90};
+  generatedAt: '2026-09-06 14:30 KST', scoreEligible: true, missingScoreFields: [], wind: '북풍 0.0m/s', rain: '강수 없음', wave: '0.5m', score: 90};
 
 test('all inline scripts compile', () => {
   for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) new vm.Script(match[1]);

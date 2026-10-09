@@ -2063,7 +2063,7 @@ function weatherLatestDue(now){
   });});
   return latest;
 }
-function storedWeatherState(day,root,now){
+function storedWeatherState(day,root,now,site){
   now=now||new Date();root=root||{};
   var today=new Date(now.getTime()+9*60*60*1000).toISOString().slice(0,10);
   if(!day)return {kind:'none',dataCurrent:false,scoreEligible:false,stale:true};
@@ -2075,9 +2075,9 @@ function storedWeatherState(day,root,now){
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
   var current=hasData&&sameDay&&onSchedule&&!day.stale&&Number.isFinite(forecastMs);
   /* 적격은 자기 필드의 scoreEligible===true·빈 missingScoreFields·유효 점수·필수 기상값(site 기준)을 모두 확인한 경우만이다. 미확인(누락/null)을 true 로 올리지 않는다. */
-  var numeric=typeof day.score==='number'&&Number.isFinite(day.score)&&day.score>=0&&day.score<=100;
+  var eligible=weeklyTodayRecommendable(day,site);
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
-    dataCurrent:current,scoreEligible:current&&day.scoreEligible!==false&&numeric,stale:!current,
+    dataCurrent:current,scoreEligible:current&&eligible,stale:!current,
     date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
     ageMinutes:Number.isFinite(generatedMs)?Math.max(0,Math.floor((now.getTime()-generatedMs)/60000)):null};
 }
@@ -2085,7 +2085,7 @@ function storedWeatherState(day,root,now){
    출처 정보가 없는 객체는 적격성을 확인할 수 없으므로 허용하지 않는다. */
 function weatherScoreAllowed(today){
   return !!today&&typeof today.score==='number'&&Number.isFinite(today.score)&&today.score>=0&&today.score<=100&&
-    (today._weatherState?today._weatherState.scoreEligible:storedWeatherState(today,weatherToday).scoreEligible);
+    !!today._weatherState&&today._weatherState.scoreEligible===true;
 }
 function storedWeatherLabel(today){
   var state=today&&today._weatherState;
@@ -2107,7 +2107,7 @@ function todayWeatherFromWeek(site){
 function weatherTodayForSite(site){
   var sites=weatherToday&&weatherToday.sites;
   var day=sites?(sites[String(site.id)]||sites[site.name]||null):null;
-  var state=day?storedWeatherState(day,weatherToday):null;
+  var state=day?storedWeatherState(day,weatherToday,undefined,site):null;
   if(!state||state.kind==='previous_saved'||state.kind==='none'||state.kind==='today_reference'){
     var fromWeek=todayWeatherFromWeek(site);
     if(fromWeek)return fromWeek;
@@ -3785,7 +3785,7 @@ function weeklySampleAsWeather(site,sample,dateText){
     cloud:(sample.cloudPct===null||sample.cloudPct===undefined)?null:Math.round(Number(sample.cloudPct))+'%',
     wave:number(sample.waveM,1)===null?null:floor1(sample.waveM).toFixed(1)+'m',
     forecastTime:sample.forecastTime,generatedAt:generatedAt,
-    _weatherState:{kind:'week_forecast',dataCurrent:true,scoreEligible:sample.scoreEligible===true,stale:false,date:dateText,generatedAt:generatedAt,forecastTime:sample.forecastTime}};
+    _weatherState:{kind:'week_forecast',dataCurrent:true,scoreEligible:weeklySampleRecommendable(site,sample),stale:false,date:dateText,generatedAt:generatedAt,forecastTime:sample.forecastTime}};
 }
 function todayHighTideLevelsCm(tide){
   if(!tide||!tide.highTide||!tide.highTideLevel)return [];
