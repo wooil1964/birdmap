@@ -76,3 +76,12 @@ node docs/p1-s-review/scripts/r4/general_e2e.mjs docs/p1-s-review/.scratch/combi
 source_crosscheck.mjs는 공식 저장결과의 exact8ccb/1bd/b097 blob과 archive를 대조한다. 새 SHA 결과로 재사용할 때 고정상수/예상 counts부터 갱신한다. 최초 harness 재시도는 제품실패가 아니다; 최종 정상145와 추가30실패를 섞거나 후자를 성공으로 세지 않는다. 회색tile은 합성응답, 실제Leaflet로딩 성공이다. 물리기기/운영Access/Turnstile/GPS/운영raw자료·전체세로layout은 미검증.
 
 결과 복사후 .scratch의 resolved 절대경로가 위review/docs/p1-s-review/.scratch 안임을 검사하고 nativePowerShell Remove-Item -LiteralPath로만 제거한다. 검증branch에는 docs/p1-s-review의 문서·합성시험만stage한다. 원래 제품checkout과 운영브랜치가 clean인지 마지막에 확인한다.
+
+## R4 최종 게시·read-back 완료
+
+보고서 체크포인트 **5dd7297c7e46910b1a5f8917414a14feec455f4f** push 완료.
+
+- PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080998481
+- Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080999469
+
+FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확인했다. results/r4/github_receipts.json에 URL/ID/본문SHA256/검증SHA/보고서commit을 저장했다. 최종 게시증빙commit은 git log -1로 조회한다. 판정은 수정 필요이며 제품 보완·운영 반영은 수행하지 않고 사용자 승인 및 새 SHA를 기다린다.

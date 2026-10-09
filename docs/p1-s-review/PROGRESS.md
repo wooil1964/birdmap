@@ -54,3 +54,12 @@
 PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080213498
 Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080214390
 저장된 FINAL_R123_COMMENT.md와 게시본문5198자 일치를 API read-back으로 검증했다. results/r123/github_receipts.json에 증빙을 저장했다. 최종보고 commit8d2e574 및 다음 게시증빙commit은 git log -1로 확인한다. 제품/배포 변경 없이 사용자 승인 또는 새 보완SHA를 기다린다.
+
+## R4 최종 게시·read-back 완료
+
+보고서 체크포인트 **5dd7297c7e46910b1a5f8917414a14feec455f4f** push 완료.
+
+- PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080998481
+- Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080999469
+
+FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확인했다. results/r4/github_receipts.json에 URL/ID/본문SHA256/검증SHA/보고서commit을 저장했다. 최종 게시증빙commit은 git log -1로 조회한다. 판정은 수정 필요이며 제품 보완·운영 반영은 수행하지 않고 사용자 승인 및 새 SHA를 기다린다.
