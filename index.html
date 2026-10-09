@@ -2074,12 +2074,15 @@ function storedWeatherState(day,root,now){
   var sameDay=date===today&&String(day.forecastTime||'').slice(0,10)===today;
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
   var current=hasData&&sameDay&&onSchedule&&!day.stale&&Number.isFinite(forecastMs);
+  /* 적격은 자기 필드의 scoreEligible===true·빈 missingScoreFields·유효 점수·필수 기상값(site 기준)을 모두 확인한 경우만이다. 미확인(누락/null)을 true 로 올리지 않는다. */
   var numeric=typeof day.score==='number'&&Number.isFinite(day.score)&&day.score>=0&&day.score<=100;
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
     dataCurrent:current,scoreEligible:current&&day.scoreEligible!==false&&numeric,stale:!current,
     date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
     ageMinutes:Number.isFinite(generatedMs)?Math.max(0,Math.floor((now.getTime()-generatedMs)/60000)):null};
 }
+/* 점수는 출처에서 검증된 적격(_weatherState.scoreEligible===true)과 유효한 점수가 모두 있을 때만 표시한다.
+   출처 정보가 없는 객체는 적격성을 확인할 수 없으므로 허용하지 않는다. */
 function weatherScoreAllowed(today){
   return !!today&&typeof today.score==='number'&&Number.isFinite(today.score)&&today.score>=0&&today.score<=100&&
     (today._weatherState?today._weatherState.scoreEligible:storedWeatherState(today,weatherToday).scoreEligible);
@@ -3842,19 +3845,35 @@ function weeklyMudflatTideGateOpen(site,week){
    원점수는 number·유한·0~100 이어야 하며, 가점이 더해진 내부 순위점수(rankScore)에는 적용하지 않는다. */
 function weeklyScoreValid(score){return typeof score==='number'&&Number.isFinite(score)&&score>=0&&score<=100;}
 function weeklyNonNegativeNumber(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0;}
-/* 주간 표본: 명시적 scoreEligible===true, 유효 점수, 빈 missingScoreFields, 필수 기상값(풍속·풍향·강수, 파고가 필요한 곳은 파고).
-   파고가 필요 없는 곳의 waveM null 과 선택 값(돌풍·시정·구름 등)의 null 은 허용한다. */
+/* 객체 자신의 필드만 인정한다(Object.create 등으로 상속된 scoreEligible 은 적격 근거가 아니다). */
+function weeklyOwn(object,key){return !!object&&typeof object==='object'&&Object.prototype.hasOwnProperty.call(object,key);}
+/* 주간 표본: 자기 필드의 scoreEligible===true, 유효 점수, 빈 missingScoreFields, 필수 기상값(풍속·풍향·강수, 파고가 필요한 곳은 파고).
+   파고가 필요 없는 곳의 waveM 은 null/없음만 허용하고 값이 있으면 유한한 0 이상 숫자여야 한다(Python weekly validator 와 같다).
+   선택 값(돌풍·시정·구름 등)의 null 은 허용한다. */
 function weeklySampleRecommendable(site,sample){
-  if(!sample||typeof sample!=='object'||sample.scoreEligible!==true||!weeklyScoreValid(sample.score))return false;
-  if(!Array.isArray(sample.missingScoreFields)||sample.missingScoreFields.length)return false;
+  if(!weeklyOwn(sample,'scoreEligible')||sample.scoreEligible!==true||!weeklyOwn(sample,'score')||!weeklyScoreValid(sample.score))return false;
+  if(!weeklyOwn(sample,'missingScoreFields')||!Array.isArray(sample.missingScoreFields)||sample.missingScoreFields.length)return false;
   if(!weeklyNonNegativeNumber(sample.windSpeed)||!weeklyNonNegativeNumber(sample.precipitation3h))return false;
   if(!weeklyNonNegativeNumber(sample.windDirectionDeg)||sample.windDirectionDeg>=360)return false;
-  return !(site&&(site.showWave||site.island||site.pelagic))||weeklyNonNegativeNumber(sample.waveM);
+  var required=!!(site&&(site.showWave||site.island||site.pelagic)), wave=sample.waveM;
+  return (!required&&(wave===null||wave===undefined))||weeklyNonNegativeNumber(wave);
 }
-/* 오늘 저장 기상(weather_today.json 항목): 풍속·강수·파고는 문자열이라 점수와 적격 메타데이터만 본다. */
-function weeklyTodayRecommendable(raw){
-  return !!raw&&typeof raw==='object'&&!raw.stale&&!raw.dataUnavailable&&raw.scoreEligible===true&&weeklyScoreValid(raw.score)&&
-    Array.isArray(raw.missingScoreFields)&&!raw.missingScoreFields.length;
+/* 오늘 저장 기상(weather_today.json 항목). 풍속·풍향·강수·파고는 생성기가 만든 문자열이므로
+   "북동풍 3.6m/s", "강수 없음"/"3시간 강수 0.5mm", "0.7m" 형식을 그대로 검사한다(validate_weather.py 와 같은 형식).
+   파고는 showWave/island/pelagic 지역에서만 필수이고, 필수가 아니어도 값이 있으면 형식이 맞아야 한다.
+   site 를 모르면(null) 파고 필수 여부를 판단할 수 없으므로 null 파고를 허용하지 않는다(fail closed). */
+function weeklyTodayRequiredDataValid(raw,site){
+  if(typeof raw.wind!=='string'||!/^(?:북|북동|동|남동|남|남서|서|북서)풍\s*\d+(?:\.\d+)?\s*m\/s$/.test(raw.wind.trim()))return false;
+  if(typeof raw.rain!=='string'||!/^(?:강수 없음|3시간 강수 \d+(?:\.\d+)?mm)$/.test(raw.rain.trim()))return false;
+  var required=!site||!!(site.showWave||site.island||site.pelagic), wave=raw.wave;
+  if(!required&&(wave===null||wave===undefined))return true;
+  return typeof wave==='string'&&/^\d+(?:\.\d+)?m$/.test(wave.trim());
+}
+function weeklyTodayRecommendable(raw,site){
+  if(!raw||typeof raw!=='object'||raw.stale||raw.dataUnavailable)return false;
+  if(!weeklyOwn(raw,'scoreEligible')||raw.scoreEligible!==true||!weeklyOwn(raw,'score')||!weeklyScoreValid(raw.score))return false;
+  if(!weeklyOwn(raw,'missingScoreFields')||!Array.isArray(raw.missingScoreFields)||raw.missingScoreFields.length)return false;
+  return weeklyTodayRequiredDataValid(raw,site);
 }
 function weeklySampleCaution(sample){
   if(!sample)return false;
@@ -3871,7 +3890,7 @@ function weeklyTideWeather(site,tide){
     return sample&&!weeklySampleCaution(sample)?{sample:sample,weather:weeklySampleAsWeather(site,sample,tide.date)}:null;
   }
   var sites=weatherToday&&weatherToday.sites, raw=sites&&(sites[String(site.id)]||sites[site.name]);
-  if(!weeklyTodayRecommendable(raw))return null;
+  if(!weeklyTodayRecommendable(raw,site))return null;
   var minutes=weeklySampleMinutes(raw), date=raw.date||weeklySampleDateText(raw);
   if(minutes===null||String(date)!==String(tide.date)||Math.abs(minutes-tide.minutes)>90)return null;
   var today=Object.assign({},raw);
@@ -3997,7 +4016,7 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   if(!sites)return null;
   var raw=sites[String(site.id)]||sites[site.name]||null;
   var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
-  if(!weeklyTodayRecommendable(raw)||!weeklyDateInRange(date,week))return null;
+  if(!weeklyTodayRecommendable(raw,site)||!weeklyDateInRange(date,week))return null;
   var score=raw.score;
   var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
   return {date:date,weather:today,score:score};
