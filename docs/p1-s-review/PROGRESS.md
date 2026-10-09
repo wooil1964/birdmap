@@ -9,3 +9,7 @@
 - 체크포인트1: 0ebd148e96c56ce375f81dfdcf31566d056aab57. 이어 E2E/최종문서 checkpoint를 저장한다.
 - 완료: PR13 댓글6079394141 및Issue9 댓글6079396000 게시, API read-back7370자 본문일치 확인. results/github_receipts.json 저장. 검증완료checkpoint d9e5877d7fad792d7fe3ed79485e7d829afbc9da, 이어 게시증빙 최종checkpoint/push 후 사용자 보고.
 - 제품·main·자동JSON·Worker·운영D1·실사용자 제보는 수정하지 않음. 최초 기존browser자동telemetry는 미계측이므로 성공/실패를 단정하지 않음. 이후browser검증은격리함.
+
+## 새 SHA 재검증 시작
+
+사용자 지정1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c, main38b4529. 이전ff0d334 체크포인트를 읽고 재개했다. 새로운 결과는 R123_RECHECK.md 및 results/r123에 분리한다. 기존 회귀563pass/0fail/1skip 직접 확인; 독립matrix/정상만조display추가계약/E2E 진행중. 제품수정금지.

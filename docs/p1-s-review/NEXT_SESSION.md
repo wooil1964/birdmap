@@ -47,3 +47,7 @@ node docs/p1-s-review/scripts/pr13_e2e.mjs <combined-directory> <new-temporary-o
 기존스위트의정확발견파일/명령/skip은results/EXECUTION_SCOPE.md, E2E범위/미검증은results/E2E_REVIEW.md에있다. 재실행시기존결과를덮어쓰기보다별도결과폴더를만든다.
 
 임시combined자료는git merge-tree cb24c5085f8f297c0197950a756e41d08082dd98에서archive로다시만들수있다. Windows CRLF 차이는e2e_source_crosscheck와canonical blob정규화로확인한다. 임시.scratch는보존할결과를복사한후절대경로검증을거쳐삭제한다. profile/제품copy/민감원자료는commit하지않는다.
+
+## 1bd26199 진행중 세션 재개 우선
+
+R123_RECHECK.md를 먼저 읽는다. 이전ff0d334자료는유지하고새결과는results/r123. 실제targetarchive는docs/p1-s-review/.scratch/target1bd, 최신maincombined는.scratch/combined1bd(tree1be66adc)다. 원래스위트563pass/1skip 완료. 추가matrix/정상만조fallback카드provenance/5폭E2E/기존cache위험 재평가/최종댓글 남음. agents p1s_score/p1s_taxon/p1s_protection은각각visualization pr13_r123_score/compare/e2e에script/results작성중이다. root만review docs작성. 이전JSON덮어쓰기·제품guard수정금지.
