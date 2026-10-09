@@ -3875,13 +3875,49 @@ function weeklyTodayRecommendable(raw,site){
   if(!weeklyOwn(raw,'missingScoreFields')||!Array.isArray(raw.missingScoreFields)||raw.missingScoreFields.length)return false;
   return weeklyTodayRequiredDataValid(raw,site);
 }
+/* 한국 시간(Asia/Seoul, +09:00)의 날짜·시각을 절대 시각(ms)으로 바꾼다. 날짜까지 포함하므로 시·분만 같은 다른 날짜를 같은 시각으로 오인하지 않는다.
+   달력에 없는 날짜(2/30)·시각(24:30)이나 형식이 모호하면 null 이다. */
+function weeklyKstTimestamp(dateText,timeText){
+  var date=String(dateText||''), time=String(timeText||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^\d{2}:\d{2}$/.test(time))return null;
+  var timestamp=Date.parse(date+'T'+time+':00+09:00');
+  return Number.isFinite(timestamp)&&new Date(timestamp+9*3600000).toISOString().slice(0,16)===date+'T'+time?timestamp:null;
+}
+/* 예보 시각 문자열("2026-10-10 12:00 KST" 또는 ISO "2026-10-10T12:00:00+09:00")의 절대 시각. 시간대가 없거나 다른 표기는 모호하므로 null. */
+function weeklyForecastTimestamp(text){
+  var value=String(text||'').trim();
+  var match=/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}) KST$/.exec(value)||/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})(?::00(?:\.0+)?)?\+09:00$/.exec(value);
+  return match?weeklyKstTimestamp(match[1],match[2]):null;
+}
+/* 만조(날짜 + 그날 0시 기준 분)의 절대 시각. */
+function weeklyTideTimestamp(tide){
+  if(!tide||!Number.isFinite(tide.minutes)||tide.minutes<0||tide.minutes>=1440)return null;
+  var midnight=weeklyKstTimestamp(tide.date,'00:00');
+  return midnight===null?null:midnight+Math.round(tide.minutes)*60000;
+}
+/* 예보와 만조의 절대 시각 차이(분). 어느 쪽이든 해석할 수 없으면 null 이며, 그때 만조 추천은 제외한다(추정·대체 금지). */
+function weeklyTideForecastGapMinutes(tide,forecastText){
+  var tideTs=weeklyTideTimestamp(tide), forecastTs=weeklyForecastTimestamp(forecastText);
+  return tideTs===null||forecastTs===null?null:Math.abs(forecastTs-tideTs)/60000;
+}
 /* 오늘 저장 기상의 출처 판정은 팝업과 같은 storedWeatherState 한 곳에서만 한다(날짜·예보 시각·생성 시각의 유효성·미래 생성·
-   예정 갱신 시각(weatherLatestDue)·stale·own 적격 metadata·필수 기상값). 추천 카드와 팝업이 같은 결과를 쓴다.
-   후보 자격(weeklyTodayRecommendable)은 기존 그대로이며, 현재 자료가 아닌 참고 상태(갱신 지연·날짜 불일치·생성 시각 불명 등)는
-   _weatherState.scoreEligible=false 로 전달되어 점수·별점이 '오늘 적합도 미확인'으로 표시된다. 더 강한 적격 상태를 새로 만들지 않는다. */
+   예정 갱신 시각(weatherLatestDue)·stale·own 적격 metadata·필수 기상값).
+   C 정책(사용자 승인): 이 판정에서 현재 적격(scoreEligible===true)인 자료만 추천 후보의 근거가 된다. 참고 상태(갱신 지연·미래/비정상/없는
+   생성 시각·날짜 불일치·previous_saved 등)는 후보로 쓰지 않는다. 원본 raw 는 지우지 않으며 팝업은 기존처럼 참고 값을 보여 준다.
+   허용 지연 같은 예외나 대체 점수는 만들지 않는다. */
 function weeklyTodayWeather(site,raw){
   if(!weeklyTodayRecommendable(raw,site))return null;
-  return Object.assign({},raw,{_weatherState:storedWeatherState(raw,weatherToday,undefined,site)});
+  var state=storedWeatherState(raw,weatherToday,undefined,site);
+  return state.scoreEligible===true?Object.assign({},raw,{_weatherState:state}):null;
+}
+/* 최종 관문(후보 채택 뒤·최종 선발 전후): 검증된 현재 기상자료에 근거한 entry 만 통과한다.
+   주간 표본은 weeklySampleRecommendable 로, today 는 storedWeatherState 가 부여한 적격 출처로 확인한다.
+   점수·가점·공지·mandatory·정원 보충으로는 이 조건을 대신할 수 없다. */
+function weeklyRecommendationEligible(entry){
+  if(!entry||!weeklyScoreValid(entry.score))return false;
+  if(entry.sample&&!weeklySampleRecommendable(entry.site,entry.sample))return false;
+  var today=entry.today;
+  return !!today&&weeklyScoreValid(today.score)&&!!today._weatherState&&today._weatherState.scoreEligible===true;
 }
 function weeklySampleCaution(sample){
   if(!sample)return false;
@@ -3898,10 +3934,11 @@ function weeklyTideWeather(site,tide){
     return sample&&!weeklySampleCaution(sample)?{sample:sample,weather:weeklySampleAsWeather(site,sample,tide.date)}:null;
   }
   var sites=weatherToday&&weatherToday.sites, raw=sites&&(sites[String(site.id)]||sites[site.name]);
-  var date=raw&&(raw.date||weeklySampleDateText(raw)), today=weeklyTodayWeather(site,raw);
+  var today=weeklyTodayWeather(site,raw);
   if(!today)return null;
-  var minutes=weeklySampleMinutes(raw);
-  if(minutes===null||String(date)!==String(tide.date)||Math.abs(minutes-tide.minutes)>90)return null;
+  /* 예보와 만조는 날짜·시간대를 포함한 절대 시각으로 90분 이내여야 한다. 해석할 수 없으면 제외한다. */
+  var gap=weeklyTideForecastGapMinutes(tide,raw.forecastTime);
+  if(gap===null||gap>90)return null;
   return todayWeatherCautionNote(today)?null:{sample:null,weather:today};
 }
 /* 기준 충족 만조 중 인접 예보가 유효하고 안전한 것만 남긴다. 규칙이 없는 탐조지는 null. */
@@ -3934,8 +3971,8 @@ function weeklyTideNearestSample(site,tide){
   if(!tide||!Number.isFinite(tide.minutes))return null;
   var interval=Number(weatherWeek&&weatherWeek.sampleIntervalHours), limit=Math.min(90,(interval>0?interval:3)*30), best=null, bestGap=Infinity;
   weeklyDaylightCandidates(site,tide.date).forEach(function(sample){
-    var gap=Math.abs(weeklySampleMinutes(sample)-tide.minutes);
-    if(gap<bestGap){best=sample;bestGap=gap;}
+    var gap=weeklyTideForecastGapMinutes(tide,sample.forecastTime);
+    if(gap!==null&&gap<bestGap){best=sample;bestGap=gap;}
   });
   return best&&bestGap<=limit?best:null;
 }
@@ -4129,6 +4166,8 @@ function weeklyRecommendationForSite(site,week){
   // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.
   entry.recentReport=weeklyRecentReportBonus(site);
   entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;
+  // C 정책 후보 관문: 검증된 현재 기상자료가 아닌 근거(참고·시각 불명)는 점수·가점·공지·mandatory 와 무관하게 후보가 아니다.
+  if(!weeklyRecommendationEligible(entry))return null;
   return entry;
 }
 /* 최근 출현 추천 가점. /reports/recent-sites 가 관리자가 site_id 를 지정한 승인 제보만

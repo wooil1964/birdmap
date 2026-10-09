@@ -86,7 +86,7 @@ function loadApi(state = {}) {
     'function monthTideForSite(id){return tideMonth&&tideMonth.sites?tideMonth.sites[String(id)]||null:null;}' +
     'function todayKstMonth(){return ctx.month||9;}' +
     tideRules + '\n' + source + '\n' +
-    'return {' + ALL_NAMES.join(',') + ',setWeek:function(w){weatherWeek=w;},setSightings:function(v){recentSiteSightings=v;}};'
+    'return {' + ALL_NAMES.join(',') + ',clockNow:ctx.now||null,setWeek:function(w){weatherWeek=w;},setSightings:function(v){recentSiteSightings=v;}};'
   );
   const Clock=state.now?class extends Date {constructor(...args){super(...(args.length?args:[state.now]));} static now(){return new Date(state.now).getTime();}}:Date;
   return factory(Object.assign({rules:RULES},state),Clock);
@@ -115,6 +115,15 @@ function weekDoc(siteId, days, name = '테스트') {
     days: Object.fromEntries(Object.entries(days).map(([d, s]) => [d, { samples: s }])),
   };
   return { startDate: Object.keys(days)[0], endDate: Object.keys(days).slice(-1)[0], sites };
+}
+
+/* C 정책: today 저장 기상은 storedWeatherState 의 현재성(생성 시각 ≤ 지금, 예정 갱신 이후, 예보 시각이 오늘)을 만족해야 추천 후보가 된다.
+   실제 시계를 쓰는 시험용: 지금으로부터 1분 전 생성으로 만든 KST 표기. */
+function realNowStamp(baseMs = Date.now()) {
+  const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(baseMs - 60000));
+  const v = {};
+  p.forEach((part) => { v[part.type] = part.value; });
+  return `${v.year}-${v.month}-${v.day} ${v.hour}:${v.minute} KST`;
 }
 
 /* 오늘이 아닌 날짜여야 '오늘 과거시간 제외'가 개입하지 않는다. */
@@ -486,7 +495,8 @@ test('들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허
 test('weather_week/rules 실패에도 today 일반 추천, 선상만 제외', () => {
   const today=loadApi().weeklyTodayDateText();
   const sites=[{...SITE,id:15,env:'간척호·농경지'},PELAGIC];
-  const weatherToday={sites:Object.fromEntries(sites.map(s=>[s.id,{date:today,forecastTime:today+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:92,wind:'동풍 3m/s',rain:'강수 없음'}]))};
+  const generatedAt=realNowStamp();
+  const weatherToday={sites:Object.fromEntries(sites.map(s=>[s.id,{date:today,generatedAt,forecastTime:today+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:92,wind:'동풍 3m/s',rain:'강수 없음'}]))};
   const api=loadApi({weatherToday,siteData:sites,rules:null});
   const top=api.todayRecommendedSites();
   assert.equal(top.length,1);assert.equal(top[0].site.id,15);assert.equal(top[0].score,92);
@@ -586,7 +596,8 @@ test('다른 시각의 caution 근거 대신 카드 표시 기상만 판단',()=
 test('최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음',()=>{
  const date=loadApi().weeklyTodayDateText();
  const sites=Array.from({length:13},(_,i)=>({...SITE,id:300+i,name:'후보'+i,env:i<5?'농경지':i<9?'갯벌':'습지'}));
- const weatherToday={sites:Object.fromEntries(sites.map((s,i)=>[s.id,{date,forecastTime:date+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:i===0?65:i===1?95:60,wind:'동풍 3m/s',wave:i<2||i===5?'2.2m':'1.0m',rain:'강수 없음'}]))};
+ const generatedAt=realNowStamp();
+ const weatherToday={sites:Object.fromEntries(sites.map((s,i)=>[s.id,{date,generatedAt,forecastTime:date+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:i===0?65:i===1?95:60,wind:'동풍 3m/s',wave:i<2||i===5?'2.2m':'1.0m',rain:'강수 없음'}]))};
  const api=loadApi({siteData:sites,weatherToday,notices:[{siteId:300},{siteId:305}]});
  const original=api.weeklyRecommendationForSite(sites[0],api.weeklyInfo());
  assert.equal(original.isMandatory,true);assert.equal(original.score,65);
@@ -862,7 +873,7 @@ test('겨울 통합: 실제 190 site + 합성 겨울 예보, 10곳/점수/cautio
 
 test('겨울 today fallback: 필수 기상자료가 있어야 추천하고, 선상 fallback 승격 금지',()=>{
  const site=RUNTIME.find(s=>s.id==='39'),ship=RUNTIME.find(s=>s.id==='48');
- const raw=(score,extra)=>Object.assign({date:'2026-12-10',scoreEligible:true,missingScoreFields:[],score,wind:'북풍 3.0m/s',rain:'강수 없음',wave:'0.3m'},extra);
+ const raw=(score,extra)=>Object.assign({date:'2026-12-10',generatedAt:'2026-12-10 07:30 KST',forecastTime:'2026-12-10 12:00 KST',scoreEligible:true,missingScoreFields:[],score,wind:'북풍 3.0m/s',rain:'강수 없음',wave:'0.3m'},extra);
  const state=winterFixture({siteData:[site,ship],weatherWeek:null,weatherToday:{sites:{39:raw(65),48:raw(92)}}});
  const api=loadApi(state),top=api.todayRecommendedSites();assert.equal(top.length,1);assert.equal(top[0].site.id,'39');
  assert.equal(api.weeklyRecommendationIsSafe(top[0]),true,'강수·파고가 확인된 안전 판정');
@@ -1028,7 +1039,7 @@ test('봄 통합 4/3/최대1/2와 core 동점 우선, 부족 보충/dedupe/점�
 
 test('봄 일반 today fallback: 필수 기상자료가 있어야 추천한다',()=>{
  const site=RUNTIME.find(s=>s.id==='39'),date='2027-04-05';
- const state=springFixture(date,{siteData:[site],weatherWeek:null,weatherToday:{sites:{39:{date,scoreEligible:true,missingScoreFields:[],score:65,wind:'서풍 3.0m/s',rain:'강수 없음',wave:'0.3m'}}}}),api=loadApi(state);
+ const state=springFixture(date,{siteData:[site],weatherWeek:null,weatherToday:{sites:{39:{date,generatedAt:date+' 07:30 KST',forecastTime:date+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:65,wind:'서풍 3.0m/s',rain:'강수 없음',wave:'0.3m'}}}}),api=loadApi(state);
  let top=api.todayRecommendedSites();assert.equal(top.length,1);assert.equal(api.weeklyRecommendationIsSafe(top[0]),true);
  state.weatherToday.sites[39].rain=null;assert.equal(api.todayRecommendedSites().length,0,'강수 결측');
  state.weatherToday.sites[39].rain='강수 없음';state.weatherToday.sites[39].scoreEligible=false;assert.equal(api.todayRecommendedSites().length,0);
@@ -1126,7 +1137,7 @@ test('여름 daylight/과거/최고점/날짜 tie 및 가을 조석 비활성',(
 test('여름 공지로 부적격 sample 승격 금지, today fallback 미확인 유지',()=>{
  const site=RUNTIME.find(s=>s.id==='109'),date='2027-06-10',state=summerFixture(date,{siteData:[site],notices:[{siteIds:[109],published:true}]});
  state.weatherWeek.sites['109'].days[date].samples.forEach(s=>s.scoreEligible=false);assert.equal(loadApi(state).todayRecommendedSites().length,0);
- const fallback=summerFixture(date,{siteData:[site],weatherWeek:null,weatherToday:{sites:{109:{date,scoreEligible:true,missingScoreFields:[],score:65,wind:'서풍 3.0m/s',rain:'강수 없음',wave:'0.3m'}}}});
+ const fallback=summerFixture(date,{siteData:[site],weatherWeek:null,weatherToday:{sites:{109:{date,generatedAt:date+' 07:30 KST',forecastTime:date+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:65,wind:'서풍 3.0m/s',rain:'강수 없음',wave:'0.3m'}}}});
  const api=loadApi(fallback),top=api.todayRecommendedSites();assert.equal(top.length,1);assert.equal(api.weeklyRecommendationIsSafe(top[0]),true);
  fallback.weatherToday.sites[109].rain=null;assert.equal(loadApi(fallback).todayRecommendedSites().length,0,'강수 결측');
  fallback.weatherToday.sites[109].rain='강수 없음';fallback.weatherToday.sites[109].scoreEligible=false;assert.equal(loadApi(fallback).todayRecommendedSites().length,0);
@@ -1425,7 +1436,7 @@ test('M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아�
 
 test('M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다', () => {
   const autumn = h01Site('107'), winter = h01Site('7');
-  const todayDoc = (id, date, extra) => ({ sites: { [id]: Object.assign({ date: date, forecastTime: date + ' 12:00 KST', score: 99, wind: '북풍 3m/s', rain: '강수 없음', missingScoreFields: [] }, extra) } });
+  const todayDoc = (id, date, extra) => ({ sites: { [id]: Object.assign({ date: date, generatedAt: date + ' 08:30 KST', forecastTime: date + ' 12:00 KST', score: 99, wind: '북풍 3m/s', rain: '강수 없음', missingScoreFields: [] }, extra) } });
   const rows = [
     { name: '가을 explicit false', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: false }, expected: false },
     { name: '가을 explicit false + 공지', today: '2026-10-13', month: 10, site: autumn, extra: { scoreEligible: false }, notice: true, expected: false },
@@ -1631,7 +1642,7 @@ function recentFieldSites(count) {
 }
 function todayWeatherFor(api, sites, scoreOf = () => 92, extra = () => ({})) {
   const date = api.weeklyTodayDateText();
-  return { sites: Object.fromEntries(sites.map((s, i) => [s.id, Object.assign({ date, forecastTime: date + ' 12:00 KST', scoreEligible: true, missingScoreFields: [], score: scoreOf(s, i), wind: '북풍 3m/s', wave: '0.5m', rain: '강수 없음' }, extra(s, i))])) };
+  return { sites: Object.fromEntries(sites.map((s, i) => [s.id, Object.assign({ date, generatedAt: realNowStamp(api.clockNow ? Date.parse(api.clockNow) : Date.now()), forecastTime: date + ' 12:00 KST', scoreEligible: true, missingScoreFields: [], score: scoreOf(s, i), wind: '북풍 3m/s', wave: '0.5m', rain: '강수 없음' }, extra(s, i))])) };
 }
 
 test('R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16', () => {
@@ -1817,6 +1828,7 @@ test('R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙�
 /* ===== 추천 알고리즘 P0 (2026-10-08): 만조·예보 시각 일치 / 안전 우선 대표 선택 / 강수 기준 일치 ===== */
 const P0_NOW = '2026-10-08T08:00:00+09:00';
 const P0_DATE = '2026-10-10';
+const P0_TODAY_NOW = '2026-10-10T08:00:00+09:00';  // C 정책: today fallback 시험용 시계(예보 날짜 P0_DATE 가 '오늘', 생성 07:00 은 예정 갱신 05:35 이후)
 const p0Samples = (date, rows) => rows.map(([time, score, extra]) => sample(`${date} ${time} KST`, score, Object.assign({ windName: '북풍', waveM: 0.3 }, extra || {})));
 const p0Tide = (id, date, time, level) => ({ sites: { [id]: { days: [{ date, highTide: time, highTideLevel: String(level) }] } } });
 const p0Api = (site, rows, tide, extraState = {}) => {
@@ -1981,9 +1993,9 @@ test('P0-B2 같은 날 두 번의 만조도 각각 검사한다', () => {
 
 test('P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다', () => {
   const site = RUNTIME.find((s) => s.id === '107');
-  const base = { date: P0_DATE, forecastTime: P0_DATE + ' 09:00 KST', scoreEligible: true, missingScoreFields: [], score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' };
+  const base = { date: P0_DATE, generatedAt: P0_DATE + ' 06:00 KST', forecastTime: P0_DATE + ' 09:00 KST', scoreEligible: true, missingScoreFields: [], score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' };
   const run = (tideTime, extra) => {
-    const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null,
+    const api = loadApi({ now: '2026-10-10T06:30:00+09:00', month: 10, siteData: [site], weatherWeek: null,
       weatherToday: { sites: { 107: Object.assign({}, base, extra) } }, tideMonth: p0Tide('107', P0_DATE, tideTime, 900) });
     return api.weeklyRecommendationForSite(site, api.weeklyInfo());
   };
@@ -2078,8 +2090,8 @@ test('P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 �
   assert.equal(entry, null);
   assert.equal(api.todayRecommendedSites().length, 0);
   const today = (time) => {
-    const fallback = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null,
-      weatherToday: { sites: { 14: { date: P0_DATE, forecastTime: P0_DATE + ' ' + time + ' KST', scoreEligible: true, missingScoreFields: [], score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' } } },
+    const fallback = loadApi(Object.assign({ now: P0_TODAY_NOW, month: 10, siteData: [site], weatherWeek: null,
+      weatherToday: { sites: { 14: { date: P0_DATE, generatedAt: P0_DATE + ' 07:00 KST', forecastTime: P0_DATE + ' ' + time + ' KST', scoreEligible: true, missingScoreFields: [], score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m' } } },
       tideMonth: p0Tide('14', P0_DATE, '12:00', 900) }, extra));
     return fallback.weeklyRecommendationForSite(site, fallback.weeklyInfo());
   };
@@ -2179,8 +2191,8 @@ test('S2-A7 만조: 잘못된 점수의 인접 예보는 쓰지 않고 정상 �
 test('S2-A8 오늘 기상 fallback(주간 자료 없음)도 같은 점수 계약을 쓴다', () => {
   const site = { ...SITE, id: 502, name: '일반2', env: '갯벌' };
   const run = (extra, state = {}) => {
-    const api = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null,
-      weatherToday: { sites: { 502: Object.assign({ date: P0_DATE, forecastTime: P0_DATE + ' 12:00 KST', score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m', scoreEligible: true, missingScoreFields: [] }, extra) } } }, state));
+    const api = loadApi(Object.assign({ now: P0_TODAY_NOW, month: 10, siteData: [site], weatherWeek: null,
+      weatherToday: { sites: { 502: Object.assign({ date: P0_DATE, generatedAt: P0_DATE + ' 07:00 KST', forecastTime: P0_DATE + ' 12:00 KST', score: 90, wind: '북풍 3m/s', rain: '강수 없음', wave: '0.3m', scoreEligible: true, missingScoreFields: [] }, extra) } } }, state));
     return api.todayRecommendedSites().length;
   };
   assert.equal(run({}), 1);
@@ -2216,7 +2228,7 @@ const R1_SIGHT = (id) => ({ [id]: { latestDate: '2026-10-08', species: ['a', 'b'
 const r1Raw = (extra = {}, time = '12:00') => Object.assign({ date: P0_DATE, forecastTime: P0_DATE + ' ' + time + ' KST', generatedAt: P0_DATE + ' 07:00 KST',
   stale: false, scoreEligible: true, missingScoreFields: [], score: 92, grade: '★★★★★', wind: '북풍 3.0m/s', rain: '강수 없음', wave: '0.3m' }, extra);
 const r1Count = (site, raw, extraState = {}) => {
-  const api = loadApi(Object.assign({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null, weatherToday: { sites: { [site.id]: raw } } }, extraState));
+  const api = loadApi(Object.assign({ now: P0_TODAY_NOW, month: 10, siteData: [site], weatherWeek: null, weatherToday: { sites: { [site.id]: raw } } }, extraState));
   return api.todayRecommendedSites().length;
 };
 const R1_SITE = { ...SITE, id: 510, name: '일반R1', env: '갯벌' };
@@ -2260,7 +2272,7 @@ test('R1-4 today 적격 metadata: scoreEligible 누락·null, missingScoreFields
 test('R1-5 만조 today fallback: 필수 기상 결측이면 12:00 만조 900cm 도 선택하지 않는다', () => {
   const site = RUNTIME.find((s) => s.id === '14');
   const run = (extra) => {
-    const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null, tideMonth: p0Tide('14', P0_DATE, '12:00', 900),
+    const api = loadApi({ now: P0_TODAY_NOW, month: 10, siteData: [site], weatherWeek: null, tideMonth: p0Tide('14', P0_DATE, '12:00', 900),
       notices: R1_NOTICE(14), recentSiteSightings: R1_SIGHT(14), weatherToday: { sites: { 14: r1Raw(extra) } } });
     return api.weeklyRecommendationForSite(site, api.weeklyInfo());
   };
@@ -2281,7 +2293,7 @@ test('R1-7 mandatory·정원 보충: 부적격 today 자료는 공지·가점·�
   const sites = Array.from({ length: 13 }, (_, i) => ({ ...SITE, id: 520 + i, name: '후보R1' + i, env: i < 5 ? '농경지' : i < 9 ? '갯벌' : '습지' }));
   const bad = [0, 1, 6]; // 공지 연계 후보 포함
   const weatherToday = { sites: Object.fromEntries(sites.map((s, i) => [s.id, r1Raw(bad.includes(i) ? { rain: null } : {}, '12:00')])) };
-  const api = loadApi({ now: P0_NOW, month: 10, siteData: sites, weatherToday, notices: [{ siteIds: [520, 526], published: true }],
+  const api = loadApi({ now: P0_TODAY_NOW, month: 10, siteData: sites, weatherToday, notices: [{ siteIds: [520, 526], published: true }],
     recentSiteSightings: { 520: { latestDate: '2026-10-08', species: ['a', 'b', 'c', 'd'] }, 521: { latestDate: '2026-10-08', species: ['a', 'b', 'c', 'd'] } } });
   const top = api.todayRecommendedSites();
   assert.equal(top.length, 10, '정상 10곳으로 채운다');
