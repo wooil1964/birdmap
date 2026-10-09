@@ -32,3 +32,10 @@
 ## 새 SHA 재검증 시작
 
 사용자 지정1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c, main38b4529. 이전ff0d334 체크포인트를 읽고 재개했다. 새로운 결과는 R123_RECHECK.md 및 results/r123에 분리한다. 기존 회귀563pass/0fail/1skip 직접 확인; 독립matrix/정상만조display추가계약/E2E 진행중. 제품수정금지.
+
+## 최종 게시 완료
+
+PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080213498
+Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080214390
+저장된 FINAL_R123_COMMENT.md와 게시본문5198자 일치를 API read-back으로 검증했다. results/r123/github_receipts.json에 증빙을 저장했다. 최종보고 commit8d2e574 및 다음 게시증빙commit은 git log -1로 확인한다. 제품/배포 변경 없이 사용자 승인 또는 새 보완SHA를 기다린다.
+

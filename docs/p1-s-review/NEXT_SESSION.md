@@ -51,3 +51,10 @@ node docs/p1-s-review/scripts/r123/pr13_r123_e2e.mjs docs/p1-s-review/.scratch/c
 
 .scratch/profile/제품archive는결과를복사한후절대경로가review/docs/p1-s-review/.scratch인지검증해nativePowerShell LiteralPath로삭제한다. 검증branch에는docs/p1-s-review만추가한다. 민감원자료·비밀·실제제보좌표는저장하지않는다.
 
+
+## 최종 게시 완료
+
+PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080213498
+Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080214390
+저장된 FINAL_R123_COMMENT.md와 게시본문5198자 일치를 API read-back으로 검증했다. results/r123/github_receipts.json에 증빙을 저장했다. 최종보고 commit8d2e574 및 다음 게시증빙commit은 git log -1로 확인한다. 제품/배포 변경 없이 사용자 승인 또는 새 보완SHA를 기다린다.
+
