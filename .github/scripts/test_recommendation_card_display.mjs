@@ -418,6 +418,11 @@ const LIFECYCLE = `(async function(){
   weatherToday=doc(cfg.reference,'${DATE} 05:41 KST'); refreshTodayPanelIfOpen(); out.push(snapshot('다시 참고 상태'));
   window.fetch=function(url){return Promise.resolve({ok:true,json:function(){return Promise.resolve(cfg.week);}});};
   var weekApplied=await loadWeatherWeek(); refreshTodayPanelIfOpen(); out.push(Object.assign(snapshot('주간 대체 예보 도착'),{applied:weekApplied}));
+  // 5) 이후 요청이 더 오래된 파일을 돌려줘도(발행 시각이 달라 반영된다) 현재성 판정에서 참고 상태가 되어 추천 근거가 되지 못한다(안전 방향).
+  weatherToday=doc(cfg.normal,'${DATE} 10:30 KST'); refreshTodayPanelIfOpen(); out.push(snapshot('정상 복구 뒤'));
+  window.fetch=function(){return Promise.resolve({ok:true,json:function(){return Promise.resolve(doc(cfg.reference,'${DATE} 05:41 KST'));}});};
+  weatherWeek=null;
+  var olderApplied=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(Object.assign(snapshot('더 오래된 파일 재수신'),{applied:olderApplied}));
   window.fetch=realFetch;
   return out;
 })()`;
@@ -436,5 +441,7 @@ test('R7 추천 자료 갱신: 전부 참고 → 빈 목록 안내, 오류 뒤�
     assert.deepEqual([by['다시 참고 상태'].cards, by['다시 참고 상태'].empty], [0, true]);
     assert.equal(by['주간 대체 예보 도착'].cards, 1);
     assert.equal(by['주간 대체 예보 도착'].score, SCORE_TEXT('★★★★★', 92));
+    assert.equal(by['정상 복구 뒤'].cards, 1, '주간 예보가 없어졌다고 가정해도 정상 today 로 추천');
+    assert.deepEqual([by['더 오래된 파일 재수신'].applied, by['더 오래된 파일 재수신'].cards, by['더 오래된 파일 재수신'].empty], [true, 0, true], '로더는 발행 시각 순서를 보지 않지만 참고 상태는 추천 근거가 아니다');
   } finally { page.dispose(); }
 });
