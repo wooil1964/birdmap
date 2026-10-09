@@ -1,0 +1,102 @@
+✔ R4-1 주간 자료 없음 + 정상 today·조석: 추천 카드와 팝업이 같은 92점을 표시하고 내부 순위 108 은 유지된다 (678.1563ms)
+✔ R4-2 정상 today 점수 0·92.5·100 은 카드와 팝업이 같은 점수를 표시한다 (0.3494ms)
+✔ R4-3 주간 자료는 있지만 해당 탐조지 항목이 없을 때도 같은 today fallback 표시를 쓴다 (0.1545ms)
+✔ R4-4 주간 기상 기반 추천도 카드와 팝업이 일치한다(기존 동작 유지) (0.1501ms)
+✔ R4-5 필수 풍속·강수 결측, 적격 미확인·목록은 추천 카드에 나오지 않고 팝업은 미확인이며 참고 기상은 남는다 (0.1976ms)
+✔ R4-6 이전 저장 자료는 카드에 나오지 않고 팝업은 점수 없이 참고 값만 보인다 (0.1558ms)
+✔ R4-7 만조 90분은 허용하고 91분은 막는다(카드 표시 포함) (0.2467ms)
+✔ R4-8 안전한 대체 만조: 예보와 90분을 넘는 높은 만조 대신 가까운 만조가 카드에 쓰인다 (0.2219ms)
+✔ R4-9 344·375·768·1024·1440px: 카드와 팝업 점수가 같고 가로로 잘리거나 화면 밖으로 나가지 않는다 (5770.4727ms)
+✖ R6-1 (C 정책) 참고 상태 today 6종: 만조·일반 fallback 모두 추천 후보·카드가 없고 빈 목록 안내가 나오며 팝업은 미확인+참고 값이다 (0.8962ms)
+✖ R6-1b (C 정책) 예보가 하루 전이면 시·분이 만조와 같아도 제외된다(1,440분 반례의 실제 카드·팝업) (0.2172ms)
+✔ R6-2 정상 최신 today(10:30 생성)는 만조·일반 fallback 모두 카드와 팝업이 같은 점수를 표시한다 (0.1051ms)
+✖ R6-3 344·375·768·1024·1440px: 정상 자료는 점수, 참고 상태 6종은 카드와 팝업 모두 "미확인"이고 잘리지 않는다 (1738.2615ms)
+✖ R7 추천 자료 갱신: 전부 참고 → 빈 목록 안내, 오류 뒤에도 유지, 정상 갱신으로 복구, 늦은 옛 응답은 무시, 대체 주간 예보 도착 시 복구 (2626.1084ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 10
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10937.6578
+
+✖ failing tests:
+
+test at .github\scripts\test_recommendation_card_display.mjs:300:1
+✖ R6-1 (C 정책) 참고 상태 today 6종: 만조·일반 fallback 모두 추천 후보·카드가 없고 빈 목록 안내가 나오며 팝업은 미확인+참고 값이다 (0.8962ms)
+  AssertionError [ERR_ASSERTION]: tide delayed_0541: 참고 자료는 추천 후보가 아니다
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/beforeR6/.github/scripts/test_recommendation_card_display.mjs:304:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_recommendation_card_display.mjs:314:1
+✖ R6-1b (C 정책) 예보가 하루 전이면 시·분이 만조와 같아도 제외된다(1,440분 반례의 실제 카드·팝업) (0.2172ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/beforeR6/.github/scripts/test_recommendation_card_display.mjs:316:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_recommendation_card_display.mjs:364:1
+✖ R6-3 344·375·768·1024·1440px: 정상 자료는 점수, 참고 상태 6종은 카드와 팝업 모두 "미확인"이고 잘리지 않는다 (1738.2615ms)
+  AssertionError [ERR_ASSERTION]: 344 delayed_0541 카드(C 정책: 참고 자료는 카드 없음): {"name":"delayed_0541","emptyNotice":false,"emptyRect":null,"cardText":"오늘 적합도 미확인","cardRect":{"left":33,"right":311,"clipped":false},"popupText":"오늘 적합도 미확인","popupRect":{"left":46,"right":174,"clipped":false}}
+  + actual - expected
+  
+  + '오늘 적합도 미확인'
+  - null
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/beforeR6/.github/scripts/test_recommendation_card_display.mjs:374:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '오늘 적합도 미확인',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_recommendation_card_display.mjs:430:1
+✖ R7 추천 자료 갱신: 전부 참고 → 빈 목록 안내, 오류 뒤에도 유지, 정상 갱신으로 복구, 늦은 옛 응답은 무시, 대체 주간 예보 도착 시 복구 (2626.1084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   1,
+  +   false
+  -   0,
+  -   true
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/beforeR6/.github/scripts/test_recommendation_card_display.mjs:435:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 1, false ],
+    expected: [ 0, true ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

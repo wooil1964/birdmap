@@ -1,0 +1,811 @@
+{
+  "head": "352315a57d038687807dbe0044c136a22fb0c9c5",
+  "timeCases": 23,
+  "timePass": 23,
+  "sourceCases": 57,
+  "mismatches": [
+    {
+      "id": "week-generation-missing-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-null-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-empty-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-bad-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "not-a-time",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-future-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 12:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-site-unavailable-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-range-missing-start-general",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "invalid-highest-no_timezone-general",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00"
+      }
+    },
+    {
+      "id": "invalid-highest-wrong_timezone-general",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 UTC",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 UTC"
+      }
+    },
+    {
+      "id": "invalid-highest-garbage_suffix-general",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 bananas",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 bananas"
+      }
+    },
+    {
+      "id": "invalid-highest-minute60-general",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:60 KST",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:60 KST"
+      }
+    },
+    {
+      "id": "invalid-highest-trailing_garbage-general",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 KST junk",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST junk"
+      }
+    },
+    {
+      "id": "week-generation-missing-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-null-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-empty-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-bad-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "not-a-time",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-future-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 12:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-site-unavailable-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-range-missing-start-tide",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-missing-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-null-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-empty-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-bad-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "not-a-time",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-future-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 12:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-site-unavailable-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-range-missing-start-island",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "invalid-highest-no_timezone-island",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00"
+      }
+    },
+    {
+      "id": "invalid-highest-wrong_timezone-island",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 UTC",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 UTC"
+      }
+    },
+    {
+      "id": "invalid-highest-garbage_suffix-island",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 bananas",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 bananas"
+      }
+    },
+    {
+      "id": "invalid-highest-minute60-island",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:60 KST",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:60 KST"
+      }
+    },
+    {
+      "id": "invalid-highest-trailing_garbage-island",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 KST junk",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST junk"
+      }
+    },
+    {
+      "id": "week-generation-missing-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-null-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-empty-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-bad-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "not-a-time",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-generation-future-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 12:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-site-unavailable-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "week-range-missing-start-boat",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 KST",
+      "strictForecastParsed": 1791601200000,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      }
+    },
+    {
+      "id": "invalid-highest-no_timezone-boat",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00"
+      }
+    },
+    {
+      "id": "invalid-highest-wrong_timezone-boat",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 UTC",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 UTC"
+      }
+    },
+    {
+      "id": "invalid-highest-garbage_suffix-boat",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 bananas",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 bananas"
+      }
+    },
+    {
+      "id": "invalid-highest-minute60-boat",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:60 KST",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:60 KST"
+      }
+    },
+    {
+      "id": "invalid-highest-trailing_garbage-boat",
+      "candidate": true,
+      "score": 99,
+      "rank": 115,
+      "forecast": "2026-10-10 12:00 KST junk",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST junk"
+      }
+    },
+    {
+      "id": "general-today-format-no_timezone",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00",
+        "ageMinutes": 30
+      }
+    },
+    {
+      "id": "general-today-format-wrong_timezone",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10 12:00 UTC",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10 12:00 UTC",
+        "ageMinutes": 30
+      }
+    },
+    {
+      "id": "general-today-format-iso_non_kst",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10T12:00:00+00:00",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10T12:00:00+00:00",
+        "ageMinutes": 30
+      }
+    },
+    {
+      "id": "general-today-format-midnight24",
+      "candidate": true,
+      "score": 92,
+      "rank": 108,
+      "forecast": "2026-10-10T24:00:00+09:00",
+      "strictForecastParsed": null,
+      "state": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-10T24:00:00+09:00",
+        "ageMinutes": 30
+      }
+    }
+  ]
+}

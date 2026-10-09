@@ -1,3 +1,10 @@
+# 최신 C 정책 검증 진행 — 352315a5 우선 재개
+
+사용자가C를승인/B는불승인. C_POLICY_RECHECK.md·results/c·scripts/c를먼저읽는다. 588/0/1·고정190/176·기존1440반례차단·S1-R·일반E2E55 완료. 새주간/일반시각관문불일치와발행자료rollback반례를root재현. Chromeloader초기baseline하네스오염은initialJSON보존/제품결함개수로미산정. 남은exact작업은 C_POLICY_RECHECK 중간메모를따른다. 현재까지최종승인아님;제품·main·배포·D1·실제제보변경금지. 체크포인트SHA는gitlog로확인한다.
+
+아래는이전R6완료재개이력이며새C최종판정과구분한다:
+
+---
 # PR #13 R6 독립 검증 완료 — 재개 지침
 
 ## 현재 판정과 확인할 파일
