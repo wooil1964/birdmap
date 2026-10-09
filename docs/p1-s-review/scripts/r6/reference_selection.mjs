@@ -1,5 +1,5 @@
 import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';
-const repo=path.resolve(process.argv[2]),out=path.resolve(process.argv[3]),head='e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6';
+const repo=path.resolve(process.argv[2]),out=path.resolve(process.argv[3]),head=process.argv[4]||'e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6';
 const html=fs.readFileSync(path.join(repo,'index.html'),'utf8').replace(/\r\n/g,'\n');
 const gitHtml=execFileSync('git',['show',head+':index.html'],{cwd:repo,encoding:'utf8',maxBuffer:1<<26});
 assert.equal(html,gitHtml.replace(/\r\n/g,'\n'));
@@ -7,7 +7,7 @@ const helper=fs.readFileSync(path.join(repo,'.github/scripts/test_weekly_recomme
 const context=vm.createContext({});vm.runInContext(html.match(/var siteData=([^\n]+);/)[0]+'\n'+html.match(/siteData=siteData\.concat\([\s\S]*?\);/)[0],context);
 const sites=JSON.parse(JSON.stringify(context.siteData)),tideSite=sites.find(s=>String(s.id)==='14');assert.ok(tideSite);
 function source(name){const start=html.indexOf('function '+name+'(');assert.ok(start>=0,name);let depth=0,quote=null;for(let i=html.indexOf('{',start);i<html.length;i++){const c=html[i],p=html[i-1];if(quote){if(c===quote&&p!=='\\')quote=null;continue;}if(c==='"'||c==="'"){quote=c;continue;}if(c==='/'&&html[i+1]==='*'){i=html.indexOf('*/',i)+1;continue;}if(c==='/'&&html[i+1]==='/'){i=html.indexOf('\n',i);continue;}if(c==='{')depth++;else if(c==='}'&&--depth===0)return html.slice(start,i+1);}throw Error(name);}
-const names=[...new Set([...vm.runInNewContext(helper.match(/const NAMES = (\[[\s\S]*?\]);/)[1]),'monthTideForSite','todayKstMonth','weatherScoreAllowed','weatherTodayForSite','todayWeatherFromWeek','v251EffectiveScore','v251GradeStars','v251ScoreDisplayText'])];
+const names=[...new Set([...vm.runInNewContext(helper.match(/const NAMES = (\[[\s\S]*?\]);/)[1]),'monthTideForSite','todayKstMonth','weatherTimeMs','weatherLatestDue','storedWeatherState','weatherScoreAllowed','weatherTodayForSite','todayWeatherFromWeek','v251EffectiveScore','v251GradeStars','v251ScoreDisplayText'])];
 const constants=[html.match(/var TODAY_MUDFLAT_TIDE_RULES=\{[\s\S]*?\};/)[0],html.match(/var WEEKLY_RECENT_BONUS_MAX=.*?;/)[0],html.match(/var AUTUMN_CORE_FIELD_SITE_IDS=.*?;/)[0],...[...html.matchAll(/var (?:WINTER|SPRING)_[A-Z_]+=new Set\(.*?;/g)].map(m=>m[0]),html.match(/var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES=.*?;/)[0]].join('\n');
 const factory=new Function('ctx','Date','var weatherWeek=ctx.week,tideMonth=ctx.tide,weatherToday=ctx.today,siteData=ctx.sites,loadedNotices=ctx.notices,PINNED_BIRDING_ISSUES=[],recommendationWeatherRules=ctx.rules,recentSiteSightings=ctx.recent;'+constants+'\n'+names.map(source).join('\n')+'\nreturn {'+names.join(',')+'};');
 const now='2026-10-10T11:00:00+09:00',day='2026-10-10';class Clock extends Date{constructor(...a){super(...(a.length?a:[now]));}static now(){return new Date(now).getTime();}}
@@ -21,7 +21,7 @@ for(const [label,fields] of variants)for(const [route,site] of [['tide',tideSite
  const entry=api.weeklyRecommendationForSite(site,api.weeklyInfo()),top=api.todayRecommendedSites(),popup=api.weatherTodayForSite(site),time=api.weatherTimeMs(item.forecastTime),tideTime=Date.parse(day+'T12:00:00+09:00');
  rows.push({label,route,candidate:!!entry,final:top.some(e=>e.site.id===site.id),rawScore:entry?.score??null,rank:entry?api.weeklyRankScore(entry):null,bonus:entry?.recentReport?.bonus??null,mandatory:entry?.isMandatory??null,numericalSafety:entry?api.weeklyRecommendationIsSafe(entry):null,state:entry?.today?._weatherState??null,cardDisplay:entry?.today?api.v251ScoreDisplayText(entry.today):null,popupDisplay:popup?api.v251ScoreDisplayText(popup):null,tideForecastGapMinutes:Number.isFinite(time)?Math.abs(tideTime-time)/60000:null,recommendationDate:entry?.recommendationDate??null});
 }
-const mismatch=rows.find(r=>r.label==='forecast_yesterday'&&r.route==='tide');assert.equal(mismatch.candidate,true);assert.equal(mismatch.final,true);assert.equal(mismatch.tideForecastGapMinutes,1440);assert.equal(mismatch.state.dataCurrent,false);
+const mismatch=rows.find(r=>r.label==='forecast_yesterday'&&r.route==='tide');assert.equal(mismatch.candidate,true);assert.equal(mismatch.final,true);assert.equal(mismatch.tideForecastGapMinutes,1440);if(head==='e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6')assert.equal(mismatch.state.dataCurrent,false);
 assert.ok(rows.filter(r=>r.label==='normal').every(r=>r.state.scoreEligible===true&&r.rank===108));
 const result={sha:head,sourceSha256:createHash('sha256').update(html).digest('hex'),clock:now,rows,actualProductFunctions: true,networkCalls:0,productChanges:0,coordinatesLogged:false};
-fs.writeFileSync(path.join(out,'reference_selection.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({sha:head,rows}));
+fs.writeFileSync(path.join(out,process.argv[4]?'reference_selection_before.json':'reference_selection.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({sha:head,rows}));

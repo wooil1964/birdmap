@@ -1,4 +1,10 @@
-# PR #13 R6 최종 독립 검증
+import fs from 'node:fs';
+const base='docs/p1-s-review',read=f=>JSON.parse(fs.readFileSync(`${base}/results/r6/${f}`,'utf8'));
+const s=read('review_summary.json'),t=read('test_summary.json');
+const table=rows=>['| 순위 | ID·탐조지 | 원점수 | 표시 | rank | 제보 가점 | 추천일·시각 KST | 선발 유형 |','|---:|---|---:|---:|---:|---:|---|---|',...rows.map(x=>`| ${x.position} | ${x.id} ${x.name} | ${x.raw} | ${x.display} | ${x.rank} | ${x.bonus} | ${x.date} ${x.time} | ${x.axis} |`)].join('\n');
+const testTable=['| 실제 실행 범위 | pass | fail | skip |','|---|---:|---:|---:|',...t.rows.map(x=>`| ${x.name} | ${x.pass} | ${x.fail} | ${x.skip} |`),'| **합계** | **578** | **0** | **1** |'].join('\n');
+const policyTable=['| 조건 이름 | 제보 | 현행 후보 | 참고 후보 | 분석용 제외 후 | 현행 상위 ID | 제외 후 상위 ID |','|---|---|---:|---:|---:|---|---|',...s.policySummary.map(x=>`| ${x.scenario} | ${x.reports} | ${x.candidates} | ${x.reference} | ${x.filteredCandidates} | ${x.currentTop.join(', ')||'없음'} | ${x.filteredTop.join(', ')||'없음'} |`)].join('\n');
+const body=`# PR #13 R6 최종 독립 검증
 
 ## 1. 종합 판정
 
@@ -43,17 +49,7 @@
 
 ## 4. 독립 자동 회귀·추가 계약
 
-| 실제 실행 범위 | pass | fail | skip |
-|---|---:|---:|---:|
-| reports_api | 178 | 0 | 0 |
-| weekly | 147 | 0 | 0 |
-| frontend | 110 | 0 | 0 |
-| chromium | 20 | 0 | 0 |
-| card_dom | 12 | 0 | 0 |
-| weather | 54 | 0 | 0 |
-| tide | 21 | 0 | 1 |
-| weather_proxy | 36 | 0 | 0 |
-| **합계** | **578** | **0** | **1** |
+${testTable}
 
 실제 명령·8실행 범위·환경 변수는 results/r6/execution_manifest.json, 출력과 해시는 test_summary.json 및 각 TAP에 보존했다. reports-api178에는 Node가 발견한 helper 모듈1건이 포함된다. 프런트110은 today 자정/현장소식/제보 검색/site history cache/recent contributors/공지KST/월간KST/tide fallback/자동갱신9파일이다. Chromium20은 notice close7 및 month tide13을 실제 Chrome으로 실행했다. 조석 skip1은 공식 샘플이 현행 rolling 기간 밖인 기존 skip이다.
 
@@ -93,33 +89,11 @@ S2-A 설계의 rawValid ∧ eligibilityValid ∧ requiredDataValid ∧ **기존 
 
 ### 최근 승인 제보 ON
 
-| 순위 | ID·탐조지 | 원점수 | 표시 | rank | 제보 가점 | 추천일·시각 KST | 선발 유형 |
-|---:|---|---:|---:|---:|---:|---|---|
-| 1 | 108 호곡리 | 92 | 92 | 103 | 11 | 2026-10-09 09:00 | field |
-| 2 | 112 알뜨르비행장 | 100 | 100 | 100 | 0 | 2026-10-13 09:00 | field |
-| 3 | 15 천수만 사기리 | 92 | 92 | 94 | 2 | 2026-10-09 09:00 | field |
-| 4 | 194 천수만 강당리 | 92 | 92 | 94 | 2 | 2026-10-09 09:00 | field |
-| 5 | 126 해리천습지 | 92 | 92 | 94 | 2 | 2026-10-09 09:00 | mudflat |
-| 6 | 14 걸매리 | 92 | 92 | 92 | 0 | 2026-10-11 18:00 | mudflat |
-| 7 | 107 매향리 | 92 | 92 | 92 | 0 | 2026-10-11 18:00 | mudflat |
-| 8 | 48 대진항 | 92 | 92 | 92 | 0 | 2026-10-09 09:00 | pelagic |
-| 9 | 195 평화의공원 | 92 | 92 | 108 | 16 | 2026-10-09 09:00 | other |
-| 10 | 3 굴업도 | 100 | 100 | 100 | 0 | 2026-10-09 18:00 | other |
+${table(s.on)}
 
 ### 최근 승인 제보 OFF
 
-| 순위 | ID·탐조지 | 원점수 | 표시 | rank | 제보 가점 | 추천일·시각 KST | 선발 유형 |
-|---:|---|---:|---:|---:|---:|---|---|
-| 1 | 112 알뜨르비행장 | 100 | 100 | 100 | 0 | 2026-10-13 09:00 | field |
-| 2 | 7 교동도 | 92 | 92 | 92 | 0 | 2026-10-09 12:00 | field |
-| 3 | 8 석모도 | 92 | 92 | 92 | 0 | 2026-10-09 18:00 | field |
-| 4 | 10 강화도 | 92 | 92 | 92 | 0 | 2026-10-09 09:00 | field |
-| 5 | 126 해리천습지 | 92 | 92 | 92 | 0 | 2026-10-09 09:00 | mudflat |
-| 6 | 14 걸매리 | 92 | 92 | 92 | 0 | 2026-10-11 18:00 | mudflat |
-| 7 | 107 매향리 | 92 | 92 | 92 | 0 | 2026-10-11 18:00 | mudflat |
-| 8 | 48 대진항 | 92 | 92 | 92 | 0 | 2026-10-09 09:00 | pelagic |
-| 9 | 3 굴업도 | 100 | 100 | 100 | 0 | 2026-10-09 18:00 | other |
-| 10 | 5 대청도 | 100 | 100 | 100 | 0 | 2026-10-09 18:00 | other |
+${table(s.off)}
 
 합성 score null11곳 입력은 별도 시험이며 기존 허위0점 후보가 제거되어165곳이 된다. 이 결과를 정상176후보와 혼용하지 않는다. 전체 후보·추천 필드·해시는 independent_replay.json 및 review_summary.json에 보존했다.
 
@@ -136,46 +110,7 @@ S2-A 설계의 rawValid ∧ eligibilityValid ∧ requiredDataValid ∧ **기존 
 
 ### 전체38조건 결과
 
-| 조건 이름 | 제보 | 현행 후보 | 참고 후보 | 분석용 제외 후 | 현행 상위 ID | 제외 후 상위 ID |
-|---|---|---:|---:|---:|---|---|
-| fixed_normal_week | OFF | 176 | 0 | 176 | 112, 7, 8, 10, 126, 14, 107, 48, 3, 5 | 112, 7, 8, 10, 126, 14, 107, 48, 3, 5 |
-| fixed_normal_week | ON | 176 | 0 | 176 | 108, 112, 15, 194, 126, 14, 107, 48, 195, 3 | 108, 112, 15, 194, 126, 14, 107, 48, 195, 3 |
-| fixed_week_loader_failure | OFF | 166 | 0 | 166 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 |
-| fixed_week_loader_failure | ON | 166 | 0 | 166 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 |
-| fixed_week_empty_registry | OFF | 166 | 0 | 166 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 |
-| fixed_week_empty_registry | ON | 166 | 0 | 166 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 |
-| fixed_week_missing_site14 | OFF | 175 | 0 | 175 | 112, 7, 8, 10, 126, 107, 9, 48, 3, 5 | 112, 7, 8, 10, 126, 107, 9, 48, 3, 5 |
-| fixed_week_missing_site14 | ON | 175 | 0 | 175 | 108, 112, 15, 194, 126, 107, 9, 48, 195, 3 | 108, 112, 15, 194, 126, 107, 9, 48, 195, 3 |
-| fixed_week_missing_report_sites | OFF | 176 | 0 | 176 | 112, 10, 15, 7, 126, 14, 107, 48, 3, 5 | 112, 10, 15, 7, 126, 14, 107, 48, 3, 5 |
-| fixed_week_missing_report_sites | ON | 176 | 0 | 176 | 108, 112, 15, 194, 126, 14, 107, 48, 195, 3 | 108, 112, 15, 194, 126, 14, 107, 48, 195, 3 |
-| fixed_week_site14_no_samples | OFF | 175 | 0 | 175 | 112, 7, 8, 10, 126, 107, 9, 48, 3, 5 | 112, 7, 8, 10, 126, 107, 9, 48, 3, 5 |
-| fixed_week_site14_no_samples | ON | 175 | 0 | 175 | 108, 112, 15, 194, 126, 107, 9, 48, 195, 3 | 108, 112, 15, 194, 126, 107, 9, 48, 195, 3 |
-| fixed_week_report_sites_no_samples | OFF | 165 | 0 | 165 | 112, 7, 8, 20, 14, 107, 9, 48, 3, 5 | 112, 7, 8, 20, 14, 107, 9, 48, 3, 5 |
-| fixed_week_report_sites_no_samples | ON | 165 | 0 | 165 | 112, 7, 8, 20, 14, 107, 9, 48, 3, 5 | 112, 7, 8, 20, 14, 107, 9, 48, 3, 5 |
-| controlled_2240_today_fresh_week_failure | OFF | 166 | 0 | 166 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 |
-| controlled_2240_today_fresh_week_failure | ON | 166 | 0 | 166 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 |
-| controlled_2240_today_delayed_week_failure | OFF | 166 | 166 | 0 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 없음 |
-| controlled_2240_today_delayed_week_failure | ON | 166 | 166 | 0 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 없음 |
-| controlled_2240_today_future_week_failure | OFF | 166 | 166 | 0 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 없음 |
-| controlled_2240_today_future_week_failure | ON | 166 | 166 | 0 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 없음 |
-| controlled_2240_today_bad_generation_week_failure | OFF | 166 | 166 | 0 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 없음 |
-| controlled_2240_today_bad_generation_week_failure | ON | 166 | 166 | 0 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 없음 |
-| controlled_2240_today_missing_generation_week_failure | OFF | 166 | 166 | 0 | 7, 8, 10, 15, 126, 9, 11, 6, 3, 108 | 없음 |
-| controlled_2240_today_missing_generation_week_failure | ON | 166 | 166 | 0 | 108, 15, 194, 37, 126, 9, 10, 195, 6, 34 | 없음 |
-| controlled_2240_mixed_report_reference | OFF | 176 | 11 | 165 | 112, 10, 15, 7, 126, 14, 107, 48, 3, 5 | 112, 7, 8, 20, 14, 107, 9, 48, 3, 5 |
-| controlled_2240_mixed_report_reference | ON | 176 | 11 | 165 | 108, 112, 15, 194, 126, 14, 107, 48, 195, 3 | 112, 7, 8, 20, 14, 107, 9, 48, 3, 5 |
-| controlled_previous_saved_week_failure | OFF | 0 | 0 | 0 | 없음 | 없음 |
-| controlled_previous_saved_week_failure | ON | 0 | 0 | 0 | 없음 | 없음 |
-| controlled_sparse6h_before_due | OFF | 1 | 0 | 1 | 14 | 14 |
-| controlled_sparse6h_before_due | ON | 1 | 0 | 1 | 14 | 14 |
-| controlled_sparse6h_after_due | OFF | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_after_due | ON | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_future_generation | OFF | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_future_generation | ON | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_bad_generation | OFF | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_bad_generation | ON | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_forecast_previous_date | OFF | 1 | 1 | 0 | 14 | 없음 |
-| controlled_sparse6h_forecast_previous_date | ON | 1 | 1 | 0 | 14 | 없음 |
+${policyTable}
 
 목록 변경량이나 후보 감소를 그 자체로 개선이라고 평가하지 않는다. 기대 효과는 검증 불능 근거로 추천하는 것을 막는 것이며, 영향은 loader·metadata 상태에 의존한다. 빈 목록 안내·재시도·캐시 복구·정상 대안 선택 검증이 필요하다. 실제 운영 빈도 및 최신 자료 전체를 strict policy로 장기간 평가하는 작업은 남아 있다.
 
@@ -214,3 +149,8 @@ merge-tree 충돌0. 결합 index는 정확한 PR head, weather_today/week 및 ti
 원본 결과 results/r6, 재현 scripts/r6, 실행 명령 execution_manifest.json. 주요 자료: source_crosscheck.json, detailed_dom_full/root.json, independent_replay.json, r6_reference_policy.json, reference_selection(_before).json, pr13_r123_actual_matrix/extended.json, sparse6h_generator_proof.json, SECURITY_REVIEW_R6.md, R6_CONTRACT_POLICY_AUDIT.md. 로그·실패·skip을 보존했고 scratch제품 archive/profile은 검증 결과 복사 후 삭제한다.
 
 중간 체크포인트3488b393271737850f27f16fc9c09d3bd7a2b648는 push 완료. 최종 보고 커밋과 PR13/Issue9 게시본문 read-back 증빙은 다음 세션에서 git log 및 results/r6/github_receipts.json으로 확인한다. 파일이 없으면 게시가 완료된 것으로 간주하지 않는다. 자기 커밋 SHA를 문서에 순환 삽입하지 않는다.
+`;
+fs.writeFileSync(`${base}/R6_RECHECK.md`,body);
+const header=`# 최신 완료 — PR #13 R6 / e9c97d6c\n\n**수정 필요 / 추천 적격성 정책 C.** R6 출처·표시 보완은175/175(추가70 포함245/245), 전체회귀578pass/0fail/1skip, S2182/21/팝업12, 고정190/176·ON/OFF 및 최신main 결합을 독립 통과했다. 그러나 known-invalid 예보 날짜/시각이 참고 표시·rank108으로 최종 추천에 남는다. 절대1440분 반례와 일반 forecast 오류/누락을 재현했다. 이전8ccb에도 같은 선발이 있으므로 신규 R6 후보 회귀와 구분한다.\n\n- 정확 head e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6 / main b0975cad9f3112af38cc286a892bf6f06722ce12.\n- [최종 R6 보고·코드 위치·보완 지시](R6_RECHECK.md). 새 결과 results/r6, 재현 scripts/r6.\n- 정책19시나리오×ON/OFF38조건·독립선발114일치. 정상176 및 주간미수신166은 제외 영향0; 생성metadata만 참고로 만든 전체미수신166→0, 혼합11참고176→165. 후보정책은 분석만 했으며 적용하지 않았다.\n- 예정갱신 지연만의 B 예외는 명시정책/사용자 승인 필요. known-invalid 시각은 예외 불가.\n- 추가계약100/103의 R5 3불일치 및 삭제/보호 old응답 실패는 별도 위험으로 보존했다. 삭제P1 우선, 보호전환/S1-P 배포전 필수차단 조건을 보고서9절에 명시했다. 사고/운영발생 미확인.\n- 임시tree59d2dbf5 충돌0·자동JSONmain blob 보존·validator2·결합JS257·일반E2E55/55.\n- 제품수정·main병합·Pages/Worker배포·운영D1·실제 제보변경 없음. 사용자정책 승인/새SHA 대기.\n\n이하 이전 검증 이력(현재 R6 판정과 구분):\n\n---\n`;
+for(const file of ['FINDINGS.md','PROGRESS.md']){let old=fs.readFileSync(`${base}/${file}`,'utf8');if(old.startsWith('# 최신 완료 — PR #13 R6 / e9c97d6c'))old=old.slice(old.indexOf('\n---\n')+6);fs.writeFileSync(`${base}/${file}`,header+old);}
+console.log('R6 final report and history headers written');

@@ -1,91 +1,85 @@
-# 최신 R6 세션 진행중 — 우선 재개
+# PR #13 R6 독립 검증 완료 — 재개 지침
 
-R6_RECHECK.md와 results/r6·scripts/r6를 먼저 읽는다. 정상표시/자동회귀 독립통과. 후보정책 판단·실험root확인·최종문서/게시가 남아 있으며 아직 최종승인 아님. 아래 R4는 이전 완료 이력이다.
+## 현재 판정과 확인할 파일
 
-# PR #13 독립 재검증 재개 — R4 8ccb248f 완료
+**수정 필요 / 추천 적격성 정책 C(배포 차단).** R6 표시 보완은 해결됐다. known-invalid 예보 날짜/시각이 참고 상태·rank108으로 최종에 남는 선발 관문은 미해결이며 이전8ccb에도 존재한다. 최종 R6_RECHECK.md, FINDINGS.md 최신 머리, results/r6/source_crosscheck.json과 github_receipts.json을 먼저 읽는다. R4/R123 및 P1-A~D 완료 분석을 반복하지 않는다.
 
-## 완료·판정
+- target e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6
+- before 8ccb248faa2c5c7b5a6019d12e19e21031169460
+- main b0975cad9f3112af38cc286a892bf6f06722ce12
+- 임시 결합 tree 59d2dbf50fd9914e97e17d2902a7b804e37219d4 (main 병합 아님)
+- review branch review/p1-s-pr13. 중간 체크포인트3488b393271737850f27f16fc9c09d3bd7a2b648 push 완료. 최종 보고/게시 증빙 커밋은 git log -3 및 github_receipts.json의 reportCommit에서 확인한다. 자기커밋SHA를 같은커밋 문서에 순환 삽입하지 않는다.
 
-- **수정 필요**: 정상 R4는 해결, 참고 today 자료의 무조건 현재 적격 출처 승격이 남았다. R4_RECHECK.md 3절·9절을 먼저 읽는다.
-- 정확한 target `8ccb248faa2c5c7b5a6019d12e19e21031169460` / 이전 `1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c` / main `b0975cad9f3112af38cc286a892bf6f06722ce12`.
-- 원래 회귀573pass/0fail/1skip, 카드DOM9/9·old3pass6fail, S2182/21/popup12 통과.
-- 독립 실제Chrome: 정상145/145, 추가참고6조건×5폭30불일치; 이전 동일조건30/30pass, 예외0. root375px도 새29pass6fail/이전6pass 직접 확인. 실패를 통과합계에 넣지 않는다.
-- 실제builder sparse6h 출력·validator수락·수정없는 DOM 재현. 운영 발생/빈도 미확인; 표준3h 갱신지연만으로 운영도달을 단정하지 않는다.
-- 고정10/8 22:40·190/176·ON/OFF4코드 전수/좌표hash 동일, 공개 집계11곳/24문자열 불변.
-- P0·S1-R 표현171/일반17·관리자5/삭제4 회귀 통과; 최신main 임시결합 충돌0·자동JSON 동일·validator2·결합JS256. actual 조석health100곳/39관측소fresh/ok, 월간partial/stale280은 기존 자료 상태.
-- 일반E2E55/55·실제Leaflet1.9.3·예외0. 기존 late 삭제marker/보호flag 실패는 별도 P1 보안; R5/P2 및 S1-P 조건은 SECURITY_REVIEW.md 참조.
-- 검증 완료 단위 중간 commit **ff78b2f**, 최종 보고/게시증빙 checkpoint는 `git log -3 --oneline` 및 results/r4/github_receipts.json 확인. 자기커밋SHA를 순환 삽입하지 않는다.
-- 최종 댓글: FINAL_R4_COMMENT.md. PR13/Issue9 API read-back이 끝나면 github_receipts.json에 실제 URL/ID/본문해시와 보고서커밋을 저장한다. 파일이 없으면 게시 미완료다.
+## 완료 결과
 
-## 미완료·다음 작업
+- 실제 회귀578pass/0fail/1skip. reports178, weekly147, frontend110, Chromium20, cardDOM12, Pythonweather54, tide21pass/1skip, proxy36.
+- S2182/182, special21/21, popup12/12. 추가103은100pass/3 R5 불일치이며 성공으로 합산하지 않았다.
+- 실제Chrome 원래175/175 + 추가70 =245/245, 예외0; root375px49/49. 일반5폭E2E55/55, 예외0. 참고6종 카드·팝업 미확인 일치; applicable entry115건 storedWeatherState 전체필드 동일. 정상0/92/92.5/100·제보16/rank108·90/91·대체만조 유지.
+- 이전8ccb에 새R6 카드시험만 실행하면10pass/2fail, 새head12pass. 실제 builder sparse6h 출력·validator 및 제품fixture 동일 확인. 운영발생/빈도 미확인.
+- 고정10/8 22:40·190곳/176후보/176수치안전·ON/OFF 전체signature·좌표hash가35141c0/main/before/head 동일. 원본manifest16파일/공개11곳24문자열 유지.
+- 후보정책19시나리오×ON/OFF38조건×3필터, actual/독립선발114일치. 정상176 및 정상week미수신166은 참고0/제외 영향0. metadata만 참고로 바꾼week미수신166→0, 혼합11참고176→165. 실제 운영 위험빈도/목록 빈도 아님.
+- actual 만조 forecast10/9 12:00 vs tide10/10 12:00 절대1440분인데 raw92/rank108/mandatory/finaltrue. 일반은 forecast 오류/누락도 최종유지. raw own true와 derived false를 구분한다. before/head18조합 selection동일.
+- S1-R 보호표현171누락0/일반17오탐0·관리자5·ownerdelete4. 최신main 임시결합 충돌0·자동weather/tideJSON보존·validator2·JS257. actualtide100곳/39관측소fresh/ok, 월간partial/stale280 기존한계.
+- 기존삭제 oldGET 마커복구(P1우선), 보호역전(P1·전환/S1-P배포전 필수차단), R5(P2), S1-P 별도승인정책. 실제민감유출사고 증거 조회하지 않았음.
 
-이번 SHA에서 추가 정상 실험은 남아 있지 않다. **제품 보완은 검증자가 하지 않는다.** 사용자 승인 및 구현자의 새 SHA를 기다린다. PR merge/Pages/Worker 배포/운영D1/실제 사용자등록삭제 금지.
+## 다음 작업 — 사용자 정책 승인과 구현자 새 SHA 이후
 
-1. 새 PR13 head·원격main·보완댓글·diff와 인수인계를 확인한다. 이전 R1~R3/S1-R와 P1-A~D 분석은 반복하지 않는다. 변경 영향범위 회귀는 유지한다.
-2. weeklyTodayWeather3880~3882에서 기존 storedWeatherState의 날짜·forecast·generatedAt·예정갱신 계약을 실제로 재사용하는지 검사한다. own metadata/필수 기상검사를 유지하고 score guard를 raw 허용으로 완화하지 않아야 한다.
-3. 두 fallback에서 fresh정상0/92/92.5/100·rank108, 참고6종(실제builder fixture 포함)을 카드·팝업 함께 검증한다. 참고값은 보존하고 현재 적격으로 승격하지 않아야 한다. 추천 후보의 유효기간 정책 변경과 표시 계약은 구분한다.
-4. actual functions matrix, 상세 Chrome, P0 90/91/6h/24h/안전대체만조/강수1/선상 및 S1-R, 고정190/176 ON/OFF full replay를 새 archive에서 실행한다. 새코드 계약을 읽고 상수/추출목록/메타데이터를 갱신한다; 기존 스크립트 경로만 바꾸고 통과라고 하지 않는다.
-5. 최신main 임시결합·validator·관련회귀를 실행하고 자동JSON blob 보존을 확인한다. 미래 날짜/최신기상 입력과 고정10/8 입력을 혼용하지 않는다.
-6. 기존 삭제 상태 보존은 별도 P1 작은 보안PR로 요청. 보호 재분류/backend 상태 전환·S1-P 배포 전에는 old응답 무효화와 marker/popup/news/guide 동시회수 필수. 비동의 실제 민감노출이 확인되면 기존/신규 여부와 무관하게 즉시 보류/회수한다. 운영 raw좌표를 검증 fixture로 저장하지 않는다.
-7. 검증 문서/결과/NEXT를 단위별 commit/push→PR13/Issue9 결과→read-back→게시증빙 commit/push→사용자보고. 구현·운영 반영은 별도 승인 필요.
+이번 SHA의 필수 독립실험은 완료했다. **후보 정책을 검증자가 구현하지 않는다.** 현재 그대로 병합·배포 승인 아님.
 
-## 경로·복원
+1. PR13 최신head·원격main·구현 보완댓글·AI_WORK_RULES·설계/diff를 확인한다. 과거exactSHA 검증을 새head 승인으로 전용하지 않는다.
+2. 최소 known-invalid/unknown forecast/source time을 후보 전·최종 선발에서 막는지 검사한다. 실제timestamp 날짜/timezone 포함 절대±90분과 동일날짜 사용을 확인한다. 공지/가점16/mandatory/정원보충은 우회하지 못해야 한다.
+3. 사용자에게 보수적 current-eligible-only 후보 정책 또는 제한된 scheduled-delay B 예외에 관한 명시승인을 받았는지 확인한다. B는 정상 실제forecast·생성시각·P0가 확인되는 지연만 대상으로 하며 날짜 오류/검증불능은 허용 대상이 아니다. 임의max-age/새점수/생태정책을 만들지 않는다.
+4. 실제함수18조합·absolute90/91/자정/6h/24h·안전차선예보/대체만조를 재검증한다. 정상주간 우선·site없음vs부적격samples 차이를 유지하며, 정보팝업 기온/풍향/조석은 보존한다.
+5. 전체참고→빈추천 안내·재시도·캐시/늦은응답 후 최신자료 복구·정상weekly 대안·정원빈자리 부적격보충불가 시험을 추가한다. R6 표시245, matrix/special/popup, 보호/S1-R/P0, 정상190/176·ON/OFF fullsignature 회귀 유지.
+6. 최신main을 merge-tree로 임시결합해 자동JSON blob 보존·validator·영향파일 회귀·5폭실제Chrome를 확인한다. main merge/배포 금지.
+7. 별도P1 삭제보안PR을 우선 요청한다. pendingGET→delete200→fresh제외→old완료 후에도 제외, marker/popup/news/guide/cache 동시회수 시험필수. 보호상태 전환/S1-P 배포 전에 old응답 재활성화를 반드시 차단한다. 실제민감정보철회/비동의 노출 증거가 생기면 기존/신규와무관하게 공개보류/회수 우선.
+8. 검증 자료 checkpoint commit/push→PR13/Issue9 댓글→API본문readback→게시증빙 commit/push→사용자 최종보고. 승인돼도 사용자 지시 전 main/Pages/Worker/D1/실사용자등록삭제 금지.
 
-Review: `C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap` (review/p1-s-pr13)
-Analysis: `C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap`
-Python: `C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe`
-Chrome: `C:/Program Files/Google/Chrome/Application/chrome.exe`
+## 경로와 복원
 
-검증 브랜치의 제품source는7eb6764이며 실행 대상으로 쓰면 안 된다. 제품 archive/profile는 결과 복사 후 제거하며 저장되지 않는다. worktree 루트에서 복원한다:
+Review: C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap
+Analysis: C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
+Python: C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe
+Chrome: C:/Program Files/Google/Chrome/Application/chrome.exe
+
+Review 제품source는7eb6764이다. 실행하면 안 된다. archive/profile는 결과 복사 후 제거하며 version관리하지 않는다. worktree 루트에서 현재검증 정확자료를 복원한다:
 
 ```powershell
 $taskScratch='docs/p1-s-review/.scratch'
 New-Item -ItemType Directory -Path $taskScratch -Force
- git archive --format=zip --output=docs/p1-s-review/.scratch/target8ccb.zip 8ccb248faa2c5c7b5a6019d12e19e21031169460
-Expand-Archive -LiteralPath docs/p1-s-review/.scratch/target8ccb.zip -DestinationPath docs/p1-s-review/.scratch/target8ccb
- git archive --format=zip --output=docs/p1-s-review/.scratch/before1bd.zip 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c
-Expand-Archive -LiteralPath docs/p1-s-review/.scratch/before1bd.zip -DestinationPath docs/p1-s-review/.scratch/before1bd
- git merge-tree --write-tree 8ccb248faa2c5c7b5a6019d12e19e21031169460 b0975cad9f3112af38cc286a892bf6f06722ce12
-# 검증 당시 tree9949dab3131d095c293f3bd0faf8f05539a1ad1e; 실제main merge 금지
- git archive --format=zip --output=docs/p1-s-review/.scratch/combined8ccb.zip 9949dab3131d095c293f3bd0faf8f05539a1ad1e
-Expand-Archive -LiteralPath docs/p1-s-review/.scratch/combined8ccb.zip -DestinationPath docs/p1-s-review/.scratch/combined8ccb
-```
-
-## 핵심 재현 명령
-
-아래는 현재8ccb를 위한 정확한 명령이다. 새 SHA에서는 코드·상수·기대상태를 먼저 검토하고 별도 결과 폴더로 실행한다. R4_GENERATOR_FIXTURE는 실제 builder 출력이며 입력행을 수정하지 않는다.
-
-```powershell
+ git archive --format=zip --output=docs/p1-s-review/.scratch/targete9c.zip e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6
+Expand-Archive -LiteralPath docs/p1-s-review/.scratch/targete9c.zip -DestinationPath docs/p1-s-review/.scratch/targete9c
+ git archive --format=zip --output=docs/p1-s-review/.scratch/before8ccb.zip 8ccb248faa2c5c7b5a6019d12e19e21031169460
+Expand-Archive -LiteralPath docs/p1-s-review/.scratch/before8ccb.zip -DestinationPath docs/p1-s-review/.scratch/before8ccb
+ git archive --format=zip --output=docs/p1-s-review/.scratch/combinede9c.zip 59d2dbf50fd9914e97e17d2902a7b804e37219d4
+Expand-Archive -LiteralPath docs/p1-s-review/.scratch/combinede9c.zip -DestinationPath docs/p1-s-review/.scratch/combinede9c
+$env:BIRDMAP_PYTHON='C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe'
 $env:PYTHONDONTWRITEBYTECODE='1'
 $env:PYTHONUTF8='1'
 $env:PYTHONIOENCODING='utf-8'
-$env:BIRDMAP_PYTHON='C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe'
-$taskAnalysis='C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap'
-& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' docs/p1-s-review/scripts/r4/sparse6h_generator_actual.py docs/p1-s-review/.scratch/target8ccb docs/p1-s-review/results/r4
-node docs/p1-s-review/scripts/r4/pr13_r123_actual_matrix.mjs docs/p1-s-review/.scratch/target8ccb docs/p1-s-review/results/r4 $taskAnalysis
-node docs/p1-s-review/scripts/r4/pr13_r123_extended.mjs docs/p1-s-review/.scratch/target8ccb docs/p1-s-review/results/r4 $taskAnalysis docs/p1-s-review/results/r123/baseline7eb_actual_matrix.json
-node docs/p1-s-review/scripts/r4/r4_freshness_actual.mjs docs/p1-s-review/.scratch/target8ccb docs/p1-s-review/results/r4 $taskAnalysis
-node docs/p1-s-review/scripts/r4/independent_replay.mjs . $taskAnalysis docs/p1-s-review/results/r4
-node docs/p1-s-review/scripts/r4/protection_regression.mjs docs/p1-s-review/.scratch/target8ccb docs/p1-s-review/results/r4
-$env:R4_GENERATOR_FIXTURE=(Resolve-Path docs/p1-s-review/results/r4/sparse6h_generated_today.json).Path
-node docs/p1-s-review/scripts/r4/independent_r4_dom.mjs docs/p1-s-review/.scratch/target8ccb docs/p1-s-review/.scratch/dom_new 8ccb248faa2c5c7b5a6019d12e19e21031169460
-$env:R4_DIAGNOSTIC_ONLY='1'
-node docs/p1-s-review/scripts/r4/independent_r4_dom.mjs docs/p1-s-review/.scratch/before1bd docs/p1-s-review/.scratch/dom_old 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c
-Remove-Item Env:R4_DIAGNOSTIC_ONLY
-node docs/p1-s-review/scripts/r4/general_e2e.mjs docs/p1-s-review/.scratch/combined8ccb docs/p1-s-review/.scratch/e2e_new 2026-10-09T21:10:00+09:00
 ```
 
-전체 스위트8개의 실제 실행범위/명령은 results/r4/execution_manifest.json. Python runtime preload 및 browser_network_isolation.mjs는 scripts 아래다. 독립 Chrome harness는 navigation 이전 DNS/Fetch 격리, 로컬 합성API 사용, staticCDN GET/HEAD만허용한다. test DOM JSON reload도 같은syntheticfixture여야 한다. 새결과를 이전폴더에 덮어쓰지 않는다.
+원래 테스트 재현: execution_manifest.json의 workdir/command대로8스위트를 실행한다. test_summary.json은 로그파싱 결과다. 기존 node helper가 새 모듈 경로에 적용되는지 먼저 확인한다.
 
-source_crosscheck.mjs는 공식 저장결과의 exact8ccb/1bd/b097 blob과 archive를 대조한다. 새 SHA 결과로 재사용할 때 고정상수/예상 counts부터 갱신한다. 최초 harness 재시도는 제품실패가 아니다; 최종 정상145와 추가30실패를 섞거나 후자를 성공으로 세지 않는다. 회색tile은 합성응답, 실제Leaflet로딩 성공이다. 물리기기/운영Access/Turnstile/GPS/운영raw자료·전체세로layout은 미검증.
+핵심독립실험은 아래 순서(분석용out은 별도폴더에 지정하여 기존스냅샷 보존):
 
-결과 복사후 .scratch의 resolved 절대경로가 위review/docs/p1-s-review/.scratch 안임을 검사하고 nativePowerShell Remove-Item -LiteralPath로만 제거한다. 검증branch에는 docs/p1-s-review의 문서·합성시험만stage한다. 원래 제품checkout과 운영브랜치가 clean인지 마지막에 확인한다.
+```powershell
+$targetPath='docs/p1-s-review/.scratch/targete9c'
+$analysisPath='C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap'
+$replayOut='docs/p1-s-review/.scratch/replay-output'
+node docs/p1-s-review/scripts/r6/pr13_r123_actual_matrix.mjs $targetPath $replayOut $analysisPath
+& $env:BIRDMAP_PYTHON docs/p1-s-review/scripts/r6/sparse6h_generator_actual.py $targetPath $replayOut
+node docs/p1-s-review/scripts/r6/r4_freshness_actual.mjs $targetPath $replayOut $analysisPath
+node docs/p1-s-review/scripts/r6/independent_replay.mjs . $analysisPath $replayOut
+node docs/p1-s-review/scripts/r6/r6_reference_policy.mjs . $analysisPath $replayOut
+node docs/p1-s-review/scripts/r6/reference_selection.mjs $targetPath $replayOut
+node docs/p1-s-review/scripts/r6/reference_selection.mjs docs/p1-s-review/.scratch/before8ccb docs/p1-s-review/.scratch/replay-before-output 8ccb248faa2c5c7b5a6019d12e19e21031169460
+$env:R6_GENERATOR_FIXTURE=Join-Path $replayOut 'sparse6h_generated_today.json'
+node docs/p1-s-review/scripts/r6/independent_r6_dom.mjs $targetPath docs/p1-s-review/.scratch/dom-output e9c97d6c67353c2197ba2f7898329b3a6d0ce8e6
+node docs/p1-s-review/scripts/r6/general_e2e.mjs docs/p1-s-review/.scratch/combinede9c docs/p1-s-review/.scratch/e2e-output 2026-10-09T21:10:00+09:00
+node docs/p1-s-review/scripts/r6/source_crosscheck.mjs
+```
 
-## R4 최종 게시·read-back 완료
+주의: 두 reference_selection은 같은파일명을 쓰므로 위와 같이 before/after output을 분리한다. DOM 모든폭은 스크립트 기본, root49는 환경변수R6_WIDTHS=375로 실행한 범위(소스 실제 설정 확인). before 카드 실패를 다시 확인하려면 새 R6 test_recommendation_card_display.mjs와 fixture만 before archive에 복사한다. 원제품index는 그대로 둔다. 합성API·DNS/Fetch 격리를 navigation 전에 설치한 실제Chrome 하네스를 사용한다. 실제 운영자료 POST/DELETE 금지.
 
-보고서 체크포인트 **5dd7297c7e46910b1a5f8917414a14feec455f4f** push 완료.
-
-- PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080998481
-- Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080999469
-
-FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확인했다. results/r4/github_receipts.json에 URL/ID/본문SHA256/검증SHA/보고서commit을 저장했다. 최종 게시증빙commit은 git log -1로 조회한다. 판정은 수정 필요이며 제품 보완·운영 반영은 수행하지 않고 사용자 승인 및 새 SHA를 기다린다.
+source_crosscheck는 이번보존결과의 exactsource/data/hash 및 수치를 대조한다. 새실험결과를 원본results/r6에 덮어쓰지 않는다. 마지막 remoteSHA·clean상태·게시readback은 github_receipts 및 최종 git log로 확인한다. 검증 자체가 끝나면 사용자정책 승인/새SHA를 기다린다.
