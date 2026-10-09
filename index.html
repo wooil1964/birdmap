@@ -3875,11 +3875,13 @@ function weeklyTodayRecommendable(raw,site){
   if(!weeklyOwn(raw,'missingScoreFields')||!Array.isArray(raw.missingScoreFields)||raw.missingScoreFields.length)return false;
   return weeklyTodayRequiredDataValid(raw,site);
 }
-/* 검증을 통과한 오늘 저장 기상에만 출처(_weatherState)를 붙여 추천 카드·팝업이 같은 점수 허용 규칙(weatherScoreAllowed)을 쓰게 한다.
-   검증(weeklyTodayRecommendable)과 출처 부여가 한 함수 안에 있으므로 검증되지 않은 raw 에는 적격 true 가 붙을 수 없다. */
-function weeklyTodayWeather(site,raw,date){
+/* 오늘 저장 기상의 출처 판정은 팝업과 같은 storedWeatherState 한 곳에서만 한다(날짜·예보 시각·생성 시각의 유효성·미래 생성·
+   예정 갱신 시각(weatherLatestDue)·stale·own 적격 metadata·필수 기상값). 추천 카드와 팝업이 같은 결과를 쓴다.
+   후보 자격(weeklyTodayRecommendable)은 기존 그대로이며, 현재 자료가 아닌 참고 상태(갱신 지연·날짜 불일치·생성 시각 불명 등)는
+   _weatherState.scoreEligible=false 로 전달되어 점수·별점이 '오늘 적합도 미확인'으로 표시된다. 더 강한 적격 상태를 새로 만들지 않는다. */
+function weeklyTodayWeather(site,raw){
   if(!weeklyTodayRecommendable(raw,site))return null;
-  return Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||(weatherToday&&(weatherToday.generatedAt||weatherToday.updated))||'',forecastTime:raw.forecastTime||''}});
+  return Object.assign({},raw,{_weatherState:storedWeatherState(raw,weatherToday,undefined,site)});
 }
 function weeklySampleCaution(sample){
   if(!sample)return false;
@@ -3896,7 +3898,7 @@ function weeklyTideWeather(site,tide){
     return sample&&!weeklySampleCaution(sample)?{sample:sample,weather:weeklySampleAsWeather(site,sample,tide.date)}:null;
   }
   var sites=weatherToday&&weatherToday.sites, raw=sites&&(sites[String(site.id)]||sites[site.name]);
-  var date=raw&&(raw.date||weeklySampleDateText(raw)), today=weeklyTodayWeather(site,raw,date);
+  var date=raw&&(raw.date||weeklySampleDateText(raw)), today=weeklyTodayWeather(site,raw);
   if(!today)return null;
   var minutes=weeklySampleMinutes(raw);
   if(minutes===null||String(date)!==String(tide.date)||Math.abs(minutes-tide.minutes)>90)return null;
@@ -4022,7 +4024,7 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   if(!sites)return null;
   var raw=sites[String(site.id)]||sites[site.name]||null;
   var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
-  var today=weeklyTodayWeather(site,raw,date);
+  var today=weeklyTodayWeather(site,raw);
   if(!today||!weeklyDateInRange(date,week))return null;
   return {date:date,weather:today,score:raw.score};
 }
