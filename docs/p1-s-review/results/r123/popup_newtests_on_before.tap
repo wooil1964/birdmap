@@ -1,0 +1,60 @@
+✔ R2-1 검증된 저장 자료는 정상 점수(0·100·92.5 포함)와 별점을 그대로 표시한다 (19.8234ms)
+✖ R2-2 적격 metadata 가 없거나 필수 기상값이 결측인 저장 자료는 점수·별점을 내지 않고 참고 기상은 남긴다 (11.931ms)
+✔ R2-3 이전 저장 자료는 참고 값만 남기고 점수는 미확인이며, 주간 파생 점수는 검증된 표본일 때만 표시한다 (36.6847ms)
+✖ R2-4 출처 정보(_weatherState)가 없는 객체는 점수를 내지 않는다(적격성 미확인) (2.8967ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 147.6869
+
+✖ failing tests:
+
+test at .github\scripts\test_today_weather_midnight.mjs:369:1
+✖ R2-2 적격 metadata 가 없거나 필수 기상값이 결측인 저장 자료는 점수·별점을 내지 않고 참고 기상은 남긴다 (11.931ms)
+  AssertionError [ERR_ASSERTION]: scoreEligible 누락
+  + actual - expected
+  
+  + '★★★★★ 92점'
+  - '오늘 적합도 미확인'
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_today_weather_midnight.mjs:375:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '★★★★★ 92점',
+    expected: '오늘 적합도 미확인',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_today_weather_midnight.mjs:407:1
+✖ R2-4 출처 정보(_weatherState)가 없는 객체는 점수를 내지 않는다(적격성 미확인) (2.8967ms)
+  AssertionError [ERR_ASSERTION]: truthy 는 검증된 true 가 아니다
+  + actual - expected
+  
+  + '★★★★★ 92점'
+  - '오늘 적합도 미확인'
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_today_weather_midnight.mjs:410:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '★★★★★ 92점',
+    expected: '오늘 적합도 미확인',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

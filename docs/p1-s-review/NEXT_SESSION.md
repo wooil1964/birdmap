@@ -51,3 +51,11 @@ node docs/p1-s-review/scripts/pr13_e2e.mjs <combined-directory> <new-temporary-o
 ## 1bd26199 진행중 세션 재개 우선
 
 R123_RECHECK.md를 먼저 읽는다. 이전ff0d334자료는유지하고새결과는results/r123. 실제targetarchive는docs/p1-s-review/.scratch/target1bd, 최신maincombined는.scratch/combined1bd(tree1be66adc)다. 원래스위트563pass/1skip 완료. 추가matrix/정상만조fallback카드provenance/5폭E2E/기존cache위험 재평가/최종댓글 남음. agents p1s_score/p1s_taxon/p1s_protection은각각visualization pr13_r123_score/compare/e2e에script/results작성중이다. root만review docs작성. 이전JSON덮어쓰기·제품guard수정금지.
+
+## 追加 체크포인트 (R123 독립 실행 완료·E2E 재시험 대기)
+
+root가 실제 스크립트를 읽고 직접 재실행했다: S2 182/182, 특별21/21, popup12/12, 독립190전수와정원12조건, 표시표본15조건, API보호171/171·일반17오탐0·관리자인증5·소유자삭제4·기존정책6/6.
+추가 계약103중99통과,4불일치: 정상today만조카드(R4)1, 400자리유한성방어(R5)3. Python49×2문서호출은acceptance조사이며98통과로표기하지않는다.
+브라우저 첫 실행 결과e2e_initial_agent.json: 정상기능50/55, live모의병합5폭timeout. 정상만조카드미확인/팝업92점 DOM재현확인. 기존late응답의보호상태복귀 및 actualownerdelete 이후marker재등장 확인. 제품문제/harness문제분류와 root combined-main 16:40독립E2E 남음. 보조agent 사용량중단으로 root가 계속수행한다.
+새target최종판정/댓글 아직게시안됨. 제품수정/병합/배포 없음.
+

@@ -1,0 +1,278 @@
+✔ R1-1 today 정상 자료(0·100·92.5, 비필수 wave null)는 추천되고, 정상 형식만 인정한다 (68.1333ms)
+✖ R1-2 today 필수 풍속·풍향·강수가 없거나 형식이 틀리면 metadata 가 true/[] 여도 공지·가점이 있어도 추천하지 않는다 (9.9152ms)
+✖ R1-3 파고가 필요한 지역은 wave 결측·형식 오류를 거부하고, 비필수 지역의 비정상 wave 도 거부한다 (18.6787ms)
+✖ R1-4 today 적격 metadata: scoreEligible 누락·null, missingScoreFields 누락·null·비어있지 않음, 상속된 값은 거부한다 (59.8691ms)
+✖ R1-5 만조 today fallback: 필수 기상 결측이면 12:00 만조 900cm 도 선택하지 않는다 (25.7871ms)
+✔ R1-6 주간 만조: 필수 강수가 없는 인접 예보는 쓰지 않고 안전한 차선 만조를 고른다 (11.9506ms)
+✖ R1-7 mandatory·정원 보충: 부적격 today 자료는 공지·가점·부족분 보충으로 다시 들어오지 않는다 (13.4701ms)
+✖ R3-1 주간 표본: 비필수 wave 는 null 만 허용하고 문자열·음수·NaN 은 거부한다 (11.293ms)
+✖ R3-2 주간 표본: 상속된 scoreEligible·missingScoreFields 는 인정하지 않는다 (9.6275ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 351.282
+
+✖ failing tests:
+
+test at .github\scripts\test_weekly_recommendation.mjs:2228:1
+✖ R1-2 today 필수 풍속·풍향·강수가 없거나 형식이 틀리면 metadata 가 true/[] 여도 공지·가점이 있어도 추천하지 않는다 (9.9152ms)
+  AssertionError [ERR_ASSERTION]: wind null
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2234:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_weekly_recommendation.mjs:2239:1
+✖ R1-3 파고가 필요한 지역은 wave 결측·형식 오류를 거부하고, 비필수 지역의 비정상 wave 도 거부한다 (18.6787ms)
+  AssertionError [ERR_ASSERTION]: required wave=null
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2241:65)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_weekly_recommendation.mjs:2245:1
+✖ R1-4 today 적격 metadata: scoreEligible 누락·null, missingScoreFields 누락·null·비어있지 않음, 상속된 값은 거부한다 (59.8691ms)
+  AssertionError [ERR_ASSERTION]: 상속 적격 필드(Object.create 계약 시험)
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2253:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_weekly_recommendation.mjs:2256:1
+✖ R1-5 만조 today fallback: 필수 기상 결측이면 12:00 만조 900cm 도 선택하지 않는다 (25.7871ms)
+  AssertionError [ERR_ASSERTION]: {"wind":null}
+  + actual - expected
+  
+  + {
+  +   axes: {
+  +     field: false,
+  +     mudflat: true,
+  +     pelagic: false
+  +   },
+  +   basisText: '만조 시각 인접 오늘 저장 기상 기준',
+  +   cautionText: '',
+  +   extraText: '',
+  +   isMandatory: true,
+  +   priority: 1,
+  +   rankScore: 108,
+  +   reasons: [
+  +     '📢 지금 볼 만한 탐조 이슈',
+  +     '🌊 도요 이동기 물때 주목'
+  +   ],
+  +   recentReport: {
+  +     ageDays: 0,
+  +     bonus: 16,
+  +     latestDate: '2026-10-08',
+  +     speciesCount: 4
+  +   },
+  +   recommendationDate: '2026-10-10',
+  +   recommendationTime: '',
+  +   sample: null,
+  +   score: 92,
+  +   season: 'autumn',
+  +   site: {
+  +     aiSummary: '',
+  +     aiTip: '',
+  +     bestMonth: '봄;가을;겨울',
+  +     bestSeason: '겨울·이동기',
+  +     bestTime: '간조 전후 2시간',
+  +     birdingFeature: '도요물떼새;저어새;갈매기',
+  +     birds: '도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기',
+  +     carBirding: '가능',
+  +     country: '대한민국',
+  +     dataConfidence: '',
+  +     dataSource: '',
+  +     difficulty: '',
+  +     ebirdHotspotUrl: 'https://ebird.org/hotspot/L66563374',
+  +     env: '갯벌·간척호',
+  +     environmentBirdingLabel: '갯벌탐조',
+  +     habitatType: '갯벌·간척호',
+  +     id: '14',
+  +     island: false,
+  +     kakaoMapUrl: 'https://map.kakao.com/link/map/%EA%B1%B8%EB%A7%A4%EB%A6%AC,36.885972,126.883244',
+  +     ksaUrl: '',
+  +     lastReviewDate: '',
+  +     lat: 36.88597222222222,
+  +     lensRecommend: '400~800mm',
+  +     localBirdingTip: '5월 초순 만조 880cm 이상일 때 주변 물댄논으로 도요들이 피신합니다.',
+  +     localDeparturePoint: '',
+  +     localTipSiteKey: 'geolmaeri',
+  +     localTipUse: true,
+  +     lon: 126.88324444444444,
+  +     mainBirdGroup: '도요물떼새류·기러기류·오리류',
+  +     markerVar: 'marker_d1bc2a99fc39ef81fc8c5a0e0b276f8d',
+  +     mijo: false,
+  +     name: '걸매리',
+  +     naverMapUrl: 'https://map.naver.com/v5/search/%EA%B1%B8%EB%A7%A4%EB%A6%AC',
+  +     oneLineIntro: '간조 전후와 시야 확보가 핵심',
+  +     overseas: false,
+  +     parkingV23: '가능',
+  +     pelagic: false,
+  +     photoDistance: '원거리',
+  +     publicTransitHigh: false,
+  +     rare: false,
+  +     recommend5: false,
+  +     recommendedLensAuto: '400~800mm',
+  +     recommendedLensReason: '갯벌·하구는 도요·물떼새와 갈매기류 원거리 관찰이 많습니다.',
+  +     region: '충남 아산·당진',
+  +     restroomV23: '가능',
+  +     searchText: '14 걸매리 대한민국 충남 아산·당진 갯벌·간척호 도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기 도요물떼새;저어새;갈매기 봄·가을·겨울 mudflat_shorebird',
+  +     seasonTags: '봄·가을·겨울',
+  +     seasons: [
+  +       '봄',
+  +       '가을',
+  +       '겨울'
+  +     ],
+  +     showTide: true,
+  +     showWave: false,
+  +     sido: '충남',
+  +     sigungu: '아산·당진',
+  +     siteGrade: '★★★★',
+  +     tideSensitive: '예',
+  +     tideStationCode: '',
+  +     tideStationName: '평택',
+  +     tideUse: '예',
+  +     walkingLevel: '짧음~중간',
+  +     waveSensitive: '아니오',
+  +     weatherRuleKey: 'mudflat_shorebird',
+  +     windyPriority: 'tide;wind;rain',
+  +     windyUrl: 'https://www.windy.com/36.885972/126.883244?36.885972,126.883244,10'
+  +   },
+  +   sortLevel: 900,
+  +   springReason: '',
+  +   tideMatched: false,
+  +   tideText: '만조 12:00 · 900cm',
+  +   today: {
+  +     date: '2026-10-10',
+  +     forecastTime: '2026-10-10 12:00 KST',
+  +     generatedAt: '2026-10-10 07:00 KST',
+  +     grade: '★★★★★',
+  +     missingScoreFields: [],
+  +     rain: '강수 없음',
+  +     score: 92,
+  +     scoreEligible: true,
+  +     stale: false,
+  +     wave: '0.3m',
+  +     wind: null
+  +   },
+  +   weatherText: ''
+  + }
+  - null
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2264:104)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { site: { id: '14', name: '걸매리', country: '대한민국', region: '충남 아산·당진', sido: '충남', sigungu: '아산·당진', env: '갯벌·간척호', birds: '도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기', searchText: '14 걸매리 대한민국 충남 아산·당진 갯벌·간척호 도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기 도요물떼새;저어새;갈매기 봄·가을·겨울 mudflat_shorebird', seasons: [Array], rare: false, mijo: false, island: false, pelagic: false, publicTransitHigh: false, recommend5: false, overseas: false, lat: 36.88597222222222, lon: 126.88324444444444, markerVar: 'marker_d1bc2a99fc39ef81fc8c5a0e0b276f8d', habitatType: '갯벌·간척호', birdingFeature: '도요물떼새;저어새;갈매기', mainBirdGroup: '도요물떼새류·기러기류·오리류', bestSeason: '겨울·이동기', bestMonth: '봄;가을;겨울', siteGrade: '★★★★', oneLineIntro: '간조 전후와 시야 확보가 핵심', weatherRuleKey: 'mudflat_shorebird', windyPriority: 'tide;wind;rain', tideSensitive: '예', waveSensitive: '아니오', bestTime: '간조 전후 2시간', lensRecommend: '400~800mm', photoDistance: '원거리', carBirding: '가능', walkingLevel: '짧음~중간', parkingV23: '가능', restroomV23: '가능', difficulty: '', dataConfidence: '', lastReviewDate: '', dataSource: '', aiSummary: '', aiTip: '', recommendedLensAuto: '400~800mm', recommendedLensReason: '갯벌·하구는 도요·물떼새와 갈매기류 원거리 관찰이 많습니다.', environmentBirdingLabel: '갯벌탐조', seasonTags: '봄·가을·겨울', tideUse: '예', tideStationName: '평택', tideStationCode: '', showTide: true, showWave: false, localTipUse: true, localTipSiteKey: 'geolmaeri', localDeparturePoint: '', localBirdingTip: '5월 초순 만조 880cm 이상일 때 주변 물댄논으로 도요들이 피신합니다.', ebirdHotspotUrl: 'https://ebird.org/hotspot/L66563374', naverMapUrl: 'https://map.naver.com/v5/search/%EA%B1%B8%EB%A7%A4%EB%A6%AC', kakaoMapUrl: 'https://map.kakao.com/link/map/%EA%B1%B8%EB%A7%A4%EB%A6%AC,36.885972,126.883244', windyUrl: 'https://www.windy.com/36.885972/126.883244?36.885972,126.883244,10', ksaUrl: '' }, today: { date: '2026-10-10', forecastTime: '2026-10-10 12:00 KST', generatedAt: '2026-10-10 07:00 KST', stale: false, scoreEligible: true, missingScoreFields: [], score: 92, grade: '★★★★★', wind: null, rain: '강수 없음', wave: '0.3m' }, sample: null, axes: { field: false, mudflat: true, pelagic: false }, season: 'autumn', score: 92, isMandatory: true, priority: 1, reasons: [ '📢 지금 볼 만한 탐조 이슈', '🌊 도요 이동기 물때 주목' ], springReason: '', recommendationDate: '2026-10-10', recommendationTime: '', tideText: '만조 12:00 · 900cm', extraText: '', weatherText: '', cautionText: '', basisText: '만조 시각 인접 오늘 저장 기상 기준', sortLevel: 900, tideMatched: false, recentReport: { ageDays: 0, latestDate: '2026-10-08', speciesCount: 4, bonus: 16 }, rankScore: 108 },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_weekly_recommendation.mjs:2276:1
+✖ R1-7 mandatory·정원 보충: 부적격 today 자료는 공지·가점·부족분 보충으로 다시 들어오지 않는다 (13.4701ms)
+  AssertionError [ERR_ASSERTION]: 부적격 후보 제외
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2284:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_weekly_recommendation.mjs:2288:1
+✖ R3-1 주간 표본: 비필수 wave 는 null 만 허용하고 문자열·음수·NaN 은 거부한다 (11.293ms)
+  AssertionError [ERR_ASSERTION]: 0.3
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2289:64)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_weekly_recommendation.mjs:2294:1
+✖ R3-2 주간 표본: 상속된 scoreEligible·missingScoreFields 는 인정하지 않는다 (9.6275ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/before7eb_newtests/.github/scripts/test_weekly_recommendation.mjs:2300:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

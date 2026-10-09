@@ -1,0 +1,171 @@
+어청도: Windy unavailable, using Open-Meteo: offline
+어청도: Windy unavailable, using Open-Meteo: offline
+어청도: Windy unavailable, using Open-Meteo: offline
+......................................FFFFFFFFFFFFF.FFF............
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wind': None})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wind': ''})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wind': '3.6m/s'})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wind': '북동풍 m/s'})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wind': '이상풍 3.6m/s'})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wind': 3.6})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'rain': None})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'rain': ''})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'rain': '알 수 없음'})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wave': ''})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wave': '0.5'})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wave': '-1.0m'})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_actual_weather_for_eligible_sites (test_weather.WeatherWeekTests.test_today_validator_requires_actual_weather_for_eligible_sites) (fields={'wave': 0.5})
+PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 551, in test_today_validator_requires_actual_weather_for_eligible_sites
+    with self.assertRaisesRegex(AssertionError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_wave_where_the_site_needs_it (test_weather.WeatherWeekTests.test_today_validator_requires_wave_where_the_site_needs_it) (flag='showWave')
+파고 필수 지역(showWave/island/pelagic)의 wave 결측은 거부하고, 비필수 지역의 null 은 허용한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 566, in test_today_validator_requires_wave_where_the_site_needs_it
+    with self.assertRaisesRegex(AssertionError, "required wave"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_wave_where_the_site_needs_it (test_weather.WeatherWeekTests.test_today_validator_requires_wave_where_the_site_needs_it) (flag='island')
+파고 필수 지역(showWave/island/pelagic)의 wave 결측은 거부하고, 비필수 지역의 null 은 허용한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 566, in test_today_validator_requires_wave_where_the_site_needs_it
+    with self.assertRaisesRegex(AssertionError, "required wave"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_requires_wave_where_the_site_needs_it (test_weather.WeatherWeekTests.test_today_validator_requires_wave_where_the_site_needs_it) (flag='pelagic')
+파고 필수 지역(showWave/island/pelagic)의 wave 결측은 거부하고, 비필수 지역의 null 은 허용한다.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-s-pr13-review\birdmap\docs\p1-s-review\.scratch\before7eb_newtests\.github\scripts\test_weather.py", line 566, in test_today_validator_requires_wave_where_the_site_needs_it
+    with self.assertRaisesRegex(AssertionError, "required wave"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+----------------------------------------------------------------------
+Ran 53 tests in 0.680s
+
+FAILED (failures=16)
+{"date": "2026-10-09", "updated": "2026-10-09 06:00 KST", "source": "test", "status": "ok", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0, "unavailableSiteCount": 0, "scoreEligibleCount": 1}
+{"date": "2026-10-09", "updated": "2026-10-09 06:00 KST", "source": "test", "status": "ok", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0, "unavailableSiteCount": 0, "scoreEligibleCount": 1}
+{"date": "2026-10-09", "updated": "2026-10-09 06:00 KST", "source": "test", "status": "ok", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0, "unavailableSiteCount": 0, "scoreEligibleCount": 1}

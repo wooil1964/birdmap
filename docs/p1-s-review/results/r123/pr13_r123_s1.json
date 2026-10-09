@@ -1,0 +1,2474 @@
+{
+  "schemaVersion": 1,
+  "base": "38b45299c832b8ab8ad549762c02979fa8ddfb28",
+  "head": "1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c",
+  "evaluationTime": "2026-10-09T12:00:00+09:00",
+  "sourceFiles": {
+    "reports-api/src/shared.js": {
+      "baseGitSha256": "4bb428fafb76f8c6871f39066d0e2c1ba7395b755f32cbfbd5780653cd6fa2ab",
+      "headGitSha256": "35710f2353ad8a0b6c99f111cb384ce1133c53724775f8f1e9e7108e23a62f5b",
+      "worktreeSha256": "ec164e97f678bf5aabf3c2315580ca0d3792a01da85fc276c7b1191bd01e1e01",
+      "sourceChange": true
+    },
+    "reports-api/src/public.js": {
+      "baseGitSha256": "de73a7f93a6929a1ccfbc24f5907d4c6196a62580f1aa15c72edb89b3a5a0fcc",
+      "headGitSha256": "de73a7f93a6929a1ccfbc24f5907d4c6196a62580f1aa15c72edb89b3a5a0fcc",
+      "worktreeSha256": "6cd83da2cae4cbed2c685ad111411d3b38813dff047b65550c0f848dc7486cbe",
+      "sourceChange": false
+    },
+    "reports-api/src/field-updates.js": {
+      "baseGitSha256": "5f404d9d721cb659334eb4fe9cb8f4a0a2720562b61786bab80f5c7ffd2ab052",
+      "headGitSha256": "5f404d9d721cb659334eb4fe9cb8f4a0a2720562b61786bab80f5c7ffd2ab052",
+      "worktreeSha256": "1e23ded487f91485794a60a8d359eae6945a3acad41685a1e6313d5658973c84",
+      "sourceChange": false
+    },
+    "reports-api/src/admin-actions.js": {
+      "baseGitSha256": "dca76fd90d02d64ea3f40f8ffefbdb86d1e0cd7d59ed5edbc9cea277f7df105b",
+      "headGitSha256": "dca76fd90d02d64ea3f40f8ffefbdb86d1e0cd7d59ed5edbc9cea277f7df105b",
+      "worktreeSha256": "97b4f9c7a4311d025844094bc83c3b81c020f8145c79592dde916928b6194fe9",
+      "sourceChange": false
+    },
+    "reports-api/src/admin.js": {
+      "baseGitSha256": "99a36d8b06dcb8b3648c614ffef1c2aa1a9fbb772c63756e34885796e96eb512",
+      "headGitSha256": "99a36d8b06dcb8b3648c614ffef1c2aa1a9fbb772c63756e34885796e96eb512",
+      "worktreeSha256": "738276869cf7cf54577288aec0a88abb58f829c60ee7f3279533085a4f3ac546",
+      "sourceChange": false
+    },
+    "reports-api/schema.sql": {
+      "baseGitSha256": "3afafa09aa1e23d2c8ea74c0c7ba1cb0a103b68bd32bb1d85ef890203dadab50",
+      "headGitSha256": "3afafa09aa1e23d2c8ea74c0c7ba1cb0a103b68bd32bb1d85ef890203dadab50",
+      "worktreeSha256": "e51ddff8abbb9ab67069c566896b005bdad535232e2a7395f8155e3e8eb39b4b",
+      "sourceChange": false
+    },
+    "reports-api/test/helpers.mjs": {
+      "baseGitSha256": "09232a4f6b54aaebae4215004d34c45e9c2482303ec818675376e31f512b8b0a",
+      "headGitSha256": "09232a4f6b54aaebae4215004d34c45e9c2482303ec818675376e31f512b8b0a",
+      "worktreeSha256": "82717d2dd0022535abc1cb63fc7c6a1fd53970880713e623257393bdb63f7ca4",
+      "sourceChange": false
+    }
+  },
+  "constraints": {
+    "localMemoryOnly": true,
+    "productionEndpointCalls": 0,
+    "productionD1Access": 0,
+    "sourceEdits": 0,
+    "coordinateNumbersInResult": false,
+    "turnstile": "Bounded exact URL local fetch mock; no network",
+    "turnstileMockCalls": 37
+  },
+  "protectionCases": [
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "저어새",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "저어새 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "저어새 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "저어새3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리저어새",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리저어새 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리저어새 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리저어새3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,노랑부리저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/노랑부리저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n노랑부리저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;노랑부리저어새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리백로",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리백로1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리백로 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리백로 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "노랑부리백로3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,노랑부리백로1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/노랑부리백로1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n노랑부리백로1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;노랑부리백로1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "황새",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "황새 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "황새 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "황새3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "먹황새",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "먹황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "먹황새 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "먹황새 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "먹황새3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,먹황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/먹황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n먹황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;먹황새1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "따오기",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "따오기1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "따오기 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "따오기 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "따오기3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,따오기1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/따오기1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n따오기1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;따오기1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "두루미",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "두루미 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "두루미 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "두루미3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "재두루미",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "재두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "재두루미 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "재두루미 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "재두루미3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,재두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/재두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n재두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;재두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흑두루미",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흑두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흑두루미 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흑두루미 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흑두루미3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,흑두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/흑두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n흑두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;흑두루미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "검독수리",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "검독수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "검독수리 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "검독수리 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "검독수리3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,검독수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/검독수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n검독수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;검독수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참수리",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참수리 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참수리 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참수리3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,참수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/참수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n참수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;참수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흰꼬리수리",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흰꼬리수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흰꼬리수리 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흰꼬리수리 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "흰꼬리수리3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,흰꼬리수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/흰꼬리수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n흰꼬리수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;흰꼬리수리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "매",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "매 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "매 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "매3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참매",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참매 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참매 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "참매3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,참매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/참매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n참매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;참매1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "수리부엉이",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "수리부엉이1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "수리부엉이 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "수리부엉이 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "수리부엉이3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,수리부엉이1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/수리부엉이1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n수리부엉이1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;수리부엉이1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "올빼미",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "올빼미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "올빼미 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "올빼미 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "올빼미3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,올빼미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/올빼미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n올빼미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;올빼미1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "팔색조",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "팔색조1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "팔색조 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "팔색조 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "팔색조3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,팔색조1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/팔색조1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n팔색조1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;팔색조1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "뿔쇠오리",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "뿔쇠오리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "뿔쇠오리 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "뿔쇠오리 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "뿔쇠오리3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,뿔쇠오리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/뿔쇠오리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n뿔쇠오리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;뿔쇠오리1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "넓적부리도요",
+      "before": true,
+      "after": true,
+      "changed": false
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "넓적부리도요1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "넓적부리도요 1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "넓적부리도요 2마리",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "protected_name_or_quantity",
+      "raw": "넓적부리도요3개체",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새,넓적부리도요1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새/넓적부리도요1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새\n넓적부리도요1",
+      "before": false,
+      "after": true,
+      "changed": true
+    },
+    {
+      "kind": "legacy_mixed_separator",
+      "raw": "참새;넓적부리도요1",
+      "before": false,
+      "after": true,
+      "changed": true
+    }
+  ],
+  "ordinaryControls": [
+    {
+      "raw": "갈매기",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "괭이갈매기",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "검은머리갈매기",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "쇠제비갈매기2",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "알락오리",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "알락할미새",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "동박새",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "한국동박새",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "참새",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "참새1",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "참새 3마리",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "검은어깨매",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "붉은배새매",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "새매",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "매미새",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "참매미",
+      "before": false,
+      "after": false
+    },
+    {
+      "raw": "올빼미과",
+      "before": false,
+      "after": false
+    }
+  ],
+  "breedingCases": [
+    {
+      "word": "둥지",
+      "before": true,
+      "after": true
+    },
+    {
+      "word": "번식",
+      "before": true,
+      "after": true
+    },
+    {
+      "word": "포란",
+      "before": true,
+      "after": true
+    },
+    {
+      "word": "육추",
+      "before": true,
+      "after": true
+    },
+    {
+      "word": "새끼",
+      "before": true,
+      "after": true
+    },
+    {
+      "word": "영소",
+      "before": true,
+      "after": true
+    }
+  ],
+  "ambiguousCases": [
+    {
+      "raw": "저어새 -1",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새 1-3",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새1.5",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새?",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새류",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저 어 새",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새(2)",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새+1",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새1e3",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    },
+    {
+      "raw": "저어새 2마리 정도",
+      "before": false,
+      "after": false,
+      "scope": "Existing ambiguous-input S1-P design item; not an S1-R regression"
+    }
+  ],
+  "additionalCases": [
+    {
+      "raw": "저어새0",
+      "before": false,
+      "after": true,
+      "meaning": "Conservative protected-base detection; not a validated individual count or taxon write"
+    },
+    {
+      "raw": "저어새100001",
+      "before": false,
+      "after": true,
+      "meaning": "Conservative protected-base detection; not a validated individual count or taxon write"
+    },
+    {
+      "raw": "저어새01",
+      "before": false,
+      "after": true,
+      "meaning": "Conservative protected-base detection; not a validated individual count or taxon write"
+    },
+    {
+      "raw": "저어새 2 마리",
+      "before": false,
+      "after": true,
+      "meaning": "Conservative protected-base detection; not a validated individual count or taxon write"
+    },
+    {
+      "raw": "저어새",
+      "before": false,
+      "after": true,
+      "meaning": "Conservative protected-base detection; not a validated individual count or taxon write"
+    }
+  ],
+  "normalizerCases": [
+    {
+      "label": "lf",
+      "raw": "저어새\n참새",
+      "rawCodepoints": [
+        51200,
+        50612,
+        49352,
+        10,
+        52280,
+        49352
+      ],
+      "before": {
+        "ok": true,
+        "names": [
+          "저어새참새"
+        ]
+      },
+      "after": {
+        "ok": true,
+        "names": [
+          "저어새",
+          "참새"
+        ]
+      }
+    },
+    {
+      "label": "crlf",
+      "raw": "저어새\r\n참새",
+      "rawCodepoints": [
+        51200,
+        50612,
+        49352,
+        13,
+        10,
+        52280,
+        49352
+      ],
+      "before": {
+        "ok": true,
+        "names": [
+          "저어새참새"
+        ]
+      },
+      "after": {
+        "ok": true,
+        "names": [
+          "저어새",
+          "참새"
+        ]
+      }
+    },
+    {
+      "label": "cr",
+      "raw": "저어새\r참새",
+      "rawCodepoints": [
+        51200,
+        50612,
+        49352,
+        13,
+        52280,
+        49352
+      ],
+      "before": {
+        "ok": true,
+        "names": [
+          "저어새참새"
+        ]
+      },
+      "after": {
+        "ok": true,
+        "names": [
+          "저어새",
+          "참새"
+        ]
+      }
+    },
+    {
+      "label": "semicolon",
+      "raw": "참새;저어새1",
+      "rawCodepoints": [
+        52280,
+        49352,
+        59,
+        51200,
+        50612,
+        49352,
+        49
+      ],
+      "before": {
+        "ok": true,
+        "names": [
+          "참새",
+          "저어새1"
+        ]
+      },
+      "after": {
+        "ok": true,
+        "names": [
+          "참새",
+          "저어새1"
+        ]
+      }
+    },
+    {
+      "label": "middot",
+      "raw": "참새·저어새1",
+      "rawCodepoints": [
+        52280,
+        49352,
+        183,
+        51200,
+        50612,
+        49352,
+        49
+      ],
+      "before": {
+        "ok": true,
+        "names": [
+          "참새",
+          "저어새1"
+        ]
+      },
+      "after": {
+        "ok": true,
+        "names": [
+          "참새",
+          "저어새1"
+        ]
+      }
+    },
+    {
+      "label": "comma",
+      "raw": "참새,저어새1",
+      "rawCodepoints": [
+        52280,
+        49352,
+        44,
+        51200,
+        50612,
+        49352,
+        49
+      ],
+      "before": {
+        "ok": true,
+        "names": [
+          "참새",
+          "저어새1"
+        ]
+      },
+      "after": {
+        "ok": true,
+        "names": [
+          "참새",
+          "저어새1"
+        ]
+      }
+    },
+    {
+      "label": "new_slash_rejected",
+      "raw": "참새/저어새1",
+      "rawCodepoints": [
+        52280,
+        49352,
+        47,
+        51200,
+        50612,
+        49352,
+        49
+      ],
+      "before": {
+        "ok": false,
+        "error": "SPECIES_INVALID"
+      },
+      "after": {
+        "ok": false,
+        "error": "SPECIES_INVALID"
+      }
+    },
+    {
+      "label": "literal_backslash_n_rejected",
+      "raw": "저어새\\n참새",
+      "rawCodepoints": [
+        51200,
+        50612,
+        49352,
+        92,
+        110,
+        52280,
+        49352
+      ],
+      "before": {
+        "ok": false,
+        "error": "SPECIES_INVALID"
+      },
+      "after": {
+        "ok": false,
+        "error": "SPECIES_INVALID"
+      }
+    }
+  ],
+  "recentSitesCases": [
+    {
+      "raw": "저어새",
+      "before": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새 1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새 1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새 2마리",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새 2마리"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새 2 마리",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새 2 마리"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "흰꼬리수리1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "흰꼬리수리1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "매1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "매1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "참새,저어새1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "참새,저어새1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "참새/저어새1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "참새/저어새1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "참새\n저어새1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "참새\n저어새1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "참새\r\n저어새1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "참새\r\n저어새1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "참새;저어새1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "참새;저어새1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": false,
+        "speciesStrings": [],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "갈매기",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "갈매기"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": true,
+        "speciesStrings": [
+          "갈매기"
+        ],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "알락오리",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "알락오리"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": true,
+        "speciesStrings": [
+          "알락오리"
+        ],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "동박새",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "동박새"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": true,
+        "speciesStrings": [
+          "동박새"
+        ],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새 -1",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새 -1"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": true,
+        "speciesStrings": [
+          "저어새 -1"
+        ],
+        "privateFields": false
+      }
+    },
+    {
+      "raw": "저어새류",
+      "before": {
+        "included": true,
+        "speciesStrings": [
+          "저어새류"
+        ],
+        "privateFields": false
+      },
+      "after": {
+        "included": true,
+        "speciesStrings": [
+          "저어새류"
+        ],
+        "privateFields": false
+      }
+    }
+  ],
+  "legacySubmitCases": [
+    {
+      "raw": "저어새",
+      "before": {
+        "status": 201,
+        "storedSpecies": "저어새",
+        "pendingPublic": 0,
+        "publicVisibility": "withheld",
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "저어새",
+        "pendingPublic": 0,
+        "publicVisibility": "withheld",
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "저어새1",
+      "before": {
+        "status": 201,
+        "storedSpecies": "저어새1",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "저어새1",
+        "pendingPublic": 0,
+        "publicVisibility": "withheld",
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "저어새 2마리",
+      "before": {
+        "status": 201,
+        "storedSpecies": "저어새 2마리",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "저어새 2마리",
+        "pendingPublic": 0,
+        "publicVisibility": "withheld",
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "참새\n저어새1",
+      "before": {
+        "status": 201,
+        "storedSpecies": "참새저어새1",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "참새 · 저어새1",
+        "pendingPublic": 0,
+        "publicVisibility": "withheld",
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "참새\r\n저어새1",
+      "before": {
+        "status": 201,
+        "storedSpecies": "참새저어새1",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "참새 · 저어새1",
+        "pendingPublic": 0,
+        "publicVisibility": "withheld",
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "참새/저어새",
+      "before": {
+        "status": 400,
+        "storedSpecies": null,
+        "pendingPublic": null,
+        "publicVisibility": null,
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": "SPECIES_INVALID"
+      },
+      "after": {
+        "status": 400,
+        "storedSpecies": null,
+        "pendingPublic": null,
+        "publicVisibility": null,
+        "spotReturned": false,
+        "exactCoordinatesReturned": false,
+        "error": "SPECIES_INVALID"
+      }
+    },
+    {
+      "raw": "갈매기",
+      "before": {
+        "status": 201,
+        "storedSpecies": "갈매기",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "갈매기",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "알락오리",
+      "before": {
+        "status": 201,
+        "storedSpecies": "알락오리",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "알락오리",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    },
+    {
+      "raw": "동박새",
+      "before": {
+        "status": 201,
+        "storedSpecies": "동박새",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      },
+      "after": {
+        "status": 201,
+        "storedSpecies": "동박새",
+        "pendingPublic": 1,
+        "publicVisibility": "approximate",
+        "spotReturned": true,
+        "exactCoordinatesReturned": false,
+        "error": null
+      }
+    }
+  ],
+  "fieldSubmitCases": [
+    {
+      "raw": "저어새",
+      "before": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "저어새1",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "저어새 1",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "저어새 2마리",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "흰꼬리수리1",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "매1",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": true,
+        "exactCoordinatesReturned": false,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "갈매기",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "알락오리",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "동박새",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    },
+    {
+      "raw": "저어새 -1",
+      "before": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      },
+      "after": {
+        "status": 201,
+        "locationHidden": false,
+        "exactCoordinatesReturned": true,
+        "stablePublicPoint": true,
+        "generalFlagDoesNotImplyBreeding": true
+      }
+    }
+  ],
+  "fieldBreedingCases": [
+    {
+      "word": "둥지",
+      "status": 400,
+      "error": "FIELD_BREEDING_NOT_ALLOWED"
+    },
+    {
+      "word": "번식",
+      "status": 400,
+      "error": "FIELD_BREEDING_NOT_ALLOWED"
+    },
+    {
+      "word": "포란",
+      "status": 400,
+      "error": "FIELD_BREEDING_NOT_ALLOWED"
+    },
+    {
+      "word": "육추",
+      "status": 400,
+      "error": "FIELD_BREEDING_NOT_ALLOWED"
+    },
+    {
+      "word": "새끼",
+      "status": 400,
+      "error": "FIELD_BREEDING_NOT_ALLOWED"
+    },
+    {
+      "word": "영소",
+      "status": 400,
+      "error": "FIELD_BREEDING_NOT_ALLOWED"
+    }
+  ],
+  "adminPlanCases": [
+    {
+      "raw": "저어새\n참새",
+      "before": {
+        "ok": true,
+        "storedSpecies": "저어새참새",
+        "status": "approved"
+      },
+      "after": {
+        "ok": true,
+        "storedSpecies": "저어새 · 참새",
+        "status": "approved"
+      }
+    },
+    {
+      "raw": "저어새\r\n참새",
+      "before": {
+        "ok": true,
+        "storedSpecies": "저어새참새",
+        "status": "approved"
+      },
+      "after": {
+        "ok": true,
+        "storedSpecies": "저어새 · 참새",
+        "status": "approved"
+      }
+    },
+    {
+      "raw": "참새/저어새",
+      "before": {
+        "ok": false,
+        "error": "SPECIES_INVALID"
+      },
+      "after": {
+        "ok": false,
+        "error": "SPECIES_INVALID"
+      }
+    }
+  ],
+  "adminAuthenticatedCases": [
+    {
+      "name": "unauthenticated_unpublish_blocked",
+      "status": 403,
+      "recordPreserved": true
+    },
+    {
+      "name": "unpublish",
+      "status": 200,
+      "approvedRemoved": true,
+      "recordPreserved": true
+    },
+    {
+      "name": "reject",
+      "status": 200,
+      "approvedRemoved": true,
+      "recordPreserved": true
+    },
+    {
+      "name": "pending_visibility_withdraw",
+      "status": 200,
+      "pendingRemoved": true,
+      "recordPreserved": true
+    },
+    {
+      "name": "no_permanent_delete_action",
+      "status": 400,
+      "error": "ACTION_INVALID",
+      "recordPreserved": true
+    }
+  ],
+  "fieldOwnerDeleteCases": [
+    {
+      "name": "other_device_delete_blocked",
+      "status": 403,
+      "recordRetained": true
+    },
+    {
+      "name": "own_delete",
+      "status": 200
+    },
+    {
+      "name": "get_excludes_deleted",
+      "status": 200,
+      "removed": true
+    },
+    {
+      "name": "idempotent_owner_delete",
+      "status": 200,
+      "alreadyDeleted": true
+    }
+  ],
+  "unchangedPolicyBoundary": [
+    {
+      "version": "before",
+      "approvedReturnsSpecies": true,
+      "approvedUsesActualPoint": true,
+      "siteHistoryReturnsSpecies": true,
+      "siteHistoryTotal": 1,
+      "scope": "Unchanged S1-P approval policy, not a newly introduced regression"
+    },
+    {
+      "version": "after",
+      "approvedReturnsSpecies": true,
+      "approvedUsesActualPoint": true,
+      "siteHistoryReturnsSpecies": true,
+      "siteHistoryTotal": 1,
+      "scope": "Unchanged S1-P approval policy, not a newly introduced regression"
+    }
+  ],
+  "summary": {
+    "exactAndQuantityCases": 95,
+    "legacyMixedCases": 76,
+    "protectedRepresentationCases": 171,
+    "repairedProtectedRepresentationCases": 152,
+    "ordinaryControls": 17,
+    "ordinaryFalsePositiveCount": 0,
+    "existingBreedingCases": 6,
+    "recentApiCases": 18,
+    "legacySubmitCases": 9,
+    "fieldSubmitCases": 10,
+    "fieldBreedingCases": 6,
+    "adminPlanCases": 3,
+    "adminAuthenticatedCases": 5,
+    "fieldOwnerDeleteCases": 4,
+    "allAssertionsPassed": true
+  },
+  "interpretation": "S1-R closes represented exact-list count/delimiter gaps. Ambiguous-input/read-after-approval/canonical privacy are separately deferred S1-P. No production disclosure claim. Counts do not represent operational reports or biological occurrence."
+}
