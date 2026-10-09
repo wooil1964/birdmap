@@ -1,0 +1,602 @@
+{
+  "head": "8ccb248faa2c5c7b5a6019d12e19e21031169460",
+  "baselineFixtureCorrection": "old optional base wave .3m normalized to generator canonical 0.3m; algorithm unchanged",
+  "scope": "Synthetic one-site temporary JSON; production file/DB/Worker untouched. Validator document acceptance is distinct from recommendation eligibility.",
+  "sourceDate": "2026-10-08",
+  "fixedEvaluationTime": "2026-10-08T22:40:00+09:00",
+  "rows": [
+    {
+      "case": "zero",
+      "baseNominalRecommendationCase": true,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "hundred",
+      "baseNominalRecommendationCase": true,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "float",
+      "baseNominalRecommendationCase": true,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST is eligible without a score"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: None"
+      }
+    },
+    {
+      "case": "missing_score",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "KeyError: 'score'"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "KeyError: 'score'"
+      }
+    },
+    {
+      "case": "NaN",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weekly weather contains NaN"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weather contains NaN"
+      }
+    },
+    {
+      "case": "Infinity",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weekly weather contains Infinity"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weather contains Infinity"
+      }
+    },
+    {
+      "case": "-Infinity",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weekly weather contains -Infinity"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weather contains -Infinity"
+      }
+    },
+    {
+      "case": "empty",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST score out of range: ''"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: ''"
+      }
+    },
+    {
+      "case": "numeric_string",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST score out of range: '92'"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: '92'"
+      }
+    },
+    {
+      "case": "negative",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST score out of range: -1"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: -1"
+      }
+    },
+    {
+      "case": "above100",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST score out of range: 101"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: 101"
+      }
+    },
+    {
+      "case": "boolean_true",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST score out of range: True"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: True"
+      }
+    },
+    {
+      "case": "boolean_false",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST score out of range: False"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 score is not a finite number in 0-100: False"
+      }
+    },
+    {
+      "case": "eligible_false_score92",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST carries a score while ineligible"
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "eligible_missing",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "KeyError: 'scoreEligible'"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 scoreEligible is not a boolean: None"
+      }
+    },
+    {
+      "case": "eligible_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST scoreEligible is not a boolean: None"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 scoreEligible is not a boolean: None"
+      }
+    },
+    {
+      "case": "eligible_one",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST scoreEligible is not a boolean: 1"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 scoreEligible is not a boolean: 1"
+      }
+    },
+    {
+      "case": "eligible_string",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST scoreEligible is not a boolean: 'true'"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 scoreEligible is not a boolean: 'true'"
+      }
+    },
+    {
+      "case": "eligible_float",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST scoreEligible is not a boolean: 0.5"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 scoreEligible is not a boolean: 0.5"
+      }
+    },
+    {
+      "case": "missing_reason_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST missingScoreFields is not a list: None"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 missingScoreFields is not a list: None"
+      }
+    },
+    {
+      "case": "missing_reason_absent",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "KeyError: 'missingScoreFields'"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 missingScoreFields is not a list: None"
+      }
+    },
+    {
+      "case": "missing_reason",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST is eligible with missing fields"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: "
+      }
+    },
+    {
+      "case": "required_wind_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST is eligible without windSpeed"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible without a valid wind: None"
+      }
+    },
+    {
+      "case": "required_rain_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST is eligible without precipitation3h"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible without a valid rain: None"
+      }
+    },
+    {
+      "case": "required_direction_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST is eligible without windDirectionDeg"
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "wave_required_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST is eligible without wave"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible without a valid required wave: None"
+      }
+    },
+    {
+      "case": "valid_ineligible_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "optional_wave_string",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST waveM is not a finite number: '0.3'"
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "optional_wave_negative",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 2026-10-08 2026-10-08 12:00 KST waveM is negative: -1"
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "optional_wave_NaN",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weekly weather contains NaN"
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: Weather contains NaN"
+      }
+    },
+    {
+      "case": "formatted_normal",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "formatted_trim",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible without a valid wind: ' 북풍 3m/s '"
+      }
+    },
+    {
+      "case": "formatted_unicode",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "formatted_extreme_wind",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "formatted_extreme_rain",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "formatted_extreme_wave",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "formatted_finite_large",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "wind_speed_missing",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible without a valid wind: '북풍'"
+      }
+    },
+    {
+      "case": "wind_direction_missing",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible without a valid wind: '3m/s'"
+      }
+    },
+    {
+      "case": "wave_optional_null",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "wave_optional_absent",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "wave_optional_number",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible with an invalid optional wave: 0.3"
+      }
+    },
+    {
+      "case": "wave_optional_empty",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible with an invalid optional wave: ''"
+      }
+    },
+    {
+      "case": "wave_optional_negative",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": false,
+        "message": "AssertionError: 501 eligible with an invalid optional wave: '-0.3m'"
+      }
+    },
+    {
+      "case": "week_optional_wave_absent",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": false,
+        "message": "KeyError: 'waveM'"
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "wind_trailing_newline",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "wind_form_feed",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    },
+    {
+      "case": "rain_trailing_newline",
+      "baseNominalRecommendationCase": false,
+      "weekly": {
+        "documentAccepted": true,
+        "message": ""
+      },
+      "today": {
+        "documentAccepted": true,
+        "message": ""
+      }
+    }
+  ],
+  "pythonNumericPredicate": {
+    "boolRejected": true,
+    "numberStringRejected": true,
+    "floatAccepted": true
+  }
+}

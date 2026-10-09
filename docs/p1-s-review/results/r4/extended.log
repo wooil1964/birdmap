@@ -1,0 +1,312 @@
+{
+  "head": "8ccb248faa2c5c7b5a6019d12e19e21031169460",
+  "total": 103,
+  "passed": 100,
+  "failed": [
+    {
+      "id": "formatted-data-extreme_wind",
+      "actual": true,
+      "expected": false,
+      "pass": false,
+      "scope": "synthetic actual product"
+    },
+    {
+      "id": "formatted-data-extreme_rain",
+      "actual": true,
+      "expected": false,
+      "pass": false,
+      "scope": "synthetic actual product"
+    },
+    {
+      "id": "formatted-data-extreme_wave",
+      "actual": true,
+      "expected": false,
+      "pass": false,
+      "scope": "synthetic actual product"
+    }
+  ],
+  "uiBeforeAfter": [
+    {
+      "head": "7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e",
+      "route": "valid today-only tide fallback",
+      "candidate": true,
+      "raw": 92,
+      "rank": 108,
+      "safe": true,
+      "top": [
+        "14"
+      ],
+      "cardDisplay": "★★★★★ 92점",
+      "cardScoreAllowed": true,
+      "popupDisplay": "★★★★★ 92점",
+      "popupState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "popupWind": "북풍 3m/s",
+      "popupRaw": 92
+    },
+    {
+      "head": "8ccb248faa2c5c7b5a6019d12e19e21031169460",
+      "route": "valid today-only tide fallback",
+      "candidate": true,
+      "raw": 92,
+      "rank": 108,
+      "safe": true,
+      "top": [
+        "14"
+      ],
+      "candidateState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST"
+      },
+      "cardDisplay": "★★★★★ 92점",
+      "cardScoreAllowed": true,
+      "popupDisplay": "★★★★★ 92점",
+      "popupState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "popupWind": "북풍 3m/s",
+      "popupRaw": 92
+    }
+  ],
+  "forgery": {
+    "directHelperAllowed": true,
+    "normalPopupAllowed": false,
+    "note": "Private _weatherState is trusted by display helper. Raw data ingestion recomputes and replaces it; direct helper result is not a production bypass."
+  },
+  "live": [
+    {
+      "id": "normal",
+      "applied": true,
+      "updateCount": 1,
+      "expected": true,
+      "scoreAllowed": true,
+      "scoreDisplay": "★★★★★ 92점",
+      "raw": 92,
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": true
+      },
+      "wind": "3m/s"
+    },
+    {
+      "id": "unknown-eligibility",
+      "applied": true,
+      "updateCount": 1,
+      "expected": false,
+      "scoreAllowed": false,
+      "scoreDisplay": "오늘 적합도 미확인",
+      "raw": 92,
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": false
+      },
+      "wind": "3m/s"
+    },
+    {
+      "id": "missing-wind",
+      "applied": true,
+      "updateCount": 1,
+      "expected": false,
+      "scoreAllowed": false,
+      "scoreDisplay": "오늘 적합도 미확인",
+      "raw": 92,
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": false
+      },
+      "wind": "3m/s"
+    },
+    {
+      "id": "previous-saved",
+      "applied": true,
+      "updateCount": 1,
+      "expected": false,
+      "scoreAllowed": false,
+      "scoreDisplay": "오늘 적합도 미확인",
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": false
+      },
+      "wind": "3m/s"
+    },
+    {
+      "id": "normal-week-derived",
+      "applied": true,
+      "updateCount": 1,
+      "expected": true,
+      "scoreAllowed": true,
+      "scoreDisplay": "★★★★★ 92점",
+      "raw": 92,
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": true
+      },
+      "wind": "3m/s"
+    },
+    {
+      "id": "invalid-week-derived",
+      "applied": true,
+      "updateCount": 1,
+      "expected": false,
+      "scoreAllowed": false,
+      "scoreDisplay": "오늘 적합도 미확인",
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": false
+      },
+      "wind": "3m/s"
+    },
+    {
+      "id": "null-score",
+      "applied": true,
+      "updateCount": 1,
+      "expected": false,
+      "scoreAllowed": false,
+      "scoreDisplay": "오늘 적합도 미확인",
+      "raw": null,
+      "state": {
+        "dataCurrent": true,
+        "scoreEligible": false
+      },
+      "wind": "3m/s"
+    }
+  ],
+  "repaired": {
+    "matrix": [
+      {
+        "id": "PR13-S2-required_wind_null-general_today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "PR13-S2-required_wind_null-tide_today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "PR13-S2-required_wind_null-island_today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "PR13-S2-required_rain_null-general_today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "PR13-S2-required_rain_null-tide_today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "PR13-S2-required_rain_null-island_today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "PR13-S2-required_wave_null-island_today",
+        "old": false,
+        "new": true
+      }
+    ],
+    "special": [
+      {
+        "id": "optional-wave-invalid-0.3",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "optional-wave-invalid--1",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "optional-wave-invalid-NaN",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "inherited-eligibility-week",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "inherited-eligibility-today",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "today-all-weather-fields-null",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "island-today-all-weather-fields-null",
+        "old": false,
+        "new": true
+      }
+    ],
+    "popup": [
+      {
+        "id": "popup-missingEligible",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-nullEligible",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-missingReason",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-nullReason",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-nonemptyReason",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-requiredWindMissing",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-requiredRainMissing",
+        "old": false,
+        "new": true
+      },
+      {
+        "id": "popup-requiredWaveMissing",
+        "old": false,
+        "new": true
+      }
+    ]
+  }
+}

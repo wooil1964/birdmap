@@ -1,0 +1,160 @@
+{
+  "head": "8ccb248faa2c5c7b5a6019d12e19e21031169460",
+  "totalRows": 30,
+  "normalScores": [
+    {
+      "score": 0,
+      "card": "★ 0점",
+      "popup": "★ 0점",
+      "rank": 16
+    },
+    {
+      "score": 92,
+      "card": "★★★★★ 92점",
+      "popup": "★★★★★ 92점",
+      "rank": 108
+    },
+    {
+      "score": 92.5,
+      "card": "★★★★★ 92.5점",
+      "popup": "★★★★★ 92.5점",
+      "rank": 108.5
+    },
+    {
+      "score": 100,
+      "card": "★★★★★ 100점",
+      "popup": "★★★★★ 100점",
+      "rank": 116
+    }
+  ],
+  "newMismatches": [
+    {
+      "id": "same_day_generation_delayed",
+      "route": "tide_today",
+      "oldCard": "오늘 적합도 미확인",
+      "newCard": "★★★★★ 92점",
+      "popup": "오늘 적합도 미확인",
+      "popupState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 05:41 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 319
+      }
+    },
+    {
+      "id": "future_generated",
+      "route": "tide_today",
+      "oldCard": "오늘 적합도 미확인",
+      "newCard": "★★★★★ 92점",
+      "popup": "오늘 적합도 미확인",
+      "popupState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 12:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 0
+      }
+    },
+    {
+      "id": "malformed_generated",
+      "route": "tide_today",
+      "oldCard": "오늘 적합도 미확인",
+      "newCard": "★★★★★ 92점",
+      "popup": "오늘 적합도 미확인",
+      "popupState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "not-a-timestamp",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": null
+      }
+    },
+    {
+      "id": "missing_generated_and_root",
+      "route": "tide_today",
+      "oldCard": "오늘 적합도 미확인",
+      "newCard": "★★★★★ 92점",
+      "popup": "오늘 적합도 미확인",
+      "popupState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": null
+      }
+    },
+    {
+      "id": "forecast_previous_but_date_current",
+      "route": "tide_today",
+      "oldCard": "오늘 적합도 미확인",
+      "newCard": "★★★★★ 92점",
+      "popup": "오늘 적합도 미확인",
+      "popupState": {
+        "kind": "previous_saved",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": "2026-10-09 12:00 KST",
+        "ageMinutes": 30
+      }
+    },
+    {
+      "id": "generator_sparse6h_delayed",
+      "route": "tide_today",
+      "oldCard": "오늘 적합도 미확인",
+      "newCard": "★★★★★ 92점",
+      "popup": "오늘 적합도 미확인",
+      "popupState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 06:10 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 290
+      }
+    }
+  ],
+  "previous": [
+    {
+      "id": "previous_saved",
+      "route": "tide_today",
+      "before": false,
+      "after": false
+    },
+    {
+      "id": "previous_saved",
+      "route": "ordinary_today",
+      "before": false,
+      "after": false
+    },
+    {
+      "id": "previous_day_lies_eligible",
+      "route": "tide_today",
+      "before": false,
+      "after": false
+    },
+    {
+      "id": "previous_day_lies_eligible",
+      "route": "ordinary_today",
+      "before": false,
+      "after": false
+    }
+  ]
+}
