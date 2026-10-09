@@ -61,13 +61,12 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState',
+  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
   'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
-/* C 정책(PR #13)에서 추가된 함수. 수정 전 index.html 에는 없으므로 있을 때만 읽어 새 시험만 실패하는 상태를 재현할 수 있다. */
-const C_POLICY_NAMES = ['weeklyKstTimestamp', 'weeklyForecastTimestamp', 'weeklyTideTimestamp', 'weeklyTideForecastGapMinutes', 'weeklyRecommendationEligible'];
-const ALL_NAMES = NAMES.concat(C_POLICY_NAMES.filter((name) => HTML.includes('function ' + name + '(')));
+/* C 정책(PR #13)에서 추가된 함수(weeklyKstTimestamp 등)는 수정 전 index.html 에는 없으므로 있는 것만 읽는다(수정 전 실패 재현용). */
+const ALL_NAMES = NAMES.filter((name) => HTML.includes('function ' + name + '('));
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
 function loadApi(state = {}) {
