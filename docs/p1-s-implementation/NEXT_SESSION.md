@@ -13,7 +13,9 @@
 | **R2 보완** | 362ce50 | 팝업 점수는 검증된 적격 출처에서만 표시 |
 | 증거·문서 | 1bd2619 | R1~R3 재현 전후 matrix, 비교 결과 (Sol 재검증: R1~R3 해결, **R4 신규 회귀 지적**) |
 | **R4 보완 코드** | 8e2ced9 | 검증된 today 만조 fallback 에 출처(`_weatherState`) 연결 → 추천 카드 점수 표시 |
-| **R4 DOM 회귀 시험** | c2e1c8e 외 | 실제 Chrome 에서 `renderTodayPanel` 카드 + 팝업 DOM 일치 시험 (344·375·768·1024·1440) |
+| **R4 DOM 회귀 시험** | c2e1c8e, 8ccb248 | 실제 Chrome 에서 `renderTodayPanel` 카드 + 팝업 DOM 일치 시험 (344·375·768·1024·1440) — Sol 재검증: R4 해결, **R6(참고 자료 출처 승격) 지적** |
+| **R6 DOM 시험(수정 전 실패)** | a7f0055 | 참고 today 6종 × 만조/일반 × 5폭, 실제 builder sparse6h fixture |
+| **R6 보완 코드** | cb2a8c8 | 출처 판정을 `storedWeatherState` 한 곳으로 통합 |
 
 ## R1~R3 변경 요약 (모두 index.html + validate_weather.py)
 - `weeklyTodayRequiredDataValid(raw, site)`: today 저장 항목의 `wind`("북동풍 3.6m/s", 8방위), `rain`("강수 없음"/"3시간 강수 0.5mm"), `wave`("0.7m") 를 생성기 형식 그대로 검사.
@@ -37,11 +39,22 @@
 
 ## R4 (정상 today 만조 fallback 카드가 "오늘 적합도 미확인")
 - 원인: `weeklyTideWeather` 의 today 분기가 검증된 raw 를 `Object.assign({},raw)` 로만 복사해 `_weatherState`(출처)가 없었다. `weatherScoreAllowed` 는 검증된 `_weatherState.scoreEligible===true` 를 요구하므로 추천 카드(`renderTodayPanel` → `v251ScoreDisplayText(entry.today)`)만 미확인이 됐고, 팝업은 `storedWeatherState` 로 출처를 다시 계산해 정상 표시됐다.
-- 수정: `weeklyTodayWeather(site, raw, date)` 한 함수에서 `weeklyTodayRecommendable` 검증 → 통과한 것에만 `_weatherState`(scoreEligible:true, kind today_saved/today_fallback)를 붙인다.
+- (아래 R6 에서 출처 판정이 `storedWeatherState` 로 대체됨 — 무조건 적격 부여는 폐기) 수정: `weeklyTodayWeather(site, raw, date)` 한 함수에서 `weeklyTodayRecommendable` 검증 → 통과한 것에만 `_weatherState`(scoreEligible:true, kind today_saved/today_fallback)를 붙인다.
   `weeklyTideWeather` 와 `weeklyWeatherEntryForSite` 가 같은 함수를 쓴다. **검증되지 않은 raw 에는 출처가 붙을 수 없고, `weatherScoreAllowed` 는 변경하지 않았다.** 점수 산식·P0 90분·강수 1mm·선상·가점 16·정원 무변경.
 - 증거(`results/r4/`): 수정 전(1bd2619) 걸매리 today fallback — card `오늘 적합도 미확인` / popup `★★★★★ 92점`(0·92.5·100 도 같은 불일치), 수정 후 모두 일치(rank 108 유지).
   카드 시험: 수정 전 6 fail/3 pass → 수정 후 9/9. 만조 90분 허용·91분 차단·대체 만조(12:30 · 870cm)·결측/적격 미확인/이전 저장 미표시(popup 은 미확인 + 참고 값)도 포함.
   (91분 시나리오에서 카드가 없고 팝업이 92점인 것은 불일치가 아니다: 팝업은 그 장소의 오늘 기상이고, 카드는 만조 관문을 통과한 추천이다.)
+
+## R6 (참고 상태 today 자료가 추천 카드에서 현재 적격 점수로 승격)
+- 원인: R4 의 `weeklyTodayWeather` 가 `weeklyTodayRecommendable`(점수·적격 metadata·필수 기상값) 통과 후 `dataCurrent:true, scoreEligible:true, stale:false` 를 **무조건** 부여했다. 팝업은 `storedWeatherState` 가 날짜·예보 시각·생성 시각·미래 생성·예정 갱신(`weatherLatestDue`)·stale 을 다시 판정해 달랐다. 일반 today fallback 의 같은 단정은 R4 이전(7eb6764)부터 있었다.
+- 수정(`index.html`): `weeklyTodayWeather(site, raw)` = `weeklyTodayRecommendable`(후보 자격, **기존 그대로**) + `storedWeatherState(raw, weatherToday, undefined, site)` 결과를 `_weatherState` 로 전달.
+  `weeklyTideWeather`·`weeklyWeatherEntryForSite`(카드)와 팝업(`weatherTodayForSite`)이 같은 함수·같은 입력으로 판정하므로 더 강한 적격이 새로 생기지 않는다. `weatherScoreAllowed`·점수·가점·정원·P0 무변경.
+  입력 adapter 구분: 주간 파생(`weeklySampleAsWeather`, 표본 단위 `weeklySampleRecommendable`) / today 저장자료(`weeklyTodayWeather` → `storedWeatherState`).
+- Sol 의 6개 입력(갱신 지연 05:41, 미래 생성 12:30, 비정상 generatedAt, item/root 생성 시각 없음, date 오늘+forecastTime 어제, 실제 `build_site_result` sparse6h 출력)은 모두 카드·팝업이 "오늘 적합도 미확인"으로 같다. 6번이 단순 날짜 필드 검사로 통과되지 않는 이유: builder 출력은 날짜·예보·적격이 모두 정상이고 **생성 시각(06:10)이 예정 갱신(10:17) 이전**이라는 점만 다르다 — 이는 `weatherLatestDue` 까지 쓰는 `storedWeatherState` 만 잡는다.
+- 증거(`results/r6/`): 수정 전(8ccb248) 12/12 불일치(만조 6 + 일반 6: 카드 92점 / 팝업 미확인) → 수정 후 12/12 일치; Sol 의 `independent_r4_dom.mjs` 를 그대로 실행 175 중 **145 pass/30 fail → 175/175**(`results/r6/sol_dom/`).
+  sparse6h fixture(`.github/scripts/fixtures/sparse6h_today_site14.json`)는 `test_weather.py` 가 실제 `build_site_result` 로 재생성해 같음을 확인하고 `validate_weather.py` 가 수락함을 검증한다.
+- **정책 차이 보고(변경하지 않음)**: 후보 자격은 그대로라 참고 상태(생성 지연 등) today 자료도 **후보로 남고 원점수 기준 순위를 받는다**(카드 점수는 미확인, rank 92 유지). 이는 R4 이전의 만조 카드 동작과 같다. 참고 자료를 후보에서 아예 빼는 것은 추천 선정 정책 변경이므로 사용자 승인 후 별도 결정 사항이다.
+  운영 영향 범위: 주간 예보가 모든 장소를 덮는 정상 운영에서는 today fallback 자체가 쓰이지 않는다(고정 입력 176후보·상위 10 변화 없음). 주간 로더 실패/장소 누락 시에만 해당.
 
 ## 테스트 (2026-10-09, Windows, Python 3.12, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8`, `CHROME_PATH=…/chrome.exe`)
 | 스위트 | 결과 |
@@ -55,13 +68,17 @@
 | weather-proxy | 36/36 |
 | 합계 | **563 pass / 0 fail / 1 skip** (Sol 기준 547/0/1) |
 
-R4 보완 후(현재): 주간 추천 146(+1 R4-9), **카드 DOM 시험 9(신규)**, 그 외 동일 → JS 499 pass(reports-api 178 · weather-proxy 36 · 프런트 13파일 285) + Python 74 pass/1 skip = **573 pass / 0 fail / 1 skip**.
+R4 보완 후(참고): 주간 추천 146(+1 R4-9), **카드 DOM 시험 9(신규)**, 그 외 동일 → JS 499 pass(reports-api 178 · weather-proxy 36 · 프런트 13파일 285) + Python 74 pass/1 skip = **573 pass / 0 fail / 1 skip**.
 Sol 행렬 재실행(`results/r4/matrix_after_r4.json`): 182/182 · 특별 21/21 · 팝업 12/12. 고정 입력(190곳·176후보) ON/OFF 전체 후보 signature·상위 10 은 35141c0 · 1bd2619 · 현재가 동일(`results/r4/compare_fixed_input.json`).
 최신 origin/main(38b4529)과 `git merge-tree` 충돌 없음, main 의 자동 JSON(2026-10-09 16:28)을 임시 worktree 에만 덮어 전체 스위트·두 validator 통과(자동 JSON 수정 없음).
 
 수정 전 실패 확인: 주간 신규 7건 실패, 자정(R2) 신규 3건 실패, Python 신규 16 subtest 실패 → 수정 후 전부 통과.
 Sol Ultra 의 실제 함수 matrix(`results/r123/review_matrix_adapted.mjs`, 원본 스크립트에서 소스 선택만 working tree 로 바꿈):
 7eb6764 = matrix 175/182, 특별분기 14/21, 팝업 4/12 → 현재 **182/182, 21/21, 12/12**.
+
+R6 보완 후(현재): 주간 추천 147(R6-4·5 신규, R4-9 교체), 카드 DOM 12(R6-1~3 신규), Python 기상 54(sparse6h fixture 시험 신규) → JS 503 pass(reports-api 178 · weather-proxy 36 · 프런트 13파일 289) + Python 75 pass/1 skip = **578 pass / 0 fail / 1 skip** (직전 573/0/1).
+Sol 행렬 재실행(`results/r6/matrix_after_r6.json`): 182/182 · 21/21 · 12/12. 고정 입력 ON/OFF 전체 후보 signature·상위 10 은 35141c0 · 1bd2619 · 8ccb248 · 현재가 동일(`results/r6/compare_fixed_input.json`).
+최신 origin/main(b0975ca)과 `git merge-tree` 충돌 없음, main 의 자동 JSON(2026-10-09 20:56)을 임시 worktree 에만 덮어 전체 스위트(JS 503, Python 75+1 skip)와 두 validator 통과(자동 JSON 수정 없음).
 
 ## 고정 입력 비교 (`results/r123/compare_fixed_input.json`)
 `node .github/scripts/compare_p1s_recommendation.mjs 35141c04d4fd152982b1f4683d5b7a6f4f7514e5 7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e worktree`
@@ -76,6 +93,7 @@ Sol Ultra 의 실제 함수 matrix(`results/r123/review_matrix_adapted.mjs`, 원
 - 미검증: 로컬 합성 API 를 쓴 제보·현장소식 등록/삭제/길안내 E2E, live 기상 merge 의 실제 네트워크 흐름(코드상 `mergedToday._weatherState.scoreEligible` 은 이제 검증된 stored 상태를 따른다), Cloudflare 배포 환경, 실기기.
 
 ## 후속 과제 (이번 R4 와 섞지 않음 — 배포 전 위험 평가에 유지)
+- 참고 상태 today 자료의 **후보 자격 정책**(위 R6 정책 차이): 사용자 결정 대기.
 - **R5 (P2)**: 숫자 400자리 같은 극단 숫자 문자열이 today 정규식(형식만 검사)과 `validate_weather.py` 를 통과하고 `Number()` 가 Infinity 가 된다. 생성기의 정상 출력(`.1f`)으로는 유입 증거 없음. 정규식 뒤 캡처 숫자의 finite/비음수 검사를 JS/Python 양쪽에 맞추는 방어 과제. 입력 집합 차이(JS trim 허용 / Python 거부, 유니코드 숫자, 비필수 `waveM` key 생략)도 같은 후속 시험으로.
 - **기존 현장소식 늦은 응답**: 오래된 응답이 삭제된 마커를 되살릴 수 있다(보호 상태 재노출 건과 같은 원인, 응답 순서 가드 없음).
 - **S1-P**: 승인된 보호종 공개 정책, 숨긴 자식의 부모/고정 지점 간접 연결.
