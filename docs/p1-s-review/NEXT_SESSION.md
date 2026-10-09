@@ -1,61 +1,53 @@
-# PR13 검증 재개/보완 재검증 지침
+# PR #13 독립 재검증 재개 지침 — 1bd26199 완료
 
-## 완료와 체크포인트
+## 완료·현재 판정
 
-검증 대상: 7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e.
-최신 main: 38b45299c832b8ab8ad549762c02979fa8ddfb28(10/9 19:47KST재확인).
-현재 판정: 수정 필요. FINDINGS.md 및 FINAL_COMMENT.md를 먼저 읽는다.
-첫 완료 체크포인트: 0ebd148e96c56ce375f81dfdcf31566d056aab57.
-검증완료 E2E/최종문서 체크포인트: d9e5877d7fad792d7fe3ed79485e7d829afbc9da. 게시증빙 최종 저장커밋은 git log -1로 확인한다. 자기저장커밋SHA를 문서에 순환 삽입하지 않는다.
+정확target: 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c.
+main: 38b45299c832b8ab8ad549762c02979fa8ddfb28.
+판정: **수정 필요 — R4 정상 today 만조 카드 표시 회귀**.
+이전7eb의R1~R3는해결됐으며 새차단사유는 R123_RECHECK.md 4절이다. 제품source·운영환경은변경하지않았다.
 
-모든 필수 검증은 완료됐다. 기존547pass/1skip, root latest-main combined313pass/1skip, validator2, head-only/combined 각40기능분기pass. actual S2 계약182중7/특별21중7/popup12중8불일치는 R1/R2/R3의 경로별 재현이다. 보호상태 late-response는 기존main에서도 실패하며 별도S1-P다. 실패를 성공으로 바꾸지 않는다.
+독립563pass/1skip, S2 182/21/popup12모두pass, 고정190/176전수·ON/OFF4코드동일, main결합validator2·JS255pass, Chrome5폭55/55완료.
+추가계약99/103: R4표시1·R5극값3불일치.기존late-field 보호/삭제 진단은 별도 실패이며 성공에 포함하지 않는다.
+중간commit8586ba7/48f720d, 최종저장commit은 git log -1을조회한다. 자기커밋SHA순환삽입하지않는다.
+최종댓글·readback는 FINAL_R123_COMMENT.md 및 results/r123/github_receipts.json을확인한다. 기존7eb댓글/결과는보존되어있다.
 
-## 게시 및 사용자 보고
+## 새 구현 후 정확한 다음 작업
 
-게시완료: PR13#issuecomment-6079394141 / Issue9#issuecomment-6079396000. API read-back으로 저장된 FINAL_COMMENT.md7370자 본문일치를 확인했고 results/github_receipts.json에 기록했다. 다음 세션은 새 구현 커밋이나 사용자 지시가 있을 때 아래 재검증을 시작한다. 운영 변경·병합·배포는 금지다.
+1. PR13 최신head/remote main/새diff/인수인계/보완댓글을읽고이번1bd와대조한다. 검증SHA가변경되면 scripts/r123의명시HEAD와제품함수추출목록을새검증사본에서갱신한다. 기존스냅샷/결과를덮어쓰지않는다.
+2. R4: weeklyTideWeather today 정상fallback에 검증된출처변환이추가됐는지읽는다. weatherScoreAllowed를출처없는raw허용으로완화하면안된다. 실제card와popup 모두0/100/92.5를표시하고rank108/만조90분/필수자료/신선도정책을유지하는지시험한다.
+3. week초기미수신/해당site없음+today/조석정상자료의 실제 renderTodayPanel DOM을다시실행한다. old1bd에서카드미확인/팝업92, new에서같은정상표시가됨을재현한다. 비정상today는후보없음/미확인유지.
+4. 영향받는회귀/계약/P0/고정190/176·ON/OFF·최신main결합을재실행한다. 최신main자동JSON을덮어쓰지않는다.
+5. R5 finite 문자열/ASCII·trim·optionalkey가보완됐다면 합성JS/Python을대조한다. 정상생성유입미확인권고와현재계약불일치를구분한다.
+6. 기존cache는P1보안별도: 실제ownerdelete→freshGET제외→lateGET이후marker부활을차단하는정책설계. backend보호전환시flag역전도S1-P배포전회귀로차단한다. 승인후전면비공개·대략길안내정책을검증중몰래구현하지않는다.
+7. 새최종문서/체크포인트commitpush→PR13/Issue9판정댓글→readback→게시증빙commitpush→사용자보고. 운영병합/배포는사용자별도승인까지금지.
 
-## Claude Code 보완 후 재검증
+## 재현 환경
 
-1. 새PRhead/원격main/diff/인수인계를 다시 읽고 정확SHA를 갱신한다.
-2. R1: actual formattedtoday 필수자료·유형별파고와unknownsafety차단; todayWeatherEntry/tide/validator같은계약. 기존rain없는fixture의true/[]추가만으로통과시키지않는다.
-3. R2: popupsource의owntrue·빈list·실제필수자료provenance, weekly/live/previous_savedadapter와미확인표시/참고자료보존.
-4. R3: optionalnonnullwave타입/finite/nonnegative와ownflagJS/Python정합성.
-5. scripts/pr13_s2_actual_matrix.mjs와Pythonmatrix는targetHEADconstant/functions선택을 새commit으로 갱신한 검증사본에서 실행한다. 제품 guard 자체를 테스트용으로 patch하지 않는다.
-6. 고정16파일manifest/11곳공개집계는 유지하고 190곳/176후보·원점수/표시/rank/bonus/date/time/axes를 before/newhead 전수대조한다. sourceconstant만 새검증대상으로 바꾸고 입력을 섞지 않는다.
-7. 영향받는weekly/Python/midnight/표시/모든fallback/P0boundary를 재실행한다. API S1 제품변경없으면 기존증거해시가같은지확인하고 변경시178+S1matrix를재실행한다.
-8. 최신main과merge-tree로임시결합, main자동JSON hash보존, syntheticAPI CDP/DNS격리 E2E를다시한다. 물리기기·운영Turnstile/cache는증거없는성공으로쓰지않는다.
-9. S1-P의전면비공개/승인후간접위치/fieldlate-response/popup대략안내정책을몰래운영에구현하지않는다.
-
-## 재현 경로와 명령
-
-review: C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap
-analysis: C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
+Review: C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap (review/p1-s-pr13)
+Analysis: C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
 Python: C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe
 Chrome: C:/Program Files/Google/Chrome/Application/chrome.exe
 
+제품 archive는 review/docs/p1-s-review/.scratch 아래에 git archive1bd 및 merge-tree1be66adcaaff8aa912491f11722f476255b36ed5로복원한다. archive는검증용제품사본이며commit하지않는다. worktree 제품은7eb그대로이므로 새테스트를그곳에서실행하면안된다.
+
 ```powershell
-node docs/p1-s-review/scripts/pr13_s1_independent.mjs . docs/p1-s-review/results
-node docs/p1-s-review/scripts/pr13_s2_actual_matrix.mjs . docs/p1-s-review/results C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
-& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' docs/p1-s-review/scripts/pr13_s2_python_validator_matrix.py . docs/p1-s-review/results
-node docs/p1-s-review/scripts/independent_replay.mjs . C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap docs/p1-s-review/results
-node .github/scripts/compare_p1s_recommendation.mjs 35141c04d4fd152982b1f4683d5b7a6f4f7514e5 7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e
-node docs/p1-s-review/scripts/verify_provided_compare.mjs docs/p1-s-review/results
-node docs/p1-s-review/scripts/pr13_e2e_existing_policy.mjs . docs/p1-s-review/results
-node docs/p1-s-review/scripts/pr13_e2e.mjs <combined-directory> <new-temporary-output/profile-directory> 2026-10-09T16:40:00+09:00
+git merge-tree --write-tree 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c 38b45299c832b8ab8ad549762c02979fa8ddfb28
+git archive --format=zip --output=docs/p1-s-review/.scratch/target1bd.zip 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c
+Expand-Archive -LiteralPath docs/p1-s-review/.scratch/target1bd.zip -DestinationPath docs/p1-s-review/.scratch/target1bd
+git archive --format=zip --output=docs/p1-s-review/.scratch/combined1bd.zip 1be66adcaaff8aa912491f11722f476255b36ed5
+Expand-Archive -LiteralPath docs/p1-s-review/.scratch/combined1bd.zip -DestinationPath docs/p1-s-review/.scratch/combined1bd
+node docs/p1-s-review/scripts/r123/pr13_r123_actual_matrix.mjs docs/p1-s-review/.scratch/target1bd docs/p1-s-review/results/r123 <analysisRepo>
+node docs/p1-s-review/scripts/r123/pr13_r123_extended.mjs docs/p1-s-review/.scratch/target1bd docs/p1-s-review/results/r123 <analysisRepo> docs/p1-s-review/results/r123/baseline7eb_actual_matrix.json
+node docs/p1-s-review/scripts/r123/independent_replay.mjs . <analysisRepo> docs/p1-s-review/results/r123
+node docs/p1-s-review/scripts/r123/pr13_r123_s1.mjs docs/p1-s-review/.scratch/target1bd docs/p1-s-review/results/r123
+node docs/p1-s-review/scripts/r123/pr13_r123_existing_policy.mjs docs/p1-s-review/.scratch/target1bd docs/p1-s-review/results/r123
+node docs/p1-s-review/scripts/r123/pr13_r123_e2e.mjs docs/p1-s-review/.scratch/combined1bd <newTempOut> 2026-10-09T16:40:00+09:00
 ```
 
-기존스위트의정확발견파일/명령/skip은results/EXECUTION_SCOPE.md, E2E범위/미검증은results/E2E_REVIEW.md에있다. 재실행시기존결과를덮어쓰기보다별도결과폴더를만든다.
+실행명령7스위트는 results/r123/execution_manifest.json. Python UTF8/PYTHONDONTWRITEBYTECODE/BIRDMAP_PYTHON 및browser시작전DNS/Fetch격리를설정한다. 새resultdir사용을권장한다. 이전재현의본표시R4추가assertion은스위트563에없다.
 
-임시combined자료는git merge-tree cb24c5085f8f297c0197950a756e41d08082dd98에서archive로다시만들수있다. Windows CRLF 차이는e2e_source_crosscheck와canonical blob정규화로확인한다. 임시.scratch는보존할결과를복사한후절대경로검증을거쳐삭제한다. profile/제품copy/민감원자료는commit하지않는다.
+합성E2E예외0/55pass와R4·late진단은분리한다. status DOM필드는제품에없으므로live적용을humidity/온도/풍속/내일DOM으로검사한다. screenshot회색map은외부tile을합성투명처리해서이며Leaflet로드실패가아니다. 물리기기/운영Access/Turnstile/D1은미검증이다.
 
-## 1bd26199 진행중 세션 재개 우선
-
-R123_RECHECK.md를 먼저 읽는다. 이전ff0d334자료는유지하고새결과는results/r123. 실제targetarchive는docs/p1-s-review/.scratch/target1bd, 최신maincombined는.scratch/combined1bd(tree1be66adc)다. 원래스위트563pass/1skip 완료. 추가matrix/정상만조fallback카드provenance/5폭E2E/기존cache위험 재평가/최종댓글 남음. agents p1s_score/p1s_taxon/p1s_protection은각각visualization pr13_r123_score/compare/e2e에script/results작성중이다. root만review docs작성. 이전JSON덮어쓰기·제품guard수정금지.
-
-## 追加 체크포인트 (R123 독립 실행 완료·E2E 재시험 대기)
-
-root가 실제 스크립트를 읽고 직접 재실행했다: S2 182/182, 특별21/21, popup12/12, 독립190전수와정원12조건, 표시표본15조건, API보호171/171·일반17오탐0·관리자인증5·소유자삭제4·기존정책6/6.
-추가 계약103중99통과,4불일치: 정상today만조카드(R4)1, 400자리유한성방어(R5)3. Python49×2문서호출은acceptance조사이며98통과로표기하지않는다.
-브라우저 첫 실행 결과e2e_initial_agent.json: 정상기능50/55, live모의병합5폭timeout. 정상만조카드미확인/팝업92점 DOM재현확인. 기존late응답의보호상태복귀 및 actualownerdelete 이후marker재등장 확인. 제품문제/harness문제분류와 root combined-main 16:40독립E2E 남음. 보조agent 사용량중단으로 root가 계속수행한다.
-새target최종판정/댓글 아직게시안됨. 제품수정/병합/배포 없음.
+.scratch/profile/제품archive는결과를복사한후절대경로가review/docs/p1-s-review/.scratch인지검증해nativePowerShell LiteralPath로삭제한다. 검증branch에는docs/p1-s-review만추가한다. 민감원자료·비밀·실제제보좌표는저장하지않는다.
 

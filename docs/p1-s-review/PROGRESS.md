@@ -1,3 +1,22 @@
+# 최신 완료 상태 — 1bd26199 최종 재검증
+
+- target 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c / main38b45299c832b8ab8ad549762c02979fa8ddfb28.
+- 최종 판정: **수정 필요(R4 정상만조카드표시)**. 이전R1~R3는해결.
+- 독립원래회귀563pass/0fail/1skip; 계약182/182·21/21·popup12/12; 추가99/103(4불일치 명시); Python합성98문서호출.
+- 실제old신규시험실패 weekly7/9·popup2/4·Python16subtests를 확인했고 새target 통과.
+- 고정190/176·ON/OFF4버전전수·독립정원12조건·제공compare대조 통과. 원본manifest16file/공개11곳 hash 유지.
+- 보호171누락0·일반17오탐0·관리자5·소유자삭제4·main기존정책6/6통과.
+- latestmain merge-tree1be66adc 충돌0; validator2성공·결합JS255pass.
+- root합성API E2E5폭55/55·실제Leaflet1.9.3·예외0. 초기5timeout은 없는status대기harness를 실제DOM적용확인으로 보정했다. 최초출력보존.
+- 별도실패R4표시DOM와기존late보호flag/삭제marker재등장 기록, 정상E2Epass합계에서 분리.
+- 체크포인트: 8586ba7 기본회귀, 48f720d 계약/고정전수/API. 최종보고/게시증빙commit은 git log -1로확인.
+- 최종문서 R123_RECHECK.md, 최신결과 results/r123, 재현 scripts/r123. PR/Issue댓글과read-back receipt는 results/r123/github_receipts.json(게시 후 생성).
+- 운영수정·main병합·Pages/Worker배포·D1변경 없음. 사용자승인대기.
+
+이하 이전7eb검증 이력:
+
+---
+
 # PR #13 최종 검증 진행
 
 - 전용 브랜치: review/p1-s-pr13. 제품 source는7eb6764 그대로다.
