@@ -61,7 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','weeklyDocVerified','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
+  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','birdmapDataTime','weeklyDocVerified','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
   'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
