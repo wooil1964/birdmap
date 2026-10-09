@@ -1,0 +1,49 @@
+{
+  "sha": "8ccb248faa2c5c7b5a6019d12e19e21031169460",
+  "batchDate": "2026-10-09",
+  "testClock": "2026-10-09T12:00:00+09:00",
+  "sourceHashes": {
+    ".github/scripts/update_weather.py": "99ea84f316cdc4a201e8b96392583d57d48576a42a0eb5ea0681188ea21f237d",
+    ".github/scripts/validate_weather.py": "fc3707d415bcc8a70ecaeb265b81d00a5de210d55611f9dd6ed020c65cc54b6d"
+  },
+  "actualValidatorRows": [
+    {
+      "label": "normal",
+      "acceptedByActualValidator": true
+    },
+    {
+      "label": "extreme_wind",
+      "acceptedByActualValidator": true
+    },
+    {
+      "label": "extreme_rain",
+      "acceptedByActualValidator": true
+    },
+    {
+      "label": "extreme_wave",
+      "acceptedByActualValidator": true
+    },
+    {
+      "label": "trim",
+      "acceptedByActualValidator": false
+    },
+    {
+      "label": "unicode_digits",
+      "acceptedByActualValidator": true
+    }
+  ],
+  "actualGeneratorFiniteSourceChecks": {
+    "valueAtRejects400DigitInput": true,
+    "hourlyValueRejects400DigitInput": true,
+    "parsed400DigitsFinite": false
+  },
+  "actualGeneratorHypotOverflow": {
+    "finiteInputsHypotNotFinite": true,
+    "generatorOutputsInfString": true,
+    "scoreEligible": true,
+    "validatorAllowsGeneratedOverflow": false
+  },
+  "networkCalls": 0,
+  "productChanges": 0,
+  "rawCoordinatesLogged": false
+}

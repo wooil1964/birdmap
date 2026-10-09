@@ -1,3 +1,18 @@
+# 최신 판정 — PR #13 R4 / 8ccb248f
+
+**수정 필요 — 참고 today 자료의 현재 적격 출처 승격.** 기존 정상 R4 문제와 R1~R3/S1-R는 해결됐고 전체573pass/0fail/1skip, 카드9/9, S2182/182·특별21/21·팝업12/12, 정상190/176 전수·ON/OFF, 최신main 결합은 통과했다.
+
+새 weeklyTodayWeather(index.html3880~3882)가 기존 storedWeatherState의 생성시각/예정갱신/날짜 계약 없이 true 출처를 부여한다. 실제 Chrome5폭: 정상145/145, 추가참고6종×5폭30불일치(카드92·팝업미확인), 이전1bd 동일30/30미확인 일치. 실제 Python builder sparse6h 출력·validator수락→수정없이 DOM에도 재현했다. 운영 발생·빈도는 미확인, 원점수/순위/P0 신규우회로 확대하지 않는다.
+
+- target8ccb248faa2c5c7b5a6019d12e19e21031169460 / mainb0975cad9f3112af38cc286a892bf6f06722ce12.
+- 최종 보고/수정 지시: [R4_RECHECK.md](R4_RECHECK.md). 증거·재현: results/r4 및 scripts/r4.
+- main 임시결합 충돌0·자동자료 동일·validator2·JS256; 독립 일반E2E55/55·예외0.
+- R5(P2)·삭제marker(P1)·보호 상태 역전(P1, 전환배포전 필수차단)·S1-P 별도 공개정책은 SECURITY_REVIEW.md에 근거와 선행 조건을 기록했다. 기존 결함/실패를 보안 통과로 세지 않는다.
+- 무조건true 출처 보완 및 실제카드·팝업6조건 회귀를 Claude Code에 요청한다. 제품수정·main병합·Pages/Worker배포·운영D1·실사용자 제보 변경 없음.
+
+아래는 **이전1bd/7eb 독립 검증 이력**이다. 이전 차단이 그대로 남았다고 재해석하지 않는다.
+
+---
 # 최신 판정 — PR #13 / 1bd26199 최종 재검증
 
 **수정 필요.** 기존 R1·R2·R3는 해결됐고 563 pass/0 fail/1 skip, S2 182/182·특별21/21·popup12/12, 고정190곳/176후보·ON/OFF전수, 최신main결합, 5폭E2E55/55는 통과했다.

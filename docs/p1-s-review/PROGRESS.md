@@ -1,3 +1,19 @@
+# 최신 완료 — PR #13 R4 / 8ccb248f
+
+- 정확한 target8ccb248faa2c5c7b5a6019d12e19e21031169460, mainb0975cad9f3112af38cc286a892bf6f06722ce12 유지.
+- 최종 판정 **수정 필요**. 정상 R4는 해결, 참고자료 출처승격 불일치가 신규 만조표시에 남음. R1~R3/S1-R통과 유지.
+- 전체573pass/0fail/1skip, 원래카드DOM9/9, 이전DOM3pass6fail, S2182/21/팝업12모두통과.
+- 실제함수30조건과 실제Chrome5폭175조건: 정상145pass·추가참고30fail·예외0. 이전 동일 추가조건30pass. root새29pass6fail/이전6pass직접대조.
+- 실제builder sparse6h 출력/validator수락/DOM 재현; 운영발생미확인. source/data hash교차검증 완료.
+- 고정10/8 22:40·190/176·제보ON/OFF4코드전수 동일, 보호171/일반17·관리자5·삭제4 실제회귀 완료.
+- 최신main merge-tree9949dab3 충돌0·validator2·결합JS256, actual tidehealth100/39fresh/ok; 월간partial/stale280은기존 한계. 일반E2E55/55·예외0.
+- 잔여R5·삭제/privacy cache·S1-P별도 위험, 제한된PR13과 정책전환배포의 차단조건을 SECURITY_REVIEW.md에 기록.
+- R4_RECHECK/FINDINGS/NEXT_SESSION 최종갱신. 중간체크포인트ff78b2f push완료, 최종문서/게시증빙commit은 git log 및 github_receipts.json 확인.
+- PR13/Issue9 댓글은 FINAL_R4_COMMENT.md, API본문대조는 results/r4/github_receipts.json(게시 후 생성). 운영변경 없음. 사용자승인/새SHA대기.
+
+이하 이전 검증 이력:
+
+---
 # 최신 완료 상태 — 1bd26199 최종 재검증
 
 - target 1bd26199bdd66ff48d41dc4fa5a6ebcef059f07c / main38b45299c832b8ab8ad549762c02979fa8ddfb28.
@@ -38,4 +54,3 @@
 PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6080213498
 Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080214390
 저장된 FINAL_R123_COMMENT.md와 게시본문5198자 일치를 API read-back으로 검증했다. results/r123/github_receipts.json에 증빙을 저장했다. 최종보고 commit8d2e574 및 다음 게시증빙commit은 git log -1로 확인한다. 제품/배포 변경 없이 사용자 승인 또는 새 보완SHA를 기다린다.
-
