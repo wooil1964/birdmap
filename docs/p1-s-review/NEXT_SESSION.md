@@ -6,13 +6,13 @@
 최신 main: 38b45299c832b8ab8ad549762c02979fa8ddfb28(10/9 19:47KST재확인).
 현재 판정: 수정 필요. FINDINGS.md 및 FINAL_COMMENT.md를 먼저 읽는다.
 첫 완료 체크포인트: 0ebd148e96c56ce375f81dfdcf31566d056aab57.
-이후 E2E/최종문서 저장커밋은 git log -1로 확인한다. 자기저장커밋SHA를 문서에 순환 삽입하지 않는다.
+검증완료 E2E/최종문서 체크포인트: d9e5877d7fad792d7fe3ed79485e7d829afbc9da. 게시증빙 최종 저장커밋은 git log -1로 확인한다. 자기저장커밋SHA를 문서에 순환 삽입하지 않는다.
 
 모든 필수 검증은 완료됐다. 기존547pass/1skip, root latest-main combined313pass/1skip, validator2, head-only/combined 각40기능분기pass. actual S2 계약182중7/특별21중7/popup12중8불일치는 R1/R2/R3의 경로별 재현이다. 보호상태 late-response는 기존main에서도 실패하며 별도S1-P다. 실패를 성공으로 바꾸지 않는다.
 
 ## 게시 및 사용자 보고
 
-현재 FINAL_COMMENT.md의 완성된 본문을 PR13과Issue9에 게시한다(아직이단계checkpoint시점미게시). 게시뒤 read-back본문일치·댓글URL/ID를 results/github_receipts.json에 저장하고PROGRESS갱신·최종commit/push한다. 운영 변경·병합·배포는 금지다.
+게시완료: PR13#issuecomment-6079394141 / Issue9#issuecomment-6079396000. API read-back으로 저장된 FINAL_COMMENT.md7370자 본문일치를 확인했고 results/github_receipts.json에 기록했다. 다음 세션은 새 구현 커밋이나 사용자 지시가 있을 때 아래 재검증을 시작한다. 운영 변경·병합·배포는 금지다.
 
 ## Claude Code 보완 후 재검증
 

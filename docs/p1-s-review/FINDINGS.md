@@ -103,3 +103,7 @@ Windows absolute --import 첫 실행과 런타임 python3 경로 오류는 검�
 ## 최종 승인/보완 지시
 
 현재 head는 수정 필요다. R1/R2 및 JS/Python 계약 정합성을 보완한 새 head에서 실제 합성 matrix·정상176후보/상위10·P0·표시/자정·관련 API/E2E를 다시 검증한 뒤 별도 승인 판정을 받는다. 제품 안전 결함을 수정하는 것은 구현자의 별도 작업이며 검증자가 변경하지 않는다. main 병합·Pages/Worker 배포·운영 D1 변경은 하지 않는다.
+
+## 최종 기록
+
+검증완료 체크포인트: d9e5877d7fad792d7fe3ed79485e7d829afbc9da. [PR13 검증·보완 요청](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6079394141) 및 [Issue9 기록](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6079396000)을 게시하고 API read-back으로7370자 본문일치를 확인했다. 댓글증빙은 results/github_receipts.json이다. Claude Code의 보완 커밋과 사용자 지시/승인까지 검증 작업을 완료 상태로 보존한다. 현재 PR에 대한 병합/배포 승인은 하지 않는다.

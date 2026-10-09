@@ -7,5 +7,5 @@
 - 보호 상태 변경 뒤 늦은 field 응답은 hidden=false로 복귀해 길안내가 재활성화됐다. 상태보존 기대는 실패이며 최신main 동일함수에서 재현, 기존S1-P/cache 과제로 구분한다. mobile popup의 대략위치안내도 기존main/PR동일정책이며 전면길안내금지는 별도승인사항이다.
 - 마지막 remote확인: 2026-10-09 19:47KST. PRhead7eb6764/main38b4529 동일, draft/open/unmerged. 원래 checkout fix/p1-s-safety-guards7eb6764 clean이다.
 - 체크포인트1: 0ebd148e96c56ce375f81dfdcf31566d056aab57. 이어 E2E/최종문서 checkpoint를 저장한다.
-- 남음: 최종 PR13/Issue9댓글 게시·본문확인·receipt저장 → 최종checkpoint/push → 사용자 보고.
+- 완료: PR13 댓글6079394141 및Issue9 댓글6079396000 게시, API read-back7370자 본문일치 확인. results/github_receipts.json 저장. 검증완료checkpoint d9e5877d7fad792d7fe3ed79485e7d829afbc9da, 이어 게시증빙 최종checkpoint/push 후 사용자 보고.
 - 제품·main·자동JSON·Worker·운영D1·실사용자 제보는 수정하지 않음. 최초 기존browser자동telemetry는 미계측이므로 성공/실패를 단정하지 않음. 이후browser검증은격리함.
