@@ -53,3 +53,12 @@ C DOM CLI exit1은 별도무효주간2실패 때문이다. loader propertyFail�
 ## 남은 별도 정책·위험
 
 R5 P2 유입변화시격상; 삭제oldGET P1우선; 보호상태old응답 P1/보호재분류·fieldhide·S1-P전환 배포전필수차단. S1-P정책은별도사용자승인 필요. 실제운영민감정보사고는확인하지않았으며 원본좌표/비밀정보 저장금지. 주간허용최대연령/새스케줄은임의도입하지않는다.
+
+## 게시·최종 체크포인트
+
+검증 보고서 commit: 72cb3e2d142b838b357cfa61a82d4ebae1ca2679 (원격 push 완료).
+
+- [PR #13 최종 판정](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6083239755)
+- [Issue #9 동일 판정](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6083244131)
+
+두 댓글 ID와 게시된 본문을 API로 다시 읽어 FINAL_C_COMMENT.md와 일치 확인했다. readback/본문hash는 results/c/github_receipts.json. 이 증빙을 저장한 마지막 commit은 git log -1/원격 review/p1-s-pr13에서 확인한다. 원격 main/head가 현재 검증 SHA와 같은지 최종 재확인한다. 사용자 승인·구현자 보완 새SHA 대기이며 운영 작업은 수행하지 않는다.
