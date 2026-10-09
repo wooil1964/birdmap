@@ -2074,14 +2074,14 @@ function storedWeatherState(day,root,now){
   var sameDay=date===today&&String(day.forecastTime||'').slice(0,10)===today;
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
   var current=hasData&&sameDay&&onSchedule&&!day.stale&&Number.isFinite(forecastMs);
-  var numeric=day.score!==null&&day.score!==undefined&&day.score!==''&&Number.isFinite(Number(day.score));
+  var numeric=weeklyScoreValid(day.score);
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
     dataCurrent:current,scoreEligible:current&&day.scoreEligible!==false&&numeric,stale:!current,
     date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
     ageMinutes:Number.isFinite(generatedMs)?Math.max(0,Math.floor((now.getTime()-generatedMs)/60000)):null};
 }
 function weatherScoreAllowed(today){
-  return !!today&&today.score!==null&&today.score!==undefined&&today.score!==''&&Number.isFinite(Number(today.score))&&
+  return !!today&&weeklyScoreValid(today.score)&&
     (today._weatherState?today._weatherState.scoreEligible:storedWeatherState(today,weatherToday).scoreEligible);
 }
 function storedWeatherLabel(today){
@@ -2098,8 +2098,7 @@ function storedWeatherLabel(today){
 function todayWeatherFromWeek(site){
   var date=weeklyTodayDateText();
   var sample=weeklyDailyBestSample(site,date);
-  if(!sample||sample.scoreEligible!==true)return null;
-  if(sample.score===null||sample.score===undefined||sample.score===''||!Number.isFinite(Number(sample.score)))return null;
+  if(!weeklySampleRecommendable(site,sample))return null;
   return weeklySampleAsWeather(site,sample,date);
 }
 function weatherTodayForSite(site){
@@ -3397,7 +3396,7 @@ function weeklyPelagicSafety(sample){
   // 추천 전용 기준. 기존 weather_rules와 점수 계산은 그대로 둔다.
   // 표시용 값은 생성 단계에서 소수점 한 자리로 반올림되므로, 판정은 sample.safetyRaw의 원자료를 우선 사용한다.
   // 기준값(풍속 6.0·파고 0.7·3시간 강수 0)은 변경하지 않는다.
-  if(!sample||sample.scoreEligible!==true||typeof sample.score!=='number'||!Number.isFinite(sample.score))return false;
+  if(!sample||sample.scoreEligible!==true||!weeklyScoreValid(sample.score))return false;
   var raw=(sample.safetyRaw&&typeof sample.safetyRaw==='object')?sample.safetyRaw:null;
   return [['windSpeed',6],['waveM',0.7],['precipitation3h',0]].every(function(check){
     var value=raw?raw[check[0]]:sample[check[0]];
@@ -3733,7 +3732,7 @@ function weeklyDaylightCandidates(site,dateText){
   var sun=weeklySunTimes(Number(site.lat),Number(site.lon),dateText);
   var isToday=String(dateText)===weeklyTodayDateText(), nowMinutes=isToday?weeklyNowKstMinutes():0;
   return samples.filter(function(sample){
-    if(!sample||sample.scoreEligible!==true||!Number.isFinite(Number(sample.score)))return false;
+    if(!weeklySampleRecommendable(site,sample))return false;
     var minutes=weeklySampleMinutes(sample);
     if(minutes===null||weeklySampleDateText(sample)!==String(dateText))return false;
     if(sun&&(minutes<sun.riseMin||minutes>sun.setMin))return false;
@@ -3839,6 +3838,24 @@ function weeklyMudflatTideGateOpen(site,week){
 }
 /* 현장주의 조건(파고 2.0m 이상·강수 1mm 이상)을 sample 원자료로 판정한다. 표시용 반올림(예: 0.96→1.0)에
    흔들리지 않으며, 결측은 위험으로도 안전으로도 취급하지 않는다(false). */
+/* P1-S2: 추천에 쓰는 기상 원점수 계약. 자료형을 바꿔 맞추지 않는다(null→0, '85'→85 금지).
+   원점수는 number·유한·0~100 이어야 하며, 가점이 더해진 내부 순위점수(rankScore)에는 적용하지 않는다. */
+function weeklyScoreValid(score){return typeof score==='number'&&Number.isFinite(score)&&score>=0&&score<=100;}
+function weeklyNonNegativeNumber(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0;}
+/* 주간 표본: 명시적 scoreEligible===true, 유효 점수, 빈 missingScoreFields, 필수 기상값(풍속·풍향·강수, 파고가 필요한 곳은 파고).
+   파고가 필요 없는 곳의 waveM null 과 선택 값(돌풍·시정·구름 등)의 null 은 허용한다. */
+function weeklySampleRecommendable(site,sample){
+  if(!sample||typeof sample!=='object'||sample.scoreEligible!==true||!weeklyScoreValid(sample.score))return false;
+  if(!Array.isArray(sample.missingScoreFields)||sample.missingScoreFields.length)return false;
+  if(!weeklyNonNegativeNumber(sample.windSpeed)||!weeklyNonNegativeNumber(sample.precipitation3h))return false;
+  if(!weeklyNonNegativeNumber(sample.windDirectionDeg)||sample.windDirectionDeg>=360)return false;
+  return !(site&&(site.showWave||site.island||site.pelagic))||weeklyNonNegativeNumber(sample.waveM);
+}
+/* 오늘 저장 기상(weather_today.json 항목): 풍속·강수·파고는 문자열이라 점수와 적격 메타데이터만 본다. */
+function weeklyTodayRecommendable(raw){
+  return !!raw&&typeof raw==='object'&&!raw.stale&&!raw.dataUnavailable&&raw.scoreEligible===true&&weeklyScoreValid(raw.score)&&
+    Array.isArray(raw.missingScoreFields)&&!raw.missingScoreFields.length;
+}
 function weeklySampleCaution(sample){
   if(!sample)return false;
   var wave=sample.waveM, rain=sample.precipitation3h;
@@ -3854,7 +3871,7 @@ function weeklyTideWeather(site,tide){
     return sample&&!weeklySampleCaution(sample)?{sample:sample,weather:weeklySampleAsWeather(site,sample,tide.date)}:null;
   }
   var sites=weatherToday&&weatherToday.sites, raw=sites&&(sites[String(site.id)]||sites[site.name]);
-  if(!raw||raw.stale||raw.dataUnavailable||raw.scoreEligible===false||raw.score===null||raw.score===undefined||raw.score===''||!Number.isFinite(Number(raw.score)))return null;
+  if(!weeklyTodayRecommendable(raw))return null;
   var minutes=weeklySampleMinutes(raw), date=raw.date||weeklySampleDateText(raw);
   if(minutes===null||String(date)!==String(tide.date)||Math.abs(minutes-tide.minutes)>90)return null;
   var today=Object.assign({},raw);
@@ -3980,9 +3997,9 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   if(!sites)return null;
   var raw=sites[String(site.id)]||sites[site.name]||null;
   var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
-  var score=raw&&raw.score!==null&&raw.score!==undefined&&raw.score!==''?Number(raw.score):NaN;
-  if(!raw||raw.stale||raw.dataUnavailable||!weeklyDateInRange(date,week)||!Number.isFinite(score))return null;
-  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:raw.scoreEligible!==false,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
+  if(!weeklyTodayRecommendable(raw)||!weeklyDateInRange(date,week))return null;
+  var score=raw.score;
+  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
   return {date:date,weather:today,score:score};
 }
 /* 추천 정책은 화면을 연 날이 아니라 후보의 추천 날짜가 속한 계절을 따른다.
@@ -4068,7 +4085,10 @@ function weeklyRecommendationForSite(site,week){
   var tideDay=!!tideRec&&date===tideRec.date;
   var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?tideRec.sample:(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;
   var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(tideDay?tideRec.weather:((!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather));
-  var dayScore=dayBest?Number(dayBest.score):(dayWeather&&weatherEntry?weatherEntry.score:null);
+  var dayScore=dayBest?dayBest.score:((tideDay&&dayWeather)?dayWeather.score:(dayWeather&&weatherEntry?weatherEntry.score:null));
+  /* 유효한 기상 점수가 없는 후보(공지·물때·동풍 사유만 있는 경우 포함)는 추천하지 않는다.
+     공지 내용과 조석·참고 기상 표시는 별도 경로라 그대로다. */
+  if(!weeklyScoreValid(dayScore))return null;
   var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);
   if(spring&&axes.island){
     reasons.push('봄 도서 이동기');
@@ -4076,7 +4096,7 @@ function weeklyRecommendationForSite(site,week){
   }
   if(geolmaeriPriority)reasons.push('5월 초 긴부리흑꼬리도요 이동 시기로 최우선 검토');
   if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);
-  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:Number.isFinite(dayScore)?dayScore:null,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,
+  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:dayScore,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,
     recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',
     tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 인접 오늘 저장 기상 기준':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};
   if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;
@@ -4145,7 +4165,7 @@ function todayRecommendedSites(){
   var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
   siteData.forEach(function(site,stableOrder){
     var entry=weeklyRecommendationForSite(site,week);
-    if(!entry)return;
+    if(!entry||!weeklyScoreValid(entry.score))return;
     // mandatory/공지 정보는 후보에 보존하고, 현장주의만 최종 선발에서 제외한다.
     if(weeklyRecommendationIsSafe(entry)===false)return;
     entry.stableOrder=stableOrder;
