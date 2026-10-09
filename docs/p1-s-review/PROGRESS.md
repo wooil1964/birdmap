@@ -1,3 +1,5 @@
+게시완료: PR13 댓글6089038356 / Issue9 댓글6089039285, API exact본문 일치. 보고서commit2026d347, 게시증빙results/final-2e485/github_receipts.json.
+
 # 최신 완료 — PR #13 배포 전 / 2e485079
 
 **수정 필요.** target `2e485079a34fa5aeeef09e82f3b996bf2696d978`, before `352315a57d038687807dbe0044c136a22fb0c9c5`, 최종 main `4b164ffe74efa5cadad9e686bd628a8915527e77`. 이전 C1/C2 canonical 및 C3 base8/40 해결; 회귀603/0/1·S2182/21/12·source74·helper23·고정190/176·Chrome245/45·최신결합55/validator2 통과. 새 C3 미래 비교기준 회복차단, root/item 안전역행 및 시각자료형 우회는 배포전 필수보완이다. [최종 보고서](FINAL_DEPLOY_RECHECK.md), [교차증빙](results/final-2e485/verification_summary.json).

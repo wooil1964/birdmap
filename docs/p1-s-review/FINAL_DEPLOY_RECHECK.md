@@ -194,3 +194,7 @@ node "$rootScripts/timestamp_type_diagnostics.mjs" $target $rootOut
 ```
 
 발행일을 혼동하지 않도록 batch_date_recheck.py와 latest_main_validate.py는 별도 결과·시각으로 재실행한다. 전체8스위트의 정확 cmd/workdir는 execution_manifest.json, 필요한 실생성fixture는 normal_current_builder.py → final_c1_c2_additional.mjs 순서다. 출력directory를 먼저 만든다. 실패를 성공기대 대신 삭제하지 않으며 새SHA 결과는 별도directory에 저장한다.
+
+## 최종 게시·본문 확인
+
+보고서 commit `2026d34795d1050f29a2bd29a079d93fbbb20b19` push 후 [PR #13 댓글6089038356](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6089038356) 및 [Issue #9 댓글6089039285](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6089039285)을 게시했다. 두 댓글을 API로 다시 읽어 FINAL_DEPLOY_COMMENT.md의 저장 본문과 **각각 exact 일치**를 확인했다. body SHA256·reportCommit·readback 시각은 results/final-2e485/github_receipts.json에 기록했다. 최종 판정 수정 필요·운영 변경 금지는 유지한다.

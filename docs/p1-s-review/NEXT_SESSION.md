@@ -32,3 +32,7 @@ Chrome=C:/Program Files/Google/Chrome/Application/chrome.exe
 실제생성fixture의존: normal_current_builder.py 후final_c1_c2_additional.mjs; 출력directory미리생성. sparse6h_generated_today.json은 이전실제builder의보존합성자료로생성timestamp를위조하지않는다. `C_GENERATOR_FIXTURE`를설정해야기본DOM6참고조건이보존된다. 새Chrome추가타입은 FINAL_TYPED_ONLY=1/C_WIDTHS=375; 원래기본245를재실행할때는FINAL_TYPED_ONLY/FINAL_BOAT_ONLY해제. loader기존8·확장28은성공기대로정의된final_cases를공유하며 실패는exit1이다.
 
 GitHubActions: 현4workflow는출력commit/push포함/PRtrigger없음. 무단dispatch/rerun금지. 최신mainrun성공을PRCI성공으로오인하지않는다. 배포현재Workerversion/보호유지rollbackversion은아직준비완료아님. 새검증통과와사용자별도승인 후배포순서/rollback을구체적으로고정한다.
+
+## 최종 게시·본문 확인
+
+보고서 commit `2026d34795d1050f29a2bd29a079d93fbbb20b19` push 후 [PR #13 댓글6089038356](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6089038356) 및 [Issue #9 댓글6089039285](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6089039285)을 게시했다. 두 댓글을 API로 다시 읽어 FINAL_DEPLOY_COMMENT.md의 저장 본문과 **각각 exact 일치**를 확인했다. body SHA256·reportCommit·readback 시각은 results/final-2e485/github_receipts.json에 기록했다. 최종 판정 수정 필요·운영 변경 금지는 유지한다.
