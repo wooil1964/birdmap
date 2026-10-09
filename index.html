@@ -3875,6 +3875,12 @@ function weeklyTodayRecommendable(raw,site){
   if(!weeklyOwn(raw,'missingScoreFields')||!Array.isArray(raw.missingScoreFields)||raw.missingScoreFields.length)return false;
   return weeklyTodayRequiredDataValid(raw,site);
 }
+/* 검증을 통과한 오늘 저장 기상에만 출처(_weatherState)를 붙여 추천 카드·팝업이 같은 점수 허용 규칙(weatherScoreAllowed)을 쓰게 한다.
+   검증(weeklyTodayRecommendable)과 출처 부여가 한 함수 안에 있으므로 검증되지 않은 raw 에는 적격 true 가 붙을 수 없다. */
+function weeklyTodayWeather(site,raw,date){
+  if(!weeklyTodayRecommendable(raw,site))return null;
+  return Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||(weatherToday&&(weatherToday.generatedAt||weatherToday.updated))||'',forecastTime:raw.forecastTime||''}});
+}
 function weeklySampleCaution(sample){
   if(!sample)return false;
   var wave=sample.waveM, rain=sample.precipitation3h;
@@ -3890,10 +3896,10 @@ function weeklyTideWeather(site,tide){
     return sample&&!weeklySampleCaution(sample)?{sample:sample,weather:weeklySampleAsWeather(site,sample,tide.date)}:null;
   }
   var sites=weatherToday&&weatherToday.sites, raw=sites&&(sites[String(site.id)]||sites[site.name]);
-  if(!weeklyTodayRecommendable(raw,site))return null;
-  var minutes=weeklySampleMinutes(raw), date=raw.date||weeklySampleDateText(raw);
+  var date=raw&&(raw.date||weeklySampleDateText(raw)), today=weeklyTodayWeather(site,raw,date);
+  if(!today)return null;
+  var minutes=weeklySampleMinutes(raw);
   if(minutes===null||String(date)!==String(tide.date)||Math.abs(minutes-tide.minutes)>90)return null;
-  var today=Object.assign({},raw);
   return todayWeatherCautionNote(today)?null:{sample:null,weather:today};
 }
 /* 기준 충족 만조 중 인접 예보가 유효하고 안전한 것만 남긴다. 규칙이 없는 탐조지는 null. */
@@ -4016,10 +4022,9 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   if(!sites)return null;
   var raw=sites[String(site.id)]||sites[site.name]||null;
   var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
-  if(!weeklyTodayRecommendable(raw,site)||!weeklyDateInRange(date,week))return null;
-  var score=raw.score;
-  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:true,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
-  return {date:date,weather:today,score:score};
+  var today=weeklyTodayWeather(site,raw,date);
+  if(!today||!weeklyDateInRange(date,week))return null;
+  return {date:date,weather:today,score:raw.score};
 }
 /* 추천 정책은 화면을 연 날이 아니라 후보의 추천 날짜가 속한 계절을 따른다.
    기존 계절 범위(봄 3~5·여름 6~8·가을 9~10·겨울 11~2)와 각 계절 정책 내용은 그대로 재사용한다. */

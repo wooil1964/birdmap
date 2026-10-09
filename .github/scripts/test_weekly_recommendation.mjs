@@ -61,7 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable',
+  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather',
   'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
@@ -2301,4 +2301,29 @@ test('R3-2 주간 표본: 상속된 scoreEligible·missingScoreFields 는 인정
   const inheritedScore = Object.create({ score: 90 });
   Object.assign(inheritedScore, own); delete inheritedScore.score;
   assert.equal(api.weeklySampleRecommendable(SITE, inheritedScore), false);
+});
+
+/* ===== PR #13 R4: 검증된 today fallback 만 출처(_weatherState)를 받는다 ===== */
+test('R4-9 weeklyTodayWeather: 검증을 통과한 today 만 적격 출처를 받고, 만조·일반 fallback 이 같은 출처를 쓴다', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null, tideMonth: p0Tide('14', P0_DATE, '12:00', 900), weatherToday: { sites: { 14: r1Raw() } } });
+  const ok = api.weeklyTodayWeather(site, r1Raw(), P0_DATE);
+  assert.equal(ok._weatherState.scoreEligible, true);
+  assert.equal(ok._weatherState.kind, 'today_saved');
+  assert.equal(ok.score, 92);
+  for (const bad of [{ rain: null }, { wind: null }, { scoreEligible: undefined }, { missingScoreFields: ['wave'] }, { score: null }, { score: '92' }, { stale: true }]) {
+    assert.equal(api.weeklyTodayWeather(site, r1Raw(bad), P0_DATE), null, JSON.stringify(bad));
+  }
+  assert.equal(api.weeklyTodayWeather(site, null, P0_DATE), null);
+  const week = api.weeklyInfo();
+  const tide = api.weeklyQualifyingHighTides(site, week)[0];
+  const found = api.weeklyTideWeather(site, tide);
+  assert.equal(found.sample, null);
+  assert.equal(found.weather._weatherState.scoreEligible, true, '만조 fallback 도 같은 출처');
+  assert.equal(found.weather.score, 92);
+  assert.equal(api.weeklyWeatherEntryForSite(site, week, undefined).weather._weatherState.scoreEligible, true);
+  /* 원본 raw 객체를 바꾸지 않는다. */
+  const source = r1Raw();
+  api.weeklyTodayWeather(site, source, P0_DATE);
+  assert.ok(!('_weatherState' in source));
 });
