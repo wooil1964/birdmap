@@ -1,0 +1,277 @@
+{
+  "before": "352315a57d038687807dbe0044c136a22fb0c9c5",
+  "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "rows": [
+    {
+      "scenario": "future_first_does_not_poison_normal_recovery_today",
+      "before": [
+        {
+          "stage": "future first",
+          "cards": 0,
+          "today": "2026-10-10 12:30 KST",
+          "week": null,
+          "item": "2026-10-10 12:30 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 1,
+          "today": "2026-10-10 10:50 KST",
+          "week": null,
+          "item": "2026-10-10 10:50 KST"
+        }
+      ],
+      "head": [
+        {
+          "stage": "future first",
+          "cards": 0,
+          "today": "2026-10-10 12:30 KST",
+          "week": null,
+          "item": "2026-10-10 12:30 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 0,
+          "today": "2026-10-10 12:30 KST",
+          "week": null,
+          "item": "2026-10-10 12:30 KST"
+        }
+      ],
+      "headChecks": [
+        {
+          "expectation": "Future publication cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "Invalid future high-water cannot block valid recovery",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "scenario": "future_first_does_not_poison_normal_recovery_week",
+      "before": [
+        {
+          "stage": "future first",
+          "cards": 1,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 12:30 KST",
+          "item": "2026-10-10 05:41 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 1,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 10:50 KST",
+          "item": "2026-10-10 05:41 KST"
+        }
+      ],
+      "head": [
+        {
+          "stage": "future first",
+          "cards": 0,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 12:30 KST",
+          "item": "2026-10-10 05:41 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 0,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 12:30 KST",
+          "item": "2026-10-10 05:41 KST"
+        }
+      ],
+      "headChecks": [
+        {
+          "expectation": "Future publication cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "Invalid future high-water cannot block valid recovery",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "scenario": "future_after_valid_does_not_erase_or_poison_today",
+      "before": [
+        {
+          "stage": "normal10:40",
+          "cards": 1,
+          "today": "2026-10-10 10:40 KST",
+          "week": null,
+          "item": "2026-10-10 10:40 KST"
+        },
+        {
+          "stage": "future12:30",
+          "cards": 0,
+          "today": "2026-10-10 12:30 KST",
+          "week": null,
+          "item": "2026-10-10 12:30 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 1,
+          "today": "2026-10-10 10:50 KST",
+          "week": null,
+          "item": "2026-10-10 10:50 KST"
+        }
+      ],
+      "head": [
+        {
+          "stage": "normal10:40",
+          "cards": 1,
+          "today": "2026-10-10 10:40 KST",
+          "week": null,
+          "item": "2026-10-10 10:40 KST"
+        },
+        {
+          "stage": "future12:30",
+          "cards": 0,
+          "today": "2026-10-10 12:30 KST",
+          "week": null,
+          "item": "2026-10-10 12:30 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 0,
+          "today": "2026-10-10 12:30 KST",
+          "week": null,
+          "item": "2026-10-10 12:30 KST"
+        }
+      ],
+      "headChecks": [
+        {
+          "expectation": "Known invalid future publication preserves current source",
+          "passed": false
+        },
+        {
+          "expectation": "Subsequent valid newer publication is accepted",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "scenario": "future_after_valid_does_not_erase_or_poison_week",
+      "before": [
+        {
+          "stage": "normal10:40",
+          "cards": 1,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 10:40 KST",
+          "item": "2026-10-10 05:41 KST"
+        },
+        {
+          "stage": "future12:30",
+          "cards": 1,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 12:30 KST",
+          "item": "2026-10-10 05:41 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 1,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 10:50 KST",
+          "item": "2026-10-10 05:41 KST"
+        }
+      ],
+      "head": [
+        {
+          "stage": "normal10:40",
+          "cards": 1,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 10:40 KST",
+          "item": "2026-10-10 05:41 KST"
+        },
+        {
+          "stage": "future12:30",
+          "cards": 0,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 12:30 KST",
+          "item": "2026-10-10 05:41 KST"
+        },
+        {
+          "stage": "normal10:50",
+          "cards": 0,
+          "today": "2026-10-10 05:41 KST",
+          "week": "2026-10-10 12:30 KST",
+          "item": "2026-10-10 05:41 KST"
+        }
+      ],
+      "headChecks": [
+        {
+          "expectation": "Known invalid future publication preserves current source",
+          "passed": false
+        },
+        {
+          "expectation": "Subsequent valid newer publication is accepted",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "scenario": "new_root_older_eligible_item_does_not_revive_unsafe_today",
+      "before": [
+        {
+          "stage": "root/item10:40 unsafe",
+          "cards": 0,
+          "today": "2026-10-10 10:40 KST",
+          "week": null,
+          "item": "2026-10-10 10:40 KST"
+        },
+        {
+          "stage": "root10:50/item10:30 safe",
+          "cards": 1,
+          "today": "2026-10-10 10:50 KST",
+          "week": null,
+          "item": "2026-10-10 10:30 KST"
+        },
+        {
+          "stage": "root/item10:55 safe",
+          "cards": 1,
+          "today": "2026-10-10 10:55 KST",
+          "week": null,
+          "item": "2026-10-10 10:55 KST"
+        }
+      ],
+      "head": [
+        {
+          "stage": "root/item10:40 unsafe",
+          "cards": 0,
+          "today": "2026-10-10 10:40 KST",
+          "week": null,
+          "item": "2026-10-10 10:40 KST"
+        },
+        {
+          "stage": "root10:50/item10:30 safe",
+          "cards": 1,
+          "today": "2026-10-10 10:50 KST",
+          "week": null,
+          "item": "2026-10-10 10:30 KST"
+        },
+        {
+          "stage": "root/item10:55 safe",
+          "cards": 1,
+          "today": "2026-10-10 10:55 KST",
+          "week": null,
+          "item": "2026-10-10 10:55 KST"
+        }
+      ],
+      "headChecks": [
+        {
+          "expectation": "Newest known item excludes candidate",
+          "passed": true
+        },
+        {
+          "expectation": "New root cannot revive recommendation using older eligible item",
+          "passed": false
+        },
+        {
+          "expectation": "Consistent verified newer item still recovers",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

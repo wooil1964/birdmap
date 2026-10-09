@@ -1,0 +1,767 @@
+{
+  "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "before": "352315a57d038687807dbe0044c136a22fb0c9c5",
+  "clock": "2026-10-10 11:00 KST",
+  "mode": "Actual validate() controlled datetime.now and runtime site projection only. No validator/source guards patched.",
+  "sourceSHA256": "2d12863912ab10f1a4fa383da319c18ede89443de6dd874a38f382327ff62863",
+  "rows": [
+    {
+      "id": "normal",
+      "expectedAccepted": true,
+      "accepted": true,
+      "pass": true,
+      "error": ""
+    },
+    {
+      "id": "generation_missing",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: generatedAt must be a KST stamp: None"
+    },
+    {
+      "id": "generation_null",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: generatedAt must be a KST stamp: None"
+    },
+    {
+      "id": "generation_empty",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: generatedAt must be a KST stamp: ''"
+    },
+    {
+      "id": "generation_bad",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: generatedAt must be a KST stamp: 'not-a-time'"
+    },
+    {
+      "id": "generation_future",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: generatedAt is in the future: '2026-10-10 12:30 KST'"
+    },
+    {
+      "id": "forecast_missing_zone",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10 12:00 must be a KST stamp: '2026-10-10 12:00'"
+    },
+    {
+      "id": "forecast_bad_suffix",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10 12:00 bananas must be a KST stamp: '2026-10-10 12:00 bananas'"
+    },
+    {
+      "id": "forecast_minute60",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10 12:60 KST is not a KST stamp: '2026-10-10 12:60 KST'"
+    },
+    {
+      "id": "site_unavailable_with_samples",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "error": "AssertionError: 15 keeps samples while marked unavailable"
+    }
+  ],
+  "passed": 10,
+  "total": 10,
+  "typed": [
+    {
+      "id": "general-score-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST is eligible without a score"
+    },
+    {
+      "id": "general-score-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST score out of range: '92'"
+    },
+    {
+      "id": "general-score-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST score out of range: True"
+    },
+    {
+      "id": "general-score-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST score out of range: -1"
+    },
+    {
+      "id": "general-score-above100",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST score out of range: 101"
+    },
+    {
+      "id": "general-wind-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST is eligible without windSpeed"
+    },
+    {
+      "id": "general-wind-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: '3'"
+    },
+    {
+      "id": "general-wind-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST windSpeed is negative: -1"
+    },
+    {
+      "id": "general-wind-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: True"
+    },
+    {
+      "id": "general-direction-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST is eligible without windDirectionDeg"
+    },
+    {
+      "id": "general-direction360",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST windDirectionDeg is outside the stored 0-359 range: 360"
+    },
+    {
+      "id": "general-rain-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST is eligible without precipitation3h"
+    },
+    {
+      "id": "general-rain-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST precipitation3h is not a finite number: '0'"
+    },
+    {
+      "id": "general-eligible-false",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST carries a score while ineligible"
+    },
+    {
+      "id": "general-eligible-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: None"
+    },
+    {
+      "id": "general-eligible-number",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: 1"
+    },
+    {
+      "id": "general-reasons-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: None"
+    },
+    {
+      "id": "general-reasons-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: ''"
+    },
+    {
+      "id": "general-reasons-nonempty",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST is eligible with missing fields"
+    },
+    {
+      "id": "general-wave-null",
+      "jsRecommendable": true,
+      "pythonStorageValid": true,
+      "same": true,
+      "error": ""
+    },
+    {
+      "id": "general-wave-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: '0.3'"
+    },
+    {
+      "id": "general-wave-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST waveM is negative: -1"
+    },
+    {
+      "id": "general-wave-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 501 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: True"
+    },
+    {
+      "id": "tide-score-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST is eligible without a score"
+    },
+    {
+      "id": "tide-score-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST score out of range: '92'"
+    },
+    {
+      "id": "tide-score-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST score out of range: True"
+    },
+    {
+      "id": "tide-score-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST score out of range: -1"
+    },
+    {
+      "id": "tide-score-above100",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST score out of range: 101"
+    },
+    {
+      "id": "tide-wind-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST is eligible without windSpeed"
+    },
+    {
+      "id": "tide-wind-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: '3'"
+    },
+    {
+      "id": "tide-wind-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST windSpeed is negative: -1"
+    },
+    {
+      "id": "tide-wind-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: True"
+    },
+    {
+      "id": "tide-direction-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST is eligible without windDirectionDeg"
+    },
+    {
+      "id": "tide-direction360",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST windDirectionDeg is outside the stored 0-359 range: 360"
+    },
+    {
+      "id": "tide-rain-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST is eligible without precipitation3h"
+    },
+    {
+      "id": "tide-rain-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST precipitation3h is not a finite number: '0'"
+    },
+    {
+      "id": "tide-eligible-false",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST carries a score while ineligible"
+    },
+    {
+      "id": "tide-eligible-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: None"
+    },
+    {
+      "id": "tide-eligible-number",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: 1"
+    },
+    {
+      "id": "tide-reasons-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: None"
+    },
+    {
+      "id": "tide-reasons-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: ''"
+    },
+    {
+      "id": "tide-reasons-nonempty",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST is eligible with missing fields"
+    },
+    {
+      "id": "tide-wave-null",
+      "jsRecommendable": true,
+      "pythonStorageValid": true,
+      "same": true,
+      "error": ""
+    },
+    {
+      "id": "tide-wave-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: '0.3'"
+    },
+    {
+      "id": "tide-wave-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST waveM is negative: -1"
+    },
+    {
+      "id": "tide-wave-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 14 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: True"
+    },
+    {
+      "id": "island-score-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST is eligible without a score"
+    },
+    {
+      "id": "island-score-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST score out of range: '92'"
+    },
+    {
+      "id": "island-score-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST score out of range: True"
+    },
+    {
+      "id": "island-score-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST score out of range: -1"
+    },
+    {
+      "id": "island-score-above100",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST score out of range: 101"
+    },
+    {
+      "id": "island-wind-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST is eligible without windSpeed"
+    },
+    {
+      "id": "island-wind-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: '3'"
+    },
+    {
+      "id": "island-wind-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST windSpeed is negative: -1"
+    },
+    {
+      "id": "island-wind-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: True"
+    },
+    {
+      "id": "island-direction-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST is eligible without windDirectionDeg"
+    },
+    {
+      "id": "island-direction360",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST windDirectionDeg is outside the stored 0-359 range: 360"
+    },
+    {
+      "id": "island-rain-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST is eligible without precipitation3h"
+    },
+    {
+      "id": "island-rain-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST precipitation3h is not a finite number: '0'"
+    },
+    {
+      "id": "island-eligible-false",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST carries a score while ineligible"
+    },
+    {
+      "id": "island-eligible-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: None"
+    },
+    {
+      "id": "island-eligible-number",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: 1"
+    },
+    {
+      "id": "island-reasons-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: None"
+    },
+    {
+      "id": "island-reasons-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: ''"
+    },
+    {
+      "id": "island-reasons-nonempty",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST is eligible with missing fields"
+    },
+    {
+      "id": "island-wave-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST is eligible without wave"
+    },
+    {
+      "id": "island-wave-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: '0.3'"
+    },
+    {
+      "id": "island-wave-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST waveM is negative: -1"
+    },
+    {
+      "id": "island-wave-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 3 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: True"
+    },
+    {
+      "id": "boat-score-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST is eligible without a score"
+    },
+    {
+      "id": "boat-score-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST score out of range: '92'"
+    },
+    {
+      "id": "boat-score-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST score out of range: True"
+    },
+    {
+      "id": "boat-score-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST score out of range: -1"
+    },
+    {
+      "id": "boat-score-above100",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST score out of range: 101"
+    },
+    {
+      "id": "boat-wind-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST is eligible without windSpeed"
+    },
+    {
+      "id": "boat-wind-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: '3'"
+    },
+    {
+      "id": "boat-wind-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST windSpeed is negative: -1"
+    },
+    {
+      "id": "boat-wind-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST windSpeed is not a finite number: True"
+    },
+    {
+      "id": "boat-direction-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST is eligible without windDirectionDeg"
+    },
+    {
+      "id": "boat-direction360",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST windDirectionDeg is outside the stored 0-359 range: 360"
+    },
+    {
+      "id": "boat-rain-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST is eligible without precipitation3h"
+    },
+    {
+      "id": "boat-rain-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST precipitation3h is not a finite number: '0'"
+    },
+    {
+      "id": "boat-eligible-false",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST carries a score while ineligible"
+    },
+    {
+      "id": "boat-eligible-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: None"
+    },
+    {
+      "id": "boat-eligible-number",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST scoreEligible is not a boolean: 1"
+    },
+    {
+      "id": "boat-reasons-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: None"
+    },
+    {
+      "id": "boat-reasons-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST missingScoreFields is not a list: ''"
+    },
+    {
+      "id": "boat-reasons-nonempty",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST is eligible with missing fields"
+    },
+    {
+      "id": "boat-wave-null",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST is eligible without wave"
+    },
+    {
+      "id": "boat-wave-string",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: '0.3'"
+    },
+    {
+      "id": "boat-wave-negative",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST waveM is negative: -1"
+    },
+    {
+      "id": "boat-wave-bool",
+      "jsRecommendable": false,
+      "pythonStorageValid": false,
+      "same": true,
+      "error": "AssertionError: 48 2026-10-10 2026-10-10 12:00 KST waveM is not a finite number: True"
+    }
+  ],
+  "typedSame": 92,
+  "typedTotal": 92,
+  "formatDiagnostics": [
+    {
+      "id": "generated_ISO_KST",
+      "field": "generatedAt",
+      "value": "2026-10-10T10:30:00+09:00",
+      "accepted": false,
+      "error": "AssertionError: generatedAt must be a KST stamp: '2026-10-10T10:30:00+09:00'",
+      "scope": "Parser input-set diagnostic; canonical generator emits padded KST. Not counted in C1/C2 core or numeric parity."
+    },
+    {
+      "id": "generated_unpadded_KST",
+      "field": "generatedAt",
+      "value": "2026-10-10 9:30 KST",
+      "accepted": true,
+      "error": "",
+      "scope": "Parser input-set diagnostic; canonical generator emits padded KST. Not counted in C1/C2 core or numeric parity."
+    },
+    {
+      "id": "forecast_ISO_KST",
+      "field": "forecastTime",
+      "value": "2026-10-10T12:00:00+09:00",
+      "accepted": false,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10T12:00:00+09:00 must be a KST stamp: '2026-10-10T12:00:00+09:00'",
+      "scope": "Parser input-set diagnostic; canonical generator emits padded KST. Not counted in C1/C2 core or numeric parity."
+    },
+    {
+      "id": "forecast_unpadded_KST",
+      "field": "forecastTime",
+      "value": "2026-10-10 12:0 KST",
+      "accepted": true,
+      "error": "",
+      "scope": "Parser input-set diagnostic; canonical generator emits padded KST. Not counted in C1/C2 core or numeric parity."
+    }
+  ],
+  "limits": [
+    "Storage validity and recommendation eligibility are distinct. This typed matrix uses eligible samples/contradictory false samples so equal outcomes are expected; well-formed ineligible stored samples are intentionally accepted by Python and excluded by JS.",
+    "ISO+09 acceptance in JS and canonical KST requirement in Python, plus strptime nonpadded acceptance, are diagnosed separately and do not alter normal generated records."
+  ]
+}

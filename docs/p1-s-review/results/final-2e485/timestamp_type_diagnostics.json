@@ -1,0 +1,321 @@
+{
+  "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "mode": "Actual product API on JSON.stringify/parse roundtripped synthetic timestamp values. Normal generator emits strings; no corrupt operating file observed.",
+  "parserRows": [
+    {
+      "label": "string",
+      "rawType": "string",
+      "parsed": 1791601200000,
+      "error": null,
+      "expectedValid": true,
+      "pass": true
+    },
+    {
+      "label": "array",
+      "rawType": "array",
+      "parsed": 1791601200000,
+      "error": null,
+      "expectedValid": false,
+      "pass": false
+    },
+    {
+      "label": "number",
+      "rawType": "number",
+      "parsed": null,
+      "error": null,
+      "expectedValid": false,
+      "pass": true
+    },
+    {
+      "label": "boolean",
+      "rawType": "boolean",
+      "parsed": null,
+      "error": null,
+      "expectedValid": false,
+      "pass": true
+    },
+    {
+      "label": "object",
+      "rawType": "object",
+      "parsed": null,
+      "error": "TypeError: Cannot convert object to primitive value",
+      "expectedValid": false,
+      "pass": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "general-publication-array",
+      "expected": {
+        "candidate": false
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": [
+          "2026-10-10 10:30 KST"
+        ],
+        "forecastTime": "2026-10-10 12:00 KST"
+      },
+      "pass": false
+    },
+    {
+      "id": "general-forecast-array",
+      "expected": {
+        "candidate": true,
+        "score": 80,
+        "rank": 96
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": [
+          "2026-10-10 12:00 KST"
+        ]
+      },
+      "pass": false
+    },
+    {
+      "id": "tide-publication-array",
+      "expected": {
+        "candidate": false
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": [
+          "2026-10-10 10:30 KST"
+        ],
+        "forecastTime": "2026-10-10 12:00 KST"
+      },
+      "pass": false
+    },
+    {
+      "id": "tide-forecast-array",
+      "expected": {
+        "candidate": true,
+        "score": 80,
+        "rank": 96
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": [
+          "2026-10-10 12:00 KST"
+        ]
+      },
+      "pass": false
+    },
+    {
+      "id": "island-publication-array",
+      "expected": {
+        "candidate": false
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": [
+          "2026-10-10 10:30 KST"
+        ],
+        "forecastTime": "2026-10-10 12:00 KST"
+      },
+      "pass": false
+    },
+    {
+      "id": "island-forecast-array",
+      "expected": {
+        "candidate": true,
+        "score": 80,
+        "rank": 96
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": [
+          "2026-10-10 12:00 KST"
+        ]
+      },
+      "pass": false
+    },
+    {
+      "id": "boat-publication-array",
+      "expected": {
+        "candidate": false
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "48"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": [
+          "2026-10-10 10:30 KST"
+        ],
+        "forecastTime": "2026-10-10 12:00 KST"
+      },
+      "pass": false
+    },
+    {
+      "id": "boat-forecast-array",
+      "expected": {
+        "candidate": true,
+        "score": 80,
+        "rank": 96
+      },
+      "actual": {
+        "candidate": true,
+        "score": 99,
+        "rank": 115,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "48"
+        ],
+        "popupScore": 99
+      },
+      "entrySource": {
+        "kind": "week_forecast",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:30 KST",
+        "forecastTime": [
+          "2026-10-10 12:00 KST"
+        ]
+      },
+      "pass": false
+    }
+  ]
+}
