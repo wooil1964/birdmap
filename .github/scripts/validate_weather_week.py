@@ -93,6 +93,9 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
                 direction = sample["windDirectionDeg"]
                 assert direction is None or direction < 360, \
                     f"{label} windDirectionDeg is outside the stored 0-359 range: {direction!r}"
+                # P1-S2: 적격 여부는 bool, 결측 사유는 list 여야 한다(truthiness 로 추천 적격을 추정하지 않는다).
+                assert isinstance(sample["scoreEligible"], bool),                     f"{label} scoreEligible is not a boolean: {sample['scoreEligible']!r}"
+                assert isinstance(sample["missingScoreFields"], list),                     f"{label} missingScoreFields is not a list: {sample['missingScoreFields']!r}"
                 if sample["scoreEligible"]:
                     eligible_count += 1
                     assert not sample["missingScoreFields"], f"{label} is eligible with missing fields"

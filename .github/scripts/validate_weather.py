@@ -36,7 +36,10 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_today.json"):
             value = day.get(field)
             assert value is None or finite_number(value), \
                 f"{site_id} {field} is not a finite number: {value!r}"
-        if day.get("scoreEligible"):
+        # P1-S2: 적격 여부는 반드시 bool 이어야 한다(1·"true"·None 같은 truthy/falsy 값으로 추천 적격을 추정하지 않는다).
+        assert isinstance(day.get("scoreEligible"), bool),             f"{site_id} scoreEligible is not a boolean: {day.get('scoreEligible')!r}"
+        if day["scoreEligible"]:
+            assert isinstance(day.get("missingScoreFields"), list),                 f"{site_id} missingScoreFields is not a list: {day.get('missingScoreFields')!r}"
             assert not day.get("stale") and not day.get("dataUnavailable")
             assert day["date"] == data["date"] == day["forecastTime"][:10]
             assert finite_number(day["score"]) and 0 <= day["score"] <= 100, \

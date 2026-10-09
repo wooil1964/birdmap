@@ -517,6 +517,19 @@ class WeatherWeekTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "Weather contains NaN"):
             self.run_today_validator(nan_document, raw_replace=("987654321", "NaN"))
 
+    def test_today_validator_requires_typed_eligibility(self):
+        """P1-S2: scoreEligible 는 bool, 적격일 때 missingScoreFields 는 빈 list 여야 한다."""
+        for eligible in (1, "true", 0.5, None):
+            with self.subTest(scoreEligible=eligible):
+                with self.assertRaisesRegex(AssertionError, "scoreEligible is not a boolean"):
+                    self.run_today_validator(self.today_document(scoreEligible=eligible))
+        for missing in (None, "wave"):
+            with self.subTest(missingScoreFields=missing):
+                with self.assertRaisesRegex(AssertionError, "missingScoreFields is not a list"):
+                    self.run_today_validator(self.today_document(missingScoreFields=missing))
+        with self.assertRaises(AssertionError):
+            self.run_today_validator(self.today_document(missingScoreFields=["wave"]))
+
     # ---- L03: weekly validator 의 수치 타입·음수·비유한값 검증 ----
 
     OVERFLOW_MARKER = 123456.789
@@ -577,6 +590,21 @@ class WeatherWeekTests(unittest.TestCase):
             with self.subTest(field=field, value=value):
                 with self.assertRaisesRegex(AssertionError, message):
                     self.run_week_validator(self.week_document(**{field: value}), site_fields)
+
+    def test_validator_requires_typed_weekly_eligibility(self):
+        """P1-S2: scoreEligible 는 bool, missingScoreFields 는 list 여야 하고 truthiness 로 적격을 추정하지 않는다."""
+        for eligible in (1, "true", 0.5):
+            with self.subTest(scoreEligible=eligible):
+                with self.assertRaisesRegex(AssertionError, "scoreEligible is not a boolean"):
+                    self.run_week_validator(self.week_document(scoreEligible=eligible), {"showWave": True})
+        for missing in (None, "wave"):
+            with self.subTest(missingScoreFields=missing):
+                with self.assertRaisesRegex(AssertionError, "missingScoreFields is not a list"):
+                    self.run_week_validator(self.week_document(missingScoreFields=missing), {"showWave": True})
+        # 정상 0점·100점·소수점은 그대로 통과한다.
+        for score in (0, 100, 92.5):
+            with self.subTest(score=score):
+                self.assertEqual(self.run_week_validator(self.week_document(score=score), {"showWave": True})["sampleCount"], 1)
 
     def test_validator_rejects_json_number_overflow(self):
         """JSON 숫자 1e999 는 parse_constant 가 아니라 inf 로 파싱되므로 유한성 검사로 막는다."""
