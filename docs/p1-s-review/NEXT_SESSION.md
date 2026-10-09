@@ -83,3 +83,13 @@ node docs/p1-s-review/scripts/r6/source_crosscheck.mjs
 주의: 두 reference_selection은 같은파일명을 쓰므로 위와 같이 before/after output을 분리한다. DOM 모든폭은 스크립트 기본, root49는 환경변수R6_WIDTHS=375로 실행한 범위(소스 실제 설정 확인). before 카드 실패를 다시 확인하려면 새 R6 test_recommendation_card_display.mjs와 fixture만 before archive에 복사한다. 원제품index는 그대로 둔다. 합성API·DNS/Fetch 격리를 navigation 전에 설치한 실제Chrome 하네스를 사용한다. 실제 운영자료 POST/DELETE 금지.
 
 source_crosscheck는 이번보존결과의 exactsource/data/hash 및 수치를 대조한다. 새실험결과를 원본results/r6에 덮어쓰지 않는다. 마지막 remoteSHA·clean상태·게시readback은 github_receipts 및 최종 git log로 확인한다. 검증 자체가 끝나면 사용자정책 승인/새SHA를 기다린다.
+
+
+## R6 최종 게시·저장 완료
+
+최종 보고 체크포인트 **20a73321c7ec09dd6262b9c3ef471660f2da8df0**를 검증 브랜치에 push했다. PR13 댓글 **6081928890** 및 Issue9 댓글 **6081932642** 게시 후 API로 본문 전체를 정규화 대조하여 일치를 확인했다. 정확한 URL·본문 SHA256·SHA·체크시각은 results/r6/github_receipts.json, 게시 본문은 FINAL_R6_COMMENT.md에 저장했다.
+
+- [PR #13 최종 검증](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6081928890)
+- [Issue #9 기록](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6081932642)
+
+이 세션의 실험·보고·게시가 완료됐다. 추가 제품 실험은 남아 있지 않으며 **수정 필요/C 판정에 따른 사용자 정책 승인과 구현자 새 SHA를 기다린다**. 게시 증빙 최종 checkpoint는 git log -1에서 확인한다. main/Pages/Worker/D1/실사용자 제보 변경 없음.

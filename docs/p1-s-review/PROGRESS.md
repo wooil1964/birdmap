@@ -78,3 +78,13 @@ Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080214390
 - Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6080999469
 
 FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확인했다. results/r4/github_receipts.json에 URL/ID/본문SHA256/검증SHA/보고서commit을 저장했다. 최종 게시증빙commit은 git log -1로 조회한다. 판정은 수정 필요이며 제품 보완·운영 반영은 수행하지 않고 사용자 승인 및 새 SHA를 기다린다.
+
+
+## R6 최종 게시·저장 완료
+
+최종 보고 체크포인트 **20a73321c7ec09dd6262b9c3ef471660f2da8df0**를 검증 브랜치에 push했다. PR13 댓글 **6081928890** 및 Issue9 댓글 **6081932642** 게시 후 API로 본문 전체를 정규화 대조하여 일치를 확인했다. 정확한 URL·본문 SHA256·SHA·체크시각은 results/r6/github_receipts.json, 게시 본문은 FINAL_R6_COMMENT.md에 저장했다.
+
+- [PR #13 최종 검증](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6081928890)
+- [Issue #9 기록](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6081932642)
+
+이 세션의 실험·보고·게시가 완료됐다. 추가 제품 실험은 남아 있지 않으며 **수정 필요/C 판정에 따른 사용자 정책 승인과 구현자 새 SHA를 기다린다**. 게시 증빙 최종 checkpoint는 git log -1에서 확인한다. main/Pages/Worker/D1/실사용자 제보 변경 없음.

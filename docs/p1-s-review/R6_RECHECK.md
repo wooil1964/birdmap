@@ -214,3 +214,13 @@ merge-tree 충돌0. 결합 index는 정확한 PR head, weather_today/week 및 ti
 원본 결과 results/r6, 재현 scripts/r6, 실행 명령 execution_manifest.json. 주요 자료: source_crosscheck.json, detailed_dom_full/root.json, independent_replay.json, r6_reference_policy.json, reference_selection(_before).json, pr13_r123_actual_matrix/extended.json, sparse6h_generator_proof.json, SECURITY_REVIEW_R6.md, R6_CONTRACT_POLICY_AUDIT.md. 로그·실패·skip을 보존했고 scratch제품 archive/profile은 검증 결과 복사 후 삭제한다.
 
 중간 체크포인트3488b393271737850f27f16fc9c09d3bd7a2b648는 push 완료. 최종 보고 커밋과 PR13/Issue9 게시본문 read-back 증빙은 다음 세션에서 git log 및 results/r6/github_receipts.json으로 확인한다. 파일이 없으면 게시가 완료된 것으로 간주하지 않는다. 자기 커밋 SHA를 문서에 순환 삽입하지 않는다.
+
+
+## R6 최종 게시·저장 완료
+
+최종 보고 체크포인트 **20a73321c7ec09dd6262b9c3ef471660f2da8df0**를 검증 브랜치에 push했다. PR13 댓글 **6081928890** 및 Issue9 댓글 **6081932642** 게시 후 API로 본문 전체를 정규화 대조하여 일치를 확인했다. 정확한 URL·본문 SHA256·SHA·체크시각은 results/r6/github_receipts.json, 게시 본문은 FINAL_R6_COMMENT.md에 저장했다.
+
+- [PR #13 최종 검증](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6081928890)
+- [Issue #9 기록](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6081932642)
+
+이 세션의 실험·보고·게시가 완료됐다. 추가 제품 실험은 남아 있지 않으며 **수정 필요/C 판정에 따른 사용자 정책 승인과 구현자 새 SHA를 기다린다**. 게시 증빙 최종 checkpoint는 git log -1에서 확인한다. main/Pages/Worker/D1/실사용자 제보 변경 없음.
