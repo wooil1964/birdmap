@@ -4230,16 +4230,18 @@ function todayRecommendedSites(){
   var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
   siteData.forEach(function(site,stableOrder){
     var entry=weeklyRecommendationForSite(site,week);
-    if(!entry||!weeklyScoreValid(entry.score))return;
+    if(!entry||!weeklyRecommendationEligible(entry))return;
     // mandatory/공지 정보는 후보에 보존하고, 현장주의만 최종 선발에서 제외한다.
     if(weeklyRecommendationIsSafe(entry)===false)return;
     entry.stableOrder=stableOrder;
     (entry.isMandatory?mandatory:general).push(entry);
   });
-  if(weeklySummerRecommendationSeason())return summerBalancedRecommendations(mandatory.concat(general));
-  if(weeklySpringRecommendationSeason())return springBalancedRecommendations(mandatory.concat(general));
-  if(weeklyWinterRecommendationSeason())return winterBalancedRecommendations(mandatory.concat(general));
-  if(autumnRecommendationSeason())return autumnBalancedRecommendations(mandatory.concat(general));
+  // 두 번째 관문: 계절별 선발·정원 보충이 돌려준 최종 목록에도 검증된 현재 기상자료 조건을 다시 적용한다.
+  function finalPicks(list){return list.filter(weeklyRecommendationEligible);}
+  if(weeklySummerRecommendationSeason())return finalPicks(summerBalancedRecommendations(mandatory.concat(general)));
+  if(weeklySpringRecommendationSeason())return finalPicks(springBalancedRecommendations(mandatory.concat(general)));
+  if(weeklyWinterRecommendationSeason())return finalPicks(winterBalancedRecommendations(mandatory.concat(general)));
+  if(autumnRecommendationSeason())return finalPicks(autumnBalancedRecommendations(mandatory.concat(general)));
   function rank(a,b){
     var ap=a.priority||4, bp=b.priority||4;
     var as=weeklyRankScore(a), bs=weeklyRankScore(b);
@@ -4253,7 +4255,7 @@ function todayRecommendedSites(){
     selectedIds[id]=true;
     selected.push(entry);
   });
-  return selected;
+  return finalPicks(selected);
 }
 function todayTideLineText(site){
   var tide=tideTodayForSite(site);
@@ -4360,7 +4362,7 @@ function renderTodayPanel(){
   if(!top.length){
     var none=document.createElement('div');
     none.className='smallText';
-    none.textContent='이번 주에 확인 가능한 추천 자료가 없습니다. 기상·조석 자료 갱신 후 다시 확인해 주세요.';
+    none.textContent='현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.';
     body.appendChild(none);
   }
   top.forEach(function(entry,index){

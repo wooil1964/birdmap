@@ -388,6 +388,9 @@ const LIFECYCLE = `(async function(){
   var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
   window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
   var cfg=${JSON.stringify({ reference: raw({ generatedAt: DATE + ' 05:41 KST' }), normal: raw(), week: weekWith({ 14: { name: '걸매리', days: { [DATE]: { samples: [sample('12:00', 92)] } } } }), tide: TIDE_NOON })};
+  /* 페이지 자체의 최초 자료 확인(load 뒤 300ms)이 끝난 다음에 시작한다. 그렇지 않으면 그 요청이 아래 시험 요청의 순번을 가로챈다. */
+  for(var wait=0;wait<100&&!(typeof birdmapDataStarted!=='undefined'&&birdmapDataStarted);wait++)await new Promise(function(r){setTimeout(r,100);});
+  await new Promise(function(r){setTimeout(r,1200);});
   var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
   var EMPTY='현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다';
   function snapshot(label){
