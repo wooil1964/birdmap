@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
-const names = ['weatherTimeMs', 'weatherLatestDue', 'weeklyScoreValid', 'weeklyOwn', 'weeklyTodayRequiredDataValid', 'weeklyTodayRecommendable', 'storedWeatherState', 'weatherScoreAllowed',
+const names = ['weatherTimeMs', 'weatherLatestDue', 'weeklyKstTimestamp', 'weeklyForecastTimestamp', 'weeklyScoreValid', 'weeklyOwn', 'weeklyTodayRequiredDataValid', 'weeklyTodayRecommendable', 'storedWeatherState', 'weatherScoreAllowed',
   'liveWeatherComponents', 'liveWeatherResponseCurrent', 'v251EffectiveScore'];
 const context = vm.createContext({weatherToday: {}, LIVE_WEATHER_CACHE_TTL_MS: 900000,
   LIVE_WEATHER_REQUEST_TIMEOUT_MS: 12000, v251RainInfo: () => ({raining: true, amount: 5})});

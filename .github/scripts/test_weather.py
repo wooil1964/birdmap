@@ -385,7 +385,7 @@ class WeatherWeekTests(unittest.TestCase):
         import validate_weather_week as validator
 
         document = {
-            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "generatedAt": "2026-09-07 05:00 KST", "forecastDayCount": 7,
             "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
             "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
             "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant", "days": {"2026-09-07": {"samples": [
@@ -409,7 +409,7 @@ class WeatherWeekTests(unittest.TestCase):
         import validate_weather_week as validator
 
         document = {
-            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "generatedAt": "2026-09-07 05:00 KST", "forecastDayCount": 7,
             "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
             "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
             "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant", "days": {"2026-09-08": {"samples": [
@@ -626,7 +626,7 @@ class WeatherWeekTests(unittest.TestCase):
                   "scoreEligible": True, "missingScoreFields": []}
         sample.update(sample_fields)
         return {
-            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "generatedAt": "2026-09-07 05:00 KST", "forecastDayCount": 7,
             "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
             "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
             "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant",
@@ -690,6 +690,20 @@ class WeatherWeekTests(unittest.TestCase):
         for score in (0, 100, 92.5):
             with self.subTest(score=score):
                 self.assertEqual(self.run_week_validator(self.week_document(score=score), {"showWave": True})["sampleCount"], 1)
+
+    def test_week_validator_requires_a_valid_non_future_generation_time(self):
+        """PR #13 C1: 프런트 weeklyDocVerified 와 같은 계약 — 발행 시각 누락·무효·미래는 거부한다."""
+        for value, message in [(None, "generatedAt"), ("", "generatedAt"), ("not-a-time", "generatedAt"), ("2026-09-07 10:60 KST", "generatedAt"),
+                               ("2099-01-01 00:00 KST", "future")]:
+            with self.subTest(generatedAt=value):
+                document = self.week_document()
+                document["generatedAt"] = value
+                with self.assertRaisesRegex(AssertionError, message):
+                    self.run_week_validator(document, {"showWave": True})
+        document = self.week_document()
+        del document["generatedAt"]
+        with self.assertRaises((AssertionError, KeyError)):
+            self.run_week_validator(document, {"showWave": True})
 
     def test_validator_rejects_json_number_overflow(self):
         """JSON 숫자 1e999 는 parse_constant 가 아니라 inf 로 파싱되므로 유한성 검사로 막는다."""

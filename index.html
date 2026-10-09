@@ -2069,11 +2069,11 @@ function storedWeatherState(day,root,now,site){
   if(!day)return {kind:'none',dataCurrent:false,scoreEligible:false,stale:true};
   var date=day.date||String(day.forecastTime||'').slice(0,10);
   var generated=day.generatedAt||(!day.stale&&(root.generatedAt||root.updated))||'';
-  var generatedMs=weatherTimeMs(generated), forecastMs=weatherTimeMs(day.forecastTime);
+  var generatedMs=weatherTimeMs(generated), forecastMs=weeklyForecastTimestamp(day.forecastTime);
   var hasData=!day.dataUnavailable&&['temperature','wind','rain','visibility','wave'].some(function(key){return day[key]!==null&&day[key]!==undefined&&day[key]!=='';});
   var sameDay=date===today&&String(day.forecastTime||'').slice(0,10)===today;
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
-  var current=hasData&&sameDay&&onSchedule&&!day.stale&&Number.isFinite(forecastMs);
+  var current=hasData&&sameDay&&onSchedule&&!day.stale&&forecastMs!==null&&Number.isFinite(forecastMs);
   /* 적격은 자기 필드의 scoreEligible===true·빈 missingScoreFields·유효 점수·필수 기상값(site 기준)을 모두 확인한 경우만이다. 미확인(누락/null)을 true 로 올리지 않는다. */
   var eligible=weeklyTodayRecommendable(day,site);
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
@@ -3719,9 +3719,17 @@ function weeklySunTimes(lat,lon,dateText){
   }
   return {riseMin:kstMinutes(transit-hourAngle/360),setMin:kstMinutes(transit+hourAngle/360)};
 }
+/* 주간 자료(weather_week.json)는 발행 시각(generatedAt)이 엄격한 KST 형식이고 미래가 아닐 때만 출처로 인정한다.
+   검증되지 않은 발행 자료에서는 현재 적격 출처를 만들지 않는다(주간 최대 연령 같은 새 정책은 두지 않는다). */
+function weeklyDocVerified(){
+  var published=weeklyForecastTimestamp(weatherWeek&&weatherWeek.generatedAt);
+  return published!==null&&published<=Date.now();
+}
+/* 검증된 발행본의 장소 항목. dataUnavailable 장소와 미검증 발행본은 없는 것(null)으로 본다. */
 function weeklyWeekSite(site){
   var sites=weatherWeek&&weatherWeek.sites;
-  return sites?sites[String(site&&site.id)]||null:null;
+  var entry=sites?sites[String(site&&site.id)]||null:null;
+  return entry&&!entry.dataUnavailable&&weeklyDocVerified()?entry:null;
 }
 function weeklyDaySamples(site,dateText){
   var weekSite=weeklyWeekSite(site);
@@ -3734,14 +3742,21 @@ function weeklyDaylightCandidates(site,dateText){
   if(!samples.length)return [];
   var sun=weeklySunTimes(Number(site.lat),Number(site.lon),dateText);
   var isToday=String(dateText)===weeklyTodayDateText(), nowMinutes=isToday?weeklyNowKstMinutes():0;
+  /* 예보 날짜·시각은 점수 비교 전에 엄격 parser(weeklyForecastTimestamp)로 확인한다. 12:60·시간대 없음·꼬리 문자열은 후보가 아니다. */
+  function strict(sample){
+    var timestamp=weeklyForecastTimestamp(sample.forecastTime);
+    if(timestamp===null)return null;
+    var kst=new Date(timestamp+9*3600000).toISOString();
+    return {date:kst.slice(0,10),minutes:Number(kst.slice(11,13))*60+Number(kst.slice(14,16)),timestamp:timestamp};
+  }
   return samples.filter(function(sample){
     if(!weeklySampleRecommendable(site,sample))return false;
-    var minutes=weeklySampleMinutes(sample);
-    if(minutes===null||weeklySampleDateText(sample)!==String(dateText))return false;
-    if(sun&&(minutes<sun.riseMin||minutes>sun.setMin))return false;
-    if(isToday&&(sample.isPastAtGeneration===true||minutes<=nowMinutes))return false;
+    var when=strict(sample);
+    if(!when||when.date!==String(dateText))return false;
+    if(sun&&(when.minutes<sun.riseMin||when.minutes>sun.setMin))return false;
+    if(isToday&&(sample.isPastAtGeneration===true||when.minutes<=nowMinutes))return false;
     return true;
-  }).sort(function(a,b){return weeklySampleMinutes(a)-weeklySampleMinutes(b);});
+  }).sort(function(a,b){return strict(a).timestamp-strict(b).timestamp;});
 }
 /* 하루 대표: 최고 score → 동점이면 오전 우선 → 그 안에서 더 이른 시각 */
 function weeklyDailyBestSample(site,dateText,sampleFilter){
@@ -4521,7 +4536,9 @@ function birdmapDataStamp(data){
 }
 
 /* 반영했으면 true, 같은 자료거나 실패했으면 false 로 끝난다(그리기는 호출한 쪽에서 한 번만). */
-function loadBirdmapData(key,url,currentStamp,apply,onMissing){
+/* 자료의 실제 발행 시각(절대 시각, ms). 엄격한 KST 형식이 아니면 null. */
+function birdmapDataTime(data){return weeklyForecastTimestamp(data&&data.generatedAt);}
+function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData){
   var seq=birdmapDataSeq[key]=(birdmapDataSeq[key]||0)+1;
   return fetch(url,{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error(url+' '+r.status);
@@ -4530,6 +4547,12 @@ function loadBirdmapData(key,url,currentStamp,apply,onMissing){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error(url+' invalid');
     if(seq!==birdmapDataSeq[key])return false;
     if(birdmapDataStamp(data)===currentStamp())return false;
+    /* 발행 시각 순서(currentData 가 있는 today/week): 나중 요청이라도 이미 적용한 검증 자료보다 오래됐거나 같은 시각·시각 불명이면 적용하지 않는다.
+       더 최신 발행본은 정상 적용된다. 아직 검증된 자료가 없으면 그대로 적용하고 추천 자격은 출처 검증이 판단한다. */
+    if(currentData){
+      var have=birdmapDataTime(currentData()), next=birdmapDataTime(data);
+      if(have!==null&&(next===null||next<=have))return false;
+    }
     return apply(data);
   }).catch(function(){
     // 아직 한 번도 못 받은 상태에서만 대체 경로를 탄다. 그 외에는 직전 정상 자료를 유지한다.
@@ -4541,7 +4564,7 @@ function loadBirdmapData(key,url,currentStamp,apply,onMissing){
 function loadWeatherToday(){
   return loadBirdmapData('weatherToday','./weather_today.json',
     function(){return birdmapDataStamp(weatherToday);},
-    function(data){weatherToday=data;return true;});
+    function(data){weatherToday=data;return true;},undefined,function(){return weatherToday;});
 }
 function loadRecommendationWeatherRules(){
   if(recommendationRulesRequest)return recommendationRulesRequest;
@@ -4558,7 +4581,7 @@ function loadWeatherWeek(){
   if(!recommendationWeatherRules)loadRecommendationWeatherRules();
   return loadBirdmapData('weatherWeek','./weather_week.json',
     function(){return birdmapDataStamp(weatherWeek);},
-    function(data){weatherWeek=data;return true;});
+    function(data){weatherWeek=data;return true;},undefined,function(){return weatherWeek;});
 }
 function loadTideToday(){
   return loadBirdmapData('tideToday','./tide_today.json',

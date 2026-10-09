@@ -33,7 +33,7 @@ function functionSource(name) {
 }
 
 const NAMES = [
-  'birdmapDataStamp', 'loadBirdmapData', 'loadWeatherToday', 'loadWeatherWeek',
+  'weeklyKstTimestamp', 'weeklyForecastTimestamp', 'birdmapDataTime', 'birdmapDataStamp', 'loadBirdmapData', 'loadWeatherToday', 'loadWeatherWeek',
   'loadTideToday', 'refreshBirdmapData', 'scheduleBirdmapRefresh',
   'kstDateText', 'tideTodayDateText', 'tideTodayIsCurrent',
 ];
@@ -275,3 +275,42 @@ test('실제 저장 파일도 stamp 로 구분된다', () => {
   assert.equal(api.birdmapDataStamp(null), '');
   assert.equal(api.birdmapDataStamp({ updated: '', source: '', sites: {} }), '', '빈 초기값은 "자료 없음"이어야 한다');
 });
+
+/* ===== PR #13 C3: 나중 요청이라도 이미 적용한 검증 자료보다 오래된 발행본은 적용하지 않는다 ===== */
+for (const [name, loader, prop] of [['today', 'loadWeatherToday', 'weatherToday'], ['week', 'loadWeatherWeek', 'weatherWeek']]) {
+  const sequence = async (stamps, extra = {}) => {
+    let i = 0;
+    const docs = stamps.map((stamp) => (typeof stamp === 'string' || stamp === undefined ? doc(stamp) : stamp));
+    const api = loadApi({ ctx: { [prop]: extra.initial || EMPTY_TODAY }, respond: () => ok(docs[i++]) });
+    const results = [];
+    for (let n = 0; n < docs.length; n++) results.push(await api[loader]());
+    return { api, results };
+  };
+
+  test(`C3 ${name}: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다`, async () => {
+    const { api, results } = await sequence(['2026-10-10 10:40 KST', '2026-10-10 10:30 KST', '2026-10-10 10:50 KST']);
+    assert.deepEqual(results, [true, false, true]);
+    assert.equal(api[prop].generatedAt, '2026-10-10 10:50 KST');
+  });
+
+  test(`C3 ${name}: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다`, async () => {
+    const base = '2026-10-10 10:40 KST';
+    const conflict = doc(base, { updated: '2026-10-10 10:41 KST' });
+    const cases = [conflict, doc(undefined), doc(''), doc('not-a-time'), doc('2026-10-10T10:50:00Z'), doc('2026-10-10 10:60 KST')];
+    const { api, results } = await sequence([base, ...cases]);
+    assert.deepEqual(results, [true, ...cases.map(() => false)]);
+    assert.equal(api[prop].generatedAt, base);
+  });
+
+  test(`C3 ${name}: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다`, async () => {
+    const { api, results } = await sequence(['2026-10-10 23:50 KST', '2026-10-11 00:10 KST', '2026-10-10 23:58 KST']);
+    assert.deepEqual(results, [true, true, false]);
+    assert.equal(api[prop].generatedAt, '2026-10-11 00:10 KST');
+  });
+
+  test(`C3 ${name}: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)`, async () => {
+    const { api, results } = await sequence([doc(undefined, { updated: 'first' })]);
+    assert.deepEqual(results, [true]);
+    assert.ok(api[prop]);
+  });
+}

@@ -61,7 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
+  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','weeklyDocVerified','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
   'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
@@ -113,7 +113,7 @@ function weekDoc(siteId, days, name = '테스트') {
     fallbackSource: 'open_meteo',
     days: Object.fromEntries(Object.entries(days).map(([d, s]) => [d, { samples: s }])),
   };
-  return { startDate: Object.keys(days)[0], endDate: Object.keys(days).slice(-1)[0], sites };
+  return { startDate: Object.keys(days)[0], endDate: Object.keys(days).slice(-1)[0], generatedAt: '2020-01-01 00:00 KST', sites };
 }
 
 /* C 정책: today 저장 기상은 storedWeatherState 의 현재성(생성 시각 ≤ 지금, 예정 갱신 이후, 예보 시각이 오늘)을 만족해야 추천 후보가 된다.
@@ -736,7 +736,7 @@ test('실제 동풍·선상 후보별 gate와 최종 선발 보고',()=>{
 test('봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충',()=>{
  const date=futureDate(1),ships=[{...PELAGIC,id:701},{...PELAGIC,id:702}];
  const land=Array.from({length:11},(_,i)=>({...SITE,id:710+i,name:'일반 '+i,env:'산림',seasons:['봄'],birdingFeature:'이동성 조류'}));
- const sites=[...ships,...land],doc={sites:{}};
+ const sites=[...ships,...land],doc={generatedAt:'2020-01-01 00:00 KST',sites:{}};
  for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(date+' 09:00 KST',s.pelagic?95:92,{waveM:0.6})]}).sites);
  const api=loadApi({month:4,siteData:sites,weatherWeek:doc});
  let top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,1);
@@ -747,7 +747,7 @@ test('봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 
 
 // 겨울 자료는 합성 fixture다. 현재 9월 실제 예보를 겨울 예보로 바꾸지 않는다.
 function winterFixture(extra={}){
- const date='2026-12-10',sites=extra.siteData||RUNTIME,doc={sites:{}};
+ const date='2026-12-10',sites=extra.siteData||RUNTIME,doc={generatedAt:'2020-01-01 00:00 KST',sites:{}};
  for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[
   sample(date+' 06:00 KST',100,{waveM:0.5}),
   sample(date+' 09:00 KST',92,{waveM:0.5}),
@@ -906,7 +906,7 @@ test('겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전�
 
 // 합성 봄 예보와 고정 KST clock. 실제 현재 weather_week 날짜를 바꾸지 않는다.
 function springFixture(date='2027-05-05',extra={}){
- const sites=extra.siteData||RUNTIME,doc={sites:{}};
+ const sites=extra.siteData||RUNTIME,doc={generatedAt:'2020-01-01 00:00 KST',sites:{}};
  for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[
   sample(date+' 03:00 KST',100,{waveM:0.5}),sample(date+' 09:00 KST',92,{waveM:0.5}),sample(date+' 12:00 KST',92,{waveM:0.5})
  ]}).sites);
@@ -1263,7 +1263,7 @@ function h01Week(rows) {
     dates.push(...Object.keys(days));
   }
   dates.sort();
-  return { startDate: dates[0], endDate: dates[dates.length - 1], sites };
+  return { startDate: dates[0], endDate: dates[dates.length - 1], generatedAt: '2020-01-01 00:00 KST', sites };
 }
 function h01Api(today, month, rows) {
   return loadApi({ siteData: RUNTIME, weatherWeek: h01Week(rows), month, now: today + 'T09:00:00+09:00' });
@@ -1481,7 +1481,7 @@ function gateApi(id, now, days, extra = {}) {
   const date = now.slice(0, 10);
   const sites = extra.siteData || [gateSite(id)];
   const dates = weekDates(date);
-  const doc = { sites: {}, startDate: dates[0], endDate: dates[dates.length - 1] };
+  const doc = { generatedAt: '2020-01-01 00:00 KST', sites: {}, startDate: dates[0], endDate: dates[dates.length - 1] };
   for (const s of sites) {
     Object.assign(doc.sites, weekDoc(s.id, Object.fromEntries(dates.map((d) => [d, ['09:00', '12:00', '15:00'].map((t) => sample(d + ' ' + t + ' KST', 92))])), s.name).sites);
   }
@@ -2507,4 +2507,69 @@ test('C-8 mandatory·공지·제보·정원 보충: 일부 장소만 참고 상�
   const allBad = loadApi({ now: R6_NOW, month: 10, siteData: sites, notices: [{ siteIds: [540], published: true }],
     weatherToday: { generatedAt: P0_DATE + ' 05:41 KST', date: P0_DATE, sites: Object.fromEntries(sites.map((s) => [s.id, r6Raw({ generatedAt: P0_DATE + ' 05:41 KST' })])) } });
   assert.deepEqual(allBad.todayRecommendedSites(), [], '전부 참고 상태면 빈 목록(억지로 채우지 않는다)');
+});
+
+/* ===== PR #13 C1·C2 (최종 보완): 주간 발행 출처 검증 · 무효 예보 시각 ===== */
+const FIN_GENERAL = { ...SITE, id: 560, name: '일반F', env: '농경지' };
+const FIN_ISLAND = { ...SITE, id: 561, name: '섬F', env: '농경지', island: true, showWave: true };
+const FIN_BOOST = (id) => ({ notices: [{ siteIds: [id], published: true }], recentSiteSightings: { [id]: { latestDate: '2026-10-09', species: ['a', 'b', 'c', 'd'] } } });
+function finWeek(site, rows, generatedAt = '2026-10-10 10:30 KST', siteExtra = {}) {
+  if (generatedAt === 'MISSING') generatedAt = undefined;
+  const doc = weekDoc(site.id, { [P0_DATE]: rows.map(([time, score, extra]) => sample(P0_DATE + ' ' + time + ' KST', score, Object.assign({ windName: '북풍', waveM: 0.3 }, extra || {}))) });
+  doc.sampleIntervalHours = 3;
+  doc.generatedAt = generatedAt;
+  if (generatedAt === undefined) delete doc.generatedAt;
+  Object.assign(doc.sites[site.id], siteExtra);
+  return doc;
+}
+const finApi = (site, week, extra = {}) => loadApi(Object.assign({ now: R6_NOW, month: 10, siteData: [site], weatherWeek: week, tideMonth: site.id === '14' ? p0Tide('14', P0_DATE, '13:00', 900) : null }, FIN_BOOST(Number(site.id)), extra));
+const finTop = (site, week) => finApi(site, week).todayRecommendedSites().length;
+
+test('C1 주간 발행 시각 누락·null·빈 문자열·무효·미래, dataUnavailable 은 일반·갯벌·섬 모두 후보·최종에서 제외되고 정상 발행·정상 미래 예보는 허용된다', () => {
+  const site14 = RUNTIME.find((s) => s.id === '14');
+  for (const [route, site] of [['일반', FIN_GENERAL], ['갯벌', site14], ['섬', FIN_ISLAND]]) {
+    const rows = [['13:00', 92]];
+    assert.equal(finTop(site, finWeek(site, rows)), 1, route + ' 정상 발행');
+    assert.equal(finTop(site, finWeek(site, rows, '2026-10-10 10:30 KST')), 1);
+    for (const bad of ['MISSING', null, '', 'not-a-time', '2026-10-10 12:30 KST', '2026-10-10 10:60 KST', '2026-10-10T10:30:00Z', '2026-10-10 10:30']) {
+      assert.equal(finTop(site, finWeek(site, rows, bad)), 0, route + ' generatedAt=' + String(bad));
+    }
+    assert.equal(finTop(site, finWeek(site, rows, '2026-10-10 10:30 KST', { dataUnavailable: true })), 0, route + ' dataUnavailable');
+  }
+  const futureForecast = finWeek(FIN_GENERAL, [['13:00', 92]]);
+  futureForecast.sites[FIN_GENERAL.id].days['2026-10-12'] = { samples: [sample('2026-10-12 12:00 KST', 90, { windName: '북풍', waveM: 0.3 })] };
+  assert.ok(finApi(FIN_GENERAL, futureForecast).weeklyRecommendationForSite(FIN_GENERAL, finApi(FIN_GENERAL, futureForecast).weeklyInfo()), '정상 미래 예보 허용');
+});
+
+test('C1 검증되지 않은 주간 발행본은 없는 것으로 보아 정상 today 로 대체되고, 공지·가점으로 되살아나지 않는다', () => {
+  const week = finWeek(FIN_GENERAL, [['13:00', 99]], 'not-a-time');
+  const today = { generatedAt: P0_DATE + ' 10:30 KST', date: P0_DATE, sites: { 560: r6Raw({ score: 70 }) } };
+  const api = finApi(FIN_GENERAL, week, { weatherToday: today });
+  const top = api.todayRecommendedSites();
+  assert.equal(top.length, 1);
+  assert.equal(top[0].score, 70, '무효 발행 주간 99점이 아니라 검증된 today');
+});
+
+test('C2 무효 예보 시각(12:60·시간대 없음·UTC·꼬리 문자열)의 99점은 점수 비교 전에 제외되고 정상 80점이 rank 96 으로 선택된다', () => {
+  const site14 = RUNTIME.find((s) => s.id === '14');
+  for (const [route, site] of [['일반', FIN_GENERAL], ['갯벌', site14], ['섬', FIN_ISLAND]]) {
+    for (const bad of ['2026-10-10 12:60 KST', '2026-10-10 12:00', '2026-10-10 12:00 UTC', '2026-10-10 12:00 KST bananas', '2026-10-10T12:00:00Z', '2026-10-10 24:00 KST']) {
+      const week = finWeek(site, [['12:00', 99, { forecastTime: bad }], ['13:00', 80]]);
+      const api = finApi(site, week);
+      const e = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+      assert.ok(e, route + ' ' + bad);
+      assert.equal(e.score, 80, route + ' ' + bad);
+      assert.equal(api.weeklyRankScore(e), 96, route + ' ' + bad + ': 80 + 제보 16');
+      assert.equal(e.recommendationTime, '13:00');
+      assert.equal(api.todayRecommendedSites()[0].score, 80);
+    }
+  }
+});
+
+test('C2 today 예보 시각도 같은 엄격 parser: 시간대 없음·UTC·24:00·꼬리 문자열은 현재 자료가 아니다', () => {
+  const site = { ...SITE, id: 562, name: '일반T', env: '농경지' };
+  for (const bad of ['2026-10-10T12:00:00', '2026-10-10T12:00:00Z', '2026-10-10 24:00 KST', '2026-10-10 12:00 KST bananas', '2026-10-10 12:60 KST']) {
+    const api = loadApi({ now: R6_NOW, month: 10, siteData: [site], weatherWeek: null, weatherToday: { generatedAt: P0_DATE + ' 10:30 KST', date: P0_DATE, sites: { 562: r6Raw({ forecastTime: bad }) } } });
+    assert.equal(api.todayRecommendedSites().length, 0, bad);
+  }
 });

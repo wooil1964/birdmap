@@ -166,6 +166,8 @@ test.before(async () => {
     gap91: Object.assign(NORMAL({}), { tide: tides([['13:31', '900']]) }),
     alternate: Object.assign(NORMAL({}), { tide: tides([['13:45', '900'], ['12:30', '870']]) }),
     ordinaryNormal: ORDINARY({}),
+    invalidTime99: { siteId: '15', today: null, tide: null, sightings: { 15: BOOST[14] },
+      week: weekWith({ 15: { name: '천수만 사기리', days: { [DATE]: { samples: [sample('12:00', 99, { forecastTime: DATE + ' 12:60 KST' }), sample('13:00', 80)] } } } }) },
     counterexample1440: NORMAL({ forecastTime: '2026-10-09 12:00 KST' }, { sightings: BOOST }),
   };
   for (const [label, scenario] of Object.entries(REFERENCE_CASES)) {
@@ -418,7 +420,7 @@ const LIFECYCLE = `(async function(){
   weatherToday=doc(cfg.reference,'${DATE} 05:41 KST'); refreshTodayPanelIfOpen(); out.push(snapshot('다시 참고 상태'));
   window.fetch=function(url){return Promise.resolve({ok:true,json:function(){return Promise.resolve(cfg.week);}});};
   var weekApplied=await loadWeatherWeek(); refreshTodayPanelIfOpen(); out.push(Object.assign(snapshot('주간 대체 예보 도착'),{applied:weekApplied}));
-  // 5) 이후 요청이 더 오래된 파일을 돌려줘도(발행 시각이 달라 반영된다) 현재성 판정에서 참고 상태가 되어 추천 근거가 되지 못한다(안전 방향).
+  // 5) 이후 요청이 더 오래된 발행본을 돌려줘도 적용하지 않는다(C3).
   weatherToday=doc(cfg.normal,'${DATE} 10:30 KST'); refreshTodayPanelIfOpen(); out.push(snapshot('정상 복구 뒤'));
   window.fetch=function(){return Promise.resolve({ok:true,json:function(){return Promise.resolve(doc(cfg.reference,'${DATE} 05:41 KST'));}});};
   weatherWeek=null;
@@ -442,6 +444,55 @@ test('R7 추천 자료 갱신: 전부 참고 → 빈 목록 안내, 오류 뒤�
     assert.equal(by['주간 대체 예보 도착'].cards, 1);
     assert.equal(by['주간 대체 예보 도착'].score, SCORE_TEXT('★★★★★', 92));
     assert.equal(by['정상 복구 뒤'].cards, 1, '주간 예보가 없어졌다고 가정해도 정상 today 로 추천');
-    assert.deepEqual([by['더 오래된 파일 재수신'].applied, by['더 오래된 파일 재수신'].cards, by['더 오래된 파일 재수신'].empty], [true, 0, true], '로더는 발행 시각 순서를 보지 않지만 참고 상태는 추천 근거가 아니다');
+    assert.deepEqual([by['더 오래된 파일 재수신'].applied, by['더 오래된 파일 재수신'].cards, by['더 오래된 파일 재수신'].empty], [false, 1, false], '더 오래된 발행본은 적용하지 않아 정상 추천을 지우지 못한다(C3)');
   } finally { page.dispose(); }
+});
+
+test('C2 무효 예보 시각 12:60 의 99점 대신 정상 80점이 카드와 Leaflet 팝업에 rank 96 으로 나온다', { skip: SKIP }, () => {
+  const r = results.invalidTime99;
+  assert.equal(r.cardCount, 1);
+  assert.ok(r.cardScore.endsWith('80점'), r.cardScore);
+  assert.equal(r.popupScore, r.cardScore);
+  assert.equal(r.rawScore, 80);
+  assert.equal(r.rank, 96, '80 + 제보 16');
+});
+
+/* C3: 실제 loadWeatherToday()/refreshTodayPanelIfOpen(). 10:40 발행 위험(강수 1mm) → 추천 0, 나중 요청의 10:30 발행(강수 0)이 와도 0, 더 최신 10:50 정상이 오면 복구,
+   반대로 최신 정상 뒤 늦게 온 옛 위험 자료는 정상 추천을 지우지 못한다. */
+const LOADER_ORDER = `(async function(){
+  var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
+  window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
+  var raw=${JSON.stringify(raw())};
+  for(var wait=0;wait<100&&!(typeof birdmapDataStarted!=='undefined'&&birdmapDataStarted);wait++)await new Promise(function(r){setTimeout(r,100);});
+  await new Promise(function(r){setTimeout(r,1200);});
+  var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
+  weatherWeek=null; tideMonth=${JSON.stringify(TIDE_NOON)}; recentSiteSightings={}; loadedNotices=[];
+  function doc(rain,stamp){return {date:'${DATE}',generatedAt:stamp,updated:stamp,sites:{14:Object.assign({},raw,{rain:rain,generatedAt:stamp})}};}
+  function cards(){return document.getElementById('todayPanelBody').querySelectorAll('.todayRankItem').length;}
+  var out=[];
+  var realFetch=window.fetch; function serve(body){window.fetch=function(){return Promise.resolve({ok:true,json:function(){return Promise.resolve(body);}});};}
+  weatherToday=doc('강수 없음','${DATE} 10:20 KST'); toggleTodayPanel(true); out.push(['초기 정상',cards()]);
+  serve(doc('3시간 강수 1.0mm','${DATE} 10:40 KST')); var a=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(['10:40 위험 적용',cards(),a]);
+  serve(doc('강수 없음','${DATE} 10:30 KST')); var b=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(['나중 요청의 10:30 정상(옛 발행)',cards(),b]);
+  serve(doc('강수 없음','${DATE} 10:40 KST')); var c=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(['같은 10:40 충돌 자료',cards(),c]);
+  serve(doc('강수 없음','${DATE} 10:50 KST')); var d=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(['10:50 최신 정상',cards(),d]);
+  serve(doc('3시간 강수 1.0mm','${DATE} 10:45 KST')); var e=await loadWeatherToday(); refreshTodayPanelIfOpen(); out.push(['나중 요청의 10:45 옛 위험',cards(),e]);
+  window.fetch=realFetch; return out;
+})()`;
+
+test('C3 이전 발행본 재적용 차단: 10:40 위험 → 10:30 정상 무시(0건 유지), 10:50 정상 복구, 이후 옛 위험이 정상 추천을 지우지 않는다(5폭)', { skip: SKIP }, async () => {
+  for (const width of WIDTHS) {
+    const page = await Page.open();
+    try {
+      await page.setViewport(width, 800);
+      const out = await page.evaluate(LOADER_ORDER);
+      const by = Object.fromEntries(out.map(([k, ...v]) => [k, v]));
+      assert.deepEqual(by['초기 정상'], [1], width);
+      assert.deepEqual(by['10:40 위험 적용'], [0, true], width);
+      assert.deepEqual(by['나중 요청의 10:30 정상(옛 발행)'], [0, false], width + ': 위험 역전 금지');
+      assert.deepEqual(by['같은 10:40 충돌 자료'], [0, false], width);
+      assert.deepEqual(by['10:50 최신 정상'], [1, true], width);
+      assert.deepEqual(by['나중 요청의 10:45 옛 위험'], [1, false], width + ': 가용성 퇴행 금지');
+    } finally { page.dispose(); }
+  }
 });

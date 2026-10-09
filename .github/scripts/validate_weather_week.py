@@ -55,6 +55,9 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
     assert set(sites) == set(runtime), "Weekly weather IDs mismatch"
     assert data["siteCount"] == len(sites) == len(runtime), "Weekly siteCount mismatch"
 
+    # 프런트(weeklyDocVerified)와 같은 계약: 발행 시각은 엄격한 KST 형식이고 미래가 아니어야 한다.
+    generated = parse_forecast_time(data.get("generatedAt"), "generatedAt")
+    assert generated <= datetime.now(KST), f"generatedAt is in the future: {data['generatedAt']!r}"
     start = parse_date(data["startDate"], "startDate")
     end = parse_date(data["endDate"], "endDate")
     assert start <= end, "Weekly startDate is after endDate"
