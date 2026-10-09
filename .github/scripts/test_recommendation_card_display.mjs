@@ -4,13 +4,15 @@
    실행: CHROME_PATH=<chrome> node --test .github/scripts/test_recommendation_card_display.mjs (Chrome 이 없으면 skip) */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+/* 실제 update_weather.build_site_result 가 만든 sparse 6시간 출력(test_weather.py 가 같은 입력으로 재생성해 일치를 확인한다). */
+const SPARSE6H = JSON.parse(readFileSync(join(ROOT, '.github/scripts/fixtures/sparse6h_today_site14.json'), 'utf8'));
 const CHROME = ['/opt/pw-browsers/chromium-1194/chrome-linux/chrome', '/opt/pw-browsers/chromium/chrome-linux/chrome', process.env.CHROME_PATH]
   .filter(Boolean).find((path) => existsSync(path));
 const SKIP = CHROME ? false : 'Chromium 없음';
@@ -98,15 +100,17 @@ const READ = (scenario) => `(async function(){
   var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
   window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
   var sc=${JSON.stringify(scenario)};
-  weatherWeek=sc.week||null; weatherToday=sc.today?{generatedAt:sc.todayGeneratedAt||'${DATE} 10:30 KST',date:'${DATE}',sites:sc.today}:null;
+  weatherWeek=sc.week||null; weatherToday=sc.today?Object.assign({date:'${DATE}',sites:sc.today},sc.todayGeneratedAt===null?{}:{generatedAt:sc.todayGeneratedAt||'${DATE} 10:30 KST'}):null;
   tideMonth=sc.tide||null; recentSiteSightings=sc.sightings||{}; loadedNotices=[];
-  var site=siteData.find(function(s){return String(s.id)==='14';});
+  var sid=String(sc.siteId||'14');
+  window.__allSites=window.__allSites||siteData; siteData=window.__allSites;  // 시나리오마다 전체 목록에서 장소를 고른다
+  var site=siteData.find(function(s){return String(s.id)===sid;});
   siteData=[site];
   renderTodayPanel();
-  var cards=[].slice.call(document.querySelectorAll('#todayPanelBody .todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf('걸매리')>=0;});
+  var cards=[].slice.call(document.querySelectorAll('#todayPanelBody .todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf(site.name)>=0;});
   var holder=document.createElement('div'); holder.innerHTML=v23TodayWeatherHtml(site);
   var popupScore=holder.querySelector('.v23TodayScore');
-  var entry=weeklyPanelRecommendations(weeklyInfo()).filter(function(e){return String(e.site.id)==='14';})[0]||null;
+  var entry=weeklyPanelRecommendations(weeklyInfo()).filter(function(e){return String(e.site.id)===sid;})[0]||null;
   return {cardCount:cards.length,
     cardScore:cards[0]?cards[0].querySelector('.todayRankScore').textContent:null,
     cardTide:cards[0]?[].slice.call(cards[0].querySelectorAll('div')).map(function(d){return d.textContent;}).join(' | '):null,
@@ -119,13 +123,28 @@ async function readAll(scenarios) {
   const page = await Page.open();
   try {
     const out = {};
-    for (const [name, scenario] of Object.entries(scenarios)) out[name] = await page.evaluate(READ(scenario));
+    for (const [name, scenario] of Object.entries(scenarios)) {
+      try { out[name] = await page.evaluate(READ(scenario)); } catch (error) { throw new Error('시나리오 ' + name + ': ' + error.message); }
+    }
     return out;
   } finally { page.dispose(); }
 }
 
 const TIDE_NOON = tides([['12:00', '900']]);
 const NORMAL = (extra, more = {}) => Object.assign({ today: { 14: raw(extra) }, tide: TIDE_NOON, week: null }, more);
+
+/* 일반 장소(만조 기준 없음, 천수만 사기리 15) today fallback. */
+const ORDINARY = (extra, more = {}) => Object.assign({ siteId: '15', today: { 15: raw(extra) }, tide: null, week: null }, more);
+
+/* PR #13 R6: 참고(현재 적격이 아닌) today 자료 6종. 같은 raw 점수 92·명시 적격 true·정상 풍속/강수여도 현재 자료가 아니면 점수는 미확인이다. */
+const REFERENCE_CASES = {
+  delayed_0541: NORMAL({ generatedAt: DATE + ' 05:41 KST' }),                                  // 예정 갱신(10:17)이 지난 뒤의 이전 생성분
+  future_1230: NORMAL({ generatedAt: DATE + ' 12:30 KST' }),                                   // 현재(11:00)보다 미래 생성
+  malformed_generated: NORMAL({ generatedAt: 'not-a-timestamp' }),
+  missing_generated: Object.assign(NORMAL({ generatedAt: undefined }), { todayGeneratedAt: null }),  // item·root 생성 시각 모두 없음
+  yesterday_forecast: NORMAL({ forecastTime: '2026-10-09 12:00 KST' }),                       // date 는 오늘, 예보 시각은 어제
+  sparse6h_builder: { today: { 14: SPARSE6H }, tide: TIDE_NOON, week: null },                  // 실제 builder 출력(생성 06:10, 예보 12:00)
+};
 
 let results;
 test.before(async () => {
@@ -145,7 +164,12 @@ test.before(async () => {
     gap90: Object.assign(NORMAL({}), { tide: tides([['13:30', '900']]) }),
     gap91: Object.assign(NORMAL({}), { tide: tides([['13:31', '900']]) }),
     alternate: Object.assign(NORMAL({}), { tide: tides([['13:45', '900'], ['12:30', '870']]) }),
+    ordinaryNormal: ORDINARY({}),
   };
+  for (const [label, scenario] of Object.entries(REFERENCE_CASES)) {
+    scenarios['tide_' + label] = Object.assign({}, scenario, { today: { 14: scenario.today[14] }, tide: TIDE_NOON });
+    scenarios['ordinary_' + label] = Object.assign({}, scenario, { siteId: '15', today: { 15: scenario.today[14] }, tide: null });
+  }
   results = await readAll(scenarios);
   if (process.env.R4_DUMP) writeFileSync(process.env.R4_DUMP, JSON.stringify(results, null, 1)); // 수정 전후 증거 보존용
 });
@@ -262,6 +286,82 @@ test('R4-9 344·375·768·1024·1440px: 카드와 팝업 점수가 같고 가로
       for (const [name, rect] of [['카드', out.cardRect], ['팝업', out.popupRect]]) {
         assert.ok(rect.left >= 0 && rect.right <= width + 1, width + ' ' + name + ' 가로 범위: ' + JSON.stringify(rect));
         assert.equal(rect.clipped, false, width + ' ' + name + ' 가로 잘림');
+      }
+    } finally { page.dispose(); }
+  }
+});
+
+const UNKNOWN = '오늘 적합도 미확인';
+
+test('R6-1 참고 상태 today 6종: 만조·일반 fallback 모두 카드와 팝업이 같은 "미확인"이고 후보·순위는 그대로다', { skip: SKIP }, () => {
+  for (const route of ['tide', 'ordinary']) {
+    for (const label of Object.keys(REFERENCE_CASES)) {
+      const r = results[route + '_' + label];
+      assert.equal(r.cardCount, 1, route + ' ' + label + ': 후보 선정 정책은 변경하지 않는다');
+      assert.equal(r.cardScore, UNKNOWN, route + ' ' + label + ' 카드: ' + r.cardScore);
+      assert.equal(r.popupScore, UNKNOWN, route + ' ' + label + ' 팝업: ' + r.popupScore);
+      assert.ok(!/★/.test(r.cardScore + r.popupScore), route + ' ' + label);
+      assert.equal(r.rank, 92, route + ' ' + label + ': 내부 순위(원점수 기준)는 유지');
+      assert.ok(/20\.0°C/.test(r.popupText), route + ' ' + label + ': 기온 참고 정보 유지');
+    }
+  }
+});
+
+test('R6-2 정상 최신 today(10:30 생성)는 만조·일반 fallback 모두 카드와 팝업이 같은 점수를 표시한다', { skip: SKIP }, () => {
+  for (const name of ['base', 'ordinaryNormal']) {
+    const r = results[name];
+    assert.equal(r.cardCount, 1, name);
+    assert.equal(r.cardScore, SCORE_TEXT('★★★★★', 92), name);
+    assert.equal(r.popupScore, r.cardScore, name);
+  }
+  assert.equal(results.base.rank, 108);
+});
+
+/* 같은 시나리오를 5폭에서 실제 카드·Leaflet 마커 팝업으로 읽는다(폭마다 Chrome 한 번, 시나리오는 순차 주입). */
+const MULTI = (cases) => `(async function(){
+  var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
+  window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
+  var cases=${JSON.stringify(cases)};
+  var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
+  var map=map_7010a44f6ac2025090f0fe07508ed485;
+  function popupReady(){var ev=map._events&&map._events.popupopen;return !!markerRegistry[markerKey(site)]&&!!ev&&ev.some(function(h){return String(h.fn).indexOf('applyMobilePopupAutoPan')>=0;});}
+  for(var tries=0;tries<100&&!popupReady();tries++)await new Promise(function(r){setTimeout(r,100);});
+  var out={vw:window.innerWidth,rows:[]};
+  function rectOf(el){var r=el.getBoundingClientRect();return {left:Math.round(r.left),right:Math.round(r.right),clipped:el.scrollWidth>el.clientWidth+1};}
+  for(var i=0;i<cases.length;i++){
+    var c=cases[i];
+    weatherWeek=null; tideMonth=${JSON.stringify(TIDE_NOON)}; recentSiteSightings={}; loadedNotices=[];
+    weatherToday=Object.assign({date:'${DATE}',sites:{14:c.raw}},c.rootGenerated===null?{}:{generatedAt:'${DATE} 10:30 KST'});
+    map.closePopup(); toggleTodayPanel(false); toggleTodayPanel(true);
+    await new Promise(function(r){setTimeout(r,100);});
+    var card=[].slice.call(document.querySelectorAll('#todayPanelBody .todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf('걸매리')>=0;})[0];
+    var cardScore=card?card.querySelector('.todayRankScore'):null;
+    var cardRect=cardScore?rectOf(cardScore):null, cardText=cardScore?cardScore.textContent:null;
+    toggleTodayPanel(false);
+    map.setView([site.lat,site.lon],11,{animate:false});
+    var marker=markerRegistry[markerKey(site)]; marker.addTo(map); marker.openPopup();
+    for(var wait=0;wait<60&&!document.querySelector('.leaflet-popup-content .v23TodayScore');wait++)await new Promise(function(r){setTimeout(r,100);});
+    var popupScore=document.querySelector('.leaflet-popup-content .v23TodayScore');
+    out.rows.push({name:c.name,cardText:cardText,cardRect:cardRect,popupText:popupScore?popupScore.textContent:null,popupRect:popupScore?rectOf(popupScore):null});
+  }
+  return out;
+})()`;
+
+test('R6-3 344·375·768·1024·1440px: 정상 자료는 점수, 참고 상태 6종은 카드와 팝업 모두 "미확인"이고 잘리지 않는다', { skip: SKIP }, async () => {
+  const cases = [{ name: 'normal', raw: raw() }, ...Object.entries(REFERENCE_CASES).map(([name, sc]) => ({ name, raw: sc.today[14], rootGenerated: sc.todayGeneratedAt }))];
+  for (const width of WIDTHS) {
+    const page = await Page.open();
+    try {
+      await page.setViewport(width, 800);
+      const out = await page.evaluate(MULTI(cases));
+      assert.equal(out.vw, width);
+      for (const row of out.rows) {
+        const expected = row.name === 'normal' ? SCORE_TEXT('★★★★★', 92) : UNKNOWN;
+        assert.equal(row.cardText, expected, width + ' ' + row.name + ' 카드: ' + JSON.stringify(row));
+        assert.equal(row.popupText, expected, width + ' ' + row.name + ' 팝업: ' + JSON.stringify(row));
+        for (const rect of [row.cardRect, row.popupRect]) {
+          assert.ok(rect.left >= 0 && rect.right <= width + 1 && rect.clipped === false, width + ' ' + row.name + ' 가로 범위: ' + JSON.stringify(rect));
+        }
       }
     } finally { page.dispose(); }
   }

@@ -582,6 +582,39 @@ class WeatherWeekTests(unittest.TestCase):
         previous["staleCount"] = 1
         self.assertEqual(self.run_today_validator(previous)["scoreEligibleCount"], 0)
 
+    def test_sparse6h_fixture_matches_the_real_builder_and_validator(self):
+        """PR #13 R6: 프런트 출처 시험이 쓰는 sparse 6시간 fixture 는 실제 build_site_result 출력이어야 하고 validator 도 수락한다.
+        (생성기는 평가 시각과 6시간 간격의 예보가 가까우면 적격으로 만들지만, 화면은 예정 갱신 시각 이후 생성분만 현재 자료로 쓴다.)"""
+        import validate_weather as validator
+
+        site = next(s for s in load_runtime_sites() if str(s["id"]) == "14")
+        target = datetime(2026, 10, 10, 6, 10, tzinfo=weather.KST)
+        stamps = [datetime(2026, 10, 10, hour, tzinfo=weather.KST).timestamp() * 1000 for hour in (12, 18)]
+        atmosphere = {"ts": stamps, "wind_u-surface": [0, 0], "wind_v-surface": [-3, -3], "past3hprecip-surface": [0, 0],
+                      "temp-surface": [293.15, 293.15], "visibility-surface": [15000, 15000], "lclouds-surface": [20, 20],
+                      "cloudUnit": "percent", "visibilityUnit": "m"}
+        result = weather.build_site_result(site, weather.load_rules(), atmosphere, None, None, target)
+        fixture = json.loads((Path(__file__).parent / "fixtures" / "sparse6h_today_site14.json").read_text(encoding="utf-8"))
+        self.assertEqual(result, fixture)
+        self.assertTrue(result["scoreEligible"])
+        self.assertFalse(result["stale"])
+        self.assertEqual((result["generatedAt"], result["forecastTime"]), ("2026-10-10 06:10 KST", "2026-10-10 12:00 KST"))
+        document = {"date": "2026-10-10", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
+                    "unavailableSiteCount": 0, "scoreEligibleCount": 1, "status": "ok", "sites": {"14": result}}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "weather_today.json"
+            path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+
+            class FixedNow(datetime):
+                @classmethod
+                def now(cls, tz=None):
+                    moment = datetime(2026, 10, 10, 11, 0, tzinfo=weather.KST)
+                    return moment.astimezone(tz) if tz else moment.replace(tzinfo=None)
+
+            with patch.object(validator, "load_runtime_sites", return_value=[site]), patch.object(validator, "datetime", FixedNow):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(validator.validate(path)["siteCount"], 1)
+
     # ---- L03: weekly validator 의 수치 타입·음수·비유한값 검증 ----
 
     OVERFLOW_MARKER = 123456.789

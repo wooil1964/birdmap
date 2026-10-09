@@ -61,7 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather',
+  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState',
   'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
@@ -2303,27 +2303,52 @@ test('R3-2 주간 표본: 상속된 scoreEligible·missingScoreFields 는 인정
   assert.equal(api.weeklySampleRecommendable(SITE, inheritedScore), false);
 });
 
-/* ===== PR #13 R4: 검증된 today fallback 만 출처(_weatherState)를 받는다 ===== */
-test('R4-9 weeklyTodayWeather: 검증을 통과한 today 만 적격 출처를 받고, 만조·일반 fallback 이 같은 출처를 쓴다', () => {
+/* ===== PR #13 R4·R6: today fallback 의 출처 판정은 storedWeatherState 한 곳에서만 한다 ===== */
+const R6_NOW = '2026-10-10T11:00:00+09:00';
+const r6Raw = (extra = {}) => r1Raw(Object.assign({ generatedAt: P0_DATE + ' 10:30 KST' }, extra));
+const r6Api = (site, raw, state = {}) => loadApi(Object.assign({ now: R6_NOW, month: 10, siteData: [site], weatherWeek: null,
+  tideMonth: p0Tide(String(site.id), P0_DATE, '12:00', 900), weatherToday: { generatedAt: P0_DATE + ' 10:30 KST', date: P0_DATE, sites: { [site.id]: raw } } }, state));
+
+test('R6-4 weeklyTodayWeather: 최신 정상 자료만 적격 출처를 받고, 참고 상태는 같은 storedWeatherState 결과(적격 아님)를 받는다', () => {
   const site = RUNTIME.find((s) => s.id === '14');
-  const api = loadApi({ now: P0_NOW, month: 10, siteData: [site], weatherWeek: null, tideMonth: p0Tide('14', P0_DATE, '12:00', 900), weatherToday: { sites: { 14: r1Raw() } } });
-  const ok = api.weeklyTodayWeather(site, r1Raw(), P0_DATE);
+  const api = r6Api(site, r6Raw());
+  const ok = api.weeklyTodayWeather(site, r6Raw());
   assert.equal(ok._weatherState.scoreEligible, true);
   assert.equal(ok._weatherState.kind, 'today_saved');
+  assert.deepEqual(ok._weatherState, api.storedWeatherState(r6Raw(), { generatedAt: P0_DATE + ' 10:30 KST' }, undefined, site), '팝업과 같은 판정 함수 결과');
   assert.equal(ok.score, 92);
-  for (const bad of [{ rain: null }, { wind: null }, { scoreEligible: undefined }, { missingScoreFields: ['wave'] }, { score: null }, { score: '92' }, { stale: true }]) {
-    assert.equal(api.weeklyTodayWeather(site, r1Raw(bad), P0_DATE), null, JSON.stringify(bad));
+  const reference = {
+    '예정 갱신 지연(05:41)': { generatedAt: P0_DATE + ' 05:41 KST' }, '미래 생성(12:30)': { generatedAt: P0_DATE + ' 12:30 KST' },
+    '비정상 generatedAt': { generatedAt: 'not-a-timestamp' }, '예보 시각이 어제': { forecastTime: '2026-10-09 12:00 KST' },
+  };
+  for (const [label, extra] of Object.entries(reference)) {
+    const weather = api.weeklyTodayWeather(site, r6Raw(extra));
+    assert.ok(weather, label + ': 후보 자격(weeklyTodayRecommendable)은 기존 그대로라 객체는 전달된다');
+    assert.equal(weather._weatherState.scoreEligible, false, label);
+    assert.equal(weather._weatherState.dataCurrent, false, label);
+    assert.equal(weather.score, 92, label + ': 원점수·참고 값은 보존');
+    assert.equal(weather.wind, '북풍 3.0m/s');
   }
-  assert.equal(api.weeklyTodayWeather(site, null, P0_DATE), null);
-  const week = api.weeklyInfo();
-  const tide = api.weeklyQualifyingHighTides(site, week)[0];
-  const found = api.weeklyTideWeather(site, tide);
-  assert.equal(found.sample, null);
-  assert.equal(found.weather._weatherState.scoreEligible, true, '만조 fallback 도 같은 출처');
-  assert.equal(found.weather.score, 92);
-  assert.equal(api.weeklyWeatherEntryForSite(site, week, undefined).weather._weatherState.scoreEligible, true);
-  /* 원본 raw 객체를 바꾸지 않는다. */
-  const source = r1Raw();
-  api.weeklyTodayWeather(site, source, P0_DATE);
-  assert.ok(!('_weatherState' in source));
+  for (const bad of [{ rain: null }, { wind: null }, { scoreEligible: undefined }, { missingScoreFields: ['wave'] }, { score: null }, { score: '92' }, { stale: true }]) {
+    assert.equal(api.weeklyTodayWeather(site, r6Raw(bad)), null, JSON.stringify(bad));
+  }
+  assert.equal(api.weeklyTodayWeather(site, null), null);
+  const source = r6Raw();
+  api.weeklyTodayWeather(site, source);
+  assert.ok(!('_weatherState' in source), '원본 raw 는 바꾸지 않는다');
+});
+
+test('R6-5 만조·일반 fallback 이 같은 출처 판정을 쓴다(정상=적격, 참고=비적격) 그리고 어느 쪽도 더 강한 적격을 만들지 않는다', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  for (const [label, extra, eligible] of [['정상', {}, true], ['갱신 지연', { generatedAt: P0_DATE + ' 05:41 KST' }, false], ['미래 생성', { generatedAt: P0_DATE + ' 12:30 KST' }, false]]) {
+    const api = r6Api(site, r6Raw(extra));
+    const week = api.weeklyInfo();
+    const tide = api.weeklyQualifyingHighTides(site, week)[0];
+    const viaTide = api.weeklyTideWeather(site, tide);
+    assert.ok(viaTide, label);
+    assert.equal(viaTide.weather._weatherState.scoreEligible, eligible, label + ' 만조');
+    const viaEntry = api.weeklyWeatherEntryForSite(site, week, undefined);
+    assert.equal(viaEntry.weather._weatherState.scoreEligible, eligible, label + ' 일반');
+    assert.deepEqual(viaTide.weather._weatherState, viaEntry.weather._weatherState, label + ': 같은 판정');
+  }
 });
