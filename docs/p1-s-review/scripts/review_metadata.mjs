@@ -1,0 +1,20 @@
+// Verification metadata only. Never modifies product files, refs or production services.
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+const repo=process.cwd(), out=path.resolve(process.argv[2]||'docs/p1-s-review/results');
+const main='38b45299c832b8ab8ad549762c02979fa8ddfb28', head='7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e';
+const git=(...args)=>execFileSync('git',args,{cwd:repo,maxBuffer:32*1024*1024}).toString('utf8');
+const ancestor=git('merge-base',head,main).trim();
+const tree='cb24c5085f8f297c0197950a756e41d08082dd98';
+const files=git('diff','--name-only',ancestor,head).trim().split('\n');
+const mainFiles=git('diff','--name-only',ancestor,main).trim().split('\n');
+const hash=(rev,p)=>createHash('sha256').update(git('show',rev+':'+p)).digest('hex');
+const paths=['index.html','reports-api/src/shared.js','reports-api/src/public.js','reports-api/src/field-updates.js','reports-api/src/admin-actions.js','weather_today.json','weather_week.json'];
+const result={head,main,commonAncestor:ancestor,temporaryCombinedTree:tree,actualMerge:false,PRChangedFiles:files,mainChangedFiles:mainFiles,overlap:files.filter(p=>mainFiles.includes(p)),fileHashes:{}};
+for(const p of paths)result.fileHashes[p]={head:hash(head,p),main:hash(main,p),combined:hash(tree,p)};
+result.autoWeatherFromLatestMain=['weather_today.json','weather_week.json'].every(p=>result.fileHashes[p].main===result.fileHashes[p].combined);
+result.combinedProductSourceFromPR=['index.html','reports-api/src/shared.js'].every(p=>result.fileHashes[p].head===result.fileHashes[p].combined);
+fs.writeFileSync(path.join(out,'merge_metadata.json'),JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify(result,null,2));

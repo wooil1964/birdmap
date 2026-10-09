@@ -1,0 +1,97 @@
+# PR #13 독립 보안·품질 검증
+
+## 현재 판정: 수정 필요 (브라우저 검증 진행 중)
+
+검증 대상은 `7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e`다. 구현자가 보고한 결과를 승인 근거로 대체하지 않고 실제 PR source, 실행 로그, 별도 합성 입력 및 고정 자료를 사용했다. 제품 코드는 수정하지 않았다.
+
+| 항목 | 판정 | 근거 |
+|---|---|---|
+| S1-R 표현 방어 | 승인 가능 | 보호 표현 171개 누락 0, 일반 표현 17개 오탐 0; API 읽기·집계·등록·삭제·승인 경로 독립 시험 |
+| S2-A 유효점수 계약 | 수정 필요 | today fallback 실제 필수 날씨 결측이 최종 추천에 남음; unknown 적격 자료에 팝업 92점 표시 |
+| P0 시간·강수·선상 경계 | 기존 회귀 통과, 결측 방어 보완 필요 | 90/91분·6/24h·대체 만조·강수1mm·선상6m/s/0.7m 회귀 통과; today 결측은 별도 차단 사유 |
+| 고정 정상 추천 결과 | 통과 | 190곳 중176후보, ON/OFF 모든 후보 객체 및 상위10 동일 |
+| 최신 main 임시 결합 | 통과 | main38b4529와 merge-tree 충돌0; 자동JSON 유지, 추가313pass/1skip 및 validator2 성공 |
+| PC·모바일 E2E | 진행 중 | 합성 API와 격리 Chromium으로 검사 중 |
+
+## 검증 범위·자료
+
+- PR: https://github.com/wooil1964/birdmap/pull/13
+- 작업 시작 main: `38b45299c832b8ab8ad549762c02979fa8ddfb28`
+- 수정 전 고정 코드: `35141c04d4fd152982b1f4683d5b7a6f4f7514e5`
+- 설계/자료 브랜치: `analysis/recommendation-masterplan` / `60bfbdb9308fef5e7441c7627ba20102f4a10901`
+- 설계: `docs/recommendation-masterplan/P1_SAFETY_DESIGN.md`, 구현 인수인계: `docs/p1-s-implementation/NEXT_SESSION.md`.
+- AI_WORK_RULES.md와 인수인계를 읽고 전체14파일 diff를 검토했다. 제품 변경은 index.html, reports-api/src/shared.js 및 두 Python validator이며 나머지는 테스트·재현자료·인수인계다.
+- 평가시계: 2026-10-08 22:40 KST; 입력 manifest의16파일과 공개 승인 집계11곳/24종명 문자열의 SHA256을 확인했다. 이전 스냅샷은 수정하지 않았다.
+- 190곳 원본 배열·좌표는 세 버전에서 동일하며 결과에는 좌표값을 저장하지 않고 해시만 저장했다. 합성 사례의 위치는 원본 민감 좌표가 아니다.
+
+## S1-R 결과
+
+`results/S1_REVIEW.md`와 `pr13_s1_independent.json`에 실제 호출 경로와 재현을 기록했다. 저어새/흰꼬리수리/매의 숫자·수량 suffix, 쉼표·세미콜론·중점·슬래시·LF·CRLF와 일반/보호 혼합을 검사했다. 보호 표현171개에서 수정 전 누락152개가 수정 후0개로 줄었다. 일반종17개에서 오탐0개다. 종명 자체를 숫자 제거로 재작성하지 않고 판정용 suffix만 분리한다.
+
+신규 입력은 구분자를 보존하며 보호종 하나가 있으면 행 전체를 보호한다. 과거 slash 자료는 읽기에서 보호되지만 신규 slash 입력은 기존 입력 허용규칙상 거부된다. 최근 공개 집계에서 민감행을 제외하고 현장소식은 기존 대략 좌표 처리, 번식 제한 및 본인 삭제를 유지했다. 실제 Worker 호출·D1 접근 없이 실제 API handler와 메모리 DB를 실행했다. 승인·audit 코드와 정책은 변경되지 않았다.
+
+기존 승인된 민감행을 전부 비공개로 바꾸는 S1-P는 이번 PR에 구현되지 않았다. 모호한 이름/기존 승인 후 간접 위치 연결과 캐시 정책은 별도 정책 과제로 구분한다. S1-R 표현 방어의 승인과 S1-P 위험 수용은 같은 판단이 아니다.
+
+## S2-A 보완 지시
+
+### R1 [P1] today 실제 필수 기상 결측이 추천·만조 선택을 통과
+
+`index.html:3855`의 weeklyTodayRecommendable은 score 자료형·범위와 true/빈 배열 metadata만 확인한다. 실제 wind/rain/wave를 검사하지 않는다. 일반·갯벌·섬 today에서 wind:null 또는 rain:null을 넣으면 candidate=true, safe=true, score92/rank108로 최종 추천에 남는다. 굴업도 required wave:null도 통과한다. 공지와 최근 제보16점을 넣은 실제 함수 경로로 재현했다. 전체 세 필드가 null이면 safe=null이지만 후보/최종에 남는다. 실제 운영 발생률이나 유입 사례를 추정한 것은 아니다.
+
+Claude Code 보완 요청:
+1. site context를 받는 today 전용 adapter로 실제 formatted 풍속/풍향·강수 존재와 파고 필수 여부를 검사한다. 정상 generator의 문자열 표현과 실제 수치 안전 기준을 유지한다.
+2. weeklyWeatherEntryForSite(3991/4000), weeklyTideWeather(3867/3874) 및 표시 판단이 같은 유효성 계약을 사용하게 한다.
+3. `validate_weather.py:40`도 eligible true의 실제 필수자료를 확인한다. metadata만 true/[]로 맞추어 결측을 통과시키지 않는다.
+4. 필수 rain이 없는 기존 fallback fixture에 true/[]만 추가한 테스트를 정상자료/결측거부 사례로 분리한다. 일반·만조·섬, 공지·가점·mandatory·보충, 전체결측, 정상0/100/92.5 및 optional wave:null을 회귀한다.
+5. 이전 저장자료 숫자와 참고 날씨/조석은 보존하며 부적격 자료의 추천·유효점수만 차단한다.
+
+### R2 [P1/P2] 화면 표시의 적격 provenance가 계약과 다름
+
+`index.html:2079` storedWeatherState의 scoreEligible!==false와 `2083` weatherScoreAllowed가 unknown/결측 provenance를 유효하게 올린다. weatherTodayForSite→v251ScoreDisplayText 실제 경로에서 eligible 누락/null, missingScoreFields 누락/null/nonempty, wind/rain/required wave 결측의8개 사례가 모두 별5개92점을 표시했다.
+
+Claude Code 보완 요청: raw source의 명시적 own true·빈 list·실제 필수자료 유효성을 확인하고 weekly-derived/live merge의 검증된 provenance를 별도 adapter로 전달한다. 무효 score는 미확인으로 표시하되 참고 날씨는 유지한다. todayFromWeek/previous_saved/live/current 저장자료의 정상0/100/92.5와 unknown 사례를 함께 회귀한다.
+
+### R3 [P2] optional wave 및 own flag 정합성
+
+주간 비필수 wave에 문자열/음수/NaN을 넣으면 JS 후보가 통과하지만 Python validator는 거부한다. null 허용과 non-null 비정상 허용을 구분해 계약을 맞춰야 한다. inherited scoreEligible:true도 메모리 입력에서 통과한다. 이는 Object.create 기반 계약 시험이며 JSON만으로 운영 공격이 성립한다고 주장하지 않는다. own true 요건을 맞춘다.
+
+직접 balanced selector에 invalid entry를 주입하면 선택되지만 정상 최종 진입에는 typed guard가 있으므로 독립적인 운영 우회 결함으로 계산하지 않았다.
+
+실제 함수 matrix182개 중175개 일치/7개 불일치, 특별분기21개 중14개 일치/7개 불일치, popup12개 중4개 일치/8개 불일치다. 동일 원인의 경로별 재현 수이며22개의 독립 운영 사고를 뜻하지 않는다. Python validator는31문서×2개를 별도로 검사했다.
+
+## 회귀 스위트 직접 실행
+
+| 스위트 | pass | fail | skip | 로그 |
+|---|---:|---:|---:|---|
+| reports-api node --test | 178 | 0 | 0 | reports_api.tap |
+| 주간 추천 | 136 | 0 | 0 | weekly.tap |
+| Python 기상 | 50 | 0 | 0 | weather.tap |
+| 조석 | 21 | 0 | 1 | tide.tap |
+| weather-proxy | 36 | 0 | 0 | weather_proxy.tap |
+| 관련 frontend9파일 | 106 | 0 | 0 | frontend.tap |
+| 실제 Chrome 공지 닫기7 + 월간조석13 | 20 | 0 | 0 | chromium_existing.tap |
+| 합계 | 547 | 0 | 1 | 전체548발견 |
+
+reports-api의178은 node --test가 helpers.mjs도 발견한 개수이며 *.test.mjs의 실제 behavior case는177개다. 주간136의 기존 회귀는 통과하지만 새 합성 계약 결함을 포착하지 못했다. test pass를 전체 계약 승인으로 해석하지 않는다.
+
+Windows absolute --import 첫 실행과 런타임 python3 경로 오류는 검증 환경 문제였다. review-only relative preload로 번들 Python을 지정해 실제 제품 테스트를 재실행했다. 설치된 Chrome으로 기존 Chromium20개도 통과했다. 최초 Chromium 실행은 자동 네트워크 호출이 계측되지 않았다. 이후 authoritative 재실행은 DNS 격리로 Worker/Turnstile 연결을 막았다. 최초 자동 telemetry의 실제 성공/실패나 D1 결과는 관측하지 않았으므로 이를 확인했다고 주장하지 않는다. 운영 D1 명령·실사용자 제보/현장소식 등록·삭제는 실행하지 않았다.
+
+## 고정 정상 추천 전수 비교
+
+세 버전에서 ON/OFF 각각176후보 및 모든190곳의 전체 객체 signature가 같았다. 점수, 표시, rank, bonus, 날짜/시간, 유형, safety, mandatory, 근거를 전수 비교했다. 별도 tuple/정원 계산9회도 제품 선발과 일치했다.
+
+- ON 상위10: 108,112,15,194,126,14,107,48,195,3.
+- OFF 상위10: 112,7,8,10,126,14,107,48,3,5.
+- 각 장소명·점수·추천 날짜/시각의 표는 `results/RECOMMENDATION_REVIEW.md`에 있다.
+- raw92+bonus16=rank108은 유지된다. rank100 초과를 raw score 계약으로 거부하지 않는다.
+- 별도 합성 null11곳은 수정 전176후보/가짜0점11 → 수정 후165후보/가짜0점0이다.
+- 제공 compare script 출력도 독립 결과와 일치한다. 다만 제공 스크립트는 today/display/전체후보/실제 month 함수의 범위를 빠뜨리므로 본 독립 전수 비교를 함께 보존한다.
+- 고정 공개 집계에는 원본행·관찰자·민감 flag/연결 이력이 없어 이를 생성하거나 실제 API 전체 집계 동일을 주장하지 않았다. S1 표현 수정으로 보호 행이 집계에서 빠지는 영향과 S2 동일입력 비교를 구분한다.
+
+## 최신 main 결합
+
+`git merge-tree --write-tree 7eb6764 origin/main`은 충돌 없이 tree `cb24c5085f8f297c0197950a756e41d08082dd98`을 생성했다. 실제 main·PR ref는 병합하지 않았다. archive를 임시 폴더에 풀어 주간136+관련frontend106=242pass, 기상50pass, 조석21pass/1skip, today/week validator 성공을 확인했다. 자동 기상자료는 main의 새 자료를 유지했다. reports/proxy 제품 코드는 main과 동일 또는 PR과 동일이므로 동일 코드에 대한 앞선 실행 결과를 적용한다. 최종 종료 전 원격 SHA를 다시 확인한다.
+
+## 아직 미완료
+
+합성 API PC/mobile E2E, 최종 원격 head 확인, 최종 PR13/Issue9 기록. 제품 안전 결함을 수정하는 것은 구현자의 별도 작업이며 검증자가 변경하지 않는다. 현재 코드로 승인하지 않는다.

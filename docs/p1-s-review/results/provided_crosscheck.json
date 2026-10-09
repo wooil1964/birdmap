@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "allComparisonsPass": true,
+  "providedOutputSHA256": "26f10ff6f885b957d583fa3a8662c815d6a62da77da0bf2ba8d6b8e9dc93cc06",
+  "normalComparisons": 4,
+  "syntheticComparisons": 2,
+  "summary": [
+    {
+      "rev": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+      "scenario": "withSightings",
+      "matchedCountTopScores": true,
+      "candidates": 176,
+      "safe": 176,
+      "topIds": [
+        "108",
+        "112",
+        "15",
+        "194",
+        "126",
+        "14",
+        "107",
+        "48",
+        "195",
+        "3"
+      ]
+    },
+    {
+      "rev": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+      "scenario": "withoutSightings",
+      "matchedCountTopScores": true,
+      "candidates": 176,
+      "safe": 176,
+      "topIds": [
+        "112",
+        "7",
+        "8",
+        "10",
+        "126",
+        "14",
+        "107",
+        "48",
+        "3",
+        "5"
+      ]
+    },
+    {
+      "rev": "35141c04d4fd152982b1f4683d5b7a6f4f7514e5",
+      "scenario": "syntheticNullScores",
+      "matchedCountTopScores": true,
+      "candidates": 176,
+      "zeroScoreCandidateCount": 11
+    },
+    {
+      "rev": "7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e",
+      "scenario": "withSightings",
+      "matchedCountTopScores": true,
+      "candidates": 176,
+      "safe": 176,
+      "topIds": [
+        "108",
+        "112",
+        "15",
+        "194",
+        "126",
+        "14",
+        "107",
+        "48",
+        "195",
+        "3"
+      ]
+    },
+    {
+      "rev": "7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e",
+      "scenario": "withoutSightings",
+      "matchedCountTopScores": true,
+      "candidates": 176,
+      "safe": 176,
+      "topIds": [
+        "112",
+        "7",
+        "8",
+        "10",
+        "126",
+        "14",
+        "107",
+        "48",
+        "3",
+        "5"
+      ]
+    },
+    {
+      "rev": "7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e",
+      "scenario": "syntheticNullScores",
+      "matchedCountTopScores": true,
+      "candidates": 165,
+      "zeroScoreCandidateCount": 0
+    }
+  ],
+  "limitations": [
+    "Provided script lacks weather_today input, display score output and full candidate comparisons. Independent replay supplies actual today snapshot and compares all 190 complete entry hashes."
+  ]
+}
