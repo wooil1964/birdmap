@@ -1,0 +1,130 @@
+[
+  {
+    "width": 375,
+    "scenario": "weekly_no_timezone",
+    "expected": {
+      "selectedRawScore": 80,
+      "rankScore": 96,
+      "scoreDisplay": "★★★★ 80점"
+    },
+    "badForecastTime": "2026-10-10 12:00",
+    "candidatePresent": true,
+    "candidateRankScore": 115,
+    "todayAdapterIsNull": null,
+    "emptyNotice": false,
+    "bodyText": "🧭 이번 주 추천 1곳추천 기간: 2026-10-10 ~ 2026-10-16 · 기상: 2026-10-10 ~ 2026-10-16 3시간 예보(예보 자료 생성 2026-10-10 10:30 KST) · 조석: KHOA 예측자료1. 천수만 사기리🌾 들판탐조★★★★★ 99점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일 12:00 · 낮 시간 대표충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m주간 3시간 예보 기준 · 저장 예보 2026-10-10 12:00 · 생성 2026-10-10 10:30 KST🗺️ 지도에서 보기📢 탐조 이슈 자세히 보기",
+    "cardCount": 1,
+    "cardScore": "★★★★★ 99점",
+    "cardText": "1. 천수만 사기리🌾 들판탐조★★★★★ 99점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일 12:00 · 낮 시간 대표충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m주간 3시간 예보 기준 · 저장 예보 2026-10-10 12:00 · 생성 2026-10-10 10:30 KST🗺️ 지도에서 보기",
+    "rawScore": 99,
+    "rankScore": 115,
+    "bonus": 16,
+    "safe": true,
+    "recommendationDate": "2026-10-10",
+    "recommendationTime": "12:00",
+    "sourceState": {
+      "kind": "week_forecast",
+      "dataCurrent": true,
+      "scoreEligible": true,
+      "stale": false,
+      "date": "2026-10-10",
+      "generatedAt": "2026-10-10 10:30 KST",
+      "forecastTime": "2026-10-10 12:00"
+    },
+    "sourceEligible": true,
+    "sourceKind": "week_forecast",
+    "cardRect": {
+      "left": 33,
+      "right": 342,
+      "clipped": false
+    },
+    "strictParserResult": null,
+    "popupScore": "★★★★★ 99점",
+    "popupHasTemperature": true,
+    "popupHasWind": true,
+    "popupStateKind": "week_forecast",
+    "popupState": {
+      "kind": "week_forecast",
+      "dataCurrent": true,
+      "scoreEligible": true,
+      "stale": false,
+      "date": "2026-10-10",
+      "generatedAt": "2026-10-10 10:30 KST",
+      "forecastTime": "2026-10-10 12:00"
+    },
+    "rawStoredState": null,
+    "popupSourceEligible": true,
+    "popupAllowed": true,
+    "popupRect": {
+      "left": 46,
+      "right": 156.859375,
+      "clipped": false
+    },
+    "passed": false,
+    "error": "Invalid highest score must not hide valid 13:00 score80\n\n99 !== 80\n"
+  },
+  {
+    "width": 375,
+    "scenario": "weekly_invalid_minutes",
+    "expected": {
+      "selectedRawScore": 80,
+      "rankScore": 96,
+      "scoreDisplay": "★★★★ 80점"
+    },
+    "badForecastTime": "2026-10-10 12:60 KST",
+    "candidatePresent": true,
+    "candidateRankScore": 115,
+    "todayAdapterIsNull": null,
+    "emptyNotice": false,
+    "bodyText": "🧭 이번 주 추천 1곳추천 기간: 2026-10-10 ~ 2026-10-16 · 기상: 2026-10-10 ~ 2026-10-16 3시간 예보(예보 자료 생성 2026-10-10 10:30 KST) · 조석: KHOA 예측자료1. 천수만 사기리🌾 들판탐조★★★★★ 99점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일 12:60 · 낮 시간 대표충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m주간 3시간 예보 기준 · 저장 예보 2026-10-10 12:60 KST · 생성 2026-10-10 10:30 KST🗺️ 지도에서 보기📢 탐조 이슈 자세히 보기",
+    "cardCount": 1,
+    "cardScore": "★★★★★ 99점",
+    "cardText": "1. 천수만 사기리🌾 들판탐조★★★★★ 99점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일 12:60 · 낮 시간 대표충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m주간 3시간 예보 기준 · 저장 예보 2026-10-10 12:60 KST · 생성 2026-10-10 10:30 KST🗺️ 지도에서 보기",
+    "rawScore": 99,
+    "rankScore": 115,
+    "bonus": 16,
+    "safe": true,
+    "recommendationDate": "2026-10-10",
+    "recommendationTime": "12:60",
+    "sourceState": {
+      "kind": "week_forecast",
+      "dataCurrent": true,
+      "scoreEligible": true,
+      "stale": false,
+      "date": "2026-10-10",
+      "generatedAt": "2026-10-10 10:30 KST",
+      "forecastTime": "2026-10-10 12:60 KST"
+    },
+    "sourceEligible": true,
+    "sourceKind": "week_forecast",
+    "cardRect": {
+      "left": 33,
+      "right": 342,
+      "clipped": false
+    },
+    "strictParserResult": null,
+    "popupScore": "★★★★★ 99점",
+    "popupHasTemperature": true,
+    "popupHasWind": true,
+    "popupStateKind": "week_forecast",
+    "popupState": {
+      "kind": "week_forecast",
+      "dataCurrent": true,
+      "scoreEligible": true,
+      "stale": false,
+      "date": "2026-10-10",
+      "generatedAt": "2026-10-10 10:30 KST",
+      "forecastTime": "2026-10-10 12:60 KST"
+    },
+    "rawStoredState": null,
+    "popupSourceEligible": true,
+    "popupAllowed": true,
+    "popupRect": {
+      "left": 46,
+      "right": 156.859375,
+      "clipped": false
+    },
+    "passed": false,
+    "error": "Invalid highest score must not hide valid 13:00 score80\n\n99 !== 80\n"
+  }
+]

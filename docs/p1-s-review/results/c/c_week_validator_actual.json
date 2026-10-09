@@ -1,0 +1,57 @@
+{
+  "head": "352315a57d038687807dbe0044c136a22fb0c9c5",
+  "mode": "Actual validate() and synthetic one-site docs; runtime list projection only, no guard patch. Future comparison diagnostic clock 2026-10-10 11:00KST; validator does not inspect publication clock.",
+  "sourceSHA256": "42395257a896eb7f99a27da1549ebce55bbe022d558bb3539815d27a53d567cd",
+  "rows": [
+    {
+      "id": "normal",
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "id": "generation_missing",
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "id": "generation_null",
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "id": "generation_empty",
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "id": "generation_bad",
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "id": "generation_future",
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "id": "forecast_missing_zone",
+      "accepted": false,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10 12:00 must be a KST stamp: '2026-10-10 12:00'"
+    },
+    {
+      "id": "forecast_bad_suffix",
+      "accepted": false,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10 12:00 bananas must be a KST stamp: '2026-10-10 12:00 bananas'"
+    },
+    {
+      "id": "forecast_minute60",
+      "accepted": false,
+      "error": "AssertionError: 15 2026-10-10 2026-10-10 12:60 KST is not a KST stamp: '2026-10-10 12:60 KST'"
+    },
+    {
+      "id": "site_unavailable_with_samples",
+      "accepted": false,
+      "error": "AssertionError: 15 keeps samples while marked unavailable"
+    }
+  ]
+}

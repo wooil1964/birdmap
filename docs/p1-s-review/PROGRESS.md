@@ -1,3 +1,19 @@
+# 최신 완료 — PR #13 C 정책 / 352315a5
+
+**수정 필요.** 기존1440분 및 참고today 후보 제외는 해결, 실제회귀588pass/0fail/1skip·S2182/21/팝업12·고정190/176·기본Chrome245/복구45·일반E2E55 통과. 그러나 주간 발행/시각검증 누락 및 일반today permissive시각, 나중요청의이전발행자료 안전역전이 남는다. 상세실제반례·코드위치·보완요청은 [C_POLICY_RECHECK.md](C_POLICY_RECHECK.md).
+
+- C만사용자승인/B불승인. exacthead 352315a57d038687807dbe0044c136a22fb0c9c5 / main b0975cad9f3112af38cc286a892bf6f06722ce12.
+- source핵심74중43불일치(같은원인의경로조합), schema4별도. stricthelper23통과. 실제Chrome 무효주간2실패. loaderNode8중4실패/correctedChrome40중20불변성실패(위험10·가용성10),예외0.
+- 정상데이터/190·176·ONOFF전수불변.19정책×ONOFF38이전strict기대와일치·독립선발114일치. 정상week실패166,controlled참고전체0/혼합165.
+- 기대변경14ID×5폭70명시원장;나머지175유지;before에서70실패재현. before weekly147/8fail,card10/4fail.
+- main임시tree 0a32d8b656405ba3ee8cf85dc0208b9e0aa3d3d6 충돌0·4자동JSONblob유지·validator2·결합JS265. 실제main변경없음.
+- 초기loaderDOM은fixture혼입무효baseline을발견해보존/제외하고corrected전체재실행. 제품결함으로오산하지않음.
+- R5(P2)·삭제oldGET(P1)·보호역전(P1/전환배포전필수)·S1-P별도승인정책 추적. C해결로보고하지않음.
+- 제품수정·main병합·Pages/Worker배포·운영D1·실사용자변경 없음. 구현자보완/새SHA와사용자별도승인대기.
+
+이하 이전 이력(현재 C 판정과 구분):
+
+---
 # 최신 완료 — PR #13 R6 / e9c97d6c
 
 **수정 필요 / 추천 적격성 정책 C.** R6 출처·표시 보완은175/175(추가70 포함245/245), 전체회귀578pass/0fail/1skip, S2182/21/팝업12, 고정190/176·ON/OFF 및 최신main 결합을 독립 통과했다. 그러나 known-invalid 예보 날짜/시각이 참고 표시·rank108으로 최종 추천에 남는다. 절대1440분 반례와 일반 forecast 오류/누락을 재현했다. 이전8ccb에도 같은 선발이 있으므로 신규 R6 후보 회귀와 구분한다.

@@ -1,0 +1,16 @@
+{
+  "head": "352315a57d038687807dbe0044c136a22fb0c9c5",
+  "initialLoaderDomExcluded": [
+    "loader_dom_initial_full.json",
+    "loader_dom_initial_root.json"
+  ],
+  "reason": "reset/toggle asynchronous week request contaminated today baseline; not final product failure evidence",
+  "correction": "loader_dom_corrected: initial actual toggle once, await microtask completion, URL-specific fixtures, assert afterNew card0/weekStamp null and afterOld card1",
+  "rootRerun": "loader_dom_corrected_root.json, actual all5width40conditions",
+  "initialSetupErrors": [
+    "extended: baseline file argument initially missing; rerun correct baseline after matrix",
+    "DOM: sparse fixture initially not yet written; rerun after actual builder"
+  ],
+  "productFailuresCountedFromSetupErrors": 0,
+  "policyAssertionsRemoved": 0
+}
