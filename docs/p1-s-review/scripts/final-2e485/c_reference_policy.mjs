@@ -9,7 +9,7 @@ const OUT=path.resolve(process.argv[4]||HERE);
 fs.mkdirSync(OUT,{recursive:true});
 const REPO=path.resolve(process.argv[2]||process.cwd());
 const ANALYSIS=path.resolve(process.argv[3]||REPO);
-const BEFORE='35141c04d4fd152982b1f4683d5b7a6f4f7514e5',MAIN='b0975cad9f3112af38cc286a892bf6f06722ce12',PREVIOUS='352315a57d038687807dbe0044c136a22fb0c9c5',HEAD='2e485079a34fa5aeeef09e82f3b996bf2696d978';
+const BEFORE='35141c04d4fd152982b1f4683d5b7a6f4f7514e5',MAIN='4b164ffe74efa5cadad9e686bd628a8915527e77',PREVIOUS='352315a57d038687807dbe0044c136a22fb0c9c5',HEAD='2e485079a34fa5aeeef09e82f3b996bf2696d978';
 const NOW='2026-10-08T22:40:00+09:00';
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const blob=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:REPO,maxBuffer:1<<29});
@@ -28,7 +28,7 @@ assert.equal(reports.sites.length,11);
 const sightings=Object.fromEntries(reports.sites.map(s=>[String(s.siteId),{latestDate:s.latestDate,species:s.species.map(String)}]));
 const data={week:JSON.parse(inputs.get('weather_week.json')),today:JSON.parse(inputs.get('weather_today.json')),tide:JSON.parse(inputs.get('tide_month.json')),notices:JSON.parse(inputs.get('notices.json')),rules:JSON.parse(inputs.get('weather_rules.json'))};
 const names=Array.from(vm.runInNewContext(inputs.get('.github/scripts/test_weekly_recommendation.mjs').toString('utf8').match(/const NAMES = (\[[\s\S]*?\]);/)[1]));
-const extras=['monthTideForSite','todayKstMonth','weatherScoreAllowed','storedWeatherState','weatherTimeMs','weatherLatestDue','v251EffectiveScore','v251GradeStars','v251ScoreDisplayText','todayWeatherFromWeek','weatherTodayForSite','weeklyScoreValid','weeklyNonNegativeNumber','weeklySampleRecommendable','weeklyTodayRecommendable','weeklyOwn','weeklyTodayRequiredDataValid','weeklyTodayWeather','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible'];
+const extras=['monthTideForSite','todayKstMonth','weatherScoreAllowed','storedWeatherState','weatherTimeMs','weatherLatestDue','v251EffectiveScore','v251GradeStars','v251ScoreDisplayText','todayWeatherFromWeek','weatherTodayForSite','weeklyScoreValid','weeklyNonNegativeNumber','weeklySampleRecommendable','weeklyTodayRecommendable','weeklyOwn','weeklyTodayRequiredDataValid','weeklyTodayWeather','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible','weeklyDocVerified'];
 function parseSites(html){
  const ctx=vm.createContext({});
  vm.runInContext(html.match(/var siteData=([^\n]+);/)[0]+'\n'+html.match(/siteData=siteData\.concat\([\s\S]*?\);/)[0],ctx);

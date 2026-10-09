@@ -1,3 +1,18 @@
+# 최신 완료 — PR #13 배포 전 / 2e485079
+
+**수정 필요.** target `2e485079a34fa5aeeef09e82f3b996bf2696d978`, before `352315a57d038687807dbe0044c136a22fb0c9c5`, 최종 main `4b164ffe74efa5cadad9e686bd628a8915527e77`. 이전 C1/C2 canonical 및 C3 base8/40 해결; 회귀603/0/1·S2182/21/12·source74·helper23·고정190/176·Chrome245/45·최신결합55/validator2 통과. 새 C3 미래 비교기준 회복차단, root/item 안전역행 및 시각자료형 우회는 배포전 필수보완이다. [최종 보고서](FINAL_DEPLOY_RECHECK.md), [교차증빙](results/final-2e485/verification_summary.json).
+
+- C3 Node28=23pass5fail·Chrome140=115pass25fail/예외0; root도 Node28/Chrome37528을 직접 재현. before 비교로 today 복구차단은 새회귀, item역행은 기존 미완결 계약으로 분리.
+- 시각 배열8경로 raw99/rank115 최종, 객체8후보/최종 TypeError, 실제Chrome375 배열2실패·Python4거부. 운영유입/사고 미관측.
+- 자동603 성공과 추가계약 실패를 분리. 선상65 안전선발은 유지, 초기카드/팝업동일40/65+의미차이25 보존/before동일.
+- 최신main 자동4JSON 변경만·tree75df87ad 충돌0·자동5blob main 보존/제품8blob head 일치. 최신batch10/10 actualvalidator2통과. 옛9일JSON을10일검사한 Batch date mismatch 별도입증·정상newbuilder190통과.
+- exacthead Actions0/status0, test-only PRworkflow없음·dispatch0. 운영weather37984742517 success는 main의기존workflow이며 PRCI가 아님.
+- S1-R171/일반17·관리자/삭제 actual 회귀통과. R5P2/삭제oldGET P1/보호전환·S1-P 선행차단/선상안내별도 추적. 제품·main·운영배포/D1/실사용자쓰기 없음.
+- 최종체크포인트는 git log와 github_receipts.json의 reportCommit·bodyhash로 확인한다. PR13/Issue9 exact본문readback후receipt를별도commit한다. 새보완SHA/사용자승인대기.
+
+이하 이전 검증 이력(현재 판정과 구분):
+
+---
 # 최신 완료 — PR #13 C 정책 / 352315a5
 
 **수정 필요.** 기존1440분 및 참고today 후보 제외는 해결, 실제회귀588pass/0fail/1skip·S2182/21/팝업12·고정190/176·기본Chrome245/복구45·일반E2E55 통과. 그러나 주간 발행/시각검증 누락 및 일반today permissive시각, 나중요청의이전발행자료 안전역전이 남는다. 상세실제반례·코드위치·보완요청은 [C_POLICY_RECHECK.md](C_POLICY_RECHECK.md).

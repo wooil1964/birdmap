@@ -9,7 +9,7 @@ const OUT=path.resolve(process.argv[4]||HERE);
 fs.mkdirSync(OUT,{recursive:true});
 const REPO=path.resolve(process.argv[2]||process.cwd());
 const ANALYSIS=path.resolve(process.argv[3]||REPO);
-const BEFORE='35141c04d4fd152982b1f4683d5b7a6f4f7514e5',MAIN='b0975cad9f3112af38cc286a892bf6f06722ce12',PREVIOUS='352315a57d038687807dbe0044c136a22fb0c9c5',HEAD='2e485079a34fa5aeeef09e82f3b996bf2696d978';
+const BEFORE='35141c04d4fd152982b1f4683d5b7a6f4f7514e5',MAIN='4b164ffe74efa5cadad9e686bd628a8915527e77',PREVIOUS='352315a57d038687807dbe0044c136a22fb0c9c5',HEAD='2e485079a34fa5aeeef09e82f3b996bf2696d978';
 const NOW='2026-10-08T22:40:00+09:00';
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const blob=(rev,file)=>execFileSync('git',['show',rev+':'+file],{cwd:REPO,maxBuffer:1<<29});

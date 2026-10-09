@@ -1,0 +1,27 @@
+{
+  "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "clock": "2026-10-10 11:00 KST",
+  "mode": "Actual validator validate() with clock and single-site projection only, transported JSON timestamps.",
+  "rows": [
+    {
+      "id": "publication-array",
+      "accepted": false,
+      "error": "AssertionError: generatedAt must be a KST stamp: ['2026-10-10 10:30 KST']"
+    },
+    {
+      "id": "forecast-array",
+      "accepted": false,
+      "error": "AssertionError: 15 2026-10-10 ['2026-10-10 12:00 KST'] must be a KST stamp: ['2026-10-10 12:00 KST']"
+    },
+    {
+      "id": "publication-object",
+      "accepted": false,
+      "error": "AssertionError: generatedAt must be a KST stamp: {'toString': 'not-callable'}"
+    },
+    {
+      "id": "forecast-object",
+      "accepted": false,
+      "error": "AssertionError: 15 2026-10-10 {'toString': 'not-callable'} must be a KST stamp: {'toString': 'not-callable'}"
+    }
+  ]
+}

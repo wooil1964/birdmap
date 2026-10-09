@@ -1,0 +1,30 @@
+{
+  "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "clock": "2026-10-10 11:00 KST",
+  "actualValidators": true,
+  "syntheticTodayIDs": 190,
+  "rows": [
+    {
+      "scenario": "today_normal_root_and_item1050",
+      "accepted": true
+    },
+    {
+      "scenario": "today_new_root1050_old_eligible_item1030",
+      "accepted": true
+    },
+    {
+      "scenario": "today_future_root_and_item1230_at1100",
+      "accepted": true
+    },
+    {
+      "scenario": "weekly_future_root1230_at1100",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "generatedAt is in the future: '2026-10-10 12:30 KST'"
+    }
+  ],
+  "coordinatesStored": false,
+  "productChanges": 0,
+  "networkCalls": 0,
+  "notes": "Today batch is synthetic contract data, not a prediction or real report. Normal generator stamps current successful item and envelope at now; previous reuse explicitly sets stale=true/scoreEligible=false."
+}

@@ -1,4 +1,24 @@
-# PR #13 배포 승인 전 최종 독립 검증
+from pathlib import Path
+import json
+import sys
+base=Path(sys.argv[1]); docs=base/'docs/p1-s-review'; out=docs/'results/final-2e485'
+read=lambda f:json.loads((out/f).read_text(encoding='utf-8-sig'))
+head='2e485079a34fa5aeeef09e82f3b996bf2696d978'; before='352315a57d038687807dbe0044c136a22fb0c9c5'; main='4b164ffe74efa5cadad9e686bd628a8915527e77'
+r=read('independent_replay.json'); final=next(v for v in r['normal'] if v['rev']==head)
+assert len(r['differences'])==6 and all(d['full190SignatureEqual'] and not d['topChanged'] for d in r['differences'])
+assert final['reportsOn']['siteCount']==190 and final['reportsOn']['candidateCount']==176
+add=read('root-additional/final_c1_c2_additional.json'); assert add['passed']==80 and add['total']==80 and add['numericPassed']==92
+src=read('c_temporal_source_actual.json'); assert src['timePass']==23
+policy=read('c_policy_before_after.json'); assert policy['conditions']==38 and all(x['fullTopMatchesApprovedStrict'] for x in policy['comparison'])
+tests=read('test_summary.json'); assert tests['summary']=={'pass':603,'fail':0,'skip':1}
+rows='\n'.join('|'+v['name']+'|'+str(v['pass'])+'|'+str(v['fail'])+'|'+str(v['skip'])+'|' for v in tests['rows'])
+axes={'field':'들판','mudflat':'갯벌','pelagic':'선상','island':'섬'}
+def table(condition):
+    records=final[condition]['top']; assert len(records)==10
+    lines=['|순위|ID·탐조지|원점수=표시|가점|내부 rank|추천일·시각|추천 유형|','|---:|---|---:|---:|---:|---|---|']
+    for e in records:lines.append(f"|{e['position']}|{e['id']} {e['name']}|{e['raw']}|{e['bonus']}|{e['rank']}|{e['date']} {e['time']}|{axes.get(e['axis'],e['axis'])}|")
+    return '\n'.join(lines)
+report='''# PR #13 배포 승인 전 최종 독립 검증
 
 ## 1. 종합 판정 — 수정 필요
 
@@ -64,14 +84,7 @@ C3 성공 기대28조건은 **Node23pass/5fail/예외0**, 실제 Chrome5폭 **11
 
 |스위트|pass|fail|skip|
 |---|---:|---:|---:|
-|reports_api|178|0|0|
-|weekly|159|0|0|
-|frontend|118|0|0|
-|chromium|20|0|0|
-|card_dom|16|0|0|
-|weather|55|0|0|
-|tide|21|0|1|
-|weather_proxy|36|0|0|
+__TEST_ROWS__
 |합계|603|0|1|
 
 실제 실행 명령·workdir는 results/final-2e485/execution_manifest.json, 발견 스위트/TAP hash는 test_summary.json에 저장했다. reports178에는 Node helper 모듈1개가 포함된다. frontend는9파일118, Chromium20은 notice-close-hit7+월간조석13, 카드DOM16이다. 기존 Chromium 환경 실패7도 실제 Chrome에서 통과했다. 조석 skip1은 rolling 공식 오래된 표본 조건이다. 구현 보고603은 이8범위로 독립 확인했으며 이를 GitHub CI 성공이라고 부르지 않는다.
@@ -92,33 +105,11 @@ S1-R actual 보호표현171개 누락0·일반종17개 오탐0. LF/CRLF/구분�
 
 제보 ON — 네 버전 동일:
 
-|순위|ID·탐조지|원점수=표시|가점|내부 rank|추천일·시각|추천 유형|
-|---:|---|---:|---:|---:|---|---|
-|1|108 호곡리|92|11|103|2026-10-09 09:00|들판|
-|2|112 알뜨르비행장|100|0|100|2026-10-13 09:00|들판|
-|3|15 천수만 사기리|92|2|94|2026-10-09 09:00|들판|
-|4|194 천수만 강당리|92|2|94|2026-10-09 09:00|들판|
-|5|126 해리천습지|92|2|94|2026-10-09 09:00|갯벌|
-|6|14 걸매리|92|0|92|2026-10-11 18:00|갯벌|
-|7|107 매향리|92|0|92|2026-10-11 18:00|갯벌|
-|8|48 대진항|92|0|92|2026-10-09 09:00|선상|
-|9|195 평화의공원|92|16|108|2026-10-09 09:00|other|
-|10|3 굴업도|100|0|100|2026-10-09 18:00|other|
+__TOP_ON__
 
 제보 OFF — 네 버전 동일:
 
-|순위|ID·탐조지|원점수=표시|가점|내부 rank|추천일·시각|추천 유형|
-|---:|---|---:|---:|---:|---|---|
-|1|112 알뜨르비행장|100|0|100|2026-10-13 09:00|들판|
-|2|7 교동도|92|0|92|2026-10-09 12:00|들판|
-|3|8 석모도|92|0|92|2026-10-09 18:00|들판|
-|4|10 강화도|92|0|92|2026-10-09 09:00|들판|
-|5|126 해리천습지|92|0|92|2026-10-09 09:00|갯벌|
-|6|14 걸매리|92|0|92|2026-10-11 18:00|갯벌|
-|7|107 매향리|92|0|92|2026-10-11 18:00|갯벌|
-|8|48 대진항|92|0|92|2026-10-09 09:00|선상|
-|9|3 굴업도|100|0|100|2026-10-09 18:00|other|
-|10|5 대청도|100|0|100|2026-10-09 18:00|other|
+__TOP_OFF__
 
 원점수/표시는 실제0~100 계약이고 rank는 제보 가점이 들어간 내부 수다. 유형은 추천 axis이며 실제 서식환경 분류와 같다고 해석하지 않는다.
 
@@ -193,4 +184,64 @@ node "$rootScripts/timestamp_type_diagnostics.mjs" $target $rootOut
 & 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' "$rootScripts/timestamp_type_python.py" $target $rootOut
 ```
 
-발행일을 혼동하지 않도록 batch_date_recheck.py와 latest_main_validate.py는 별도 결과·시각으로 재실행한다. 전체8스위트의 정확 cmd/workdir는 execution_manifest.json, 필요한 실생성fixture는 normal_current_builder.py → final_c1_c2_additional.mjs 순서다. 출력directory를 먼저 만든다. 실패를 성공기대 대신 삭제하지 않으며 새SHA 결과는 별도directory에 저장한다.
+発行日の取り違えを防ぐため batch_date_recheck.py と latest_main_validate.py は別結果・別時刻で再実行する。全8スイートの正確なcmd/workdirは execution_manifest.json、必要な実生成fixtureは normal_current_builder.py → final_c1_c2_additional.mjs の順。出力directoryを先に作る。失敗をsuccess期待に置換せず保存し、新しいSHAの結果は別directoryへ置く。
+'''
+report=report.replace('__TEST_ROWS__',rows).replace('__TOP_ON__',table('reportsOn')).replace('__TOP_OFF__',table('reportsOff'))
+report=report.replace('発行日の取り違えを防ぐため batch_date_recheck.py と latest_main_validate.py は別結果・別時刻で再実行する。全8スイートの正確なcmd/workdirは execution_manifest.json、必要な実生成fixtureは normal_current_builder.py → final_c1_c2_additional.mjs の順。出力directoryを先に作る。失敗をsuccess期待に置換せず保存し、新しいSHAの結果は別directoryへ置く。','발행일을 혼동하지 않도록 batch_date_recheck.py와 latest_main_validate.py는 별도 결과·시각으로 재실행한다. 전체8스위트의 정확 cmd/workdir는 execution_manifest.json, 필요한 실생성fixture는 normal_current_builder.py → final_c1_c2_additional.mjs 순서다. 출력directory를 먼저 만든다. 실패를 성공기대 대신 삭제하지 않으며 새SHA 결과는 별도directory에 저장한다.')
+(docs/'FINAL_DEPLOY_RECHECK.md').write_text(report,encoding='utf-8')
+header=f'''# 최신 완료 — PR #13 배포 전 / 2e485079
+
+**수정 필요.** target `{head}`, before `{before}`, 최종 main `{main}`. 이전 C1/C2 canonical 및 C3 base8/40 해결; 회귀603/0/1·S2182/21/12·source74·helper23·고정190/176·Chrome245/45·최신결합55/validator2 통과. 새 C3 미래 비교기준 회복차단, root/item 안전역행 및 시각자료형 우회는 배포전 필수보완이다. [최종 보고서](FINAL_DEPLOY_RECHECK.md), [교차증빙](results/final-2e485/verification_summary.json).
+
+- C3 Node28=23pass5fail·Chrome140=115pass25fail/예외0; root도 Node28/Chrome37528을 직접 재현. before 비교로 today 복구차단은 새회귀, item역행은 기존 미완결 계약으로 분리.
+- 시각 배열8경로 raw99/rank115 최종, 객체8후보/최종 TypeError, 실제Chrome375 배열2실패·Python4거부. 운영유입/사고 미관측.
+- 자동603 성공과 추가계약 실패를 분리. 선상65 안전선발은 유지, 초기카드/팝업동일40/65+의미차이25 보존/before동일.
+- 최신main 자동4JSON 변경만·tree75df87ad 충돌0·자동5blob main 보존/제품8blob head 일치. 최신batch10/10 actualvalidator2통과. 옛9일JSON을10일검사한 Batch date mismatch 별도입증·정상newbuilder190통과.
+- exacthead Actions0/status0, test-only PRworkflow없음·dispatch0. 운영weather37984742517 success는 main의기존workflow이며 PRCI가 아님.
+- S1-R171/일반17·관리자/삭제 actual 회귀통과. R5P2/삭제oldGET P1/보호전환·S1-P 선행차단/선상안내별도 추적. 제품·main·운영배포/D1/실사용자쓰기 없음.
+- 최종체크포인트는 git log와 github_receipts.json의 reportCommit·bodyhash로 확인한다. PR13/Issue9 exact본문readback후receipt를별도commit한다. 새보완SHA/사용자승인대기.
+
+이하 이전 검증 이력(현재 판정과 구분):
+
+---
+'''
+for name in ('FINDINGS.md','PROGRESS.md'):
+    file=docs/name; previous=file.read_text(encoding='utf-8-sig');file.write_text(header+previous,encoding='utf-8')
+nextdoc=f'''# PR #13 배포 전 검증 완료 — 다음 세션
+
+최종판정 **수정 필요**, target `{head}`, before `{before}`, 최종검증main `{main}`. 먼저 FINAL_DEPLOY_RECHECK.md·FINDINGS최신머리·results/final-2e485/verification_summary.json·github_receipts.json을 읽는다. P1-A~D 및 통과한 R1~R6를 처음부터 반복하지 않는다. 사용자는 C만승인/B불승인. main병합·Pages/Worker배포·D1·실사용자수정 금지.
+
+## 완료
+
+603/0/1, matrix182/21/12, source74/helper23, 추가80/92·Python92/10, 고정190/176·ONOFF전체190 signature불변, 정책38, Chrome245/45·C2strings10, 일반55 및 최신결합55. S1-R171/일반17·관리자/현장소식/삭제 회귀통과. latestmain4자동JSON변경·merge-tree75df87ad충돌0·자동5blob/제품8blob 보존·latestvalidator2 통과. headCI0/未실행, main자동weather37984742517success를 별도확인. old9daydate문제같은hash로입증/currentbuilder190pass.
+
+추가차단: C3 Node28=23/5, Chrome140=115/25(예외0), 기존8/40전부성공. 미래발행highwater회복차단(새today회귀)·root/item과거eligible안전역행(기존미완결). 배열time8 raw99/rank115·object8TypeError·Chrome2우회/Python4거부. 실패원장/수정요청을 보존했다. 선상별도65의25popup차이는기존다른시각/안내의미며 신규C2실패로오산하지 않는다.
+
+중간체크포인트 `ee9d12771f985480a9797ee6c63ea6c4280212b9`. 최종보고commit 및 게시receiptcommit은 git log -3와 results/final-2e485/github_receipts.json에서 확인한다. 자기commitSHA를 같은commit문서에 순환삽입하지 않는다.
+
+## 다음 정확한 작업
+
+1. PR13 head/원격main 읽기전용확인. 새보완SHA가없으면 반복분석/제품수정 없이 사용자·구현자보완을 기다린다.
+2. 새diff에서 F1 검증된 비교기준(미래고착 금지), F2 root/item발행일관성/장소별역행차단, F3 원본string검사/비정상타입null·예외0를 확인한다. B·배점·정원·S1-P무단정책변경이없는지 검사한다.
+3. 새SHA별 archive/결과directory를 만들고 actual loader→후보→최종→Chrome 안전 성공기대28/140·시각형식/자료형8·객체8·typedChrome2를 실행한다. assertion삭제로 통과시키지 않는다. 정상1050복구와 knownrain1→oldrain0이0유지를 반드시검사한다.
+4. source74·normal0/100/92.5·rank108·safealternative/tide90/91/강수1/선상6/.7/0·matrix182/21/12·fixed190/176/ONOFF·영향회귀603·DOM245/45·latestmain결합/자동JSON보존·validatoractualdate를 재검증한다. 코드/자료가변하지않은 범위를 반복확장할필요는없다.
+5. R5P2·삭제oldGET P1우선·보호상태/S1-P전환前필수차단·선상팝업설명과제는 별도보안PR에 유지한다. 실제사고로단정하지않는다.
+6. final문서/브랜치commitpush/PR13Issue9게시·본문exact대조receipt 후 사용자승인대기. 조건통과하더라도 운영변경하지 않는다.
+
+## 재현 자료·환경
+
+review=C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap
+analysis=C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
+Python=C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe
+Chrome=C:/Program Files/Google/Chrome/Application/chrome.exe
+結果=docs/p1-s-review/results/final-2e485、実行=scripts/final-2e485。
+
+제품archive는 보관하지 않는다. review branch 제품은 역사적7eb이므로 시험하지 않는다. `git archive --format=zip --output=<검증.scratch.zip> <정확SHA>` 후Expand-Archive. sourceproof의refs/시계는 새검증별 별도scriptcopy에서 고정한다. 자동JSON 날짜/점수를 수동수정하지 않는다. 최종 보고서 “재현 명령” 및 execution_manifest에 정확cmd가 있다.
+
+실제생성fixture의존: normal_current_builder.py 후final_c1_c2_additional.mjs; 출력directory미리생성. sparse6h_generated_today.json은 이전실제builder의보존합성자료로생성timestamp를위조하지않는다. `C_GENERATOR_FIXTURE`를설정해야기본DOM6참고조건이보존된다. 새Chrome추가타입은 FINAL_TYPED_ONLY=1/C_WIDTHS=375; 원래기본245를재실행할때는FINAL_TYPED_ONLY/FINAL_BOAT_ONLY해제. loader기존8·확장28은성공기대로정의된final_cases를공유하며 실패는exit1이다.
+
+GitHubActions: 현4workflow는출력commit/push포함/PRtrigger없음. 무단dispatch/rerun금지. 최신mainrun성공을PRCI성공으로오인하지않는다. 배포현재Workerversion/보호유지rollbackversion은아직준비완료아님. 새검증통과와사용자별도승인 후배포순서/rollback을구체적으로고정한다.
+'''
+nextdoc=nextdoc.replace('未실행','미실행').replace('전환前','전환 전').replace('結果=docs/p1-s-review/results/final-2e485、実行=scripts/final-2e485。','결과=docs/p1-s-review/results/final-2e485, 실행=docs/p1-s-review/scripts/final-2e485.')
+(docs/'NEXT_SESSION.md').write_text(nextdoc,encoding='utf-8')
+print(json.dumps({'report':str(docs/'FINAL_DEPLOY_RECHECK.md'),'verdict':'수정 필요','normalCandidates':176,'suites':tests['summary'],'additional':add['passed']},ensure_ascii=False))

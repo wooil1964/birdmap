@@ -1,0 +1,23 @@
+{
+  "latestCombined": "75df87adfe7e82d3e12290d73a4e670b2112c59c",
+  "operatingWrites": 0,
+  "setupDiagnostics": [
+    "Initial typed DOM missing C_GENERATOR_FIXTURE: harness precondition, rerun after preserving actual fixture.",
+    "Initial Python/type diagnostics output folder absent: setup error, folder created and rerun.",
+    "Initial additional missing normal builder fixture: harness dependency, actual immutable fixture copied and rerun80/80."
+  ],
+  "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "rootDirect": [
+    "node scripts/final-2e485/loader_final_node.mjs targetFinal results/root-loader-node head",
+    "LOADER_WIDTHS=375 node scripts/final-2e485/loader_final_dom.mjs targetFinal .scratch/root-loader-dom375 head",
+    "C_GENERATOR_FIXTURE=<preserved sparse6h> FINAL_TYPED_ONLY=1 C_WIDTHS=375 node scripts/final-2e485/independent_final_dom.mjs targetFinal .scratch/root-typed-dom375 head",
+    "python scripts/final-2e485/timestamp_type_python.py targetFinal results/root-type-python",
+    "node scripts/final-2e485/timestamp_type_diagnostics.mjs targetFinal results/root-type-routes",
+    "node scripts/final-2e485/final_c1_c2_additional.mjs targetFinal results/root-additional",
+    "node scripts/final-2e485/independent_replay.mjs review analysis results",
+    "node scripts/final-2e485/c_reference_policy.mjs review analysis results results/c/c_reference_policy.json",
+    "node scripts/final-2e485/final_source_proof.mjs review results"
+  ],
+  "productChanges": 0,
+  "latestMain": "4b164ffe74efa5cadad9e686bd628a8915527e77"
+}

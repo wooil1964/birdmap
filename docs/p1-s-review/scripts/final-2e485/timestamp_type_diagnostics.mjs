@@ -57,6 +57,17 @@ for(const [kind,s] of [['general',general],['tide',tideSite],['island',islandSit
   rows.push({id:kind+'-'+mode,expected,actual,entrySource:e?.today?._weatherState??null,pass:Object.entries(expected).every(([k,v])=>actual[k]===v)});
  }
 }
-const report={head:HEAD,clock:TEST_NOW,mode:'Actual product API on JSON.stringify/parse roundtripped synthetic timestamp values. Normal generator emits strings; no corrupt operating file observed.',parserRows,rows};
-fs.writeFileSync(path.join(out,'timestamp_type_diagnostics.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+const errorRoutes=[];
+for(const [kind,s] of [['general',general],['tide',tideSite],['island',islandSite],['boat',boatSite]]){
+ for(const mode of ['publication-object','forecast-object']){
+  const st=state(s,[sample(99,{forecastTime:mode==='forecast-object'?{toString:'not-callable'}:DAY+' 12:00 KST'})]);
+  st.week.generatedAt=mode==='publication-object'?{toString:'not-callable'}:DAY+' 10:30 KST';
+  const api=make(JSON.parse(JSON.stringify(st)),TEST_NOW);let candidateError=null,finalError=null;
+  try{api.weeklyRecommendationForSite(s,api.weeklyInfo());}catch(e){candidateError=e.name+': '+e.message;}
+  try{api.todayRecommendedSites();}catch(e){finalError=e.name+': '+e.message;}
+  errorRoutes.push({id:kind+'-'+mode,candidateError,finalError,scope:'Actual candidate and final selection calls throw; actual Chrome DOM behavior remains separate root E2E scope.'});
+ }
+}
 
+const report={head:HEAD,clock:TEST_NOW,mode:'Actual product API on JSON.stringify/parse roundtripped synthetic timestamp values. Normal generator emits strings; no corrupt operating file observed.',parserRows,rows,errorRoutes};
+fs.writeFileSync(path.join(out,'timestamp_type_diagnostics.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

@@ -1,0 +1,113 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 114003793454,
+      "run_id": 37984742517,
+      "workflow_name": "Update birding weather four times daily",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/wooil1964/birdmap/actions/runs/37984742517",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOSzkdBs8AAAAaiyfWLg",
+      "head_sha": "f982e8821214c380df1bd7e87997746d7c3e2903",
+      "url": "https://api.github.com/repos/wooil1964/birdmap/actions/jobs/114003793454",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/37984742517/job/114003793454",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-09T20:06:28Z",
+      "started_at": "2026-10-09T20:06:31Z",
+      "completed_at": "2026-10-09T20:10:39Z",
+      "name": "update-weather",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-09T20:06:32Z",
+          "completed_at": "2026-10-09T20:06:33Z"
+        },
+        {
+          "name": "Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-09T20:06:33Z",
+          "completed_at": "2026-10-09T20:06:34Z"
+        },
+        {
+          "name": "Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-09T20:06:34Z",
+          "completed_at": "2026-10-09T20:06:34Z"
+        },
+        {
+          "name": "Check updater syntax",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-09T20:06:34Z",
+          "completed_at": "2026-10-09T20:06:35Z"
+        },
+        {
+          "name": "Build weather_today.json and weather_week.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-09T20:06:35Z",
+          "completed_at": "2026-10-09T20:10:35Z"
+        },
+        {
+          "name": "Validate weather_today.json and weather_week.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-09T20:10:35Z",
+          "completed_at": "2026-10-09T20:10:35Z"
+        },
+        {
+          "name": "Commit updated weather",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-09T20:10:35Z",
+          "completed_at": "2026-10-09T20:10:37Z"
+        },
+        {
+          "name": "Post Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-09T20:10:37Z",
+          "completed_at": "2026-10-09T20:10:37Z"
+        },
+        {
+          "name": "Post Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-09T20:10:37Z",
+          "completed_at": "2026-10-09T20:10:38Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-09T20:10:38Z",
+          "completed_at": "2026-10-09T20:10:38Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/wooil1964/birdmap/check-runs/114003793454",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000004100,
+      "runner_name": "GitHub Actions 1000004100",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}
