@@ -1,24 +1,35 @@
-# PR #13 독립 검증 재개
+# PR13 검증 재개/보완 재검증 지침
 
-## 체크포인트
+## 완료와 체크포인트
 
-첫 review checkpoint 직전 상태. 현재 브랜치 review/p1-s-pr13. 이 문서의 저장 커밋은 `git log -1`로 확인한다(자기 커밋 SHA를 문서 안에 순환 기록하지 않는다). 대상 product source는7eb6764다.
+검증 대상: 7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e.
+최신 main: 38b45299c832b8ab8ad549762c02979fa8ddfb28(10/9 19:47KST재확인).
+현재 판정: 수정 필요. FINDINGS.md 및 FINAL_COMMENT.md를 먼저 읽는다.
+첫 완료 체크포인트: 0ebd148e96c56ce375f81dfdcf31566d056aab57.
+이후 E2E/최종문서 저장커밋은 git log -1로 확인한다. 자기저장커밋SHA를 문서에 순환 삽입하지 않는다.
 
-완료와 판정은 FINDINGS.md 및 PROGRESS.md를 먼저 읽는다. 기존547pass/1skip 전체 반복은 새 product 변경이 있을 때만 한다. PR head가 추가되면 영향 범위 재검증한다.
+모든 필수 검증은 완료됐다. 기존547pass/1skip, root latest-main combined313pass/1skip, validator2, head-only/combined 각40기능분기pass. actual S2 계약182중7/특별21중7/popup12중8불일치는 R1/R2/R3의 경로별 재현이다. 보호상태 late-response는 기존main에서도 실패하며 별도S1-P다. 실패를 성공으로 바꾸지 않는다.
 
-## 정확한 다음 작업
+## 게시 및 사용자 보고
 
-1. `/root/p1s_protection`이 임시 `.../.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_e2e`에 만드는 합성 API E2E script와 JSON을 검토한다. Worker/Turnstile/telemetry를 CDP interception+DNS로 격리해야 한다. 실제 운영 API 쓰기는 금지다.
-2. 344/375/768/1024/1440 폭의 화면·제보·현장소식·본인삭제·길안내·오류/캐시/늦은응답·서버보호변경을 검사하고 신구 source 구분으로 기존 S1-P 이슈를 분리한다. 가능하지 않은 항목은 성공으로 기록하지 않는다.
-3. GitHub PR metadata와 origin/main을 다시 읽는다. product head가 바뀌면 actual head와 재실행을 기록한다.
-4. 결함 R1/R2 및 R3 구체적인 보완 요청을 최종 PR13/Issue9 댓글로 게시하고 댓글 본문·URL·반환ID를 results에 저장한다. 아직 게시하지 않았다.
-5. docs/p1-s-review만 명시적으로 stage한다. `.scratch/`의 제품 copy와 archive는 포함하지 않는다. 임시 폴더 삭제 전에 resolved absolute target이 review/docs/p1-s-review/.scratch 이내인지 확인한다.
-6. commit/push 후 원래 checkout과 PR 제품 소스 hash가 그대로인지 확인하고 사용자에게 수정 필요 판정과 구현자 보완 후 재검증 조건을 보고한다. 병합/배포하지 않는다.
+현재 FINAL_COMMENT.md의 완성된 본문을 PR13과Issue9에 게시한다(아직이단계checkpoint시점미게시). 게시뒤 read-back본문일치·댓글URL/ID를 results/github_receipts.json에 저장하고PROGRESS갱신·최종commit/push한다. 운영 변경·병합·배포는 금지다.
 
-## 자료·재현 명령
+## Claude Code 보완 후 재검증
 
-작업 트리: C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap
-분석자료: C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
+1. 새PRhead/원격main/diff/인수인계를 다시 읽고 정확SHA를 갱신한다.
+2. R1: actual formattedtoday 필수자료·유형별파고와unknownsafety차단; todayWeatherEntry/tide/validator같은계약. 기존rain없는fixture의true/[]추가만으로통과시키지않는다.
+3. R2: popupsource의owntrue·빈list·실제필수자료provenance, weekly/live/previous_savedadapter와미확인표시/참고자료보존.
+4. R3: optionalnonnullwave타입/finite/nonnegative와ownflagJS/Python정합성.
+5. scripts/pr13_s2_actual_matrix.mjs와Pythonmatrix는targetHEADconstant/functions선택을 새commit으로 갱신한 검증사본에서 실행한다. 제품 guard 자체를 테스트용으로 patch하지 않는다.
+6. 고정16파일manifest/11곳공개집계는 유지하고 190곳/176후보·원점수/표시/rank/bonus/date/time/axes를 before/newhead 전수대조한다. sourceconstant만 새검증대상으로 바꾸고 입력을 섞지 않는다.
+7. 영향받는weekly/Python/midnight/표시/모든fallback/P0boundary를 재실행한다. API S1 제품변경없으면 기존증거해시가같은지확인하고 변경시178+S1matrix를재실행한다.
+8. 최신main과merge-tree로임시결합, main자동JSON hash보존, syntheticAPI CDP/DNS격리 E2E를다시한다. 물리기기·운영Turnstile/cache는증거없는성공으로쓰지않는다.
+9. S1-P의전면비공개/승인후간접위치/fieldlate-response/popup대략안내정책을몰래운영에구현하지않는다.
+
+## 재현 경로와 명령
+
+review: C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap
+analysis: C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
 Python: C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe
 Chrome: C:/Program Files/Google/Chrome/Application/chrome.exe
 
@@ -29,10 +40,10 @@ node docs/p1-s-review/scripts/pr13_s2_actual_matrix.mjs . docs/p1-s-review/resul
 node docs/p1-s-review/scripts/independent_replay.mjs . C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap docs/p1-s-review/results
 node .github/scripts/compare_p1s_recommendation.mjs 35141c04d4fd152982b1f4683d5b7a6f4f7514e5 7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e
 node docs/p1-s-review/scripts/verify_provided_compare.mjs docs/p1-s-review/results
+node docs/p1-s-review/scripts/pr13_e2e_existing_policy.mjs . docs/p1-s-review/results
+node docs/p1-s-review/scripts/pr13_e2e.mjs <combined-directory> <new-temporary-output/profile-directory> 2026-10-09T16:40:00+09:00
 ```
 
-환경변수 PYTHONDONTWRITEBYTECODE=1, PYTHONUTF8=1, PYTHONIOENCODING=utf-8. 주간테스트는 `node --import ./docs/p1-s-review/scripts/python_runtime_preload.mjs --test .github/scripts/test_weekly_recommendation.mjs`, BIRDMAP_PYTHON에 위python절대경로를 지정한다. Chromium 기존테스트는 CHROME_PATH 지정과 `--import ./docs/p1-s-review/scripts/browser_network_isolation.mjs`로 Worker DNS를 차단한다. 자세한 실행범위는 로그 첫test명을 대조한다.
+기존스위트의정확발견파일/명령/skip은results/EXECUTION_SCOPE.md, E2E범위/미검증은results/E2E_REVIEW.md에있다. 재실행시기존결과를덮어쓰기보다별도결과폴더를만든다.
 
-## 남은 정책
-
-S1-P 승인 후 전면 비공개·간접 위치·캐시 상태변화 정책은 별도 설계/승인을 받는다. 배열/92점/가점16/4312정원은 이번 승인 범위 밖이며 운영 적용하지 않는다.
+임시combined자료는git merge-tree cb24c5085f8f297c0197950a756e41d08082dd98에서archive로다시만들수있다. Windows CRLF 차이는e2e_source_crosscheck와canonical blob정규화로확인한다. 임시.scratch는보존할결과를복사한후절대경로검증을거쳐삭제한다. profile/제품copy/민감원자료는commit하지않는다.

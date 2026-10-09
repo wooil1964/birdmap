@@ -1,6 +1,6 @@
 # PR #13 독립 보안·품질 검증
 
-## 현재 판정: 수정 필요 (브라우저 검증 진행 중)
+## 현재 판정: 수정 필요
 
 검증 대상은 `7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e`다. 구현자가 보고한 결과를 승인 근거로 대체하지 않고 실제 PR source, 실행 로그, 별도 합성 입력 및 고정 자료를 사용했다. 제품 코드는 수정하지 않았다.
 
@@ -11,7 +11,7 @@
 | P0 시간·강수·선상 경계 | 기존 회귀 통과, 결측 방어 보완 필요 | 90/91분·6/24h·대체 만조·강수1mm·선상6m/s/0.7m 회귀 통과; today 결측은 별도 차단 사유 |
 | 고정 정상 추천 결과 | 통과 | 190곳 중176후보, ON/OFF 모든 후보 객체 및 상위10 동일 |
 | 최신 main 임시 결합 | 통과 | main38b4529와 merge-tree 충돌0; 자동JSON 유지, 추가313pass/1skip 및 validator2 성공 |
-| PC·모바일 E2E | 진행 중 | 합성 API와 격리 Chromium으로 검사 중 |
+| PC·모바일 E2E | 기능40흐름 통과; 기존 보호 캐시 결함 별도 | 최신main결합/5폭/예외0; 지연 응답 보호상태 보존은 실패(main동일) |
 
 ## 검증 범위·자료
 
@@ -92,6 +92,14 @@ Windows absolute --import 첫 실행과 런타임 python3 경로 오류는 검�
 
 `git merge-tree --write-tree 7eb6764 origin/main`은 충돌 없이 tree `cb24c5085f8f297c0197950a756e41d08082dd98`을 생성했다. 실제 main·PR ref는 병합하지 않았다. archive를 임시 폴더에 풀어 주간136+관련frontend106=242pass, 기상50pass, 조석21pass/1skip, today/week validator 성공을 확인했다. 자동 기상자료는 main의 새 자료를 유지했다. reports/proxy 제품 코드는 main과 동일 또는 PR과 동일이므로 동일 코드에 대한 앞선 실행 결과를 적용한다. 최종 종료 전 원격 SHA를 다시 확인한다.
 
-## 아직 미완료
+## PC·모바일 E2E 및 기존 정책
 
-합성 API PC/mobile E2E, 최종 원격 head 확인, 최종 PR13/Issue9 기록. 제품 안전 결함을 수정하는 것은 구현자의 별도 작업이며 검증자가 변경하지 않는다. 현재 코드로 승인하지 않는다.
+최신 main 기상 JSON을 포함한 combined archive에서 root가 실제 Chrome을 직접 실행했다. 344/375/768/1024/1440 폭의 기능40흐름은40pass, JS exception0, Leaflet1.9.3 실제 CDN 로딩 성공이었다. 모바일 합성 등록·본인삭제, PC 합성 기존소식의 본인삭제, 보호 fieldNews/일반 길안내, report 오류·field 오류, 추천10카드/popup을 검사했다. main 자료 생성16:28, 평가16:40이며 고정176후보 실험22:40와 다른 입력이다. Windows archive CRLF가 Git canonical LF와 달라 raw hash는 다르지만 전체 text의 유일한 차이가 줄바꿈임을 assertion으로 확인했다(e2e_source_crosscheck.json). 기기/GPS/외부내비/배포Turnstile·운영cache·base map tiles는 합성 또는 미검증이다.
+
+**지연 응답 보호 상태 보존 시험은 실패했다.** 서버 새 응답에서 hidden=true가 된 뒤 이전 GET이 늦게 오면 false로 복귀하고 뉴스 길안내가 재활성화된다. 실제 브라우저에서 재현했다. 실제 main/PR의8개 field 함수 hash가 동일하고 양쪽 함수 실행에서도 같은 역전이 일어났다. S1-R에서 새로 생긴 회귀는 아니지만 완료로 취급하지 않는다. sequence/version monotonicity 및 보호 갱신 시 marker/popup/guide/cache 폐기를 S1-P 별도 과제로 남긴다.
+
+또한 보호 fieldNews 길안내는 막지만 mobile field popup의 대략 위치 안내는 기존 main/PR 모두 허용하고 위치보호 경고를 표시한다. 정확 원본 좌표 유출로 주장하지 않으며 전면 길안내 금지 여부는 별도 S1-P 정책으로 구분한다. 자세한 증거와 한계는 results/E2E_REVIEW.md에 있다. head 단독의 독립 agent 실행도40/40이며 root combined 직접 실행과 별도 파일로 보존했다.
+
+## 최종 승인/보완 지시
+
+현재 head는 수정 필요다. R1/R2 및 JS/Python 계약 정합성을 보완한 새 head에서 실제 합성 matrix·정상176후보/상위10·P0·표시/자정·관련 API/E2E를 다시 검증한 뒤 별도 승인 판정을 받는다. 제품 안전 결함을 수정하는 것은 구현자의 별도 작업이며 검증자가 변경하지 않는다. main 병합·Pages/Worker 배포·운영 D1 변경은 하지 않는다.

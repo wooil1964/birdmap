@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "refs": {
+    "base": "38b45299c832b8ab8ad549762c02979fa8ddfb28",
+    "head": "7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e"
+  },
+  "sourceFunctionHashes": {
+    "loadFieldUpdates": {
+      "base": "541be4a10f25982ecedf1e3fed9eace060989d943f8c9ddd14590d435e15dea1",
+      "head": "541be4a10f25982ecedf1e3fed9eace060989d943f8c9ddd14590d435e15dea1"
+    },
+    "fieldValidUpdate": {
+      "base": "91c2ca40ef4e993507119c1e0bf54531c668e207c15e1aab9471e54f26979e22",
+      "head": "91c2ca40ef4e993507119c1e0bf54531c668e207c15e1aab9471e54f26979e22"
+    },
+    "fieldFind": {
+      "base": "2e2f6a396d978e41d7475bea89003f5cd96c728ed21e4b46b0a2b894b0c7a550",
+      "head": "2e2f6a396d978e41d7475bea89003f5cd96c728ed21e4b46b0a2b894b0c7a550"
+    },
+    "fieldPublicPoint": {
+      "base": "00a6f261128cc4f28087c670c539ff8db18a04e6dd0acdb178a52b4d139d8e27",
+      "head": "00a6f261128cc4f28087c670c539ff8db18a04e6dd0acdb178a52b4d139d8e27"
+    },
+    "fieldGuideStart": {
+      "base": "2feb527d7a85f10283317fe2b561688968eca0b76ef2b397e43ae945cae04ef8",
+      "head": "2feb527d7a85f10283317fe2b561688968eca0b76ef2b397e43ae945cae04ef8"
+    },
+    "fieldGuideUpdate": {
+      "base": "cc3c3315308efab27b9f4e75e447baabf8391724f7fc89d175a7a1624e131a8e",
+      "head": "cc3c3315308efab27b9f4e75e447baabf8391724f7fc89d175a7a1624e131a8e"
+    },
+    "fieldPopupNode": {
+      "base": "a211e77e42c07f0571f36663e697e6c400630355d372223735f7aab26829f4b4",
+      "head": "a211e77e42c07f0571f36663e697e6c400630355d372223735f7aab26829f4b4"
+    },
+    "fieldNewsNavigate": {
+      "base": "cffb30307a332965a5163e6d9b66d01ec5b19f127d6cfb11295648b9f2d336a7",
+      "head": "cffb30307a332965a5163e6d9b66d01ec5b19f127d6cfb11295648b9f2d336a7"
+    }
+  },
+  "sourceLines": {
+    "base": {
+      "loadFieldUpdates": 5133,
+      "fieldValidUpdate": 5128,
+      "fieldFind": 5155,
+      "fieldPublicPoint": 5392,
+      "fieldGuideStart": 5343,
+      "fieldGuideUpdate": 5282,
+      "fieldPopupNode": 5195,
+      "fieldNewsNavigate": 5534
+    },
+    "head": {
+      "loadFieldUpdates": 5153,
+      "fieldValidUpdate": 5148,
+      "fieldFind": 5175,
+      "fieldPublicPoint": 5412,
+      "fieldGuideStart": 5363,
+      "fieldGuideUpdate": 5302,
+      "fieldPopupNode": 5215,
+      "fieldNewsNavigate": 5554
+    }
+  },
+  "experiments": {
+    "base": {
+      "lateResponse": {
+        "actualFunctionsExecuted": true,
+        "newResponseHidden": true,
+        "oldResponseRevertedHidden": true,
+        "navigationReenabled": true,
+        "coordinatesLogged": false
+      },
+      "protectedPopupGuide": {
+        "actualFunctionsExecuted": true,
+        "newsNavigationBlocked": true,
+        "approximatePopupGuideStarted": true,
+        "approximateWarningShown": true,
+        "approximateTitleShown": true,
+        "watchStarted": true,
+        "coordinatesLogged": false,
+        "mockedDependencies": [
+          "Leaflet drawing",
+          "DOM",
+          "geolocation watcher",
+          "active/age helpers; tested row is visible"
+        ]
+      }
+    },
+    "head": {
+      "lateResponse": {
+        "actualFunctionsExecuted": true,
+        "newResponseHidden": true,
+        "oldResponseRevertedHidden": true,
+        "navigationReenabled": true,
+        "coordinatesLogged": false
+      },
+      "protectedPopupGuide": {
+        "actualFunctionsExecuted": true,
+        "newsNavigationBlocked": true,
+        "approximatePopupGuideStarted": true,
+        "approximateWarningShown": true,
+        "approximateTitleShown": true,
+        "watchStarted": true,
+        "coordinatesLogged": false,
+        "mockedDependencies": [
+          "Leaflet drawing",
+          "DOM",
+          "geolocation watcher",
+          "active/age helpers; tested row is visible"
+        ]
+      }
+    }
+  },
+  "policies": {
+    "base": {
+      "desktopCreationHidden": true,
+      "popupGuideHiddenOnFinePointer": true,
+      "explicitApproximateWarning": true,
+      "popupGuideAddedWithoutLocationHiddenCondition": true
+    },
+    "head": {
+      "desktopCreationHidden": true,
+      "popupGuideHiddenOnFinePointer": true,
+      "explicitApproximateWarning": true,
+      "popupGuideAddedWithoutLocationHiddenCondition": true
+    }
+  },
+  "classification": "Both behaviors pre-exist on latest comparison main. Neither is introduced by S1-R. They remain S1-P/navigation-cache policy decisions.",
+  "constraints": {
+    "networkCalls": 0,
+    "productionD1Access": 0,
+    "sourceChanges": 0,
+    "coordinatesLogged": false
+  }
+}
