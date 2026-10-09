@@ -75,6 +75,23 @@
 - **정책 영향(`results/c/reference_policy_on_C.json`, Sol 의 19시나리오×제보 ON/OFF=38조건을 제품 코드로 재실행)**: 고정 정상 주간 176/176(상위 10 동일), 주간 로더 실패(today 정상) 166, 주간 11곳 누락 165 등 정상 입력은 변화 없음. 생성 지연·미래·비정상·누락 생성 시각 today 만 있는 합성 조건은 166 → 0(빈 목록), 혼합(참고 11곳) 176 → 165. 이는 의도된 후보 감소이며 정상 입력 회귀가 아니다. 운영 발생 빈도는 측정하지 않았다.
 - **갱신 흐름 확인**: `loadBirdmapData` 는 파일별 요청 순번으로 늦게 온 *이전 요청* 응답을 버린다(실제 Chrome 시험 R7: 늦은 옛 응답이 최신 정상 자료를 덮어쓰지 못함, 오류 시 직전 자료 유지, 정상 갱신·주간 대체 예보 도착 시 추천 복구). 발행 시각은 *같음*만 비교하므로 이후 요청이 더 오래된 파일을 돌려주면 반영되지만, C 정책에서 그 자료는 참고 상태라 추천 근거가 되지 못한다(안전 방향, R7 에서 확인). 현장소식 삭제/보호 상태 늦은 응답 결함(별도 과제)과 같은 코드가 아니다.
 
+## 배포 승인 전 최종 보완 C1·C2·C3 (Sol 재검증 `352315a` 지적)
+- **C1 주간 발행 출처**: `weeklyDocVerified`(weather_week `generatedAt` 이 엄격 KST 형식이고 미래가 아님) + `weeklyWeekSite`(검증된 발행본의 `dataUnavailable` 아닌 장소만). 미검증 발행본은 "주간 자료 없음"으로 보아 검증된 today fallback 으로 대체될 뿐 현재 적격 출처를 만들지 않는다. 정상 미래 예보는 허용, 주간 최대 연령 정책은 없음. `validate_weather_week.py` 도 같은 계약(발행 시각 엄격 형식·미래 거부).
+- **C2 예보 시각**: `weeklyDaylightCandidates` 가 점수 비교 전에 `weeklyForecastTimestamp`(엄격)로 날짜·시각을 확인(12:60·시간대 없음·UTC·꼬리 문자열·24:00 제외, 정렬도 절대 시각). today 의 `storedWeatherState` 도 같은 parser(`weatherTimeMs` 의 느슨한 Date.parse 제거). 무효 99점 대신 정상 80점이 rank 96(제보 16)으로 카드·팝업에 나온다(일반·갯벌·섬 + today).
+- **C3 로더**: `loadBirdmapData(..., currentData)` — today/week 는 요청 순번 + `birdmapDataTime`(엄격 KST 발행 시각) 비교: 이미 적용한 검증 자료보다 오래됐거나 같은 시각(충돌)·시각 누락/무효인 새 응답은 적용하지 않고, 더 최신은 적용. 검증된 자료가 아직 없으면 첫 자료는 적용(추천 자격은 출처 검증이 결정). 자정 변경은 절대 시각이라 자연스럽게 처리. 조석 로더는 변경 없음.
+- 수정 전후: 10:40 발행 위험(강수 1mm) → 추천 0 → 나중 요청의 10:30 정상: **수정 전 1건으로 복구(위험 역전) → 수정 후 0 유지**; 10:50 정상은 복구; 최신 정상 뒤 늦게 온 옛 위험은 정상 추천을 지우지 못함(5폭 Chrome). C1 발행 누락/null/빈/무효/미래·dataUnavailable 은 일반·갯벌·섬 최종 제외.
+- Sol 도구(현재 제품): 시간 source 계약 78행 중 core 74행 전부 일치(이전 31일치·43불일치), 남은 4행은 startDate 누락 schema 진단(별도); C DOM core **245/245**·lifecycle **45/45**·diagnostics **2/2**; loader Chrome 검증은 5폭 모두 "결함 재현 불가"(위험 역전·가용성 퇴행 모두 차단 — 스크립트가 결함 재현을 전제로 예외를 던지는 것이 정상); loader_replay 의 위험 역전 재현 assertion 도 더 이상 성립하지 않음. S2 행렬 182/182·21/21·12/12, 일반 E2E 55/55, S1-R 171/오탐 0, 38조건 정책 실험 변화 없음, 고정 190곳·176후보·ON/OFF 전체 signature·상위 10 동일(`results/final/`).
+- 회귀: JS 527 + Python 76 pass/1 skip = **603 pass / 0 fail / 1 skip**(직전 588). origin/main(b0975ca) merge-tree 충돌 없음, main 자동 JSON 임시 결합 JS 527 통과·weekly validator 통과(today validator 는 main 파일이 어제 날짜라 "Batch date mismatch" — 기존 날짜 assertion, 자정 이후 로컬 시계 때문).
+- 기존 시험 변경: 주간 fixture 에 유효한 `generatedAt` 추가(실제 JSON 계약), R7 의 "더 오래된 파일 재수신"은 이제 미적용·정상 추천 유지.
+
+### 배포 시 적용 순서·되돌리기 (실행하지 않음 — 사용자 승인 필요)
+이번 변경은 `index.html`(프런트) + Python validator/시험 + `reports-api` 보호종 판정(S1-R, Worker)이다. weather-proxy·D1 스키마 변경 없음.
+1. 사전: 사용자 승인, 최신 main 과 다시 merge-tree 충돌 확인, PR #13 CI(Actions) 통과 확인.
+2. `reports-api` 공개 Worker 먼저 배포(`npm run deploy:public`, S1-R 서버 보호는 프런트보다 먼저 — 설계서 §12). D1 변경 없음. 배포 직후 `GET /reports/recent-sites`·제보 접수 스모크(보호 표현 포함 합성 입력은 운영에 보내지 말 것).
+3. 그 다음 GitHub Pages(main 병합 시 자동). Actions 의 기상 JSON 갱신(`validate_weather_week.py` 의 새 발행 시각 검사)이 정상 JSON 에서 통과함을 첫 실행에서 확인.
+4. 되돌리기: Pages 는 main 에서 PR #13 병합 커밋을 `git revert` 후 push(프런트만 즉시 복귀). Worker 는 직전 version 으로 `wrangler rollback`(S1-R 만 되돌리면 보호가 약해지므로 설계서 원칙상 보호 유지 version 또는 비공개 안전모드를 우선). Python validator 만 문제 시 해당 파일 revert(생성기·점수식은 무변경이라 JSON 형식 영향 없음). 원자료·D1·승인 기록은 어떤 단계에서도 재작성하지 않는다.
+5. 배포 후 관찰: 추천 패널이 빈 목록이면 기상 JSON 발행 시각·갱신 지연부터 확인(C 정책상 참고 자료는 후보가 아님).
+
 ## 테스트 (2026-10-09, Windows, Python 3.12, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8`, `CHROME_PATH=…/chrome.exe`)
 | 스위트 | 결과 |
 |---|---|
