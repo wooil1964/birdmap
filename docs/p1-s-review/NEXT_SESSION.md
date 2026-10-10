@@ -63,3 +63,10 @@ analysis C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap
 Python C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe
 Chrome C:/Program Files/Google/Chrome/Application/chrome.exe
 PYTHONUTF8=1, PYTHONDONTWRITEBYTECODE=1.
+
+
+## b12e20c 최종 게시 및 readback 완료 (2026-10-11)
+보고서 증거 commit: `dde70ebe2b1be6802d352298766feb8ac92b5b96`.
+- PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6102686789
+- Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6102688337
+두 댓글을 API로 다시 읽어 준비한 2,199자 본문과 각각 전체 일치함을 확인했다. 본문은 `results/f23-b12e20c/FINAL_F23_COMMENT.md`, 게시 증빙은 `results/f23-b12e20c/github_receipts.json`에 저장했다. 최종 판정은 조건부 승인이다. 운영 승인 조건은 F23_RECHECK.md 및 NEXT_SESSION.md에 기재했으며 제품 코드·main·Pages/Worker·D1·실사용자 데이터를 변경하지 않았다. 검증 브랜치 증빙 저장을 완료한 후 별도 운영 승인을 기다린다. 마지막 증빙 commit은 review/p1-s-pr13의 git log -1에서 확인한다.

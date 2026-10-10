@@ -202,3 +202,10 @@ Windows absolute --import 첫 실행과 런타임 python3 경로 오류는 검�
 
 ## 최종 F2·F3 재검증 — b12e20c (2026-10-11)
 판정 조건부 승인. 이전F2 출처승격·동일root교정·F3 String/렌더객체예외는실제제품/Node/Chrome에서해결. 자동621/0/1, 고정190/176 전수불변. 최신main89e7 공지추가및TMAP결합을따로확인했고안전한주간대안/갱신지연today차단유지. 원형실패와Python저장/JS현재범위차이는성공과분리해보존. 상세증빙 F23_RECHECK.md, results/f23-b12e20c. 운영Worker/current보호rollback미확인과보호재분류/철회cache P1은배포선행조건; S1-P임의구현없음. 검증통과가실제병합·배포승인은아님.
+
+
+## b12e20c 최종 게시 및 readback 완료 (2026-10-11)
+보고서 증거 commit: `dde70ebe2b1be6802d352298766feb8ac92b5b96`.
+- PR #13: https://github.com/wooil1964/birdmap/pull/13#issuecomment-6102686789
+- Issue #9: https://github.com/wooil1964/birdmap/issues/9#issuecomment-6102688337
+두 댓글을 API로 다시 읽어 준비한 2,199자 본문과 각각 전체 일치함을 확인했다. 본문은 `results/f23-b12e20c/FINAL_F23_COMMENT.md`, 게시 증빙은 `results/f23-b12e20c/github_receipts.json`에 저장했다. 최종 판정은 조건부 승인이다. 운영 승인 조건은 F23_RECHECK.md 및 NEXT_SESSION.md에 기재했으며 제품 코드·main·Pages/Worker·D1·실사용자 데이터를 변경하지 않았다. 검증 브랜치 증빙 저장을 완료한 후 별도 운영 승인을 기다린다. 마지막 증빙 commit은 review/p1-s-pr13의 git log -1에서 확인한다.
