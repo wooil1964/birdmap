@@ -194,3 +194,5 @@ actual process_site/build_site_result/main을 합성 provider10:50으로190실�
 - [rootChrome today실패3](results/f123-a35b859/root-today-dom/additional_today_dom.json)
 
 이 보고서는 실제 실행 결과로 작성했다. 자동615성공과 별도 안전계약 실패를 전체성공으로 합산하지 않는다.
+
+게시 완료: [PR #13 최종 판정](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6097679288), [Issue #9 동일 판정](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6097679798). API readback에서 게시 본문 전체가 준비한 본문과 정확히 일치함을 확인했다. 보고서 commit86a93e726096820cc2e9e59228d08176250f6705, 게시 증빙 results/f123-a35b859/github_receipts.json. 새 보완 SHA 및 사용자 별도 승인 대기.

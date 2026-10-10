@@ -139,3 +139,5 @@ FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확
 - [Issue #9 동일 판정](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6083244131)
 
 두 댓글 ID와 게시된 본문을 API로 다시 읽어 FINAL_C_COMMENT.md와 일치 확인했다. readback/본문hash는 results/c/github_receipts.json. 이 증빙을 저장한 마지막 commit은 git log -1/원격 review/p1-s-pr13에서 확인한다. 원격 main/head가 현재 검증 SHA와 같은지 최종 재확인한다. 사용자 승인·구현자 보완 새SHA 대기이며 운영 작업은 수행하지 않는다.
+
+게시 완료: [PR #13 최종 판정](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6097679288), [Issue #9 동일 판정](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6097679798). API readback에서 게시 본문 전체가 준비한 본문과 정확히 일치함을 확인했다. 보고서 commit86a93e726096820cc2e9e59228d08176250f6705, 게시 증빙 results/f123-a35b859/github_receipts.json. 새 보완 SHA 및 사용자 별도 승인 대기.

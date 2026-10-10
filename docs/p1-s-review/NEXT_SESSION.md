@@ -50,3 +50,5 @@ node <scripts>/independent_replay.mjs <review> <analysis> <out>
 source 시험 일부의 head/main/previous는 metadata 상수라 새SHA로 갱신하고 actual source/hash를 대조한다. 전체8명령·TAP 파일범위는 results/f123-a35b859/execution_manifest.json, 계약/Python은 contract-execution_manifest.json, Chrome은 dom-execution_manifest.json, root 재실행은 root_execution_manifest.json이다. python_runtime_preload/browser_network_isolation은 상위scripts에 있다. 초기 하네스 오류는 initial_harness로 별도 보존했다.
 
 임시 .scratch는 증거 보존 후 정확 절대경로를 검증해 삭제한다. 재실행시 재생성한다. 수정 필요이며 CI 미구축·Worker 현재version/보호rollback 미확인도 운영 선행 조건이다. main병합/Pages·Worker배포/D1/실사용자POSTDELETE/민감원좌표공개 금지. 새 보완 SHA 및 사용자 별도 승인 대기.
+
+게시 완료: [PR #13 최종 판정](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6097679288), [Issue #9 동일 판정](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6097679798). API readback에서 게시 본문 전체가 준비한 본문과 정확히 일치함을 확인했다. 보고서 commit86a93e726096820cc2e9e59228d08176250f6705, 게시 증빙 results/f123-a35b859/github_receipts.json. 새 보완 SHA 및 사용자 별도 승인 대기.

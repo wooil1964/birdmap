@@ -197,3 +197,5 @@ Windows absolute --import 첫 실행과 런타임 python3 경로 오류는 검�
 ## 최종 기록
 
 검증완료 체크포인트: d9e5877d7fad792d7fe3ed79485e7d829afbc9da. [PR13 검증·보완 요청](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6079394141) 및 [Issue9 기록](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6079396000)을 게시하고 API read-back으로7370자 본문일치를 확인했다. 댓글증빙은 results/github_receipts.json이다. Claude Code의 보완 커밋과 사용자 지시/승인까지 검증 작업을 완료 상태로 보존한다. 현재 PR에 대한 병합/배포 승인은 하지 않는다.
+
+게시 완료: [PR #13 최종 판정](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6097679288), [Issue #9 동일 판정](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6097679798). API readback에서 게시 본문 전체가 준비한 본문과 정확히 일치함을 확인했다. 보고서 commit86a93e726096820cc2e9e59228d08176250f6705, 게시 증빙 results/f123-a35b859/github_receipts.json. 새 보완 SHA 및 사용자 별도 승인 대기.
