@@ -175,3 +175,6 @@ F2-a/b·F3 기존차단해결; 자동621/0/1 및정상고정190/176 ON/OFF signa
 최종 판정은 **조건부 승인 유지**. Pages rollback SHA, 실제 보호 전환 영향 및 전환 시 cache 보안 선행 조건은 그대로 남는다. 제품 코드 변경·배포·rollback·D1·실사용자 데이터 변경은 0이다.
 
 정제 증빙: `results/f23-b12e20c/worker_versions_readonly.json`.
+
+
+Worker 추가 확인 게시 완료: [PR #13](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6102822780), [Issue #9](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6102823104). 두 댓글의 870자 본문을 API로 재조회해 전체 일치를 확인했다. 증빙은 results/f23-b12e20c/worker_versions_github_receipts.json, 본문은 WORKER_VERSIONS_COMMENT.md. 현재 Worker 확인 조건만 해소됐으며 보호 유지 rollback 및 별도 운영 승인 조건은 남는다.
