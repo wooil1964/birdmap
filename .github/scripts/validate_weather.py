@@ -49,7 +49,10 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_today.json"):
             assert not day.get("stale") and not day.get("dataUnavailable")
             assert day["date"] == data["date"] == day["forecastTime"][:10]
             assert finite_number(day["score"]) and 0 <= day["score"] <= 100,                 f"{site_id} score is not a finite number in 0-100: {day['score']!r}"
-            assert day["generatedAt"] and not day.get("missingScoreFields")
+            assert not day.get("missingScoreFields")
+            # 프런트(storedWeatherState)와 같은 배치 일관성: 적격 항목의 발행 시각은 실제 문자열이어야 하고 배치(root) 발행 시각과 같아야 한다.
+            assert isinstance(day.get("generatedAt"), str) and day["generatedAt"] and day["generatedAt"] == data.get("generatedAt"), \
+                f"{site_id} eligible item generatedAt differs from the batch: {day.get('generatedAt')!r} vs {data.get('generatedAt')!r}"
             # 적격(true)인 항목은 추천·팝업 점수에 쓰이므로 실제 필수 기상 표시값도 있어야 한다(index.html 의 today 검사와 같은 형식).
             assert isinstance(day.get("wind"), str) and WIND_PATTERN.match(day["wind"]),                 f"{site_id} eligible without a valid wind: {day.get('wind')!r}"
             assert isinstance(day.get("rain"), str) and RAIN_PATTERN.match(day["rain"]),                 f"{site_id} eligible without a valid rain: {day.get('rain')!r}"

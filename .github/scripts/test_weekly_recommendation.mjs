@@ -2573,3 +2573,56 @@ test('C2 today 예보 시각도 같은 엄격 parser: 시간대 없음·UTC·24:
     assert.equal(api.todayRecommendedSites().length, 0, bad);
   }
 });
+
+/* ===== PR #13 F3: 시각 원본이 실제 문자열이 아니면(배열·객체·숫자·boolean) 안전하게 부적격 ===== */
+const NON_STRINGS = [['배열', (t) => [t]], ['객체', () => ({ toString: 'not-callable' })], ['숫자', () => 1791601200000], ['boolean', () => true], ['null', () => null]];
+
+test('F3 weeklyForecastTimestamp/weatherTimeMs: 문자열이 아닌 원본은 null/NaN(TypeError 없음), 정상 KST·ISO +09:00 는 유지', () => {
+  const api = loadApi({ month: 10 });
+  for (const [label, make] of NON_STRINGS) {
+    assert.equal(api.weeklyForecastTimestamp(make('2026-10-10 12:00 KST')), null, label);
+    assert.ok(Number.isNaN(api.weatherTimeMs(make('2026-10-10 12:00 KST'))), label);
+  }
+  assert.equal(typeof api.weeklyForecastTimestamp('2026-10-10 12:00 KST'), 'number');
+  assert.equal(api.weeklyForecastTimestamp('2026-10-10T12:00:00+09:00'), api.weeklyForecastTimestamp('2026-10-10 12:00 KST'));
+});
+
+test('F3 배열·객체 예보 시각의 99점은 일반·갯벌·섬 모두 제외되고 정상 80점이 rank 96 으로 선택된다(예외 없음)', () => {
+  const site14 = RUNTIME.find((s) => s.id === '14');
+  for (const [route, site] of [['일반', FIN_GENERAL], ['갯벌', site14], ['섬', FIN_ISLAND]]) {
+    for (const [label, make] of NON_STRINGS.slice(0, 4)) {
+      const week = finWeek(site, [['12:00', 99], ['13:00', 80]]);
+      week.sites[site.id].days[P0_DATE].samples[0].forecastTime = make(P0_DATE + ' 12:00 KST');
+      const api = finApi(site, week);
+      const e = api.weeklyRecommendationForSite(site, api.weeklyInfo());
+      assert.ok(e, route + ' ' + label);
+      assert.equal(e.score, 80, route + ' ' + label);
+      assert.equal(api.weeklyRankScore(e), 96);
+      assert.equal(api.todayRecommendedSites()[0].score, 80);
+    }
+  }
+});
+
+test('F3 배열·객체 발행 시각(주간 generatedAt·today generatedAt)은 후보가 아니다', () => {
+  for (const [label, make] of NON_STRINGS) {
+    const week = finWeek(FIN_GENERAL, [['13:00', 92]]);
+    week.generatedAt = make('2026-10-10 10:30 KST');
+    assert.equal(finTop(FIN_GENERAL, week), 0, '주간 ' + label);
+    const site = { ...SITE, id: 563, name: '일반T3', env: '농경지' };
+    const raw = r6Raw({ generatedAt: make(P0_DATE + ' 10:30 KST') });
+    const api = loadApi({ now: R6_NOW, month: 10, siteData: [site], weatherWeek: null, weatherToday: { date: P0_DATE, sites: { 563: raw } } });
+    assert.equal(api.todayRecommendedSites().length, 0, 'today ' + label);
+  }
+});
+
+test('F2 배치 일관성: 장소별 generatedAt 이 root 발행과 다른 적격 item 은 새 자료로 인정하지 않고, 같은 발행 item 은 허용한다', () => {
+  const site = { ...SITE, id: 564, name: '일반F2', env: '농경지' };
+  const run = (rootStamp, itemStamp) => {
+    const api = loadApi({ now: '2026-10-10T11:00:00+09:00', month: 10, siteData: [site], weatherWeek: null,
+      weatherToday: { generatedAt: rootStamp, date: P0_DATE, sites: { 564: r6Raw({ generatedAt: itemStamp }) } } });
+    return api.todayRecommendedSites().length;
+  };
+  assert.equal(run('2026-10-10 10:50 KST', '2026-10-10 10:50 KST'), 1);
+  assert.equal(run('2026-10-10 10:50 KST', '2026-10-10 10:30 KST'), 0, 'root 10:50 / item 10:30');
+  assert.equal(run('2026-10-10 10:30 KST', '2026-10-10 10:50 KST'), 0, 'root 10:30 / item 10:50 (반대 방향)');
+});

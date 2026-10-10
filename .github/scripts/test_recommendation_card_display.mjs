@@ -400,7 +400,7 @@ const LIFECYCLE = `(async function(){
     var card=[].slice.call(body.querySelectorAll('.todayRankItem')).filter(function(el){return el.querySelector('.todayRankName').textContent.indexOf('걸매리')>=0;})[0];
     return {label:label,cards:body.querySelectorAll('.todayRankItem').length,score:card?card.querySelector('.todayRankScore').textContent:null,empty:body.innerText.indexOf(EMPTY)>=0};
   }
-  function doc(raw,generatedAt){return {date:'${DATE}',generatedAt:generatedAt,updated:generatedAt,sites:{14:raw}};}
+  function doc(raw,generatedAt){return {date:'${DATE}',generatedAt:generatedAt,updated:generatedAt,sites:{14:Object.assign({},raw,{generatedAt:generatedAt})}};}
   weatherWeek=null; weatherToday=doc(cfg.reference,'${DATE} 05:41 KST'); tideMonth=cfg.tide; recentSiteSightings={}; loadedNotices=[];
   toggleTodayPanel(true);
   var out=[]; out.push(snapshot('모두 참고 상태'));
@@ -415,7 +415,7 @@ const LIFECYCLE = `(async function(){
   var calls=0;
   window.fetch=function(){var n=++calls;return new Promise(function(resolve){var body=n===1?doc(cfg.reference,'${DATE} 05:41 KST'):doc(cfg.normal,'${DATE} 10:31 KST');setTimeout(function(){resolve({ok:true,json:function(){return Promise.resolve(body);}});},n===1?150:0);});};
   var first=loadWeatherToday(), second=loadWeatherToday(); await Promise.all([first,second]); await new Promise(function(r){setTimeout(r,250);}); refreshTodayPanelIfOpen();
-  out.push(Object.assign(snapshot('늦은 옛 응답 이후'),{stateKindOk:weatherToday.sites['14'].generatedAt==='${DATE} 10:30 KST'}));
+  out.push(Object.assign(snapshot('늦은 옛 응답 이후'),{stateKindOk:weatherToday.sites['14'].generatedAt==='${DATE} 10:31 KST'}));
   // 4) 정상 today 가 다시 참고 상태가 되고(예: 시간 경과) 주간 대체 예보가 뒤늦게 도착하면 정상 주간 예보로 복구된다.
   weatherToday=doc(cfg.reference,'${DATE} 05:41 KST'); refreshTodayPanelIfOpen(); out.push(snapshot('다시 참고 상태'));
   window.fetch=function(url){return Promise.resolve({ok:true,json:function(){return Promise.resolve(cfg.week);}});};
@@ -493,6 +493,46 @@ test('C3 이전 발행본 재적용 차단: 10:40 위험 → 10:30 정상 무시
       assert.deepEqual(by['같은 10:40 충돌 자료'], [0, false], width);
       assert.deepEqual(by['10:50 최신 정상'], [1, true], width);
       assert.deepEqual(by['나중 요청의 10:45 옛 위험'], [1, false], width + ': 가용성 퇴행 금지');
+    } finally { page.dispose(); }
+  }
+});
+
+/* F1·F2 실제 Chrome: 미래 발행 뒤 정상 복구, 장소별 item 이 오래된 새 root 가 위험 제외를 뒤집지 못함 */
+const LOADER_FINAL = `(async function(){
+  var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
+  window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
+  var raw=${JSON.stringify(raw())};
+  for(var wait=0;wait<100&&!(typeof birdmapDataStarted!=='undefined'&&birdmapDataStarted);wait++)await new Promise(function(r){setTimeout(r,100);});
+  await new Promise(function(r){setTimeout(r,1200);});
+  var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
+  weatherWeek=null; tideMonth=${JSON.stringify(TIDE_NOON)}; recentSiteSightings={}; loadedNotices=[];
+  function doc(rain,root,item){return {date:'${DATE}',generatedAt:root,updated:root,sites:{14:Object.assign({},raw,{rain:rain,generatedAt:item})}};}
+  function cards(){return document.getElementById('todayPanelBody').querySelectorAll('.todayRankItem').length;}
+  var T=function(h){return '${DATE} '+h+' KST';};
+  var out=[]; var realFetch=window.fetch; function serve(body){window.fetch=function(){return Promise.resolve({ok:true,json:function(){return Promise.resolve(body);}});};}
+  async function step(label,body){serve(body);var a=await loadWeatherToday();refreshTodayPanelIfOpen();out.push([label,cards(),a]);}
+  weatherToday={sites:{}}; toggleTodayPanel(true);
+  await step('F1 미래 12:30 수신',doc('강수 없음',T('12:30'),T('12:30')));
+  await step('F1 정상 10:50 복구',doc('강수 없음',T('10:50'),T('10:50')));
+  await step('F1 미래 12:30 재수신(정상 유지)',doc('강수 없음',T('12:30'),T('12:30')));
+  await step('F2 root10:55/item10:55 위험',doc('3시간 강수 1.0mm',T('10:55'),T('10:55')));
+  await step('F2 root11:00 지만 item10:30 정상',doc('강수 없음',T('10:57'),T('10:30')));
+  await step('F2 root11:00/item11:00 새 정상',doc('강수 없음',T('10:59'),T('10:59')));
+  window.fetch=realFetch; return out;
+})()`;
+
+test('F1·F2 미래 발행 뒤 정상 복구, 오래된 장소별 item 은 위험 제외를 뒤집지 못하고 새 item 은 복구한다(5폭)', { skip: SKIP }, async () => {
+  for (const width of WIDTHS) {
+    const page = await Page.open();
+    try {
+      await page.setViewport(width, 800);
+      const by = Object.fromEntries((await page.evaluate(LOADER_FINAL)).map(([k, ...v]) => [k, v]));
+      assert.deepEqual(by['F1 미래 12:30 수신'], [0, true], width);
+      assert.deepEqual(by['F1 정상 10:50 복구'], [1, true], width);
+      assert.deepEqual(by['F1 미래 12:30 재수신(정상 유지)'], [1, false], width);
+      assert.deepEqual(by['F2 root10:55/item10:55 위험'], [0, true], width);
+      assert.deepEqual(by['F2 root11:00 지만 item10:30 정상'], [0, true], width + ': 위험 역전 금지');
+      assert.deepEqual(by['F2 root11:00/item11:00 새 정상'], [1, true], width);
     } finally { page.dispose(); }
   }
 });

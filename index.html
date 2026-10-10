@@ -2048,7 +2048,7 @@ function fieldInfoHtml(site){
     '</div></div></details>';
 }
 function weatherTimeMs(value){
-  var text=String(value||'').trim();
+  var text=typeof value==='string'?value.trim():'';
   if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2} KST$/.test(text))text=text.replace(' ','T').replace(' KST','+09:00');
   return text?Date.parse(text):NaN;
 }
@@ -2076,6 +2076,10 @@ function storedWeatherState(day,root,now,site){
   var current=hasData&&sameDay&&onSchedule&&!day.stale&&forecastMs!==null&&Number.isFinite(forecastMs);
   /* 적격은 자기 필드의 scoreEligible===true·빈 missingScoreFields·유효 점수·필수 기상값(site 기준)을 모두 확인한 경우만이다. 미확인(누락/null)을 true 로 올리지 않는다. */
   var eligible=weeklyTodayRecommendable(day,site);
+  /* 배치 출처 일관성: 장소별 generatedAt 이 있으면 배치(root) 발행 시각과 같아야 한다. 새 root 에 실린 더 오래된 item(이미 확인된 위험 자료 이전의 자료)은
+     새 자료로 인정하지 않는다. 생성 시각(generatedAt)과 예보 대상 시각(forecastTime)은 별개다. */
+  var rootMs=weeklyForecastTimestamp(root.generatedAt), hasItemGenerated=day.generatedAt!==undefined&&day.generatedAt!==null&&day.generatedAt!=='';
+  if(rootMs!==null&&hasItemGenerated&&weeklyForecastTimestamp(day.generatedAt)!==rootMs)eligible=false;
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
     dataCurrent:current,scoreEligible:current&&eligible,stale:!current,
     date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
@@ -3900,7 +3904,8 @@ function weeklyKstTimestamp(dateText,timeText){
 }
 /* 예보 시각 문자열("2026-10-10 12:00 KST" 또는 ISO "2026-10-10T12:00:00+09:00")의 절대 시각. 시간대가 없거나 다른 표기는 모호하므로 null. */
 function weeklyForecastTimestamp(text){
-  var value=String(text||'').trim();
+  if(typeof text!=='string')return null;
+  var value=text.trim();
   var match=/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}) KST$/.exec(value)||/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})(?::00(?:\.0+)?)?\+09:00$/.exec(value);
   return match?weeklyKstTimestamp(match[1],match[2]):null;
 }
@@ -4537,7 +4542,10 @@ function birdmapDataStamp(data){
 
 /* 반영했으면 true, 같은 자료거나 실패했으면 false 로 끝난다(그리기는 호출한 쪽에서 한 번만). */
 /* 자료의 실제 발행 시각(절대 시각, ms). 엄격한 KST 형식이 아니면 null. */
-function birdmapDataTime(data){return weeklyForecastTimestamp(data&&data.generatedAt);}
+function birdmapDataTime(data){
+  var published=weeklyForecastTimestamp(data&&data.generatedAt);
+  return published!==null&&published<=Date.now()?published:null;  // 미래·무효 발행은 비교 기준(검증된 발행 버전)을 갱신하지 못한다
+}
 function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData){
   var seq=birdmapDataSeq[key]=(birdmapDataSeq[key]||0)+1;
   return fetch(url,{cache:'no-cache'}).then(function(r){

@@ -303,14 +303,47 @@ for (const [name, loader, prop] of [['today', 'loadWeatherToday', 'weatherToday'
   });
 
   test(`C3 ${name}: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다`, async () => {
-    const { api, results } = await sequence(['2026-10-10 23:50 KST', '2026-10-11 00:10 KST', '2026-10-10 23:58 KST']);
+    const { api, results } = await sequence(['2026-09-30 23:50 KST', '2026-10-01 00:10 KST', '2026-09-30 23:58 KST']);
     assert.deepEqual(results, [true, true, false]);
-    assert.equal(api[prop].generatedAt, '2026-10-11 00:10 KST');
+    assert.equal(api[prop].generatedAt, '2026-10-01 00:10 KST');
   });
 
   test(`C3 ${name}: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)`, async () => {
     const { api, results } = await sequence([doc(undefined, { updated: 'first' })]);
     assert.deepEqual(results, [true]);
     assert.ok(api[prop]);
+  });
+}
+
+/* ===== PR #13 F1: 미래 발행은 발행 버전 비교 기준을 갱신하지 못한다 ===== */
+for (const [name, loader, prop] of [['today', 'loadWeatherToday', 'weatherToday'], ['week', 'loadWeatherWeek', 'weatherWeek']]) {
+  const FUTURE = '2099-01-01 00:00 KST';
+  const run = async (stamps) => {
+    let i = 0;
+    const api = loadApi({ ctx: { [prop]: EMPTY_TODAY }, respond: () => ok(doc(stamps[i++])) });
+    const results = [];
+    for (let n = 0; n < stamps.length; n++) results.push(await api[loader]());
+    return { api, results };
+  };
+  test(`F1 ${name}: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다`, async () => {
+    const { api, results } = await run([FUTURE, '2026-10-10 10:50 KST']);
+    assert.deepEqual(results, [true, true]);
+    assert.equal(api[prop].generatedAt, '2026-10-10 10:50 KST');
+  });
+  test(`F1 ${name}: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부`, async () => {
+    const { api, results } = await run(['2026-10-10 10:40 KST', FUTURE, '2026-10-10 10:30 KST', '2026-10-10 10:50 KST']);
+    assert.deepEqual(results, [true, false, false, true]);
+    assert.equal(api[prop].generatedAt, '2026-10-10 10:50 KST');
+  });
+  test(`F3 ${name}: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음)`, async () => {
+    const bad = [['2026-10-10 10:50 KST'], { toString: 'not-callable' }, 1791601200000, true];
+    for (const value of bad) {
+      let i = 0;
+      const docs = [doc('2026-10-10 10:40 KST'), doc(value, { updated: 'x' })];
+      const api = loadApi({ ctx: { [prop]: EMPTY_TODAY }, respond: () => ok(docs[i++]) });
+      assert.equal(await api[loader](), true);
+      assert.equal(await api[loader](), false, JSON.stringify(value));
+      assert.equal(api[prop].generatedAt, '2026-10-10 10:40 KST');
+    }
   });
 }

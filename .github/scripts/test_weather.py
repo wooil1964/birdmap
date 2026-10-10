@@ -442,7 +442,7 @@ class WeatherWeekTests(unittest.TestCase):
                  "visibility": "20.0km", "cloud": "10%", "wave": "0.7m", "ruleKey": "island_migrant",
                  "waveLat": 36.12, "waveLon": 125.98}
         entry.update(site_fields)
-        return {"date": today, "updated": today + " 06:00 KST", "source": "test", "status": "ok",
+        return {"date": today, "updated": today + " 06:00 KST", "generatedAt": entry.get("generatedAt"), "source": "test", "status": "ok",
                 "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
                 "unavailableSiteCount": 0,
                 "scoreEligibleCount": 1 if entry.get("scoreEligible") else 0,
@@ -551,6 +551,17 @@ class WeatherWeekTests(unittest.TestCase):
                 with self.assertRaisesRegex(AssertionError, message):
                     self.run_today_validator(self.today_document(**fields))
 
+    def test_today_validator_requires_batch_consistent_item_generation(self):
+        """PR #13 F2: 적격 항목의 generatedAt 은 문자열이며 배치(root) 발행과 같아야 한다(프런트와 같은 계약)."""
+        today = datetime.now(weather.KST).date().isoformat()
+        for value in (today + " 05:30 KST", None, ["x"], {"a": 1}, 7):
+            with self.subTest(item=value):
+                document = self.today_document(generatedAt=value)
+                document["generatedAt"] = today + " 06:00 KST"
+                with self.assertRaises(AssertionError):
+                    self.run_today_validator(document)
+        self.assertEqual(self.run_today_validator(self.today_document())["siteCount"], 1)
+
     def test_today_validator_requires_wave_where_the_site_needs_it(self):
         """파고 필수 지역(showWave/island/pelagic)의 wave 결측은 거부하고, 비필수 지역의 null 은 허용한다."""
         import validate_weather as validator
@@ -599,7 +610,7 @@ class WeatherWeekTests(unittest.TestCase):
         self.assertTrue(result["scoreEligible"])
         self.assertFalse(result["stale"])
         self.assertEqual((result["generatedAt"], result["forecastTime"]), ("2026-10-10 06:10 KST", "2026-10-10 12:00 KST"))
-        document = {"date": "2026-10-10", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
+        document = {"date": "2026-10-10", "generatedAt": "2026-10-10 06:10 KST", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
                     "unavailableSiteCount": 0, "scoreEligibleCount": 1, "status": "ok", "sites": {"14": result}}
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "weather_today.json"
