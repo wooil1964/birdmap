@@ -1,0 +1,402 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "sourceDigest": "c9afe975ff29ba3f18ae720694703aa680acefff1a2521343c580852e8948b7d",
+  "rows": [
+    {
+      "scenario": "today_root_generated_object",
+      "width": 375,
+      "expected": {
+        "candidatePresent": false,
+        "cardCount": 0,
+        "popupScore": "오늘 적합도 미확인",
+        "exceptions": 0,
+        "referenceWeatherRetained": true
+      },
+      "stages": {
+        "before": {
+          "candidatePresent": true,
+          "candidateRankScore": 108,
+          "todayAdapterIsNull": false,
+          "emptyNotice": false,
+          "bodyText": "🧭 이번 주 추천 1곳추천 기간: 2026-10-10 ~ 2026-10-16 · 기상: 10월 10일 토요일 저장 예보(주간 자료 없음) · 조석: KHOA 예측자료1. 천수만 사기리🌾 들판탐조★★★★★ 92점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m확인 가능한 예보 기간 내 추천 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기📢 탐조 이슈 자세히 보기",
+          "cardCount": 1,
+          "cardScore": "★★★★★ 92점",
+          "cardText": "1. 천수만 사기리🌾 들판탐조★★★★★ 92점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m확인 가능한 예보 기간 내 추천 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기",
+          "rawScore": 92,
+          "rankScore": 108,
+          "bonus": 16,
+          "safe": true,
+          "recommendationDate": "2026-10-10",
+          "recommendationTime": "",
+          "sourceState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": true,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:50 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 10
+          },
+          "sourceEligible": true,
+          "sourceKind": "today_saved",
+          "cardRect": {
+            "left": 33,
+            "right": 342,
+            "clipped": false
+          }
+        },
+        "card": {
+          "candidatePresent": false,
+          "candidateRankScore": null,
+          "todayAdapterIsNull": true,
+          "emptyNotice": true,
+          "bodyText": "🧭 이번 주 추천 0곳추천 기간: 2026-10-10 ~ 2026-10-16 · 기상: 10월 10일 토요일 저장 예보(주간 자료 없음) · 조석: KHOA 예측자료현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.📢 탐조 이슈 자세히 보기",
+          "cardCount": 0,
+          "cardScore": null,
+          "cardText": null,
+          "rawScore": null,
+          "rankScore": null,
+          "cardRect": null
+        },
+        "probe": {
+          "candidate": {
+            "exception": null,
+            "present": false,
+            "raw": null,
+            "rank": null,
+            "scoreEligible": null
+          },
+          "final": {
+            "exception": null,
+            "present": false
+          },
+          "state": {
+            "exception": null,
+            "present": true,
+            "scoreEligible": false
+          }
+        },
+        "renderedDOM": {
+          "cardCount": 0,
+          "cardScores": [],
+          "empty": true,
+          "root": {
+            "toString": "not-callable"
+          },
+          "itemGeneratedAt": "2026-10-10 10:50 KST"
+        },
+        "popupDOM": {
+          "popupPresent": true,
+          "score": "오늘 적합도 미확인",
+          "windRetained": true,
+          "temperatureRetained": true
+        }
+      },
+      "exceptions": [],
+      "checks": [
+        {
+          "expectation": "No product exception",
+          "passed": true
+        },
+        {
+          "expectation": "Invalid source excludes candidate and final card",
+          "passed": true
+        },
+        {
+          "expectation": "Popup score unconfirmed and reference weather retained",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "scenario": "today_item_generated_object",
+      "width": 375,
+      "expected": {
+        "candidatePresent": false,
+        "cardCount": 0,
+        "popupScore": "오늘 적합도 미확인",
+        "exceptions": 0,
+        "referenceWeatherRetained": true
+      },
+      "stages": {
+        "before": {
+          "candidatePresent": true,
+          "candidateRankScore": 108,
+          "todayAdapterIsNull": false,
+          "emptyNotice": false,
+          "bodyText": "🧭 이번 주 추천 1곳추천 기간: 2026-10-10 ~ 2026-10-16 · 기상: 10월 10일 토요일 저장 예보(주간 자료 없음) · 조석: KHOA 예측자료1. 천수만 사기리🌾 들판탐조★★★★★ 92점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m확인 가능한 예보 기간 내 추천 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기📢 탐조 이슈 자세히 보기",
+          "cardCount": 1,
+          "cardScore": "★★★★★ 92점",
+          "cardText": "1. 천수만 사기리🌾 들판탐조★★★★★ 92점🐦 최근 출현 1일 전(2026-10-09 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 서산 · 농경지탐조🌬️ 북풍 3.0m/s · 강수 없음 · 파고 0.3m확인 가능한 예보 기간 내 추천 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기",
+          "rawScore": 92,
+          "rankScore": 108,
+          "bonus": 16,
+          "safe": true,
+          "recommendationDate": "2026-10-10",
+          "recommendationTime": "",
+          "sourceState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": true,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:50 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 10
+          },
+          "sourceEligible": true,
+          "sourceKind": "today_saved",
+          "cardRect": {
+            "left": 33,
+            "right": 342,
+            "clipped": false
+          }
+        },
+        "card": {
+          "candidatePresent": false,
+          "candidateRankScore": null,
+          "todayAdapterIsNull": true,
+          "emptyNotice": true,
+          "bodyText": "🧭 이번 주 추천 0곳추천 기간: 2026-10-10 ~ 2026-10-16 · 기상: 10월 10일 토요일 저장 예보(주간 자료 없음) · 조석: KHOA 예측자료현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.📢 탐조 이슈 자세히 보기",
+          "cardCount": 0,
+          "cardScore": null,
+          "cardText": null,
+          "rawScore": null,
+          "rankScore": null,
+          "cardRect": null
+        },
+        "probe": {
+          "candidate": {
+            "exception": null,
+            "present": false,
+            "raw": null,
+            "rank": null,
+            "scoreEligible": null
+          },
+          "final": {
+            "exception": null,
+            "present": false
+          },
+          "state": {
+            "exception": null,
+            "present": true,
+            "scoreEligible": false
+          }
+        },
+        "renderedDOM": {
+          "cardCount": 0,
+          "cardScores": [],
+          "empty": true,
+          "root": "2026-10-10 10:50 KST",
+          "itemGeneratedAt": {
+            "toString": "not-callable"
+          }
+        },
+        "popupDOM": {
+          "popupPresent": true,
+          "score": "오늘 적합도 미확인",
+          "windRetained": true,
+          "temperatureRetained": true
+        }
+      },
+      "exceptions": [],
+      "checks": [
+        {
+          "expectation": "No product exception",
+          "passed": true
+        },
+        {
+          "expectation": "Invalid source excludes candidate and final card",
+          "passed": true
+        },
+        {
+          "expectation": "Popup score unconfirmed and reference weather retained",
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "traffic": [
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "pass": 2,
+    "fail": 0,
+    "exceptionRows": 0
+  },
+  "constraints": {
+    "actualChromeDom": true,
+    "actualLeaflet": true,
+    "sourceChanges": 0,
+    "allAPIRequestsFulfilledSynthetic": true,
+    "DNSIsolationBeforeNavigation": true,
+    "productionWorkerConnections": 0,
+    "productionPOSTDELETE": 0,
+    "coordinatesLogged": false
+  }
+}

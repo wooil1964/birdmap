@@ -1,0 +1,3735 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "expectationChanges": [
+    {
+      "scenario": "delayed_generation",
+      "group": "tide_reference",
+      "reason": "10:17 due time passed; 05:41 generation is a reference",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "future_generation",
+      "group": "tide_reference",
+      "reason": "12:30 generatedAt is after 11:00 evaluation",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "malformed_generation",
+      "group": "tide_reference",
+      "reason": "generatedAt has no valid timestamp",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "missing_generation",
+      "group": "tide_reference",
+      "reason": "item and root generatedAt both unavailable",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "previous_forecast_date",
+      "group": "tide_reference",
+      "reason": "raw date today differs from actual forecast previous date",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "generated_sparse6h_delayed",
+      "group": "tide_reference",
+      "reason": "unchanged actual builder generation06:10 is before latest due10:17",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_delayed_generation",
+      "group": "ordinary_reference",
+      "reason": "same delayed reference contract in general route",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_future_generation",
+      "group": "ordinary_reference",
+      "reason": "same future generation contract in general route",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_malformed_generation",
+      "group": "ordinary_reference",
+      "reason": "same invalid generation contract in general route",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_missing_generation",
+      "group": "ordinary_reference",
+      "reason": "same missing generation contract in general route",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_previous_forecast_date",
+      "group": "ordinary_reference",
+      "reason": "same actual forecast date mismatch in general route",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_generated_sparse6h_delayed",
+      "group": "ordinary_reference",
+      "reason": "unchanged builder row mapped to general route",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_reference_bonus108",
+      "group": "ordinary_control",
+      "reason": "bonus16 may not revive reference source",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 108,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    },
+    {
+      "scenario": "ordinary_week_site_absent_reference",
+      "group": "week_policy",
+      "reason": "missing weekly registry entry may not revive delayed today source",
+      "before": {
+        "cardCount": 1,
+        "candidatePresent": true,
+        "rankScore": 92,
+        "cardScore": "오늘 적합도 미확인"
+      },
+      "after": {
+        "cardCount": 0,
+        "candidatePresent": false,
+        "rankScore": null,
+        "cardScore": null,
+        "popupScore": "오늘 적합도 미확인",
+        "referenceTemperatureRetained": true
+      }
+    }
+  ],
+  "lifecycle": [
+    {
+      "width": 344,
+      "phase": "all_reference_empty",
+      "expectedIds": [],
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "network_failure_retains_empty",
+      "expectedIds": [],
+      "loaderResult": false,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "fresh_today_arrives",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14",
+          "15"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "partial_reference_today",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_reference",
+          "popupState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "rawStoredState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "all_reference_again",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "valid_week_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "partial_week_eligible",
+      "expectedIds": [
+        "14"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "all_week_ineligible_empty",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "valid_week_recovery",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 344,
+      "phase": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "width": 375,
+      "phase": "all_reference_empty",
+      "expectedIds": [],
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "network_failure_retains_empty",
+      "expectedIds": [],
+      "loaderResult": false,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "fresh_today_arrives",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14",
+          "15"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "partial_reference_today",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_reference",
+          "popupState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "rawStoredState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 46,
+            "right": 174.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "all_reference_again",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "valid_week_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "partial_week_eligible",
+      "expectedIds": [
+        "14"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "all_week_ineligible_empty",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "valid_week_recovery",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 375,
+      "phase": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "width": 768,
+      "phase": "all_reference_empty",
+      "expectedIds": [],
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "network_failure_retains_empty",
+      "expectedIds": [],
+      "loaderResult": false,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "fresh_today_arrives",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14",
+          "15"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 161,
+            "right": 289.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 168,
+            "right": 296.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "partial_reference_today",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 161,
+            "right": 289.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_reference",
+          "popupState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "rawStoredState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 168,
+            "right": 296.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "all_reference_again",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "valid_week_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "partial_week_eligible",
+      "expectedIds": [
+        "14"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "all_week_ineligible_empty",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "valid_week_recovery",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 768,
+      "phase": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "width": 1024,
+      "phase": "all_reference_empty",
+      "expectedIds": [],
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "network_failure_retains_empty",
+      "expectedIds": [],
+      "loaderResult": false,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "fresh_today_arrives",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14",
+          "15"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 289,
+            "right": 417.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 296,
+            "right": 424.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "partial_reference_today",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 289,
+            "right": 417.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_reference",
+          "popupState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "rawStoredState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 296,
+            "right": 424.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "all_reference_again",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "valid_week_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "partial_week_eligible",
+      "expectedIds": [
+        "14"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "all_week_ineligible_empty",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "valid_week_recovery",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "phase": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "width": 1440,
+      "phase": "all_reference_empty",
+      "expectedIds": [],
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "network_failure_retains_empty",
+      "expectedIds": [],
+      "loaderResult": false,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "fresh_today_arrives",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14",
+          "15"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 497,
+            "right": 625.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 504,
+            "right": 632.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "partial_reference_today",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "policyChange": {
+        "contract": "F2 batch provenance consistency",
+        "originalExpectedIds": [
+          "14"
+        ],
+        "safeExpectedIds": [],
+        "assertionsRetained": true
+      },
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:30 KST",
+            "scoreEligible": false
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false
+          }
+        }
+      },
+      "referencePopups": [
+        {
+          "siteId": "14",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:30 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 갯벌 가장자리의 도요·물떼새와 수변 조류를 중심으로 살펴보세요. 현재 기온 20.0°C, 풍속 3.0m/s, 강수 없음, 시정 15.0km, 만조 04:13, 간조 10:37입니다. 만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_saved",
+          "popupState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "rawStoredState": {
+            "kind": "today_saved",
+            "dataCurrent": true,
+            "scoreEligible": false,
+            "stale": false,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 30
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 497,
+            "right": 625.34375,
+            "clipped": false
+          }
+        },
+        {
+          "siteId": "15",
+          "popupForecastTime": "2026-10-10 12:00 KST",
+          "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+          "popupFerryText": [],
+          "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+          "popupScore": "오늘 적합도 미확인",
+          "popupHasTemperature": true,
+          "popupHasWind": true,
+          "popupStateKind": "today_reference",
+          "popupState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "rawStoredState": {
+            "kind": "today_reference",
+            "dataCurrent": false,
+            "scoreEligible": false,
+            "stale": true,
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "ageMinutes": 319
+          },
+          "popupSourceEligible": false,
+          "popupAllowed": false,
+          "popupRect": {
+            "left": 504,
+            "right": 632.34375,
+            "clipped": false
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "all_reference_again",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "valid_week_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "partial_week_eligible",
+      "expectedIds": [
+        "14"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "all_week_ineligible_empty",
+      "expectedIds": [],
+      "loaderResult": true,
+      "candidateIds": [],
+      "pickIds": [],
+      "cardCount": 0,
+      "cardScores": [],
+      "emptyNotice": true,
+      "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.",
+      "sourceEligible": [],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "valid_week_recovery",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "loaderResult": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "phase": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    }
+  ],
+  "badWeekDiagnostics": [],
+  "boatDiagnostics": [],
+  "typedDiagnostics": [],
+  "productFixtureEqualsIndependentBuilder": true,
+  "productFixtureDigest": "5b9a1f288219213c9ae0d72fdfe63745dfb872cfa76d9d36d8b58189a2781f5f",
+  "sourceDigest": "c9afe975ff29ba3f18ae720694703aa680acefff1a2521343c580852e8948b7d",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "fixtureDate": "2026-10-10",
+  "summary": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0,
+    "errors": 0
+  },
+  "rows": [],
+  "errors": [],
+  "traffic": [
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    }
+  ],
+  "constraints": {
+    "sourceModified": false,
+    "productionWorkerConnections": 0,
+    "productionD1Access": 0,
+    "productionPOSTDELETE": 0,
+    "allAPIRequestsFulfilledSynthetic": true,
+    "DNSIsolationBeforeNavigation": true,
+    "coordinatesLogged": false,
+    "actualLeaflet": true,
+    "actualMarkerPopup": true,
+    "realDevice": false,
+    "staticCDNGETHEADOnly": true
+  },
+  "groups": {},
+  "lifecycleSummary": {
+    "total": 55,
+    "pass": 50,
+    "fail": 5
+  },
+  "diagnosticSummary": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0
+  },
+  "boatSummary": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0
+  },
+  "typedSummary": {
+    "total": 0,
+    "pass": 0,
+    "fail": 0
+  }
+}

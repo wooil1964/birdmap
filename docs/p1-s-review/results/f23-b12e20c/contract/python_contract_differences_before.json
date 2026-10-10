@@ -1,0 +1,107 @@
+{
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "clock": "2026-10-10 11:00 KST",
+  "mode": "Diagnostic observation, no safety assertion removed; actual full190 validator on actual-builder synthetic base.",
+  "sourceSHA256": "39e7af8183f9075d39b3c3b8f9a163f4ca6ffdfdc559b66bbef78e6c260ad612",
+  "rows": [
+    {
+      "id": "canonical_KST_same",
+      "root": "2026-10-10 10:50 KST",
+      "item": "2026-10-10 10:50 KST",
+      "scope": "canonical normal control",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "6c7f144471aece50b560a34ea358da1980e3e28863b2aac8b313fea1fbd27c24"
+    },
+    {
+      "id": "KST_root_ISO_item_same_instant",
+      "root": "2026-10-10 10:50 KST",
+      "item": "2026-10-10T10:50:00+09:00",
+      "scope": "existing JS ISO input set / Python raw equality",
+      "accepted": false,
+      "error": "AssertionError: 5 eligible item generatedAt differs from the batch: '2026-10-10T10:50:00+09:00' vs '2026-10-10 10:50 KST'",
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "635b1e1f00f0cc68ab1721dc4a0b42317f003d336487c1fdb528442aca314b50"
+    },
+    {
+      "id": "ISO_root_KST_item_same_instant",
+      "root": "2026-10-10T10:50:00+09:00",
+      "item": "2026-10-10 10:50 KST",
+      "scope": "existing JS ISO input set / Python raw equality",
+      "accepted": false,
+      "error": "AssertionError: 5 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs '2026-10-10T10:50:00+09:00'",
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "fa130257b7901a97507402d04acadaae48efc0dbc95ec7160c711a552f914f24"
+    },
+    {
+      "id": "ISO_both_same",
+      "root": "2026-10-10T10:50:00+09:00",
+      "item": "2026-10-10T10:50:00+09:00",
+      "scope": "existing JS ISO input set / Python strict KST",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "bb15eca0623bf8a73d228072ec3b585f7262562cad20c4a59b8d1b2a0162a86b"
+    },
+    {
+      "id": "whitespace_KST_both_same",
+      "root": " 2026-10-10 10:50 KST ",
+      "item": " 2026-10-10 10:50 KST ",
+      "scope": "existing JS trim input set / Python strict KST",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "0225620a46f3d7875eb443c4faf79470e7f0a3ba485ae504277891f20083f8d5"
+    },
+    {
+      "id": "future_KST_both_same",
+      "root": "2026-10-10 12:30 KST",
+      "item": "2026-10-10 12:30 KST",
+      "scope": "future publication eligibility versus storage validator",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "0c9ccb4d83be6a5a158d95919534dfd026c55c5656129eb216b41de77287ef35"
+    },
+    {
+      "id": "old_KST_both_same",
+      "root": "2026-10-10 05:41 KST",
+      "item": "2026-10-10 05:41 KST",
+      "scope": "existing current schedule versus storage validator; separate known age scope",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "8eab03e4e9126459d71cb3041e32b9af1e9f4530a3d0046e815fcb6955a75736"
+    },
+    {
+      "id": "future_ISO_both_same",
+      "root": "2026-10-10T12:30:00+09:00",
+      "item": "2026-10-10T12:30:00+09:00",
+      "scope": "future and format intersection",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "90f233eab359059011912563e55ecf8caa201599378c38598bad40f475c30bbf"
+    },
+    {
+      "id": "invalid_calendar_KST_both_same",
+      "root": "2026-02-30 10:50 KST",
+      "item": "2026-02-30 10:50 KST",
+      "scope": "calendar rejection control",
+      "accepted": true,
+      "error": null,
+      "inputIDs": 190,
+      "runtimeSiteProjection": false,
+      "inputSHA256": "d596b64fdb106bd8d481f43d864707b00252b37965589f989a5004cfbc80d863"
+    }
+  ]
+}

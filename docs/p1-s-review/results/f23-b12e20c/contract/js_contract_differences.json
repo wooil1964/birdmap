@@ -1,0 +1,311 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "mode": "Actual source/candidate/final diagnostic observation; no asserted contract weakened. All190 generated raw items use selected stamps, actual ID14 selection projected only for UI route.",
+  "sourceSHA256": "0e807c2e0ad380a9c60eddb7e69a6abe34382c72a5a20175c71aa863d8ac0d69",
+  "functionSHA256": {
+    "storedWeatherState": "534157358d78bcf10c7f270d4dc066ce7b136dee47dba3ecd37effb1cf8a468b",
+    "weeklyForecastTimestamp": "6c7363368b9da7525e50686ea23bb1f11517a591e2cf86e711bf15cdfa84d873"
+  },
+  "rows": [
+    {
+      "id": "canonical_KST_same",
+      "root": "2026-10-10 10:50 KST",
+      "item": "2026-10-10 10:50 KST",
+      "scope": "canonical normal control",
+      "rootParsed": 1791597000000,
+      "itemParsed": 1791597000000,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "source": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:50 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 10
+      },
+      "error": null
+    },
+    {
+      "id": "KST_root_ISO_item_same_instant",
+      "root": "2026-10-10 10:50 KST",
+      "item": "2026-10-10T10:50:00+09:00",
+      "scope": "existing JS ISO input set / Python raw equality",
+      "rootParsed": 1791597000000,
+      "itemParsed": 1791597000000,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "source": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10T10:50:00+09:00",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 10
+      },
+      "error": null
+    },
+    {
+      "id": "ISO_root_KST_item_same_instant",
+      "root": "2026-10-10T10:50:00+09:00",
+      "item": "2026-10-10 10:50 KST",
+      "scope": "existing JS ISO input set / Python raw equality",
+      "rootParsed": 1791597000000,
+      "itemParsed": 1791597000000,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "source": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:50 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 10
+      },
+      "error": null
+    },
+    {
+      "id": "ISO_both_same",
+      "root": "2026-10-10T10:50:00+09:00",
+      "item": "2026-10-10T10:50:00+09:00",
+      "scope": "existing JS ISO input set / Python strict KST",
+      "rootParsed": 1791597000000,
+      "itemParsed": 1791597000000,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "source": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10T10:50:00+09:00",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 10
+      },
+      "error": null
+    },
+    {
+      "id": "whitespace_KST_both_same",
+      "root": " 2026-10-10 10:50 KST ",
+      "item": " 2026-10-10 10:50 KST ",
+      "scope": "existing JS trim input set / Python strict KST",
+      "rootParsed": 1791597000000,
+      "itemParsed": 1791597000000,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "source": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": " 2026-10-10 10:50 KST ",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 10
+      },
+      "error": null
+    },
+    {
+      "id": "future_KST_both_same",
+      "root": "2026-10-10 12:30 KST",
+      "item": "2026-10-10 12:30 KST",
+      "scope": "future publication eligibility versus storage validator",
+      "rootParsed": 1791603000000,
+      "itemParsed": 1791603000000,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "source": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 12:30 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 0
+      },
+      "error": null
+    },
+    {
+      "id": "old_KST_both_same",
+      "root": "2026-10-10 05:41 KST",
+      "item": "2026-10-10 05:41 KST",
+      "scope": "existing current schedule versus storage validator; separate known age scope",
+      "rootParsed": 1791578460000,
+      "itemParsed": 1791578460000,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "source": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 05:41 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 319
+      },
+      "error": null
+    },
+    {
+      "id": "future_ISO_both_same",
+      "root": "2026-10-10T12:30:00+09:00",
+      "item": "2026-10-10T12:30:00+09:00",
+      "scope": "future and format intersection",
+      "rootParsed": 1791603000000,
+      "itemParsed": 1791603000000,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "source": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10T12:30:00+09:00",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 0
+      },
+      "error": null
+    },
+    {
+      "id": "invalid_calendar_KST_both_same",
+      "root": "2026-02-30 10:50 KST",
+      "item": "2026-02-30 10:50 KST",
+      "scope": "calendar rejection control",
+      "rootParsed": null,
+      "itemParsed": null,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "source": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-10",
+        "generatedAt": "2026-02-30 10:50 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 319690
+      },
+      "error": null
+    }
+  ]
+}

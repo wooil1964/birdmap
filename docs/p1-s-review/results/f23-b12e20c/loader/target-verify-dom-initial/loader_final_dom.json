@@ -1,0 +1,551 @@
+{
+  "sha": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "sourceDigest": "0e807c2e0ad380a9c60eddb7e69a6abe34382c72a5a20175c71aa863d8ac0d69",
+  "summary": {
+    "conditions": 7,
+    "pass": 3,
+    "fail": 4,
+    "exceptions": 0,
+    "base40Pass": 0
+  },
+  "rows": [
+    {
+      "width": 375,
+      "scenario": "verify_valid_unsafe_updates_and_safe_next_recovers",
+      "checks": [
+        {
+          "expectation": "Consistent latest unsafe data is applied and excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent next safe data recovers",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "safe1040",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:40 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        },
+        {
+          "label": "unsafe1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "safe1055",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:55 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 375,
+      "scenario": "verify_rejected_mixed_same_root_unsafe_correction_updates",
+      "checks": [
+        {
+          "expectation": "Unverified mixed batch preserves still-current source",
+          "passed": true
+        },
+        {
+          "expectation": "Rejected mixed predecessor cannot block consistent unsafe correction",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "safe1040",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:40 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        },
+        {
+          "label": "mixed1050",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:40 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        },
+        {
+          "label": "same1050 unsafe correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 375,
+      "scenario": "verify_expired_current_invalid_new_batch_then_current_correction",
+      "checks": [
+        {
+          "expectation": "Invalid data cannot extend expired eligibility",
+          "passed": false
+        },
+        {
+          "expectation": "Consistent current data recovers without B delay",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "safe1040",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:40 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        },
+        {
+          "label": "expired1230",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "mixed1225/1220",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 13:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:40 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        },
+        {
+          "label": "consistent1225/1225",
+          "todayStamp": "2026-10-10 12:25 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 12:25 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 13:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 13:00 KST · 생성 2026-10-10 12:25 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "diagnostic_general_same_publication_forecast_array_correction",
+      "checks": [
+        {
+          "expectation": "Malformed first data cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "General malformed same-publication correction diagnostic availability expectation",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first malformed same root1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "same1050 canonical correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "classification": "Separate availability diagnostic beyond requested root/item inconsistency correction; no forbidden recommendation observed, not a new required deployment blocker by availability alone.",
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "diagnostic_general_same_publication_date_array_correction",
+      "checks": [
+        {
+          "expectation": "Malformed first data cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "General malformed same-publication correction diagnostic availability expectation",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first malformed same root1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "same1050 canonical correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "classification": "Separate availability diagnostic beyond requested root/item inconsistency correction; no forbidden recommendation observed, not a new required deployment blocker by availability alone.",
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "diagnostic_general_same_publication_eligible_string_correction",
+      "checks": [
+        {
+          "expectation": "Malformed first data cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "General malformed same-publication correction diagnostic availability expectation",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first malformed same root1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "same1050 canonical correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "classification": "Separate availability diagnostic beyond requested root/item inconsistency correction; no forbidden recommendation observed, not a new required deployment blocker by availability alone.",
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "verify_verified_ineligible_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "Same-publication explicitly ineligible result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified root explicitly ineligible",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "same1050 conflicts to eligible",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "traffic": [
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    }
+  ],
+  "constraints": {
+    "actualChromeDom": true,
+    "actualProductLoadersAndRenderers": true,
+    "actualLeafletLoaded": true,
+    "syntheticFetchResponsesOnly": true,
+    "externalWorkerRequestsFulfilledSynthetic": true,
+    "DNSIsolationBeforeNavigation": true,
+    "staticCDNGetHeadOnly": true,
+    "productionPOSTDELETE": 0,
+    "productionD1Writes": 0,
+    "productChanges": 0,
+    "coordinatesLogged": false
+  }
+}

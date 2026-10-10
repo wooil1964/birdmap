@@ -1,0 +1,467 @@
+{
+  "sha": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "sourceDigest": "0e807c2e0ad380a9c60eddb7e69a6abe34382c72a5a20175c71aa863d8ac0d69",
+  "sourceFunctionHashes": {
+    "monthTideForSite": "ad9acd77e74c5f08862e8a85a3b94c65fafe141619b535256c8bf3c4a474bb02",
+    "todayKstMonth": "c07a9385c558cea1457c51eeb942053b61beb0584292e3bdefbdae109b4cacb6",
+    "weeklyDocVerified": "e78bc3d92e99f2a8422f7e5d871b39afc0eba035e6dc1c83146dd7aefbe1c992",
+    "birdmapDataStamp": "8dcd5db45cae90efcc5a9ab73a74aa558902975998bff80b62a286bf706ae92e",
+    "birdmapDataTime": "526579994d69c4262cbffb2b7de17f2348e9153bf8b16bac1056c5a5ac23ec9a",
+    "loadBirdmapData": "07ac783a1ddc303dd4c3e3ba8c118eaa1c67412a8c4929c466efff73a45ba30c",
+    "loadWeatherToday": "b802d8d0f574f00e73ce213954d48d0921e1f44b30ac465c4a9dfc841ae3a7da",
+    "loadWeatherWeek": "640b8ac7688201dc42029af15c18f078f9f0cb2f993c30ea5d227ddd65c5dd42",
+    "loadTideToday": "e83b0551e32c588cc98793ada5157fc2091e21f252f948691af266d6185caccd",
+    "tideTodayDateText": "d8f4afe4d2380bbbf16df5cbf8f28c7c5bbbcd97ad2343d6f3f0df40eb4bbf86",
+    "tideTodayIsCurrent": "1a92149d1c50a2bca6b65dc0b42d5b74d5c5e9c7ca1553fbb66dcb19502dda16",
+    "refreshBirdmapData": "e146c3e255b857a3dedcaf558afa2584006c5f0ab87a9909f09d17abb27bebec",
+    "refreshTodayPanelIfOpen": "e959f54fa6a0eac7d8b53f1ee5974cc4cc5a828efa45d9cee82ec4270203260a"
+  },
+  "summary": {
+    "conditions": 7,
+    "pass": 4,
+    "fail": 3,
+    "exceptions": 0,
+    "base8Pass": 4,
+    "base8Fail": 3
+  },
+  "rows": [
+    {
+      "scenario": "verify_valid_unsafe_updates_and_safe_next_recovers",
+      "checks": [
+        {
+          "expectation": "Consistent latest unsafe data is applied and excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent next safe data recovers",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "safe1040",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 1,
+          "topIds": [
+            "14"
+          ],
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "unsafe1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "safe1055",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 1,
+          "topIds": [
+            "14"
+          ],
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ],
+          "renderCount": 3,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "scenario": "verify_rejected_mixed_same_root_unsafe_correction_updates",
+      "checks": [
+        {
+          "expectation": "Unverified mixed batch preserves still-current source",
+          "passed": true
+        },
+        {
+          "expectation": "Rejected mixed predecessor cannot block consistent unsafe correction",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "safe1040",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 1,
+          "topIds": [
+            "14"
+          ],
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "mixed1050",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 1,
+          "topIds": [
+            "14"
+          ],
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "same1050 unsafe correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 3,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "scenario": "verify_expired_current_invalid_new_batch_then_current_correction",
+      "checks": [
+        {
+          "expectation": "Invalid data cannot extend eligibility after actual1417+30minute deadline with tide unchanged",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent current data recovers without B delay",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "safe1040 forecast1530 tide1530",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 1,
+          "topIds": [
+            "14"
+          ],
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "expired1448 due1417 after30minutes",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "mixed1440/1435",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 3,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "consistent1440/1440",
+          "todayStamp": "2026-10-10 14:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 14:40 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 1,
+          "topIds": [
+            "14"
+          ],
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ],
+          "renderCount": 4,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "scenario": "diagnostic_general_same_publication_forecast_array_correction",
+      "checks": [
+        {
+          "expectation": "Malformed first data cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "General malformed same-publication correction diagnostic availability expectation",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first malformed same root1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "same1050 canonical correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "classification": "Separate availability diagnostic beyond requested root/item inconsistency correction; no forbidden recommendation observed, not a new required deployment blocker by availability alone.",
+      "pass": false
+    },
+    {
+      "scenario": "diagnostic_general_same_publication_date_array_correction",
+      "checks": [
+        {
+          "expectation": "Malformed first data cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "General malformed same-publication correction diagnostic availability expectation",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first malformed same root1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "same1050 canonical correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "classification": "Separate availability diagnostic beyond requested root/item inconsistency correction; no forbidden recommendation observed, not a new required deployment blocker by availability alone.",
+      "pass": false
+    },
+    {
+      "scenario": "diagnostic_general_same_publication_eligible_string_correction",
+      "checks": [
+        {
+          "expectation": "Malformed first data cannot recommend",
+          "passed": true
+        },
+        {
+          "expectation": "General malformed same-publication correction diagnostic availability expectation",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first malformed same root1050",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "same1050 canonical correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "classification": "Separate availability diagnostic beyond requested root/item inconsistency correction; no forbidden recommendation observed, not a new required deployment blocker by availability alone.",
+      "pass": false
+    },
+    {
+      "scenario": "verify_verified_ineligible_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "Same-publication explicitly ineligible result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified root explicitly ineligible",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 1,
+          "popupRefreshCount": 0
+        },
+        {
+          "label": "same1050 conflicts to eligible",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 2,
+          "popupRefreshCount": 0
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    }
+  ],
+  "constraints": {
+    "actualProductFunctions": true,
+    "actualDom": false,
+    "mockedFetchOnlyMemory": true,
+    "mockedDependencies": [
+      "DOM visibility",
+      "panel renderer and popup refresh counters"
+    ],
+    "networkCalls": 0,
+    "productionD1Writes": 0,
+    "productChanges": 0,
+    "coordinatesLogged": false
+  }
+}

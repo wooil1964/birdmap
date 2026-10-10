@@ -1,0 +1,80 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "rootReviewerReexecution": true,
+  "runs": [
+    {
+      "name": "F2/F3/live actual source",
+      "command": "node scripts/f23-b12e20c/contract/contract_matrix.mjs <targetB> <root_contract> <analysis> <combinedB>",
+      "exitCode": 0,
+      "results": "root_contract/contract_matrix.json",
+      "actual": {
+        "F2": 60,
+        "F3": 77,
+        "live": 6,
+        "TypeError": 0
+      }
+    },
+    {
+      "name": "same-root Node",
+      "command": "node scripts/f23-b12e20c/loader/loader_contractF_node.mjs <targetB> <root_loader> b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "exitCode": 0,
+      "results": "root_loader/loader_final_node.json",
+      "pass": 6,
+      "fail": 0
+    },
+    {
+      "name": "same-root Chrome375",
+      "command": "LOADER_WIDTHS=375 node scripts/f23-b12e20c/loader/loader_contractF_dom.mjs <targetB> <root_chrome> b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "exitCode": 0,
+      "results": "root_chrome/loader_final_dom.json",
+      "pass": 6,
+      "fail": 0,
+      "exceptions": 0
+    },
+    {
+      "name": "Python actual190 validator/builder",
+      "command": "<Python> scripts/f23-b12e20c/contract/python_contract.py <targetB> <root_contract>",
+      "exitCode": 0,
+      "results": "root_contract/python_contract.json",
+      "F2": 20,
+      "F3": 35,
+      "normal190": true,
+      "stale189": true
+    },
+    {
+      "name": "generated object Chrome375",
+      "command": "C_GENERATOR_FIXTURE=<sparse6h_generated_today.json> node scripts/f23-b12e20c/dom/additional_generated_object_dom.mjs <targetB> <root_generated_dom> b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "exitCode": 0,
+      "results": "root_generated_dom/additional_today_dom.json",
+      "pass": 2,
+      "fail": 0,
+      "exceptions": 0
+    }
+  ],
+  "initialHarnessErrors": [
+    {
+      "scope": "root contract JS/Python",
+      "exitCode": 1,
+      "cause": "root_contract output directory was absent; ENOENT/FileNotFound before results write",
+      "repair": "Created output directory; identical inputs/assertions rerun exit0",
+      "productFailure": false
+    },
+    {
+      "scope": "root generated object Chrome",
+      "exitCode": 1,
+      "cause": "Required C_GENERATOR_FIXTURE env missing; preserve six reference conditions assertion 5!=6 before browser launch",
+      "repair": "Set existing unchanged sparse6h fixture env; identical assertions exit0",
+      "productFailure": false
+    },
+    {
+      "scope": "approval review usage limit",
+      "executed": false,
+      "reason": "Automatic approval review could not complete because usage was exhausted; action did not execute",
+      "resolved": "User resumed after usage reset; normal approval check accepted continuation",
+      "bypass": false
+    }
+  ],
+  "productPatches": 0,
+  "productionWrites": 0,
+  "clock": "Fixed contract cases2026-10-10 11:00KST; fresh main uses separate actual capture"
+}

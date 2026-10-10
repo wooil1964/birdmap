@@ -144,3 +144,6 @@ FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확
 
 ## b12e20c 중간 체크포인트 (2026-10-10)
 자동621/0/1, 고정190/176 ON/OFF 전수불변, S1-R171/17 root 재실행 완료. F2/F3 핵심 및 5폭 Chrome·latest main 증거 확정 중. 이전 실패 원장 보존. 현재 CI0/운영 rollback 미확인, 배포 금지 유지. 재개는 NEXT_SESSION.md와 results/f23-b12e20c.
+
+## b12e20c F2/F3 및 독립 추가 검증 확정 (2026-10-11 재개)
+F2 60/60, F3 77/77, live6/6, Python 실제190의20/35, same-root Node6/Chrome30 및 exact[true,false,true]/[0,0,1] 통과. root 별도 소스·Python·Chrome375 재실행도 완료. 원형 lifecycle35/45·이전 control50/55·선상40/65 실패 원장 보존. 새main b596cdc8은 TMAP 변경 포함, 결합 tree2c3703e 충돌0. 자동5blob 보존·제품7/8동일·추천111함수 동일·siteData190/좌표 불변. 최신main 실제 validator·현재추천·5폭 브라우저 추가확인중; 최종 판정/게시 미완료.

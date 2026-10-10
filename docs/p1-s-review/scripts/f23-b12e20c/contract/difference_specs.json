@@ -1,0 +1,11 @@
+[
+{"id":"canonical_KST_same","root":"2026-10-10 10:50 KST","item":"2026-10-10 10:50 KST","scope":"canonical normal control"},
+{"id":"KST_root_ISO_item_same_instant","root":"2026-10-10 10:50 KST","item":"2026-10-10T10:50:00+09:00","scope":"existing JS ISO input set / Python raw equality"},
+{"id":"ISO_root_KST_item_same_instant","root":"2026-10-10T10:50:00+09:00","item":"2026-10-10 10:50 KST","scope":"existing JS ISO input set / Python raw equality"},
+{"id":"ISO_both_same","root":"2026-10-10T10:50:00+09:00","item":"2026-10-10T10:50:00+09:00","scope":"existing JS ISO input set / Python strict KST"},
+{"id":"whitespace_KST_both_same","root":" 2026-10-10 10:50 KST ","item":" 2026-10-10 10:50 KST ","scope":"existing JS trim input set / Python strict KST"},
+{"id":"future_KST_both_same","root":"2026-10-10 12:30 KST","item":"2026-10-10 12:30 KST","scope":"future publication eligibility versus storage validator"},
+{"id":"old_KST_both_same","root":"2026-10-10 05:41 KST","item":"2026-10-10 05:41 KST","scope":"existing current schedule versus storage validator; separate known age scope"},
+{"id":"future_ISO_both_same","root":"2026-10-10T12:30:00+09:00","item":"2026-10-10T12:30:00+09:00","scope":"future and format intersection"},
+{"id":"invalid_calendar_KST_both_same","root":"2026-02-30 10:50 KST","item":"2026-02-30 10:50 KST","scope":"calendar rejection control"}
+]

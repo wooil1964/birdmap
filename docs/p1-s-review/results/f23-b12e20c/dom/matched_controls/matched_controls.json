@@ -1,0 +1,2764 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "controls": [
+    {
+      "width": 344,
+      "name": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:31 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 344,
+      "name": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": false,
+            "missingScoreFields": [],
+            "stale": true,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:32 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:32 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 28
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false,
+            "stale": true,
+            "state": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 05:41 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 319
+            }
+          }
+        }
+      },
+      "passed": true,
+      "referencePopup": {
+        "popupForecastTime": "2026-10-10 12:00 KST",
+        "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+        "popupFerryText": [],
+        "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+        "popupScore": "오늘 적합도 미확인",
+        "popupHasTemperature": true,
+        "popupHasWind": true,
+        "popupStateKind": "today_reference",
+        "popupState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "rawStoredState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "popupSourceEligible": false,
+        "popupAllowed": false,
+        "popupRect": {
+          "left": 46,
+          "right": 174.34375,
+          "clipped": false
+        }
+      }
+    },
+    {
+      "width": 375,
+      "name": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:31 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 375,
+      "name": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": false,
+            "missingScoreFields": [],
+            "stale": true,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:32 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:32 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 28
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false,
+            "stale": true,
+            "state": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 05:41 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 319
+            }
+          }
+        }
+      },
+      "passed": true,
+      "referencePopup": {
+        "popupForecastTime": "2026-10-10 12:00 KST",
+        "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+        "popupFerryText": [],
+        "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+        "popupScore": "오늘 적합도 미확인",
+        "popupHasTemperature": true,
+        "popupHasWind": true,
+        "popupStateKind": "today_reference",
+        "popupState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "rawStoredState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "popupSourceEligible": false,
+        "popupAllowed": false,
+        "popupRect": {
+          "left": 46,
+          "right": 174.34375,
+          "clipped": false
+        }
+      }
+    },
+    {
+      "width": 768,
+      "name": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:31 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 768,
+      "name": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": false,
+            "missingScoreFields": [],
+            "stale": true,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:32 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:32 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 28
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false,
+            "stale": true,
+            "state": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 05:41 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 319
+            }
+          }
+        }
+      },
+      "passed": true,
+      "referencePopup": {
+        "popupForecastTime": "2026-10-10 12:00 KST",
+        "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+        "popupFerryText": [],
+        "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+        "popupScore": "오늘 적합도 미확인",
+        "popupHasTemperature": true,
+        "popupHasWind": true,
+        "popupStateKind": "today_reference",
+        "popupState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "rawStoredState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "popupSourceEligible": false,
+        "popupAllowed": false,
+        "popupRect": {
+          "left": 168,
+          "right": 296.34375,
+          "clipped": false
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "name": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:31 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "name": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": false,
+            "missingScoreFields": [],
+            "stale": true,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:32 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:32 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 28
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false,
+            "stale": true,
+            "state": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 05:41 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 319
+            }
+          }
+        }
+      },
+      "passed": true,
+      "referencePopup": {
+        "popupForecastTime": "2026-10-10 12:00 KST",
+        "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+        "popupFerryText": [],
+        "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+        "popupScore": "오늘 적합도 미확인",
+        "popupHasTemperature": true,
+        "popupHasWind": true,
+        "popupStateKind": "today_reference",
+        "popupState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "rawStoredState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "popupSourceEligible": false,
+        "popupAllowed": false,
+        "popupRect": {
+          "left": 296,
+          "right": 424.34375,
+          "clipped": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "name": "consistent_fresh_today_arrives",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:31 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:31 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "name": "consistent_partial_reference_today",
+      "expectedIds": [
+        "14"
+      ],
+      "expectedApply": true,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": false,
+            "missingScoreFields": [],
+            "stale": true,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": true,
+      "candidateIds": [
+        "14"
+      ],
+      "pickIds": [
+        "14"
+      ],
+      "cardCount": 1,
+      "cardScores": [
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:32 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:32 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:32 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 28
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 05:41 KST",
+            "scoreEligible": false,
+            "stale": true,
+            "state": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 05:41 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 319
+            }
+          }
+        }
+      },
+      "passed": true,
+      "referencePopup": {
+        "popupForecastTime": "2026-10-10 12:00 KST",
+        "popupStoredLabel": "오늘 저장값 · 갱신 지연/재사용(참고) · 예보 2026-10-10 12:00 KST · 생성 2026-10-10 05:41 KST",
+        "popupFerryText": [],
+        "popupInterpretation": "10월 가을철에는 들새와 개방지에서 활동하는 맹금류를 중심으로 살펴보세요. 표시된 저장 기상은 참고자료이며 현재 조건으로 판단하지 않습니다. 이전 저장 기상은 참고용이며 오늘 탐조 적합도는 미확인입니다. 오전과 늦은 오후 탐조를 권장합니다.",
+        "popupScore": "오늘 적합도 미확인",
+        "popupHasTemperature": true,
+        "popupHasWind": true,
+        "popupStateKind": "today_reference",
+        "popupState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "rawStoredState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 05:41 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 319
+        },
+        "popupSourceEligible": false,
+        "popupAllowed": false,
+        "popupRect": {
+          "left": 504,
+          "right": 632.34375,
+          "clipped": false
+        }
+      }
+    }
+  ],
+  "retention": [
+    {
+      "width": 344,
+      "name": "old_control_mixed_reference_claims_eligible_retains_verified",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": false,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": false,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 375,
+      "name": "old_control_mixed_reference_claims_eligible_retains_verified",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": false,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": false,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 768,
+      "name": "old_control_mixed_reference_claims_eligible_retains_verified",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": false,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": false,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "name": "old_control_mixed_reference_claims_eligible_retains_verified",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": false,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": false,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "name": "old_control_mixed_reference_claims_eligible_retains_verified",
+      "expectedIds": [
+        "14",
+        "15"
+      ],
+      "expectedApply": false,
+      "attemptedDocument": {
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 10:32 KST",
+        "sites": {
+          "14": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 10:32 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          },
+          "15": {
+            "date": "2026-10-10",
+            "generatedAt": "2026-10-10 05:41 KST",
+            "refreshedAt": "2026-10-10 10:30 KST",
+            "forecastTime": "2026-10-10 12:00 KST",
+            "sourceType": "saved_forecast",
+            "score": 92,
+            "grade": "★★★★★",
+            "scoreEligible": true,
+            "missingScoreFields": [],
+            "stale": false,
+            "wind": "북풍 3.0m/s",
+            "rain": "강수 없음",
+            "wave": "0.3m",
+            "temperature": "20.0°C",
+            "visibility": "15.0km"
+          }
+        }
+      },
+      "applied": false,
+      "candidateIds": [
+        "14",
+        "15"
+      ],
+      "pickIds": [
+        "14",
+        "15"
+      ],
+      "cardCount": 2,
+      "cardScores": [
+        "★★★★★ 92점",
+        "★★★★★ 92점"
+      ],
+      "emptyNotice": false,
+      "sourceEligible": [
+        true,
+        true
+      ],
+      "provenance": {
+        "root": "2026-10-10 10:31 KST",
+        "items": {
+          "14": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          },
+          "15": {
+            "generatedAt": "2026-10-10 10:31 KST",
+            "scoreEligible": true,
+            "stale": false,
+            "state": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:31 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 29
+            }
+          }
+        }
+      },
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "traffic": [
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    }
+  ],
+  "summary": {
+    "matchedControls10": {
+      "total": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    "retentionObservation5": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "exceptions": 0
+  },
+  "fixtureJustification": "Previous control left reference item15 as scoreEligible=true/stale=false. New loader correctly rejects that mixed batch after verified31. Normal partial recovery is tested separately with actual builder reuse semantics scoreEligible=false/stale=true. Previous failed expectations are retained unchanged.",
+  "sourceDigest": "c9afe975ff29ba3f18ae720694703aa680acefff1a2521343c580852e8948b7d",
+  "constraints": {
+    "productChanges": 0,
+    "allExternalAPIInterceptedBeforeNavigation": true,
+    "DNSIsolation": true,
+    "productionPOSTDELETE": 0,
+    "actualChrome": true,
+    "actualLeaflet": true
+  }
+}

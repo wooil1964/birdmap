@@ -26,3 +26,5 @@ JS는 KST/ISO+09 문자열의 절대시각을 인정하지만 Python builder/저
 실행환경과 재생성법은 이전 F123_RECHECK/NEXT_SESSION 및 신규 manifest를 함께 읽는다. targetB는 정확SHA archive, combinedB는 위tree archive다. 기본review index는 역사적 코드이므로 제품시험에 쓰지 않는다. 민감 원좌표·비밀·Chrome profile은 저장하지 않는다.
 
 main 병합·제품수정·Pages/Worker배포·D1·실사용자POST/DELETE 금지. 최종 독립 판정후 별도 사용자 운영 승인 대기.
+
+2026-10-11 재개 추가: PR b12 head 불변. 새 origin/main b596cdc8ede83fe25e64ec10b2dc88d4141673b2, combinedLatest tree2c3703e7234f9f0ab02786f03d03a2314bf5cfcf. main의 TMAP c361342/528337e 때문에 index는head와다르나 실제추천111함수와siteData/좌표는동일(latest_combination_proof.json). root F2/F3/live/Python/Chrome 재실행완료, 세agent최종자료 contract/dom/loader로복사됨. F23_RECHECK.md 초안의 FINAL_MAIN_EVIDENCE/OPERATIONAL_VERSION_EVIDENCE placeholders는 최종확정전교체필수. 최신maintoday04:16은갱신지연(reference)이고정상week대안후보를따로검증한다. 최종main브라우저/CIWorker읽기결과취합·최종docs/게시exactreadback 미완료. 중간 체크포인트11e85527523c267c86c164ba116cba5ed85d6c1e.

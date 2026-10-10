@@ -1,0 +1,2038 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "sourceSHA256": "0e807c2e0ad380a9c60eddb7e69a6abe34382c72a5a20175c71aa863d8ac0d69",
+  "base": {
+    "cases": 28,
+    "pass": 28,
+    "fail": 0,
+    "rows": [
+      {
+        "scenario": "older_request_late_today",
+        "checks": [
+          {
+            "expectation": "Only newest request applies",
+            "passed": true
+          },
+          {
+            "expectation": "New verified recommendation remains",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new response",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "late old request",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "older_request_late_week",
+        "checks": [
+          {
+            "expectation": "Only newest request applies",
+            "passed": true
+          },
+          {
+            "expectation": "New verified recommendation remains",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new response",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "late old request",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "unsafe_new_old_safe_ignored_new_safe_recovers_today",
+        "checks": [
+          {
+            "expectation": "Newest unsafe input gives empty recommendation",
+            "passed": true
+          },
+          {
+            "expectation": "Today baseline has no weekly alternative",
+            "passed": true
+          },
+          {
+            "expectation": "Older favorable publication cannot revive recommendation",
+            "passed": true
+          },
+          {
+            "expectation": "Newer verified input restores recommendation",
+            "passed": true
+          },
+          {
+            "expectation": "Original92 and internal108 remain distinct",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new10:40 rain1",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "old10:30 rain0",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new10:50 rain0",
+            "todayStamp": "2026-10-10 10:50 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 3,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "unsafe_new_old_safe_ignored_new_safe_recovers_week",
+        "checks": [
+          {
+            "expectation": "Newest unsafe input gives empty recommendation",
+            "passed": true
+          },
+          {
+            "expectation": "Older favorable publication cannot revive recommendation",
+            "passed": true
+          },
+          {
+            "expectation": "Newer verified input restores recommendation",
+            "passed": true
+          },
+          {
+            "expectation": "Original92 and internal108 remain distinct",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new10:40 rain1",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "old10:30 rain0",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new10:50 rain0",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:50 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 3,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "older_reference_ineligible_does_not_erase_current_today",
+        "checks": [
+          {
+            "expectation": "Older invalid input cannot erase newer valid source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new current",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "older reference/ineligible",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "older_reference_ineligible_does_not_erase_current_week",
+        "checks": [
+          {
+            "expectation": "Older invalid input cannot erase newer valid source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new current",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "older reference/ineligible",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "network_error_retains_current_today",
+        "checks": [
+          {
+            "expectation": "Failure preserves still-current verified data",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "normal",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "network error",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "ineligible_today_valid_week_alternative_recovers",
+        "checks": [
+          {
+            "expectation": "Normal alternative restores recommendation",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "missing wind",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "valid weekly arrives",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": "2026-10-10 10:50 KST",
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 3,
+            "popupRefreshCount": 1
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "latest_normal_older_unsafe_ignored_today",
+        "checks": [
+          {
+            "expectation": "Old unfavorable publication cannot erase newest valid recommendation",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "latest normal",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "older unsafe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "latest_normal_older_unsafe_ignored_week",
+        "checks": [
+          {
+            "expectation": "Old unfavorable publication cannot erase newest valid recommendation",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "latest normal",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "older unsafe",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "same_publication_conflict_ignored_today",
+        "checks": [
+          {
+            "expectation": "Same publication cannot change known safety result",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new unsafe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "same generatedAt/different content",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "same_publication_conflict_ignored_week",
+        "checks": [
+          {
+            "expectation": "Same publication cannot change known safety result",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new unsafe",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "same generatedAt/different content",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "invalid_missing_publication_after_valid_today",
+        "checks": [
+          {
+            "expectation": "Unverified publication cannot replace verified source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new unsafe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "invalid publication",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "invalid_missing_publication_after_valid_week",
+        "checks": [
+          {
+            "expectation": "Unverified publication cannot replace verified source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new unsafe",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "invalid publication",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "invalid_bad_publication_after_valid_today",
+        "checks": [
+          {
+            "expectation": "Unverified publication cannot replace verified source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new unsafe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "invalid publication",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "invalid_bad_publication_after_valid_week",
+        "checks": [
+          {
+            "expectation": "Unverified publication cannot replace verified source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "new unsafe",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "invalid publication",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "future_first_does_not_poison_normal_recovery_today",
+        "checks": [
+          {
+            "expectation": "Future publication cannot recommend",
+            "passed": true
+          },
+          {
+            "expectation": "Invalid future high-water cannot block valid recovery",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "future first",
+            "todayStamp": "2026-10-10 12:30 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 12:30 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal10:50",
+            "todayStamp": "2026-10-10 10:50 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "applyResults": {
+          "future": true,
+          "normal": true
+        },
+        "pass": true
+      },
+      {
+        "scenario": "future_first_does_not_poison_normal_recovery_week",
+        "checks": [
+          {
+            "expectation": "Future publication cannot recommend",
+            "passed": true
+          },
+          {
+            "expectation": "Invalid future high-water cannot block valid recovery",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "future first",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 12:30 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal10:50",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:50 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "applyResults": {
+          "future": true,
+          "normal": true
+        },
+        "pass": true
+      },
+      {
+        "scenario": "future_after_valid_does_not_erase_or_poison_today",
+        "checks": [
+          {
+            "expectation": "Known invalid future publication preserves current source",
+            "passed": true
+          },
+          {
+            "expectation": "Subsequent valid newer publication is accepted",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "normal10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "future12:30",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal10:50",
+            "todayStamp": "2026-10-10 10:50 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 3,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "future_after_valid_does_not_erase_or_poison_week",
+        "checks": [
+          {
+            "expectation": "Known invalid future publication preserves current source",
+            "passed": true
+          },
+          {
+            "expectation": "Subsequent valid newer publication is accepted",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "normal10:40",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "future12:30",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal10:50",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:50 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 3,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "bad_first_valid_recovers_today",
+        "checks": [
+          {
+            "expectation": "Unknown publication cannot block later verified recovery",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "invalid first",
+            "todayStamp": "bad-time",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "bad-time",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "valid recovery",
+            "todayStamp": "2026-10-10 10:50 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "bad_first_valid_recovers_week",
+        "checks": [
+          {
+            "expectation": "Unknown publication cannot block later verified recovery",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "invalid first",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "bad-time",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "valid recovery",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-10 10:50 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "midnight_absolute_publication_order_today",
+        "checks": [
+          {
+            "expectation": "Next-day verified source is normal",
+            "passed": true
+          },
+          {
+            "expectation": "Absolute dates prevent midnight rollback",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "next day06:40",
+            "todayStamp": "2026-10-11 06:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-11 06:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "prior day23:59",
+            "todayStamp": "2026-10-11 06:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-11 06:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "midnight_absolute_publication_order_week",
+        "checks": [
+          {
+            "expectation": "Next-day verified source is normal",
+            "passed": true
+          },
+          {
+            "expectation": "Absolute dates prevent midnight rollback",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "next day06:40",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-11 06:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "prior day23:59",
+            "todayStamp": "2026-10-10 05:41 KST",
+            "weekStamp": "2026-10-11 06:40 KST",
+            "todayItemGeneratedAt": "2026-10-10 05:41 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "new_root_older_eligible_item_does_not_revive_unsafe_today",
+        "checks": [
+          {
+            "expectation": "Newest known item excludes candidate",
+            "passed": true
+          },
+          {
+            "expectation": "New root cannot revive recommendation using older eligible item",
+            "passed": true
+          },
+          {
+            "expectation": "Consistent verified newer item still recovers",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "root/item10:40 unsafe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "root10:50/item10:30 safe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "root/item10:55 safe",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 3,
+            "popupRefreshCount": 0
+          }
+        ],
+        "mixedApplied": false,
+        "pass": true
+      },
+      {
+        "scenario": "old_root_new_item_does_not_override_new_root",
+        "checks": [
+          {
+            "expectation": "Older batch cannot override newest source",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "latest unsafe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "root10:30/item10:50 safe",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "today_week_publication_states_independent",
+        "checks": [
+          {
+            "expectation": "Weekly publication state is independent",
+            "passed": true
+          },
+          {
+            "expectation": "Each stream preserves its own order",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "today10:40/week10:30",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": "2026-10-10 10:30 KST",
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "old today ignored/new week accepted",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": "2026-10-10 10:50 KST",
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "week_forecast",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      },
+      {
+        "scenario": "today_expires_without_B_exception_and_recovers",
+        "checks": [
+          {
+            "expectation": "Old today loses eligibility after required deadline",
+            "passed": true
+          },
+          {
+            "expectation": "Expiry stays fail closed",
+            "passed": true
+          },
+          {
+            "expectation": "Verified current recovery keeps normal fallback",
+            "passed": true
+          }
+        ],
+        "stages": [
+          {
+            "label": "11:00 current",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 1,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "12:30 next due",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 2,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "older cannot resurrect",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 3,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "fresh12:25/forecast13",
+            "todayStamp": "2026-10-10 12:25 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 12:25 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 4,
+            "popupRefreshCount": 0
+          }
+        ],
+        "pass": true
+      }
+    ]
+  },
+  "extended": {
+    "cases": 10,
+    "pass": 10,
+    "fail": 0,
+    "rows": [
+      {
+        "scenario": "F2-new-root-item-missing",
+        "rawItemSource": "ABSENT",
+        "stages": [
+          {
+            "label": "known unsafe root/item10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new root10:50 item-missing",
+            "applied": false,
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal verified10:55 recovery",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          }
+        ],
+        "error": null,
+        "expectedMixedCards": 0,
+        "pass": true
+      },
+      {
+        "scenario": "F2-new-root-item-null",
+        "rawItemSource": null,
+        "stages": [
+          {
+            "label": "known unsafe root/item10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new root10:50 item-null",
+            "applied": false,
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal verified10:55 recovery",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          }
+        ],
+        "error": null,
+        "expectedMixedCards": 0,
+        "pass": true
+      },
+      {
+        "scenario": "F2-new-root-item-empty",
+        "rawItemSource": "",
+        "stages": [
+          {
+            "label": "known unsafe root/item10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new root10:50 item-empty",
+            "applied": false,
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal verified10:55 recovery",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          }
+        ],
+        "error": null,
+        "expectedMixedCards": 0,
+        "pass": true
+      },
+      {
+        "scenario": "F2-new-root-item-array",
+        "rawItemSource": [
+          "2026-10-10 10:30 KST"
+        ],
+        "stages": [
+          {
+            "label": "known unsafe root/item10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new root10:50 item-array",
+            "applied": false,
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal verified10:55 recovery",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          }
+        ],
+        "error": null,
+        "expectedMixedCards": 0,
+        "pass": true
+      },
+      {
+        "scenario": "F2-new-root-item-object",
+        "rawItemSource": {
+          "toString": "not-callable"
+        },
+        "stages": [
+          {
+            "label": "known unsafe root/item10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new root10:50 item-object",
+            "applied": false,
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal verified10:55 recovery",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          }
+        ],
+        "error": null,
+        "expectedMixedCards": 0,
+        "pass": true
+      },
+      {
+        "scenario": "F2-new-root-item-normal",
+        "rawItemSource": "2026-10-10 10:50 KST",
+        "stages": [
+          {
+            "label": "known unsafe root/item10:40",
+            "todayStamp": "2026-10-10 10:40 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+            "todayItemRain": "3시간 강수 1mm",
+            "cardCount": 0,
+            "topIds": [],
+            "top": [],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "new root10:50 item-normal",
+            "applied": true,
+            "todayStamp": "2026-10-10 10:50 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          },
+          {
+            "label": "normal verified10:55 recovery",
+            "todayStamp": "2026-10-10 10:55 KST",
+            "weekStamp": null,
+            "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+            "todayItemRain": "강수 없음",
+            "cardCount": 1,
+            "topIds": [
+              "14"
+            ],
+            "top": [
+              {
+                "raw": 92,
+                "rank": 108,
+                "bonus": 16,
+                "sourceKind": "today_saved",
+                "sourceEligible": true,
+                "safe": true
+              }
+            ],
+            "renderCount": 0,
+            "popupRefreshCount": 0
+          }
+        ],
+        "error": null,
+        "expectedMixedCards": 1,
+        "pass": true
+      },
+      {
+        "scenario": "F2-root-missing-first-normal-item1050",
+        "rawRootSource": "ABSENT",
+        "applied": true,
+        "actual": {
+          "todayStamp": null,
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 0,
+          "popupRefreshCount": 0
+        },
+        "error": null,
+        "pass": true
+      },
+      {
+        "scenario": "F2-root-null-first-normal-item1050",
+        "rawRootSource": null,
+        "applied": true,
+        "actual": {
+          "todayStamp": null,
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 0,
+          "popupRefreshCount": 0
+        },
+        "error": null,
+        "pass": true
+      },
+      {
+        "scenario": "F2-root-array-first-normal-item1050",
+        "rawRootSource": [
+          "2026-10-10 10:50 KST"
+        ],
+        "applied": true,
+        "actual": {
+          "todayStamp": [
+            "2026-10-10 10:50 KST"
+          ],
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 0,
+          "popupRefreshCount": 0
+        },
+        "error": null,
+        "pass": true
+      },
+      {
+        "scenario": "F2-root-object-first-normal-item1050",
+        "rawRootSource": {
+          "toString": "not-callable"
+        },
+        "applied": false,
+        "actual": {
+          "todayStamp": null,
+          "weekStamp": null,
+          "todayItemGeneratedAt": null,
+          "todayItemRain": null,
+          "cardCount": 0,
+          "topIds": [],
+          "top": [],
+          "renderCount": 0,
+          "popupRefreshCount": 0
+        },
+        "error": null,
+        "pass": true
+      }
+    ]
+  },
+  "actualLoader": true,
+  "actualCandidate": true,
+  "actualFinal": true,
+  "actualDOM": false,
+  "networkCalls": 0,
+  "operatingWrites": 0,
+  "coordinatesLogged": false
+}

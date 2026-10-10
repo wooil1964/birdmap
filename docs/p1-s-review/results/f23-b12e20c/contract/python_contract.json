@@ -1,0 +1,615 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "sourceSHA256": {
+    "update_weather.py": "3f0463bc3c1484a5378572c62ef4203590758f9b4fb7b5db07824e9ed898f4a7",
+    "validate_weather.py": "f89bb8e494725bc785338982d68eb07a48f720c695533972906c5959dafe0782",
+    "validate_weather_week.py": "2d12863912ab10f1a4fa383da319c18ede89443de6dd874a38f382327ff62863"
+  },
+  "f2": {
+    "cases": 20,
+    "pass": 20,
+    "rows": [
+      {
+        "id": "F2-root-normal",
+        "raw": "2026-10-10 10:50 KST",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true
+      },
+      {
+        "id": "F2-root-old",
+        "raw": "2026-10-10 10:30 KST",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs '2026-10-10 10:30 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-root-new",
+        "raw": "2026-10-10 10:55 KST",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs '2026-10-10 10:55 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-root-missing",
+        "raw": "ABSENT",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs None",
+        "pass": true
+      },
+      {
+        "id": "F2-root-null",
+        "raw": null,
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs None",
+        "pass": true
+      },
+      {
+        "id": "F2-root-empty",
+        "raw": "",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs ''",
+        "pass": true
+      },
+      {
+        "id": "F2-root-array",
+        "raw": [
+          "2026-10-10 10:50 KST"
+        ],
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs ['2026-10-10 10:50 KST']",
+        "pass": true
+      },
+      {
+        "id": "F2-root-object",
+        "raw": {
+          "toString": "not-callable"
+        },
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs {'toString': 'not-callable'}",
+        "pass": true
+      },
+      {
+        "id": "F2-root-number",
+        "raw": 1791601200000,
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs 1791601200000",
+        "pass": true
+      },
+      {
+        "id": "F2-root-boolean",
+        "raw": true,
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs True",
+        "pass": true
+      },
+      {
+        "id": "F2-item-normal",
+        "raw": "2026-10-10 10:50 KST",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true
+      },
+      {
+        "id": "F2-item-old",
+        "raw": "2026-10-10 10:30 KST",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: '2026-10-10 10:30 KST' vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-new",
+        "raw": "2026-10-10 10:55 KST",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: '2026-10-10 10:55 KST' vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-missing",
+        "raw": "ABSENT",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: None vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-null",
+        "raw": null,
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: None vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-empty",
+        "raw": "",
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: '' vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-array",
+        "raw": [
+          "2026-10-10 10:50 KST"
+        ],
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: ['2026-10-10 10:50 KST'] vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-object",
+        "raw": {
+          "toString": "not-callable"
+        },
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: {'toString': 'not-callable'} vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-number",
+        "raw": 1791601200000,
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: 1791601200000 vs '2026-10-10 10:50 KST'",
+        "pass": true
+      },
+      {
+        "id": "F2-item-boolean",
+        "raw": true,
+        "runtimeSiteProjection": false,
+        "ids": 190,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: True vs '2026-10-10 10:50 KST'",
+        "pass": true
+      }
+    ]
+  },
+  "f3": {
+    "cases": 35,
+    "pass": 35,
+    "rows": [
+      {
+        "id": "F3-week-publication-string",
+        "value": "2026-10-10 12:00 KST",
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-publication-array",
+        "value": [
+          "2026-10-10 12:00 KST"
+        ],
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: generatedAt must be a KST stamp: ['2026-10-10 12:00 KST']",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-publication-object",
+        "value": {
+          "toString": "not-callable"
+        },
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: generatedAt must be a KST stamp: {'toString': 'not-callable'}",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-publication-number",
+        "value": 1791601200000,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: generatedAt must be a KST stamp: 1791601200000",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-publication-boolean",
+        "value": true,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: generatedAt must be a KST stamp: True",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-publication-null",
+        "value": null,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: generatedAt must be a KST stamp: None",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-publication-ISO",
+        "value": "2026-10-10T12:00:00+09:00",
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: generatedAt must be a KST stamp: '2026-10-10T10:30:00+09:00'",
+        "pass": true,
+        "ISOAllowsetSeparate": true
+      },
+      {
+        "id": "F3-week-forecast-string",
+        "value": "2026-10-10 12:00 KST",
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-forecast-array",
+        "value": [
+          "2026-10-10 12:00 KST"
+        ],
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 2026-10-10 ['2026-10-10 12:00 KST'] must be a KST stamp: ['2026-10-10 12:00 KST']",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-forecast-object",
+        "value": {
+          "toString": "not-callable"
+        },
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 2026-10-10 {'toString': 'not-callable'} must be a KST stamp: {'toString': 'not-callable'}",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-forecast-number",
+        "value": 1791601200000,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 2026-10-10 1791601200000 must be a KST stamp: 1791601200000",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-forecast-boolean",
+        "value": true,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 2026-10-10 True must be a KST stamp: True",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-forecast-null",
+        "value": null,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 2026-10-10 None must be a KST stamp: None",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-week-forecast-ISO",
+        "value": "2026-10-10T12:00:00+09:00",
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 2026-10-10 2026-10-10T12:00:00+09:00 must be a KST stamp: '2026-10-10T12:00:00+09:00'",
+        "pass": true,
+        "ISOAllowsetSeparate": true
+      },
+      {
+        "id": "F3-today-publication-root-string",
+        "value": "2026-10-10 12:00 KST",
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-root-array",
+        "value": [
+          "2026-10-10 12:00 KST"
+        ],
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs ['2026-10-10 12:00 KST']",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-root-object",
+        "value": {
+          "toString": "not-callable"
+        },
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs {'toString': 'not-callable'}",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-root-number",
+        "value": 1791601200000,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs 1791601200000",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-root-boolean",
+        "value": true,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs True",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-root-null",
+        "value": null,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs None",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-root-ISO",
+        "value": "2026-10-10T12:00:00+09:00",
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs '2026-10-10T10:50:00+09:00'",
+        "pass": true,
+        "ISOAllowsetSeparate": true
+      },
+      {
+        "id": "F3-today-publication-item-string",
+        "value": "2026-10-10 12:00 KST",
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-item-array",
+        "value": [
+          "2026-10-10 12:00 KST"
+        ],
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: ['2026-10-10 12:00 KST'] vs '2026-10-10 10:50 KST'",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-item-object",
+        "value": {
+          "toString": "not-callable"
+        },
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: {'toString': 'not-callable'} vs '2026-10-10 10:50 KST'",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-item-number",
+        "value": 1791601200000,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: 1791601200000 vs '2026-10-10 10:50 KST'",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-item-boolean",
+        "value": true,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: True vs '2026-10-10 10:50 KST'",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-item-null",
+        "value": null,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: None vs '2026-10-10 10:50 KST'",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-publication-item-ISO",
+        "value": "2026-10-10T12:00:00+09:00",
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: 14 eligible item generatedAt differs from the batch: '2026-10-10T10:50:00+09:00' vs '2026-10-10 10:50 KST'",
+        "pass": true,
+        "ISOAllowsetSeparate": true
+      },
+      {
+        "id": "F3-today-forecast-string",
+        "value": "2026-10-10 12:00 KST",
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-forecast-array",
+        "value": [
+          "2026-10-10 12:00 KST"
+        ],
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "AssertionError: ",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-forecast-object",
+        "value": {
+          "toString": "not-callable"
+        },
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "KeyError: slice(None, 10, None)",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-forecast-number",
+        "value": 1791601200000,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "TypeError: 'int' object is not subscriptable",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-forecast-boolean",
+        "value": true,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "TypeError: 'bool' object is not subscriptable",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-forecast-null",
+        "value": null,
+        "expectedAccepted": false,
+        "accepted": false,
+        "error": "TypeError: 'NoneType' object is not subscriptable",
+        "pass": true,
+        "ISOAllowsetSeparate": false
+      },
+      {
+        "id": "F3-today-forecast-ISO",
+        "value": "2026-10-10T12:00:00+09:00",
+        "expectedAccepted": true,
+        "accepted": true,
+        "error": null,
+        "pass": true,
+        "ISOAllowsetSeparate": true
+      }
+    ]
+  },
+  "builder": [
+    {
+      "mode": "normal",
+      "rootGeneratedAt": "2026-10-10 10:50 KST",
+      "itemGeneratedAt": "2026-10-10 10:50 KST",
+      "itemStale": false,
+      "itemEligible": true,
+      "rootItemSameCount": 190,
+      "eligibleItemSameCount": 190,
+      "eligibleCount": 190,
+      "todayValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "weekValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "originalCoordinatesStored": false,
+      "actualProcessSite": true,
+      "actualMainEnvelope": true,
+      "actualReuseBranch": false
+    },
+    {
+      "mode": "stale_reuse",
+      "rootGeneratedAt": "2026-10-10 10:55 KST",
+      "itemGeneratedAt": "2026-10-10 10:50 KST",
+      "itemStale": true,
+      "itemEligible": false,
+      "rootItemSameCount": 189,
+      "eligibleItemSameCount": 189,
+      "eligibleCount": 189,
+      "todayValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "weekValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "originalCoordinatesStored": false,
+      "actualProcessSite": true,
+      "actualMainEnvelope": true,
+      "actualReuseBranch": true
+    }
+  ],
+  "notes": [
+    "Clock is fixed for explicit synthetic contract tests. Runtime contains all190 IDs; no runtime projection.",
+    "Providers are in-memory synthetic arrays; wave candidate coordinates are synthetic zeros. All result writes remain in designated visualization directory.",
+    "Actual main date/stale accounting and actual validators execute without product guard patches.",
+    "Python ISO acceptance difference is separate from raw-type contracts. Today malformed forecast may fail via TypeError/AttributeError; rejection is preserved, not counted as UI TypeError."
+  ]
+}
