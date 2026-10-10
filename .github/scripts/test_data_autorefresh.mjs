@@ -347,3 +347,35 @@ for (const [name, loader, prop] of [['today', 'loadWeatherToday', 'weatherToday'
     }
   });
 }
+
+/* ===== PR #13 F2-b: 검증되지 않은 혼합 배치는 정상 적용 버전의 기준을 선점하지 못한다 ===== */
+{
+  const D = '2026-10-10';
+  const T = (hm) => D + ' ' + hm + ' KST';
+  const todayDoc = (root, item, rain = '강수 없음') => ({ date: D, generatedAt: root, updated: root, sites: { 14: { scoreEligible: true, rain, generatedAt: item } } });
+  const run = async (docs, initial = EMPTY_TODAY) => {
+    let i = 0;
+    const api = loadApi({ ctx: { weatherToday: initial }, respond: () => ok(docs[i++]) });
+    const results = [];
+    for (let n = 0; n < docs.length; n++) results.push(await api.loadWeatherToday());
+    return { api, results };
+  };
+  test('F2-b root10:40/item10:40 강수1 → root10:50/item10:30 혼합 → root10:50/item10:50 교정: 혼합은 거부되고 교정본이 적용된다', async () => {
+    const { api, results } = await run([todayDoc(T('10:40'), T('10:40'), '3시간 강수 1.0mm'), todayDoc(T('10:50'), T('10:30')), todayDoc(T('10:50'), T('10:50'))]);
+    assert.deepEqual(results, [true, false, true]);
+    assert.equal(api.weatherToday.sites[14].rain, '강수 없음');
+    assert.equal(api.weatherToday.sites[14].generatedAt, T('10:50'));
+  });
+  test('F2-b 혼합(미래 item·누락 item) 뒤에도 정상 10:55 신규 배치가 적용되고, 검증된 같은 발행의 다른 내용·옛 발행·순번 역전은 계속 막는다', async () => {
+    const missing = todayDoc(T('10:50'), T('10:50')); delete missing.sites[14].generatedAt;
+    const { api, results } = await run([todayDoc(T('10:40'), T('10:40')), todayDoc(T('10:50'), T('10:55')), missing, todayDoc(T('10:55'), T('10:55')),
+      todayDoc(T('10:55'), T('10:55'), '3시간 강수 2.0mm'), todayDoc(T('10:45'), T('10:45'))]);
+    assert.deepEqual(results, [true, false, false, true, false, false]);
+    assert.equal(api.weatherToday.sites[14].rain, '강수 없음');
+  });
+  test('F2-b 아직 검증된 자료가 없으면 혼합 배치도 참고용으로 적용되지만 기준이 되지 않아 이후 교정본이 적용된다', async () => {
+    const { api, results } = await run([todayDoc(T('10:50'), T('10:30')), todayDoc(T('10:50'), T('10:50'))]);
+    assert.deepEqual(results, [true, true]);
+    assert.equal(api.weatherToday.sites[14].generatedAt, T('10:50'));
+  });
+}

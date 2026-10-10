@@ -2067,22 +2067,26 @@ function storedWeatherState(day,root,now,site){
   now=now||new Date();root=root||{};
   var today=new Date(now.getTime()+9*60*60*1000).toISOString().slice(0,10);
   if(!day)return {kind:'none',dataCurrent:false,scoreEligible:false,stale:true};
-  var date=day.date||String(day.forecastTime||'').slice(0,10);
-  var generated=day.generatedAt||(!day.stale&&(root.generatedAt||root.updated))||'';
+  /* 시각 원본은 실제 문자열일 때만 해석한다(배열·객체의 암묵 문자열 변환은 TypeError 를 만들 수 있다). */
+  var itemGen=typeof day.generatedAt==='string'?day.generatedAt:'', rootGen=typeof root.generatedAt==='string'?root.generatedAt:'', rootUpdated=typeof root.updated==='string'?root.updated:'';
+  var forecastText=typeof day.forecastTime==='string'?day.forecastTime:'';
+  var date=(typeof day.date==='string'&&day.date)||forecastText.slice(0,10);
+  var generated=itemGen||(!day.stale&&(rootGen||rootUpdated))||'';
   var generatedMs=weatherTimeMs(generated), forecastMs=weeklyForecastTimestamp(day.forecastTime);
   var hasData=!day.dataUnavailable&&['temperature','wind','rain','visibility','wave'].some(function(key){return day[key]!==null&&day[key]!==undefined&&day[key]!=='';});
-  var sameDay=date===today&&String(day.forecastTime||'').slice(0,10)===today;
+  var sameDay=date===today&&forecastText.slice(0,10)===today;
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
   var current=hasData&&sameDay&&onSchedule&&!day.stale&&forecastMs!==null&&Number.isFinite(forecastMs);
   /* 적격은 자기 필드의 scoreEligible===true·빈 missingScoreFields·유효 점수·필수 기상값(site 기준)을 모두 확인한 경우만이다. 미확인(누락/null)을 true 로 올리지 않는다. */
   var eligible=weeklyTodayRecommendable(day,site);
-  /* 배치 출처 일관성: 장소별 generatedAt 이 있으면 배치(root) 발행 시각과 같아야 한다. 새 root 에 실린 더 오래된 item(이미 확인된 위험 자료 이전의 자료)은
-     새 자료로 인정하지 않는다. 생성 시각(generatedAt)과 예보 대상 시각(forecastTime)은 별개다. */
-  var rootMs=weeklyForecastTimestamp(root.generatedAt), hasItemGenerated=day.generatedAt!==undefined&&day.generatedAt!==null&&day.generatedAt!=='';
-  if(rootMs!==null&&hasItemGenerated&&weeklyForecastTimestamp(day.generatedAt)!==rootMs)eligible=false;
+  /* 배치 출처 일관성: 적격 자료는 root 와 item 양쪽에 실제 문자열 generatedAt 이 명시돼야 하고(한쪽 시각으로 다른 쪽을 대체하지 않는다),
+     둘 다 엄격한 KST 형식·미래 아님이며 서로 같아야 한다. 새 root 에 실린 더 오래된 item 은 새 자료로 인정하지 않는다.
+     생성 시각(generatedAt)과 예보 대상 시각(forecastTime)은 별개다. 부적격은 참고 표시만 막을 뿐 기존 자료를 지우지 않는다. */
+  var rootMs=weeklyForecastTimestamp(root.generatedAt), itemMs=weeklyForecastTimestamp(day.generatedAt);
+  if(rootMs===null||itemMs===null||itemMs!==rootMs||rootMs>now.getTime()||(day.date!==undefined&&typeof day.date!=='string'))eligible=false;
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
     dataCurrent:current,scoreEligible:current&&eligible,stale:!current,
-    date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
+    date:date,generatedAt:generated,forecastTime:forecastText,
     ageMinutes:Number.isFinite(generatedMs)?Math.max(0,Math.floor((now.getTime()-generatedMs)/60000)):null};
 }
 /* 점수는 출처에서 검증된 적격(_weatherState.scoreEligible===true)과 유효한 점수가 모두 있을 때만 표시한다.
@@ -2494,7 +2498,7 @@ function applyLiveTomorrow(card,tomorrow){
   var tomorrowDate=new Date(Date.now()+9*60*60*1000+24*60*60*1000).toISOString().slice(0,10);
   ['morning','afternoon'].forEach(function(name){
     var period=tomorrow[name], text=liveTomorrowPeriodText(period);
-    if(!text||String(period.forecastTime||'').slice(0,10)!==tomorrowDate)return;
+    if(!text||(typeof period.forecastTime==='string'?period.forecastTime:'').slice(0,10)!==tomorrowDate)return;
     var row=container.querySelector('[data-live-weather-period="'+name+'"]');
     if(!row)return;
     var time=period.forecastTime&&period.forecastTime.match(/\b(\d{2}):(\d{2})\b/);
@@ -3691,15 +3695,15 @@ function weeklyNowKstMinutes(){
   return Number(values.hour)*60+Number(values.minute);
 }
 function weeklySampleMinutes(sample){
-  var match=String(sample&&sample.forecastTime||'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}):(\d{2})/);
+  var match=(sample&&typeof sample.forecastTime==='string'?sample.forecastTime:'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}):(\d{2})/);
   return match?Number(match[1])*60+Number(match[2]):null;
 }
 function weeklySampleTimeText(sample){
-  var match=String(sample&&sample.forecastTime||'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}:\d{2})/);
+  var match=(sample&&typeof sample.forecastTime==='string'?sample.forecastTime:'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}:\d{2})/);
   return match?match[1]:'';
 }
 function weeklySampleDateText(sample){
-  var match=String(sample&&sample.forecastTime||'').match(/^(\d{4}-\d{2}-\d{2})/);
+  var match=(sample&&typeof sample.forecastTime==='string'?sample.forecastTime:'').match(/^(\d{4}-\d{2}-\d{2})/);
   return match?match[1]:'';
 }
 /* 일출·일몰: NOAA sunrise equation. 좌표는 기존 site 좌표를 그대로 사용한다. */
@@ -3792,7 +3796,7 @@ function weeklyBestWeatherDay(site,week,sampleFilter){
 }
 function weeklySampleAsWeather(site,sample,dateText){
   if(!sample)return null;
-  var rain=sample.precipitation3h, generatedAt=(weatherWeek&&weatherWeek.generatedAt)||'';
+  var rain=sample.precipitation3h, generatedAt=(weatherWeek&&typeof weatherWeek.generatedAt==='string'&&weatherWeek.generatedAt)||'';
   function number(value,digits){return (value===null||value===undefined||!Number.isFinite(Number(value)))?null:Number(value).toFixed(digits);}
   function floor1(value){return (value===null||value===undefined||!Number.isFinite(Number(value)))?value:Math.floor(Number(value)*10+1e-9)/10;}
   var speed=number(sample.windSpeed,1);
@@ -4009,7 +4013,7 @@ function todayWeatherCautionNote(today){
   return '';
 }
 function todaySoutheastEastWindReason(site,today){
-  var result=weeklyEastWindRecommendation(site,today?{date:today.date||String(today.forecastTime||'').slice(0,10),weather:today}:null,weeklyInfo());
+  var result=weeklyEastWindRecommendation(site,today?{date:(typeof today.date==='string'&&today.date)||(typeof today.forecastTime==='string'?today.forecastTime:'').slice(0,10),weather:today}:null,weeklyInfo());
   return result?result.reason+(result.cautionText?' · '+result.cautionText:''):'';
 }
 function weeklyEastWindRecommendation(site,weatherEntry,week){
@@ -4050,7 +4054,7 @@ function weeklyEastWindFromWeek(site,week){
 }
 function todayMandatoryReason(site,today){
   var tide=weeklyBestMudflatTide(site,weeklyInfo());
-  var wind=weeklyEastWindRecommendation(site,today?{date:today.date||String(today.forecastTime||'').slice(0,10),weather:today}:null,weeklyInfo());
+  var wind=weeklyEastWindRecommendation(site,today?{date:(typeof today.date==='string'&&today.date)||(typeof today.forecastTime==='string'?today.forecastTime:'').slice(0,10),weather:today}:null,weeklyInfo());
   return [tide&&tide.reason,wind&&wind.reason].filter(Boolean).join(' · ');
 }
 function todayIsAutumnRemoteIsland(site,month){
@@ -4080,7 +4084,7 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   var sites=weatherToday&&weatherToday.sites;
   if(!sites)return null;
   var raw=sites[String(site.id)]||sites[site.name]||null;
-  var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
+  var date=raw&&((typeof raw.date==='string'&&raw.date)||(typeof raw.forecastTime==='string'?raw.forecastTime:'').slice(0,10));
   var today=weeklyTodayWeather(site,raw);
   if(!today||!weeklyDateInRange(date,week))return null;
   return {date:date,weather:today,score:raw.score};
@@ -4289,7 +4293,7 @@ function todayTideLineText(site){
 }
 function weeklyWeatherCoverageText(week){
   if(weatherWeek&&weatherWeek.startDate&&weatherWeek.endDate)return weatherWeek.startDate+' ~ '+weatherWeek.endDate+' 3시간 예보';
-  var date=String(weatherToday&&weatherToday.date||'');
+  var date=weatherToday&&typeof weatherToday.date==='string'?weatherToday.date:'';
   return date&&weeklyDateInRange(date,week)?weeklyDateLabel(date)+' 저장 예보(주간 자료 없음)':'확인 가능한 주간 일별 기상예보 없음';
 }
 
@@ -4377,7 +4381,7 @@ function renderTodayPanel(){
   body.appendChild(topTitle);
   var basisInfo=document.createElement('div');
   basisInfo.className='todayRankBasis';
-  basisInfo.textContent='추천 기간: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+(weatherWeek&&weatherWeek.generatedAt?'(예보 자료 생성 '+weatherWeek.generatedAt+')':'')+' · 조석: KHOA 예측자료';
+  basisInfo.textContent='추천 기간: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+(weatherWeek&&typeof weatherWeek.generatedAt==='string'&&weatherWeek.generatedAt?'(예보 자료 생성 '+weatherWeek.generatedAt+')':'')+' · 조석: KHOA 예측자료';
   body.appendChild(basisInfo);
   if(!top.length){
     var none=document.createElement('div');
@@ -4468,7 +4472,7 @@ function renderTodayPanel(){
     }
     var basis=document.createElement('div');
     basis.className='todayRankBasis';
-    basis.textContent=entry.basisText+(entry.today?' · 저장 예보 '+(entry.today.forecastTime||'시각 미확인')+' · 생성 '+(entry.today.generatedAt||'시각 미확인'):'');
+    basis.textContent=entry.basisText+(entry.today?' · 저장 예보 '+(typeof entry.today.forecastTime==='string'&&entry.today.forecastTime||'시각 미확인')+' · 생성 '+(typeof entry.today.generatedAt==='string'&&entry.today.generatedAt||'시각 미확인'):'');
     item.appendChild(basis);
     var mapHint=document.createElement('div');
     mapHint.className='todayRankBasis';
@@ -4546,7 +4550,7 @@ function birdmapDataTime(data){
   var published=weeklyForecastTimestamp(data&&data.generatedAt);
   return published!==null&&published<=Date.now()?published:null;  // 미래·무효 발행은 비교 기준(검증된 발행 버전)을 갱신하지 못한다
 }
-function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData){
+function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData,verify){
   var seq=birdmapDataSeq[key]=(birdmapDataSeq[key]||0)+1;
   return fetch(url,{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error(url+' '+r.status);
@@ -4554,12 +4558,15 @@ function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData){
   }).then(function(data){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error(url+' invalid');
     if(seq!==birdmapDataSeq[key])return false;
-    if(birdmapDataStamp(data)===currentStamp())return false;
+    /* 발행 표지가 같아도 현재 자료가 검증되지 않은 혼합 배치이고 내용이 다르면(같은 발행의 교정본) 건너뛰지 않는다. */
+    if(birdmapDataStamp(data)===currentStamp()&&!(verify&&currentData&&!verify(currentData())&&JSON.stringify(data)!==JSON.stringify(currentData())))return false;
     /* 발행 시각 순서(currentData 가 있는 today/week): 나중 요청이라도 이미 적용한 검증 자료보다 오래됐거나 같은 시각·시각 불명이면 적용하지 않는다.
        더 최신 발행본은 정상 적용된다. 아직 검증된 자료가 없으면 그대로 적용하고 추천 자격은 출처 검증이 판단한다. */
     if(currentData){
-      var have=birdmapDataTime(currentData()), next=birdmapDataTime(data);
-      if(have!==null&&(next===null||next<=have))return false;
+      /* verify(검증 가능한 배치인지)가 있으면 검증되지 않은 현재 자료는 기준이 아니고, 검증된 자료가 적용 중일 때 검증되지 않은 배치는 적용하지 않는다
+         (혼합 배치가 같은 발행 시각의 정상 교정본을 막지 못하게 하고, 이전 참고값도 지우지 않는다). */
+      var current=currentData(), have=(!verify||verify(current))?birdmapDataTime(current):null, next=birdmapDataTime(data);
+      if(have!==null&&(next===null||next<=have||(verify&&!verify(data))))return false;
     }
     return apply(data);
   }).catch(function(){
@@ -4572,7 +4579,14 @@ function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData){
 function loadWeatherToday(){
   return loadBirdmapData('weatherToday','./weather_today.json',
     function(){return birdmapDataStamp(weatherToday);},
-    function(data){weatherToday=data;return true;},undefined,function(){return weatherToday;});
+    function(data){weatherToday=data;return true;},undefined,function(){return weatherToday;},
+    function(data){
+      /* 적격(scoreEligible) 항목의 generatedAt 이 모두 root 발행과 같고 root 발행이 유효해야 검증된 배치다(Python validate_weather.py 와 같은 계약). */
+      var root=data&&weeklyForecastTimestamp(data.generatedAt);
+      if(root===null||root===undefined||root>Date.now())return false;
+      var sites=data.sites||{};
+      return Object.keys(sites).every(function(id){var item=sites[id];return !item||item.scoreEligible!==true||weeklyForecastTimestamp(item.generatedAt)===root;});
+    });
 }
 function loadRecommendationWeatherRules(){
   if(recommendationRulesRequest)return recommendationRulesRequest;

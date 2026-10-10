@@ -61,7 +61,7 @@ const NAMES = [
   'weeklyWinterRecommendationSeason','winterBirdingAxes','winterRecommendationRank','winterBalancedRecommendations','winterAxisLabel',
   'weeklySpringRecommendationSeason','springBirdingAxes','springGeolmaeriPriority','weeklySampleTimestamp','springWestNorthwestWind',
   'springIslandRainWindCondition','springRecommendationRank','springBalancedRecommendations','springAxisLabel',
-  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','birdmapDataTime','weeklyDocVerified','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
+  'weeklyScoreValid','weeklyNonNegativeNumber','weeklyOwn','weeklySampleRecommendable','weeklyTodayRequiredDataValid','weeklyTodayRecommendable','weeklyTodayWeather','weatherTimeMs','weatherLatestDue','storedWeatherState','storedWeatherLabel','birdmapDataTime','weeklyDocVerified','weeklyKstTimestamp','weeklyForecastTimestamp','weeklyTideTimestamp','weeklyTideForecastGapMinutes','weeklyRecommendationEligible',
   'weeklyRecentReportBonus','weeklyRankScore','weeklyRecentTieBreak','weeklyPanelRecommendations',
 ];
 
@@ -70,6 +70,13 @@ const ALL_NAMES = NAMES.filter((name) => HTML.includes('function ' + name + '(')
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
 function loadApi(state = {}) {
+  /* 실제 생성기 계약: 한 배치의 root 와 item 은 같은 generatedAt 을 가진다. root 를 생략한 옛 fixture 는 item 이 모두 같은 발행이면 그 값을 root 로 채운다
+     (root 키를 명시한 시험 - 누락·불일치·무효 반례 - 은 건드리지 않는다). */
+  const wt = state.weatherToday;
+  if (wt && wt.sites && !('generatedAt' in wt)) {
+    const stamps = [...new Set(Object.values(wt.sites).map((item) => item && item.generatedAt).filter((v) => typeof v === 'string'))];
+    if (stamps.length === 1) wt.generatedAt = stamps[0];
+  }
   const source = ALL_NAMES.map(functionSource).join('\n');
   const tideRules = HTML.match(/var TODAY_MUDFLAT_TIDE_RULES=\{[\s\S]*?\};/)[0];
   const factory = new Function(
@@ -2625,4 +2632,42 @@ test('F2 배치 일관성: 장소별 generatedAt 이 root 발행과 다른 적�
   assert.equal(run('2026-10-10 10:50 KST', '2026-10-10 10:50 KST'), 1);
   assert.equal(run('2026-10-10 10:50 KST', '2026-10-10 10:30 KST'), 0, 'root 10:50 / item 10:30');
   assert.equal(run('2026-10-10 10:30 KST', '2026-10-10 10:50 KST'), 0, 'root 10:30 / item 10:50 (반대 방향)');
+});
+
+/* ===== PR #13 F2-a/F3: 적격 today 는 root·item 양쪽의 실제 문자열 generatedAt 이 필요하고, 비문자열 시각은 어느 소비 경로에서도 예외 없이 부적격 ===== */
+const F2A_BAD = [['누락', undefined], ['null', null], ['빈 문자열', ''], ['배열', ['x']], ['객체', { toString: 'not-callable' }], ['숫자', 7], ['boolean', true],
+  ['미래', P0_DATE + ' 23:30 KST'], ['무효', 'not-a-timestamp']];
+
+test('F2-a 적격 today: item generatedAt 이 누락·null·빈 값·비문자열·미래·무효면 root 시각으로 대체해 적격이 되지 못한다', () => {
+  const site = { ...SITE, id: 565, name: '일반F2a', env: '농경지' };
+  const run = (rootGen, itemGen) => {
+    const raw = r6Raw(); if (itemGen === undefined) delete raw.generatedAt; else raw.generatedAt = itemGen;
+    const api = loadApi({ now: R6_NOW, month: 10, siteData: [site], weatherWeek: null, weatherToday: { generatedAt: rootGen, date: P0_DATE, sites: { 565: raw } } });
+    return { n: api.todayRecommendedSites().length, w: api.weeklyTodayWeather(site, raw), state: api.storedWeatherState(raw, { generatedAt: rootGen }, undefined, site) };
+  };
+  assert.equal(run(P0_DATE + ' 10:30 KST', P0_DATE + ' 10:30 KST').n, 1);
+  for (const [label, value] of F2A_BAD) {
+    const r = run(P0_DATE + ' 10:30 KST', value);
+    assert.equal(r.n, 0, 'item ' + label); assert.equal(r.w, null, 'item ' + label); assert.equal(r.state.scoreEligible, false, 'item ' + label);
+  }
+  for (const [label, value] of F2A_BAD) {
+    if (label === '누락') continue;
+    assert.equal(run(value, P0_DATE + ' 10:30 KST').n, 0, 'root ' + label);
+  }
+  assert.equal(run(undefined, P0_DATE + ' 10:30 KST').n, 0, 'root 누락');
+});
+
+test('F3 storedWeatherState·팝업·카드 소비 경로: 비문자열 forecastTime/date/generatedAt 은 TypeError 없이 부적격이고 정상 80점이 선택된다', () => {
+  const site = { ...SITE, id: 566, name: '일반F3', env: '농경지' };
+  for (const [label, make] of NON_STRINGS) {
+    for (const field of ['forecastTime', 'date', 'generatedAt']) {
+      const raw = r6Raw(); raw[field] = make(raw[field] || P0_DATE + ' 12:00 KST');
+      const api = loadApi({ now: R6_NOW, month: 10, siteData: [site], weatherWeek: null, weatherToday: { generatedAt: P0_DATE + ' 10:30 KST', date: P0_DATE, sites: { 566: raw } } });
+      const state = api.storedWeatherState(raw, api.weatherToday || { generatedAt: P0_DATE + ' 10:30 KST' }, undefined, site);
+      assert.equal(state.scoreEligible, false, field + ' ' + label);
+      assert.doesNotThrow(() => api.storedWeatherLabel({ _weatherState: state }), field + ' ' + label);
+      assert.doesNotThrow(() => api.todayRecommendedSites(), field + ' ' + label);
+      assert.equal(api.todayRecommendedSites().length, 0, field + ' ' + label);
+    }
+  }
 });

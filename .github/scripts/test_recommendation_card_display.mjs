@@ -531,8 +531,63 @@ test('F1·F2 미래 발행 뒤 정상 복구, 오래된 장소별 item 은 위�
       assert.deepEqual(by['F1 정상 10:50 복구'], [1, true], width);
       assert.deepEqual(by['F1 미래 12:30 재수신(정상 유지)'], [1, false], width);
       assert.deepEqual(by['F2 root10:55/item10:55 위험'], [0, true], width);
-      assert.deepEqual(by['F2 root11:00 지만 item10:30 정상'], [0, true], width + ': 위험 역전 금지');
+      assert.deepEqual(by['F2 root11:00 지만 item10:30 정상'], [0, false], width + ': 위험 역전 금지(검증 안 된 혼합 배치는 적용하지 않음)');
       assert.deepEqual(by['F2 root11:00/item11:00 새 정상'], [1, true], width);
+    } finally { page.dispose(); }
+  }
+});
+
+/* F2-a·F2-b·F3 실제 Chrome: 누락 item 시각, 동일 root 교정본 복구, 비문자열 시각의 카드·팝업 예외 */
+const F23_CHROME = `(async function(){
+  var RealDate=Date, fixed=new RealDate(${JSON.stringify(NOW)}).getTime();
+  window.Date=class extends RealDate{constructor(){var a=[].slice.call(arguments);super(...(a.length?a:[fixed]));}static now(){return fixed;}};
+  var errors=[]; window.addEventListener('error',function(e){errors.push(String(e.message));});
+  var raw=${JSON.stringify(raw())};
+  for(var wait=0;wait<100&&!(typeof birdmapDataStarted!=='undefined'&&birdmapDataStarted);wait++)await new Promise(function(r){setTimeout(r,100);});
+  await new Promise(function(r){setTimeout(r,1200);});
+  var site=siteData.find(function(s){return String(s.id)==='14';}); siteData=[site];
+  weatherWeek=null; tideMonth=${JSON.stringify(TIDE_NOON)}; recentSiteSightings={}; loadedNotices=[];
+  var T=function(h){return '${DATE} '+h+' KST';};
+  function doc(rain,root,item){var it=Object.assign({},raw,{rain:rain}); if(item===undefined)delete it.generatedAt; else it.generatedAt=item; return {date:'${DATE}',generatedAt:root,updated:root,sites:{14:it}};}
+  function cards(){return document.getElementById('todayPanelBody').querySelectorAll('.todayRankItem').length;}
+  function text(){return document.getElementById('todayPanelBody').textContent;}
+  var out=[]; var realFetch=window.fetch;
+  async function step(label,body){window.fetch=function(){return Promise.resolve({ok:true,json:function(){return Promise.resolve(body);}});};var a=await loadWeatherToday();refreshTodayPanelIfOpen();out.push([label,cards(),a,/92|108/.test(text())]);}
+  weatherToday={sites:{}}; toggleTodayPanel(true);
+  await step('B1 root10:40/item10:40 강수1',doc('3시간 강수 1.0mm',T('10:40'),T('10:40')));
+  await step('B2 root10:50/item10:30 혼합',doc('강수 없음',T('10:50'),T('10:30')));
+  await step('B3 root10:50/item10:50 교정',doc('강수 없음',T('10:50'),T('10:50')));
+  weatherToday={sites:{}};
+  await step('A1 item generatedAt 누락',doc('강수 없음',T('10:58'),undefined));
+  window.fetch=realFetch;
+  var bad=[['배열',['x']],['객체',{toString:'not-callable'}],['숫자',7],['boolean',true],['null',null]], thrown=[];
+  bad.forEach(function(pair){
+    ['forecastTime','generatedAt','date'].forEach(function(field){
+      try{
+        var d=doc('강수 없음',T('10:59'),T('10:59')); d.sites[14][field]=pair[1];
+        weatherWeek={generatedAt:pair[1],startDate:'${DATE}',endDate:'${DATE}',sites:{}};
+        weatherToday=d; toggleTodayPanel(false); toggleTodayPanel(true);
+        var marker=markerRegistry[markerKey(site)]; marker.addTo(map_7010a44f6ac2025090f0fe07508ed485); marker.openPopup(); map_7010a44f6ac2025090f0fe07508ed485.closePopup();
+        if(cards()!==0)thrown.push('cards '+pair[0]+field+cards());
+      }catch(e){thrown.push(pair[0]+' '+field+' '+e.message);}
+    });
+  });
+  return {out:out,thrown:thrown,errors:errors};
+})()`;
+
+test('F2-a·F2-b·F3 실제 로더·카드·팝업: 누락 item 은 추천되지 않고 동일 root 교정본은 복구되며 비문자열 시각은 예외 없이 부적격이다(5폭)', { skip: SKIP }, async () => {
+  for (const width of WIDTHS) {
+    const page = await Page.open();
+    try {
+      await page.setViewport(width, 800);
+      const result = await page.evaluate(F23_CHROME);
+      const by = Object.fromEntries(result.out.map(([k, ...v]) => [k, v]));
+      assert.deepEqual(by['B1 root10:40/item10:40 강수1'].slice(0, 2), [0, true], width);
+      assert.deepEqual(by['B2 root10:50/item10:30 혼합'].slice(0, 2), [0, false], width);
+      assert.deepEqual(by['B3 root10:50/item10:50 교정'].slice(0, 2), [1, true], width);
+      assert.deepEqual(by['A1 item generatedAt 누락'], [0, true, false], width + ': 92점·rank108 추천 금지');
+      assert.deepEqual(result.thrown, [], width);
+      assert.deepEqual(result.errors, [], width);
     } finally { page.dispose(); }
   }
 });
