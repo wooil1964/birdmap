@@ -1,0 +1,44 @@
+✔ all inline scripts compile (19.8339ms)
+✔ today, component fallback, yesterday, old and no data remain distinct (2.8818ms)
+✔ schedule deadline expires prior batch without using arbitrary age (0.3145ms)
+✔ 05:35 KST batch becomes required at 06:05 without colliding with tide refresh (0.3895ms)
+✔ fresh root or live current state cannot renew an old stored score (0.3771ms)
+✔ live cache keeps original timestamp and rejects outdated components (0.33ms)
+✔ retains usable current data when getUltraSrtFcst fails (32.5813ms)
+✔ retains usable current data when getUltraSrtNcst fails (1.5296ms)
+✔ retains usable current data when getVilageFcst fails (1.172ms)
+✔ does not claim current success when both current requests fail (1.782ms)
+✔ rejects wrong response grid/date and empty payload (0.7396ms)
+✔ ultra-short forecast accepts the HH00 label only for the latest HH30 issuance (0.5108ms)
+✔ observation and village forecast keep exact base time matching (0.3184ms)
+✔ 188 lookup succeeds; Dokdo remains marine primary; complete tomorrow requires usable values (2.3578ms)
+✔ Worker cache preserves generation time and cannot renew expired entries (2.4807ms)
+✔ converts the official Seoul reference coordinate (1.981ms)
+✔ creates a stable cache key (0.264ms)
+✔ selects separate observation and forecast base times (0.4553ms)
+✔ selects the latest available village forecast base across midnight (0.1803ms)
+✔ handles CORS preflight for the production origin (28.7458ms)
+✔ rejects an unapproved browser origin (2.1407ms)
+✔ rejects unsupported methods (0.4515ms)
+✔ rejects missing and invalid site IDs (0.6961ms)
+✔ keeps pelagic sites on marine-first weather (1.0774ms)
+✔ reports a missing secret without exposing a key (1.0027ms)
+✔ converts an aborted upstream request to a timeout error (5.0644ms)
+✔ keeps observation and forecast timestamps separate (0.6478ms)
+✔ prioritizes observed precipitation over cloudy sky (0.2483ms)
+✔ prioritizes tomorrow precipitation and uses a 60 percent POP threshold (0.4482ms)
+✔ rejects missing, non-finite, sentinel, and out-of-range weather values (0.2747ms)
+✔ normalizes invalid observation sentinels without changing real zero values (0.1728ms)
+✔ applies range validation to current and tomorrow forecasts (0.2128ms)
+✔ selects tomorrow 09:00 and 15:00 KST forecasts (0.1898ms)
+✔ keeps missing tomorrow periods and fields nullable (0.1237ms)
+✔ only caches responses with both tomorrow periods (0.1272ms)
+✔ keeps the configured cache and timeout bounds (0.0882ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 163.0305
