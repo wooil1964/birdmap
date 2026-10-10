@@ -75,6 +75,15 @@
 - **정책 영향(`results/c/reference_policy_on_C.json`, Sol 의 19시나리오×제보 ON/OFF=38조건을 제품 코드로 재실행)**: 고정 정상 주간 176/176(상위 10 동일), 주간 로더 실패(today 정상) 166, 주간 11곳 누락 165 등 정상 입력은 변화 없음. 생성 지연·미래·비정상·누락 생성 시각 today 만 있는 합성 조건은 166 → 0(빈 목록), 혼합(참고 11곳) 176 → 165. 이는 의도된 후보 감소이며 정상 입력 회귀가 아니다. 운영 발생 빈도는 측정하지 않았다.
 - **갱신 흐름 확인**: `loadBirdmapData` 는 파일별 요청 순번으로 늦게 온 *이전 요청* 응답을 버린다(실제 Chrome 시험 R7: 늦은 옛 응답이 최신 정상 자료를 덮어쓰지 못함, 오류 시 직전 자료 유지, 정상 갱신·주간 대체 예보 도착 시 추천 복구). 발행 시각은 *같음*만 비교하므로 이후 요청이 더 오래된 파일을 돌려주면 반영되지만, C 정책에서 그 자료는 참고 상태라 추천 근거가 되지 못한다(안전 방향, R7 에서 확인). 현장소식 삭제/보호 상태 늦은 응답 결함(별도 과제)과 같은 코드가 아니다.
 
+## F1·F2·F3 배포 차단 보완 (Sol 재검증 `2e48507` 지적)
+- **F1**: `birdmapDataTime` 은 미래·무효 발행을 null 로 보아 발행 버전 비교 기준을 갱신하지 못한다 → 미래 자료를 먼저 받거나(정상→미래→정상) 해도 정상 10:50 이 적용된다. 옛 발행·같은 시각·seq 차단은 유지. today/week 모두.
+- **F2**: 실제 구조 확인 — 생성기는 한 배치의 root·item `generatedAt` 에 같은 시각을 쓰고(실제 main 190곳 모두 일치), 이전 값 재사용은 stale/적격 false. `storedWeatherState` 는 적격 item 의 `generatedAt` 이 배치 root 와 다르면(양방향) 현재 자료가 아니라고 본다(생성 시각과 예보 대상 시각은 별개). `validate_weather.py` 도 적격 item 의 `generatedAt` 이 문자열이며 root 와 같아야 함을 검사(parity). 새 root 에 실린 더 오래된 item 이 위험 제외를 뒤집지 못하고, root=item 인 새 자료는 복구된다. 주의: root 가 item 보다 새로운 배치를 "정상"으로 가정하는 외부 fixture 는 이제 부적격이다(Sol 라이프사이클 `normalDoc('10:31')`+item 10:30 이 이 형태라 그 2단계×5폭이 불일치로 나옴 — F2 반례와 같은 구조).
+- **F3**: `weeklyForecastTimestamp`·`weatherTimeMs` 가 `typeof === 'string'` 확인 후에만 해석(배열·객체·숫자·boolean·null 은 안전하게 거부, TypeError 없음). 무효 배열형 99점 대신 정상 80점이 rank 96(제보 16)으로 선택. KST·ISO `+09:00` 허용 형식 유지.
+- 수정 전 실패(새 시험): loader Node 6·주간 4·Chrome 1. Sol 도구: loader Node **28/28**(이전 23/5), loader Chrome **140/140**(이전 115/25), 기존 8/40 유지, 최종 DOM core **245/245**·diagnostics 10/10, S2 182/182·21/21·12/12, 일반 E2E 55/55(예외 0), S1-R 171/오탐 0, 고정 190곳·176후보·ON/OFF 전체 signature·상위 10 동일. 선상 65 중 25 불일치는 Sol 이 "기존 의미 차이(카드=13:00 안전 80, 팝업=12:00 대표 99)"로 분류한 건으로 이번 범위 밖.
+- 회귀: JS 538 + Python 77 pass/1 skip = **615 pass / 0 fail / 1 skip**(직전 603). origin/main(bf74095) merge-tree 충돌 없음, 자동 JSON 임시 결합 JS 538 통과, 실제 main JSON 이 새 validator 를 통과(배치+10분 시계로 확인; main 파일은 하루 지난 날짜라 today validator 의 날짜 assertion 은 시계에 의존).
+- CI: `.github/workflows` 에는 `pull_request` 트리거가 없다(기상·조석·공유카드 갱신 workflow 만). 시험 전용 PR CI(`on: pull_request`, 읽기 권한, node --test·unittest, 배포·JSON 쓰기 없음)를 추가하는 것은 별도 승인 후 권장 — 이번에는 만들거나 실행하지 않았다.
+- 유지·분리: R5, 현장소식 삭제 캐시, 보호 상태 전환, S1-P, B 정책.
+
 ## 배포 승인 전 최종 보완 C1·C2·C3 (Sol 재검증 `352315a` 지적)
 - **C1 주간 발행 출처**: `weeklyDocVerified`(weather_week `generatedAt` 이 엄격 KST 형식이고 미래가 아님) + `weeklyWeekSite`(검증된 발행본의 `dataUnavailable` 아닌 장소만). 미검증 발행본은 "주간 자료 없음"으로 보아 검증된 today fallback 으로 대체될 뿐 현재 적격 출처를 만들지 않는다. 정상 미래 예보는 허용, 주간 최대 연령 정책은 없음. `validate_weather_week.py` 도 같은 계약(발행 시각 엄격 형식·미래 거부).
 - **C2 예보 시각**: `weeklyDaylightCandidates` 가 점수 비교 전에 `weeklyForecastTimestamp`(엄격)로 날짜·시각을 확인(12:60·시간대 없음·UTC·꼬리 문자열·24:00 제외, 정렬도 절대 시각). today 의 `storedWeatherState` 도 같은 parser(`weatherTimeMs` 의 느슨한 Date.parse 제거). 무효 99점 대신 정상 80점이 rank 96(제보 16)으로 카드·팝업에 나온다(일반·갯벌·섬 + today).
