@@ -134,9 +134,10 @@ const SPECIES_PATTERN = /^[가-힣ㄱ-ㅎㅏ-ㅣA-Za-z0-9()'. -]+$/;
 const MARKUP_PATTERN = /[<>]/;
 
 export function normalizeSpecies(raw) {
-  const tokens = stripControl(raw)
-    .split(/[,;·\n]+/)
-    .map((token) => token.trim())
+  // 줄바꿈은 제어문자로 지워지기 전에 구분자로 먼저 쓴다(그러지 않으면 앞뒤 종명이 붙어 버린다).
+  const tokens = String(raw ?? "")
+    .split(/[,;·\r\n]+/)
+    .map((part) => stripControl(part))
     .filter(Boolean);
   if (!tokens.length) {
     throw new WorkerError("SPECIES_REQUIRED", "출현종을 입력해 주세요.", 400);
@@ -310,10 +311,24 @@ export const SENSITIVE_SPECIES = [
   '매', '참매', '수리부엉이', '올빼미', '팔색조', '뿔쇠오리', '넓적부리도요',
 ];
 
+// 보호종 판정용 토큰 하나. 종명 전체 일치를 먼저 보고, 아니면 "보호종명 + 수량(마리·개체)" 꼴만 인정한다.
+// 숫자를 일괄 삭제하거나 부분 문자열로 비교하지 않으므로 갈매기·알락오리 등은 걸리지 않는다.
+// 원문은 바꾸지 않고 판정에만 쓴다.
+const PROTECTED_QUANTITY = /^(.+?)\s*\d+\s*(?:마리|개체)?$/;
+const PROTECTION_SPLIT = /[,;·/\r\n]+/;
+function isProtectedSpeciesToken(token) {
+  const text = token.normalize('NFC').trim();
+  if (SENSITIVE_SPECIES.includes(text)) return true;
+  const match = PROTECTED_QUANTITY.exec(text);
+  return !!match && SENSITIVE_SPECIES.includes(match[1].trim());
+}
+
 export function isSensitiveReport(report) {
   const haystack = [report?.note || '', report?.speciesText || ''].join(' ');
   if (SENSITIVE_KEYWORDS.some((word) => haystack.includes(word))) return true;
-  return (report?.species || []).some((name) => SENSITIVE_SPECIES.includes(name));
+  // 과거 저장 자료에는 구분자(슬래시·줄바꿈 등)가 남아 있을 수 있어 읽기 판정에서도 다시 나눈다.
+  const names = report?.species || [];
+  return names.some((name) => String(name).split(PROTECTION_SPLIT).some(isProtectedSpeciesToken));
 }
 
 // 승인 전 공개 목록. 종·관찰일·대략 좌표만 내보낸다.

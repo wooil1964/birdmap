@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
-const names = ['weatherTimeMs', 'weatherLatestDue', 'storedWeatherState', 'weatherScoreAllowed',
+const names = ['weatherTimeMs', 'weatherLatestDue', 'weeklyKstTimestamp', 'weeklyForecastTimestamp', 'weeklyScoreValid', 'weeklyOwn', 'weeklyTodayRequiredDataValid', 'weeklyTodayRecommendable', 'storedWeatherState', 'weatherScoreAllowed',
   'liveWeatherComponents', 'liveWeatherResponseCurrent', 'v251EffectiveScore'];
 const context = vm.createContext({weatherToday: {}, LIVE_WEATHER_CACHE_TTL_MS: 900000,
   LIVE_WEATHER_REQUEST_TIMEOUT_MS: 12000, v251RainInfo: () => ({raining: true, amount: 5})});
@@ -15,7 +15,7 @@ for (const name of names) {
 }
 const now = new Date('2026-09-06T08:00:00Z');
 const today = {date: '2026-09-06', forecastTime: '2026-09-06 17:00 KST',
-  generatedAt: '2026-09-06 14:30 KST', wind: '0m/s', rain: '강수 없음', score: 90};
+  generatedAt: '2026-09-06 14:30 KST', scoreEligible: true, missingScoreFields: [], wind: '북풍 0.0m/s', rain: '강수 없음', wave: '0.5m', score: 90};
 
 test('all inline scripts compile', () => {
   for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) new vm.Script(match[1]);
@@ -33,16 +33,16 @@ test('today, component fallback, yesterday, old and no data remain distinct', ()
 });
 test('schedule deadline expires prior batch without using arbitrary age', () => {
   const previous = {...today, generatedAt: '2026-09-06 10:30 KST'};
-  assert.equal(context.storedWeatherState(previous, {}, new Date('2026-09-06T05:46:00Z')).scoreEligible, true);
-  assert.equal(context.storedWeatherState(previous, {}, new Date('2026-09-06T05:47:00Z')).scoreEligible, false);
+  assert.equal(context.storedWeatherState(previous, {generatedAt: previous.generatedAt}, new Date('2026-09-06T05:46:00Z')).scoreEligible, true);
+  assert.equal(context.storedWeatherState(previous, {generatedAt: previous.generatedAt}, new Date('2026-09-06T05:47:00Z')).scoreEligible, false);
 });
 
 test('05:35 KST batch becomes required at 06:05 without colliding with tide refresh', () => {
   const beforeEarlyBatch = {...today, generatedAt: '2026-09-06 05:34 KST'};
   const earlyBatch = {...today, generatedAt: '2026-09-06 05:40 KST'};
-  assert.equal(context.storedWeatherState(beforeEarlyBatch, {}, new Date('2026-09-05T21:04:00Z')).scoreEligible, true);
-  assert.equal(context.storedWeatherState(beforeEarlyBatch, {}, new Date('2026-09-05T21:05:00Z')).scoreEligible, false);
-  assert.equal(context.storedWeatherState(earlyBatch, {}, new Date('2026-09-05T21:05:00Z')).scoreEligible, true);
+  assert.equal(context.storedWeatherState(beforeEarlyBatch, {generatedAt: beforeEarlyBatch.generatedAt}, new Date('2026-09-05T21:04:00Z')).scoreEligible, true);
+  assert.equal(context.storedWeatherState(beforeEarlyBatch, {generatedAt: beforeEarlyBatch.generatedAt}, new Date('2026-09-05T21:05:00Z')).scoreEligible, false);
+  assert.equal(context.storedWeatherState(earlyBatch, {generatedAt: earlyBatch.generatedAt}, new Date('2026-09-05T21:05:00Z')).scoreEligible, true);
 });
 test('fresh root or live current state cannot renew an old stored score', () => {
   const old = {...today, generatedAt: '2026-08-25 18:49 KST', stale: true};

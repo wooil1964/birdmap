@@ -1,0 +1,4471 @@
+{
+  "head": "7eb6764a0ea1c1e1ac6b97b3752d14dc05a8ff3e",
+  "latestMainAtTaskStart": "38b45299c832b8ab8ad549762c02979fa8ddfb28",
+  "actualFunctionSourceSha256": "de216996745cb3b53211db050e11afc272061ed416590798d7333bbf70efc839",
+  "indexSha256": "26488eddbff68fc118ae6d69a093675ddeb812bfa8e55a8c8d94a6a3a158f147",
+  "evaluationTime": "2026-10-10T08:00:00+09:00",
+  "mode": "Actual PR function extraction, no product guard patch/wrapper. Frozen clock only.",
+  "matrixCases": 182,
+  "matrixPassed": 182,
+  "matrixFailed": 0,
+  "rows": [
+    {
+      "id": "PR13-S2-zero-general_week",
+      "route": "general_week",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-zero-tide_week",
+      "route": "tide_week",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-zero-island_week",
+      "route": "island_week",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-zero-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "48"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-zero-general_today",
+      "route": "general_today",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-zero-tide_today",
+      "route": "tide_today",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-zero-island_today",
+      "route": "island_today",
+      "inputLabel": "zero",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 0
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-general_week",
+      "route": "general_week",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-tide_week",
+      "route": "tide_week",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-island_week",
+      "route": "island_week",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "48"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-general_today",
+      "route": "general_today",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-tide_today",
+      "route": "tide_today",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-hundred-island_today",
+      "route": "island_today",
+      "inputLabel": "hundred",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 100,
+        "rank": 116,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 100
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-general_week",
+      "route": "general_week",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-tide_week",
+      "route": "tide_week",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-island_week",
+      "route": "island_week",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "48"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-general_today",
+      "route": "general_today",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-tide_today",
+      "route": "tide_today",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-float-island_today",
+      "route": "island_today",
+      "inputLabel": "float",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92.5,
+        "rank": 108.5,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 92.5
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-general_week",
+      "route": "general_week",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-island_week",
+      "route": "island_week",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-general_today",
+      "route": "general_today",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-null-island_today",
+      "route": "island_today",
+      "inputLabel": "null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-general_week",
+      "route": "general_week",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-tide_week",
+      "route": "tide_week",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-island_week",
+      "route": "island_week",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-general_today",
+      "route": "general_today",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-tide_today",
+      "route": "tide_today",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-undefined-island_today",
+      "route": "island_today",
+      "inputLabel": "undefined",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-general_week",
+      "route": "general_week",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-tide_week",
+      "route": "tide_week",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-island_week",
+      "route": "island_week",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-general_today",
+      "route": "general_today",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-tide_today",
+      "route": "tide_today",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-NaN-island_today",
+      "route": "island_today",
+      "inputLabel": "NaN",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-general_week",
+      "route": "general_week",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-tide_week",
+      "route": "tide_week",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-island_week",
+      "route": "island_week",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-general_today",
+      "route": "general_today",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-tide_today",
+      "route": "tide_today",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-Infinity-island_today",
+      "route": "island_today",
+      "inputLabel": "Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-general_week",
+      "route": "general_week",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-tide_week",
+      "route": "tide_week",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-island_week",
+      "route": "island_week",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-general_today",
+      "route": "general_today",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-tide_today",
+      "route": "tide_today",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2--Infinity-island_today",
+      "route": "island_today",
+      "inputLabel": "-Infinity",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-general_week",
+      "route": "general_week",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-tide_week",
+      "route": "tide_week",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-island_week",
+      "route": "island_week",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-general_today",
+      "route": "general_today",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-tide_today",
+      "route": "tide_today",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-empty-island_today",
+      "route": "island_today",
+      "inputLabel": "empty",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-general_week",
+      "route": "general_week",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-tide_week",
+      "route": "tide_week",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-island_week",
+      "route": "island_week",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-general_today",
+      "route": "general_today",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-tide_today",
+      "route": "tide_today",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-numeric_string-island_today",
+      "route": "island_today",
+      "inputLabel": "numeric_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-general_week",
+      "route": "general_week",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-tide_week",
+      "route": "tide_week",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-island_week",
+      "route": "island_week",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-general_today",
+      "route": "general_today",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-tide_today",
+      "route": "tide_today",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-negative-island_today",
+      "route": "island_today",
+      "inputLabel": "negative",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-general_week",
+      "route": "general_week",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-tide_week",
+      "route": "tide_week",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-island_week",
+      "route": "island_week",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-general_today",
+      "route": "general_today",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-tide_today",
+      "route": "tide_today",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-above100-island_today",
+      "route": "island_today",
+      "inputLabel": "above100",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-general_week",
+      "route": "general_week",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-tide_week",
+      "route": "tide_week",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-island_week",
+      "route": "island_week",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-general_today",
+      "route": "general_today",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-tide_today",
+      "route": "tide_today",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_true-island_today",
+      "route": "island_today",
+      "inputLabel": "boolean_true",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-general_week",
+      "route": "general_week",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-tide_week",
+      "route": "tide_week",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-island_week",
+      "route": "island_week",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-general_today",
+      "route": "general_today",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-tide_today",
+      "route": "tide_today",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-boolean_false-island_today",
+      "route": "island_today",
+      "inputLabel": "boolean_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-general_week",
+      "route": "general_week",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-tide_week",
+      "route": "tide_week",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-island_week",
+      "route": "island_week",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-general_today",
+      "route": "general_today",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-tide_today",
+      "route": "tide_today",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_false-island_today",
+      "route": "island_today",
+      "inputLabel": "eligible_false",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-general_week",
+      "route": "general_week",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-tide_week",
+      "route": "tide_week",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-island_week",
+      "route": "island_week",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-general_today",
+      "route": "general_today",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-tide_today",
+      "route": "tide_today",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_missing-island_today",
+      "route": "island_today",
+      "inputLabel": "eligible_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-general_week",
+      "route": "general_week",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-island_week",
+      "route": "island_week",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-general_today",
+      "route": "general_today",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_null-island_today",
+      "route": "island_today",
+      "inputLabel": "eligible_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-general_week",
+      "route": "general_week",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-tide_week",
+      "route": "tide_week",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-island_week",
+      "route": "island_week",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-general_today",
+      "route": "general_today",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-tide_today",
+      "route": "tide_today",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_one-island_today",
+      "route": "island_today",
+      "inputLabel": "eligible_one",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-general_week",
+      "route": "general_week",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-tide_week",
+      "route": "tide_week",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-island_week",
+      "route": "island_week",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-general_today",
+      "route": "general_today",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-tide_today",
+      "route": "tide_today",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-eligible_string-island_today",
+      "route": "island_today",
+      "inputLabel": "eligible_string",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-general_week",
+      "route": "general_week",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-tide_week",
+      "route": "tide_week",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-island_week",
+      "route": "island_week",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-general_today",
+      "route": "general_today",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-tide_today",
+      "route": "tide_today",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason-island_today",
+      "route": "island_today",
+      "inputLabel": "missing_reason",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-general_week",
+      "route": "general_week",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-island_week",
+      "route": "island_week",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-general_today",
+      "route": "general_today",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_null-island_today",
+      "route": "island_today",
+      "inputLabel": "missing_reason_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-general_week",
+      "route": "general_week",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-tide_week",
+      "route": "tide_week",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-island_week",
+      "route": "island_week",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-general_today",
+      "route": "general_today",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-tide_today",
+      "route": "tide_today",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-missing_reason_missing-island_today",
+      "route": "island_today",
+      "inputLabel": "missing_reason_missing",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-general_week",
+      "route": "general_week",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-island_week",
+      "route": "island_week",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-general_today",
+      "route": "general_today",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wind_null-island_today",
+      "route": "island_today",
+      "inputLabel": "required_wind_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-general_week",
+      "route": "general_week",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-island_week",
+      "route": "island_week",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-general_today",
+      "route": "general_today",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_rain_null-island_today",
+      "route": "island_today",
+      "inputLabel": "required_rain_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-general_week",
+      "route": "general_week",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-island_week",
+      "route": "island_week",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-general_today",
+      "route": "general_today",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_direction_null-island_today",
+      "route": "island_today",
+      "inputLabel": "required_direction_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "3"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-general_week",
+      "route": "general_week",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-tide_week",
+      "route": "tide_week",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-island_week",
+      "route": "island_week",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-pelagic_week",
+      "route": "pelagic_week",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-general_today",
+      "route": "general_today",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-tide_today",
+      "route": "tide_today",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": true,
+      "actual": {
+        "candidate": true,
+        "score": 92,
+        "rank": 108,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 92
+      },
+      "contractPass": true
+    },
+    {
+      "id": "PR13-S2-required_wave_null-island_today",
+      "route": "island_today",
+      "inputLabel": "required_wave_null",
+      "expectedCandidate": false,
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "contractPass": true
+    }
+  ],
+  "specialCases": 21,
+  "specialPassed": 21,
+  "specialFailed": 0,
+  "specials": [
+    {
+      "id": "alternative-different-date",
+      "actual": {
+        "candidate": true,
+        "score": 80,
+        "rank": 96,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-11",
+        "time": "12:00",
+        "tideText": "만조 12:00 · 880cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 80
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "alternative-same-day",
+      "actual": {
+        "candidate": true,
+        "score": 80,
+        "rank": 96,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "15:00",
+        "tideText": "만조 15:00 · 870cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 80
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "notice-reports-no-weather",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-tide_gap90",
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "10:30",
+        "tideText": "만조 12:00 · 900cm",
+        "topIds": [
+          "14"
+        ],
+        "popupScore": 0
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-tide_gap91",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-tide_gap120",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-rain0999",
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "501"
+        ],
+        "popupScore": 0
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-rain1",
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": false,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [],
+        "popupScore": 0
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-wave2",
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": false,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [],
+        "popupScore": 0
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-boat_wind6",
+      "actual": {
+        "candidate": true,
+        "score": 0,
+        "rank": 16,
+        "bonus": 16,
+        "mandatory": true,
+        "safe": true,
+        "date": "2026-10-10",
+        "time": "12:00",
+        "tideText": null,
+        "topIds": [
+          "48"
+        ],
+        "popupScore": 0
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-boat_wind_over",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-boat_wave_over",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "safety-boat_rain_positive",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "fill-invalid-score",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [
+          "502"
+        ],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "optional-wave-invalid-0.3",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "optional-wave-invalid--1",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "optional-wave-invalid-NaN",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "inherited-eligibility-week",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "inherited-eligibility-today",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "today-all-weather-fields-null",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    },
+    {
+      "id": "island-today-all-weather-fields-null",
+      "actual": {
+        "candidate": false,
+        "score": null,
+        "rank": null,
+        "bonus": 0,
+        "mandatory": false,
+        "safe": null,
+        "date": null,
+        "time": null,
+        "tideText": null,
+        "topIds": [],
+        "popupScore": null
+      },
+      "expectedPass": true,
+      "error": null
+    }
+  ],
+  "popup": [
+    {
+      "id": "popup-missingEligible",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-nullEligible",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-falseEligible",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-missingReason",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-nullReason",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-nonemptyReason",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-requiredWindMissing",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-requiredRainMissing",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-requiredWaveMissing",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 92,
+      "contractPass": true
+    },
+    {
+      "id": "popup-nullScore",
+      "expectedScoreAllowed": false,
+      "actualScoreAllowed": false,
+      "display": "오늘 적합도 미확인",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": false,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": null,
+      "contractPass": true
+    },
+    {
+      "id": "popup-normalZero",
+      "expectedScoreAllowed": true,
+      "actualScoreAllowed": true,
+      "display": "★★★★★ 0점",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 0,
+      "contractPass": true
+    },
+    {
+      "id": "popup-normal100",
+      "expectedScoreAllowed": true,
+      "actualScoreAllowed": true,
+      "display": "★★★★★ 100점",
+      "resolvedState": {
+        "kind": "today_saved",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-10",
+        "generatedAt": "2026-10-10 07:00 KST",
+        "forecastTime": "2026-10-10 12:00 KST",
+        "ageMinutes": 60
+      },
+      "score": 100,
+      "contractPass": true
+    }
+  ],
+  "selectors": [
+    {
+      "function": "autumnBalancedRecommendations",
+      "invalidDirectIds": [
+        "501"
+      ],
+      "note": "Direct call defense only; full production todayRecommendedSites already calls candidate/raw-score gates."
+    },
+    {
+      "function": "winterBalancedRecommendations",
+      "invalidDirectIds": [
+        "501"
+      ],
+      "note": "Direct call defense only; full production todayRecommendedSites already calls candidate/raw-score gates."
+    },
+    {
+      "function": "springBalancedRecommendations",
+      "invalidDirectIds": [
+        "501"
+      ],
+      "note": "Direct call defense only; full production todayRecommendedSites already calls candidate/raw-score gates."
+    },
+    {
+      "function": "summerBalancedRecommendations",
+      "invalidDirectIds": [
+        "501"
+      ],
+      "note": "Direct call defense only; full production todayRecommendedSites already calls candidate/raw-score gates."
+    }
+  ],
+  "fixed": {
+    "manifest": "input_manifest_35141c0_2240.json",
+    "evaluationTime": "2026-10-08T22:40:00+09:00",
+    "candidates": 176,
+    "topExact": true,
+    "top": [
+      {
+        "position": 1,
+        "id": "108",
+        "raw": 92,
+        "display": 92,
+        "rank": 103,
+        "bonus": 11,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field"
+      },
+      {
+        "position": 2,
+        "id": "112",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "date": "2026-10-13",
+        "time": "09:00",
+        "axis": "field"
+      },
+      {
+        "position": 3,
+        "id": "15",
+        "raw": 92,
+        "display": 92,
+        "rank": 94,
+        "bonus": 2,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field"
+      },
+      {
+        "position": 4,
+        "id": "194",
+        "raw": 92,
+        "display": 92,
+        "rank": 94,
+        "bonus": 2,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field"
+      },
+      {
+        "position": 5,
+        "id": "126",
+        "raw": 92,
+        "display": 92,
+        "rank": 94,
+        "bonus": 2,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "mudflat"
+      },
+      {
+        "position": 6,
+        "id": "14",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "date": "2026-10-11",
+        "time": "18:00",
+        "axis": "mudflat"
+      },
+      {
+        "position": 7,
+        "id": "107",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "date": "2026-10-11",
+        "time": "18:00",
+        "axis": "mudflat"
+      },
+      {
+        "position": 8,
+        "id": "48",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "pelagic"
+      },
+      {
+        "position": 9,
+        "id": "195",
+        "raw": 92,
+        "display": 92,
+        "rank": 108,
+        "bonus": 16,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "other"
+      },
+      {
+        "position": 10,
+        "id": "3",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "date": "2026-10-09",
+        "time": "18:00",
+        "axis": "other"
+      }
+    ]
+  },
+  "privacy": "Synthetic source-only; no production API calls, database modifications, network requests or code writes."
+}
