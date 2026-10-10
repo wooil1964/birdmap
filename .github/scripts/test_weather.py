@@ -554,12 +554,16 @@ class WeatherWeekTests(unittest.TestCase):
     def test_today_validator_requires_batch_consistent_item_generation(self):
         """PR #13 F2: 적격 항목의 generatedAt 은 문자열이며 배치(root) 발행과 같아야 한다(프런트와 같은 계약)."""
         today = datetime.now(weather.KST).date().isoformat()
-        for value in (today + " 05:30 KST", None, ["x"], {"a": 1}, 7):
+        for value in (today + " 05:30 KST", None, ["x"], {"a": 1}, 7, "", "not-a-timestamp"):
             with self.subTest(item=value):
                 document = self.today_document(generatedAt=value)
                 document["generatedAt"] = today + " 06:00 KST"
                 with self.assertRaises(AssertionError):
                     self.run_today_validator(document)
+        garbage = self.today_document(generatedAt="not-a-timestamp")
+        garbage["generatedAt"] = "not-a-timestamp"
+        with self.assertRaises(AssertionError):
+            self.run_today_validator(garbage)
         self.assertEqual(self.run_today_validator(self.today_document())["siteCount"], 1)
 
     def test_today_validator_requires_wave_where_the_site_needs_it(self):
