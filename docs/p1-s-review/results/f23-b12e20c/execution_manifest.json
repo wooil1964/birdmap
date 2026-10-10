@@ -1,0 +1,50 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "before": "a35b8598d55890e705042e4d6f88621357749d09",
+  "main": "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f",
+  "combinedTree": "1065b16fcba94eeeb1a300d9b1e1953be9bfc65e",
+  "commands": [
+    {
+      "name": "reports_api",
+      "command": "node --test *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/reports_api.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB/reports-api"
+    },
+    {
+      "name": "weekly",
+      "command": "$env:BIRDMAP_PYTHON='C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe'\n$env:PYTHONDONTWRITEBYTECODE='1'\n$env:PYTHONUTF8='1'\n$env:PYTHONIOENCODING='utf-8'\nnode --import ../../scripts/python_runtime_preload.mjs --test .github/scripts/test_weekly_recommendation.mjs *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/weekly.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB"
+    },
+    {
+      "name": "frontend",
+      "command": "node --test .github/scripts/test_today_weather_midnight.mjs .github/scripts/test_field_news.mjs .github/scripts/test_report_search.mjs .github/scripts/test_site_history_cache.mjs .github/scripts/test_recent_contributors.mjs .github/scripts/test_notice_kst_date.mjs .github/scripts/test_briefing_kst_month.mjs .github/scripts/test_tide_fallback.mjs .github/scripts/test_data_autorefresh.mjs *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/frontend.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB"
+    },
+    {
+      "name": "chromium",
+      "command": "$env:CHROME_PATH='C:/Program Files/Google/Chrome/Application/chrome.exe'\nnode --import ../../scripts/browser_network_isolation.mjs --test .github/scripts/test_notice_close_hit.mjs .github/scripts/test_month_tide_button.mjs *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/chromium.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB"
+    },
+    {
+      "name": "card_dom",
+      "command": "$env:CHROME_PATH='C:/Program Files/Google/Chrome/Application/chrome.exe'\n$env:R4_DUMP='C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/provided_cards_after.json'\nnode --import ../../scripts/browser_network_isolation.mjs --test .github/scripts/test_recommendation_card_display.mjs *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/card_dom.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB"
+    },
+    {
+      "name": "weather",
+      "command": "$env:BIRDMAP_PYTHON='C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe'\n$env:PYTHONDONTWRITEBYTECODE='1'\n$env:PYTHONUTF8='1'\n$env:PYTHONIOENCODING='utf-8'\n& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -m unittest discover -s .github/scripts -p test_weather.py *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/weather.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB"
+    },
+    {
+      "name": "tide",
+      "command": "$env:BIRDMAP_PYTHON='C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe'\n$env:PYTHONDONTWRITEBYTECODE='1'\n$env:PYTHONUTF8='1'\n$env:PYTHONIOENCODING='utf-8'\n& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' -m unittest discover -s .github/scripts -p test_tide.py *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/tide.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB"
+    },
+    {
+      "name": "weather_proxy",
+      "command": "node --test *> 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/results/f23-b12e20c/weather_proxy.tap'",
+      "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetB/weather-proxy"
+    }
+  ],
+  "merged": false,
+  "operatingWrites": 0
+}
