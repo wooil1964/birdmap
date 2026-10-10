@@ -1,0 +1,67 @@
+{
+  "observedAt": "2026-10-11T07:23:00+09:00",
+  "worker": "birdmap-reports",
+  "tool": "wrangler 4.149.0",
+  "commands": [
+    {
+      "command": "npx wrangler versions view 494b97d1-69ab-40f7-bbbf-e8c6e3c5effc --name birdmap-reports",
+      "exitCode": 0
+    },
+    {
+      "command": "npx wrangler versions view 16dae92a-4bd7-4fda-ba90-d5075604d4db --name birdmap-reports",
+      "exitCode": 0
+    },
+    {
+      "command": "npx wrangler deployments list --name birdmap-reports",
+      "exitCode": 0
+    }
+  ],
+  "versions": [
+    {
+      "id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+      "createdUtc": "2026-10-08T05:19:39.572Z",
+      "deploymentUtc": "2026-10-08T05:19:40.077Z",
+      "latestListedDeployment": true,
+      "trafficPercent": 100
+    },
+    {
+      "id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+      "createdUtc": "2026-10-06T14:58:25.144Z",
+      "deploymentUtc": "2026-10-06T14:58:25.709Z",
+      "latestListedDeployment": false,
+      "trafficPercentAtThatDeployment": 100
+    }
+  ],
+  "metadataComparison": {
+    "handlers": "fetch",
+    "compatibilityDate": "2026-07-03",
+    "displayedBindingsEqual": true,
+    "secretNamesEqual": true,
+    "secretValuesRead": false,
+    "writeMode": "CANONICAL_DUAL_WRITE",
+    "sourceLabel": "Unknown (version_upload)",
+    "tag": null,
+    "message": null,
+    "sourceContentCompared": false
+  },
+  "assessment": {
+    "currentVersionConfirmed": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+    "previousDeploymentVersionConfirmed": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+    "s1rPreservingRollbackVerified": false,
+    "verdict": "조건부 승인 유지",
+    "remainingConditions": [
+      "두 버전의 실제 보호 기능 및 S1-R 보호 유지 rollback 대상 검증",
+      "Pages rollback SHA와 보호 상태 전환 영향 확인",
+      "보호 재분류 또는 공개 철회가 발생하는 경우 오래된 응답·길안내 경합을 전환 전에 해결",
+      "별도 운영 승인"
+    ]
+  },
+  "operations": {
+    "deployment": 0,
+    "rollback": 0,
+    "d1Writes": 0,
+    "realUserWrites": 0,
+    "productCodeChanges": 0
+  },
+  "privacy": "Author email, D1 ID, recipient addresses, secret values and raw configuration are not persisted in this sanitized evidence."
+}

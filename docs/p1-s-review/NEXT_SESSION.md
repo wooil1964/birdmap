@@ -1,3 +1,21 @@
+
+## Worker 메타데이터 추가 확인 — 2026-10-11 07:23 KST
+
+사용자가 지정한 두 `wrangler versions view`와 추가 읽기 전용 `wrangler deployments list`를 Wrangler 4.149.0으로 실행해 모두 exit 0을 확인했다.
+
+| 버전 | 생성 시각 KST | 배포 이력 판단 |
+|---|---|---|
+| `494b97d1-69ab-40f7-bbbf-e8c6e3c5effc` | 2026-10-08 14:19:39.572 | 조회 시점 최신 배포, 100% 적용 |
+| `16dae92a-4bd7-4fda-ba90-d5075604d4db` | 2026-10-06 23:58:25.144 | 직전 배포 버전 |
+
+표시된 바인딩과 secret 이름은 두 버전이 같고 `CANONICAL_DUAL_WRITE`가 유지된다. Secret 값은 읽지 않았다. 원본 설정·계정 이메일·D1 ID는 증거 파일에 저장하지 않았다.
+
+이 추가 확인으로 **현재 운영 Worker 버전 미확인 조건은 해소**됐다. 이전 HTTP 401/429 기록은 당시의 실패 증거로 보존한다. 두 버전 모두 source/tag/message만으로 실제 제품 코드나 S1-R 보호 기능을 입증할 수 없으므로 **보호 유지 rollback 대상 확인 조건은 미해결**이다. 직전 버전을 보호 유지 rollback으로 승인하지 않는다.
+
+최종 판정은 **조건부 승인 유지**. Pages rollback SHA, 실제 보호 전환 영향 및 전환 시 cache 보안 선행 조건은 그대로 남는다. 제품 코드 변경·배포·rollback·D1·실사용자 데이터 변경은 0이다.
+
+정제 증빙: `results/f23-b12e20c/worker_versions_readonly.json`.
+
 # 다음 세션 — PR13 b12e20c 검증 완료, 조건부 승인
 
 정확 검증 SHA: b12e20c1b6d856a021898a0c1c9221b30393a221.
