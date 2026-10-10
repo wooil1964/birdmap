@@ -1,0 +1,6810 @@
+{
+  "actualExecutionTimestamp": "2026-10-10T21:55:50.028Z",
+  "schemaVersion": 2,
+  "sourceDigests": {
+    "index.html": "ef86a2fc2a7ffe008db646b1ae07d9bd3081a98f8da3814ee1ac9395416695e5",
+    "weather_today.json": "95cb9631919b2e4cbee8c23e2a7507d210c29814f3945dd7fbec97335fc2dabd",
+    "weather_week.json": "370b4ad78c7ff55cb3698f6aa963ff4bdd2d72d6a6afd7e5bab741f589d0b342",
+    "tide_today.json": "a0ea0c7248351a8285d3990cc8634dc1d21a5a6a4da03fe3d4a9caf682f4b061"
+  },
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "evaluationTime": "2026-10-11T06:55:23.5171298+09:00",
+  "viewports": [
+    {
+      "width": 344,
+      "height": 900,
+      "mobile": true,
+      "steps": {
+        "leaflet_and_load": {
+          "passed": true,
+          "result": {
+            "leaflet": "1.9.3",
+            "sites": 190,
+            "fieldMarkers": 2,
+            "reportMarkers": 1,
+            "documentWidth": 344,
+            "viewport": 344,
+            "dataBasis": {
+              "evaluationClock": "2026-10-10T21:55:23.517Z",
+              "weatherTodayGeneratedAt": "2026-10-11 04:16 KST",
+              "weatherWeekGeneratedAt": "2026-10-11 04:16 KST",
+              "tideTodayGeneratedAt": "2026-10-11 04:08 KST"
+            }
+          }
+        },
+        "recommendation_panel_and_popup": {
+          "passed": true,
+          "result": {
+            "cards": 10,
+            "fieldNewsPresent": true,
+            "panelVisible": true,
+            "popupOpened": true
+          }
+        },
+        "r2_unconfirmed_popup_dom": {
+          "passed": true,
+          "result": {
+            "variants": [
+              {
+                "name": "eligible_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_string",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_inherited",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "wind_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_nan",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              }
+            ],
+            "normalRestored": {
+              "scoreNumeric": true,
+              "labelRetained": true,
+              "scoreAllowed": true,
+              "sourceKind": "week_forecast",
+              "sourceCurrent": true,
+              "rawStoredKind": "today_reference",
+              "rawStoredCurrent": false,
+              "rawStoredEligible": false
+            }
+          }
+        },
+        "r2_reference_popup_dom": {
+          "passed": true,
+          "result": {
+            "reference": {
+              "kind": "today_reference",
+              "unconfirmed": true,
+              "referenceTitle": true,
+              "referenceLabel": true,
+              "windRetained": true
+            }
+          }
+        },
+        "r2_synthetic_live_proxy_merge": {
+          "passed": true,
+          "result": {
+            "actualFetchApplyPath": true,
+            "syntheticResponse": true,
+            "results": [
+              {
+                "mode": "unconfirmed",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              },
+              {
+                "mode": "normal",
+                "unconfirmed": false,
+                "scoreNumeric": true,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": false,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "week_forecast",
+                  "activeCurrent": true,
+                  "activeEligible": true
+                }
+              },
+              {
+                "mode": "reference",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-08 05:41 KST",
+                  "rootItemTimestampEqual": false,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              }
+            ]
+          }
+        },
+        "field_hidden_news_navigation": {
+          "passed": true,
+          "result": {
+            "rowPresent": true,
+            "buttonDisabled": true,
+            "pointBlocked": true,
+            "popupGuideVisible": true,
+            "directApproximateGuideAllowed": true,
+            "approximateWarningShown": true,
+            "policy": "Existing popup approximate direction guide, distinct from news navigation"
+          }
+        },
+        "ordinary_navigation": {
+          "passed": true,
+          "result": {
+            "guide": true,
+            "choice": false,
+            "pointAllowed": true,
+            "kakaoLinks": 0
+          }
+        },
+        "report_ui_protected_submit": {
+          "passed": true,
+          "result": {
+            "messageProtects": true,
+            "pendingMarkerCount": 0,
+            "submitEnabled": true
+          }
+        },
+        "field_own_create_popup_delete": {
+          "passed": true,
+          "result": {
+            "ownedRemoved": true,
+            "markerRemoved": true,
+            "newsRemoved": true
+          }
+        },
+        "field_error_retains_state": {
+          "passed": true,
+          "result": {
+            "returnedFalse": true,
+            "retained": true,
+            "navStillBlocked": true
+          }
+        },
+        "report_error_retains_input": {
+          "passed": true,
+          "result": {
+            "retained": true,
+            "enabled": true,
+            "message": true
+          }
+        }
+      },
+      "weatherCompatibilityPhases": [
+        {
+          "name": "all_ineligible_exact_empty",
+          "passed": true,
+          "result": {
+            "candidateCount": 0,
+            "finalCount": 0,
+            "cardCount": 0,
+            "exactEmpty": true,
+            "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+          }
+        },
+        {
+          "name": "original_latest_week_restored",
+          "passed": true,
+          "result": {
+            "ids": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "originalIds": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "finalCount": 10,
+            "cardCount": 10,
+            "rawScores": [
+              92,
+              92,
+              92,
+              92,
+              92,
+              92,
+              91,
+              92,
+              100,
+              100
+            ],
+            "safe": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "eligible": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "sourceKinds": [
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast"
+            ],
+            "restoredTodayRoot": "2026-10-11 04:16 KST",
+            "restoredWeekRoot": "2026-10-11 04:16 KST"
+          }
+        }
+      ],
+      "navigationCompatibility": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 328,
+            "viewport": 344,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "popupWidth": 240,
+            "viewport": 344,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "height": 900,
+      "mobile": true,
+      "steps": {
+        "leaflet_and_load": {
+          "passed": true,
+          "result": {
+            "leaflet": "1.9.3",
+            "sites": 190,
+            "fieldMarkers": 2,
+            "reportMarkers": 1,
+            "documentWidth": 375,
+            "viewport": 375,
+            "dataBasis": {
+              "evaluationClock": "2026-10-10T21:55:23.517Z",
+              "weatherTodayGeneratedAt": "2026-10-11 04:16 KST",
+              "weatherWeekGeneratedAt": "2026-10-11 04:16 KST",
+              "tideTodayGeneratedAt": "2026-10-11 04:08 KST"
+            }
+          }
+        },
+        "recommendation_panel_and_popup": {
+          "passed": true,
+          "result": {
+            "cards": 10,
+            "fieldNewsPresent": true,
+            "panelVisible": true,
+            "popupOpened": true
+          }
+        },
+        "r2_unconfirmed_popup_dom": {
+          "passed": true,
+          "result": {
+            "variants": [
+              {
+                "name": "eligible_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_string",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_inherited",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "wind_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_nan",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              }
+            ],
+            "normalRestored": {
+              "scoreNumeric": true,
+              "labelRetained": true,
+              "scoreAllowed": true,
+              "sourceKind": "week_forecast",
+              "sourceCurrent": true,
+              "rawStoredKind": "today_reference",
+              "rawStoredCurrent": false,
+              "rawStoredEligible": false
+            }
+          }
+        },
+        "r2_reference_popup_dom": {
+          "passed": true,
+          "result": {
+            "reference": {
+              "kind": "today_reference",
+              "unconfirmed": true,
+              "referenceTitle": true,
+              "referenceLabel": true,
+              "windRetained": true
+            }
+          }
+        },
+        "r2_synthetic_live_proxy_merge": {
+          "passed": true,
+          "result": {
+            "actualFetchApplyPath": true,
+            "syntheticResponse": true,
+            "results": [
+              {
+                "mode": "unconfirmed",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              },
+              {
+                "mode": "normal",
+                "unconfirmed": false,
+                "scoreNumeric": true,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": false,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "week_forecast",
+                  "activeCurrent": true,
+                  "activeEligible": true
+                }
+              },
+              {
+                "mode": "reference",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-08 05:41 KST",
+                  "rootItemTimestampEqual": false,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              }
+            ]
+          }
+        },
+        "field_hidden_news_navigation": {
+          "passed": true,
+          "result": {
+            "rowPresent": true,
+            "buttonDisabled": true,
+            "pointBlocked": true,
+            "popupGuideVisible": true,
+            "directApproximateGuideAllowed": true,
+            "approximateWarningShown": true,
+            "policy": "Existing popup approximate direction guide, distinct from news navigation"
+          }
+        },
+        "ordinary_navigation": {
+          "passed": true,
+          "result": {
+            "guide": true,
+            "choice": false,
+            "pointAllowed": true,
+            "kakaoLinks": 0
+          }
+        },
+        "report_ui_protected_submit": {
+          "passed": true,
+          "result": {
+            "messageProtects": true,
+            "pendingMarkerCount": 0,
+            "submitEnabled": true
+          }
+        },
+        "field_own_create_popup_delete": {
+          "passed": true,
+          "result": {
+            "ownedRemoved": true,
+            "markerRemoved": true,
+            "newsRemoved": true
+          }
+        },
+        "field_error_retains_state": {
+          "passed": true,
+          "result": {
+            "returnedFalse": true,
+            "retained": true,
+            "navStillBlocked": true
+          }
+        },
+        "report_error_retains_input": {
+          "passed": true,
+          "result": {
+            "retained": true,
+            "enabled": true,
+            "message": true
+          }
+        }
+      },
+      "weatherCompatibilityPhases": [
+        {
+          "name": "all_ineligible_exact_empty",
+          "passed": true,
+          "result": {
+            "candidateCount": 0,
+            "finalCount": 0,
+            "cardCount": 0,
+            "exactEmpty": true,
+            "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+          }
+        },
+        {
+          "name": "original_latest_week_restored",
+          "passed": true,
+          "result": {
+            "ids": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "originalIds": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "finalCount": 10,
+            "cardCount": 10,
+            "rawScores": [
+              92,
+              92,
+              92,
+              92,
+              92,
+              92,
+              91,
+              92,
+              100,
+              100
+            ],
+            "safe": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "eligible": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "sourceKinds": [
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast"
+            ],
+            "restoredTodayRoot": "2026-10-11 04:16 KST",
+            "restoredWeekRoot": "2026-10-11 04:16 KST"
+          }
+        }
+      ],
+      "navigationCompatibility": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 375,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "popupWidth": 240,
+            "viewport": 375,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "mobile": false,
+      "steps": {
+        "leaflet_and_load": {
+          "passed": true,
+          "result": {
+            "leaflet": "1.9.3",
+            "sites": 190,
+            "fieldMarkers": 2,
+            "reportMarkers": 1,
+            "documentWidth": 768,
+            "viewport": 768,
+            "dataBasis": {
+              "evaluationClock": "2026-10-10T21:55:23.517Z",
+              "weatherTodayGeneratedAt": "2026-10-11 04:16 KST",
+              "weatherWeekGeneratedAt": "2026-10-11 04:16 KST",
+              "tideTodayGeneratedAt": "2026-10-11 04:08 KST"
+            }
+          }
+        },
+        "recommendation_panel_and_popup": {
+          "passed": true,
+          "result": {
+            "cards": 10,
+            "fieldNewsPresent": true,
+            "panelVisible": true,
+            "popupOpened": true
+          }
+        },
+        "r2_unconfirmed_popup_dom": {
+          "passed": true,
+          "result": {
+            "variants": [
+              {
+                "name": "eligible_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_string",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_inherited",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "wind_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_nan",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              }
+            ],
+            "normalRestored": {
+              "scoreNumeric": true,
+              "labelRetained": true,
+              "scoreAllowed": true,
+              "sourceKind": "week_forecast",
+              "sourceCurrent": true,
+              "rawStoredKind": "today_reference",
+              "rawStoredCurrent": false,
+              "rawStoredEligible": false
+            }
+          }
+        },
+        "r2_reference_popup_dom": {
+          "passed": true,
+          "result": {
+            "reference": {
+              "kind": "today_reference",
+              "unconfirmed": true,
+              "referenceTitle": true,
+              "referenceLabel": true,
+              "windRetained": true
+            }
+          }
+        },
+        "r2_synthetic_live_proxy_merge": {
+          "passed": true,
+          "result": {
+            "actualFetchApplyPath": true,
+            "syntheticResponse": true,
+            "results": [
+              {
+                "mode": "unconfirmed",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              },
+              {
+                "mode": "normal",
+                "unconfirmed": false,
+                "scoreNumeric": true,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": false,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "week_forecast",
+                  "activeCurrent": true,
+                  "activeEligible": true
+                }
+              },
+              {
+                "mode": "reference",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-08 05:41 KST",
+                  "rootItemTimestampEqual": false,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              }
+            ]
+          }
+        },
+        "field_hidden_news_navigation": {
+          "passed": true,
+          "result": {
+            "rowPresent": true,
+            "buttonDisabled": true,
+            "pointBlocked": true,
+            "popupGuideVisible": false
+          }
+        },
+        "ordinary_navigation": {
+          "passed": true,
+          "result": {
+            "guide": false,
+            "choice": true,
+            "pointAllowed": true,
+            "kakaoLinks": 2
+          }
+        },
+        "report_ui_protected_submit": {
+          "passed": true,
+          "result": {
+            "messageProtects": true,
+            "pendingMarkerCount": 0,
+            "submitEnabled": true
+          }
+        },
+        "field_own_create_popup_delete": {
+          "passed": true,
+          "result": {
+            "creationButtonHidden": true,
+            "finePointer": true,
+            "ownedRemoved": true,
+            "markerRemoved": true,
+            "registrationUi": "Intentionally mobile-only; existing own row and ownership restored as local fixture, native popup delete verified on PC"
+          }
+        },
+        "field_error_retains_state": {
+          "passed": true,
+          "result": {
+            "returnedFalse": true,
+            "retained": true,
+            "navStillBlocked": true
+          }
+        },
+        "report_error_retains_input": {
+          "passed": true,
+          "result": {
+            "retained": true,
+            "enabled": true,
+            "message": true
+          }
+        }
+      },
+      "weatherCompatibilityPhases": [
+        {
+          "name": "all_ineligible_exact_empty",
+          "passed": true,
+          "result": {
+            "candidateCount": 0,
+            "finalCount": 0,
+            "cardCount": 0,
+            "exactEmpty": true,
+            "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+          }
+        },
+        {
+          "name": "original_latest_week_restored",
+          "passed": true,
+          "result": {
+            "ids": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "originalIds": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "finalCount": 10,
+            "cardCount": 10,
+            "rawScores": [
+              92,
+              92,
+              92,
+              92,
+              92,
+              92,
+              91,
+              92,
+              100,
+              100
+            ],
+            "safe": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "eligible": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "sourceKinds": [
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast"
+            ],
+            "restoredTodayRoot": "2026-10-11 04:16 KST",
+            "restoredWeekRoot": "2026-10-11 04:16 KST"
+          }
+        }
+      ],
+      "navigationCompatibility": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 768,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "popupWidth": 240,
+            "viewport": 768,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "height": 900,
+      "mobile": false,
+      "steps": {
+        "leaflet_and_load": {
+          "passed": true,
+          "result": {
+            "leaflet": "1.9.3",
+            "sites": 190,
+            "fieldMarkers": 2,
+            "reportMarkers": 1,
+            "documentWidth": 1024,
+            "viewport": 1024,
+            "dataBasis": {
+              "evaluationClock": "2026-10-10T21:55:23.517Z",
+              "weatherTodayGeneratedAt": "2026-10-11 04:16 KST",
+              "weatherWeekGeneratedAt": "2026-10-11 04:16 KST",
+              "tideTodayGeneratedAt": "2026-10-11 04:08 KST"
+            }
+          }
+        },
+        "recommendation_panel_and_popup": {
+          "passed": true,
+          "result": {
+            "cards": 10,
+            "fieldNewsPresent": true,
+            "panelVisible": true,
+            "popupOpened": true
+          }
+        },
+        "r2_unconfirmed_popup_dom": {
+          "passed": true,
+          "result": {
+            "variants": [
+              {
+                "name": "eligible_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_string",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_inherited",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "wind_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_nan",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              }
+            ],
+            "normalRestored": {
+              "scoreNumeric": true,
+              "labelRetained": true,
+              "scoreAllowed": true,
+              "sourceKind": "week_forecast",
+              "sourceCurrent": true,
+              "rawStoredKind": "today_reference",
+              "rawStoredCurrent": false,
+              "rawStoredEligible": false
+            }
+          }
+        },
+        "r2_reference_popup_dom": {
+          "passed": true,
+          "result": {
+            "reference": {
+              "kind": "today_reference",
+              "unconfirmed": true,
+              "referenceTitle": true,
+              "referenceLabel": true,
+              "windRetained": true
+            }
+          }
+        },
+        "r2_synthetic_live_proxy_merge": {
+          "passed": true,
+          "result": {
+            "actualFetchApplyPath": true,
+            "syntheticResponse": true,
+            "results": [
+              {
+                "mode": "unconfirmed",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              },
+              {
+                "mode": "normal",
+                "unconfirmed": false,
+                "scoreNumeric": true,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": false,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "week_forecast",
+                  "activeCurrent": true,
+                  "activeEligible": true
+                }
+              },
+              {
+                "mode": "reference",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-08 05:41 KST",
+                  "rootItemTimestampEqual": false,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              }
+            ]
+          }
+        },
+        "field_hidden_news_navigation": {
+          "passed": true,
+          "result": {
+            "rowPresent": true,
+            "buttonDisabled": true,
+            "pointBlocked": true,
+            "popupGuideVisible": false
+          }
+        },
+        "ordinary_navigation": {
+          "passed": true,
+          "result": {
+            "guide": false,
+            "choice": true,
+            "pointAllowed": true,
+            "kakaoLinks": 2
+          }
+        },
+        "report_ui_protected_submit": {
+          "passed": true,
+          "result": {
+            "messageProtects": true,
+            "pendingMarkerCount": 0,
+            "submitEnabled": true
+          }
+        },
+        "field_own_create_popup_delete": {
+          "passed": true,
+          "result": {
+            "creationButtonHidden": true,
+            "finePointer": true,
+            "ownedRemoved": true,
+            "markerRemoved": true,
+            "registrationUi": "Intentionally mobile-only; existing own row and ownership restored as local fixture, native popup delete verified on PC"
+          }
+        },
+        "field_error_retains_state": {
+          "passed": true,
+          "result": {
+            "returnedFalse": true,
+            "retained": true,
+            "navStillBlocked": true
+          }
+        },
+        "report_error_retains_input": {
+          "passed": true,
+          "result": {
+            "retained": true,
+            "enabled": true,
+            "message": true
+          }
+        }
+      },
+      "weatherCompatibilityPhases": [
+        {
+          "name": "all_ineligible_exact_empty",
+          "passed": true,
+          "result": {
+            "candidateCount": 0,
+            "finalCount": 0,
+            "cardCount": 0,
+            "exactEmpty": true,
+            "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+          }
+        },
+        {
+          "name": "original_latest_week_restored",
+          "passed": true,
+          "result": {
+            "ids": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "originalIds": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "finalCount": 10,
+            "cardCount": 10,
+            "rawScores": [
+              92,
+              92,
+              92,
+              92,
+              92,
+              92,
+              91,
+              92,
+              100,
+              100
+            ],
+            "safe": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "eligible": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "sourceKinds": [
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast"
+            ],
+            "restoredTodayRoot": "2026-10-11 04:16 KST",
+            "restoredWeekRoot": "2026-10-11 04:16 KST"
+          }
+        }
+      ],
+      "navigationCompatibility": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 1024,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "popupWidth": 240,
+            "viewport": 1024,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "mobile": false,
+      "steps": {
+        "leaflet_and_load": {
+          "passed": true,
+          "result": {
+            "leaflet": "1.9.3",
+            "sites": 190,
+            "fieldMarkers": 2,
+            "reportMarkers": 1,
+            "documentWidth": 1440,
+            "viewport": 1440,
+            "dataBasis": {
+              "evaluationClock": "2026-10-10T21:55:23.517Z",
+              "weatherTodayGeneratedAt": "2026-10-11 04:16 KST",
+              "weatherWeekGeneratedAt": "2026-10-11 04:16 KST",
+              "tideTodayGeneratedAt": "2026-10-11 04:08 KST"
+            }
+          }
+        },
+        "recommendation_panel_and_popup": {
+          "passed": true,
+          "result": {
+            "cards": 10,
+            "fieldNewsPresent": true,
+            "panelVisible": true,
+            "popupOpened": true
+          }
+        },
+        "r2_unconfirmed_popup_dom": {
+          "passed": true,
+          "result": {
+            "variants": [
+              {
+                "name": "eligible_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_string",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "eligible_inherited",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "missing_fields_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "wind_missing",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_null",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              },
+              {
+                "name": "score_nan",
+                "unconfirmed": true,
+                "storedReferenceRetained": true,
+                "scoreAllowed": false,
+                "sourceKind": "today_reference",
+                "sourceCurrent": false
+              }
+            ],
+            "normalRestored": {
+              "scoreNumeric": true,
+              "labelRetained": true,
+              "scoreAllowed": true,
+              "sourceKind": "week_forecast",
+              "sourceCurrent": true,
+              "rawStoredKind": "today_reference",
+              "rawStoredCurrent": false,
+              "rawStoredEligible": false
+            }
+          }
+        },
+        "r2_reference_popup_dom": {
+          "passed": true,
+          "result": {
+            "reference": {
+              "kind": "today_reference",
+              "unconfirmed": true,
+              "referenceTitle": true,
+              "referenceLabel": true,
+              "windRetained": true
+            }
+          }
+        },
+        "r2_synthetic_live_proxy_merge": {
+          "passed": true,
+          "result": {
+            "actualFetchApplyPath": true,
+            "syntheticResponse": true,
+            "results": [
+              {
+                "mode": "unconfirmed",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              },
+              {
+                "mode": "normal",
+                "unconfirmed": false,
+                "scoreNumeric": true,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": false,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-11 04:16 KST",
+                  "rootItemTimestampEqual": true,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "week_forecast",
+                  "activeCurrent": true,
+                  "activeEligible": true
+                }
+              },
+              {
+                "mode": "reference",
+                "unconfirmed": true,
+                "scoreNumeric": false,
+                "liveTemperatureApplied": true,
+                "liveWindApplied": true,
+                "tomorrowShown": true,
+                "storedReferenceRetained": true,
+                "provenance": {
+                  "rootGeneratedAt": "2026-10-11 04:16 KST",
+                  "itemGeneratedAt": "2026-10-08 05:41 KST",
+                  "rootItemTimestampEqual": false,
+                  "stateCurrent": false,
+                  "stateEligible": false,
+                  "activeKind": "today_reference",
+                  "activeCurrent": false,
+                  "activeEligible": false
+                }
+              }
+            ]
+          }
+        },
+        "field_hidden_news_navigation": {
+          "passed": true,
+          "result": {
+            "rowPresent": true,
+            "buttonDisabled": true,
+            "pointBlocked": true,
+            "popupGuideVisible": false
+          }
+        },
+        "ordinary_navigation": {
+          "passed": true,
+          "result": {
+            "guide": false,
+            "choice": true,
+            "pointAllowed": true,
+            "kakaoLinks": 2
+          }
+        },
+        "report_ui_protected_submit": {
+          "passed": true,
+          "result": {
+            "messageProtects": true,
+            "pendingMarkerCount": 0,
+            "submitEnabled": true
+          }
+        },
+        "field_own_create_popup_delete": {
+          "passed": true,
+          "result": {
+            "creationButtonHidden": true,
+            "finePointer": true,
+            "ownedRemoved": true,
+            "markerRemoved": true,
+            "registrationUi": "Intentionally mobile-only; existing own row and ownership restored as local fixture, native popup delete verified on PC"
+          }
+        },
+        "field_error_retains_state": {
+          "passed": true,
+          "result": {
+            "returnedFalse": true,
+            "retained": true,
+            "navStillBlocked": true
+          }
+        },
+        "report_error_retains_input": {
+          "passed": true,
+          "result": {
+            "retained": true,
+            "enabled": true,
+            "message": true
+          }
+        }
+      },
+      "weatherCompatibilityPhases": [
+        {
+          "name": "all_ineligible_exact_empty",
+          "passed": true,
+          "result": {
+            "candidateCount": 0,
+            "finalCount": 0,
+            "cardCount": 0,
+            "exactEmpty": true,
+            "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+          }
+        },
+        {
+          "name": "original_latest_week_restored",
+          "passed": true,
+          "result": {
+            "ids": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "originalIds": [
+              "10",
+              "107",
+              "126",
+              "14",
+              "15",
+              "3",
+              "48",
+              "5",
+              "7",
+              "8"
+            ],
+            "finalCount": 10,
+            "cardCount": 10,
+            "rawScores": [
+              92,
+              92,
+              92,
+              92,
+              92,
+              92,
+              91,
+              92,
+              100,
+              100
+            ],
+            "safe": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "eligible": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "sourceKinds": [
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast",
+              "week_forecast"
+            ],
+            "restoredTodayRoot": "2026-10-11 04:16 KST",
+            "restoredWeekRoot": "2026-10-11 04:16 KST"
+          }
+        }
+      ],
+      "navigationCompatibility": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 1440,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "popupWidth": 240,
+            "viewport": 1440,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": false,
+          "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+        }
+      ]
+    },
+    {
+      "normalTideFallbackObservation": {
+        "width": 375,
+        "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+        "candidatePresent": false,
+        "internalWeatherStatePresent": false,
+        "cardPresent": false,
+        "error": "Unclickable selector .todayRankItem"
+      }
+    },
+    {
+      "lateFieldResponse": {
+        "width": 375,
+        "newResponseHidden": true,
+        "oldResponseRevertedHidden": true,
+        "navigationReenabled": true,
+        "classification": "Existing field load race. Synthetic backend privacy-policy/administrative state change; current public API cannot change location_hidden. Not a normal-user flag-changing attack or newly introduced PR regression."
+      }
+    },
+    {
+      "lateFieldDeleteResponse": {
+        "width": 375,
+        "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+        "actualOwnerDeleteSucceeded": true,
+        "freshResponseRemoved": true,
+        "oldResponseResurrected": true,
+        "markerResurrected": true,
+        "newsResurrected": false,
+        "classification": "Existing loadFieldUpdates race; actual current owner-delete API makes this UI resurrection reachable. Subsequent fresh GET removes it; deletion remains committed in memory DB. Not a newly introduced PR regression."
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [],
+  "traffic": [
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/15",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/7",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "challenges.cloudflare.com",
+      "path": "/turnstile/v0/api.js",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/d9647dc2-9023-4278-9891-5c63e48a56bc/delete",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/d9647dc2-9023-4278-9891-5c63e48a56bc/delete",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/15",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/7",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "challenges.cloudflare.com",
+      "path": "/turnstile/v0/api.js",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/cde487e5-c186-4d27-953e-4e092bf33d27/delete",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/cde487e5-c186-4d27-953e-4e092bf33d27/delete",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/15",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/7",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "challenges.cloudflare.com",
+      "path": "/turnstile/v0/api.js",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/5b5add90-d221-4822-9e67-4536be0974fa/delete",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/5b5add90-d221-4822-9e67-4536be0974fa/delete",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/15",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/7",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "challenges.cloudflare.com",
+      "path": "/turnstile/v0/api.js",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/9163949c-4fee-4a7f-9a4e-6f34a7284a42/delete",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/9163949c-4fee-4a7f-9a4e-6f34a7284a42/delete",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/15",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/site/7",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-weather-proxy.wooil-birdmap.workers.dev",
+      "path": "/weather",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "challenges.cloudflare.com",
+      "path": "/turnstile/v0/api.js",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/7888cf36-006c-44f9-98c2-eee2d009877f/delete",
+      "method": "OPTIONS",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates/7888cf36-006c-44f9-98c2-eee2d009877f/delete",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/capabilities",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports",
+      "method": "POST",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "path": "[static or navigation]",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/approved",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/pending",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/reports/recent-sites",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "path": "/field-updates",
+      "method": "GET",
+      "synthetic": true
+    }
+  ],
+  "constraints": {
+    "productionWorkerConnections": 0,
+    "productionD1Access": 0,
+    "sourceChanges": 0,
+    "staticCDNReadsAllowed": true,
+    "tileReadsSynthetic": true,
+    "captchaActualNetwork": false,
+    "coordinatesLogged": false,
+    "DNSFallbackBlocked": true,
+    "chromeHeadless": true
+  },
+  "limitationsNotes": [
+    "Desktop/mobile viewport emulation does not test a physical device keyboard/GPS.",
+    "Actual Leaflet engine is required. CDN bootstrap failures are recorded separately.",
+    "window.open and geolocation are synthetic to avoid launching external routes or using physical location.",
+    "All API methods run against local memory actual reports handler; not deployed configuration tests.",
+    "Late cache behavior is observed separately and must be compared to unchanged baseline source."
+  ],
+  "summary": {
+    "passedSteps": 55,
+    "totalSteps": 55,
+    "failedSteps": 0,
+    "pageExceptions": 0
+  },
+  "weatherCompatibilitySummary": {
+    "passed": 10,
+    "total": 10
+  },
+  "navigationCompatibilitySummary": {
+    "passed": 15,
+    "total": 20
+  },
+  "combination": {
+    "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+    "main": "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+    "mergeTree": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+    "indexContainsMainTmapChanges": true
+  },
+  "harnessAdaptation": {
+    "originalCurrentRun": "../original_current/general_final_e2e.json",
+    "reason": "Expired stored today must stay reference. Unconfirmed raw-today probes temporarily remove verified weekly alternatives; normal restoration and live merge assert eligible week_forecast fallback, while raw root/item provenance remains equal but expired.",
+    "extraChecksSeparateFrom55": true
+  }
+}

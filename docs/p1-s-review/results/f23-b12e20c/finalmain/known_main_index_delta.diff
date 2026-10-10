@@ -1,0 +1,85 @@
+diff --git a/index.html b/index.html
+index 69b6a08..29a12e6 100644
+--- a/index.html
++++ b/index.html
+@@ -790,0 +791,5 @@ body.fieldMode #fieldGuideBox{display:none}
++.spotTmapRoute{display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;margin-top:8px;padding:6px 10px;border:1px solid #155c90;border-radius:8px;background:#e8f3fc;color:#12466d!important;font-size:14px;font-weight:bold;text-decoration:none}
++/* 승인된 출현종 제보: 길찾기 두 버튼을 작은 팝업에서도 같은 줄에 배치한다. */
++.spotRouteButtons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
++.spotRouteButtons .spotKakaoRoute,.spotRouteButtons .spotTmapRoute{min-width:0;margin-top:0;padding:6px 3px;font-size:13px;white-space:nowrap}
++.leaflet-popup-content .btn.tmap,.mobilePopupButtons .btn.tmap{background:#e8f3fc;border:1px solid #155c90;color:#12466d!important}
+@@ -1528,0 +1534 @@ function ensureMasterDbMarkers(){
++      +(site.country==='대한민국'?tmapNavigationLink(site,site.name,'tmap','티맵')+' ':'')
+@@ -1593 +1599,26 @@ function spotKakaoRouteHtml(dest){
+-  return url?'<a class="spotKakaoRoute" target="_blank" rel="noopener" href="'+url+'">🚗 카카오맵 찾아가기</a>':'';
++  return url?'<a class="spotKakaoRoute" target="_blank" rel="noopener" href="'+url+'">🚗 카카오맵</a>':'';
++}
++/* 티맵 앱 딥링크: goalx=경도, goaly=위도. 보호 위치는 호출부에서 제외한다. */
++function tmapNavigationUrl(dest,name){
++  if(!dest||dest.lat===undefined||dest.lon===undefined||dest.lat===null||dest.lon===null)return '';
++  var lat=Number(dest.lat),lon=Number(dest.lon);
++  if(!isFinite(lat)||!isFinite(lon)||lat<-90||lat>90||lon<-180||lon>180||(lat===0&&lon===0))return '';
++  return 'tmap://route?goalname='+encodeURIComponent(name||'탐조지')+'&goalx='+lon+'&goaly='+lat;
++}
++function openTmapNavigation(){
++  if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
++    alert('티맵 내비게이션은 티맵이 설치된 스마트폰에서 이용해 주세요.');
++    return false;
++  }
++  return true;
++}
++function tmapNavigationLink(dest,name,cls,text){
++  var url=tmapNavigationUrl(dest,name);
++  return url?'<a class="'+cls+'" href="'+escapeHtml(url)+'" onclick="return openTmapNavigation()" title="티맵 앱이 설치된 스마트폰에서 열기">'+text+'</a>':'';
++}
++function spotTmapRouteHtml(dest){
++  return tmapNavigationLink(dest,'출현 지점','spotTmapRoute','🚙 티맵');
++}
++function spotRouteButtonsHtml(dest){
++  var kakao=spotKakaoRouteHtml(dest),tmap=spotTmapRouteHtml(dest);
++  return kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
+@@ -1597 +1628 @@ function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDes
+-  var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))';
++  var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':(!locationHidden&&kakaoDest?'min(240px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))');
+@@ -1603 +1634 @@ function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDes
+-    +spotHistoryHtml(history)+(locationHidden?'':spotKakaoRouteHtml(kakaoDest))+'</div>';
++    +spotHistoryHtml(history)+(locationHidden?'':spotRouteButtonsHtml(kakaoDest))+'</div>';
+@@ -1756,0 +1788 @@ function mobilePopupContent(site,desktopContent){
++    {selector:'a.tmap',className:'btn tmap',text:'🚙 티맵 내비게이션',href:site.country==='대한민국'?tmapNavigationUrl(site,site.name):''},
+@@ -1771,0 +1804 @@ function mobilePopupContent(site,desktopContent){
++    if(link&&def.selector==='a.tmap')link.setAttribute('onclick','return openTmapNavigation()');
+@@ -2741,0 +2775 @@ function v23ButtonsFromLegacy(source,site){
++    +(site.country==='대한민국'&&!isGukhwado?tmapNavigationLink(isYubudo?{lat:Number(yubudoDepartureLat),lon:Number(yubudoDepartureLon)}:site,isYubudo?'유부도 출항지':site.name,'btn tmap',isYubudo?'🚙 티맵 출항지':'🚙 티맵 내비'):'')
+@@ -5626,5 +5660,15 @@ function fieldNavChooser(update,message){
+-  var url=spotKakaoRouteUrl(fieldPublicPoint(update),update.species);
+-  var link=document.createElement('a');
+-  link.href=url;link.target='_blank';link.rel='noopener';link.textContent='내비게이션';
+-  link.onclick=fieldNavChoiceClose;
+-  row.appendChild(link);
++  var point=fieldPublicPoint(update);
++  var kakaoUrl=spotKakaoRouteUrl(point,update.species);
++  if(kakaoUrl){
++    var kakaoLink=document.createElement('a');
++    kakaoLink.href=kakaoUrl;kakaoLink.target='_blank';kakaoLink.rel='noopener';kakaoLink.textContent='카카오맵';
++    kakaoLink.onclick=fieldNavChoiceClose;
++    row.appendChild(kakaoLink);
++  }
++  var tmapUrl=tmapNavigationUrl(point,update.species);
++  if(tmapUrl){
++    var tmapLink=document.createElement('a');
++    tmapLink.href=tmapUrl;tmapLink.textContent='티맵';
++    tmapLink.onclick=function(){if(!openTmapNavigation())return false;fieldNavChoiceClose();};
++    row.appendChild(tmapLink);
++  }
+@@ -5645,8 +5689,3 @@ function fieldNavExternal(update,km,accuracy){
+-  var url=spotKakaoRouteUrl(fieldPublicPoint(update),update.species);
+-  if(!url)return;
+-  fieldToast(fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열어요.');
+-  // 위치 확인 뒤라 사용자 터치 직후가 아니어서 새 창이 막힐 수 있다. 막히면 직접 누르는 링크를 보여 준다.
+-  // 'noopener' 기능 문자열을 쓰면 성공해도 null 이 돌아와 차단으로 오판하므로, 열린 창의 opener 를 직접 끊는다.
+-  var opened=window.open(url,'_blank');
+-  if(opened){try{opened.opener=null;}catch(error){}}
+-  else fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 카카오맵 길찾기를 열려면 ‘내비게이션’을 눌러 주세요.');
++  if(!fieldPublicPoint(update))return;
++  // GPS 콜백 뒤 새 창 자동 실행 대신 사용자가 앱을 선택하도록 해 팝업 차단을 피한다.
++  fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 내비게이션 앱을 선택해 주세요.');

@@ -1,0 +1,138 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "89e7e339812fbd9c096008cb5631c88fd8765c03",
+  "previousMain": "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+  "combinedTree": "e02191c1ca4cc00e0faedab2ffd4e10b14c537e2",
+  "previousCombinedTree": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+  "remoteCheckedAtUtc": "2026-10-10T22:02:19.429Z",
+  "lastRemoteRefs": [
+    "b12e20c1b6d856a021898a0c1c9221b30393a221\trefs/heads/fix/p1-s-safety-guards",
+    "89e7e339812fbd9c096008cb5631c88fd8765c03\trefs/heads/main"
+  ],
+  "clockUtc": "2026-10-10T22:03:49.238Z",
+  "newHarnessErrors": 0,
+  "scriptChanges": "Copies of latest_main_validate.py/latest_current.mjs contain only new MAIN/TREE metadata substitutions. Product guards/assertions unchanged.",
+  "commands": [
+    {
+      "toolChunk": "1a365b",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "fetch",
+        "--no-tags",
+        "--no-write-fetch-head",
+        "origin",
+        "main"
+      ],
+      "exitCode": 0
+    },
+    {
+      "toolChunk": "1a365b",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "diff",
+        "--name-only",
+        "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+        "89e7e339812fbd9c096008cb5631c88fd8765c03"
+      ],
+      "exitCode": 0,
+      "result": [
+        "notices.json"
+      ]
+    },
+    {
+      "toolChunk": "1a365b",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "merge-tree",
+        "--write-tree",
+        "89e7e339812fbd9c096008cb5631c88fd8765c03",
+        "b12e20c1b6d856a021898a0c1c9221b30393a221"
+      ],
+      "exitCode": 0,
+      "tree": "e02191c1ca4cc00e0faedab2ffd4e10b14c537e2",
+      "conflicts": 0,
+      "actualBranchMerge": false
+    },
+    {
+      "toolChunk": "c6422a",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "archive",
+        "--format=zip",
+        "--output=C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\combinedFinal.zip",
+        "e02191c1ca4cc00e0faedab2ffd4e10b14c537e2"
+      ],
+      "exitCode": 0,
+      "expandedTo": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedFinal",
+      "zipSHA256": "1b7453fc4bee43b369010c6b05fd8cab741d800112aead3a95d9bb103abb3077",
+      "temporaryZipRemovedAfterExtract": true
+    },
+    {
+      "toolChunk": "b52365",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\final_notice\\latest_main_validate.py",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedFinal",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results\\final_notice"
+      ],
+      "exitCode": 0,
+      "clockStart": "2026-10-11T07:00:50.574417+09:00",
+      "clockEnd": "2026-10-11T07:00:50.983372+09:00",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONUTF8": "1"
+      }
+    },
+    {
+      "toolChunk": "801f02",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\final_notice\\latest_current.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedFinal",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results\\final_notice",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap"
+      ],
+      "exitCode": 0,
+      "clockStartUtc": "2026-10-10T22:00:52.431Z",
+      "clockEndUtc": "2026-10-10T22:00:53.119Z"
+    },
+    {
+      "toolChunk": "d384c1",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\final_notice\\notice_final_audit.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedFinal",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results\\final_notice",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain"
+      ],
+      "exitCode": 0,
+      "clockStartUtc": "2026-10-10T22:02:15.028Z",
+      "clockEndUtc": "2026-10-10T22:02:19.455Z"
+    },
+    {
+      "toolChunk": "d384c1",
+      "command": [
+        "git",
+        "-C",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap",
+        "ls-remote",
+        "origin",
+        "refs/heads/main",
+        "refs/heads/fix/p1-s-safety-guards"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "clockUtc": "2026-10-10T22:02:19.429Z",
+      "stdout": "b12e20c1b6d856a021898a0c1c9221b30393a221\trefs/heads/fix/p1-s-safety-guards\n89e7e339812fbd9c096008cb5631c88fd8765c03\trefs/heads/main"
+    }
+  ]
+}

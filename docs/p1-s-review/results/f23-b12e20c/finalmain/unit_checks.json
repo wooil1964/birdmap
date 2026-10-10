@@ -1,0 +1,109 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+  "combinedTree": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+  "clockPatched": false,
+  "productSourcePatched": false,
+  "rows": [
+    {
+      "name": "test_field_news.mjs",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_field_news.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest",
+      "clockStartUtc": "2026-10-10T21:52:51.981Z",
+      "clockEndUtc": "2026-10-10T21:52:52.148Z",
+      "sourceSHA256": "fc9883f587a0df3ecbacec0480efa8f13a6f1b82f3865ff7870fbc2457c0349f",
+      "exitCode": 1,
+      "summary": {
+        "tests": 9,
+        "suites": 0,
+        "pass": 7,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "coordinateRedaction": false,
+      "stdout": "✔ 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순 (7.4493ms)\n✔ 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다 (1.5231ms)\n✔ 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션 (1.3937ms)\n✔ 위치 보호·비정상 좌표는 길안내 좌표가 없다 (1.4742ms)\n✔ 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다 (1.5256ms)\n✖ 카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다 (2.395ms)\n✔ 위치정보를 저장·전송하는 코드가 새 길안내에 없다 (0.4638ms)\n✖ 외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다 (2.9957ms)\n✔ 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다 (1.2523ms)\nℹ tests 9\nℹ suites 0\nℹ pass 7\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.2412\n\n✖ failing tests:\n\ntest at .github\\scripts\\test_field_news.mjs:77:1\n✖ 카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다 (2.395ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + '<a class=\"spotKakaoRoute\" target=\"_blank\" rel=\"noopener\" href=\"https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4\">🚗 카카오맵</a>'\n  - '<a class=\"spotKakaoRoute\" target=\"_blank\" rel=\"noopener\" href=\"https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4\">🚗 카카오맵 찾아가기</a>'\n  \n      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest/.github/scripts/test_field_news.mjs:80:10)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1325:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)\n      at Test.postRun (node:internal/test_runner/test:1465:19)\n      at Test.run (node:internal/test_runner/test:1390:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: '<a class=\"spotKakaoRoute\" target=\"_blank\" rel=\"noopener\" href=\"https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4\">🚗 카카오맵</a>',\n    expected: '<a class=\"spotKakaoRoute\" target=\"_blank\" rel=\"noopener\" href=\"https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4\">🚗 카카오맵 찾아가기</a>',\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n\ntest at .github\\scripts\\test_field_news.mjs:92:1\n✖ 외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다 (2.9957ms)\n  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n  \n    assert.ok(block.includes('opened.opener=null'))\n  \n      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest/.github/scripts/test_field_news.mjs:95:10)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1325:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)\n      at Test.postRun (node:internal/test_runner/test:1465:19)\n      at Test.run (node:internal/test_runner/test:1390:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: false,\n    expected: true,\n    operator: '==',\n    diff: 'simple'\n  }\n",
+      "stderr": ""
+    },
+    {
+      "name": "test_today_weather_midnight.mjs",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_today_weather_midnight.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest",
+      "clockStartUtc": "2026-10-10T21:52:51.988Z",
+      "clockEndUtc": "2026-10-10T21:52:52.357Z",
+      "sourceSHA256": "ce9db15fd5538deb82bf94857f9963edf194b06d9f5e23bd40bc43965a09163a",
+      "exitCode": 0,
+      "summary": {
+        "tests": 17,
+        "suites": 0,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "coordinateRedaction": false,
+      "stdout": "✔ 자정 전 23:59 에는 기존 오늘 저장값이 그대로 쓰인다 (6.7538ms)\n✔ 자정 직후 저장 일일 자료만으로는 오늘 적합도를 낼 수 없다 (원인 재현) (19.2226ms)\n✔ 자정 직후 오늘 날짜 주간 예보가 있으면 출처와 예보 시각을 밝히고 적합도를 낸다 (5.9563ms)\n✔ 오늘 예보가 없거나 필수값이 모자라면 미확인을 유지한다 (17.8115ms)\n✔ 야간 시간대 예보만 남아 있으면 대체하지 않는다 (3.595ms)\n✔ 새 일일 자료가 도착하면 주간 대체에서 오늘 저장값으로 되돌아온다 (3.3564ms)\n✔ 저장 일일 자료가 오늘이면 주간 예보로 갈아타지 않는다 (3.2866ms)\n✔ 실제 저장 파일로 자정 직후를 재현하면 유부도·월포리해변이 미확인에서 벗어난다 (31.9336ms)\n✔ 오늘 날짜라도 예보 시각이 예정 갱신보다 오래되면 일일 자료만으로는 적합도를 낼 수 없다 (원인 재현) (3.8287ms)\n✔ 갱신 지연 구간에도 오늘 주간 예보가 있으면 주간 저장 예보로 대체한다 (5.4009ms)\n✔ 갱신 지연이어도 오늘 주간 예보가 없거나 쓸 수 없으면 미확인을 유지한다 (20.1894ms)\n✔ 늦은 일일 자료가 도착하면 갱신 지연 대체에서 오늘 저장값으로 되돌아온다 (3.3486ms)\n✔ 실제 저장 파일을 갱신 지연 시각으로 되돌리면 해리천습지·유부도·월포리해변이 미확인에서 벗어난다 (30.4378ms)\n✔ R2-1 검증된 저장 자료는 정상 점수(0·100·92.5 포함)와 별점을 그대로 표시한다 (18.7872ms)\n✔ R2-2 적격 metadata 가 없거나 필수 기상값이 결측인 저장 자료는 점수·별점을 내지 않고 참고 기상은 남긴다 (24.5579ms)\n✔ R2-3 이전 저장 자료는 참고 값만 남기고 점수는 미확인이며, 주간 파생 점수는 검증된 표본일 때만 표시한다 (23.6219ms)\n✔ R2-4 출처 정보(_weatherState)가 없는 객체는 점수를 내지 않는다(적격성 미확인) (3.2052ms)\nℹ tests 17\nℹ suites 0\nℹ pass 17\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 307.5436\n",
+      "stderr": ""
+    },
+    {
+      "name": "test_site_history_cache.mjs",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_site_history_cache.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest",
+      "clockStartUtc": "2026-10-10T21:52:51.993Z",
+      "clockEndUtc": "2026-10-10T21:52:52.147Z",
+      "sourceSHA256": "2066de66b805277cf1c99cd14c2b16d1d69d5d61efc2b4d38b016fa2ba3a3f7f",
+      "exitCode": 0,
+      "summary": {
+        "tests": 16,
+        "suites": 0,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "coordinateRedaction": false,
+      "stdout": "✔ 같은 탐조지를 다시 열면 네트워크를 타지 않는다 (2.5076ms)\n✔ 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다 (1.124ms)\n✔ 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영) (0.8329ms)\n✔ 승인 제보 갱신이 돌면 기억을 버린다 (0.842ms)\n✔ 탐조지마다 따로 기억한다 (0.9186ms)\n✔ '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다 (0.8129ms)\n✔ no-cache 를 붙이지 않아 서버의 60초 캐시를 살린다 (1.0332ms)\n✔ 실패해도 null 을 돌려주고 기억에 남기지 않는다 (1.0212ms)\n✔ 응답 모양이 어긋나면 실패로 본다 (1.0991ms)\n✔ 응답이 오지 않으면 시간을 끊는다 (1.0719ms)\n✔ 이력 칸은 접이식이고 기본은 접힌 상태다 (0.2766ms)\n✔ 제목 옆에 승인된 이력 건수를 적는다 (0.4314ms)\n✔ '더 보기'와 이력 조회 방식은 그대로 둔다 (0.2371ms)\n✔ 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다 (0.4314ms)\n✔ 이력을 그릴 때 칸을 다시 찾는다 (0.3127ms)\n✔ 서버가 쓰는 캐시 시간과 같은 값을 쓴다 (0.9663ms)\nℹ tests 16\nℹ suites 0\nℹ pass 16\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.8038\n",
+      "stderr": ""
+    },
+    {
+      "name": "test_data_autorefresh.mjs",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_data_autorefresh.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest",
+      "clockStartUtc": "2026-10-10T21:52:51.997Z",
+      "clockEndUtc": "2026-10-10T21:52:52.243Z",
+      "sourceSHA256": "7ce41dc10e1079708c5af7d27e6786fba66b4c078a3f8d1c37c21ee311fd2dde",
+      "exitCode": 0,
+      "summary": {
+        "tests": 31,
+        "suites": 0,
+        "pass": 31,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "coordinateRedaction": false,
+      "stdout": "✔ 발행 시각이 같으면 반영도 다시 그리기도 하지 않는다 (깜빡임 없음) (4.0219ms)\n✔ 새 자료가 오면 전역을 바꾸고 팝업·주간 추천을 한 번만 다시 그린다 (16.1096ms)\n✔ 통신 실패·잘못된 JSON 이면 마지막 정상 자료를 그대로 둔다 (8.5011ms)\n✔ 실패한 다음 확인에서 정상 복구된다 (2.345ms)\n✔ 늦게 도착한 응답이 더 최신 자료를 덮어쓰지 않는다 (1.9833ms)\n✔ 탭이 숨겨져 있으면 요청하지 않고 주기 타이머도 걸지 않는다 (1.5788ms)\n✔ 최초 로드는 탭이 숨겨져 있어도 자료를 읽는다 (1.7517ms)\n✔ 탭 복귀 때 focus 와 visibilitychange 가 겹쳐도 한 번만 요청한다 (1.7865ms)\n✔ 최초 로드 전에 들어온 focus 는 같은 파일을 두 번 읽지 않는다 (2.3856ms)\n✔ 최소 간격이 지나면 다시 확인한다 (2.3057ms)\n✔ 보이는 탭에서는 10분 주기 타이머를 건다 (1.564ms)\n✔ 캐시된 옛 파일을 그대로 쓰지 않도록 재검증 요청으로 읽는다 (0.6589ms)\n✔ 조석 daily 가 오늘이 아니면 월간 자료로 보완하고, 한 번도 못 받으면 월간으로 대체한다 (5.0403ms)\n✔ 실제 저장 파일도 stamp 로 구분된다 (23.9481ms)\n✔ C3 today: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다 (2.187ms)\n✔ C3 today: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다 (1.8213ms)\n✔ C3 today: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다 (1.56ms)\n✔ C3 today: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단) (1.5135ms)\n✔ C3 week: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다 (1.4836ms)\n✔ C3 week: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다 (1.4818ms)\n✔ C3 week: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다 (1.4425ms)\n✔ C3 week: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단) (1.4119ms)\n✔ F1 today: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다 (1.5196ms)\n✔ F1 today: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부 (1.5142ms)\n✔ F3 today: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음) (5.7435ms)\n✔ F1 week: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다 (1.4369ms)\n✔ F1 week: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부 (1.4519ms)\n✔ F3 week: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음) (5.508ms)\n✔ F2-b root10:40/item10:40 강수1 → root10:50/item10:30 혼합 → root10:50/item10:50 교정: 혼합은 거부되고 교정본이 적용된다 (1.6096ms)\n✔ F2-b 혼합(미래 item·누락 item) 뒤에도 정상 10:55 신규 배치가 적용되고, 검증된 같은 발행의 다른 내용·옛 발행·순번 역전은 계속 막는다 (2.1031ms)\n✔ F2-b 아직 검증된 자료가 없으면 혼합 배치도 참고용으로 적용되지만 기준이 되지 않아 이후 교정본이 적용된다 (1.5126ms)\nℹ tests 31\nℹ suites 0\nℹ pass 31\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 188.0806\n",
+      "stderr": ""
+    }
+  ]
+}

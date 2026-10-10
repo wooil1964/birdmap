@@ -169,17 +169,44 @@ S1-R 보호 표현171 누락0·일반17 오탐0. 번식6·최근 집계18·legac
 
 ## 9. 최신 main·CI·기상 날짜
 
-FINAL_MAIN_EVIDENCE
+첫 재개 시 확인한 main은 b596cdc8ede83fe25e64ec10b2dc88d4141673b2, 임시 merge-tree2c3703e7234f9f0ab02786f03d03a2314bf5cfcf다. 충돌0이며 실제main 병합은 하지 않았다. 새main에는 c361342 TMAP 추가와528337e 보고 팝업 링크 공존 변경이 포함됐다.
+
+자동5JSON은 main blob과 동일하다. 제품8파일 head 동일성은7/8이며 index가main TMAP 변경을 함께 보존하므로 strict8 assertion exit1을 보존했다. 추천·저장·loader·live·parser137/137 실제함수와 추천constants는 b12와 동일하고 siteData전체JSON·좌표190/190도 동일하다. main의 navigation12함수는 결합에서 보존됐다. root도별도111함수·siteData/좌표·자동5blob을교차확인했다.
+
+실제10/11 06:50:11~12KST Python검사는 today190/week10640 모두통과했다. 자료는10/11 04:16KST발행·04:18갱신이다. 실제06:51:54JS평가는 today190모두 갱신지연 참고상태/current=false/eligible=false이며 scoreAllowed0이었다. 정상주간docVerified=true에서후보176·최종10이선택되고모두safe/eligible·예외0이다. 이번현자료는제보OFF이며10/8고정자료나운영제보ON을섞지않았다. 현재topIDs7,8,10,15,126,107,14,48,3,5는고정10/8의OFF목록과도별도시각/자료결과다.
+
+새main영향unit은 midnight17/17·history16/16·autorefresh31/31·field_news7/9, 합계71/73이다. field2실패는카카오버튼옛문구와자동window.open 기대가main의새문구/직접앱선택chooser와달라생긴다. exact main에도같은7/9·같은testblob/실패원인이재현돼PR신규회귀로판정하지않는다. 실패를삭제하거나621자동통과에합산하지않았다.
+
+실제Chrome344·375·768·1024·1440px에서 최신main 계약 E2E55/55·전체부적격empty/정상원본복구10/10·현재marker 범위를 명시한일반/보호Kakao·TMAP20/20, 페이지예외0을확인했다. storedtoday참고→정상week_forecast/current/eligible 대안선택을실제DOM에서확인했다. 최신notice변경후별도5폭E2E는아래최종갱신추가기록으로분리한다.
+
+원형현재E2E45/55의10실패는 rawtoday를무효로만든상황에도정상주간대안이있어서팝업미확인을기대할수없었던차이다. 새시험에서는rawtoday참고계약확인때만week대안을별도로제거하고, 원본today/week복구시10카드와적격week파생점수가복구되는지추가확인했다. 원형assertion과실패원장을보존했다.
+
+초기TMAP15/20의5실패는닫히는이전일반Leaflet팝업을global querySelector가읽은범위오류였다. 실제현재marker.getPopup().getElement()에서는보호팝업hidden-note=true/카카오0/TMAP0이고일반팝업은두링크를유지해20/20이다. 최초15/20원장도보존했다. 티맵앱을실제로실행하지않았으며Chrome화면폭시험은물리모바일/GPS/설치앱검증을대체하지않는다.
+
+선상잔여표시의실제기준도대조했다. 선상추천은원본wind<=6/wave<=0.7/무강수, 기존여객선안내는표시값을읽어wind7/wave1.5부터주의,11/2부터위험이다. 대표기상/여객선과선상탐조추천은같은판정이아니다. 실제generator순수계산은wind6.01→85, wave0.701/강수0.001→92이며엄격선상안전추천에서는모두제외된다. 합성99를실제생성사례로주장하지않는다. 이전352와b12의기존팝업5조건도같아신규F2/F3회귀로합산하지않았다.
+
+정확 refs/tree/clock·strict실패·mainbaseline은 finalmain/의source_manifest.json,main_delta_impact.json,latest_main_validator.json,js_current190.json,unit_checks.json과execution_receipts.json에있다. raw좌표대신hash만저장했다.
+
+최신main기상schedule run38079151621(10/11 04:16~04:18KST), 월간조석run38088304953(06:37KST)의build/validate/commitstep 성공을읽기전용으로확인했다. main Pages38088325736성공도 b12PR배포나CI성공과다른사실이다. deployment_readonly/github_metadata_readonly.json 참조.
 
 10/10의 current 검증과10/11 새main 검증은 별도 기록한다. 이전10/9 JSON을10/10 현재 배치로 검사한 Batch date mismatch 근거는 FINAL_DEPLOY_RECHECK에서 이어받았다. 실제 생성일 고정 시험과 실제 현재 배치/정상 합성builder는 별도로 검사했으며 날짜 검사 삭제·과거JSON날짜 변경·자동JSON수정은0.
 
 PR 전용 검증 CI가 미구축이다. head b12의 all-event Actions 및 commit status 조회 결과를 저장하고, 기존 main 자동갱신 성공과 구분한다. 4개 workflow는 운영JSON 생성·commit/push를 포함해 임의 dispatch/rerun하지 않았다. 수동 독립 exact-SHA 증빙을 병합 검토 근거로 채택할지는 운영 승인 항목이며 CI 성공으로 대체 표기하지 않는다.
 
+### 게시 전 최종 main 갱신
+
+최종 확인 main은 **89e7e339812fbd9c096008cb5631c88fd8765c03**, 임시 tree **e02191c1ca4cc00e0faedab2ffd4e10b14c537e2**다. b596 대비 **notices.json만** 변경됐다(10월 출현종 공개 공지3개). 자동기상 갱신이라고 추정하지 않고 실제diff를확인했다. 제품·기상/조석·137함수·탐조지190/좌표는불변이며 최신공지도mainblob을보존한다.
+
+새공지입력으로 실제07:00:50~53KST validators와후보/최종을추가실행했다. today190은같은갱신지연reference/scoreAllowed0, 정상week후보176·최종10all safe/eligible·예외0이고직전현재topID/점수와같다. 과거22:40입력을이시험에섞지않았다.
+
+새결합 실제Chrome평가는07:00:45.7677508KST다. 일반5폭55/55·예외0, rawtoday참고상태유지/activeweek현재적격·정상10카드·현장소식등록/본인삭제/보호길안내/오류보존을확인했다. archive10파일과exacttree는일치하며직전대비공지외9파일이같다. 빈목록·복구10과scopedTMAP20은직전검증+소스불변근거로재사용하고새로합산하지않았다. finaldom/FINAL89_DOM_REPORT.md 및final89_execution_manifest.json 참조.
+
+최종원격확인시각과공지입력보존·전체후보적격검사 결과는 finalmain/final_notice 증빙에따로있다. 게시후예약갱신까지미래무변경을보증하는판정이아니다.
 ## 10. 잔여 위험·운영 선행 조건
 
 |항목|판단과 선행 조건|
 |---|---|
-|운영 Worker/rollback|OPERATIONAL_VERSION_EVIDENCE|
+|운영 Worker/rollback|공개 Worker settings/deployments/versions/content 읽기전용 GET은401, admin metadata는429로 확인 실패했다. 기존 인증을 메모리에서 사용했으며 token/secret/raw source 저장·인증refresh·POST/D1/배포0. 현재 version과 보호 유지 rollback은 미확인이다. 과거 문서ID·로컬Wrangler·Git SHA로 현재 운영 증거를 대체하지 않는다. 운영 전 확인 필수.|
 |R5 극단 숫자 문자열|기존 별도P2. 이번 시각 F3로 해결되지 않음. 현재 신뢰된 생성경로/최종 차단 시험에서 새 우회 증거 없음.|
 |삭제 후 늦은GET 마커 복귀|별도P1 보안 위험 유지. 서버 실제삭제가 DOM의 과거 응답 철회까지 보증하지 않음. 개인정보·민감위치 철회가 운영 전환 요구이면 그 전환 전에 cache 경합을 해결해야 함.|
 |보호 상태 역전·길안내 복귀|서버 재분류/fieldhide/S1-P 전환 전 필수 선행 차단. S1-R 때문에 과거 공개자료가 새 보호 상태가 되는 경우도 포함. 실제 운영 대상 영향은 원자료를 외부 저장하지 않는 읽기전용 점검으로 먼저 확인해야 함.|

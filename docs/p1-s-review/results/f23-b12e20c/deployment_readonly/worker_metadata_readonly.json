@@ -1,0 +1,150 @@
+{
+  "startedAt": "2026-10-10T21:50:15.742Z",
+  "repositoryProductSHA": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "scope": "Existing authentication, Cloudflare Worker metadata/source GET only. No credential values or raw settings/source persisted.",
+  "credentialStatus": "existing_token_available_hidden",
+  "requests": [
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports/settings",
+      "startedAt": "2026-10-10T21:50:15.745Z",
+      "httpStatus": 401,
+      "contentType": "application/json",
+      "responseSHA256": "6979949596e21188252f2394e828a8d535daec89ca894ea4aa85179c83e27e00",
+      "bytes": 105,
+      "apiSuccess": false,
+      "errorCodes": [
+        10000
+      ],
+      "endedAt": "2026-10-10T21:50:16.246Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports/deployments",
+      "startedAt": "2026-10-10T21:50:15.781Z",
+      "httpStatus": 401,
+      "contentType": "application/json",
+      "responseSHA256": "6979949596e21188252f2394e828a8d535daec89ca894ea4aa85179c83e27e00",
+      "bytes": 105,
+      "apiSuccess": false,
+      "errorCodes": [
+        10000
+      ],
+      "endedAt": "2026-10-10T21:50:16.167Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports/versions",
+      "startedAt": "2026-10-10T21:50:15.782Z",
+      "httpStatus": 401,
+      "contentType": "application/json",
+      "responseSHA256": "6979949596e21188252f2394e828a8d535daec89ca894ea4aa85179c83e27e00",
+      "bytes": 105,
+      "apiSuccess": false,
+      "errorCodes": [
+        10000
+      ],
+      "endedAt": "2026-10-10T21:50:16.153Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports/content",
+      "startedAt": "2026-10-10T21:50:15.782Z",
+      "httpStatus": 401,
+      "contentType": "application/json",
+      "responseSHA256": "6979949596e21188252f2394e828a8d535daec89ca894ea4aa85179c83e27e00",
+      "bytes": 105,
+      "apiSuccess": false,
+      "errorCodes": [
+        10000
+      ],
+      "endedAt": "2026-10-10T21:50:16.226Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports-admin/settings",
+      "startedAt": "2026-10-10T21:50:16.246Z",
+      "httpStatus": 429,
+      "contentType": "application/json",
+      "responseSHA256": "845fc7e32f4672cf870f454ea134f35df3d03e60ca9aff20d03fc0984f4cac58",
+      "bytes": 153,
+      "apiSuccess": false,
+      "errorCodes": [
+        10429
+      ],
+      "endedAt": "2026-10-10T21:50:16.583Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports-admin/deployments",
+      "startedAt": "2026-10-10T21:50:16.247Z",
+      "httpStatus": 429,
+      "contentType": "application/json",
+      "responseSHA256": "845fc7e32f4672cf870f454ea134f35df3d03e60ca9aff20d03fc0984f4cac58",
+      "bytes": 153,
+      "apiSuccess": false,
+      "errorCodes": [
+        10429
+      ],
+      "endedAt": "2026-10-10T21:50:16.562Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports-admin/versions",
+      "startedAt": "2026-10-10T21:50:16.247Z",
+      "httpStatus": 429,
+      "contentType": "application/json",
+      "responseSHA256": "845fc7e32f4672cf870f454ea134f35df3d03e60ca9aff20d03fc0984f4cac58",
+      "bytes": 153,
+      "apiSuccess": false,
+      "errorCodes": [
+        10429
+      ],
+      "endedAt": "2026-10-10T21:50:16.597Z"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/workers/scripts/birdmap-reports-admin/content",
+      "startedAt": "2026-10-10T21:50:16.247Z",
+      "httpStatus": 429,
+      "contentType": "application/json",
+      "responseSHA256": "845fc7e32f4672cf870f454ea134f35df3d03e60ca9aff20d03fc0984f4cac58",
+      "bytes": 153,
+      "apiSuccess": false,
+      "errorCodes": [
+        10429
+      ],
+      "endedAt": "2026-10-10T21:50:16.634Z"
+    }
+  ],
+  "workers": {
+    "birdmap-reports": {
+      "deploymentsAvailable": false,
+      "settingsAvailable": false,
+      "versionListAvailable": false,
+      "currentDeployment": null,
+      "recentVersions": [],
+      "bindings": [],
+      "publicVariables": {},
+      "contentProof": null
+    },
+    "birdmap-reports-admin": {
+      "deploymentsAvailable": false,
+      "settingsAvailable": false,
+      "versionListAvailable": false,
+      "currentDeployment": null,
+      "recentVersions": [],
+      "bindings": [],
+      "publicVariables": {},
+      "contentProof": null
+    }
+  },
+  "currentVersionsConfirmed": false,
+  "protectedRollbackConfirmed": false,
+  "operatingWrites": 0,
+  "d1Calls": 0,
+  "postCalls": 0,
+  "tokenRefreshCalls": 0,
+  "authChanges": 0,
+  "endedAt": "2026-10-10T21:50:16.634Z"
+}

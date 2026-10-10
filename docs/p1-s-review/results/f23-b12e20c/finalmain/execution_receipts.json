@@ -1,0 +1,206 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+  "combinedTree": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+  "clockUtc": "2026-10-10T21:56:48.385Z",
+  "commands": [
+    {
+      "toolChunk": "ca208c",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "cat-file",
+        "-t",
+        "b596cdc8ede83fe25e64ec10b2dc88d4141673b2"
+      ],
+      "exitCode": null,
+      "wrapperExitCode": 0,
+      "result": "fatal: object was not available before authorized fetch; nested exit not captured. No assertion changed."
+    },
+    {
+      "toolChunk": "c13438",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "fetch",
+        "--no-tags",
+        "--no-write-fetch-head",
+        "origin",
+        "main"
+      ],
+      "exitCode": 0,
+      "result": "Object fetched; remote-tracking origin/main advanced bf74095 to b596cdc. No actual branch/main checkout or merge."
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap",
+        "ls-remote",
+        "origin",
+        "refs/heads/main",
+        "refs/heads/fix/p1-s-safety-guards"
+      ],
+      "exitCode": 0,
+      "stdout": "b12e20c1b6d856a021898a0c1c9221b30393a221\trefs/heads/fix/p1-s-safety-guards\nb596cdc8ede83fe25e64ec10b2dc88d4141673b2\trefs/heads/main",
+      "stderr": "",
+      "toolChunk": "abf1c5"
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap",
+        "merge-tree",
+        "--write-tree",
+        "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+        "b12e20c1b6d856a021898a0c1c9221b30393a221"
+      ],
+      "exitCode": 0,
+      "stdout": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+      "stderr": "",
+      "toolChunk": "abf1c5"
+    },
+    {
+      "toolChunk": "24c6de",
+      "command": [
+        "git",
+        "-C",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "archive",
+        "--format=zip",
+        "--output=C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\combinedLatest.zip",
+        "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf"
+      ],
+      "exitCode": 0,
+      "temporaryZipSHA256": "72911d0d430a52dbf95638103f1338a2744518b93d550c37e159bf6cd26c9b39",
+      "expandedTo": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest",
+      "temporaryZipRemovedAfterExtract": true
+    },
+    {
+      "toolChunk": "d02652",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\latest_main_validate.py",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results"
+      ],
+      "exitCode": 0,
+      "clockStart": "2026-10-11T06:50:11.806366+09:00",
+      "clockEnd": "2026-10-11T06:50:12.090988+09:00",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONUTF8": "1"
+      }
+    },
+    {
+      "toolChunk": "abf1c5",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\source_manifest.mjs",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results"
+      ],
+      "exitCode": 1,
+      "result": "Strict product8 assertion failed because latest main TMAP changes are preserved in index; product7/8. Failure retained."
+    },
+    {
+      "toolChunk": "69c5ef",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\latest_current.mjs",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap"
+      ],
+      "exitCode": 0,
+      "clockStartUtc": "2026-10-10T21:51:53.924Z",
+      "clockEndUtc": "2026-10-10T21:51:54.550Z"
+    },
+    {
+      "toolChunk": "1c2f35",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\unit_checks.mjs",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results"
+      ],
+      "exitCode": 1,
+      "result": "4 product unit files executed in parallel; field7/9 exit1; other3 pass64/64 exit0.",
+      "individualCommands": [
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--test",
+            "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_field_news.mjs"
+          ],
+          "exitCode": 1,
+          "clockStartUtc": "2026-10-10T21:52:51.981Z",
+          "clockEndUtc": "2026-10-10T21:52:52.148Z"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--test",
+            "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_today_weather_midnight.mjs"
+          ],
+          "exitCode": 0,
+          "clockStartUtc": "2026-10-10T21:52:51.988Z",
+          "clockEndUtc": "2026-10-10T21:52:52.357Z"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--test",
+            "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_site_history_cache.mjs"
+          ],
+          "exitCode": 0,
+          "clockStartUtc": "2026-10-10T21:52:51.993Z",
+          "clockEndUtc": "2026-10-10T21:52:52.147Z"
+        },
+        {
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--test",
+            "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest\\.github\\scripts\\test_data_autorefresh.mjs"
+          ],
+          "exitCode": 0,
+          "clockStartUtc": "2026-10-10T21:52:51.997Z",
+          "clockEndUtc": "2026-10-10T21:52:52.243Z"
+        }
+      ]
+    },
+    {
+      "toolChunk": "967199",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\mainLatest\\.github\\scripts\\test_field_news.mjs"
+      ],
+      "exitCode": 1,
+      "wrapperExitCode": 0,
+      "result": "Exact latest main baseline field7/9 with same two test expectation failures.",
+      "baselineArchive": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/mainLatest",
+      "temporaryZipRemovedAfterExtract": true
+    },
+    {
+      "toolChunk": "5efb2b",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\scripts\\main_delta_impact.mjs",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap",
+        "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedLatest",
+        "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f23_b12_finalmain\\results"
+      ],
+      "exitCode": 0,
+      "result": "137 unchanged product functions; siteData and coordinate digest190 parity; main-navigation12 parity; baseline failure classification confirmed."
+    }
+  ],
+  "sourceAssertionsRelaxed": false,
+  "validatorScriptMetadataOnlyTransform": true,
+  "productSourceChanged": false,
+  "initialObjectAbsenceRecorded": true
+}

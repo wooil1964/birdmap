@@ -1,0 +1,4325 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+  "combinedTree": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+  "clockStartUtc": "2026-10-10T21:51:53.924Z",
+  "clockEndUtc": "2026-10-10T21:51:54.550Z",
+  "clockPatched": false,
+  "weatherDataPatched": false,
+  "sourceFunctionsPatched": false,
+  "sourceFrom": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedLatest",
+  "indexLFSHA256": "5f4d8515a1618483344b6c8b3524af22830359bda335d726290b3b001f2d5c6d",
+  "inputFiles": [
+    {
+      "key": "week",
+      "file": "weather_week.json",
+      "generatedAt": "2026-10-11 04:16 KST",
+      "startDate": "2026-10-11",
+      "date": null,
+      "SHA256": "370b4ad78c7ff55cb3698f6aa963ff4bdd2d72d6a6afd7e5bab741f589d0b342"
+    },
+    {
+      "key": "today",
+      "file": "weather_today.json",
+      "generatedAt": "2026-10-11 04:16 KST",
+      "startDate": null,
+      "date": "2026-10-11",
+      "SHA256": "95cb9631919b2e4cbee8c23e2a7507d210c29814f3945dd7fbec97335fc2dabd"
+    },
+    {
+      "key": "tide",
+      "file": "tide_month.json",
+      "generatedAt": "2026-10-11 06:37 KST",
+      "startDate": null,
+      "date": null,
+      "SHA256": "26515f63dc1791ae52591b48a1daa21910fae6cd273e358254f179fcb1be1cef"
+    },
+    {
+      "key": "rules",
+      "file": "weather_rules.json",
+      "generatedAt": null,
+      "startDate": null,
+      "date": null,
+      "SHA256": "83d05dcaf454028318513e366120538de2fdfe9477406a7db7d392013dbee03f"
+    },
+    {
+      "key": "notices",
+      "file": "notices.json",
+      "generatedAt": null,
+      "startDate": null,
+      "date": null,
+      "SHA256": "721ff45d1c58db197eaf754fe8ae4abccad912d6bcf713d3d1693d73b398efb6"
+    }
+  ],
+  "recentSightings": {
+    "mode": "reports_off",
+    "reason": "No latest public recent-report snapshot supplied; empty browser startup state. No 10/8 or 10/10 fixed snapshots loaded."
+  },
+  "runtimeSiteCount": 190,
+  "siteDataDeclarationSHA256": "8720f3f51c13c1753ab41a5377debea54fdea7ef9393c59f6b2faf23feb3dd39",
+  "sourceParity": [
+    {
+      "name": "summerPelagicSafety",
+      "combinedLine": 3674,
+      "combinedSHA256": "4aad37f76789e89c97acb92759eb1fd694feec993eba0c2e0309636b645f34e8",
+      "headSHA256": "4aad37f76789e89c97acb92759eb1fd694feec993eba0c2e0309636b645f34e8",
+      "identical": true
+    },
+    {
+      "name": "weeklySummerRecommendationSeason",
+      "combinedLine": 3628,
+      "combinedSHA256": "4556f6f4ef320b1b75dcba8cdf32407dac57a481b825c2717adf5a00ba56f984",
+      "headSHA256": "4556f6f4ef320b1b75dcba8cdf32407dac57a481b825c2717adf5a00ba56f984",
+      "identical": true
+    },
+    {
+      "name": "summerBirdingAxes",
+      "combinedLine": 3631,
+      "combinedSHA256": "feb8ccb458b030152deafdaf2ae5b4e30875746bea845843605b71286dfe4e13",
+      "headSHA256": "feb8ccb458b030152deafdaf2ae5b4e30875746bea845843605b71286dfe4e13",
+      "identical": true
+    },
+    {
+      "name": "summerBalancedRecommendations",
+      "combinedLine": 3653,
+      "combinedSHA256": "1d24a3e4896b542de68d366c9fc339ccefddff29c2c529fa00dc9f00a7ba5535",
+      "headSHA256": "1d24a3e4896b542de68d366c9fc339ccefddff29c2c529fa00dc9f00a7ba5535",
+      "identical": true
+    },
+    {
+      "name": "summerAxisLabel",
+      "combinedLine": 3677,
+      "combinedSHA256": "0a141d3296d2d97932d6a65ab7b437c12721f2c12f7d398a2f419c3584bc678c",
+      "headSHA256": "0a141d3296d2d97932d6a65ab7b437c12721f2c12f7d398a2f419c3584bc678c",
+      "identical": true
+    },
+    {
+      "name": "weeklyKstDateParts",
+      "combinedLine": 3687,
+      "combinedSHA256": "109ff1c16ac78c3a418083e45830562fe800a3b7cdfa008f0caa51fccbcba6eb",
+      "headSHA256": "109ff1c16ac78c3a418083e45830562fe800a3b7cdfa008f0caa51fccbcba6eb",
+      "identical": true
+    },
+    {
+      "name": "weeklyDateFromText",
+      "combinedLine": 3692,
+      "combinedSHA256": "f159da6f6b34587ca40829750c27892886f82ea297728defeda2d4391466cff2",
+      "headSHA256": "f159da6f6b34587ca40829750c27892886f82ea297728defeda2d4391466cff2",
+      "identical": true
+    },
+    {
+      "name": "weeklyDateTextFromUtc",
+      "combinedLine": 3696,
+      "combinedSHA256": "edcc503e720a9126d09e8d9005a08ed3dda03163c76888676dbfd09994883061",
+      "headSHA256": "edcc503e720a9126d09e8d9005a08ed3dda03163c76888676dbfd09994883061",
+      "identical": true
+    },
+    {
+      "name": "weeklyTodayDateText",
+      "combinedLine": 3699,
+      "combinedSHA256": "1f6003d8b013bc7629136b3839a54e2349534eef8c2d43861e6496aec149b9f0",
+      "headSHA256": "1f6003d8b013bc7629136b3839a54e2349534eef8c2d43861e6496aec149b9f0",
+      "identical": true
+    },
+    {
+      "name": "weeklyInfo",
+      "combinedLine": 3703,
+      "combinedSHA256": "a3e85c5a54d2a7753a27eca20d83805f6f5cf4d9c999d0380585d9e0115f6e2b",
+      "headSHA256": "a3e85c5a54d2a7753a27eca20d83805f6f5cf4d9c999d0380585d9e0115f6e2b",
+      "identical": true
+    },
+    {
+      "name": "weeklyDateInRange",
+      "combinedLine": 3712,
+      "combinedSHA256": "8851011afe2eb6847bc623e3ba8ea708020337a3bbc9ea297a59dd5e482015ae",
+      "headSHA256": "8851011afe2eb6847bc623e3ba8ea708020337a3bbc9ea297a59dd5e482015ae",
+      "identical": true
+    },
+    {
+      "name": "weeklyMonthForDate",
+      "combinedLine": 3715,
+      "combinedSHA256": "5f87ccd6c01cc238cdf6893ee03ed434d3a99320396344de78fe50678be1fa59",
+      "headSHA256": "5f87ccd6c01cc238cdf6893ee03ed434d3a99320396344de78fe50678be1fa59",
+      "identical": true
+    },
+    {
+      "name": "weeklyDateLabel",
+      "combinedLine": 3719,
+      "combinedSHA256": "eca008fc97aff7718b789db6476e95caa8821ac81bdba75c1961171f1a532a59",
+      "headSHA256": "eca008fc97aff7718b789db6476e95caa8821ac81bdba75c1961171f1a532a59",
+      "identical": true
+    },
+    {
+      "name": "weeklyNowKstMinutes",
+      "combinedLine": 3726,
+      "combinedSHA256": "f0c44e1008d32cea4bf268131286641489ecbee16fb45b3d2e79cfde23f005f9",
+      "headSHA256": "f0c44e1008d32cea4bf268131286641489ecbee16fb45b3d2e79cfde23f005f9",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleMinutes",
+      "combinedLine": 3731,
+      "combinedSHA256": "5a7e00a0383551eb6f7a28aaa994cb5a30a03256d7050434a571db74d3f32160",
+      "headSHA256": "5a7e00a0383551eb6f7a28aaa994cb5a30a03256d7050434a571db74d3f32160",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleTimeText",
+      "combinedLine": 3735,
+      "combinedSHA256": "f8d6a9160196449976f07286d493ca9329083fb89e3218a8a79b280a18d665d2",
+      "headSHA256": "f8d6a9160196449976f07286d493ca9329083fb89e3218a8a79b280a18d665d2",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleDateText",
+      "combinedLine": 3739,
+      "combinedSHA256": "747b6c54ab97dd72e801e58b47330746f7bd8f6b574a64066736ef4257f878aa",
+      "headSHA256": "747b6c54ab97dd72e801e58b47330746f7bd8f6b574a64066736ef4257f878aa",
+      "identical": true
+    },
+    {
+      "name": "weeklySunTimes",
+      "combinedLine": 3744,
+      "combinedSHA256": "19389d17ae991497673cb104e4dd3db6867b881eff091af1eaf10efc491b9516",
+      "headSHA256": "19389d17ae991497673cb104e4dd3db6867b881eff091af1eaf10efc491b9516",
+      "identical": true
+    },
+    {
+      "name": "weeklyWeekSite",
+      "combinedLine": 3771,
+      "combinedSHA256": "e77394137aa4fad52358ea45b27a74fb65d63cd497577486cc65193bc10b99f0",
+      "headSHA256": "e77394137aa4fad52358ea45b27a74fb65d63cd497577486cc65193bc10b99f0",
+      "identical": true
+    },
+    {
+      "name": "weeklyDaySamples",
+      "combinedLine": 3776,
+      "combinedSHA256": "15747963eab800bde4b5011beec1a9ebac0cd59513430eb6e457262f7f7e7402",
+      "headSHA256": "15747963eab800bde4b5011beec1a9ebac0cd59513430eb6e457262f7f7e7402",
+      "identical": true
+    },
+    {
+      "name": "weeklyDaylightCandidates",
+      "combinedLine": 3782,
+      "combinedSHA256": "e72dc382b7b75d3731401a817843adc52064ddeecc5008109fb9c47d50e66a6f",
+      "headSHA256": "e72dc382b7b75d3731401a817843adc52064ddeecc5008109fb9c47d50e66a6f",
+      "identical": true
+    },
+    {
+      "name": "weeklyDailyBestSample",
+      "combinedLine": 3804,
+      "combinedSHA256": "83a0032fc055ba9ab83bc26e6e5ba638d704c7ce9abff27bc7dd50f5abf6cffe",
+      "headSHA256": "83a0032fc055ba9ab83bc26e6e5ba638d704c7ce9abff27bc7dd50f5abf6cffe",
+      "identical": true
+    },
+    {
+      "name": "weeklyBestWeatherDay",
+      "combinedLine": 3822,
+      "combinedSHA256": "ed6d929e4b60737fcd65fa697afbc2c2c470adcdd39076bf2b3b4fc86c2c01e1",
+      "headSHA256": "ed6d929e4b60737fcd65fa697afbc2c2c470adcdd39076bf2b3b4fc86c2c01e1",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleAsWeather",
+      "combinedLine": 3831,
+      "combinedSHA256": "39a4ec88cec9651f4b80659a20ea5633e9dfd640f618a594dae0426fa4c4e10e",
+      "headSHA256": "39a4ec88cec9651f4b80659a20ea5633e9dfd640f618a594dae0426fa4c4e10e",
+      "identical": true
+    },
+    {
+      "name": "todayIsEastWindDirection",
+      "combinedLine": 4037,
+      "combinedSHA256": "bce6d327dbbfd0a728c5aa306b95d752884a5f6ad5eee53080ff22b6c5988c4e",
+      "headSHA256": "bce6d327dbbfd0a728c5aa306b95d752884a5f6ad5eee53080ff22b6c5988c4e",
+      "identical": true
+    },
+    {
+      "name": "v24WaveNumber",
+      "combinedLine": 2241,
+      "combinedSHA256": "53ec28da4f78a91f1615ce9bbd8cab77089379382a4f58f4e2e6404236970e9f",
+      "headSHA256": "53ec28da4f78a91f1615ce9bbd8cab77089379382a4f58f4e2e6404236970e9f",
+      "identical": true
+    },
+    {
+      "name": "todayWeatherCautionNote",
+      "combinedLine": 4041,
+      "combinedSHA256": "d67d1edb642ae0565bbc577266758bc6758a0f67f8cd146791086c250591e3bf",
+      "headSHA256": "d67d1edb642ae0565bbc577266758bc6758a0f67f8cd146791086c250591e3bf",
+      "identical": true
+    },
+    {
+      "name": "v251RainInfo",
+      "combinedLine": 1904,
+      "combinedSHA256": "276c1c581d34f9f84f2e4db5be8062f81a9d2c7078e0ab1c81c6ef34afcb0844",
+      "headSHA256": "276c1c581d34f9f84f2e4db5be8062f81a9d2c7078e0ab1c81c6ef34afcb0844",
+      "identical": true
+    },
+    {
+      "name": "weeklyTideNearestSample",
+      "combinedLine": 4028,
+      "combinedSHA256": "1bef72cde3960d12ccadd20530df70db7613e600e1bade095e11328ae500301b",
+      "headSHA256": "1bef72cde3960d12ccadd20530df70db7613e600e1bade095e11328ae500301b",
+      "identical": true
+    },
+    {
+      "name": "weeklyCautionFreeFilter",
+      "combinedLine": 4135,
+      "combinedSHA256": "f6827fbc594122dcbf3f1be9555ef96a00ee5faff2007cb0f706ef39680c95fa",
+      "headSHA256": "f6827fbc594122dcbf3f1be9555ef96a00ee5faff2007cb0f706ef39680c95fa",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleCaution",
+      "combinedLine": 3980,
+      "combinedSHA256": "1b74f9b8502e806767ddb81ff56fbd65b9a5a8835df85ec3389f4b7f3eac3ba9",
+      "headSHA256": "1b74f9b8502e806767ddb81ff56fbd65b9a5a8835df85ec3389f4b7f3eac3ba9",
+      "identical": true
+    },
+    {
+      "name": "weeklyTideWeather",
+      "combinedLine": 3988,
+      "combinedSHA256": "4f058ddcfc00a4c713d0c2129f277936cf67804f257cd57bcae6621e0f14bc96",
+      "headSHA256": "4f058ddcfc00a4c713d0c2129f277936cf67804f257cd57bcae6621e0f14bc96",
+      "identical": true
+    },
+    {
+      "name": "weeklyUsableHighTides",
+      "combinedLine": 4003,
+      "combinedSHA256": "919013e6a6c4ba8aa798b63967f10ecf5c089dffa9d9907d6f3cf531baa50b27",
+      "headSHA256": "919013e6a6c4ba8aa798b63967f10ecf5c089dffa9d9907d6f3cf531baa50b27",
+      "identical": true
+    },
+    {
+      "name": "weeklyQualifyingHighTides",
+      "combinedLine": 3872,
+      "combinedSHA256": "5856b9f125e682b8c4bcc73e3fb25303afef7225b2623437d5153c928724cc6b",
+      "headSHA256": "5856b9f125e682b8c4bcc73e3fb25303afef7225b2623437d5153c928724cc6b",
+      "identical": true
+    },
+    {
+      "name": "weeklyEastWindFromWeek",
+      "combinedLine": 4067,
+      "combinedSHA256": "36cfb6c06b9f7976cfb7052eacf1721ed49fe828c8aa8b37042b8957823c0d26",
+      "headSHA256": "36cfb6c06b9f7976cfb7052eacf1721ed49fe828c8aa8b37042b8957823c0d26",
+      "identical": true
+    },
+    {
+      "name": "weeklyHighTideEvents",
+      "combinedLine": 3857,
+      "combinedSHA256": "a417dd01e36cfbd89001b03be7674abd17c0a469536009fbe19997a39cd1583a",
+      "headSHA256": "a417dd01e36cfbd89001b03be7674abd17c0a469536009fbe19997a39cd1583a",
+      "identical": true
+    },
+    {
+      "name": "v24TideMinutesOfDay",
+      "combinedLine": 2283,
+      "combinedSHA256": "7269dbaac21cfad3481c30c556915da86478e20426a94af7656ae3cd7679b010",
+      "headSHA256": "7269dbaac21cfad3481c30c556915da86478e20426a94af7656ae3cd7679b010",
+      "identical": true
+    },
+    {
+      "name": "weeklyMudflatTideGateOpen",
+      "combinedLine": 3895,
+      "combinedSHA256": "c698ad9042b981d7936a9feea851ad1193f866236f12e95eceac53307aec14b4",
+      "headSHA256": "c698ad9042b981d7936a9feea851ad1193f866236f12e95eceac53307aec14b4",
+      "identical": true
+    },
+    {
+      "name": "weeklyBestMudflatTide",
+      "combinedLine": 4013,
+      "combinedSHA256": "a482b7e7fe5041c6fdc69fc4af4b3b036225f63757bf07fc4376da03e1617728",
+      "headSHA256": "a482b7e7fe5041c6fdc69fc4af4b3b036225f63757bf07fc4376da03e1617728",
+      "identical": true
+    },
+    {
+      "name": "autumnBirdingAxes",
+      "combinedLine": 3432,
+      "combinedSHA256": "0d67f6ef0d923fec4a1fc995bd625070956eafb41f482438b1780e5e957aef3e",
+      "headSHA256": "0d67f6ef0d923fec4a1fc995bd625070956eafb41f482438b1780e5e957aef3e",
+      "identical": true
+    },
+    {
+      "name": "autumnRecommendationSeason",
+      "combinedLine": 3438,
+      "combinedSHA256": "88a69d535317cc2f6d3a6a54189302fda663ca4158f4afe2eefacc0d7b164225",
+      "headSHA256": "88a69d535317cc2f6d3a6a54189302fda663ca4158f4afe2eefacc0d7b164225",
+      "identical": true
+    },
+    {
+      "name": "weeklyPelagicSafety",
+      "combinedLine": 3440,
+      "combinedSHA256": "199ea88454f39bc568de8f9d66d446f9d404ad82d86b3baa0c857bd4b3223517",
+      "headSHA256": "199ea88454f39bc568de8f9d66d446f9d404ad82d86b3baa0c857bd4b3223517",
+      "identical": true
+    },
+    {
+      "name": "weeklySeasonForDate",
+      "combinedLine": 4128,
+      "combinedSHA256": "043c5a07346da751971acac78ab68f49eda6da5d52d2672ab2a4d59ebaf7f05e",
+      "headSHA256": "043c5a07346da751971acac78ab68f49eda6da5d52d2672ab2a4d59ebaf7f05e",
+      "identical": true
+    },
+    {
+      "name": "weeklyDatePolicy",
+      "combinedLine": 4140,
+      "combinedSHA256": "a709eaf6db34310fa38fe53a90ce346e001e802b0a07179788fc5e97425b70b0",
+      "headSHA256": "a709eaf6db34310fa38fe53a90ce346e001e802b0a07179788fc5e97425b70b0",
+      "identical": true
+    },
+    {
+      "name": "weeklySeasonalBestWeatherDay",
+      "combinedLine": 4156,
+      "combinedSHA256": "c8b25f8d042e3c3ce9eb6515d8bae3264d2eefb02f6cd1aa3d1ab5a12f4a3c7f",
+      "headSHA256": "c8b25f8d042e3c3ce9eb6515d8bae3264d2eefb02f6cd1aa3d1ab5a12f4a3c7f",
+      "identical": true
+    },
+    {
+      "name": "weeklySeasonQuotaEntries",
+      "combinedLine": 3459,
+      "combinedSHA256": "774c52ab2510d6751e6f496cda224d390355658fc1a15e1879ebd8110891f6fb",
+      "headSHA256": "774c52ab2510d6751e6f496cda224d390355658fc1a15e1879ebd8110891f6fb",
+      "identical": true
+    },
+    {
+      "name": "autumnFieldRank",
+      "combinedLine": 3451,
+      "combinedSHA256": "8c2561d684d38e2c9a1fad2a2fa6e58d1b0704c72fe5695190aeb0a32bc44ca1",
+      "headSHA256": "8c2561d684d38e2c9a1fad2a2fa6e58d1b0704c72fe5695190aeb0a32bc44ca1",
+      "identical": true
+    },
+    {
+      "name": "autumnBalancedRecommendations",
+      "combinedLine": 3462,
+      "combinedSHA256": "a1a13aae366348fecd1f6e9c11547fc3a113a11517a64850d192bb2c334db718",
+      "headSHA256": "a1a13aae366348fecd1f6e9c11547fc3a113a11517a64850d192bb2c334db718",
+      "identical": true
+    },
+    {
+      "name": "autumnAxisLabel",
+      "combinedLine": 3493,
+      "combinedSHA256": "b86081fc33e028a2b7255d545b65cfd78716dbb1f5e87b87d41b0b4518e35648",
+      "headSHA256": "b86081fc33e028a2b7255d545b65cfd78716dbb1f5e87b87d41b0b4518e35648",
+      "identical": true
+    },
+    {
+      "name": "todayIsAutumnRemoteIsland",
+      "combinedLine": 4094,
+      "combinedSHA256": "ba496bd0692f08101531275a94b4842093b6d4c3297b3149f3be974d45409b21",
+      "headSHA256": "ba496bd0692f08101531275a94b4842093b6d4c3297b3149f3be974d45409b21",
+      "identical": true
+    },
+    {
+      "name": "todaySpringIslandReason",
+      "combinedLine": 4098,
+      "combinedSHA256": "7c95097cdcf0ee0a7b79edee68852a9330bed5cf302e0a3456dd1c5548a5b771",
+      "headSHA256": "7c95097cdcf0ee0a7b79edee68852a9330bed5cf302e0a3456dd1c5548a5b771",
+      "identical": true
+    },
+    {
+      "name": "weeklyIssueReason",
+      "combinedLine": 4102,
+      "combinedSHA256": "ea89ecf8354d52e3fc2e908100d4fd267eec49edef4b84e24cd0c91be24876b7",
+      "headSHA256": "ea89ecf8354d52e3fc2e908100d4fd267eec49edef4b84e24cd0c91be24876b7",
+      "identical": true
+    },
+    {
+      "name": "weeklyRecommendationDateLabel",
+      "combinedLine": 4109,
+      "combinedSHA256": "933442c10dcab81fab79bc6689e821edec37d19fa5831c57c8a7bd58696296e0",
+      "headSHA256": "933442c10dcab81fab79bc6689e821edec37d19fa5831c57c8a7bd58696296e0",
+      "identical": true
+    },
+    {
+      "name": "weeklyWeatherEntryForSite",
+      "combinedLine": 4113,
+      "combinedSHA256": "8e848b2727a791928833fe5c54d6ba4196d067b282ca032d4594f75a5115c0ef",
+      "headSHA256": "8e848b2727a791928833fe5c54d6ba4196d067b282ca032d4594f75a5115c0ef",
+      "identical": true
+    },
+    {
+      "name": "weeklyRecommendationForSite",
+      "combinedLine": 4172,
+      "combinedSHA256": "f1bba3211d477ce05110a5ca9488c3cdb6e8e53ffe95a0bbfbcbf026dce5adca",
+      "headSHA256": "f1bba3211d477ce05110a5ca9488c3cdb6e8e53ffe95a0bbfbcbf026dce5adca",
+      "identical": true
+    },
+    {
+      "name": "weeklyEditorialRecommendations",
+      "combinedLine": 4374,
+      "combinedSHA256": "1bbd36e4afd8bc6d8101ef285ba38c721dbbaa7e13babee431b077fa87bb2ade",
+      "headSHA256": "1bbd36e4afd8bc6d8101ef285ba38c721dbbaa7e13babee431b077fa87bb2ade",
+      "identical": true
+    },
+    {
+      "name": "todayRecommendedSites",
+      "combinedLine": 4287,
+      "combinedSHA256": "6698c653b070334a03a3eed9026656349128faedd1ffdd4d6e64ff026dac3773",
+      "headSHA256": "6698c653b070334a03a3eed9026656349128faedd1ffdd4d6e64ff026dac3773",
+      "identical": true
+    },
+    {
+      "name": "weeklyEastWindRecommendation",
+      "combinedLine": 4053,
+      "combinedSHA256": "9b758b572c087d6b01584acfebf9205473855088cab53bb821ac0ccf2cda7ba5",
+      "headSHA256": "9b758b572c087d6b01584acfebf9205473855088cab53bb821ac0ccf2cda7ba5",
+      "identical": true
+    },
+    {
+      "name": "v24WindParts",
+      "combinedLine": 2236,
+      "combinedSHA256": "58f2a6c538afeae1aab45fa9c4a4ea6574c679f12a2476b5e724e778ce59b86a",
+      "headSHA256": "58f2a6c538afeae1aab45fa9c4a4ea6574c679f12a2476b5e724e778ce59b86a",
+      "identical": true
+    },
+    {
+      "name": "v24WindNumber",
+      "combinedLine": 2245,
+      "combinedSHA256": "5b72ee45a4431a02dd31dd2ccc485ee04b67ae9ee69563da311bb9421b69e5ac",
+      "headSHA256": "5b72ee45a4431a02dd31dd2ccc485ee04b67ae9ee69563da311bb9421b69e5ac",
+      "identical": true
+    },
+    {
+      "name": "activeNotice",
+      "combinedLine": 3317,
+      "combinedSHA256": "099d0956552c8c28f99ca3cceedfb012e33ac2964079e5e7b180ed43952a2e64",
+      "headSHA256": "099d0956552c8c28f99ca3cceedfb012e33ac2964079e5e7b180ed43952a2e64",
+      "identical": true
+    },
+    {
+      "name": "activeNoticeItems",
+      "combinedLine": 3326,
+      "combinedSHA256": "507925400bea30366d428f9ece7cd6df9404605c78573ced894c45d6b65dd534",
+      "headSHA256": "507925400bea30366d428f9ece7cd6df9404605c78573ced894c45d6b65dd534",
+      "identical": true
+    },
+    {
+      "name": "noticeLinkedSites",
+      "combinedLine": 3331,
+      "combinedSHA256": "a1316a3fa4494700ccfd103403f9eb8d4700f55f6ea99f6d570d4e7fcd13683a",
+      "headSHA256": "a1316a3fa4494700ccfd103403f9eb8d4700f55f6ea99f6d570d4e7fcd13683a",
+      "identical": true
+    },
+    {
+      "name": "kstDateText",
+      "combinedLine": 4558,
+      "combinedSHA256": "0d47c7e67a0a75c53efcd2c0a91a9d2dd313bb1c30ab26e00b26d9375c1f14d4",
+      "headSHA256": "0d47c7e67a0a75c53efcd2c0a91a9d2dd313bb1c30ab26e00b26d9375c1f14d4",
+      "identical": true
+    },
+    {
+      "name": "todayString",
+      "combinedLine": 3312,
+      "combinedSHA256": "6f16236d0c4c56d565fe3454812cd798ccc23f7ff9922b3755e73b016b1d2281",
+      "headSHA256": "6f16236d0c4c56d565fe3454812cd798ccc23f7ff9922b3755e73b016b1d2281",
+      "identical": true
+    },
+    {
+      "name": "v23Value",
+      "combinedLine": 1849,
+      "combinedSHA256": "834f2332112484652dea32fec6a9a2dd7ea1f6b3c1bcc9b2ca1ef283a73903ce",
+      "headSHA256": "834f2332112484652dea32fec6a9a2dd7ea1f6b3c1bcc9b2ca1ef283a73903ce",
+      "identical": true
+    },
+    {
+      "name": "weeklyRecommendationIsSafe",
+      "combinedLine": 4280,
+      "combinedSHA256": "3c266999915e5c6a2025d94d456427268c70211b5f9a3e62da06fdc68796e3ae",
+      "headSHA256": "3c266999915e5c6a2025d94d456427268c70211b5f9a3e62da06fdc68796e3ae",
+      "identical": true
+    },
+    {
+      "name": "weeklyPelagicRecommendationSeason",
+      "combinedLine": 3439,
+      "combinedSHA256": "1d6d9db9b815e87b69ce027eb4d7a8383d23dea33fe5fd1db9b4a970a5b69533",
+      "headSHA256": "1d6d9db9b815e87b69ce027eb4d7a8383d23dea33fe5fd1db9b4a970a5b69533",
+      "identical": true
+    },
+    {
+      "name": "weeklyWinterRecommendationSeason",
+      "combinedLine": 3503,
+      "combinedSHA256": "1dec61ef6c6ca3c7ea949be50567330c27be6b8e71af0dba571904e57a74194a",
+      "headSHA256": "1dec61ef6c6ca3c7ea949be50567330c27be6b8e71af0dba571904e57a74194a",
+      "identical": true
+    },
+    {
+      "name": "winterBirdingAxes",
+      "combinedLine": 3504,
+      "combinedSHA256": "d64581311c7500b49eb625ef0a2a97928ac5dc9e01656adb71e52013024d6891",
+      "headSHA256": "d64581311c7500b49eb625ef0a2a97928ac5dc9e01656adb71e52013024d6891",
+      "identical": true
+    },
+    {
+      "name": "winterRecommendationRank",
+      "combinedLine": 3522,
+      "combinedSHA256": "b716277f67964f85a263f07c68525e92db5e86e9ca4751dadfad9b349f4705f5",
+      "headSHA256": "b716277f67964f85a263f07c68525e92db5e86e9ca4751dadfad9b349f4705f5",
+      "identical": true
+    },
+    {
+      "name": "winterBalancedRecommendations",
+      "combinedLine": 3528,
+      "combinedSHA256": "a5ae48d61b67ff39729a0cf5e0805e2e85db5a0c6f740d11f945295dfcb89853",
+      "headSHA256": "a5ae48d61b67ff39729a0cf5e0805e2e85db5a0c6f740d11f945295dfcb89853",
+      "identical": true
+    },
+    {
+      "name": "winterAxisLabel",
+      "combinedLine": 3545,
+      "combinedSHA256": "4c497365588de843fb3cbf8597f8d845ab82d48a293c299731d999871dea2c85",
+      "headSHA256": "4c497365588de843fb3cbf8597f8d845ab82d48a293c299731d999871dea2c85",
+      "identical": true
+    },
+    {
+      "name": "weeklySpringRecommendationSeason",
+      "combinedLine": 3551,
+      "combinedSHA256": "4c49742dd984a02ed57fbffe2ff2cd5d4926d0929dad4c2bec7b9222efc04ed3",
+      "headSHA256": "4c49742dd984a02ed57fbffe2ff2cd5d4926d0929dad4c2bec7b9222efc04ed3",
+      "identical": true
+    },
+    {
+      "name": "springBirdingAxes",
+      "combinedLine": 3552,
+      "combinedSHA256": "e042318dc085e68da43877dd66135b4fef638b305352fac4f3f31b0a7e5f734c",
+      "headSHA256": "e042318dc085e68da43877dd66135b4fef638b305352fac4f3f31b0a7e5f734c",
+      "identical": true
+    },
+    {
+      "name": "springGeolmaeriPriority",
+      "combinedLine": 3569,
+      "combinedSHA256": "3ba4f88316e2f56790d6788338978415353e1a7b40a3f3eeb40b3dd39da45638",
+      "headSHA256": "3ba4f88316e2f56790d6788338978415353e1a7b40a3f3eeb40b3dd39da45638",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleTimestamp",
+      "combinedLine": 3572,
+      "combinedSHA256": "d3179a3bcffdb67a2dae0646109a4fcd9525ad17e66ee80a4073d8c13a0670b8",
+      "headSHA256": "d3179a3bcffdb67a2dae0646109a4fcd9525ad17e66ee80a4073d8c13a0670b8",
+      "identical": true
+    },
+    {
+      "name": "springWestNorthwestWind",
+      "combinedLine": 3578,
+      "combinedSHA256": "afa8d3f64338b8c0ffbbf92c603ea105bcdb1438bd7a47669da8270b9e1fc6f6",
+      "headSHA256": "afa8d3f64338b8c0ffbbf92c603ea105bcdb1438bd7a47669da8270b9e1fc6f6",
+      "identical": true
+    },
+    {
+      "name": "springIslandRainWindCondition",
+      "combinedLine": 3588,
+      "combinedSHA256": "ae91fd1cf4436f73c3fabf19230af62b0d5f9384d62072aff9685da1708aee11",
+      "headSHA256": "ae91fd1cf4436f73c3fabf19230af62b0d5f9384d62072aff9685da1708aee11",
+      "identical": true
+    },
+    {
+      "name": "springRecommendationRank",
+      "combinedLine": 3600,
+      "combinedSHA256": "07dc2c0f527dd541cee31cda9caaf50bc1b47165137065f862aa65d2d4cedaf8",
+      "headSHA256": "07dc2c0f527dd541cee31cda9caaf50bc1b47165137065f862aa65d2d4cedaf8",
+      "identical": true
+    },
+    {
+      "name": "springBalancedRecommendations",
+      "combinedLine": 3605,
+      "combinedSHA256": "ad37c217bfa9b6ae2058ca0ebdcc1c8eacc660837474771ab5d42b2c63f01ec9",
+      "headSHA256": "ad37c217bfa9b6ae2058ca0ebdcc1c8eacc660837474771ab5d42b2c63f01ec9",
+      "identical": true
+    },
+    {
+      "name": "springAxisLabel",
+      "combinedLine": 3623,
+      "combinedSHA256": "0fd1154bef855ff6867b7026ab78b62b2e33713bfd61d3098465bc5b82b93af3",
+      "headSHA256": "0fd1154bef855ff6867b7026ab78b62b2e33713bfd61d3098465bc5b82b93af3",
+      "identical": true
+    },
+    {
+      "name": "weeklyScoreValid",
+      "combinedLine": 3903,
+      "combinedSHA256": "9982a2fa98a14346af79317dd137a49f96acd92c32b95d9f8c7e40453ba15fa6",
+      "headSHA256": "9982a2fa98a14346af79317dd137a49f96acd92c32b95d9f8c7e40453ba15fa6",
+      "identical": true
+    },
+    {
+      "name": "weeklyNonNegativeNumber",
+      "combinedLine": 3904,
+      "combinedSHA256": "c122797ddf33a8367e72122d70ecb1ca441c0b08b2d6af08f4e7869a05309e52",
+      "headSHA256": "c122797ddf33a8367e72122d70ecb1ca441c0b08b2d6af08f4e7869a05309e52",
+      "identical": true
+    },
+    {
+      "name": "weeklyOwn",
+      "combinedLine": 3906,
+      "combinedSHA256": "3cc19bb781d98c224c90700c8493d8e9eabf13a095c8522ffe4dd211ef2dd36c",
+      "headSHA256": "3cc19bb781d98c224c90700c8493d8e9eabf13a095c8522ffe4dd211ef2dd36c",
+      "identical": true
+    },
+    {
+      "name": "weeklySampleRecommendable",
+      "combinedLine": 3910,
+      "combinedSHA256": "2e44627ff72e65af993e89e56114ffcd820e2f779b0ebcb1a15744c01923fd78",
+      "headSHA256": "2e44627ff72e65af993e89e56114ffcd820e2f779b0ebcb1a15744c01923fd78",
+      "identical": true
+    },
+    {
+      "name": "weeklyTodayRequiredDataValid",
+      "combinedLine": 3922,
+      "combinedSHA256": "632579881b614bc3f68e65536996b7cfd5aa6c23827559c26fbd3e3109c4c348",
+      "headSHA256": "632579881b614bc3f68e65536996b7cfd5aa6c23827559c26fbd3e3109c4c348",
+      "identical": true
+    },
+    {
+      "name": "weeklyTodayRecommendable",
+      "combinedLine": 3929,
+      "combinedSHA256": "8fdd5eff40c67f4b13cc10aba991f1a6cb6108a2dee3408b1c02cf8596fa29c0",
+      "headSHA256": "8fdd5eff40c67f4b13cc10aba991f1a6cb6108a2dee3408b1c02cf8596fa29c0",
+      "identical": true
+    },
+    {
+      "name": "weeklyTodayWeather",
+      "combinedLine": 3966,
+      "combinedSHA256": "45f2b536e2581d9a3ad18d7259438397998e7c83a6166fa566172bfceedb0c59",
+      "headSHA256": "45f2b536e2581d9a3ad18d7259438397998e7c83a6166fa566172bfceedb0c59",
+      "identical": true
+    },
+    {
+      "name": "weatherTimeMs",
+      "combinedLine": 2083,
+      "combinedSHA256": "c30e80366e91dc82196a4bd2134abc37101c3fef28176b6f14e37c91193d0598",
+      "headSHA256": "c30e80366e91dc82196a4bd2134abc37101c3fef28176b6f14e37c91193d0598",
+      "identical": true
+    },
+    {
+      "name": "weatherLatestDue",
+      "combinedLine": 2088,
+      "combinedSHA256": "f32d202895e11e3d5226b405fe6aebc1be5c444635a76b1f6e63677305af6c88",
+      "headSHA256": "f32d202895e11e3d5226b405fe6aebc1be5c444635a76b1f6e63677305af6c88",
+      "identical": true
+    },
+    {
+      "name": "storedWeatherState",
+      "combinedLine": 2099,
+      "combinedSHA256": "534157358d78bcf10c7f270d4dc066ce7b136dee47dba3ecd37effb1cf8a468b",
+      "headSHA256": "534157358d78bcf10c7f270d4dc066ce7b136dee47dba3ecd37effb1cf8a468b",
+      "identical": true
+    },
+    {
+      "name": "storedWeatherLabel",
+      "combinedLine": 2131,
+      "combinedSHA256": "da401d4f59d8f49e1d10f8df7bd405b1b3e44c5167b40b679173ed0fcc688d3b",
+      "headSHA256": "da401d4f59d8f49e1d10f8df7bd405b1b3e44c5167b40b679173ed0fcc688d3b",
+      "identical": true
+    },
+    {
+      "name": "birdmapDataTime",
+      "combinedLine": 4583,
+      "combinedSHA256": "526579994d69c4262cbffb2b7de17f2348e9153bf8b16bac1056c5a5ac23ec9a",
+      "headSHA256": "526579994d69c4262cbffb2b7de17f2348e9153bf8b16bac1056c5a5ac23ec9a",
+      "identical": true
+    },
+    {
+      "name": "weeklyDocVerified",
+      "combinedLine": 3766,
+      "combinedSHA256": "e78bc3d92e99f2a8422f7e5d871b39afc0eba035e6dc1c83146dd7aefbe1c992",
+      "headSHA256": "e78bc3d92e99f2a8422f7e5d871b39afc0eba035e6dc1c83146dd7aefbe1c992",
+      "identical": true
+    },
+    {
+      "name": "weeklyKstTimestamp",
+      "combinedLine": 3937,
+      "combinedSHA256": "6d6e020cd2bc40deb57acfe431b4d662f1751679ac5256375c28d773be489deb",
+      "headSHA256": "6d6e020cd2bc40deb57acfe431b4d662f1751679ac5256375c28d773be489deb",
+      "identical": true
+    },
+    {
+      "name": "weeklyForecastTimestamp",
+      "combinedLine": 3944,
+      "combinedSHA256": "6c7363368b9da7525e50686ea23bb1f11517a591e2cf86e711bf15cdfa84d873",
+      "headSHA256": "6c7363368b9da7525e50686ea23bb1f11517a591e2cf86e711bf15cdfa84d873",
+      "identical": true
+    },
+    {
+      "name": "weeklyTideTimestamp",
+      "combinedLine": 3951,
+      "combinedSHA256": "3f47df362be87d4f0a5a5a7927e3bf0fb1ffd430e5ca7c8e2ccb4d0796eecc4a",
+      "headSHA256": "3f47df362be87d4f0a5a5a7927e3bf0fb1ffd430e5ca7c8e2ccb4d0796eecc4a",
+      "identical": true
+    },
+    {
+      "name": "weeklyTideForecastGapMinutes",
+      "combinedLine": 3957,
+      "combinedSHA256": "b144db9510f6faa67dcc50898353cb7baa91e2bbdb20a7169e376279be9ff830",
+      "headSHA256": "b144db9510f6faa67dcc50898353cb7baa91e2bbdb20a7169e376279be9ff830",
+      "identical": true
+    },
+    {
+      "name": "weeklyRecommendationEligible",
+      "combinedLine": 3974,
+      "combinedSHA256": "ce8eec537192f33beace6239deff2951bf5b9aac16f9e662b006cd64abd3db63",
+      "headSHA256": "ce8eec537192f33beace6239deff2951bf5b9aac16f9e662b006cd64abd3db63",
+      "identical": true
+    },
+    {
+      "name": "weeklyRecentReportBonus",
+      "combinedLine": 4258,
+      "combinedSHA256": "62a39d33d17b7a09597f4714028ab2de4519f13c09c2019cfac9108ce3241a6c",
+      "headSHA256": "62a39d33d17b7a09597f4714028ab2de4519f13c09c2019cfac9108ce3241a6c",
+      "identical": true
+    },
+    {
+      "name": "weeklyRankScore",
+      "combinedLine": 4271,
+      "combinedSHA256": "a394904129b67f09f4d1f0a524a1631ce5b262d204343d4b8b1b36887017de4c",
+      "headSHA256": "a394904129b67f09f4d1f0a524a1631ce5b262d204343d4b8b1b36887017de4c",
+      "identical": true
+    },
+    {
+      "name": "weeklyRecentTieBreak",
+      "combinedLine": 4276,
+      "combinedSHA256": "899780f00026c819e7bec9edecdff16c03b77c16071f1694c02fde218e89437d",
+      "headSHA256": "899780f00026c819e7bec9edecdff16c03b77c16071f1694c02fde218e89437d",
+      "identical": true
+    },
+    {
+      "name": "weeklyPanelRecommendations",
+      "combinedLine": 4392,
+      "combinedSHA256": "88c81486da9b513d55e4590fec4f173522e46facc11b2d132fed3cc18dd00998",
+      "headSHA256": "88c81486da9b513d55e4590fec4f173522e46facc11b2d132fed3cc18dd00998",
+      "identical": true
+    },
+    {
+      "name": "monthTideForSite",
+      "combinedLine": 2342,
+      "combinedSHA256": "ad9acd77e74c5f08862e8a85a3b94c65fafe141619b535256c8bf3c4a474bb02",
+      "headSHA256": "ad9acd77e74c5f08862e8a85a3b94c65fafe141619b535256c8bf3c4a474bb02",
+      "identical": true
+    },
+    {
+      "name": "todayKstMonth",
+      "combinedLine": 3682,
+      "combinedSHA256": "c07a9385c558cea1457c51eeb942053b61beb0584292e3bdefbdae109b4cacb6",
+      "headSHA256": "c07a9385c558cea1457c51eeb942053b61beb0584292e3bdefbdae109b4cacb6",
+      "identical": true
+    },
+    {
+      "name": "weatherScoreAllowed",
+      "combinedLine": 2127,
+      "combinedSHA256": "cd12b9ba4c8732a5af54ad488f3de7cf62f40526c1832d74e54081e9f190f3e7",
+      "headSHA256": "cd12b9ba4c8732a5af54ad488f3de7cf62f40526c1832d74e54081e9f190f3e7",
+      "identical": true
+    },
+    {
+      "name": "v251EffectiveScore",
+      "combinedLine": 1933,
+      "combinedSHA256": "c7bad3d61fedae77da69ad6eb592b04d715cd918bd021a045d004c9f6ff52273",
+      "headSHA256": "c7bad3d61fedae77da69ad6eb592b04d715cd918bd021a045d004c9f6ff52273",
+      "identical": true
+    },
+    {
+      "name": "v251GradeStars",
+      "combinedLine": 1929,
+      "combinedSHA256": "0522af7162bc7ee106f7c2ade407fd5ec08bd3d784107978831ac05e54faaf59",
+      "headSHA256": "0522af7162bc7ee106f7c2ade407fd5ec08bd3d784107978831ac05e54faaf59",
+      "identical": true
+    },
+    {
+      "name": "v251ScoreDisplayText",
+      "combinedLine": 1942,
+      "combinedSHA256": "897a2e211e76879bdf7bd58b7a24bd77ccad90d3c2cf0b36cf6e705aa0592ef4",
+      "headSHA256": "897a2e211e76879bdf7bd58b7a24bd77ccad90d3c2cf0b36cf6e705aa0592ef4",
+      "identical": true
+    },
+    {
+      "name": "todayWeatherFromWeek",
+      "combinedLine": 2142,
+      "combinedSHA256": "82652c1b90ff0ae20c6029814957d317f84c3933d684bf26d9c4b26d05ba3aff",
+      "headSHA256": "82652c1b90ff0ae20c6029814957d317f84c3933d684bf26d9c4b26d05ba3aff",
+      "identical": true
+    },
+    {
+      "name": "weatherTodayForSite",
+      "combinedLine": 2148,
+      "combinedSHA256": "ab58992615b4d39ac27f4b05c9cbbde0168afaa3c2e3c35c8323675b19264076",
+      "headSHA256": "ab58992615b4d39ac27f4b05c9cbbde0168afaa3c2e3c35c8323675b19264076",
+      "identical": true
+    }
+  ],
+  "constantParity": [
+    {
+      "declaration": "TODAY_MUDFLAT_TIDE_RULES",
+      "combinedSHA256": "b0c03e67740df4fb1d9d39ac2dbefe01caf6da2359a15254555ca8015ce8c5ad",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "WEEKLY_RECENT_BONUS_MAX",
+      "combinedSHA256": "0f9a6eb3cf3a71d779ab6f725d851fc5ab814e051a00510d5abae497a5ae0713",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "AUTUMN_CORE_FIELD_SITE_IDS",
+      "combinedSHA256": "cf6909c377c2cfe476a55c016af7542165a3574bd7a39883b48744837e927674",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES",
+      "combinedSHA256": "d73be0d694eee1c247833ce9b49829a72ee9238c0854a0edecf7e11124c9ea27",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "PINNED_BIRDING_ISSUES",
+      "combinedSHA256": "2aea55ad3f477ac7b7a734e0476b1efd91d70fa956786324ea46e0d9f0668e17",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "WINTER_CORE_FIELD_SITE_IDS",
+      "combinedSHA256": "4a02625233ab7ee656044ffa06f2b44162794850d64ea8d4c6e8563914a04083",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "WINTER_EXCLUDED_SITE_IDS",
+      "combinedSHA256": "a8973b650f479584a7e72bcf8352bec448f6dc6cf0087eec056cf767d8d255b6",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "WINTER_EXCLUDED_SITE_NAMES",
+      "combinedSHA256": "892722cb1ab772387bec6bf67e247b6738f030f368f3bd780246d86fcd4c4efb",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "WINTER_PELAGIC_SITE_IDS",
+      "combinedSHA256": "3b157178b2fb356d80604128283ab9d8db188a4e3a81cd673e73d621f9606c2f",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "WINTER_ISLAND_EXCEPTION_SITE_IDS",
+      "combinedSHA256": "7cb570b8e9259bc1ca68bf165bd867cff0afea8deecd6d04cbcbacf6432a3c93",
+      "existsExactlyAtHead": true
+    },
+    {
+      "declaration": "SPRING_CORE_ISLAND_SITE_IDS",
+      "combinedSHA256": "3ac23ffdc42d92a0a5e036d0da06fc59454d960c7d3a3edf6ac54e663643267d",
+      "existsExactlyAtHead": true
+    }
+  ],
+  "latestDueUtc": "2026-10-10T20:35:00.000Z",
+  "weeklyDocVerified": true,
+  "summary": {
+    "sites": 190,
+    "rootItemRawEqual": 190,
+    "stateValues": {
+      "{\"kind\":\"today_reference\",\"dataCurrent\":false,\"scoreEligible\":false,\"stale\":true,\"date\":\"2026-10-11\",\"generatedAt\":\"2026-10-11 04:16 KST\",\"forecastTime\":\"2026-10-11 04:15 KST\",\"ageMinutes\":155}": 190
+    },
+    "scoreAllowed": 0,
+    "candidateCount": 176,
+    "finalRecommendedCount": 10,
+    "finalAllSafe": true,
+    "finalAllEligible": true,
+    "exceptions": 0,
+    "sourceFunctionsIdentical": 112,
+    "sourceFunctionsTotal": 112
+  },
+  "top": [
+    {
+      "position": 1,
+      "id": "7",
+      "name": "교동도",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "09:00",
+      "axis": "field",
+      "season": null,
+      "mandatory": false,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 2,
+      "id": "8",
+      "name": "석모도",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "09:00",
+      "axis": "field",
+      "season": null,
+      "mandatory": false,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 3,
+      "id": "10",
+      "name": "강화도",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "09:00",
+      "axis": "field",
+      "season": null,
+      "mandatory": false,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 4,
+      "id": "15",
+      "name": "천수만 사기리",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "09:00",
+      "axis": "field",
+      "season": null,
+      "mandatory": true,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 5,
+      "id": "126",
+      "name": "해리천습지",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "09:00",
+      "axis": "mudflat",
+      "season": null,
+      "mandatory": true,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 6,
+      "id": "107",
+      "name": "매향리",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "18:00",
+      "axis": "mudflat",
+      "season": null,
+      "mandatory": true,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 7,
+      "id": "14",
+      "name": "걸매리",
+      "raw": 91,
+      "display": 91,
+      "rank": 91,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "18:00",
+      "axis": "mudflat",
+      "season": null,
+      "mandatory": true,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 8,
+      "id": "48",
+      "name": "대진항",
+      "raw": 92,
+      "display": 92,
+      "rank": 92,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "09:00",
+      "axis": "pelagic",
+      "season": null,
+      "mandatory": false,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 9,
+      "id": "3",
+      "name": "굴업도",
+      "raw": 100,
+      "display": 100,
+      "rank": 100,
+      "bonus": 0,
+      "date": "2026-10-12",
+      "time": "15:00",
+      "axis": "other",
+      "season": null,
+      "mandatory": false,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    },
+    {
+      "position": 10,
+      "id": "5",
+      "name": "대청도",
+      "raw": 100,
+      "display": 100,
+      "rank": 100,
+      "bonus": 0,
+      "date": "2026-10-11",
+      "time": "15:00",
+      "axis": "other",
+      "season": null,
+      "mandatory": false,
+      "safe": true,
+      "eligible": true,
+      "basis": null
+    }
+  ],
+  "rows": [
+    {
+      "id": "1",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "2",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "3",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "4",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "5",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "6",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "7",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "8",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "9",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "10",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "11",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "12",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "13",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "14",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "15",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "16",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "17",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "18",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "19",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "20",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "21",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "22",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "23",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "24",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "25",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "26",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "27",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "28",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "29",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "30",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "31",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "32",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "33",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "34",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "35",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "36",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "37",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "38",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "39",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "40",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "41",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "42",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "43",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "44",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "45",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "46",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "47",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "48",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "49",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "50",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "51",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "52",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "53",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "54",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "55",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "56",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "57",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "58",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "59",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "60",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "61",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "62",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "63",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "64",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "65",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "66",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "67",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "68",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "69",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "70",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "71",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "72",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "73",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "74",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "75",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "76",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "77",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "78",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "79",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "80",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "81",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "82",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "83",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "84",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "85",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "86",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "87",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "88",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "89",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "90",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "91",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "92",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "93",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "94",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "95",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "96",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "97",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "98",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "99",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "100",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "101",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "102",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "103",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "104",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "105",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "106",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "107",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "108",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "109",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "110",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "111",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "112",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "113",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "114",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "115",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "116",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "117",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "118",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "119",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "120",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "121",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "122",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "123",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "124",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "125",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "126",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "127",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "128",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "129",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "130",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "131",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "132",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "133",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "134",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "135",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "136",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "137",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "138",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "139",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "140",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "141",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "142",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "143",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "144",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "145",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "146",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "147",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "148",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "149",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "150",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "151",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "152",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "153",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "154",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "155",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "156",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "157",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "158",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "159",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "160",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "162",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "163",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "164",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "165",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "167",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "168",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "169",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "170",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "172",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "173",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "174",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "175",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "176",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "178",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "179",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "180",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "181",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "182",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "183",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "185",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "186",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "187",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "188",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "189",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "190",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "191",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "192",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "193",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "194",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    },
+    {
+      "id": "195",
+      "rootGeneratedAt": "2026-10-11 04:16 KST",
+      "itemGeneratedAt": "2026-10-11 04:16 KST",
+      "rootItemRawEqual": true,
+      "storedState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-11",
+        "generatedAt": "2026-10-11 04:16 KST",
+        "forecastTime": "2026-10-11 04:15 KST",
+        "ageMinutes": 155
+      },
+      "scoreAllowed": false
+    }
+  ],
+  "errors": []
+}

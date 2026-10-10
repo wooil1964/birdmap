@@ -147,3 +147,6 @@ FINAL_R4_COMMENT.md와 두 게시본문5289자 일치를 API read-back으로 확
 
 ## b12e20c F2/F3 및 독립 추가 검증 확정 (2026-10-11 재개)
 F2 60/60, F3 77/77, live6/6, Python 실제190의20/35, same-root Node6/Chrome30 및 exact[true,false,true]/[0,0,1] 통과. root 별도 소스·Python·Chrome375 재실행도 완료. 원형 lifecycle35/45·이전 control50/55·선상40/65 실패 원장 보존. 새main b596cdc8은 TMAP 변경 포함, 결합 tree2c3703e 충돌0. 자동5blob 보존·제품7/8동일·추천111함수 동일·siteData190/좌표 불변. 최신main 실제 validator·현재추천·5폭 브라우저 추가확인중; 최종 판정/게시 미완료.
+
+## b12e20c 최종 검증 완료 — 조건부 승인 (2026-10-11)
+F2-a/b·F3 기존차단해결; 자동621/0/1 및정상고정190/176 ON/OFF signature불변. 최신main89e7/treee021 검증, 자동5/공지보존·137함수/190좌표동일·Chrome55/55. mainunit71/73과원형lifecycle/선상/하네스실패는원장보존. 현재Worker/보호rollback미확인·보호전환P1 선행조건으로조건부승인. exact보고 F23_RECHECK.md; 최종게시본문·readback증빙은 github_receipts.json. main/배포/D1/실사용자수정0.

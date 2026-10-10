@@ -1,0 +1,219 @@
+{
+  "before": "352315a57d038687807dbe0044c136a22fb0c9c5",
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "originalSummary": {
+    "total": 65,
+    "pass": 40,
+    "fail": 25
+  },
+  "unresolvedOriginalMismatches": 25,
+  "comparison": [
+    {
+      "scenario": "boat_wind_over6",
+      "before352Actual375EqualsB12Actual375": true,
+      "fieldsCompared": [
+        "rawScore",
+        "rankScore",
+        "cardScore",
+        "popupScore",
+        "popupForecastTime",
+        "popupFerryText",
+        "popupInterpretation"
+      ],
+      "selectedSafeForecastTime": "2026-10-10 13:00 KST",
+      "popupForecastTime": "2026-10-10 12:00 KST",
+      "cardScore": "★★★★ 80점",
+      "popupScore": "★★★★★ 99점",
+      "ferryText": [
+        "여객선: 🟢 출항 여건 양호"
+      ]
+    },
+    {
+      "scenario": "boat_wave_over07",
+      "before352Actual375EqualsB12Actual375": true,
+      "fieldsCompared": [
+        "rawScore",
+        "rankScore",
+        "cardScore",
+        "popupScore",
+        "popupForecastTime",
+        "popupFerryText",
+        "popupInterpretation"
+      ],
+      "selectedSafeForecastTime": "2026-10-10 13:00 KST",
+      "popupForecastTime": "2026-10-10 12:00 KST",
+      "cardScore": "★★★★ 80점",
+      "popupScore": "★★★★★ 99점",
+      "ferryText": [
+        "여객선: 🟢 출항 여건 양호"
+      ]
+    },
+    {
+      "scenario": "boat_rain_above0",
+      "before352Actual375EqualsB12Actual375": true,
+      "fieldsCompared": [
+        "rawScore",
+        "rankScore",
+        "cardScore",
+        "popupScore",
+        "popupForecastTime",
+        "popupFerryText",
+        "popupInterpretation"
+      ],
+      "selectedSafeForecastTime": "2026-10-10 13:00 KST",
+      "popupForecastTime": "2026-10-10 12:00 KST",
+      "cardScore": "★★★★ 80점",
+      "popupScore": "★★★★★ 99점",
+      "ferryText": [
+        "여객선: 🟢 출항 여건 양호"
+      ]
+    },
+    {
+      "scenario": "boat_raw_wind_rounding",
+      "before352Actual375EqualsB12Actual375": true,
+      "fieldsCompared": [
+        "rawScore",
+        "rankScore",
+        "cardScore",
+        "popupScore",
+        "popupForecastTime",
+        "popupFerryText",
+        "popupInterpretation"
+      ],
+      "selectedSafeForecastTime": "2026-10-10 13:00 KST",
+      "popupForecastTime": "2026-10-10 12:00 KST",
+      "cardScore": "★★★★ 80점",
+      "popupScore": "★★★★★ 99점",
+      "ferryText": [
+        "여객선: 🟢 출항 여건 양호"
+      ]
+    },
+    {
+      "scenario": "boat_raw_wave_rounding",
+      "before352Actual375EqualsB12Actual375": true,
+      "fieldsCompared": [
+        "rawScore",
+        "rankScore",
+        "cardScore",
+        "popupScore",
+        "popupForecastTime",
+        "popupFerryText",
+        "popupInterpretation"
+      ],
+      "selectedSafeForecastTime": "2026-10-10 13:00 KST",
+      "popupForecastTime": "2026-10-10 12:00 KST",
+      "cardScore": "★★★★ 80점",
+      "popupScore": "★★★★★ 99점",
+      "ferryText": [
+        "여객선: 🟢 출항 여건 양호"
+      ]
+    }
+  ],
+  "helperProof": [
+    {
+      "name": "weeklyPelagicSafety",
+      "headSHA256": "199ea88454f39bc568de8f9d66d446f9d404ad82d86b3baa0c857bd4b3223517",
+      "combinedSHA256": "199ea88454f39bc568de8f9d66d446f9d404ad82d86b3baa0c857bd4b3223517",
+      "before352SHA256": "199ea88454f39bc568de8f9d66d446f9d404ad82d86b3baa0c857bd4b3223517",
+      "headEqualsCombined": true,
+      "before352EqualsHead": true
+    },
+    {
+      "name": "weeklyDailyBestSample",
+      "headSHA256": "7566cc18b89223674136f530c72e6b8e7b84615b1058051d800e36bc947c4fd4",
+      "combinedSHA256": "7566cc18b89223674136f530c72e6b8e7b84615b1058051d800e36bc947c4fd4",
+      "before352SHA256": "7566cc18b89223674136f530c72e6b8e7b84615b1058051d800e36bc947c4fd4",
+      "headEqualsCombined": true,
+      "before352EqualsHead": true
+    },
+    {
+      "name": "todayWeatherFromWeek",
+      "headSHA256": "82652c1b90ff0ae20c6029814957d317f84c3933d684bf26d9c4b26d05ba3aff",
+      "combinedSHA256": "82652c1b90ff0ae20c6029814957d317f84c3933d684bf26d9c4b26d05ba3aff",
+      "before352SHA256": "82652c1b90ff0ae20c6029814957d317f84c3933d684bf26d9c4b26d05ba3aff",
+      "headEqualsCombined": true,
+      "before352EqualsHead": true
+    },
+    {
+      "name": "v24FerryStatus",
+      "headSHA256": "81884a96ceee5c1d7009cd16565bfc99ff188b10083f89a63c67a407cbca349f",
+      "combinedSHA256": "81884a96ceee5c1d7009cd16565bfc99ff188b10083f89a63c67a407cbca349f",
+      "before352SHA256": "81884a96ceee5c1d7009cd16565bfc99ff188b10083f89a63c67a407cbca349f",
+      "headEqualsCombined": true,
+      "before352EqualsHead": true
+    },
+    {
+      "name": "v251ScoreSentence",
+      "headSHA256": "2343ee8ccbaf44f7afee1702a7ede3c62291f81dcb37f8e054e6ca2aa4c5b645",
+      "combinedSHA256": "2343ee8ccbaf44f7afee1702a7ede3c62291f81dcb37f8e054e6ca2aa4c5b645",
+      "before352SHA256": "2343ee8ccbaf44f7afee1702a7ede3c62291f81dcb37f8e054e6ca2aa4c5b645",
+      "headEqualsCombined": true,
+      "before352EqualsHead": true
+    }
+  ],
+  "thresholds": {
+    "recommendation": {
+      "function": "weeklyPelagicSafety",
+      "rawWindMax": 6,
+      "rawWaveMax": 0.7,
+      "rawPrecip3hMax": 0
+    },
+    "ferry": {
+      "function": "v24FerryStatus",
+      "windYellowAt": 7,
+      "waveYellowAt": 1.5,
+      "windRedAt": 11,
+      "waveRedAt": 2,
+      "displayParsed": true
+    }
+  },
+  "actualGeneratorProof": {
+    "method": "AST-extracted actual pure score functions only; no generator/API execution",
+    "sourceSHA256": "99ea84f316cdc4a201e8b96392583d57d48576a42a0eb5ea0681188ea21f237d",
+    "rule": {
+      "label": "선상탐조·바다새",
+      "targetGroup": "바다오리류·슴새류·갈매기류",
+      "baseScore": 92,
+      "windIdealMax": 5,
+      "windMax": 9,
+      "gustMax": 13,
+      "precip3hMax": 1,
+      "visibilityMinKm": 8,
+      "cloudMaxPct": 95,
+      "waveMaxM": 1.5
+    },
+    "samples": [
+      {
+        "name": "wind6.01",
+        "windSpeed": 6.01,
+        "waveM": 0.3,
+        "precipitation3h": 0,
+        "actualGeneratorScore": 85,
+        "pelagicRecommendationSafety": false
+      },
+      {
+        "name": "wave.701",
+        "windSpeed": 3,
+        "waveM": 0.701,
+        "precipitation3h": 0,
+        "actualGeneratorScore": 92,
+        "pelagicRecommendationSafety": false
+      },
+      {
+        "name": "rain.001",
+        "windSpeed": 3,
+        "waveM": 0.3,
+        "precipitation3h": 0.001,
+        "actualGeneratorScore": 92,
+        "pelagicRecommendationSafety": false
+      }
+    ],
+    "pelagicBase": 92,
+    "positiveBonusCondition": "only island_migrant",
+    "synthetic99GeneratedByThesePelagicInputs": false,
+    "limitation": "This does not establish occurrence of the exact original99 fixture in operational forecasts. Current pelagic score formula starts92 and only subtracts; raw99 is synthetic contract input."
+  },
+  "conclusion": "Existing representative-popup versus recommendation-time meaning difference, not a newly introduced PR safety-selection regression. The25 original agreement mismatches remain unresolved and are not recounted as passes; these25 alone do not establish a mandatory blocker for this PR alone.",
+  "remainingRisk": "A verified representative popup may use a different sample from the safe recommendation card and show a high score/very-good sentence/ferry-green. Source eligibility does not imply pelagic recommendation safety. Ferry status and pelagic safety are separate functions. Operational99 for the synthetic pelagic fixture is not demonstrated; current actual score formula produces85/92 for the examined unsafe inputs.",
+  "additionalBrowserRuns": 0
+}

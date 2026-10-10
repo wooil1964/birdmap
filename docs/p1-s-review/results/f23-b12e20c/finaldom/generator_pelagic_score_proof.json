@@ -1,0 +1,46 @@
+{
+  "method": "AST-extracted actual pure score functions only; no generator/API execution",
+  "sourceSHA256": "99ea84f316cdc4a201e8b96392583d57d48576a42a0eb5ea0681188ea21f237d",
+  "rule": {
+    "label": "선상탐조·바다새",
+    "targetGroup": "바다오리류·슴새류·갈매기류",
+    "baseScore": 92,
+    "windIdealMax": 5,
+    "windMax": 9,
+    "gustMax": 13,
+    "precip3hMax": 1,
+    "visibilityMinKm": 8,
+    "cloudMaxPct": 95,
+    "waveMaxM": 1.5
+  },
+  "samples": [
+    {
+      "name": "wind6.01",
+      "windSpeed": 6.01,
+      "waveM": 0.3,
+      "precipitation3h": 0,
+      "actualGeneratorScore": 85,
+      "pelagicRecommendationSafety": false
+    },
+    {
+      "name": "wave.701",
+      "windSpeed": 3,
+      "waveM": 0.701,
+      "precipitation3h": 0,
+      "actualGeneratorScore": 92,
+      "pelagicRecommendationSafety": false
+    },
+    {
+      "name": "rain.001",
+      "windSpeed": 3,
+      "waveM": 0.3,
+      "precipitation3h": 0.001,
+      "actualGeneratorScore": 92,
+      "pelagicRecommendationSafety": false
+    }
+  ],
+  "pelagicBase": 92,
+  "positiveBonusCondition": "only island_migrant",
+  "synthetic99GeneratedByThesePelagicInputs": false,
+  "limitation": "This does not establish occurrence of the exact original99 fixture in operational forecasts. Current pelagic score formula starts92 and only subtracts; raw99 is synthetic contract input."
+}

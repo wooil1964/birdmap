@@ -1,0 +1,998 @@
+{
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "b596cdc8ede83fe25e64ec10b2dc88d4141673b2",
+  "mergeTree": "2c3703e7234f9f0ab02786f03d03a2314bf5cfcf",
+  "originalCurrent": {
+    "evaluationTime": "2026-10-11T06:51:30.0819143+09:00",
+    "summary": {
+      "passedSteps": 45,
+      "totalSteps": 55,
+      "failedSteps": 10,
+      "pageExceptions": 0
+    },
+    "failedSteps": [
+      {
+        "width": 344,
+        "name": "r2_unconfirmed_popup_dom",
+        "error": "eligible_missing\n\nfalse !== true\n"
+      },
+      {
+        "width": 344,
+        "name": "r2_synthetic_live_proxy_merge",
+        "error": "unconfirmed\n\nfalse !== true\n"
+      },
+      {
+        "width": 375,
+        "name": "r2_unconfirmed_popup_dom",
+        "error": "eligible_missing\n\nfalse !== true\n"
+      },
+      {
+        "width": 375,
+        "name": "r2_synthetic_live_proxy_merge",
+        "error": "unconfirmed\n\nfalse !== true\n"
+      },
+      {
+        "width": 768,
+        "name": "r2_unconfirmed_popup_dom",
+        "error": "eligible_missing\n\nfalse !== true\n"
+      },
+      {
+        "width": 768,
+        "name": "r2_synthetic_live_proxy_merge",
+        "error": "unconfirmed\n\nfalse !== true\n"
+      },
+      {
+        "width": 1024,
+        "name": "r2_unconfirmed_popup_dom",
+        "error": "eligible_missing\n\nfalse !== true\n"
+      },
+      {
+        "width": 1024,
+        "name": "r2_synthetic_live_proxy_merge",
+        "error": "unconfirmed\n\nfalse !== true\n"
+      },
+      {
+        "width": 1440,
+        "name": "r2_unconfirmed_popup_dom",
+        "error": "eligible_missing\n\nfalse !== true\n"
+      },
+      {
+        "width": 1440,
+        "name": "r2_synthetic_live_proxy_merge",
+        "error": "unconfirmed\n\nfalse !== true\n"
+      }
+    ]
+  },
+  "currentContract": {
+    "evaluationTime": "2026-10-11T06:55:23.5171298+09:00",
+    "summary": {
+      "passedSteps": 55,
+      "totalSteps": 55,
+      "failedSteps": 0,
+      "pageExceptions": 0
+    },
+    "weatherCompatibility": {
+      "passed": 10,
+      "total": 10
+    }
+  },
+  "navigationInitial": {
+    "evaluationTime": "2026-10-11T06:55:23.5171298+09:00",
+    "summary": {
+      "passed": 15,
+      "total": 20
+    },
+    "failed": "15/20"
+  },
+  "navigationScoped": {
+    "evaluationTime": "2026-10-11T06:56:49.6323065+09:00",
+    "summary": {
+      "passed": 20,
+      "total": 20,
+      "failed": 0,
+      "pageExceptions": 0
+    }
+  },
+  "observations": [
+    {
+      "width": 344,
+      "normalPopup": {
+        "scoreNumeric": true,
+        "labelRetained": true,
+        "scoreAllowed": true,
+        "sourceKind": "week_forecast",
+        "sourceCurrent": true,
+        "rawStoredKind": "today_reference",
+        "rawStoredCurrent": false,
+        "rawStoredEligible": false
+      },
+      "normalLiveMerge": {
+        "mode": "normal",
+        "unconfirmed": false,
+        "scoreNumeric": true,
+        "liveTemperatureApplied": true,
+        "liveWindApplied": true,
+        "tomorrowShown": true,
+        "storedReferenceRetained": false,
+        "provenance": {
+          "rootGeneratedAt": "2026-10-11 04:16 KST",
+          "itemGeneratedAt": "2026-10-11 04:16 KST",
+          "rootItemTimestampEqual": true,
+          "stateCurrent": false,
+          "stateEligible": false,
+          "activeKind": "week_forecast",
+          "activeCurrent": true,
+          "activeEligible": true
+        }
+      },
+      "empty": {
+        "candidateCount": 0,
+        "finalCount": 0,
+        "cardCount": 0,
+        "exactEmpty": true,
+        "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+      },
+      "restoration": {
+        "ids": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "originalIds": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "finalCount": 10,
+        "cardCount": 10,
+        "rawScores": [
+          92,
+          92,
+          92,
+          92,
+          92,
+          92,
+          91,
+          92,
+          100,
+          100
+        ],
+        "safe": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "eligible": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceKinds": [
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast"
+        ],
+        "restoredTodayRoot": "2026-10-11 04:16 KST",
+        "restoredWeekRoot": "2026-10-11 04:16 KST"
+      },
+      "fieldCreateDelete": {
+        "ownedRemoved": true,
+        "markerRemoved": true,
+        "newsRemoved": true
+      },
+      "navigationCorrected": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 328,
+            "viewport": 344,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": true,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 240,
+            "viewport": 344,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": true,
+          "result": {
+            "kakao": 0,
+            "tmap": 0,
+            "hiddenNote": true,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": false,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 190,
+            "viewport": 344,
+            "windowOpenCount": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "normalPopup": {
+        "scoreNumeric": true,
+        "labelRetained": true,
+        "scoreAllowed": true,
+        "sourceKind": "week_forecast",
+        "sourceCurrent": true,
+        "rawStoredKind": "today_reference",
+        "rawStoredCurrent": false,
+        "rawStoredEligible": false
+      },
+      "normalLiveMerge": {
+        "mode": "normal",
+        "unconfirmed": false,
+        "scoreNumeric": true,
+        "liveTemperatureApplied": true,
+        "liveWindApplied": true,
+        "tomorrowShown": true,
+        "storedReferenceRetained": false,
+        "provenance": {
+          "rootGeneratedAt": "2026-10-11 04:16 KST",
+          "itemGeneratedAt": "2026-10-11 04:16 KST",
+          "rootItemTimestampEqual": true,
+          "stateCurrent": false,
+          "stateEligible": false,
+          "activeKind": "week_forecast",
+          "activeCurrent": true,
+          "activeEligible": true
+        }
+      },
+      "empty": {
+        "candidateCount": 0,
+        "finalCount": 0,
+        "cardCount": 0,
+        "exactEmpty": true,
+        "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+      },
+      "restoration": {
+        "ids": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "originalIds": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "finalCount": 10,
+        "cardCount": 10,
+        "rawScores": [
+          92,
+          92,
+          92,
+          92,
+          92,
+          92,
+          91,
+          92,
+          100,
+          100
+        ],
+        "safe": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "eligible": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceKinds": [
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast"
+        ],
+        "restoredTodayRoot": "2026-10-11 04:16 KST",
+        "restoredWeekRoot": "2026-10-11 04:16 KST"
+      },
+      "fieldCreateDelete": {
+        "ownedRemoved": true,
+        "markerRemoved": true,
+        "newsRemoved": true
+      },
+      "navigationCorrected": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 375,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": true,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 240,
+            "viewport": 375,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": true,
+          "result": {
+            "kakao": 0,
+            "tmap": 0,
+            "hiddenNote": true,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": false,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 190,
+            "viewport": 375,
+            "windowOpenCount": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "normalPopup": {
+        "scoreNumeric": true,
+        "labelRetained": true,
+        "scoreAllowed": true,
+        "sourceKind": "week_forecast",
+        "sourceCurrent": true,
+        "rawStoredKind": "today_reference",
+        "rawStoredCurrent": false,
+        "rawStoredEligible": false
+      },
+      "normalLiveMerge": {
+        "mode": "normal",
+        "unconfirmed": false,
+        "scoreNumeric": true,
+        "liveTemperatureApplied": true,
+        "liveWindApplied": true,
+        "tomorrowShown": true,
+        "storedReferenceRetained": false,
+        "provenance": {
+          "rootGeneratedAt": "2026-10-11 04:16 KST",
+          "itemGeneratedAt": "2026-10-11 04:16 KST",
+          "rootItemTimestampEqual": true,
+          "stateCurrent": false,
+          "stateEligible": false,
+          "activeKind": "week_forecast",
+          "activeCurrent": true,
+          "activeEligible": true
+        }
+      },
+      "empty": {
+        "candidateCount": 0,
+        "finalCount": 0,
+        "cardCount": 0,
+        "exactEmpty": true,
+        "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+      },
+      "restoration": {
+        "ids": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "originalIds": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "finalCount": 10,
+        "cardCount": 10,
+        "rawScores": [
+          92,
+          92,
+          92,
+          92,
+          92,
+          92,
+          91,
+          92,
+          100,
+          100
+        ],
+        "safe": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "eligible": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceKinds": [
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast"
+        ],
+        "restoredTodayRoot": "2026-10-11 04:16 KST",
+        "restoredWeekRoot": "2026-10-11 04:16 KST"
+      },
+      "fieldCreateDelete": {
+        "creationButtonHidden": true,
+        "finePointer": true,
+        "ownedRemoved": true,
+        "markerRemoved": true,
+        "registrationUi": "Intentionally mobile-only; existing own row and ownership restored as local fixture, native popup delete verified on PC"
+      },
+      "navigationCorrected": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 768,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": true,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 240,
+            "viewport": 768,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": true,
+          "result": {
+            "kakao": 0,
+            "tmap": 0,
+            "hiddenNote": true,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": false,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 190,
+            "viewport": 768,
+            "windowOpenCount": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "normalPopup": {
+        "scoreNumeric": true,
+        "labelRetained": true,
+        "scoreAllowed": true,
+        "sourceKind": "week_forecast",
+        "sourceCurrent": true,
+        "rawStoredKind": "today_reference",
+        "rawStoredCurrent": false,
+        "rawStoredEligible": false
+      },
+      "normalLiveMerge": {
+        "mode": "normal",
+        "unconfirmed": false,
+        "scoreNumeric": true,
+        "liveTemperatureApplied": true,
+        "liveWindApplied": true,
+        "tomorrowShown": true,
+        "storedReferenceRetained": false,
+        "provenance": {
+          "rootGeneratedAt": "2026-10-11 04:16 KST",
+          "itemGeneratedAt": "2026-10-11 04:16 KST",
+          "rootItemTimestampEqual": true,
+          "stateCurrent": false,
+          "stateEligible": false,
+          "activeKind": "week_forecast",
+          "activeCurrent": true,
+          "activeEligible": true
+        }
+      },
+      "empty": {
+        "candidateCount": 0,
+        "finalCount": 0,
+        "cardCount": 0,
+        "exactEmpty": true,
+        "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+      },
+      "restoration": {
+        "ids": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "originalIds": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "finalCount": 10,
+        "cardCount": 10,
+        "rawScores": [
+          92,
+          92,
+          92,
+          92,
+          92,
+          92,
+          91,
+          92,
+          100,
+          100
+        ],
+        "safe": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "eligible": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceKinds": [
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast"
+        ],
+        "restoredTodayRoot": "2026-10-11 04:16 KST",
+        "restoredWeekRoot": "2026-10-11 04:16 KST"
+      },
+      "fieldCreateDelete": {
+        "creationButtonHidden": true,
+        "finePointer": true,
+        "ownedRemoved": true,
+        "markerRemoved": true,
+        "registrationUi": "Intentionally mobile-only; existing own row and ownership restored as local fixture, native popup delete verified on PC"
+      },
+      "navigationCorrected": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 1024,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": true,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 240,
+            "viewport": 1024,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": true,
+          "result": {
+            "kakao": 0,
+            "tmap": 0,
+            "hiddenNote": true,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": false,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 190,
+            "viewport": 1024,
+            "windowOpenCount": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "normalPopup": {
+        "scoreNumeric": true,
+        "labelRetained": true,
+        "scoreAllowed": true,
+        "sourceKind": "week_forecast",
+        "sourceCurrent": true,
+        "rawStoredKind": "today_reference",
+        "rawStoredCurrent": false,
+        "rawStoredEligible": false
+      },
+      "normalLiveMerge": {
+        "mode": "normal",
+        "unconfirmed": false,
+        "scoreNumeric": true,
+        "liveTemperatureApplied": true,
+        "liveWindApplied": true,
+        "tomorrowShown": true,
+        "storedReferenceRetained": false,
+        "provenance": {
+          "rootGeneratedAt": "2026-10-11 04:16 KST",
+          "itemGeneratedAt": "2026-10-11 04:16 KST",
+          "rootItemTimestampEqual": true,
+          "stateCurrent": false,
+          "stateEligible": false,
+          "activeKind": "week_forecast",
+          "activeCurrent": true,
+          "activeEligible": true
+        }
+      },
+      "empty": {
+        "candidateCount": 0,
+        "finalCount": 0,
+        "cardCount": 0,
+        "exactEmpty": true,
+        "emptyText": "현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요."
+      },
+      "restoration": {
+        "ids": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "originalIds": [
+          "10",
+          "107",
+          "126",
+          "14",
+          "15",
+          "3",
+          "48",
+          "5",
+          "7",
+          "8"
+        ],
+        "finalCount": 10,
+        "cardCount": 10,
+        "rawScores": [
+          92,
+          92,
+          92,
+          92,
+          92,
+          92,
+          91,
+          92,
+          100,
+          100
+        ],
+        "safe": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "eligible": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "sourceKinds": [
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast",
+          "week_forecast"
+        ],
+        "restoredTodayRoot": "2026-10-11 04:16 KST",
+        "restoredWeekRoot": "2026-10-11 04:16 KST"
+      },
+      "fieldCreateDelete": {
+        "creationButtonHidden": true,
+        "finePointer": true,
+        "ownedRemoved": true,
+        "markerRemoved": true,
+        "registrationUi": "Intentionally mobile-only; existing own row and ownership restored as local fixture, native popup delete verified on PC"
+      },
+      "navigationCorrected": [
+        {
+          "name": "ordinary_field_chooser_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "chooser": true,
+            "kakao": 1,
+            "tmap": 1,
+            "width": 340,
+            "viewport": 1440,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_field_external_navigation_blocked",
+          "passed": true,
+          "result": {
+            "publicPointBlocked": true,
+            "chooserAbsent": true,
+            "externalLinkCount": 0,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "ordinary_spot_kakao_and_tmap",
+          "passed": true,
+          "result": {
+            "kakao": 1,
+            "tmap": 1,
+            "hiddenNote": false,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": true,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 240,
+            "viewport": 1440,
+            "windowOpenCount": 0
+          }
+        },
+        {
+          "name": "hidden_spot_no_external_links",
+          "passed": true,
+          "result": {
+            "kakao": 0,
+            "tmap": 0,
+            "hiddenNote": true,
+            "actualOwnerDom": true,
+            "globalSelectorOwnerMatches": false,
+            "globalKakaoCount": 1,
+            "helperHtmlProtectedHasRoute": false,
+            "popupWidth": 190,
+            "viewport": 1440,
+            "windowOpenCount": 0
+          }
+        }
+      ]
+    }
+  ],
+  "boatClassification": "Existing representative-popup versus recommendation-time meaning difference, not a newly introduced PR safety-selection regression. The25 original agreement mismatches remain unresolved and are not recounted as passes; these25 alone do not establish a mandatory blocker for this PR alone.",
+  "previousFixedCoreRepeated": false,
+  "productChanges": 0,
+  "operationsChanges": 0
+}
