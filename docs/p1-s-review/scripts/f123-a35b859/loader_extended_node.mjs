@@ -1,0 +1,42 @@
+import {finalLoaderCases} from './final_cases.mjs';
+// Exact product loader and selection functions; only fetch/DOM redraw dependencies mocked.
+import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';
+const repo=path.resolve(process.argv[2]),out=path.resolve(process.argv[3]),head=process.argv[4]||'a35b8598d55890e705042e4d6f88621357749d09';
+const html=fs.readFileSync(path.join(repo,'index.html'),'utf8').replace(/\r\n/g,'\n');assert.equal(html,execFileSync('git',['show',head+':index.html'],{cwd:repo,encoding:'utf8',maxBuffer:1<<26}).replace(/\r\n/g,'\n'));
+const helper=fs.readFileSync(path.join(repo,'.github/scripts/test_weekly_recommendation.mjs'),'utf8'),rules=JSON.parse(fs.readFileSync(path.join(repo,'weather_rules.json'),'utf8'));
+const sc=vm.createContext({});vm.runInContext(html.match(/var siteData=([^\n]+);/)[0]+'\n'+html.match(/siteData=siteData\.concat\([\s\S]*?\);/)[0],sc);const site=JSON.parse(JSON.stringify(sc.siteData)).find(s=>String(s.id)==='14');
+function source(name){const start=html.indexOf('function '+name+'(');assert.ok(start>=0,name);let d=0,q=null;for(let i=html.indexOf('{',start);i<html.length;i++){const c=html[i],p=html[i-1];if(q){if(c===q&&p!=='\\')q=null;continue;}if(c==='"'||c==="'"){q=c;continue;}if(c==='/'&&html[i+1]==='*'){i=html.indexOf('*/',i)+1;continue;}if(c==='/'&&html[i+1]==='/'){i=html.indexOf('\n',i);continue;}if(c==='{')d++;else if(c==='}'&&--d===0)return html.slice(start,i+1);}throw Error(name);}
+const extra=['monthTideForSite','todayKstMonth','weeklyDocVerified','birdmapDataStamp','birdmapDataTime','loadBirdmapData','loadWeatherToday','loadWeatherWeek','loadTideToday','tideTodayDateText','tideTodayIsCurrent','refreshBirdmapData','refreshTodayPanelIfOpen'];
+const names=[...new Set([...vm.runInNewContext(helper.match(/const NAMES = (\[[\s\S]*?\]);/)[1]),...extra])];
+const constants=[html.match(/var TODAY_MUDFLAT_TIDE_RULES=\{[\s\S]*?\};/)[0],html.match(/var WEEKLY_RECENT_BONUS_MAX=.*?;/)[0],html.match(/var AUTUMN_CORE_FIELD_SITE_IDS=.*?;/)[0],...[...html.matchAll(/var (?:WINTER|SPRING)_[A-Z_]+=new Set\(.*?;/g)].map(m=>m[0]),html.match(/var TODAY_AUTUMN_REMOTE_ISLAND_SITE_NAMES=.*?;/)[0]].join('\n');
+const factory=new Function('ctx','Date','fetch','document','var weatherWeek=ctx.week,tideMonth=ctx.tide,weatherToday=ctx.today,tideToday=ctx.todayTide||null,siteData=ctx.sites,loadedNotices=ctx.notices,PINNED_BIRDING_ISSUES=[],recommendationWeatherRules=ctx.rules,recentSiteSightings=ctx.recent;var birdmapDataSeq={},birdmapDataStarted=false,birdmapLastDataCheck=0,BIRDMAP_REFRESH_MIN_GAP_MS=30000;var renderCount=0,popupRefreshCount=0;function renderTodayPanel(){renderCount++;}function refreshOpenBirdPopup(){popupRefreshCount++;}function loadRecommendationWeatherRules(){return Promise.resolve();}function loadTideMonth(){return Promise.resolve();}'+constants+'\n'+names.map(source).join('\n')+'\nreturn {'+names.join(',')+',setFetch:function(fn){fetch=fn;},setTide:function(day,time){tideMonth={sites:{14:{days:[{date:day,highTide:time,highTideLevel:900}]}}};},getState:function(){return {today:weatherToday,week:weatherWeek,seq:{...birdmapDataSeq},renderCount,popupRefreshCount};}};');
+const day='2026-10-10',clock=day+'T11:00:00+09:00';let auditClock=clock;class Clock extends Date{constructor(...a){super(...(a.length?a:[auditClock]));}static now(){return new Date(auditClock).getTime();}}
+const raw=(stamp,rain='강수 없음')=>({date:day,generatedAt:stamp,refreshedAt:stamp,forecastTime:day+' 12:00 KST',score:92,grade:'★★★★★',scoreEligible:true,missingScoreFields:[],stale:false,wind:'북풍 3m/s',rain,wave:'0.3m',temperature:'20°C'});
+const today=(stamp,rain)=>({date:day,generatedAt:stamp,updated:stamp,sites:{14:raw(stamp,rain)}});
+const week=(stamp,rain=0,eligible=true)=>({startDate:day,endDate:'2026-10-16',generatedAt:stamp,updated:stamp,sampleIntervalHours:3,sites:{14:{name:'걸매리',days:{[day]:{samples:[{forecastTime:day+' 12:00 KST',windSpeed:3,windDirectionDeg:0,windName:'북풍',precipitation3h:rain,waveM:.3,score:eligible?92:null,grade:'★★★★★',scoreEligible:eligible,missingScoreFields:eligible?[]:['precipitation'],isPastAtGeneration:false}]}}}}});
+const tide={sites:{14:{days:[{date:day,highTide:'12:00',highTideLevel:'900'}]}}},newStamp=day+' 10:40 KST',oldStamp=day+' 10:30 KST';
+const ok=body=>Promise.resolve({ok:true,json:()=>Promise.resolve(body)});
+function make(override={}){const d=override.day||day;const localTide={sites:{14:{days:[{date:d,highTide:'12:00',highTideLevel:'900'}]}}};return factory({todayTide:{date:day,generatedAt:day+' 10:30 KST',sites:{}},week:null,today:today(day+' 05:41 KST'),tide:localTide,sites:[site],rules,notices:[{siteId:14,published:true}],recent:{14:{latestDate:day,species:['참새','박새','울새','직박구리']}},...override},Clock,()=>Promise.reject(Error('offline')),{hidden:false,getElementById:()=>({style:{display:'block'}})});}
+function snap(api){const state=api.getState(),top=api.todayRecommendedSites();return {todayStamp:state.today?.generatedAt??null,weekStamp:state.week?.generatedAt??null,todayItemGeneratedAt:state.today?.sites?.[14]?.generatedAt??null,todayItemRain:state.today?.sites?.[14]?.rain??null,cardCount:top.length,topIds:top.map(e=>String(e.site.id)),top:top.map(e=>({raw:e.score,rank:api.weeklyRankScore(e),bonus:e.recentReport?.bonus??0,sourceKind:e.today?._weatherState?.kind,sourceEligible:e.today?._weatherState?.scoreEligible,safe:api.weeklyRecommendationIsSafe(e)})),renderCount:state.renderCount,popupRefreshCount:state.popupRefreshCount};}
+
+fs.mkdirSync(out,{recursive:true});
+const baseRows=await finalLoaderCases({clock:value=>{auditClock=value;},make,render:api=>api.refreshTodayPanelIfOpen(),snapshot:snap});
+const extended=[];
+for(const [label,value] of [['missing',undefined],['null',null],['empty',''],['array',[day+' 10:30 KST']],['object',{toString:'not-callable'}],['normal',day+' 10:50 KST']]){
+ auditClock=clock;const api=make(),stages=[];let error=null;
+ try{
+ api.setFetch(()=>ok(today(day+' 10:40 KST','3시간 강수 1mm')));await api.loadWeatherToday();stages.push({label:'known unsafe root/item10:40',...snap(api)});
+ const mixed=today(day+' 10:50 KST');if(value===undefined)delete mixed.sites[14].generatedAt;else mixed.sites[14].generatedAt=value;
+ api.setFetch(()=>ok(JSON.parse(JSON.stringify(mixed))));const applied=await api.loadWeatherToday();stages.push({label:'new root10:50 item-'+label,applied,...snap(api)});
+ api.setFetch(()=>ok(today(day+' 10:55 KST')));await api.loadWeatherToday();stages.push({label:'normal verified10:55 recovery',...snap(api)});
+ }catch(e){error=e.name+': '+e.message;}
+ const expectedMixedCards=label==='normal'?1:0,pass=!error&&stages[0].cardCount===0&&stages[1].cardCount===expectedMixedCards&&stages[2].cardCount===1;
+ extended.push({scenario:'F2-new-root-item-'+label,rawItemSource:value===undefined?'ABSENT':value,stages,error,expectedMixedCards,pass});
+}
+for(const [label,value] of [['missing',undefined],['null',null],['array',[day+' 10:50 KST']],['object',{toString:'not-callable'}]]){
+ auditClock=clock;const api=make({today:null}),body=today(day+' 10:50 KST');if(value===undefined)delete body.generatedAt;else body.generatedAt=value;
+ api.setFetch(()=>ok(JSON.parse(JSON.stringify(body))));let error=null,applied,actual;try{applied=await api.loadWeatherToday();actual=snap(api);}catch(e){error=e.name+': '+e.message;}
+ extended.push({scenario:'F2-root-'+label+'-first-normal-item1050',rawRootSource:value===undefined?'ABSENT':value,applied,actual,error,pass:!error&&actual.cardCount===0});
+}
+const result={head,clock,sourceSHA256:createHash('sha256').update(html).digest('hex'),base:{cases:baseRows.length,pass:baseRows.filter(r=>r.pass).length,fail:baseRows.filter(r=>!r.pass).length,rows:baseRows},extended:{cases:extended.length,pass:extended.filter(r=>r.pass).length,fail:extended.filter(r=>!r.pass).length,rows:extended},actualLoader:true,actualCandidate:true,actualFinal:true,actualDOM:false,networkCalls:0,operatingWrites:0,coordinatesLogged:false};
+fs.writeFileSync(path.join(out,'loader_extended_node.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({base:[result.base.pass,result.base.cases],extended:[result.extended.pass,result.extended.cases],failures:extended.filter(r=>!r.pass)},null,2));if(result.base.fail||result.extended.fail)process.exitCode=1;

@@ -15,7 +15,7 @@ for label,module,name in [('today',daily_v,'weather_today.json'),('week',week_v,
   accepted=True
  except Exception as e:error=type(e).__name__+': '+str(e)
  rows.append({'id':label,'accepted':accepted,'error':error,'metadata':{k:data[k] for k in keys if k in data},'fileSHA256':hashlib.sha256(p.read_bytes()).hexdigest(),'validatorSource':str(Path(module.__file__).resolve()),'validatorSourceSHA256':hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest(),'runtimeSiteProjection':False,'clockPatched':False})
-report={'head':'2e485079a34fa5aeeef09e82f3b996bf2696d978','main':'4b164ffe74efa5cadad9e686bd628a8915527e77','combinedTree':'75df87adfe7e82d3e12290d73a4e670b2112c59c','mode':'Exact new product validators on latest main files, actual datetime.now(KST), all190 runtime sites, no clock/runtime/source patch. Read-only; sanitized metadata and hashes only.','clockStart':start.isoformat(),'clockEnd':datetime.now(u.KST).isoformat(),'rows':rows}
+report={'head':'a35b8598d55890e705042e4d6f88621357749d09','main':'bf74095adb3bf0b13f1aca31193c8d03cf8ff53f','combinedTree':'379b0c06bad6a12570e45ed8916ae98f2645a4a7','mode':'Exact new product validators on latest main files, actual datetime.now(KST), all190 runtime sites, no clock/runtime/source patch. Read-only; sanitized metadata and hashes only.','clockStart':start.isoformat(),'clockEnd':datetime.now(u.KST).isoformat(),'rows':rows}
 (out/'latest_main_validator.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report,ensure_ascii=False))
 assert all(r['accepted'] for r in rows)

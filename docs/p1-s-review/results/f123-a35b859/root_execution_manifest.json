@@ -1,0 +1,65 @@
+{
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "archive": "exact Git archive .scratch/targetF; removed after capture",
+  "runs": [
+    {
+      "name": "baseline Node",
+      "script": "loader_final_node.mjs",
+      "pass": 28,
+      "fail": 0,
+      "exitCode": 0,
+      "result": "root-loader28/loader_final_node.json"
+    },
+    {
+      "name": "same-root Node",
+      "script": "loader_contractF_node.mjs",
+      "pass": 3,
+      "fail": 3,
+      "exitCode": 1,
+      "result": "root-loader6/loader_final_node.json"
+    },
+    {
+      "name": "same-root actual Chrome375",
+      "script": "loader_contractF_dom.mjs",
+      "env": {
+        "LOADER_WIDTHS": "375"
+      },
+      "pass": 3,
+      "fail": 3,
+      "exitCode": 1,
+      "result": "root-loader-dom6/loader_final_dom.json"
+    },
+    {
+      "name": "today actual Chrome375",
+      "script": "additional_today_dom.mjs",
+      "env": {
+        "C_GENERATOR_FIXTURE": "results/f123-a35b859/sparse6h_generated_today.json"
+      },
+      "pass": 0,
+      "fail": 3,
+      "exitCode": 1,
+      "result": "root-today-dom/additional_today_dom.json"
+    },
+    {
+      "name": "root/item actual functions",
+      "script": "contract_matrix.mjs",
+      "pass": 30,
+      "fail": 30,
+      "result": "root-contract/contract_matrix.json",
+      "note": "JSON failed conditions determine verdict; process exit alone does not mean safe"
+    },
+    {
+      "name": "Python all190 builder/validators",
+      "script": "python_contract.py",
+      "f2Pass": 20,
+      "f3Pass": 35,
+      "exitCode": 0,
+      "result": "root-python-contract.json"
+    }
+  ],
+  "argumentContract": "Loaders/DOM: archive output exactSHA; Python: archive output; contract_matrix: archive output analysis combined. Actual product guards unchanged.",
+  "runtime": {
+    "python": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+    "chrome": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "f2": {
+    "cases": 60,
+    "pass": 30,
+    "fail": 30,
+    "failIds": [
+      "F2-general-root-missing",
+      "F2-general-root-null",
+      "F2-general-root-empty",
+      "F2-general-root-array",
+      "F2-general-root-object",
+      "F2-general-root-number",
+      "F2-general-root-boolean",
+      "F2-general-item-missing",
+      "F2-general-item-null",
+      "F2-general-item-empty",
+      "F2-tide-root-missing",
+      "F2-tide-root-null",
+      "F2-tide-root-empty",
+      "F2-tide-root-array",
+      "F2-tide-root-object",
+      "F2-tide-root-number",
+      "F2-tide-root-boolean",
+      "F2-tide-item-missing",
+      "F2-tide-item-null",
+      "F2-tide-item-empty",
+      "F2-island-root-missing",
+      "F2-island-root-null",
+      "F2-island-root-empty",
+      "F2-island-root-array",
+      "F2-island-root-object",
+      "F2-island-root-number",
+      "F2-island-root-boolean",
+      "F2-island-item-missing",
+      "F2-island-item-null",
+      "F2-island-item-empty"
+    ]
+  },
+  "f3": {
+    "cases": 77,
+    "pass": 70,
+    "fail": 7,
+    "exceptions": 1,
+    "failIds": [
+      "F3-today-publication-root-array",
+      "F3-today-publication-root-object",
+      "F3-today-publication-root-number",
+      "F3-today-publication-root-boolean",
+      "F3-today-publication-root-null",
+      "F3-today-publication-item-null",
+      "F3-today-forecast-object"
+    ]
+  },
+  "live": [
+    {
+      "label": "normal",
+      "error": "ReferenceError: liveWeatherPrecipitationText is not defined",
+      "sourceUnchanged": true,
+      "mergedEligible": null,
+      "mergedGeneration": null,
+      "scoreDisplay": null,
+      "expectedEligible": true,
+      "pass": false
+    },
+    {
+      "label": "stale",
+      "error": "ReferenceError: liveWeatherPrecipitationText is not defined",
+      "sourceUnchanged": true,
+      "mergedEligible": null,
+      "mergedGeneration": null,
+      "scoreDisplay": null,
+      "expectedEligible": false,
+      "pass": false
+    },
+    {
+      "label": "mismatch",
+      "error": "ReferenceError: liveWeatherPrecipitationText is not defined",
+      "sourceUnchanged": true,
+      "mergedEligible": null,
+      "mergedGeneration": null,
+      "scoreDisplay": null,
+      "expectedEligible": false,
+      "pass": false
+    },
+    {
+      "label": "missing",
+      "error": "ReferenceError: liveWeatherPrecipitationText is not defined",
+      "sourceUnchanged": true,
+      "mergedEligible": null,
+      "mergedGeneration": null,
+      "scoreDisplay": null,
+      "expectedEligible": false,
+      "pass": false
+    },
+    {
+      "label": "null",
+      "error": "ReferenceError: liveWeatherPrecipitationText is not defined",
+      "sourceUnchanged": true,
+      "mergedEligible": null,
+      "mergedGeneration": null,
+      "scoreDisplay": null,
+      "expectedEligible": false,
+      "pass": false
+    },
+    {
+      "label": "empty",
+      "error": "ReferenceError: liveWeatherPrecipitationText is not defined",
+      "sourceUnchanged": true,
+      "mergedEligible": null,
+      "mergedGeneration": null,
+      "scoreDisplay": null,
+      "expectedEligible": false,
+      "pass": false
+    }
+  ],
+  "latestMain": {
+    "count": 190,
+    "rootItemEqual": 181,
+    "rawEligible": 181,
+    "sourceEligible": 0
+  }
+}

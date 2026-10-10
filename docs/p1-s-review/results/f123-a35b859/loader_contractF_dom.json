@@ -1,0 +1,2180 @@
+{
+  "sha": "a35b8598d55890e705042e4d6f88621357749d09",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "sourceDigest": "187daaf4818b6592c6346e87064bb608abe49b7fd6b78a79781184a3f655af61",
+  "summary": {
+    "conditions": 30,
+    "pass": 15,
+    "fail": 15,
+    "exceptions": 0,
+    "base40Pass": 0
+  },
+  "rows": [
+    {
+      "width": 344,
+      "scenario": "contractF2_exact_root1050_item1030_then_same1050_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "1040/1040 known unsafe is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "1050/1030 inconsistent favorable item cannot revive",
+          "passed": true
+        },
+        {
+          "expectation": "Verified 1050/1050 corrected batch recovers despite invalid predecessor at the same root",
+          "passed": false
+        },
+        {
+          "expectation": "Recovery preserves raw92/rank108",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1030 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 344,
+      "scenario": "contractF2_reverse_old_root_new_item_then_consistent1050_recovers",
+      "checks": [
+        {
+          "expectation": "Old root/new item cannot override verified unsafe1040",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent1050 recovers after old root is rejected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1030/1050 rain0",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 344,
+      "scenario": "contractF2_new_root_newer_item_same1050_correction_recovers",
+      "checks": [
+        {
+          "expectation": "New root/newer item mismatch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Same root correction to consistent publication recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1055 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 344,
+      "scenario": "contractF2_first_inconsistent_same_root_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "Inconsistent first batch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent correction after unverified first batch recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first1050/1030",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 344,
+      "scenario": "contractF2_verified_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "A verified same-publication unsafe result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified1050 rain1",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "verified1050 conflicting rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    },
+    {
+      "width": 344,
+      "scenario": "contractF2_next_root_consistent1055_restores_after_mixed1050",
+      "checks": [
+        {
+          "expectation": "Consistent1055 still restores normally",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040 unsafe",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050 mixed",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1055 consistent",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:55 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 375,
+      "scenario": "contractF2_exact_root1050_item1030_then_same1050_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "1040/1040 known unsafe is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "1050/1030 inconsistent favorable item cannot revive",
+          "passed": true
+        },
+        {
+          "expectation": "Verified 1050/1050 corrected batch recovers despite invalid predecessor at the same root",
+          "passed": false
+        },
+        {
+          "expectation": "Recovery preserves raw92/rank108",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1030 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "contractF2_reverse_old_root_new_item_then_consistent1050_recovers",
+      "checks": [
+        {
+          "expectation": "Old root/new item cannot override verified unsafe1040",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent1050 recovers after old root is rejected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1030/1050 rain0",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 375,
+      "scenario": "contractF2_new_root_newer_item_same1050_correction_recovers",
+      "checks": [
+        {
+          "expectation": "New root/newer item mismatch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Same root correction to consistent publication recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1055 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "contractF2_first_inconsistent_same_root_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "Inconsistent first batch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent correction after unverified first batch recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first1050/1030",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 375,
+      "scenario": "contractF2_verified_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "A verified same-publication unsafe result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified1050 rain1",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "verified1050 conflicting rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    },
+    {
+      "width": 375,
+      "scenario": "contractF2_next_root_consistent1055_restores_after_mixed1050",
+      "checks": [
+        {
+          "expectation": "Consistent1055 still restores normally",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040 unsafe",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050 mixed",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1055 consistent",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:55 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 768,
+      "scenario": "contractF2_exact_root1050_item1030_then_same1050_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "1040/1040 known unsafe is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "1050/1030 inconsistent favorable item cannot revive",
+          "passed": true
+        },
+        {
+          "expectation": "Verified 1050/1050 corrected batch recovers despite invalid predecessor at the same root",
+          "passed": false
+        },
+        {
+          "expectation": "Recovery preserves raw92/rank108",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1030 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 768,
+      "scenario": "contractF2_reverse_old_root_new_item_then_consistent1050_recovers",
+      "checks": [
+        {
+          "expectation": "Old root/new item cannot override verified unsafe1040",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent1050 recovers after old root is rejected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1030/1050 rain0",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 768,
+      "scenario": "contractF2_new_root_newer_item_same1050_correction_recovers",
+      "checks": [
+        {
+          "expectation": "New root/newer item mismatch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Same root correction to consistent publication recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1055 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 768,
+      "scenario": "contractF2_first_inconsistent_same_root_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "Inconsistent first batch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent correction after unverified first batch recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first1050/1030",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 768,
+      "scenario": "contractF2_verified_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "A verified same-publication unsafe result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified1050 rain1",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "verified1050 conflicting rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    },
+    {
+      "width": 768,
+      "scenario": "contractF2_next_root_consistent1055_restores_after_mixed1050",
+      "checks": [
+        {
+          "expectation": "Consistent1055 still restores normally",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040 unsafe",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050 mixed",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1055 consistent",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:55 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "scenario": "contractF2_exact_root1050_item1030_then_same1050_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "1040/1040 known unsafe is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "1050/1030 inconsistent favorable item cannot revive",
+          "passed": true
+        },
+        {
+          "expectation": "Verified 1050/1050 corrected batch recovers despite invalid predecessor at the same root",
+          "passed": false
+        },
+        {
+          "expectation": "Recovery preserves raw92/rank108",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1030 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 1024,
+      "scenario": "contractF2_reverse_old_root_new_item_then_consistent1050_recovers",
+      "checks": [
+        {
+          "expectation": "Old root/new item cannot override verified unsafe1040",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent1050 recovers after old root is rejected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1030/1050 rain0",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "scenario": "contractF2_new_root_newer_item_same1050_correction_recovers",
+      "checks": [
+        {
+          "expectation": "New root/newer item mismatch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Same root correction to consistent publication recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1055 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 1024,
+      "scenario": "contractF2_first_inconsistent_same_root_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "Inconsistent first batch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent correction after unverified first batch recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first1050/1030",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 1024,
+      "scenario": "contractF2_verified_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "A verified same-publication unsafe result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified1050 rain1",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "verified1050 conflicting rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    },
+    {
+      "width": 1024,
+      "scenario": "contractF2_next_root_consistent1055_restores_after_mixed1050",
+      "checks": [
+        {
+          "expectation": "Consistent1055 still restores normally",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040 unsafe",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050 mixed",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1055 consistent",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:55 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 1440,
+      "scenario": "contractF2_exact_root1050_item1030_then_same1050_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "1040/1040 known unsafe is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "1050/1030 inconsistent favorable item cannot revive",
+          "passed": true
+        },
+        {
+          "expectation": "Verified 1050/1050 corrected batch recovers despite invalid predecessor at the same root",
+          "passed": false
+        },
+        {
+          "expectation": "Recovery preserves raw92/rank108",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1030 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 1440,
+      "scenario": "contractF2_reverse_old_root_new_item_then_consistent1050_recovers",
+      "checks": [
+        {
+          "expectation": "Old root/new item cannot override verified unsafe1040",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent1050 recovers after old root is rejected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1030/1050 rain0",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:50 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        false,
+        true
+      ],
+      "pass": true
+    },
+    {
+      "width": 1440,
+      "scenario": "contractF2_new_root_newer_item_same1050_correction_recovers",
+      "checks": [
+        {
+          "expectation": "New root/newer item mismatch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Same root correction to consistent publication recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040/1040 rain1",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1055 rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 rain0 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 1440,
+      "scenario": "contractF2_first_inconsistent_same_root_corrected_recovers",
+      "checks": [
+        {
+          "expectation": "Inconsistent first batch is excluded",
+          "passed": true
+        },
+        {
+          "expectation": "Consistent correction after unverified first batch recovers",
+          "passed": false
+        }
+      ],
+      "stages": [
+        {
+          "label": "first1050/1030",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050/1050 correction",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": false
+    },
+    {
+      "width": 1440,
+      "scenario": "contractF2_verified_same_publication_conflict_stays_excluded",
+      "checks": [
+        {
+          "expectation": "A verified same-publication unsafe result remains protected",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "verified1050 rain1",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "verified1050 conflicting rain0",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:50 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        }
+      ],
+      "applyResults": [
+        true,
+        false
+      ],
+      "pass": true
+    },
+    {
+      "width": 1440,
+      "scenario": "contractF2_next_root_consistent1055_restores_after_mixed1050",
+      "checks": [
+        {
+          "expectation": "Consistent1055 still restores normally",
+          "passed": true
+        }
+      ],
+      "stages": [
+        {
+          "label": "1040 unsafe",
+          "todayStamp": "2026-10-10 10:40 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:40 KST",
+          "todayItemRain": "3시간 강수 1mm",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1050 mixed",
+          "todayStamp": "2026-10-10 10:50 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:30 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [],
+          "cardCount": 0,
+          "cardText": [],
+          "empty": true,
+          "top": []
+        },
+        {
+          "label": "1055 consistent",
+          "todayStamp": "2026-10-10 10:55 KST",
+          "weekStamp": null,
+          "todayItemGeneratedAt": "2026-10-10 10:55 KST",
+          "todayItemRain": "강수 없음",
+          "topIds": [
+            "14"
+          ],
+          "cardCount": 1,
+          "cardText": [
+            "1. 걸매리📢 현재 탐조 이슈 연계🌊 갯벌탐조★★★★★ 92점🐦 최근 출현 오늘(2026-10-10 관찰, 제보 승인 기준) · 4종 · 추천 가점 +16📅 추천: 10월 10일 토요일충남 아산·당진 · 갯벌탐조📢 지금 볼 만한 탐조 이슈🌊 도요 이동기 물때 주목🌬️ 북풍 3m/s · 강수 없음 · 파고 0.3m🌊 만조 12:00 · 900cm만조 시각 인접 오늘 저장 기상 기준 · 저장 예보 2026-10-10 12:00 KST · 생성 2026-10-10 10:55 KST🗺️ 지도에서 보기"
+          ],
+          "empty": false,
+          "top": [
+            {
+              "raw": 92,
+              "rank": 108,
+              "bonus": 16,
+              "sourceKind": "today_saved",
+              "sourceEligible": true,
+              "safe": true
+            }
+          ]
+        }
+      ],
+      "applyResults": [
+        true,
+        true,
+        true
+      ],
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "traffic": [
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "static.cloudflareinsights.com",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "tile.openstreetmap.org",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    },
+    {
+      "host": "birdmap-reports.wooil-birdmap.workers.dev",
+      "method": "GET",
+      "synthetic": true
+    }
+  ],
+  "constraints": {
+    "actualChromeDom": true,
+    "actualProductLoadersAndRenderers": true,
+    "actualLeafletLoaded": true,
+    "syntheticFetchResponsesOnly": true,
+    "externalWorkerRequestsFulfilledSynthetic": true,
+    "DNSIsolationBeforeNavigation": true,
+    "staticCDNGetHeadOnly": true,
+    "productionPOSTDELETE": 0,
+    "productionD1Writes": 0,
+    "productChanges": 0,
+    "coordinatesLogged": false
+  }
+}

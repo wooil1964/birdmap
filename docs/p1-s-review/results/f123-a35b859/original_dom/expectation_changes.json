@@ -1,0 +1,268 @@
+[
+  {
+    "scenario": "delayed_generation",
+    "group": "tide_reference",
+    "reason": "10:17 due time passed; 05:41 generation is a reference",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "future_generation",
+    "group": "tide_reference",
+    "reason": "12:30 generatedAt is after 11:00 evaluation",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "malformed_generation",
+    "group": "tide_reference",
+    "reason": "generatedAt has no valid timestamp",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "missing_generation",
+    "group": "tide_reference",
+    "reason": "item and root generatedAt both unavailable",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "previous_forecast_date",
+    "group": "tide_reference",
+    "reason": "raw date today differs from actual forecast previous date",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "generated_sparse6h_delayed",
+    "group": "tide_reference",
+    "reason": "unchanged actual builder generation06:10 is before latest due10:17",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_delayed_generation",
+    "group": "ordinary_reference",
+    "reason": "same delayed reference contract in general route",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_future_generation",
+    "group": "ordinary_reference",
+    "reason": "same future generation contract in general route",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_malformed_generation",
+    "group": "ordinary_reference",
+    "reason": "same invalid generation contract in general route",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_missing_generation",
+    "group": "ordinary_reference",
+    "reason": "same missing generation contract in general route",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_previous_forecast_date",
+    "group": "ordinary_reference",
+    "reason": "same actual forecast date mismatch in general route",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_generated_sparse6h_delayed",
+    "group": "ordinary_reference",
+    "reason": "unchanged builder row mapped to general route",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_reference_bonus108",
+    "group": "ordinary_control",
+    "reason": "bonus16 may not revive reference source",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 108,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  },
+  {
+    "scenario": "ordinary_week_site_absent_reference",
+    "group": "week_policy",
+    "reason": "missing weekly registry entry may not revive delayed today source",
+    "before": {
+      "cardCount": 1,
+      "candidatePresent": true,
+      "rankScore": 92,
+      "cardScore": "오늘 적합도 미확인"
+    },
+    "after": {
+      "cardCount": 0,
+      "candidatePresent": false,
+      "rankScore": null,
+      "cardScore": null,
+      "popupScore": "오늘 적합도 미확인",
+      "referenceTemperatureRetained": true
+    }
+  }
+]

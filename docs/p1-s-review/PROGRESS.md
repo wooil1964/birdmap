@@ -1,3 +1,12 @@
+# 최신 완료 — PR #13 F1·F2·F3 / a35b859
+
+**수정 필요.** 정확 SHA a35b8598d55890e705042e4d6f88621357749d09, 이전2e485, mainbf740·tree379b0c06 충돌0. 자동615/0/1·S2182/21/12·source74/helper23·고정190/176·ON/OFF 전수 불변·S1-R171/일반17 통과. F1 Node28/Chrome140과 주간 배열 차선80/rank96 해결. F2 누락item/무효root는 actual loader0→1/raw92/rank108·PythonJS 불일치; 동일root1050 교정은[0,0,0] 미복구. F3 parser 밖 todayforecast 객체 String 및 주간publication 렌더가 실제 Chrome TypeError. 기존 lifecycle35/10 보존·안전45+일치control10 통과. [최종 보고서](F123_RECHECK.md)·[교차 증빙](results/f123-a35b859/verification_summary.json). 최신190/10640 validator/current190·actualbuilder190·target/combinedE2E55씩 통과. PRCI0/dispatch0·실제Worker/안전rollback 미확인. 제품/main/운영/D1/실사용자쓰기0. 새 보완 SHA 대기.
+
+이하 이전 검증 이력(현재 판정과 구분):
+
+---
+
+
 게시완료: PR13 댓글6089038356 / Issue9 댓글6089039285, API exact본문 일치. 보고서commit2026d347, 게시증빙results/final-2e485/github_receipts.json.
 
 # 최신 완료 — PR #13 배포 전 / 2e485079

@@ -1,0 +1,15 @@
+{
+  "runtime": "C:/Program Files/nodejs/node.exe v24.18.0; C:/Program Files/Google/Chrome/Application/chrome.exe headless",
+  "workdir": "C:/Users/김진호/Documents/GitHub/birdmap",
+  "archiveRoot": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch",
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "runs": [
+    {"script":"independent_original.mjs","archive":"targetF","out":"original_dom","env":{"C_GENERATOR_FIXTURE":"sparse6h_generated_today.json","FINAL_SKIP_BOAT":"1"},"exitCode":1,"reason":"original lifecycle expectations10 now conflict with F2; original assertions preserved"},
+    {"script":"independent_f123_safe.mjs","archive":"targetF","out":"safe_lifecycle","env":{"C_GENERATOR_FIXTURE":"sparse6h_generated_today.json","FINAL_SKIP_BOAT":"1","C_SKIP_WEEK_DIAGNOSTICS":"1","F123_LIFECYCLE_ONLY":"1"},"result":"safe55/55 JSON complete; original45 and controls10 separate"},
+    {"script":"independent_f123_safe.mjs","archive":"targetF","out":"typed_dom","env":{"C_GENERATOR_FIXTURE":"sparse6h_generated_today.json","FINAL_TYPED_ONLY":"1","C_WIDTHS":"375"},"exitCode":1,"reason":"actual weekly object publication render TypeError"},
+    {"script":"additional_today_dom.mjs","archive":"targetF","out":"additional_today_dom","env":{"C_GENERATOR_FIXTURE":"sparse6h_generated_today.json"},"exitCode":1,"reason":"safe expected metadata exclusions2 and actual forecast object exceptions fail"},
+    {"script":"general_target_f123.mjs","archive":"targetF","out":"general_target","clockArgument":"2026-10-09T06:00:00+09:00","exitCode":0},
+    {"script":"general_latest_f123.mjs","archive":"combinedF","out":"general_latest","clockArgument":"2026-10-10T21:15:44+09:00","exitCode":0}
+  ],
+  "notes": ["Script, archive and output arguments are absolute paths beneath their roots above.","DOM scripts' optional fourth positional argument is the exact head.","All script writes occurred only under pr13_f123_dom analysis output.","A review-only selector escaping error was corrected before the final additional3 run; no product patch.","Bootstrap follow-up toggle error in typed4 repeats the same object publication product TypeError."]
+}

@@ -1,0 +1,7373 @@
+{
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "main": "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f",
+  "clock": "2026-10-10T11:00:00+09:00",
+  "sourceSHA256": "187daaf4818b6592c6346e87064bb608abe49b7fd6b78a79781184a3f655af61",
+  "mode": "Exact Git-extracted functions; JSON-roundtripped raw input; no product guard patch. No coordinates logged.",
+  "f2": {
+    "cases": 60,
+    "pass": 30,
+    "fail": 30,
+    "rows": [
+      {
+        "id": "F2-general-root-normal",
+        "expected": {
+          "candidate": true,
+          "topIds": [
+            "501"
+          ]
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "normal",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F2-general-root-old",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "old",
+          "value": "2026-10-10 10:30 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-root-new",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "new",
+          "value": "2026-10-10 10:55 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-root-missing",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "missing",
+          "value": "ABSENT"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-root-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-root-empty",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "empty",
+          "value": ""
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-root-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-root-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-root-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-root-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-item-normal",
+        "expected": {
+          "candidate": true,
+          "topIds": [
+            "501"
+          ]
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "normal",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F2-general-item-old",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "old",
+          "value": "2026-10-10 10:30 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:30 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 30
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-item-new",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "new",
+          "value": "2026-10-10 10:55 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:55 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 5
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-item-missing",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "missing",
+          "value": "ABSENT"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-item-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-item-empty",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "empty",
+          "value": ""
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-general-item-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": [
+            "2026-10-10 10:50 KST"
+          ],
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-item-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": {
+            "toString": "not-callable"
+          },
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-item-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": 1791601200000,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-general-item-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": true,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-root-normal",
+        "expected": {
+          "candidate": true,
+          "topIds": [
+            "14"
+          ]
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "normal",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-root-old",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "old",
+          "value": "2026-10-10 10:30 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-root-new",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "new",
+          "value": "2026-10-10 10:55 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-root-missing",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "missing",
+          "value": "ABSENT"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-root-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-root-empty",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "empty",
+          "value": ""
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-root-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-root-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-root-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-root-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-item-normal",
+        "expected": {
+          "candidate": true,
+          "topIds": [
+            "14"
+          ]
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "normal",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-item-old",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "old",
+          "value": "2026-10-10 10:30 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:30 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 30
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-item-new",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "new",
+          "value": "2026-10-10 10:55 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:55 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 5
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-item-missing",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "missing",
+          "value": "ABSENT"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-item-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-item-empty",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "empty",
+          "value": ""
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-tide-item-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": [
+            "2026-10-10 10:50 KST"
+          ],
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-item-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": {
+            "toString": "not-callable"
+          },
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-item-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": 1791601200000,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-tide-item-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": true,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-root-normal",
+        "expected": {
+          "candidate": true,
+          "topIds": [
+            "3"
+          ]
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "normal",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F2-island-root-old",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "old",
+          "value": "2026-10-10 10:30 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-root-new",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "new",
+          "value": "2026-10-10 10:55 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-root-missing",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "missing",
+          "value": "ABSENT"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-root-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-root-empty",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "empty",
+          "value": ""
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-root-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-root-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-root-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-root-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "root",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-item-normal",
+        "expected": {
+          "candidate": true,
+          "topIds": [
+            "3"
+          ]
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "normal",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F2-island-item-old",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "old",
+          "value": "2026-10-10 10:30 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:30 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 30
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-item-new",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "new",
+          "value": "2026-10-10 10:55 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": false,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:55 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 5
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-item-missing",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "missing",
+          "value": "ABSENT"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-item-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-item-empty",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 92
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "empty",
+          "value": ""
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F2-island-item-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": [
+            "2026-10-10 10:50 KST"
+          ],
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-item-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": {
+            "toString": "not-callable"
+          },
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-item-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": 1791601200000,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F2-island-item-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "side": "item",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": true,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      }
+    ]
+  },
+  "f3": {
+    "parser": [
+      {
+        "label": "string",
+        "value": "2026-10-10 12:00 KST",
+        "parsed": 1791601200000,
+        "weatherFinite": true,
+        "error": null,
+        "pass": true
+      },
+      {
+        "label": "array",
+        "value": [
+          "2026-10-10 12:00 KST"
+        ],
+        "parsed": null,
+        "weatherFinite": false,
+        "error": null,
+        "pass": true
+      },
+      {
+        "label": "object",
+        "value": {
+          "toString": "not-callable"
+        },
+        "parsed": null,
+        "weatherFinite": false,
+        "error": null,
+        "pass": true
+      },
+      {
+        "label": "number",
+        "value": 1791601200000,
+        "parsed": null,
+        "weatherFinite": false,
+        "error": null,
+        "pass": true
+      },
+      {
+        "label": "boolean",
+        "value": true,
+        "parsed": null,
+        "weatherFinite": false,
+        "error": null,
+        "pass": true
+      },
+      {
+        "label": "null",
+        "value": null,
+        "parsed": null,
+        "weatherFinite": false,
+        "error": null,
+        "pass": true
+      },
+      {
+        "label": "ISO",
+        "value": "2026-10-10T12:00:00+09:00",
+        "parsed": 1791601200000,
+        "weatherFinite": true,
+        "error": null,
+        "pass": true
+      }
+    ],
+    "typed": [
+      {
+        "id": "F3-general-publication-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "string",
+          "source": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-publication-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "array",
+          "source": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-general-publication-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-general-publication-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-general-publication-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-general-publication-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-general-publication-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "ISO",
+          "source": "2026-10-10T10:50:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10T10:50:00+09:00",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "string",
+          "source": "2026-10-10 12:00 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-array",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "array",
+          "source": [
+            "2026-10-10 12:00 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-object",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-number",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-boolean",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-null",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-general-forecast-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "ISO",
+          "source": "2026-10-10T12:00:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10T12:00:00+09:00"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "string",
+          "source": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "array",
+          "source": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-publication-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "ISO",
+          "source": "2026-10-10T10:50:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10T10:50:00+09:00",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "string",
+          "source": "2026-10-10 12:00 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-array",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "array",
+          "source": [
+            "2026-10-10 12:00 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-object",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-number",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-boolean",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-null",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-tide-forecast-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "ISO",
+          "source": "2026-10-10T12:00:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10T12:00:00+09:00"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "string",
+          "source": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "array",
+          "source": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-island-publication-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "ISO",
+          "source": "2026-10-10T10:50:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10T10:50:00+09:00",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "string",
+          "source": "2026-10-10 12:00 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-array",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "array",
+          "source": [
+            "2026-10-10 12:00 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-object",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-number",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-boolean",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-null",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-island-forecast-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "3"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "ISO",
+          "source": "2026-10-10T12:00:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10T12:00:00+09:00"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "string",
+          "source": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "array",
+          "source": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-publication-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication",
+          "label": "ISO",
+          "source": "2026-10-10T10:50:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10T10:50:00+09:00",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "string",
+          "source": "2026-10-10 12:00 KST"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-array",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "array",
+          "source": [
+            "2026-10-10 12:00 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-object",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "object",
+          "source": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-number",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "number",
+          "source": 1791601200000
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-boolean",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "boolean",
+          "source": true
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-null",
+        "expected": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96
+        },
+        "actual": {
+          "candidate": true,
+          "score": 80,
+          "rank": 96,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "13:00",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 80
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "null",
+          "source": null
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 13:00 KST"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-boat-forecast-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "48"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "ISO",
+          "source": "2026-10-10T12:00:00+09:00"
+        },
+        "sourceState": {
+          "kind": "week_forecast",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10T12:00:00+09:00"
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-root-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "string",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-root-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F3-today-publication-root-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F3-today-publication-root-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F3-today-publication-root-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F3-today-publication-root-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F3-today-publication-root-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-root",
+          "label": "ISO",
+          "value": "2026-10-10T10:50:00+09:00"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-item-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "string",
+          "value": "2026-10-10 10:50 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-item-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "array",
+          "value": [
+            "2026-10-10 10:50 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": [
+            "2026-10-10 10:50 KST"
+          ],
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-item-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": {
+            "toString": "not-callable"
+          },
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-item-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": 1791601200000,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-item-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": true,
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": null
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-publication-item-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": false
+      },
+      {
+        "id": "F3-today-publication-item-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "publication-item",
+          "label": "ISO",
+          "value": "2026-10-10T10:50:00+09:00"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10T10:50:00+09:00",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-today-forecast-string",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "string",
+          "value": "2026-10-10 12:00 KST"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10 12:00 KST",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      },
+      {
+        "id": "F3-today-forecast-array",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "array",
+          "value": [
+            "2026-10-10 12:00 KST"
+          ]
+        },
+        "sourceState": {
+          "kind": "today_reference",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": [
+            "2026-10-10 12:00 KST"
+          ],
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-forecast-object",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "error": "TypeError: Cannot convert object to primitive value",
+        "candidateError": "TypeError: Cannot convert object to primitive value",
+        "finalError": "TypeError: Cannot convert object to primitive value",
+        "sourceError": "TypeError: Cannot convert object to primitive value",
+        "raw": {
+          "field": "forecast",
+          "label": "object",
+          "value": {
+            "toString": "not-callable"
+          }
+        },
+        "sourceState": null,
+        "scoreAllowed": false,
+        "pass": false
+      },
+      {
+        "id": "F3-today-forecast-number",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "number",
+          "value": 1791601200000
+        },
+        "sourceState": {
+          "kind": "previous_saved",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": 1791601200000,
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-forecast-boolean",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "boolean",
+          "value": true
+        },
+        "sourceState": {
+          "kind": "previous_saved",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": true,
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-forecast-null",
+        "expected": {
+          "candidate": false,
+          "topIds": []
+        },
+        "actual": {
+          "candidate": false,
+          "score": null,
+          "rank": null,
+          "bonus": 0,
+          "mandatory": false,
+          "safe": null,
+          "date": null,
+          "time": null,
+          "tideText": null,
+          "topIds": [],
+          "popupScore": null
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "null",
+          "value": null
+        },
+        "sourceState": {
+          "kind": "previous_saved",
+          "dataCurrent": false,
+          "scoreEligible": false,
+          "stale": true,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": false,
+        "pass": true
+      },
+      {
+        "id": "F3-today-forecast-ISO",
+        "expected": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115
+        },
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": null,
+          "topIds": [
+            "501"
+          ],
+          "popupScore": 99
+        },
+        "error": null,
+        "candidateError": null,
+        "finalError": null,
+        "sourceError": null,
+        "raw": {
+          "field": "forecast",
+          "label": "ISO",
+          "value": "2026-10-10T12:00:00+09:00"
+        },
+        "sourceState": {
+          "kind": "today_saved",
+          "dataCurrent": true,
+          "scoreEligible": true,
+          "stale": false,
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 10:50 KST",
+          "forecastTime": "2026-10-10T12:00:00+09:00",
+          "ageMinutes": 10
+        },
+        "scoreAllowed": true,
+        "pass": true
+      }
+    ],
+    "cases": 77,
+    "pass": 70,
+    "fail": 7,
+    "exceptionCount": 1
+  },
+  "liveMerge": {
+    "cases": 6,
+    "pass": 3,
+    "fail": 3,
+    "rows": [
+      {
+        "label": "normal",
+        "error": null,
+        "applied": true,
+        "sourceUnchanged": true,
+        "mergedEligible": true,
+        "mergedGeneration": "2026-10-10 10:50 KST",
+        "scoreDisplay": "★★★★★ 92점",
+        "expectedEligible": true,
+        "pass": true
+      },
+      {
+        "label": "stale",
+        "error": null,
+        "applied": true,
+        "sourceUnchanged": true,
+        "mergedEligible": false,
+        "mergedGeneration": null,
+        "scoreDisplay": "오늘 적합도 미확인",
+        "expectedEligible": false,
+        "pass": true
+      },
+      {
+        "label": "mismatch",
+        "error": null,
+        "applied": true,
+        "sourceUnchanged": true,
+        "mergedEligible": false,
+        "mergedGeneration": "2026-10-10 10:30 KST",
+        "scoreDisplay": "오늘 적합도 미확인",
+        "expectedEligible": false,
+        "pass": true
+      },
+      {
+        "label": "missing",
+        "error": null,
+        "applied": true,
+        "sourceUnchanged": true,
+        "mergedEligible": true,
+        "mergedGeneration": null,
+        "scoreDisplay": "★★★★★ 92점",
+        "expectedEligible": false,
+        "pass": false
+      },
+      {
+        "label": "null",
+        "error": null,
+        "applied": true,
+        "sourceUnchanged": true,
+        "mergedEligible": true,
+        "mergedGeneration": null,
+        "scoreDisplay": "★★★★★ 92점",
+        "expectedEligible": false,
+        "pass": false
+      },
+      {
+        "label": "empty",
+        "error": null,
+        "applied": true,
+        "sourceUnchanged": true,
+        "mergedEligible": true,
+        "mergedGeneration": "",
+        "scoreDisplay": "★★★★★ 92점",
+        "expectedEligible": false,
+        "pass": false
+      }
+    ]
+  },
+  "latestMain": {
+    "actualCurrentClock": "2026-10-10T12:24:28.137Z",
+    "count": 190,
+    "rootItemEqualCount": 190,
+    "rawEligibleCount": 190,
+    "sourceEligibleCount": 190,
+    "rows": [
+      {
+        "id": "1",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "2",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "3",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "4",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "5",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "6",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "7",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "8",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "9",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "10",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "11",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "12",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "13",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "14",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "15",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "16",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "17",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "18",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "19",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "20",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "21",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "22",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "23",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "24",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "25",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "26",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "27",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "28",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "29",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "30",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "31",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "32",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "33",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "34",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "35",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "36",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "37",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "38",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "39",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "40",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "41",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "42",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "43",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "44",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "45",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "46",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "47",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "48",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "49",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "50",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "51",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "52",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "53",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "54",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "55",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "56",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "57",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "58",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "59",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "60",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "61",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "62",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "63",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "64",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "65",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "66",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "67",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "68",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "69",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "70",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "71",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "72",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "73",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "74",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "75",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "76",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "77",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "78",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "79",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "80",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "81",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "82",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "83",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "84",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "85",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "86",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "87",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "88",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "89",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "90",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "91",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "92",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "93",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "94",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "95",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "96",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "97",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "98",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "99",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "100",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "101",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "102",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "103",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "104",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "105",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "106",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "107",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "108",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "109",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "110",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "111",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "112",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "113",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "114",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "115",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "116",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "117",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "118",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "119",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "120",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "121",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "122",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "123",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "124",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "125",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "126",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "127",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "128",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "129",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "130",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "131",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "132",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "133",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "134",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "135",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "136",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "137",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "138",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "139",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "140",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "141",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "142",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "143",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "144",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "145",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "146",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "147",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "148",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "149",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "150",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "151",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "152",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "153",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "154",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "155",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "156",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "157",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "158",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "159",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "160",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "162",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "163",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "164",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "165",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "167",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "168",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "169",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "170",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "172",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "173",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "174",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "175",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "176",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "178",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "179",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "180",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "181",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "182",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "183",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "185",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "186",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "187",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "188",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "189",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "190",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "191",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "192",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "193",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "194",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      },
+      {
+        "id": "195",
+        "rawEligible": true,
+        "rootItemEqual": true,
+        "sourceCurrent": true,
+        "sourceEligible": true,
+        "sourceKind": "today_fallback"
+      }
+    ]
+  }
+}

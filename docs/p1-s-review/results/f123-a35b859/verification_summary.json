@@ -1,0 +1,930 @@
+{
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "before": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+  "main": "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f",
+  "combinedTree": "379b0c06bad6a12570e45ed8916ae98f2645a4a7",
+  "verdict": "수정 필요",
+  "remoteCheckedAt": "2026-10-10T12:41:41.037Z",
+  "remoteRefs": [
+    "a35b8598d55890e705042e4d6f88621357749d09\trefs/heads/fix/p1-s-safety-guards",
+    "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f\trefs/heads/main"
+  ],
+  "merge": {
+    "conflicts": 0,
+    "realMainMerge": false
+  },
+  "mainSincePrevious": [
+    "tide_month.json",
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "automaticData": [
+    {
+      "path": "weather_today.json",
+      "leftSHA256": "0c2622534d0b486e473de335ddd40bbdf260da2219f6d4de6fcd3f5622b1b4a5",
+      "rightSHA256": "0c2622534d0b486e473de335ddd40bbdf260da2219f6d4de6fcd3f5622b1b4a5",
+      "byteIdentical": true
+    },
+    {
+      "path": "weather_week.json",
+      "leftSHA256": "7c4813337993b50094caad6b98b5e996ae81d94e4b614dfdc56eb8a5457b1ba4",
+      "rightSHA256": "7c4813337993b50094caad6b98b5e996ae81d94e4b614dfdc56eb8a5457b1ba4",
+      "byteIdentical": true
+    },
+    {
+      "path": "tide_today.json",
+      "leftSHA256": "286f243fcdc07038f8f8e895548b4310085fecbc66212651df57c43ab9e952e3",
+      "rightSHA256": "286f243fcdc07038f8f8e895548b4310085fecbc66212651df57c43ab9e952e3",
+      "byteIdentical": true
+    },
+    {
+      "path": "tide_month.json",
+      "leftSHA256": "318d2b6ab41289aa813a378a16f277de5a3af252dc012d810f23345e67d262ee",
+      "rightSHA256": "318d2b6ab41289aa813a378a16f277de5a3af252dc012d810f23345e67d262ee",
+      "byteIdentical": true
+    },
+    {
+      "path": "tide_health.json",
+      "leftSHA256": "4cf9c9c55a588f8dd740fd7e79e8263689f4ffb06be3b8c63561db622bc6d9d5",
+      "rightSHA256": "4cf9c9c55a588f8dd740fd7e79e8263689f4ffb06be3b8c63561db622bc6d9d5",
+      "byteIdentical": true
+    }
+  ],
+  "productSource": [
+    {
+      "path": "index.html",
+      "leftSHA256": "187daaf4818b6592c6346e87064bb608abe49b7fd6b78a79781184a3f655af61",
+      "rightSHA256": "187daaf4818b6592c6346e87064bb608abe49b7fd6b78a79781184a3f655af61",
+      "byteIdentical": true
+    },
+    {
+      "path": "reports-api/src/shared.js",
+      "leftSHA256": "35710f2353ad8a0b6c99f111cb384ce1133c53724775f8f1e9e7108e23a62f5b",
+      "rightSHA256": "35710f2353ad8a0b6c99f111cb384ce1133c53724775f8f1e9e7108e23a62f5b",
+      "byteIdentical": true
+    },
+    {
+      "path": "reports-api/src/public.js",
+      "leftSHA256": "de73a7f93a6929a1ccfbc24f5907d4c6196a62580f1aa15c72edb89b3a5a0fcc",
+      "rightSHA256": "de73a7f93a6929a1ccfbc24f5907d4c6196a62580f1aa15c72edb89b3a5a0fcc",
+      "byteIdentical": true
+    },
+    {
+      "path": "reports-api/src/admin.js",
+      "leftSHA256": "99a36d8b06dcb8b3648c614ffef1c2aa1a9fbb772c63756e34885796e96eb512",
+      "rightSHA256": "99a36d8b06dcb8b3648c614ffef1c2aa1a9fbb772c63756e34885796e96eb512",
+      "byteIdentical": true
+    },
+    {
+      "path": "reports-api/src/field-updates.js",
+      "leftSHA256": "5f404d9d721cb659334eb4fe9cb8f4a0a2720562b61786bab80f5c7ffd2ab052",
+      "rightSHA256": "5f404d9d721cb659334eb4fe9cb8f4a0a2720562b61786bab80f5c7ffd2ab052",
+      "byteIdentical": true
+    },
+    {
+      "path": ".github/scripts/update_weather.py",
+      "leftSHA256": "99ea84f316cdc4a201e8b96392583d57d48576a42a0eb5ea0681188ea21f237d",
+      "rightSHA256": "99ea84f316cdc4a201e8b96392583d57d48576a42a0eb5ea0681188ea21f237d",
+      "byteIdentical": true
+    },
+    {
+      "path": ".github/scripts/validate_weather.py",
+      "leftSHA256": "62f7aac384c97e6c0a303382b782ec9248d59ef4041c306b539a54ac9a688ad8",
+      "rightSHA256": "62f7aac384c97e6c0a303382b782ec9248d59ef4041c306b539a54ac9a688ad8",
+      "byteIdentical": true
+    },
+    {
+      "path": ".github/scripts/validate_weather_week.py",
+      "leftSHA256": "8b1938e6bf5da6059a6525e0444ef2be8fee3c7deb3564f21ca5b663f3c67d85",
+      "rightSHA256": "8b1938e6bf5da6059a6525e0444ef2be8fee3c7deb3564f21ca5b663f3c67d85",
+      "byteIdentical": true
+    }
+  ],
+  "automaticRegression": {
+    "pass": 615,
+    "fail": 0,
+    "skip": 1
+  },
+  "normalFixed": {
+    "clock": "2026-10-08T22:40:00+09:00",
+    "sites": 190,
+    "candidates": 176,
+    "full190Unchanged": true,
+    "on": [
+      {
+        "position": 1,
+        "id": "108",
+        "name": "호곡리",
+        "raw": 92,
+        "display": 92,
+        "rank": 103,
+        "bonus": 11,
+        "latestDate": "2026-10-05",
+        "ageDays": 3,
+        "speciesCount": 2,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "경기",
+        "mandatory": true,
+        "priority": 1,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "23f1724e40620cc67ad27694daa6e6190b48a0674bfe9e819f123d68bc08f1a3"
+      },
+      {
+        "position": 2,
+        "id": "112",
+        "name": "알뜨르비행장",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-13",
+        "time": "09:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "island_migrant",
+        "canonicalRule": "island_migrant",
+        "region": "제주",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "f094bba3fd58aaae060017d46190473debb5eb87ae4eeab79415ccf67ae48666"
+      },
+      {
+        "position": 3,
+        "id": "15",
+        "name": "천수만 사기리",
+        "raw": 92,
+        "display": 92,
+        "rank": 94,
+        "bonus": 2,
+        "latestDate": "2026-09-29",
+        "ageDays": 9,
+        "speciesCount": 1,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "충남",
+        "mandatory": true,
+        "priority": 1,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "cb8077f2c027efcfc8c5c6faf1629a53f3998fe23817d864fefcb010c85961b1"
+      },
+      {
+        "position": 4,
+        "id": "194",
+        "name": "천수만 강당리",
+        "raw": 92,
+        "display": 92,
+        "rank": 94,
+        "bonus": 2,
+        "latestDate": "2026-09-29",
+        "ageDays": 9,
+        "speciesCount": 1,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "충남",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "d99af1793fde770bd327c0b9b43b1515ca2f10c5600d82e3b13e18b28fdb8c9c"
+      },
+      {
+        "position": 5,
+        "id": "126",
+        "name": "해리천습지",
+        "raw": 92,
+        "display": 92,
+        "rank": 94,
+        "bonus": 2,
+        "latestDate": "2026-09-25",
+        "ageDays": 13,
+        "speciesCount": 1,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "mudflat",
+        "axes": {
+          "field": false,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "전북",
+        "mandatory": true,
+        "priority": 1,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "02fc5c27bae02ecedd01dc24376be7883b7bb653ca8f097126a8835e0c8058c6"
+      },
+      {
+        "position": 6,
+        "id": "14",
+        "name": "걸매리",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-11",
+        "time": "18:00",
+        "axis": "mudflat",
+        "axes": {
+          "field": false,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "충남",
+        "mandatory": true,
+        "priority": 2,
+        "sortLevel": 921,
+        "gate": true,
+        "basis": "만조 인접 3시간 예보 기준(만조와 52분 차)",
+        "siteCoordinateSHA256": "414cfaa3d678b0151c4ae97790edbc7984693a3a6543554175c8492b7bbcaa50"
+      },
+      {
+        "position": 7,
+        "id": "107",
+        "name": "매향리",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-11",
+        "time": "18:00",
+        "axis": "mudflat",
+        "axes": {
+          "field": false,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "경기",
+        "mandatory": true,
+        "priority": 2,
+        "sortLevel": 863,
+        "gate": true,
+        "basis": "만조 인접 3시간 예보 기준(만조와 56분 차)",
+        "siteCoordinateSHA256": "ce9e87d87601d27e7026424c1d855c3d6e500e88f6ccc5f4a5afe01dd42aa1ea"
+      },
+      {
+        "position": 8,
+        "id": "48",
+        "name": "대진항",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "pelagic",
+        "axes": {
+          "field": false,
+          "mudflat": false,
+          "pelagic": true
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "강원",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "154a18f280095dc51f0e4a97a2de089ead53f1f7c37bae26a6ecc32308934e04"
+      },
+      {
+        "position": 9,
+        "id": "195",
+        "name": "평화의공원",
+        "raw": 92,
+        "display": 92,
+        "rank": 108,
+        "bonus": 16,
+        "latestDate": "2026-10-08",
+        "ageDays": 0,
+        "speciesCount": 12,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "other",
+        "axes": {
+          "field": false,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "forest_songbird",
+        "canonicalRule": "forest_songbird",
+        "region": "서울",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "694c9c6bf3cfda523dfa8f79415508678f06e28bf891f19aee2ba049dc89ba08"
+      },
+      {
+        "position": 10,
+        "id": "3",
+        "name": "굴업도",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "18:00",
+        "axis": "other",
+        "axes": {
+          "field": false,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "island_migrant",
+        "canonicalRule": "island_migrant",
+        "region": "인천",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "823f4b4722c43b462d57ef22f1edbf71bbd6134341f85ae789958ef363a4cfc4"
+      }
+    ],
+    "off": [
+      {
+        "position": 1,
+        "id": "112",
+        "name": "알뜨르비행장",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-13",
+        "time": "09:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "island_migrant",
+        "canonicalRule": "island_migrant",
+        "region": "제주",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "f094bba3fd58aaae060017d46190473debb5eb87ae4eeab79415ccf67ae48666"
+      },
+      {
+        "position": 2,
+        "id": "7",
+        "name": "교동도",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "12:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "인천",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "c236402900bac4abe50ce53149ea63ec7f77c58592655ccb4d99050db3c1a297"
+      },
+      {
+        "position": 3,
+        "id": "8",
+        "name": "석모도",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "18:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "인천",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "366894fc6d459dabce272c046b8a6110d827f522c3006f4dfe6ee3237f138364"
+      },
+      {
+        "position": 4,
+        "id": "10",
+        "name": "강화도",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "field",
+        "axes": {
+          "field": true,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "인천",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "b7ed6b3b7f9865e2a4801d17888fb6043113778ece1663b42b004463dd4c3259"
+      },
+      {
+        "position": 5,
+        "id": "126",
+        "name": "해리천습지",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "mudflat",
+        "axes": {
+          "field": false,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "전북",
+        "mandatory": true,
+        "priority": 1,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "02fc5c27bae02ecedd01dc24376be7883b7bb653ca8f097126a8835e0c8058c6"
+      },
+      {
+        "position": 6,
+        "id": "14",
+        "name": "걸매리",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-11",
+        "time": "18:00",
+        "axis": "mudflat",
+        "axes": {
+          "field": false,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "충남",
+        "mandatory": true,
+        "priority": 2,
+        "sortLevel": 921,
+        "gate": true,
+        "basis": "만조 인접 3시간 예보 기준(만조와 52분 차)",
+        "siteCoordinateSHA256": "414cfaa3d678b0151c4ae97790edbc7984693a3a6543554175c8492b7bbcaa50"
+      },
+      {
+        "position": 7,
+        "id": "107",
+        "name": "매향리",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-11",
+        "time": "18:00",
+        "axis": "mudflat",
+        "axes": {
+          "field": false,
+          "mudflat": true,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "경기",
+        "mandatory": true,
+        "priority": 2,
+        "sortLevel": 863,
+        "gate": true,
+        "basis": "만조 인접 3시간 예보 기준(만조와 56분 차)",
+        "siteCoordinateSHA256": "ce9e87d87601d27e7026424c1d855c3d6e500e88f6ccc5f4a5afe01dd42aa1ea"
+      },
+      {
+        "position": 8,
+        "id": "48",
+        "name": "대진항",
+        "raw": 92,
+        "display": 92,
+        "rank": 92,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "09:00",
+        "axis": "pelagic",
+        "axes": {
+          "field": false,
+          "mudflat": false,
+          "pelagic": true
+        },
+        "season": "autumn",
+        "ruleKey": "mudflat_shorebird",
+        "canonicalRule": "mudflat_shorebird",
+        "region": "강원",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "154a18f280095dc51f0e4a97a2de089ead53f1f7c37bae26a6ecc32308934e04"
+      },
+      {
+        "position": 9,
+        "id": "3",
+        "name": "굴업도",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "18:00",
+        "axis": "other",
+        "axes": {
+          "field": false,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "island_migrant",
+        "canonicalRule": "island_migrant",
+        "region": "인천",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "823f4b4722c43b462d57ef22f1edbf71bbd6134341f85ae789958ef363a4cfc4"
+      },
+      {
+        "position": 10,
+        "id": "5",
+        "name": "대청도",
+        "raw": 100,
+        "display": 100,
+        "rank": 100,
+        "bonus": 0,
+        "latestDate": null,
+        "ageDays": null,
+        "speciesCount": null,
+        "date": "2026-10-09",
+        "time": "18:00",
+        "axis": "other",
+        "axes": {
+          "field": false,
+          "mudflat": false,
+          "pelagic": false
+        },
+        "season": "autumn",
+        "ruleKey": "island_migrant",
+        "canonicalRule": "island_migrant",
+        "region": "인천",
+        "mandatory": false,
+        "priority": 4,
+        "sortLevel": 0,
+        "gate": true,
+        "basis": "주간 3시간 예보 기준",
+        "siteCoordinateSHA256": "155507decb60b03868141731dd836eab5031dcc9c1e905fd1d1f2e112db65f47"
+      }
+    ]
+  },
+  "F1": {
+    "node": {
+      "conditions": 28,
+      "pass": 28,
+      "fail": 0,
+      "exceptions": 0,
+      "base8Pass": 8,
+      "base8Fail": 0
+    },
+    "chrome": {
+      "conditions": 140,
+      "pass": 140,
+      "fail": 0,
+      "exceptions": 0,
+      "base40Pass": 40
+    }
+  },
+  "F2": {
+    "matrix": {
+      "pass": 30,
+      "fail": 30
+    },
+    "actualLoader": {
+      "pass": 4,
+      "fail": 6
+    },
+    "sameRootNode": {
+      "conditions": 6,
+      "pass": 3,
+      "fail": 3,
+      "exceptions": 0,
+      "base8Pass": 3,
+      "base8Fail": 3
+    },
+    "sameRootChrome": {
+      "conditions": 30,
+      "pass": 15,
+      "fail": 15,
+      "exceptions": 0,
+      "base40Pass": 0
+    },
+    "python": {
+      "pass": 20,
+      "fail": 0
+    },
+    "builder": [
+      {
+        "mode": "normal",
+        "rootGeneratedAt": "2026-10-10 10:50 KST",
+        "itemGeneratedAt": "2026-10-10 10:50 KST",
+        "itemStale": false,
+        "itemEligible": true,
+        "rootItemSameCount": 190,
+        "eligibleItemSameCount": 190,
+        "eligibleCount": 190,
+        "todayValidation": {
+          "accepted": true,
+          "error": null
+        },
+        "weekValidation": {
+          "accepted": true,
+          "error": null
+        },
+        "originalCoordinatesStored": false,
+        "actualProcessSite": true,
+        "actualMainEnvelope": true,
+        "actualReuseBranch": false
+      },
+      {
+        "mode": "stale_reuse",
+        "rootGeneratedAt": "2026-10-10 10:55 KST",
+        "itemGeneratedAt": "2026-10-10 10:50 KST",
+        "itemStale": true,
+        "itemEligible": false,
+        "rootItemSameCount": 189,
+        "eligibleItemSameCount": 189,
+        "eligibleCount": 189,
+        "todayValidation": {
+          "accepted": true,
+          "error": null
+        },
+        "weekValidation": {
+          "accepted": true,
+          "error": null
+        },
+        "originalCoordinatesStored": false,
+        "actualProcessSite": true,
+        "actualMainEnvelope": true,
+        "actualReuseBranch": true
+      }
+    ],
+    "live": {
+      "pass": 3,
+      "fail": 3
+    }
+  },
+  "F3": {
+    "parserPass": 7,
+    "typed": {
+      "pass": 70,
+      "fail": 7,
+      "overlapF2": 6,
+      "uniqueTodayObjectException": 1
+    },
+    "python": {
+      "pass": 35,
+      "fail": 0
+    }
+  },
+  "DOM": {
+    "core": {
+      "total": 245,
+      "pass": 245,
+      "fail": 0,
+      "errors": 0
+    },
+    "invalidStrings": {
+      "total": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    "lifecycleOriginal": {
+      "total": 45,
+      "pass": 35,
+      "fail": 10
+    },
+    "lifecycleSafeOriginal45": {
+      "total": 45,
+      "pass": 45,
+      "fail": 0
+    },
+    "matchedControls10": {
+      "total": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    "typedArray2": {
+      "total": 2,
+      "pass": 2,
+      "fail": 0
+    },
+    "typedObject2": {
+      "total": 2,
+      "pass": 1,
+      "fail": 1
+    },
+    "additionalToday3": {
+      "total": 3,
+      "pass": 0,
+      "fail": 3,
+      "exceptionRows": 1
+    },
+    "generalTarget": {
+      "passedSteps": 55,
+      "totalSteps": 55,
+      "failedSteps": 0,
+      "pageExceptions": 0
+    },
+    "generalLatest": {
+      "passedSteps": 55,
+      "totalSteps": 55,
+      "failedSteps": 0,
+      "pageExceptions": 0
+    }
+  },
+  "S2": {
+    "matrix": 182,
+    "special": 21,
+    "popup": 12
+  },
+  "S1": {
+    "exactAndQuantityCases": 95,
+    "legacyMixedCases": 76,
+    "protectedRepresentationCases": 171,
+    "repairedProtectedRepresentationCases": 152,
+    "ordinaryControls": 17,
+    "ordinaryFalsePositiveCount": 0,
+    "existingBreedingCases": 6,
+    "recentApiCases": 18,
+    "legacySubmitCases": 9,
+    "fieldSubmitCases": 10,
+    "fieldBreedingCases": 6,
+    "adminPlanCases": 3,
+    "adminAuthenticatedCases": 5,
+    "fieldOwnerDeleteCases": 4,
+    "allAssertionsPassed": true
+  },
+  "CI": {
+    "headRuns": 0,
+    "successClaimed": false,
+    "dispatches": 0,
+    "mainWeather": {
+      "id": 38047614684,
+      "head_sha": "e5c81242416e6e783885b02e185a5734f31d3ca5",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-10T11:12:55Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38047614684",
+      "path": ".github/workflows/update-weather.yml"
+    },
+    "workerVersionConfirmed": false,
+    "safeRollbackConfirmed": false
+  },
+  "constraints": {
+    "productChanges": 0,
+    "mainMerge": 0,
+    "deployment": 0,
+    "D1Changes": 0,
+    "realUserWrites": 0,
+    "privateCoordinatesPublished": 0
+  }
+}

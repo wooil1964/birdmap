@@ -1,0 +1,79 @@
+{
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "workdir": "C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF",
+  "runtime": {
+    "node": "C:/Program Files/nodejs/node.exe",
+    "python": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe"
+  },
+  "shell": "PowerShell",
+  "sandbox": "Default process setup failed with helper_unknown_error. require_escalated read/run operations were accepted; all writes limited to outputRoot.",
+  "outputRoot": "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f123_contract",
+  "commands": [
+    {
+      "label": "F2/F3 typed and live",
+      "command": "node 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/contract_matrix.mjs' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results' 'C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedF'",
+      "exitCode": 1
+    },
+    {
+      "label": "Actual loader baseline+extended",
+      "command": "node 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/loader_extended_node.mjs' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results' 'a35b8598d55890e705042e4d6f88621357749d09'",
+      "exitCode": 1
+    },
+    {
+      "label": "Python190 F2/F3 and actual builder",
+      "command": "$env:PYTHONDONTWRITEBYTECODE='1'\n$env:PYTHONUTF8='1'\n& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/python_contract.py' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    },
+    {
+      "label": "S2 matrix",
+      "command": "node 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/pr13_r123_actual_matrix.mjs' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    },
+    {
+      "label": "Source/helper",
+      "command": "node 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/c_temporal_source_actual.mjs' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    },
+    {
+      "label": "C1/C2 additional",
+      "command": "node 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/final_c1_c2_additional.mjs' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    },
+    {
+      "label": "Python numeric/week",
+      "command": "$env:PYTHONDONTWRITEBYTECODE='1'\n$env:PYTHONUTF8='1'\n& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/c_week_validator_actual.py' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/targetF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    },
+    {
+      "label": "Latest actual-clock validator",
+      "command": "$env:PYTHONDONTWRITEBYTECODE='1'\n$env:PYTHONUTF8='1'\n& 'C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/latest_main_validate.py' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/combinedF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    },
+    {
+      "label": "Exact historical actual functions",
+      "command": "node 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/scripts/historical_contract.mjs' 'C:/Users/김진호/.codex/worktrees/p1-s-pr13-review/birdmap/docs/p1-s-review/.scratch/beforeF' 'C:/Users/김진호/.codex/visualizations/2026/10/08/01a1190e-204e-7790-ad48-3431ee07838f/pr13_f123_contract/results'",
+      "exitCode": 0
+    }
+  ],
+  "preliminaryHarnessErrors": [
+    {
+      "preserved": "contract_matrix_initial_harness.json",
+      "error": "LIVE_WEATHER_VALUE_RANGES absent from live factory; not product failure."
+    },
+    {
+      "preserved": "contract_matrix_dependency_harness.json",
+      "error": "liveWeatherPrecipitationText/liveWeatherSky omitted; corrected by extracting original dependencies."
+    },
+    {
+      "preserved": "python_contract_initial_harness.json",
+      "error": "Target old archive week first day09 clashed with synthetic date10 normal test; corrected by real newly generated190 fixture. Today ISO forecast already accepted by old validator and is recorded separately."
+    },
+    {
+      "error": "c_week validator initially started concurrently before final_c1_c2_additional.json existed; rerun sequentially after dependency completion passed92+10."
+    }
+  ],
+  "notes": [
+    "No failed safety assertion removed. Product mismatches retain exit1.",
+    "Python bytecode writes disabled. Provider responses mocked; original coordinates not saved."
+  ]
+}

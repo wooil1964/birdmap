@@ -1,0 +1,1323 @@
+{
+  "head": "a35b8598d55890e705042e4d6f88621357749d09",
+  "main": "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f",
+  "combinedTree": "379b0c06bad6a12570e45ed8916ae98f2645a4a7",
+  "verdict": "수정 필요",
+  "rootCauses": [
+    {
+      "id": "F2-incomplete-batch-contract",
+      "severity": "배포 차단",
+      "source": "index.html:2071,2081,2082; .github/scripts/validate_weather.py:54",
+      "facts": "Root/item 양방향 값 불일치는 차단. Item missing/null/empty는 root fallback + hasItemGenerated=false로 승인. Root invalid는 rootMs=null로 guard 생략. Actual loader known rain1 -> new-root missing/null/empty rain0가0->1/raw92/rank108. Python full190 validator는18 비정상 모두거부. Normal builder does not produce mismatch."
+    },
+    {
+      "id": "F3-today-pre-parser-coercion",
+      "severity": "배포 차단",
+      "source": "index.html:2070,2074,3906",
+      "facts": "weeklyForecastTimestamp/weatherTimeMs 원본 타입 guard는 안전. Today forecastTime JSON object with toString:not-callable is String() converted by storedWeatherState before null rejection: actual candidate and actual final independently TypeError. Existing before version also throws."
+    }
+  ],
+  "f2": {
+    "cases": 60,
+    "pass": 30,
+    "fail": 30,
+    "pythonCases": 20,
+    "pythonPass": 20,
+    "parity": [
+      {
+        "id": "F2-root-normal",
+        "pythonAccepted": true,
+        "pythonError": null,
+        "js": [
+          {
+            "id": "F2-general-root-normal",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-normal",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-normal",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-old",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs '2026-10-10 10:30 KST'",
+        "js": [
+          {
+            "id": "F2-general-root-old",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-old",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-old",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-new",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs '2026-10-10 10:55 KST'",
+        "js": [
+          {
+            "id": "F2-general-root-new",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-new",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-new",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-missing",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs None",
+        "js": [
+          {
+            "id": "F2-general-root-missing",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-missing",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-missing",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-null",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs None",
+        "js": [
+          {
+            "id": "F2-general-root-null",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-null",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-null",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-empty",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs ''",
+        "js": [
+          {
+            "id": "F2-general-root-empty",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-empty",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-empty",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-array",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs ['2026-10-10 10:50 KST']",
+        "js": [
+          {
+            "id": "F2-general-root-array",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-array",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-array",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-object",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs {'toString': 'not-callable'}",
+        "js": [
+          {
+            "id": "F2-general-root-object",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-object",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-object",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-number",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs 1791601200000",
+        "js": [
+          {
+            "id": "F2-general-root-number",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-number",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-number",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-root-boolean",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 1 eligible item generatedAt differs from the batch: '2026-10-10 10:50 KST' vs True",
+        "js": [
+          {
+            "id": "F2-general-root-boolean",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-root-boolean",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-root-boolean",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-normal",
+        "pythonAccepted": true,
+        "pythonError": null,
+        "js": [
+          {
+            "id": "F2-general-item-normal",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-item-normal",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-item-normal",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-old",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: '2026-10-10 10:30 KST' vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-old",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:30 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 30
+            }
+          },
+          {
+            "id": "F2-tide-item-old",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:30 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 30
+            }
+          },
+          {
+            "id": "F2-island-item-old",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:30 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 30
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-new",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: '2026-10-10 10:55 KST' vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-new",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:55 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 5
+            }
+          },
+          {
+            "id": "F2-tide-item-new",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:55 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 5
+            }
+          },
+          {
+            "id": "F2-island-item-new",
+            "eligible": false,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": false,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:55 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 5
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-missing",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: None vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-missing",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-item-missing",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-item-missing",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-null",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: None vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-null",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-item-null",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-item-null",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-empty",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: '' vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-empty",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-tide-item-empty",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          },
+          {
+            "id": "F2-island-item-empty",
+            "eligible": true,
+            "source": {
+              "kind": "today_saved",
+              "dataCurrent": true,
+              "scoreEligible": true,
+              "stale": false,
+              "date": "2026-10-10",
+              "generatedAt": "2026-10-10 10:50 KST",
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-array",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: ['2026-10-10 10:50 KST'] vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-array",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": [
+                "2026-10-10 10:50 KST"
+              ],
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-tide-item-array",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": [
+                "2026-10-10 10:50 KST"
+              ],
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-island-item-array",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": [
+                "2026-10-10 10:50 KST"
+              ],
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-object",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: {'toString': 'not-callable'} vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-object",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": {
+                "toString": "not-callable"
+              },
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-tide-item-object",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": {
+                "toString": "not-callable"
+              },
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-island-item-object",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": {
+                "toString": "not-callable"
+              },
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-number",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: 1791601200000 vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-number",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": 1791601200000,
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-tide-item-number",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": 1791601200000,
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-island-item-number",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": 1791601200000,
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          }
+        ]
+      },
+      {
+        "id": "F2-item-boolean",
+        "pythonAccepted": false,
+        "pythonError": "AssertionError: 14 eligible item generatedAt differs from the batch: True vs '2026-10-10 10:50 KST'",
+        "js": [
+          {
+            "id": "F2-general-item-boolean",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": true,
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-tide-item-boolean",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": true,
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          },
+          {
+            "id": "F2-island-item-boolean",
+            "eligible": false,
+            "source": {
+              "kind": "today_reference",
+              "dataCurrent": false,
+              "scoreEligible": false,
+              "stale": true,
+              "date": "2026-10-10",
+              "generatedAt": true,
+              "forecastTime": "2026-10-10 12:00 KST",
+              "ageMinutes": null
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "f3": {
+    "total": 77,
+    "pass": 70,
+    "fail": 7,
+    "requestedCore": {
+      "cases": 60,
+      "pass": 58,
+      "week": [
+        48,
+        48
+      ],
+      "today": [
+        10,
+        12
+      ]
+    },
+    "extraTodayRoot": [
+      1,
+      6
+    ],
+    "ISOControls": [
+      11,
+      11
+    ],
+    "parser": [
+      7,
+      7
+    ],
+    "candidateTypeErrorRows": [
+      "F3-today-forecast-object"
+    ],
+    "finalTypeErrorRows": [
+      "F3-today-forecast-object"
+    ],
+    "python": [
+      35,
+      35
+    ],
+    "limits": "Python existing ISO accept sets are separate; malformed today forecast can reject via TypeError/AttributeError. UI TypeError is proven only by actual function calls here; Chrome evidence is parent DOMagent scope."
+  },
+  "loader": {
+    "base": [
+      28,
+      28
+    ],
+    "extended": [
+      4,
+      10
+    ]
+  },
+  "liveMerge": {
+    "pass": 3,
+    "cases": 6,
+    "exceptions": 0,
+    "limits": "Actual merge/freshness/numeric helpers; DOM sinks and interpretation capture only mocked; not actual Chrome DOM."
+  },
+  "regressions": {
+    "matrix": [
+      182,
+      182
+    ],
+    "special": [
+      21,
+      21
+    ],
+    "popup": [
+      12,
+      12
+    ],
+    "sourceCore": [
+      74,
+      74
+    ],
+    "helper": [
+      23,
+      23
+    ],
+    "schemaDiagnostics": 4,
+    "additional": [
+      80,
+      80
+    ],
+    "numeric": [
+      92,
+      92
+    ],
+    "pythonNumeric": [
+      92,
+      92
+    ],
+    "pythonWeek": [
+      10,
+      10
+    ],
+    "fixedCandidates": 176
+  },
+  "builder": [
+    {
+      "mode": "normal",
+      "rootGeneratedAt": "2026-10-10 10:50 KST",
+      "itemGeneratedAt": "2026-10-10 10:50 KST",
+      "itemStale": false,
+      "itemEligible": true,
+      "rootItemSameCount": 190,
+      "eligibleItemSameCount": 190,
+      "eligibleCount": 190,
+      "todayValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "weekValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "originalCoordinatesStored": false,
+      "actualProcessSite": true,
+      "actualMainEnvelope": true,
+      "actualReuseBranch": false
+    },
+    {
+      "mode": "stale_reuse",
+      "rootGeneratedAt": "2026-10-10 10:55 KST",
+      "itemGeneratedAt": "2026-10-10 10:50 KST",
+      "itemStale": true,
+      "itemEligible": false,
+      "rootItemSameCount": 189,
+      "eligibleItemSameCount": 189,
+      "eligibleCount": 189,
+      "todayValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "weekValidation": {
+        "accepted": true,
+        "error": null
+      },
+      "originalCoordinatesStored": false,
+      "actualProcessSite": true,
+      "actualMainEnvelope": true,
+      "actualReuseBranch": true
+    }
+  ],
+  "latestValidator": {
+    "head": "a35b8598d55890e705042e4d6f88621357749d09",
+    "main": "bf74095adb3bf0b13f1aca31193c8d03cf8ff53f",
+    "combinedTree": "379b0c06bad6a12570e45ed8916ae98f2645a4a7",
+    "mode": "Exact new product validators on latest main files, actual datetime.now(KST), all190 runtime sites, no clock/runtime/source patch. Read-only; sanitized metadata and hashes only.",
+    "clockStart": "2026-10-10T21:19:07.614794+09:00",
+    "clockEnd": "2026-10-10T21:19:08.025165+09:00",
+    "rows": [
+      {
+        "id": "today",
+        "accepted": true,
+        "error": null,
+        "metadata": {
+          "date": "2026-10-10",
+          "generatedAt": "2026-10-10 20:13 KST",
+          "refreshedAt": "2026-10-10 20:17 KST",
+          "updated": "2026-10-10 20:13 KST",
+          "status": "ok",
+          "siteCount": 190,
+          "scoreEligibleCount": 190
+        },
+        "fileSHA256": "e3012249a7322247465302da58586b33eb7148fc2db399b56ba722bc9451af59",
+        "validatorSource": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedF\\.github\\scripts\\validate_weather.py",
+        "validatorSourceSHA256": "39e7af8183f9075d39b3c3b8f9a163f4ca6ffdfdc559b66bbef78e6c260ad612",
+        "runtimeSiteProjection": false,
+        "clockPatched": false
+      },
+      {
+        "id": "week",
+        "accepted": true,
+        "error": null,
+        "metadata": {
+          "startDate": "2026-10-10",
+          "endDate": "2026-10-16",
+          "generatedAt": "2026-10-10 20:13 KST",
+          "refreshedAt": "2026-10-10 20:17 KST",
+          "status": "ok",
+          "siteCount": 190,
+          "sampleCount": 10640,
+          "scoreEligibleSampleCount": 10640
+        },
+        "fileSHA256": "952ab7be5a974ed8ea0c1fe96bcd646670579f132a3ddaf553321d14c770cff9",
+        "validatorSource": "C:\\Users\\김진호\\.codex\\worktrees\\p1-s-pr13-review\\birdmap\\docs\\p1-s-review\\.scratch\\combinedF\\.github\\scripts\\validate_weather_week.py",
+        "validatorSourceSHA256": "2d12863912ab10f1a4fa383da319c18ede89443de6dd874a38f382327ff62863",
+        "runtimeSiteProjection": false,
+        "clockPatched": false
+      }
+    ]
+  },
+  "latestCurrent": {
+    "actualCurrentClock": "2026-10-10T12:24:28.137Z",
+    "count": 190,
+    "rootItemEqualCount": 190,
+    "rawEligibleCount": 190,
+    "sourceEligibleCount": 190
+  },
+  "history": {
+    "head": "2e485079a34fa5aeeef09e82f3b996bf2696d978",
+    "sourceSHA256": "3fce6c9f54af23a883e4b1a831ea7e1eea2f7c9e48c855cc68d9ee4caab0cc11",
+    "actualBeforeFunctions": true,
+    "rows": [
+      {
+        "id": "before-F2-item-missing",
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        }
+      },
+      {
+        "id": "before-F2-item-null",
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        }
+      },
+      {
+        "id": "before-F2-item-empty",
+        "actual": {
+          "candidate": true,
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 92
+        }
+      },
+      {
+        "id": "before-F3-today-forecast-object",
+        "candidateError": "TypeError: Cannot convert object to primitive value",
+        "finalError": "TypeError: Cannot convert object to primitive value"
+      },
+      {
+        "id": "before-F3-week-forecast-array",
+        "actual": {
+          "candidate": true,
+          "score": 99,
+          "rank": 115,
+          "bonus": 16,
+          "mandatory": true,
+          "safe": true,
+          "date": "2026-10-10",
+          "time": "12:00",
+          "tideText": "만조 12:00 · 900cm",
+          "topIds": [
+            "14"
+          ],
+          "popupScore": 99
+        }
+      }
+    ],
+    "limits": "No assertion relaxed. Historical source is exact before SHA; synthetic input is identical to new cases."
+  },
+  "constraints": {
+    "productChanges": 0,
+    "networkRequests": 0,
+    "productionWrites": 0,
+    "gitMutations": 0,
+    "originalCoordinatesStored": 0,
+    "outputRoot": "C:\\Users\\김진호\\.codex\\visualizations\\2026\\10\\08\\01a1190e-204e-7790-ad48-3431ee07838f\\pr13_f123_contract"
+  },
+  "sha256": {
+    "contract_matrix.json": "e45213a8aed50d927015c7e57a0fe7a05d1b075e1b992c85ba1d174ac1a7f37c",
+    "python_contract.json": "7cc4e63601ae42b4c1d00017bda06f30c065cc72bbf23f5996f65e88738f1eaf",
+    "loader_extended_node.json": "00e9fb48a13d4cbd80d2db1eb0cf62d07f89d690e93d2896be21fe6515b273e0",
+    "historical_contract.json": "53c70204125f43aee5a0b97fcd30e005cd0c586a50f5a2eec472bda09c0448ef",
+    "latest_main_validator.json": "6fb5952ef1e801eb4d89208a88964d73a5a73bef4083a19097930f251ebaf0b3",
+    "pr13_r123_actual_matrix.json": "d747b7c3ade3417451084cedc736ee8691b4ab4405af44796ae10999a9a3201c",
+    "c_temporal_source_actual.json": "3085fd87f3186ed628fa8ec4871273836d67e53fc2bfc34611aff2c9a72fb244",
+    "final_c1_c2_additional.json": "a3250b264e6ae65badc96525cdfe6916b399a729494a07a0b376afeaa02644b7",
+    "c_week_validator_actual.json": "f66db0e520da1cb887f7724dbd83b639c0e5906543c33fc5383e965e77c3753b"
+  }
+}
