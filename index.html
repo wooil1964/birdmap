@@ -789,6 +789,9 @@ body.fieldMode #fieldGuideBox{display:none}
 /* 승인된 출현종 제보 팝업의 카카오맵 길찾기 버튼(터치 최소 44px). */
 .spotKakaoRoute{display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;margin-top:8px;padding:6px 10px;border:1px solid #c8a800;border-radius:8px;background:#fff8cc;color:#6b5600!important;font-size:14px;font-weight:bold;text-decoration:none}
 .spotTmapRoute{display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;margin-top:8px;padding:6px 10px;border:1px solid #155c90;border-radius:8px;background:#e8f3fc;color:#12466d!important;font-size:14px;font-weight:bold;text-decoration:none}
+/* 승인된 출현종 제보: 길찾기 두 버튼을 작은 팝업에서도 같은 줄에 배치한다. */
+.spotRouteButtons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+.spotRouteButtons .spotKakaoRoute,.spotRouteButtons .spotTmapRoute{min-width:0;margin-top:0;padding:6px 3px;font-size:13px;white-space:nowrap}
 .leaflet-popup-content .btn.tmap,.mobilePopupButtons .btn.tmap{background:#e8f3fc;border:1px solid #155c90;color:#12466d!important}
 </style>
 <script>
@@ -1593,7 +1596,7 @@ function spotKakaoRouteUrl(dest,label){
 }
 function spotKakaoRouteHtml(dest){
   var url=spotKakaoRouteUrl(dest);
-  return url?'<a class="spotKakaoRoute" target="_blank" rel="noopener" href="'+url+'">🚗 카카오맵 찾아가기</a>':'';
+  return url?'<a class="spotKakaoRoute" target="_blank" rel="noopener" href="'+url+'">🚗 카카오맵</a>':'';
 }
 /* 티맵 앱 딥링크: goalx=경도, goaly=위도. 보호 위치는 호출부에서 제외한다. */
 function tmapNavigationUrl(dest,name){
@@ -1614,17 +1617,21 @@ function tmapNavigationLink(dest,name,cls,text){
   return url?'<a class="'+cls+'" href="'+escapeHtml(url)+'" onclick="return openTmapNavigation()" title="티맵 앱이 설치된 스마트폰에서 열기">'+text+'</a>':'';
 }
 function spotTmapRouteHtml(dest){
-  return tmapNavigationLink(dest,'출현 지점','spotTmapRoute','🚙 티맵 내비게이션');
+  return tmapNavigationLink(dest,'출현 지점','spotTmapRoute','🚙 티맵');
+}
+function spotRouteButtonsHtml(dest){
+  var kakao=spotKakaoRouteHtml(dest),tmap=spotTmapRouteHtml(dest);
+  return kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
 }
 function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDest){
   var names=(species||[]).map(escapeHtml).join(' · ');
-  var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))';
+  var width=(history&&history.length)?'min(270px,calc(100vw - 72px))':(!locationHidden&&kakaoDest?'min(240px,calc(100vw - 72px))':'min(190px,calc(100vw - 80px))');
   var showNames=!spotSpeciesCoveredByHistory(species,history);
   return '<div class="spotPopup" style="width:'+width+'"><b>'+escapeHtml(title)+'</b>'
     +(showNames?'<br>'+names:'')
     +(undatedNote?'<div class="spotUndated">관찰일 미확인</div>':'')
     +(locationHidden?'<div class="spotHiddenNote">위치 보호 요청으로 대략적인 위치만 표시됩니다.</div>':'')
-    +spotHistoryHtml(history)+(locationHidden?'':spotKakaoRouteHtml(kakaoDest)+spotTmapRouteHtml(kakaoDest))+'</div>';
+    +spotHistoryHtml(history)+(locationHidden?'':spotRouteButtonsHtml(kakaoDest))+'</div>';
 }
 
 function birdmapSpotMarker(lat,lon,title,species,history,undatedNote,locationHidden,kakaoDest){
