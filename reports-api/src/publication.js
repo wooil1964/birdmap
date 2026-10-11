@@ -32,7 +32,7 @@ export async function publicationAnchor(db,request) {
  try{return validateState(await publicationStateStatement(primary(db)).first(),request,true);}catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');}
 }
 const paths=new Set(['/reports/approved','/reports/pending','/reports/recent-sites','/field-updates','/contributors/monthly']);
-export function isPublicationPath(path){return paths.has(path)||/^\/reports\/site\/[0-9A-Za-z_-]{1,16}$/.test(path);}
+export function isPublicationPath(path){return paths.has(path)||path.startsWith('/reports/site/');}
 function readPlan(db,url,now) {
  const path=url.pathname;
  if(path==='/reports/approved')return {statements:[db.prepare("SELECT id,species,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC")],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
@@ -46,7 +46,8 @@ function readPlan(db,url,now) {
  }
  if(path==='/field-updates')return {statements:fieldSnapshotStatements(db,now),build:s=>fieldSnapshotPayload(s,now)};
  if(path.startsWith('/reports/site/')) {
-  const siteId=decodeURIComponent(path.slice('/reports/site/'.length)),limit=Math.min(50,Math.max(1,Number(url.searchParams.get('limit'))||5)),offset=Math.max(0,Number(url.searchParams.get('offset'))||0);
+  const siteId=decodeURIComponent(path.slice('/reports/site/'.length));if(!/^[0-9A-Za-z_-]{1,16}$/.test(siteId))fail('SITE_ID_INVALID','탐조지 ID 형식이 아닙니다.',400);
+  const limit=Math.min(50,Math.max(1,Number(url.searchParams.get('limit'))||5)),offset=Math.max(0,Number(url.searchParams.get('offset'))||0);
   return {statements:[db.prepare("SELECT id,species,observed_on,reporter,name_public FROM reports WHERE status='approved' AND site_id=?1 ORDER BY observed_on DESC,received_at DESC,id DESC LIMIT ?2 OFFSET ?3").bind(siteId,limit,offset),db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved' AND site_id=?1").bind(siteId)],build:s=>({ok:true,siteId,total:Number(s[1].results?.[0]?.n||0),limit,offset,history:(s[0].results||[]).map(historyEntry)})};
  }
  const raw=url.searchParams.get('month'),month=raw===null?kstDateString(now).slice(0,7):raw;
