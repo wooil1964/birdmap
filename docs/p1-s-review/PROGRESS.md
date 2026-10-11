@@ -1,3 +1,15 @@
+## 운영 준비 최종 게시 확인 — 2026-10-11 23:05 KST
+
+검증 자료 체크포인트 **f80632308d4c88821c8ab54cadcc7f9375751998**를 `review/p1-s-pr13`에 push했다. PR head는b12, main/Pages43이며 실제 운영 반영은 하지 않았다.
+
+- [PR #13 최종 운영 준비 댓글](https://github.com/wooil1964/birdmap/pull/13#issuecomment-6109845572)
+- [Issue #9 같은 판정 댓글](https://github.com/wooil1964/birdmap/issues/9#issuecomment-6109846657)
+
+두 댓글을 connector API로 다시 읽어 준비한2855자 본문과 전체 일치를 확인했다. 본문은 results/operation-ready/FINAL_OPERATION_COMMENT.md, receipt는 results/operation-ready/github_receipts.json이다. exact script/result/doc hash manifest는 f806 체크포인트에 있다. 마지막 게시증빙 commit은git log로확인한다.
+
+최종 상태: 조건부 승인 / 별도운영승인대기. 현재494(S1-R누락)·직전16dae(소스미확인)는보호유지rollback 불승인. 새S1-R version 및C guard 유지Pages release/복귀기준 등록, localCI증거채택, 기존공개정책·cache 위험조건의운영승인이필요하다. 코드·main·Pages/Worker·D1·실사용자자료무변경. 다음세션은OPERATION_READY.md에서이남은운영조건만이어간다.
+
+
 ## 운영 승인 준비 후속 체크포인트 — 2026-10-11 22:47 KST
 
 최종 판정: **조건부 승인 유지 / 실제 운영 승인 대기**. 통합 보고서는 OPERATION_READY.md 및 OPERATION_SOURCE_DESIGN.md·OPERATION_PROTECTION_DESIGN.md·OPERATION_PAGES_CI.md.
