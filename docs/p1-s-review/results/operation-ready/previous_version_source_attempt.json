@@ -1,0 +1,26 @@
+{
+  "startedAt": "2026-10-10T22:31:56.626Z",
+  "scope": "Only GET of two explicitly version-specific source paths. No unsupported query result is attributed to an older version.",
+  "requests": [
+    {
+      "sub": "versions/16dae92a-4bd7-4fda-ba90-d5075604d4db/content",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "bytes": 3582,
+      "sha256": "863ab5178b85af561f98429603765b762f95f0bf71c36b009b8a0aa4b863f22a",
+      "needsIndependentVersionAssociation": true
+    },
+    {
+      "sub": "versions/16dae92a-4bd7-4fda-ba90-d5075604d4db/content/v2",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "bytes": 3582,
+      "sha256": "863ab5178b85af561f98429603765b762f95f0bf71c36b009b8a0aa4b863f22a",
+      "needsIndependentVersionAssociation": true
+    }
+  ],
+  "sourceConfirmed": false,
+  "rawSourceSaved": false,
+  "onlyGET": true,
+  "endedAt": "2026-10-10T22:31:57.191Z"
+}

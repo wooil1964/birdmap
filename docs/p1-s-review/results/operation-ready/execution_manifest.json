@@ -1,0 +1,276 @@
+{
+  "createdAt": "2026-10-11T14:02:38.908217+00:00",
+  "head": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "main": "43bff43301d5915a344bf2c20987698597cf8870",
+  "combinedTree": "deec588e937ed309b11f9739c02b6eae22772c3d",
+  "verdict": "Conditional approval; separate operating authorization required.",
+  "operatingMutations": {
+    "productCode": 0,
+    "mainMerge": 0,
+    "workerUploadDeployRollback": 0,
+    "pagesDeploy": 0,
+    "workflowDispatchRerun": 0,
+    "d1UserWrites": 0
+  },
+  "storage": {
+    "rawWorkerSource": false,
+    "oauthTokenOrSecretValues": false,
+    "rawPublicReportIDsSpeciesCoordinatesNotes": false,
+    "aggregatePublicCounts": true,
+    "syntheticSpeciesExpressions": true,
+    "knownPublicSiteIDs": true
+  },
+  "runtime": {
+    "wrangler": "4.149.0",
+    "esbuild": "0.28.2",
+    "shell": "PowerShell",
+    "python": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe"
+  },
+  "executions": [
+    {
+      "command": "node docs/p1-s-review/scripts/operation-ready/worker_git_compare_latest.mjs <output> C:/Users/김진호/Documents/GitHub/birdmap",
+      "exit": 0,
+      "clockKST": "2026-10-11 22:47:21–22:47:26",
+      "scope": "Existing OAuth in memory, GET only, downloaded module compared with Git in-memory builds and 13 synthetic protection expressions. Source not saved. Source-map-footer equality is authoritative; footerless byteEqual false retained.",
+      "result": "worker_git_source_comparison_latest.json"
+    },
+    {
+      "command": "node docs/p1-s-review/scripts/operation-ready/public_read_impact_latest.mjs <output> C:/Users/김진호/Documents/GitHub/birdmap",
+      "exit": 0,
+      "clockKST": "2026-10-11 22:47:08–22:47:09",
+      "result": "public_read_impact_latest.json",
+      "scope": "GET aggregate only; private D1/hidden/deleted/expired records not audited."
+    },
+    {
+      "command": "git merge-tree --write-tree 43bff43301d5915a344bf2c20987698597cf8870 b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "exit": 0,
+      "conflicts": 0,
+      "resultTree": "deec588e937ed309b11f9739c02b6eae22772c3d",
+      "scope": "Git tree objects only; no branch merge/checkout."
+    },
+    {
+      "command": "<python> docs/p1-s-review/scripts/operation-ready/latest_main_validate.py <exact-combined-tree-archive> <output>",
+      "exit": 0,
+      "clockKST": "2026-10-11 22:47:09",
+      "result": "latest-main/latest_main_validator.json",
+      "scope": "Actual clock, exact product validators/current main data, no clock/source/JSON patch."
+    },
+    {
+      "command": "node docs/p1-s-review/scripts/operation-ready/latest_current.mjs <exact-combined-tree-archive> <output> <repo>",
+      "exit": 0,
+      "clockKST": "2026-10-11 22:47",
+      "result": "latest-main/js_current190.json",
+      "scope": "112 extracted actual JS functions with head parity. Current 176 candidates/10 final safe+eligible. Reports OFF. Not a Chrome run."
+    },
+    {
+      "command": "node docs/p1-s-review/scripts/operation-ready/github_final_read.mjs docs/p1-s-review/results/operation-ready",
+      "exit": 0,
+      "clockKST": "2026-10-11 22:59:49–22:59:51",
+      "result": "final_github_read.json",
+      "scope": "Public GET 200 x6. Head/main/Pages unchanged. PR Actions/status/check-runs 0."
+    },
+    {
+      "command": "node --check <each operation-ready/*.mjs>",
+      "exit": 0,
+      "scope": "All JS syntax checked after local-account-cache privacy changes; assertions unchanged."
+    }
+  ],
+  "historicalArtifacts": {
+    "initialSourceHarness": "First closure-export harness ReferenceError, then non-array species TypeError are tooling diagnostics; final/latest resolves harness without changing product. Preserve intermediate JSON, do not count as product pass.",
+    "previousSourceAttempt": "HTTP200 version content endpoints returned metadata JSON, not code. sourceConfirmed false; no previous Git association established.",
+    "publicCountCorrection": "Initial history-row coordinate field is unavailable. final/latest uses null, while root spot public-coordinate counts are separately observed. Initial 52 and latest54 are different observations.",
+    "privacyChange": "Before publication hardcoded account IDs replaced with local cache input only; source assertions unchanged. Repro argument added to previous_source_attempt. Hashes reflect sanitized published scripts."
+  },
+  "priorIndependentEvidence": {
+    "report": "docs/p1-s-review/F23_RECHECK.md",
+    "scope": "Exact b12: automatic 621 pass,0fail,1skip and fixed10/8 22:40 ON/OFF190/176/signature. Not rerun or reattributed to latest combined tree. Original diagnostic failures retained.",
+    "chrome": "Existing exact/index-compatible 5width results reused; this operation-ready unit has no new complete Chrome suite."
+  },
+  "additionalSyntheticEvidence": {
+    "report": "OPERATION_PROTECTION_DESIGN.md / OPERATION_SOURCE_DESIGN.md",
+    "scope": "Actual legacy/canonical/owner-delete/approved-response functions and in-memory SQLite/VM. Canonical10 and stale races reported with original tool receipts; not new live POST/DELETE or fresh Leaflet DOM."
+  },
+  "remainingConditions": [
+    "Protected Worker version/recovery identity not yet established; current494 lacks S1-R and previous16dae unproven.",
+    "43 is functional Pages baseline, not unrestricted safe C-policy rollback. Protected release SHA needs recording after separately authorized release.",
+    "No PR CI; operator must explicitly adopt local evidence.",
+    "Existing canonical/approved public policy accepted only within limited scope; stale responses/navigation must be fixed before hide/withdraw/S1-P transitions. Delete race is prerequisite if persistent instant deletion is a release requirement.",
+    "Separate operating approval."
+  ],
+  "artifacts": [
+    {
+      "path": "docs/p1-s-review/OPERATION_PAGES_CI.md",
+      "bytes": 21086,
+      "sha256": "441c8b6e7ffe4435d3b0c57e42874397f5c04849085b316c0e9ab99f8f33c75f",
+      "lfSHA256": "441c8b6e7ffe4435d3b0c57e42874397f5c04849085b316c0e9ab99f8f33c75f"
+    },
+    {
+      "path": "docs/p1-s-review/OPERATION_PROTECTION_DESIGN.md",
+      "bytes": 27583,
+      "sha256": "b9d8d2be1a48523d96ec14a7bfbdbd56a58c0a79aaf2a15a2baa2ee61b32013d",
+      "lfSHA256": "6d7920355ad537b219c638cdd67052c3a0367ff46c7274f070350b32ab66ada6"
+    },
+    {
+      "path": "docs/p1-s-review/OPERATION_READY.md",
+      "bytes": 12363,
+      "sha256": "a9730efbdd90471bca80d6eae8c031221441bdaa16b407474c13853a9b747e48",
+      "lfSHA256": "904ba572b60596fdd7ed8c1e3aa253212340b554c36ec5bebb2136ec60ce8ad2"
+    },
+    {
+      "path": "docs/p1-s-review/OPERATION_SOURCE_DESIGN.md",
+      "bytes": 21001,
+      "sha256": "dfe7a185f79456ce7bd72cec2eb81fe3049f9322dffa92c58cabc10f61517782",
+      "lfSHA256": "dfe7a185f79456ce7bd72cec2eb81fe3049f9322dffa92c58cabc10f61517782"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/final_github_read.json",
+      "bytes": 2556,
+      "sha256": "1ea830581a596aea1a6a473644adc7db752ac7e480225cf9bbe546742ad3f8f6",
+      "lfSHA256": "1ea830581a596aea1a6a473644adc7db752ac7e480225cf9bbe546742ad3f8f6"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/latest-main/js_current190.json",
+      "bytes": 133915,
+      "sha256": "5148f787d79d1526814d453310185235ac8b6c9c6d2dd7b5551e4d1d3751ab08",
+      "lfSHA256": "5148f787d79d1526814d453310185235ac8b6c9c6d2dd7b5551e4d1d3751ab08"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/latest-main/latest_main_validator.json",
+      "bytes": 2163,
+      "sha256": "6240db5da23d4f57e2edfa64920663dcaf662e4e73ce582f91e79a55a3b10957",
+      "lfSHA256": "75c08fc9f90a0948c7cf879545f51eba6c15b3ac208f04c5bf0c523838af499a"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/previous_version_source_attempt.json",
+      "bytes": 955,
+      "sha256": "bf13e685cef3728ad8cfdc1430c63e8d3ec6fea06a1f63b5c37929f800a3f694",
+      "lfSHA256": "bf13e685cef3728ad8cfdc1430c63e8d3ec6fea06a1f63b5c37929f800a3f694"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/public_read_impact.json",
+      "bytes": 2360,
+      "sha256": "64c5c4742f20e0020301987b3ab174cc01aef72611fb3708c96a77a003b61e15",
+      "lfSHA256": "64c5c4742f20e0020301987b3ab174cc01aef72611fb3708c96a77a003b61e15"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/public_read_impact_final.json",
+      "bytes": 2689,
+      "sha256": "51ae00e0a07a12fc4a89cc013cd5e4eee9d1709b7b19d4f685246df59b916068",
+      "lfSHA256": "51ae00e0a07a12fc4a89cc013cd5e4eee9d1709b7b19d4f685246df59b916068"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/public_read_impact_latest.json",
+      "bytes": 2689,
+      "sha256": "68565c13aea3710366c58b7010642d8723c80eb291371b225e30b1764efb6743",
+      "lfSHA256": "68565c13aea3710366c58b7010642d8723c80eb291371b225e30b1764efb6743"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/worker_git_source_comparison.json",
+      "bytes": 9859,
+      "sha256": "ddaf352f95f4c6a4687dc532849c19b636a79216efbb3368b4f0c9febea63a32",
+      "lfSHA256": "ddaf352f95f4c6a4687dc532849c19b636a79216efbb3368b4f0c9febea63a32"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/worker_git_source_comparison_final.json",
+      "bytes": 9933,
+      "sha256": "a3699f76041945d5640ca31b37e20830b4c6bdfc9a20e1cde58e3eee0a398b3b",
+      "lfSHA256": "a3699f76041945d5640ca31b37e20830b4c6bdfc9a20e1cde58e3eee0a398b3b"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/worker_git_source_comparison_latest.json",
+      "bytes": 9933,
+      "sha256": "a31f0d63d2f840619526754161b637f64ad535353caceb9a10c9d49a5ae58a10",
+      "lfSHA256": "a31f0d63d2f840619526754161b637f64ad535353caceb9a10c9d49a5ae58a10"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/worker_git_source_comparison_names.json",
+      "bytes": 8694,
+      "sha256": "508cebb10b29a5c7598fbec25778ea2dd8a1be7b8067f773ccdef7e9e31ec11b",
+      "lfSHA256": "508cebb10b29a5c7598fbec25778ea2dd8a1be7b8067f773ccdef7e9e31ec11b"
+    },
+    {
+      "path": "docs/p1-s-review/results/operation-ready/worker_source_metadata.json",
+      "bytes": 10353,
+      "sha256": "1aa73f275f99a9a1cc6c73b017e1e276c073f5d44ee46922bb077bd3dfa1d645",
+      "lfSHA256": "1aa73f275f99a9a1cc6c73b017e1e276c073f5d44ee46922bb077bd3dfa1d645"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/github_final_read.mjs",
+      "bytes": 2060,
+      "sha256": "bed846f458a72f6ae190ec7402147b6704accb0b5b92f514c2ff886a944e8257",
+      "lfSHA256": "bed846f458a72f6ae190ec7402147b6704accb0b5b92f514c2ff886a944e8257"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/latest_current.mjs",
+      "bytes": 6971,
+      "sha256": "6d576b49367fe6cd2292dce9b0edd8154a8c7c11c4a114b8132f11fa215797e7",
+      "lfSHA256": "6d576b49367fe6cd2292dce9b0edd8154a8c7c11c4a114b8132f11fa215797e7"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/latest_main_validate.py",
+      "bytes": 1909,
+      "sha256": "838bd2406c744e8b10e9fa7d0a74b4e5d56fed9c893750df8577693c84437a9f",
+      "lfSHA256": "838bd2406c744e8b10e9fa7d0a74b4e5d56fed9c893750df8577693c84437a9f"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/previous_source_attempt.mjs",
+      "bytes": 1613,
+      "sha256": "73e248cc34bfb8d7cca15bceead9e3cec9fb0121fd1bc3e3bd5079f94761d4d0",
+      "lfSHA256": "73e248cc34bfb8d7cca15bceead9e3cec9fb0121fd1bc3e3bd5079f94761d4d0"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/public_read_impact.mjs",
+      "bytes": 3530,
+      "sha256": "de55888175dcad20218ccd07ec31858963b6f42bf5d225c2371cf0d5683ff73a",
+      "lfSHA256": "de55888175dcad20218ccd07ec31858963b6f42bf5d225c2371cf0d5683ff73a"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/public_read_impact_final.mjs",
+      "bytes": 4229,
+      "sha256": "312d474b96d8b9ecf86122415e1ade30942de42bbb0429bcda138d325b4075db",
+      "lfSHA256": "312d474b96d8b9ecf86122415e1ade30942de42bbb0429bcda138d325b4075db"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/public_read_impact_latest.mjs",
+      "bytes": 4230,
+      "sha256": "d56be672db63ab4d226342a7953b79575df3d78d4890da438b94d4b08fe09642",
+      "lfSHA256": "d56be672db63ab4d226342a7953b79575df3d78d4890da438b94d4b08fe09642"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/README.md",
+      "bytes": 3369,
+      "sha256": "6291dfc28caac3be14d09d352bd3670a4803c80477f915bd8fa60836ab64a41c",
+      "lfSHA256": "6291dfc28caac3be14d09d352bd3670a4803c80477f915bd8fa60836ab64a41c"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/worker_git_compare.mjs",
+      "bytes": 5962,
+      "sha256": "db803f0a969717e2b8f1a2cfb77bf826e04462b1e13d11d0da4b5f3ab22ad666",
+      "lfSHA256": "db803f0a969717e2b8f1a2cfb77bf826e04462b1e13d11d0da4b5f3ab22ad666"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/worker_git_compare_final.mjs",
+      "bytes": 6073,
+      "sha256": "2a90ace04585c6e876b0bb6ce100fdc519d0a9ffc3532d78f70664da3b9d7254",
+      "lfSHA256": "2a90ace04585c6e876b0bb6ce100fdc519d0a9ffc3532d78f70664da3b9d7254"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/worker_git_compare_latest.mjs",
+      "bytes": 6074,
+      "sha256": "47889d7c082d8115c0e289f6744fca10eb5c6e96410c5b70cee4047a65bfbfe4",
+      "lfSHA256": "47889d7c082d8115c0e289f6744fca10eb5c6e96410c5b70cee4047a65bfbfe4"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/worker_git_compare_names.mjs",
+      "bytes": 5991,
+      "sha256": "773ceb9494faa9c2ef64639ade44cb0c0bebb667ab1add05ccac97a43241b2e2",
+      "lfSHA256": "773ceb9494faa9c2ef64639ade44cb0c0bebb667ab1add05ccac97a43241b2e2"
+    },
+    {
+      "path": "docs/p1-s-review/scripts/operation-ready/worker_source_read.mjs",
+      "bytes": 3865,
+      "sha256": "82b4d87895db3d95d56ae6c96dca41719d37fdce4159b77c6c0d71a484511877",
+      "lfSHA256": "82b4d87895db3d95d56ae6c96dca41719d37fdce4159b77c6c0d71a484511877"
+    }
+  ]
+}

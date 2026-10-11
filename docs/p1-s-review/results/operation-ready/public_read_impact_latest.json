@@ -1,0 +1,86 @@
+{
+  "startedAt": "2026-10-11T13:47:08.815Z",
+  "scope": "Current public GET only. Raw responses, species, names, IDs, notes, coordinates not saved. Aggregates only; private stored notes and omitted rows are not audited.",
+  "requests": [
+    {
+      "endpoint": "/reports/approved",
+      "httpStatus": 200,
+      "bodySHA256": "5cfc8e2aa6aa4c171520a9380fa9dfa88dd1eeba7b9821a28a75f9c3a6c77c8f",
+      "bytes": 13462,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "generatedAt",
+        "spots",
+        "fixedSpots"
+      ],
+      "generatedAt": "2026-10-11T13:47:08.748Z",
+      "scope": "All rows observable in this approved public payload; stored private note unavailable.",
+      "spotCount": 54,
+      "fixedGroupCount": 0,
+      "historyCount": 54,
+      "rootSpotProtection": {
+        "oldSensitive": 2,
+        "newSensitive": 2,
+        "newlySensitive": 0,
+        "oldSensitiveUnhidden": 2,
+        "newSensitiveUnhidden": 2
+      },
+      "count": 54,
+      "coordinateObservability": false,
+      "oldSensitive": 2,
+      "newSensitive": 2,
+      "newlySensitive": 0,
+      "newlySensitiveWithUnhiddenPublicLocation": null,
+      "oldSensitiveWithUnhiddenPublicLocation": null
+    },
+    {
+      "endpoint": "/reports/recent-sites?days=14",
+      "httpStatus": 200,
+      "bodySHA256": "baa66b7fe9b8d7bc588094d7fb7a22fb570aa97d5d5054b4416551ae7ce753f9",
+      "bytes": 908,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "days",
+        "since",
+        "today",
+        "sites"
+      ],
+      "scope": "Already aggregated, old-classifier-filtered recent site output. Underlying row attribution is unavailable.",
+      "count": 9,
+      "coordinateObservability": false,
+      "oldSensitive": 0,
+      "newSensitive": 0,
+      "newlySensitive": 0,
+      "newlySensitiveWithUnhiddenPublicLocation": null,
+      "oldSensitiveWithUnhiddenPublicLocation": null
+    },
+    {
+      "endpoint": "/field-updates",
+      "httpStatus": 200,
+      "bodySHA256": "f989cba678043405b8f519a615178d94a2bcff50d9b53bd9e5632115c80ffa64",
+      "bytes": 77,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "serverTime",
+        "ttlHours",
+        "updates"
+      ],
+      "scope": "Current active field-update payload only; expired/deleted rows unavailable.",
+      "count": 0,
+      "coordinateObservability": false,
+      "oldSensitive": 0,
+      "newSensitive": 0,
+      "newlySensitive": 0,
+      "newlySensitiveWithUnhiddenPublicLocation": null,
+      "oldSensitiveWithUnhiddenPublicLocation": null
+    }
+  ],
+  "operatingWrites": 0,
+  "d1Queries": 0,
+  "postCalls": 0,
+  "rawDataSaved": false,
+  "endedAt": "2026-10-11T13:47:09.383Z"
+}

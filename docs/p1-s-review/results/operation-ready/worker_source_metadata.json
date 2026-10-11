@@ -1,0 +1,389 @@
+{
+  "startedAt": "2026-10-10T22:28:28.285Z",
+  "worker": "birdmap-reports",
+  "requests": [
+    {
+      "sub": "deployments",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "responseBytes": 4913,
+      "responseSHA256": "56ad566581e856b7e8c850ba8d70e49e582f83dfbcf5d21c3b40367c8e527786"
+    },
+    {
+      "sub": "versions/494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "responseBytes": 3582,
+      "responseSHA256": "16c0696b112ecff2b91b4a2403b1323709daf0fe2020b0efe848da2b8a6e415e"
+    },
+    {
+      "sub": "versions/16dae92a-4bd7-4fda-ba90-d5075604d4db",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "responseBytes": 3582,
+      "responseSHA256": "863ab5178b85af561f98429603765b762f95f0bf71c36b009b8a0aa4b863f22a"
+    },
+    {
+      "sub": "content/v2",
+      "httpStatus": 200,
+      "contentType": "multipart/form-data; boundary=d78909ed158776008d587431afbb49587e3dece201cb29c7f8a62c16694f",
+      "responseBytes": 71690,
+      "responseSHA256": "ed20e20f634acf575abbbb2cda9a2a0c7f2b104fce2f924b5a1ad5379dd069c4"
+    },
+    {
+      "sub": "deployments",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "responseBytes": 4913,
+      "responseSHA256": "56ad566581e856b7e8c850ba8d70e49e582f83dfbcf5d21c3b40367c8e527786"
+    }
+  ],
+  "versions": [
+    {
+      "id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+      "created_on": "2026-10-08T05:19:39.572822Z",
+      "annotationsKeys": [
+        "workers/triggered_by"
+      ],
+      "resourcesKeys": [
+        "script",
+        "script_runtime",
+        "bindings"
+      ],
+      "script": {
+        "etag": "c1e460efb13c5a1999af3fdbc6329122df656a1581c70e6d913dd25268955b5b",
+        "handlers": [
+          "fetch"
+        ],
+        "last_deployed_from": "wrangler"
+      }
+    },
+    {
+      "id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+      "created_on": "2026-10-06T14:58:25.144609Z",
+      "annotationsKeys": [
+        "workers/triggered_by"
+      ],
+      "resourcesKeys": [
+        "script",
+        "script_runtime",
+        "bindings"
+      ],
+      "script": {
+        "etag": "ef339f891c5be888a0cf508f322f1d425d574c35bda08d651a049d2eef2684f4",
+        "handlers": [
+          "fetch"
+        ],
+        "last_deployed_from": "wrangler"
+      }
+    }
+  ],
+  "source": {
+    "parts": [
+      {
+        "key": "public.js",
+        "name": "public.js",
+        "bytes": 71439,
+        "sha256": "045b544db305deb73a5e745550a613ee10078c918e001045a16549e522e936c4",
+        "functionNames": [
+          "allowedOrigin",
+          "responseHeaders",
+          "jsonResponse",
+          "rethrowIfFrozen",
+          "errorResponse",
+          "preflightResponse",
+          "kstDateString",
+          "stripControl",
+          "normalizeSpecies",
+          "optionalText",
+          "normalizeCoordinate",
+          "normalizeObservedOn",
+          "normalizeBirdCount",
+          "validateReport",
+          "randomUnitPair",
+          "approximateCoordinate",
+          "isSensitiveReport",
+          "pendingPayload",
+          "isLocationHidden",
+          "sha256Hex",
+          "ipHash",
+          "dedupeHash",
+          "verifyTurnstile",
+          "splitSpecies",
+          "historyEntry",
+          "newestFirst",
+          "publicPayload",
+          "stable",
+          "insert",
+          "fail",
+          "requestId",
+          "assertion",
+          "assertNotPurged",
+          "applicationDb",
+          "checklistFromReport",
+          "initialSighting",
+          "canonicalReadDb",
+          "writeMode",
+          "closed",
+          "schemaReady",
+          "capability",
+          "internalCapability",
+          "assertWriteGate",
+          "publicCapability",
+          "quickInput",
+          "replayQuick",
+          "persistQuick",
+          "compareShadow",
+          "visit",
+          "shadowRead",
+          "kst",
+          "emailText",
+          "sendEmail",
+          "notifyNewReport",
+          "cleanText",
+          "validateStatus",
+          "validateDevice",
+          "validateCount",
+          "protection",
+          "userHash",
+          "iso",
+          "cutoffIso",
+          "enforceRate",
+          "publicEntry",
+          "loadEntries",
+          "loadActive",
+          "handleList",
+          "handleCreate",
+          "handleStatus",
+          "handleConfirm",
+          "handleDelete",
+          "handleFieldUpdates",
+          "database",
+          "readJsonBody",
+          "enforceRateLimit",
+          "handleCanonicalSubmit",
+          "handleSubmit",
+          "handlePending",
+          "handleSiteHistory",
+          "handleStatus2",
+          "handleApproved",
+          "handleRecentSites",
+          "handleMonthlyContributors",
+          "handleLegacyRequest",
+          "handleRequest"
+        ],
+        "S1RIdentifierPresent": false,
+        "sourceMappingURLPresent": true
+      }
+    ]
+  },
+  "onlyGET": true,
+  "rawSourcePersisted": false,
+  "credentialValuesPersisted": false,
+  "secretValuesRead": false,
+  "beforeDeployments": [
+    {
+      "id": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+      "created_on": "2026-10-08T05:19:40.077235Z",
+      "versions": [
+        {
+          "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "beb2b759-bf8b-4545-baf3-af1aa3d8badb",
+      "created_on": "2026-10-06T14:58:25.709195Z",
+      "versions": [
+        {
+          "version_id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "3da74402-7355-4fa4-9af9-15f431aae302",
+      "created_on": "2026-10-06T08:20:06.403846Z",
+      "versions": [
+        {
+          "version_id": "4bc470a4-7047-45a8-8e7c-10c9a9b055a3",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "f04d0a02-1b9b-4ee9-927d-c0e379f13134",
+      "created_on": "2026-10-01T11:58:38.086971Z",
+      "versions": [
+        {
+          "version_id": "ba4c0f25-82a1-4acb-85f4-cb3b692a615b",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "3f18e187-8425-47a1-bda7-a91765f8820a",
+      "created_on": "2026-09-28T00:13:54.116879Z",
+      "versions": [
+        {
+          "version_id": "8936943d-e140-4347-ab3d-9e1f1416682e",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "892b6c21-c47d-4637-a3e5-495239b35c14",
+      "created_on": "2026-09-27T13:26:45.706623Z",
+      "versions": [
+        {
+          "version_id": "f1ab44ea-8440-43bf-8a60-fc363a468a10",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "84f78037-01fb-4be5-bedf-0737298a922d",
+      "created_on": "2026-09-27T13:20:50.466528Z",
+      "versions": [
+        {
+          "version_id": "897e5325-bc14-4518-aa9c-796a3427ba80",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "e19b9be0-61d8-4cfe-8e38-77bed04fb730",
+      "created_on": "2026-09-26T23:40:46.422198Z",
+      "versions": [
+        {
+          "version_id": "a7a71f32-2dc0-4035-bf03-ea774087d247",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "cb2618ff-beb8-47ae-b306-404faf6b854a",
+      "created_on": "2026-09-26T22:34:45.725833Z",
+      "versions": [
+        {
+          "version_id": "9cea851c-5b4d-4295-83b0-e900c0cddc0e",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "d3e6c4ac-9bf4-4cd3-bfbb-f02cd6a6224a",
+      "created_on": "2026-09-26T22:32:08.099126Z",
+      "versions": [
+        {
+          "version_id": "254cc69f-ec47-4f21-bbff-7488bca755cb",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "afterDeployments": [
+    {
+      "id": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+      "created_on": "2026-10-08T05:19:40.077235Z",
+      "versions": [
+        {
+          "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "beb2b759-bf8b-4545-baf3-af1aa3d8badb",
+      "created_on": "2026-10-06T14:58:25.709195Z",
+      "versions": [
+        {
+          "version_id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "3da74402-7355-4fa4-9af9-15f431aae302",
+      "created_on": "2026-10-06T08:20:06.403846Z",
+      "versions": [
+        {
+          "version_id": "4bc470a4-7047-45a8-8e7c-10c9a9b055a3",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "f04d0a02-1b9b-4ee9-927d-c0e379f13134",
+      "created_on": "2026-10-01T11:58:38.086971Z",
+      "versions": [
+        {
+          "version_id": "ba4c0f25-82a1-4acb-85f4-cb3b692a615b",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "3f18e187-8425-47a1-bda7-a91765f8820a",
+      "created_on": "2026-09-28T00:13:54.116879Z",
+      "versions": [
+        {
+          "version_id": "8936943d-e140-4347-ab3d-9e1f1416682e",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "892b6c21-c47d-4637-a3e5-495239b35c14",
+      "created_on": "2026-09-27T13:26:45.706623Z",
+      "versions": [
+        {
+          "version_id": "f1ab44ea-8440-43bf-8a60-fc363a468a10",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "84f78037-01fb-4be5-bedf-0737298a922d",
+      "created_on": "2026-09-27T13:20:50.466528Z",
+      "versions": [
+        {
+          "version_id": "897e5325-bc14-4518-aa9c-796a3427ba80",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "e19b9be0-61d8-4cfe-8e38-77bed04fb730",
+      "created_on": "2026-09-26T23:40:46.422198Z",
+      "versions": [
+        {
+          "version_id": "a7a71f32-2dc0-4035-bf03-ea774087d247",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "cb2618ff-beb8-47ae-b306-404faf6b854a",
+      "created_on": "2026-09-26T22:34:45.725833Z",
+      "versions": [
+        {
+          "version_id": "9cea851c-5b4d-4295-83b0-e900c0cddc0e",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "d3e6c4ac-9bf4-4cd3-bfbb-f02cd6a6224a",
+      "created_on": "2026-09-26T22:32:08.099126Z",
+      "versions": [
+        {
+          "version_id": "254cc69f-ec47-4f21-bbff-7488bca755cb",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "endedAt": "2026-10-10T22:28:29.942Z"
+}

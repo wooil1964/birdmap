@@ -1,3 +1,19 @@
+## 운영 승인 준비 후속 체크포인트 — 2026-10-11 22:47 KST
+
+최종 판정: **조건부 승인 유지 / 실제 운영 승인 대기**. 통합 보고서는 OPERATION_READY.md 및 OPERATION_SOURCE_DESIGN.md·OPERATION_PROTECTION_DESIGN.md·OPERATION_PAGES_CI.md.
+
+- exact PR head b12e20c1b6d856a021898a0c1c9221b30393a221 유지. 최신 main/Pages43bff43301d5915a344bf2c20987698597cf8870; merge-tree deec588e937ed309b11f9739c02b6eae22772c3d, 충돌0.
+- 현재494의 actual public.js는 Git41650e4/1817161 로컬 build+footer와 완전 일치하며 S1-R 수량/혼합7조건 누락. 직전16dae 실제 source 미확인. 둘 다 S1-R 보호 유지 rollback 불승인.
+- dc6 S1-R 서버 src16/16이b12와 동일; 최신main+shared guard 구성도 동일. source 복구 설계 완료, 실제 보호 Worker version 및 C guard를 유지하는 Pages release/rollback SHA는 아직 없다.
+- 22:47 공개GET approved54/history54/fixed0, recent9/field0; 구·신판정 보호2/신규0, root2 공개위치 유지. private D1 미감사. 기존canonical 명시 비번식/승인후 공개 정책은S1-R와별개.
+- 삭제/보호상태/지연GPS 재활성화는 기존결함. 가림·철회·S1-P 전환 전에cache/navigation guard 보완 필수; 순수S1-R/C 한정 반영은 운영자 위험 수용조건. 즉시 본인삭제철회가 필수면delete race도선행차단.
+- b12 Actions/status/check-runs0. 기존621/0/1과고정190/176은 exact b12 근거. 최신43+PR은실제날짜today/week validator와112함수동일/176후보/최종10safeeligible 확인; 전체621/Chrome재실행으로확대금지.
+
+다음 세션은 전체검증을처음부터반복하지 않는다. OPERATION_READY.md와 results/operation-ready/execution_manifest.json, 게시receipt를읽고 별도운영승인범위부터 확인한다. 최신SHA가바뀌면영향범위만재검증한다. 미완료는보호version/release등록·localCI증거채택·공개정책및기존보안위험수용/전환선행조건의사용자승인이다.
+
+이 체크포인트의 마지막 commit은 git log 및 operation-ready github_receipts.json에서 확인한다. 제품·운영쓰기0. 이전기록은아래보존한다.
+
+
 # PR #13 — F2·F3 최종 독립 검증
 
 ## 1. 종합 판정

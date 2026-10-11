@@ -1,0 +1,76 @@
+{
+  "startedAt": "2026-10-10T22:32:51.335Z",
+  "scope": "Current public GET only. Raw responses, species, names, IDs, notes, coordinates not saved. Aggregates only; private stored notes and omitted rows are not audited.",
+  "requests": [
+    {
+      "endpoint": "/reports/approved",
+      "httpStatus": 200,
+      "bodySHA256": "c6f06491b43d1007fb3dd6833da409168f18332cec51787c29b310cad5247d69",
+      "bytes": 13011,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "generatedAt",
+        "spots",
+        "fixedSpots"
+      ],
+      "generatedAt": "2026-10-10T22:32:51.566Z",
+      "scope": "All rows observable in this approved public payload; stored private note unavailable.",
+      "spotCount": 52,
+      "fixedGroupCount": 0,
+      "historyCount": 52,
+      "count": 52,
+      "oldSensitive": 2,
+      "newSensitive": 2,
+      "newlySensitive": 0,
+      "newlySensitiveWithUnhiddenPublicLocation": 0,
+      "oldSensitiveWithUnhiddenPublicLocation": 0
+    },
+    {
+      "endpoint": "/reports/recent-sites?days=14",
+      "httpStatus": 200,
+      "bodySHA256": "c878984255eb798ce41eec8f8db68365645a4a2a0ca06c085281c16c3b347149",
+      "bytes": 835,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "days",
+        "since",
+        "today",
+        "sites"
+      ],
+      "scope": "Already aggregated, old-classifier-filtered recent site output. Underlying row attribution is unavailable.",
+      "count": 8,
+      "oldSensitive": 0,
+      "newSensitive": 0,
+      "newlySensitive": 0,
+      "newlySensitiveWithUnhiddenPublicLocation": 0,
+      "oldSensitiveWithUnhiddenPublicLocation": 0
+    },
+    {
+      "endpoint": "/field-updates",
+      "httpStatus": 200,
+      "bodySHA256": "cdc3705cb0fa135af8b7fd8ad240ab6fca93bf1d289e31d44acb4600459145d4",
+      "bytes": 77,
+      "ok": true,
+      "topLevelKeys": [
+        "ok",
+        "serverTime",
+        "ttlHours",
+        "updates"
+      ],
+      "scope": "Current active field-update payload only; expired/deleted rows unavailable.",
+      "count": 0,
+      "oldSensitive": 0,
+      "newSensitive": 0,
+      "newlySensitive": 0,
+      "newlySensitiveWithUnhiddenPublicLocation": 0,
+      "oldSensitiveWithUnhiddenPublicLocation": 0
+    }
+  ],
+  "operatingWrites": 0,
+  "d1Queries": 0,
+  "postCalls": 0,
+  "rawDataSaved": false,
+  "endedAt": "2026-10-10T22:32:51.790Z"
+}
