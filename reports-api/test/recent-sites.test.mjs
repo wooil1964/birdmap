@@ -35,7 +35,7 @@ function rows() {
 test("최근 승인 제보를 탐조지별 최근 관찰일과 고유 종으로 묶는다", async () => {
   const response = await handleRequest(recentRequest(), publicEnv(fakeDb(rows())));
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("Cache-Control"), "public, max-age=60");
+  assert.equal(response.headers.get("Cache-Control"), "no-store");
   const body = await response.json();
   assert.equal(body.ok, true);
   assert.equal(body.days, 14);

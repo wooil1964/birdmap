@@ -13,6 +13,8 @@ preview_urls = false
 # 운영 기본값은 정본(dual-write) 모드다. 단계 전환은 배포 시 --var 로만 덮어쓴다.
 # NORMAL(legacy, Turnstile redemption guard 없음)로 되돌리는 배포를 하지 않는다.
 [vars]
+# Strict publication contract. Deploy only after local migration and approved coordinated rollout.
+REPORTS_PUBLICATION_REQUIRED = "true"
 ENVIRONMENT = "production"
 REPORTS_WRITE_MODE = "CANONICAL_DUAL_WRITE"
 REPORTS_DUAL_WRITE_ENABLED = "true"

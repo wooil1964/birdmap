@@ -8,7 +8,7 @@ export function compareShadow(a,b) {
     if(Array.isArray(x)&&Array.isArray(y)) {if(x.length!==y.length)found.add('count');for(let i=0;i<Math.min(x.length,y.length);i++)visit(x[i],y[i],key);return;}
     if(typeof x==='object'&&typeof y==='object') {
       const keys=new Set([...Object.keys(x),...Object.keys(y)]);
-      for(const k of keys){if(k==='generatedAt')continue;if(!Object.hasOwn(x,k)||!Object.hasOwn(y,k)){found.add('shape');if(FIELDS.has(k))found.add(k);}else visit(x[k],y[k],FIELDS.has(k)?k:key);}
+      for(const k of keys){if(k==='generatedAt'||k==='serverTime')continue;if(!Object.hasOwn(x,k)||!Object.hasOwn(y,k)){found.add('shape');if(FIELDS.has(k))found.add(k);}else visit(x[k],y[k],FIELDS.has(k)?k:key);}
       return;
     }
     found.add(FIELDS.has(key)?key:'value_or_order');
@@ -20,7 +20,9 @@ export async function shadowRead(request,env,legacyResponse,reader,log=entry=>co
   const endpoint=path==='/reports/approved'?'approved':path==='/reports/pending'?'pending':path.startsWith('/reports/site/')?'site':'status';
   try {
     const canonical=await reader(request,{...env,REPORTS_DB:canonicalReadDb(env.REPORTS_DB),REPORTS_SHADOW_READ:'false'});
-    const differences=compareShadow(await legacyResponse.json(),await canonical.json());
+    const legacyBody=await legacyResponse.json(),canonicalBody=await canonical.json();
+    if(legacyBody.publication&&(canonicalBody.error?.code==='PUBLICATION_CHANGED'||canonicalBody.publication&&(canonicalBody.publication.epoch!==legacyBody.publication.epoch||canonicalBody.publication.revision!==legacyBody.publication.revision))){log({event:'canonical_shadow_inconclusive',endpoint,reason:'publication_changed'});return ['publication_changed'];}
+    const differences=compareShadow(legacyBody,canonicalBody);
     if(legacyResponse.status!==canonical.status)differences.push('http_status');
     if(differences.length)log({event:'canonical_shadow_mismatch',endpoint,differences});
     return differences;

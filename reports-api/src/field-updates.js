@@ -22,6 +22,7 @@ import {
   sha256Hex,
   verifyTurnstile,
 } from "./shared.js";
+import { assertion,clearAssertion } from "./canonical/data.js";
 
 // 소식이 지도에 남는 시간. 마지막 활동(상태 변경 또는 확인) 뒤로 이 시간이 지나면 응답에서 빠진다.
 // 값을 바꿀 곳은 여기 하나다. 프런트 표시는 응답의 ttlHours 를 따른다.
@@ -129,9 +130,11 @@ async function enforceRate(db, table, hash, now, max) {
 }
 
 // 공개 응답 한 건. 실제 좌표(lat, lon)는 어디에도 넣지 않는다.
-function publicEntry(row, events, confirmCount) {
+export function publicEntry(row, events, confirmCount) {
   const entry = {
     id: row.id,
+    rowRevision: row.row_revision,
+    expiresAt: new Date(Date.parse(row.last_activity_at)+FIELD_UPDATE_TTL_HOURS*3600000).toISOString(),
     species: row.species,
     count: row.bird_count,
     status: row.status,
@@ -180,18 +183,32 @@ async function loadEntries(db, rows) {
 }
 
 const COLUMNS = `id, species, bird_count, status, public_lat, public_lon, location_hidden, nickname, note,
-                 created_at, updated_at, last_confirmed_at, last_activity_at, user_hash`;
+                 created_at, updated_at, last_confirmed_at, last_activity_at, user_hash, CAST(row_revision AS TEXT) AS row_revision`;
 
 async function loadActive(db, id, now) {
   const row = await db
     .prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`)
     .bind(id)
     .first();
+  if(row&&!/^[1-9][0-9]{0,18}$/.test(row.row_revision))throw new WorkerError('FIELD_UNAVAILABLE','현장소식 상태를 확인할 수 없어요.',503);
   if (!row || row.status === DELETED) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
   if (row.last_activity_at < cutoffIso(now)) {
     throw new WorkerError("FIELD_EXPIRED", "시간이 지나 이미 사라진 현장소식이에요.", 410);
   }
   return row;
+}
+
+
+async function fieldWriteFailure(db,id,error) {
+ const row=await db.prepare('SELECT status,last_activity_at FROM field_updates WHERE id=?1').bind(id).first();
+ if(!row||row.status===DELETED)throw new WorkerError('FIELD_NOT_FOUND','찾을 수 없는 현장소식이에요.',404);
+ if(row.last_activity_at<cutoffIso(new Date()))throw new WorkerError('FIELD_EXPIRED','시간이 지나 이미 사라진 현장소식이에요.',410);
+ if(/field_deleted_terminal|field_revision|transaction_assertions|CHECK constraint/i.test(String(error?.message)))throw new WorkerError('FIELD_REVISION_CONFLICT','현장소식이 먼저 변경됐어요. 다시 확인해 주세요.',409);
+ throw error;
+}
+function fieldResponse(request,env,body,status=200,headers={}) {
+ if(env.REPORTS_PUBLICATION_REQUIRED==='true'&&body?.update)body={ok:body.ok,id:body.update.id,status:body.update.status,rowRevision:body.update.rowRevision};
+ return jsonResponse(request,env,body,status,headers);
 }
 
 async function handleList(request, env, helpers) {
@@ -265,7 +282,7 @@ async function handleCreate(request, env, helpers) {
   ]);
   const row = await db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`).bind(id).first();
   const [update] = await loadEntries(db, [row]);
-  return jsonResponse(request, env, { ok: true, update }, 201);
+  return fieldResponse(request, env, { ok: true, update }, 201);
 }
 
 async function handleStatus(request, env, id, helpers) {
@@ -288,20 +305,17 @@ async function handleStatus(request, env, id, helpers) {
   await verifyTurnstile(body?.turnstileToken, ip, env.TURNSTILE_SECRET_KEY);
 
   const user = await userHash(device, env);
-  const at = iso(now);
-  // 새 이벤트를 덧붙이고 현재 상태만 바꾼다. created_at(최초 관찰시간)과 last_confirmed_at 은 건드리지 않는다.
-  await db.batch([
-    db.prepare(
-      `INSERT INTO field_update_events (id, field_update_id, status, nickname, created_at, user_hash, ip_hash)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
-    ).bind(crypto.randomUUID(), id, status, nickname, at, user, hash),
-    db.prepare(
-      "UPDATE field_updates SET status = ?2, updated_at = ?3, last_activity_at = ?3 WHERE id = ?1",
-    ).bind(id, status, at),
-  ]);
+  const writeNow=new Date(),at=iso(writeNow),key='field-status:'+crypto.randomUUID();
+  try {
+    await db.batch([
+      db.prepare("UPDATE field_updates SET status=?2,updated_at=?3,last_activity_at=?3,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?4 AND status=?5 AND status<>'deleted' AND last_activity_at>=?6"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?" AND julianday(last_activity_at)>=julianday('now','-3 hours')":"")).bind(id,status,at,row.row_revision,row.status,cutoffIso(writeNow)),
+      assertion(db,key),clearAssertion(db,key),
+      db.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES (?1,?2,?3,?4,?5,?6,?7)").bind(crypto.randomUUID(),id,status,nickname,at,user,hash),
+    ]);
+  } catch(error) {await fieldWriteFailure(db,id,error);}
   const fresh = await db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`).bind(id).first();
   const [update] = await loadEntries(db, [fresh]);
-  return jsonResponse(request, env, { ok: true, update }, 201);
+  return fieldResponse(request, env, { ok: true, update }, 201);
 }
 
 async function handleConfirm(request, env, id, helpers) {
@@ -321,28 +335,20 @@ async function handleConfirm(request, env, id, helpers) {
   const hash = await ipHash(ip, env.REPORT_IP_SALT);
   await enforceRate(db, "field_update_confirmations", hash, now, CONFIRM_WINDOW_MAX);
 
-  const at = iso(now);
+  const writeNow=new Date(),at=iso(writeNow),key='field-confirm:'+crypto.randomUUID();
   try {
-    // 확인 기록이 먼저 들어가야 한다. UNIQUE 에 걸리면 뒤의 갱신은 실행되지 않는다(배치는 한 묶음).
     await db.batch([
-      db.prepare(
-        `INSERT INTO field_update_confirmations (id, field_update_id, user_hash, ip_hash, created_at)
-         VALUES (?1, ?2, ?3, ?4, ?5)`,
-      ).bind(crypto.randomUUID(), id, user, hash, at),
-      // 최초 관찰시간(created_at)과 상태 변경시간(updated_at)은 그대로 두고 확인·활동 시각만 올린다.
-      db.prepare(
-        "UPDATE field_updates SET last_confirmed_at = ?2, last_activity_at = ?2 WHERE id = ?1",
-      ).bind(id, at),
+      db.prepare("UPDATE field_updates SET last_confirmed_at=?2,last_activity_at=?2,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?3 AND status IN ('visible','reappeared') AND last_activity_at>=?4"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?" AND julianday(last_activity_at)>=julianday('now','-3 hours')":"")).bind(id,at,row.row_revision,cutoffIso(writeNow)),
+      assertion(db,key),clearAssertion(db,key),
+      db.prepare("INSERT INTO field_update_confirmations(id,field_update_id,user_hash,ip_hash,created_at) VALUES (?1,?2,?3,?4,?5)").bind(crypto.randomUUID(),id,user,hash,at),
     ]);
-  } catch (error) {
-    if (/UNIQUE|constraint/i.test(String(error?.message))) {
-      throw new WorkerError("FIELD_ALREADY_CONFIRMED", "이미 확인하셨어요.", 409);
-    }
-    throw error;
+  } catch(error) {
+    if(/UNIQUE constraint failed: field_update_confirmations/i.test(String(error?.message)))throw new WorkerError('FIELD_ALREADY_CONFIRMED','이미 확인하셨어요.',409);
+    await fieldWriteFailure(db,id,error);
   }
   const fresh = await db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`).bind(id).first();
   const [update] = await loadEntries(db, [fresh]);
-  return jsonResponse(request, env, { ok: true, update }, 201);
+  return fieldResponse(request, env, { ok: true, update }, 201);
 }
 
 // 소유권은 서버가 판단한다. 요청의 deviceId 로 만든 user_hash 가 소식을 등록할 때 저장한 user_hash 와 같을 때만 지운다.
@@ -364,15 +370,18 @@ async function handleDelete(request, env, id, helpers) {
   const ip = request.headers.get("CF-Connecting-IP") || "";
   const hash = await ipHash(ip, env.REPORT_IP_SALT);
   await enforceRate(db, "field_update_events", hash, now, WRITE_WINDOW_MAX);
-  const at = iso(now);
-  await db.batch([
-    db.prepare(
-      `INSERT INTO field_update_events (id, field_update_id, status, nickname, created_at, user_hash, ip_hash)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
-    ).bind(crypto.randomUUID(), id, DELETED, row.nickname, at, user, hash),
-    // 소유자 조건을 UPDATE 에도 한 번 더 건다(위 검사와 쓰기 사이의 경합 방어).
-    db.prepare("UPDATE field_updates SET status = ?2 WHERE id = ?1 AND user_hash = ?3 AND status <> ?2").bind(id, DELETED, user),
-  ]);
+  const at=iso(new Date()),key='field-delete:'+crypto.randomUUID();
+  try {
+    await db.batch([
+      db.prepare("UPDATE field_updates SET status='deleted',row_revision=row_revision+1 WHERE id=?1 AND user_hash=?2 AND CAST(row_revision AS TEXT)=?3 AND status<>'deleted'").bind(id,user,row.row_revision),
+      assertion(db,key),clearAssertion(db,key),
+      db.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES (?1,?2,?3,?4,?5,?6,?7)").bind(crypto.randomUUID(),id,DELETED,row.nickname,at,user,hash),
+    ]);
+  } catch(error) {
+    const current=await db.prepare('SELECT status,user_hash FROM field_updates WHERE id=?1').bind(id).first();
+    if(current?.status===DELETED&&current.user_hash===user)return jsonResponse(request,env,{ok:true,id,alreadyDeleted:true},200,{'Cache-Control':'no-store'});
+    await fieldWriteFailure(db,id,error);
+  }
   return jsonResponse(request, env, { ok: true, id, deletedAt: at }, 200, { "Cache-Control": "no-store" });
 }
 
@@ -390,4 +399,16 @@ export async function handleFieldUpdates(request, env, url, helpers) {
     return action === "status" ? handleStatus(request, env, id, helpers) : handleConfirm(request, env, id, helpers);
   }
   throw new WorkerError("METHOD_NOT_ALLOWED", "Method not allowed", 405);
+}
+
+// All three reads execute in the caller's one D1 read transaction.
+export function fieldSnapshotStatements(db,now) {
+ const cutoff=cutoffIso(now),active=`SELECT id FROM field_updates WHERE last_activity_at>=?1 AND status<>'deleted' ORDER BY last_activity_at DESC LIMIT ${LIST_LIMIT}`;
+ return [db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id IN (${active}) ORDER BY last_activity_at DESC`).bind(cutoff),
+ db.prepare(`SELECT field_update_id,status,nickname,created_at FROM field_update_events WHERE field_update_id IN (${active}) ORDER BY created_at ASC,rowid ASC`).bind(cutoff),
+ db.prepare(`SELECT field_update_id,COUNT(*) AS n FROM field_update_confirmations WHERE field_update_id IN (${active}) GROUP BY field_update_id`).bind(cutoff)];
+}
+export function fieldSnapshotPayload(sets,now) {
+ const parents=sets[0].results||[],events=sets[1].results||[],counts=sets[2].results||[];
+ return {ok:true,serverTime:iso(now),ttlHours:FIELD_UPDATE_TTL_HOURS,updates:parents.map(row=>publicEntry(row,events.filter(e=>e.field_update_id===row.id).slice(-HISTORY_LIMIT),Number(counts.find(c=>c.field_update_id===row.id)?.n||0)))};
 }

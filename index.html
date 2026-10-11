@@ -1299,7 +1299,7 @@ function loadContributors(){
   if(contributorsLoading)return contributorsPromise;
   contributorsLoading=true;
   renderContributors();
-  contributorsPromise=fetch(REPORTS_API_URL+'/contributors/monthly',{cache:'no-cache'}).then(function(response){
+  contributorsPromise=publicationFetch('/contributors/monthly').then(function(data){return {ok:true,json:function(){return Promise.resolve(data);}};}).then(function(response){
     if(!response.ok)throw new Error('contributors '+response.status);
     return response.json();
   }).then(function(body){
@@ -1378,7 +1378,9 @@ function closeContributorsModal(){
 }
 
 /* 새 마커를 만들지 않고 이미 지도에 있는 점을 그대로 연다. */
-function openReportEntry(entry){
+function openReportEntry(entry,verified){
+  if(!verified){publicationRouteCheck(function(){var latest=reportSearchIndex.find(function(item){return item.kind===entry.kind&&item.spotId===entry.spotId&&item.date===entry.date;});if(latest)openReportEntry(latest,true);});return;}
+  if(!publicationAllowed())return;
   var map=map_7010a44f6ac2025090f0fe07508ed485,layer=null;
   if(entry.kind==='spot'){
     layer=reportSpotLayers[entry.spotId];
@@ -1620,8 +1622,10 @@ function spotTmapRouteHtml(dest){
   return tmapNavigationLink(dest,'출현 지점','spotTmapRoute','🚙 티맵');
 }
 function spotRouteButtonsHtml(dest){
+  if(dest&&dest.publicationReportId&&!publicationAllowed())return '';
   var kakao=spotKakaoRouteHtml(dest),tmap=spotTmapRouteHtml(dest);
-  return kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
+  var html=kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
+  return dest&&dest.publicationReportId?html.replace(/<a /g,'<a data-publication-report="'+escapeHtml(dest.publicationReportId)+'" '):html;
 }
 function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDest){
   var names=(species||[]).map(escapeHtml).join(' · ');
@@ -2911,6 +2915,119 @@ function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
 
 /* 오래된 응답 방어. 요청마다 번호를 받고, 이미 반영한 응답보다 먼저 보낸 요청의 응답은 버린다.
    삭제·공개 취소·위치 가림이 반영된 뒤 늦게 도착한 옛 응답이 마커를 되살리지 못하게 한다. */
+/* Public location permission: source authority, not response/request timestamps.
+   Conservative local defaults; production cadence remains a separate operating approval. */
+var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='legacy-public-v1';
+var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
+var publicationState={generation:0,anchor:null,until:0,ready:false},publicationHeadPromise=null,publicationExpiryTimer=0,publicationRefreshPromise=null;
+var reportPublicSpots={};
+function publicationRevision(value){return typeof value==='string'&&/^(0|[1-9][0-9]{0,18})$/.test(value)&&BigInt(value)<=9223372036854775807n;}
+function publicationNonce(){var bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
+function publicationSame(a,b){return !!a&&!!b&&a.contract===b.contract&&a.epoch===b.epoch&&a.revision===b.revision&&a.projection===b.projection;}
+function publicationAllowed(){return publicationState.ready&&Date.now()<publicationState.until;}
+function publicationNotice(show){
+ var box=document.getElementById('publicationNotice');
+ if(!box){box=document.createElement('div');box.id='publicationNotice';box.setAttribute('role','status');box.style.cssText='position:fixed;left:8px;bottom:8px;z-index:999;max-width:min(430px,calc(100vw - 16px));background:#fff8e1;padding:6px 9px;border-radius:6px;font:12px/1.5 Arial';document.body.appendChild(box);}
+ box.textContent='공개 위치의 최신 상태를 확인할 수 없어 위치와 길찾기를 잠시 표시하지 않습니다.';box.hidden=!show;
+}
+function publicationInvalidate(reason){
+ publicationState.generation++;publicationState.until=0;publicationState.ready=false;
+ if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
+ if(typeof fieldGuideStop==='function'&&typeof fieldGuide!=='undefined'&&fieldGuide)fieldGuideStop();
+ if(typeof fieldNavChoiceClose==='function')fieldNavChoiceClose();
+ var map=typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'?map_7010a44f6ac2025090f0fe07508ed485:null;
+ [typeof reportSpotLayers==='undefined'?{}:reportSpotLayers,typeof reportPendingLayers==='undefined'?{}:reportPendingLayers].forEach(function(layers){Object.keys(layers).forEach(function(id){if(map)map.removeLayer(layers[id]);delete layers[id];});});
+ reportPublicSpots={};reportSearchIndex=[];reportFixedHistory={};recentSiteSightings={};
+ document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
+ if(typeof fieldUpdates!=='undefined')fieldUpdates=[];
+ if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
+ if(map&&map.closePopup)map.closePopup();
+ if(typeof fieldLayer!=='undefined'&&fieldLayer&&typeof renderFieldMarkers==='function')renderFieldMarkers();
+ if(typeof refreshFixedSpotPopups==='function')refreshFixedSpotPopups();
+ if(typeof renderRecentReports==='function')renderRecentReports();
+ if(typeof refreshTodayPanelIfOpen==='function')refreshTodayPanelIfOpen();
+ publicationNotice(true);
+}
+function publicationRenew(head){
+ if(!publicationState.ready)return;
+ publicationState.until=Date.now()+PUBLICATION_MAX_AGE;
+ if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
+ publicationExpiryTimer=setTimeout(function(){if(!publicationAllowed())publicationInvalidate('expired');},PUBLICATION_MAX_AGE+1);
+ if(typeof fieldClockOffset!=='undefined')fieldClockOffset=Date.parse(head.serverTime)-Date.now();
+ publicationNotice(false);
+}
+function publicationJson(path){
+ var controller=new AbortController(),timer;
+ return new Promise(function(resolve,reject){
+  timer=setTimeout(function(){controller.abort();reject(new Error('publication timeout'));},PUBLICATION_TIMEOUT);
+  fetch(REPORTS_API_URL+path,{cache:'no-store',signal:controller.signal}).then(function(r){if(!r.ok)throw new Error('publication '+r.status);return r.json();}).then(resolve,reject);
+ }).then(function(body){clearTimeout(timer);return body;},function(error){clearTimeout(timer);throw error;});
+}
+function publicationValidate(body,nonce){
+ var a=body&&body.publication;
+ if(!a||a.contract!==PUBLICATION_CONTRACT||a.projection!==PUBLICATION_PROJECTION||typeof a.epoch!=='string'||!/^[0-9a-f]{32}$/.test(a.epoch)||!publicationRevision(a.revision)||a.nonce!==nonce||typeof body.serverTime!=='string'||!Number.isFinite(Date.parse(body.serverTime)))throw new Error('publication invalid');
+ return a;
+}
+function publicationHead(){
+ if(publicationHeadPromise)return publicationHeadPromise;
+ var nonce=publicationNonce();
+ var pending=publicationJson('/reports/public-state?nonce='+nonce).then(function(body){
+  var a=publicationValidate(body,nonce),old=publicationState.anchor;
+  if(old&&old.epoch===a.epoch&&BigInt(a.revision)<BigInt(old.revision))throw new Error('publication regressed');
+  if(old&&!publicationSame(old,a))publicationInvalidate('authority changed');
+  publicationState.anchor=a;return body;
+ }).catch(function(error){publicationInvalidate('authority unknown');throw error;});
+ publicationHeadPromise=pending;
+ pending.then(function(){if(publicationHeadPromise===pending)publicationHeadPromise=null;},function(){if(publicationHeadPromise===pending)publicationHeadPromise=null;});
+ return pending;
+}
+function publicationDataAllowed(body){return publicationAllowed()&&body&&publicationSame(body.publication,publicationState.anchor);}
+function publicationFetch(path){
+ var generation;
+ return publicationHead().then(function(head){
+  generation=publicationState.generation;var a=head.publication,nonce=publicationNonce();
+  var url=path+(path.indexOf('?')<0?'?':'&')+'contract='+PUBLICATION_CONTRACT+'&nonce='+nonce+'&expectedEpoch='+a.epoch+'&expectedRevision='+a.revision;
+  return publicationJson(url).then(function(body){
+   var b=publicationValidate(body,nonce);if(!publicationSame(a,b))throw new Error('publication snapshot mismatch');
+   return publicationHead().then(function(after){
+    if(generation!==publicationState.generation||!publicationSame(b,after.publication))throw new Error('publication changed during read');
+    publicationState.ready=true;publicationRenew(after);body.publicationCheckedAt=after.serverTime;return body;
+   });
+  });
+ }).catch(function(error){if(generation===undefined||generation===publicationState.generation)publicationInvalidate('data unverified');throw error;});
+}
+function publicationRefresh(){
+ if(publicationRefreshPromise)return publicationRefreshPromise;
+ var pending=Promise.allSettled([loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()]);
+ publicationRefreshPromise=pending;pending.then(function(){if(publicationRefreshPromise===pending)publicationRefreshPromise=null;});return pending;
+}
+function publicationRecheck(){
+ if(!reportsConfigured()||document.hidden)return Promise.resolve(false);
+ return publicationHead().then(function(head){if(publicationState.ready){publicationRenew(head);if(typeof fieldLayer!=='undefined'&&fieldLayer)renderFieldMarkers();return true;}return publicationRefresh();}).catch(function(){return false;});
+}
+function publicationRouteCheck(fn){
+ return publicationHead().then(function(head){if(!publicationState.ready){publicationRefresh();return false;}publicationRenew(head);if(!publicationAllowed())return false;return fn()!==false;}).catch(function(){return false;});
+}
+window.addEventListener('pageshow',function(){publicationInvalidate('page restored');publicationRefresh();});
+document.addEventListener('visibilitychange',function(){publicationInvalidate('visibility');if(!document.hidden)publicationRefresh();});
+window.addEventListener('load',function(){publicationRefresh();setInterval(publicationRecheck,PUBLICATION_POLL_MS);});
+// Only dynamic report/field links use this gate; static site190 links retain their behavior.
+document.addEventListener('click',function(event){
+ var link=event.target.closest&&event.target.closest('a[data-publication-report],#fieldNavChoice a');if(!link)return;
+ var reportId=link.getAttribute('data-publication-report'),box=link.closest('#fieldNavChoice'),fieldId=box&&box.getAttribute('data-field-id'),isTmap=link.href.indexOf('tmap:')===0;
+ event.preventDefault();event.stopImmediatePropagation();
+ var opened=!isTmap?window.open('about:blank','_blank'):null;
+ if(opened)try{opened.opener=null;}catch(ignore){}
+ publicationRouteCheck(function(){
+  var dest=fieldId?fieldPublicPoint(fieldGuideTarget(fieldId)):reportPublicSpots[reportId];
+  if(!dest||dest.locationHidden===true){if(opened)opened.close();return false;}
+  var url=isTmap?tmapNavigationUrl(dest,fieldId?(fieldFind(fieldId)||{}).species:'출현 지점'):spotKakaoRouteUrl(dest,fieldId?(fieldFind(fieldId)||{}).species:'출현 지점');
+  if(isTmap){if(openTmapNavigation())location.href=url;}else if(opened)opened.location.href=url;else fieldToast('팝업이 차단됐어요. 브라우저 설정을 확인한 뒤 다시 눌러 주세요.','error');
+  fieldNavChoiceClose();return true;
+ }).then(function(ok){if(!ok&&opened)opened.close();});
+},true);
+/* publication:end */
+
 var reportRequestSeq={approved:0,pending:0,recent:0}, reportAppliedSeq={approved:0,pending:0,recent:0};
 function reportRequestStart(kind){return ++reportRequestSeq[kind];}
 function reportResponseCurrent(kind,seq){
@@ -2921,7 +3038,7 @@ function reportResponseCurrent(kind,seq){
 
 function cachedSiteHistory(key){
   var hit=siteHistoryCache[key];
-  if(!hit)return null;
+  if(!hit||!publicationDataAllowed(hit.data))return null;
   if(Date.now()-hit.at>SITE_HISTORY_TTL){delete siteHistoryCache[key];return null;}
   return hit.data;
 }
@@ -2934,25 +3051,11 @@ function fetchSiteHistory(site,offset,retried){
     // 기억해 둔 값이 있으면 네트워크를 타지 않고 그대로 그린다.
     if(hit)return Promise.resolve(hit);
   }
-  // 응답이 늦어도 '불러오는 중입니다.'가 남지 않도록 시간을 끊는다.
-  var controller=(typeof AbortController!=='undefined')?new AbortController():null;
-  var timer=controller?setTimeout(function(){controller.abort();},SITE_HISTORY_TIMEOUT):0;
-  return fetch(REPORTS_API_URL+'/reports/site/'+encodeURIComponent(site.id)
-      +'?limit='+SITE_HISTORY_PAGE+'&offset='+offset,controller?{signal:controller.signal}:{})
-    .then(function(response){
-      if(!response.ok)throw new Error('site history '+response.status);
-      return response.json();
-    }).then(function(data){
-      if(!data||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
-      // 요청 뒤에 승인 제보가 갱신됐으면 이 응답은 옛 자료일 수 있다. 기억하지 않고 한 번 다시 받는다.
-      if(gen!==siteHistoryGen){
-        if(retried)return null;
-        return fetchSiteHistory(site,offset,true);
-      }
-      if(!offset)siteHistoryCache[key]={at:Date.now(),data:data};
-      return data;
-    }).catch(function(){return null;})
-    .then(function(result){if(timer)clearTimeout(timer);return result;});
+  return publicationFetch('/reports/site/'+encodeURIComponent(site.id)+'?limit='+SITE_HISTORY_PAGE+'&offset='+offset).then(function(data){
+    if(!publicationDataAllowed(data)||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
+    if(gen!==siteHistoryGen){if(retried)return null;return fetchSiteHistory(site,offset,true);}
+    if(!offset)siteHistoryCache[key]={at:Date.now(),data:data};return data;
+  }).catch(function(){return null;});
 }
 
 /* 제목 옆에 승인된 이력 건수를 적는다. 서버가 준 total 이라 '더 보기'로 아직
@@ -3141,6 +3244,7 @@ function renderReportResults(box,entries){
   box.appendChild(resultSectionTitle('출현종 제보 '+entries.length+'건'));
   entries.slice(0,80).forEach(function(entry){
     var button=document.createElement('button');
+    button.setAttribute('data-publication-entry','true');
     button.className='resultItem reportResult';
     button.onclick=function(){openReportEntry(entry);};
     var name=document.createElement('div');
@@ -4144,10 +4248,8 @@ var recentSiteSightings={};
 function loadRecentSiteSightings(){
   if(!reportsConfigured())return Promise.resolve(false);
   var seq=reportRequestStart('recent');
-  return fetch(REPORTS_API_URL+'/reports/recent-sites?days=14',{cache:'no-cache'}).then(function(r){
-    if(!r.ok)throw new Error('recent-sites '+r.status);
-    return r.json();
-  }).then(function(data){
+  return publicationFetch('/reports/recent-sites?days=14').then(function(data){
+    if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.sites))throw new Error('recent-sites invalid');
     if(!reportResponseCurrent('recent',seq))return false;
     var next={};
@@ -4625,10 +4727,8 @@ function initReportFeature(){
 function loadApprovedReports(){
   if(!reportsConfigured())return Promise.resolve(false);
   var seq=reportRequestStart('approved');
-  return fetch(REPORTS_API_URL+'/reports/approved',{cache:'no-cache'}).then(function(r){
-    if(!r.ok)throw new Error('reports '+r.status);
-    return r.json();
-  }).then(function(data){
+  return publicationFetch('/reports/approved').then(function(data){
+    if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('reports invalid');
     if(!reportResponseCurrent('approved',seq))return false;   // 더 나중에 보낸 요청의 응답이 이미 반영됨: 옛 응답은 버린다
     // 승인 제보가 새로 내려왔으니 탐조지별 이력 기억도 버린다(새 승인 건이 바로 보이게).
@@ -4655,16 +4755,18 @@ function loadApprovedReports(){
 }
 
 function renderApprovedReports(spots){
+  if(!publicationAllowed())return;
+  reportPublicSpots={};
   var seen={};
   spots.forEach(function(spot){
     if(!spot||!isFinite(spot.lat)||!isFinite(spot.lon))return;
     var id=String(spot.id||'');
     if(!id)return;
-    seen[id]=true;
+    seen[id]=true;reportPublicSpots[id]=spot;
     var existing=reportSpotLayers[id];
     if(existing)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(existing);
     // 종이나 좌표가 바뀌었을 수 있으므로 매번 현재 값으로 다시 만든다.
-    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false,spot.locationHidden===true,{lat:spot.lat,lon:spot.lon})
+    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false,spot.locationHidden===true,{lat:spot.lat,lon:spot.lon,publicationReportId:id})
       .addTo(map_7010a44f6ac2025090f0fe07508ed485);
   });
   // 관리자가 공개를 취소한 점만 사라진다. 기존 탐조지와 그 출현 지점은 건드리지 않는다.
@@ -4682,10 +4784,8 @@ function renderApprovedReports(spots){
 function loadPendingReports(){
   if(!reportsConfigured())return Promise.resolve(false);
   var seq=reportRequestStart('pending');
-  return fetch(REPORTS_API_URL+'/reports/pending',{cache:'no-cache'}).then(function(r){
-    if(!r.ok)throw new Error('pending '+r.status);
-    return r.json();
-  }).then(function(data){
+  return publicationFetch('/reports/pending').then(function(data){
+    if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('pending invalid');
     if(!reportResponseCurrent('pending',seq))return false;
     renderPendingReports(data.spots);
@@ -4701,6 +4801,7 @@ function removePendingLayer(id){
 }
 
 function showPendingSpot(spot){
+  if(!publicationAllowed())return;
   if(!spot||!isFinite(spot.lat)||!isFinite(spot.lon))return;
   var id=String(spot.id||'');
   if(!id)return;
@@ -5042,7 +5143,7 @@ function submitReport(event){
     }
     // 서버가 공개를 허용한 건만 좌표를 함께 내려보낸다. 보류된 건은 마커를 만들지 않는다.
     if(result.body.spot){
-      showPendingSpot(result.body.spot);
+      loadPendingReports();
       setReportMessage(result.body.spot.locationHidden
         ?'제보가 접수되었습니다. 위치 가리기에 따라 대략적인 위치에 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.'
         :'제보가 접수되었습니다. 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.','ok');
@@ -5169,15 +5270,18 @@ function fieldAgeText(minutes){
   return rest?hours+'시간 '+rest+'분 전':hours+'시간 전';
 }
 function fieldIsActive(update){
+  if(update&&typeof update.expiresAt==='string')return Number.isFinite(Date.parse(update.expiresAt))&&Date.parse(update.expiresAt)>=fieldNowMs();
   return fieldAgeMin(update)<=fieldTtlHours*60;
 }
 
 /* ── 서버 통신 ── */
 function fieldApi(path,method,payload){
+  if(method==='GET')return publicationFetch(path).then(function(body){return {ok:true,status:200,body:body};});
   var options={method:method,cache:'no-store'};
   if(payload){options.headers={'Content-Type':'application/json'};options.body=JSON.stringify(payload);}
   return fetch(REPORTS_API_URL+path,options).then(function(response){
     return response.json().catch(function(){return null;}).then(function(body){
+      if(response.ok&&body&&body.ok===true){publicationInvalidate('mutation');if(body.update){body={ok:true,id:body.update.id,status:body.update.status};}}
       return {ok:response.ok&&body&&body.ok===true,status:response.status,body:body};
     });
   });
@@ -5208,13 +5312,15 @@ function loadFieldUpdates(){
   if(!reportsConfigured())return Promise.resolve(false);
   var seq=++fieldRequestSeq;
   return fieldApi('/field-updates','GET').then(function(result){
-    if(!result.ok||!Array.isArray(result.body.updates))throw new Error('field-updates '+result.status);
+    if(!result.ok||!publicationDataAllowed(result.body)||!Array.isArray(result.body.updates))throw new Error('field-updates '+result.status);
     if(seq<fieldAppliedSeq||seq<=fieldBarrierSeq)return false;
     fieldAppliedSeq=seq;
     var serverTime=Date.parse(result.body.serverTime);
     if(!isNaN(serverTime))fieldClockOffset=serverTime-Date.now();
     if(typeof result.body.ttlHours==='number'&&result.body.ttlHours>0)fieldTtlHours=result.body.ttlHours;
-    fieldUpdates=result.body.updates.filter(fieldValidUpdate).map(fieldGuardIncoming).filter(Boolean);
+    fieldProtectedIds={};
+    var checkedAt=Date.parse(result.body.publicationCheckedAt);
+    fieldUpdates=result.body.updates.filter(fieldValidUpdate).filter(function(item){return typeof item.expiresAt==='string'&&Number.isFinite(Date.parse(item.expiresAt))&&Date.parse(item.expiresAt)>=checkedAt&&typeof item.rowRevision==='string'&&/^[1-9][0-9]{0,18}$/.test(item.rowRevision)&&BigInt(item.rowRevision)<=9223372036854775807n;}).map(fieldGuardIncoming).filter(Boolean);
     if(!fieldAvailable){fieldAvailable=true;fieldEl('fieldToggleBtn').hidden=false;}
     renderFieldMarkers();
     if(!fieldEl('fieldPanel').hidden&&(fieldStepName==='pickThread'))fieldRender();
@@ -5480,6 +5586,7 @@ function fieldNewsList(){
 }
 /* 길안내에 쓸 수 있는 공개 좌표. 위치 보호 소식·비정상 좌표는 null. */
 function fieldPublicPoint(update){
+  if(!publicationAllowed())return null;
   if(!update||update.locationHidden===true)return null;
   var lat=update.lat,lon=update.lon;
   if(typeof lat!=='number'||typeof lon!=='number'||!isFinite(lat)||!isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return null;
@@ -5620,7 +5727,8 @@ function fieldNavExternal(update,km,accuracy){
   // GPS 콜백 뒤 새 창 자동 실행 대신 사용자가 앱을 선택하도록 해 팝업 차단을 피한다.
   fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 내비게이션 앱을 선택해 주세요.');
 }
-function fieldNavManualGuide(id){
+function fieldNavManualGuide(id,verified){
+  if(!verified){publicationRouteCheck(function(){fieldNavManualGuide(id,true);});return;}
   var update=fieldFind(id);
   if(!update||!fieldPublicPoint(update))return;
   if(matchMedia('(pointer:fine)').matches){fieldToast('방향 유도는 스마트폰 등 터치 기기에서 쓸 수 있어요.','error');return;}
@@ -5633,7 +5741,8 @@ function fieldNavManualGuide(id){
   },function(){fieldToast(needed,'error');},{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
 /* 길안내: 현재 위치를 한 번만 읽어 직선거리로 방향 유도/외부 길찾기를 고른다. 읽은 위치는 저장·전송하지 않는다. */
-function fieldNewsNavigate(id){
+function fieldNewsNavigate(id,verified){
+  if(!verified){publicationRouteCheck(function(){fieldNewsNavigate(id,true);});return;}
   var update=fieldFind(id),point=fieldPublicPoint(update);
   if(!update||!fieldIsActive(update)){fieldToast('종료된 현장소식이에요.','error');return;}
   if(!point){fieldToast('위치 보호 중인 소식이라 길안내를 제공하지 않아요.','error');return;}
@@ -5686,8 +5795,8 @@ function fieldConfirm(id){
   if(fieldBusy)return;
   fieldBusy=true;
   fieldApi('/field-updates/'+id+'/confirm','POST',{deviceId:fieldDeviceId()}).then(function(result){
-    if(result.ok&&fieldValidUpdate(result.body.update)){
-      fieldReplace(result.body.update);
+    if(result.ok){
+      loadFieldUpdates();
       fieldToast('확인했어요. 고마워요!');
     }else{
       fieldToast(fieldErrorText(result,'확인하지 못했어요. 잠시 후 다시 시도해 주세요.'),'error');
@@ -5702,6 +5811,7 @@ function fieldDelete(id){
   if(fieldBusy||!fieldFind(id))return;
   if(!window.confirm('이 현장소식을 삭제할까요?\n삭제하면 지도와 목록에서 바로 사라지고 되돌릴 수 없어요.'))return;
   fieldBusy=true;
+  publicationInvalidate('delete pending');
   fieldApi('/field-updates/'+id+'/delete','POST',{deviceId:fieldDeviceId()}).then(function(result){
     if(result.ok){
       fieldMineRemove(id);
@@ -5743,8 +5853,8 @@ function fieldSubmitStatus(){
   fieldApi('/field-updates/'+update.id+'/status','POST',{
     status:fieldDraft.status,nickname:nickname,deviceId:fieldDeviceId(),turnstileToken:fieldTurnstileToken
   }).then(function(result){
-    if(result.ok&&fieldValidUpdate(result.body.update)){
-      fieldReplace(result.body.update);
+    if(result.ok){
+      loadFieldUpdates();
       fieldToast('‘'+FIELD_STATUS_LABEL[fieldDraft.status]+'’ 상태로 등록했어요.');
       closeFieldPanel();
     }else{
@@ -6193,9 +6303,9 @@ function fieldSubmitCreate(){
   };
   if(draft.source==='gps')payload.gpsAccuracy=draft.accuracy;
   fieldApi('/field-updates','POST',payload).then(function(result){
-    if(result.ok&&fieldValidUpdate(result.body.update)){
-      fieldMineAdd(result.body.update.id);
-      fieldReplace(result.body.update);
+    if(result.ok){
+      fieldMineAdd(result.body.id);
+      loadFieldUpdates();
       fieldToast('현장소식을 등록했어요.');
       closeFieldPanel();
     }else{

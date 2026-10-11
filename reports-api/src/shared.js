@@ -52,6 +52,7 @@ export function responseHeaders(request, env) {
   const headers = {
     "Content-Type": "application/json; charset=utf-8",
     Vary: "Origin",
+    "Cache-Control": "no-store",
   };
   if (origin) headers["Access-Control-Allow-Origin"] = origin;
   return headers;

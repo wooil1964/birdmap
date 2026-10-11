@@ -19,7 +19,7 @@ const pub = (observed_on, reporter, extra = {}) => row(observed_on, { reporter, 
 test("B. 지정 월: 관찰일 기준으로 센다", async () => {
   const response = await call("?month=2026-10", "GET", [pub("2026-10-05", "진정"), pub("2026-09-20", "진정")]);
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("Cache-Control"), "public, max-age=60");
+  assert.equal(response.headers.get("Cache-Control"), "no-store");
   assert.deepEqual(await response.json(), {
     month: "2026-10", approvedReports: 1, publicContributors: 1, contributors: [{ name: "진정", count: 1 }],
   });

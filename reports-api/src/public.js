@@ -36,7 +36,12 @@ import { applicationDb } from "./canonical/data.js";
 import { shadowRead } from "./canonical/shadow.js";
 import { notifyNewReport } from "./notify.js";
 import { handleFieldUpdates } from "./field-updates.js";
+import { handlePublicationRead } from "./publication.js";
 
+function reportReceipt(request,env,body,status=201) {
+ if(env.REPORTS_PUBLICATION_REQUIRED==='true'){body={...body};delete body.spot;}
+ return jsonResponse(request,env,body,status);
+}
 const MAX_BODY_BYTES = 4096;
 // 탐조지별 출현 이력을 한 번에 가져올 건수. 화면은 5건부터 보여 준다.
 const SITE_HISTORY_DEFAULT = 5;
@@ -98,7 +103,7 @@ async function handleCanonicalSubmit(request,env,ctx) {
   const binding=database(env),db=applicationDb(binding);
   const body=await readJsonBody(request),{report,input}=quickInput(body);
   const saved=await replayQuick(db,body.request_id,input);
-  if(saved)return jsonResponse(request,env,saved,201);
+  if(saved)return reportReceipt(request,env,saved,201);
   const now=new Date(),ip=request.headers.get('CF-Connecting-IP')||'';
   const hash=await ipHash(ip,env.REPORT_IP_SALT);
   try {
@@ -107,7 +112,7 @@ async function handleCanonicalSubmit(request,env,ctx) {
   } catch(error) {
     // A concurrent call may have committed while a single-use CAPTCHA was being verified.
     const committed=await replayQuick(db,body.request_id,input);
-    if(committed)return jsonResponse(request,env,committed,201);
+    if(committed)return reportReceipt(request,env,committed,201);
     throw error;
   }
   // Breeding observations are refused before this point (explicit non-breeding confirmation), so the public
@@ -129,7 +134,7 @@ async function handleCanonicalSubmit(request,env,ctx) {
     const job=notifyNewReport(row,env);
     if(ctx?.waitUntil)ctx.waitUntil(job);else await job;
   }
-  return jsonResponse(request,env,result,201);
+  return reportReceipt(request,env,result,201);
 }
 
 async function handleSubmit(request, env, dual=false, ctx) {
@@ -213,7 +218,7 @@ async function handleSubmit(request, env, dual=false, ctx) {
     };
     if (report.hideLocation) accepted.spot.locationHidden = true;
   }
-  return jsonResponse(request, env, accepted, 201);
+  return reportReceipt(request, env, accepted, 201);
 }
 
 // 승인 대기 제보 중 공개가 허용된 건만 내보낸다.
@@ -240,7 +245,7 @@ async function handlePending(request, env) {
       spots: pendingPayload(results),
     },
     200,
-    { "Cache-Control": "public, max-age=60" },
+    { "Cache-Control": "no-store" },
   );
 }
 
@@ -295,7 +300,7 @@ async function handleSiteHistory(request, env, siteId, url) {
       history: rows.map(historyEntry),
     },
     200,
-    { "Cache-Control": "public, max-age=60" },
+    { "Cache-Control": "no-store" },
   );
 }
 
@@ -353,7 +358,7 @@ async function handleApproved(request, env) {
     env,
     { ok: true, generatedAt: new Date().toISOString(), ...publicPayload(results) },
     200,
-    { "Cache-Control": "public, max-age=60" },
+    { "Cache-Control": "no-store" },
   );
 }
 
@@ -399,7 +404,7 @@ async function handleRecentSites(request, env, url) {
     env,
     { ok: true, days, since, today, sites: [...bySite.values()] },
     200,
-    { "Cache-Control": "public, max-age=60" },
+    { "Cache-Control": "no-store" },
   );
 }
 
@@ -444,7 +449,7 @@ async function handleMonthlyContributors(request, env, url) {
       contributors,
     },
     200,
-    { "Cache-Control": "public, max-age=60" },
+    { "Cache-Control": "no-store" },
   );
 }
 
@@ -462,6 +467,8 @@ export async function handleLegacyRequest(request, env, ctx) {
       return preflightResponse(request, env, "GET, POST, OPTIONS");
     }
     const url = new URL(request.url);
+    const publicationResponse=await handlePublicationRead(request,env,url);
+    if(publicationResponse)return publicationResponse;
     if(request.method==='GET'&&url.pathname==='/reports/capabilities')return publicCapability(request,env);
     if (request.method === "GET" && url.pathname === "/reports/approved") {
       return await handleApproved(request, env);

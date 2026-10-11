@@ -41,11 +41,13 @@ function insertRow(db, row) {
 export function fakeDb(initialRows = []) {
   const db = new DatabaseSync(":memory:");
   db.exec(SCHEMA);
+  db.exec(readFileSync(new URL("../../docs/long-term-db-phase2a/migrations/0001_core.sql",import.meta.url),"utf8"));
   for (const row of initialRows) insertRow(db, row);
 
   function prepare(sql) {
     let params = [];
     const statement = {
+      async batchResult(){if(/^\s*SELECT\b/i.test(sql))return {results:db.prepare(sql).all(...params).map(r=>({...r})),success:true,meta:{changes:0}}; const info=db.prepare(sql).run(...params);return {results:[],success:true,meta:{changes:Number(info.changes)}};},
       bind(...values) {
         params = values;
         return statement;
@@ -58,7 +60,8 @@ export function fakeDb(initialRows = []) {
       },
       async run() {
         db.prepare(sql).run(...params);
-        return { success: true };
+        const info = db.prepare("SELECT changes() AS n").get();
+        return { success: true,meta:{changes:Number(info.n)} };
       },
     };
     return statement;
@@ -67,8 +70,8 @@ export function fakeDb(initialRows = []) {
   return {
     prepare,
     async batch(statements) {
-      for (const statement of statements) await statement.run();
-      return [];
+      db.exec("BEGIN");
+      try{const result=[];for(const statement of statements)result.push(await statement.batchResult());db.exec("COMMIT");return result;}catch(error){db.exec("ROLLBACK");throw error;}
     },
     // 테스트에서 저장 결과를 확인할 때 쓴다. 매번 현재 상태를 읽어 온다.
     get rows() {
@@ -137,6 +140,7 @@ export function canonicalDb() {
   const prepare = (sql) => {
     let params = [];
     const s = {
+      async batchResult(){if(/^\s*SELECT\b/i.test(sql))return {results:db.prepare(sql).all(...params).map(r=>({...r})),success:true,meta:{changes:0}};const info=db.prepare(sql).run(...params);return {results:[],success:true,meta:{changes:Number(info.changes)}};},
       bind(...v) { params = v; return s; },
       // D1 처럼 일반 객체로 돌려준다(node:sqlite 행은 null prototype).
       async all() { return { results: db.prepare(sql).all(...params).map((r) => ({ ...r })) }; },
@@ -149,8 +153,7 @@ export function canonicalDb() {
     prepare,
     async batch(list) {
       db.exec("BEGIN");
-      try { for (const s of list) await s.run(); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; }
-      return [];
+      try { const result=[];for (const s of list)result.push(await s.batchResult());db.exec("COMMIT");return result;}catch(e){db.exec("ROLLBACK");throw e;}
     },
     count: (sql) => db.prepare(sql).get().n,
     sqlite: db,
