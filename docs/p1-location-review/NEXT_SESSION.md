@@ -1,5 +1,9 @@
 # 다음 세션 재개
 
+독립 검증용 Draft PR: https://github.com/wooil1964/birdmap/pull/16
+
+초기 게시 head: `2556a20ca249703e3637b2ce5c83a04097f8b552`. 제품 commit은 d3이며 이후 제출 receipt만 추가한 문서 commit이 있으므로 최신 PR head를 다시 고정한다. 게시 본문을 읽어 재확인했고 Draft 상태/충돌 없음이 확인됐다.
+
 ## 먼저 확인
 
 1. 이 문서, FINDINGS.md, TEST_AUDIT.md와 results/execution_manifest.json을 읽는다. 완료한 P1-A~D·PR13 전체 분석을 반복하지 않는다.

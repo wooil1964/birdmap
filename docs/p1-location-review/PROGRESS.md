@@ -12,3 +12,5 @@
 - 원 branch/main/PR13/운영 데이터는 변경하지 않았다. 업로드·배포·D1·실사용자 쓰기0.
 
 PR 게시와 원격 head 확인은 제출 receipt에 기록한다. 마지막 문서 commit은 `git log -1 --format=%H` 및 원격 PR head로 확인한다. NEXT_SESSION.md에서 다음 작업을 이어간다.
+
+제출 완료: Draft PR #16 (https://github.com/wooil1964/birdmap/pull/16). 초기 head2556a20를 원격에서 확인하고 본문 일치·Draft·mergeable=true를 재확인했다. 이 제출 receipt commit은 문서만 추가하며 제품 d3는 그대로다.

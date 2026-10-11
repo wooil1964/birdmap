@@ -4,6 +4,8 @@
 
 **독립 검증용 Draft PR 준비 완료. 전면 위치 보호의 운영 승인 판정은 수정 필요.** 삭제·가림을 관측한 같은 페이지에서 이전 요청의 응답 및 늦은 GPS를 막는 핵심 범위는 통과했다. 그러나 더 늦은 요청에 서버가 과거 자료를 반환하거나 새로고침하는 경우까지 해결되지는 않았다. 이 실패를 보존하며 병합·배포하지 않는다.
 
+제출 Draft PR: [#16](https://github.com/wooil1964/birdmap/pull/16). 최초 게시 head `2556a20ca249703e3637b2ce5c83a04097f8b552`; 이후 문서 receipt commit과 최신 head는 별도로 구분한다.
+
 제품 기준 commit: `d3efe218ad99f97d8ae6d494031b42e4bdac7ec8`.
 별도 원격 브랜치: `codex/p1-location-protection-main-20261011`.
 문서/최종 PR head는 이후 기록 commit을 포함하므로 NEXT_SESSION.md 및 게시 receipt에서 확인한다.
