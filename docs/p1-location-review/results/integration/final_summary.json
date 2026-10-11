@@ -1,0 +1,119 @@
+{
+  "targetTree": "a5808cb647759bdd10726318c061d68545c7c63a",
+  "baseMain": "43bff43301d5915a344bf2c20987698597cf8870",
+  "combinedPR13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "sourceChangesForbidden": "main, PR13, Worker, Pages, D1 and real reports unchanged",
+  "initialAttempt": "initial_missing_asset_summary.json",
+  "environment": {
+    "CHROME_PATH": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "PYTHONUTF8": "1",
+    "PYTHONIOENCODING": "utf-8",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "node": "v24.18.0",
+  "results": [
+    {
+      "name": "front",
+      "start": "2026-10-11T14:41:26.815Z",
+      "end": "2026-10-11T14:42:19.011Z",
+      "exit": 1,
+      "command": "C:\\Program Files\\nodejs\\node.exe --test --test-reporter=tap .github/scripts/test_briefing_kst_month.mjs .github/scripts/test_data_autorefresh.mjs .github/scripts/test_field_news.mjs .github/scripts/test_location_popup_guard.mjs .github/scripts/test_location_protection.mjs .github/scripts/test_month_tide_button.mjs .github/scripts/test_notice_close_hit.mjs .github/scripts/test_notice_kst_date.mjs .github/scripts/test_recent_contributors.mjs .github/scripts/test_recommendation_card_display.mjs .github/scripts/test_report_search.mjs .github/scripts/test_site_history_cache.mjs .github/scripts/test_tide_fallback.mjs .github/scripts/test_today_weather_midnight.mjs .github/scripts/test_weekly_recommendation.mjs",
+      "counts": {
+        "tests": 350,
+        "pass": 348,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [
+        "카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다",
+        "외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다"
+      ]
+    },
+    {
+      "name": "reports-api",
+      "exit": 0,
+      "command": "C:\\Program Files\\nodejs\\node.exe --test --test-reporter=tap",
+      "counts": {
+        "tests": 178,
+        "pass": 178,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-location-protection\\birdmap\\docs\\p1-location-review\\.scratch\\root\\with-pr13\\reports-api",
+      "finishedAt": "2026-10-11T14:44:39.502Z",
+      "initialScope": "reports-api/test/*.test.mjs: 177",
+      "finalScope": "cd reports-api; node --test: 178 including helper-module smoke",
+      "initialAttemptStart": "2026-10-11T14:42:19.012Z",
+      "initialAttemptEnd": "2026-10-11T14:42:20.493Z",
+      "timingNote": "InitialAttempt fields belong to first narrower-scope/missing-fixture run. finishedAt records final recheck; exact recheck start was not saved."
+    },
+    {
+      "name": "weather-proxy",
+      "start": "2026-10-11T14:42:20.494Z",
+      "end": "2026-10-11T14:42:20.688Z",
+      "exit": 0,
+      "command": "C:\\Program Files\\nodejs\\node.exe --test --test-reporter=tap weather-proxy/test/freshness.test.mjs weather-proxy/test/partial.test.mjs weather-proxy/test/worker.test.mjs",
+      "counts": {
+        "tests": 36,
+        "pass": 36,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": []
+    },
+    {
+      "name": "python-weather",
+      "start": "2026-10-11T14:42:20.688Z",
+      "end": "2026-10-11T14:42:22.149Z",
+      "exit": 0,
+      "command": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe .github/scripts/test_weather.py",
+      "counts": {
+        "tests": 56,
+        "pass": 56,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": []
+    },
+    {
+      "name": "python-tide",
+      "exit": 0,
+      "command": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe .github/scripts/test_tide.py",
+      "counts": {
+        "tests": 22,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 1,
+        "todo": 0
+      },
+      "failures": [],
+      "cwd": "C:/Users/김진호/.codex/worktrees/p1-location-protection/birdmap/docs/p1-location-review/.scratch/root/with-pr13",
+      "finishedAt": "2026-10-11T14:44:40.000Z",
+      "initialErrors": 4,
+      "assetRestored": true,
+      "initialAttemptStart": "2026-10-11T14:42:22.149Z",
+      "initialAttemptEnd": "2026-10-11T14:42:22.593Z",
+      "timingNote": "InitialAttempt fields belong to first narrower-scope/missing-fixture run. finishedAt records final recheck; exact recheck start was not saved."
+    }
+  ],
+  "totals": {
+    "tests": 642,
+    "pass": 639,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 1,
+    "todo": 0
+  },
+  "failuresClassifiedAs": "two unchanged latest-main stale test-contract assertions; preserved as failures",
+  "operationalRequests": "none (local synthetic tests only)"
+}

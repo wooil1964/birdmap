@@ -1,0 +1,41 @@
+{
+  "initialLogsPreserved": true,
+  "whyReportsCountDiffers": "177 assertion subtests plus test/helpers.mjs auto-discovery module smoke subtest = node --test 178",
+  "whyTideInitiallyFailed": "Archive omitted MasterDB, four environment fixture errors; copied unchanged exact-main tracked asset into scratch only",
+  "workbook": {
+    "gitBlob": "d8eb89ed459cc51ff41a46590b4ccc820551ad27",
+    "sha256": "959861a0b391d0e55f44097a0f994d08cb17b8215b0228cbc8585c3e5e5da50c"
+  },
+  "results": [
+    {
+      "name": "reports-api-default",
+      "exit": 0,
+      "command": "C:\\Program Files\\nodejs\\node.exe --test --test-reporter=tap",
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-location-protection\\birdmap\\docs\\p1-location-review\\.scratch\\root\\with-pr13\\reports-api",
+      "counts": {
+        "tests": 178,
+        "pass": 178,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "finishedAt": "2026-10-11T14:44:39.502Z"
+    },
+    {
+      "name": "python-tide-with-masterdb",
+      "exit": 0,
+      "command": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe .github/scripts/test_tide.py",
+      "cwd": "C:/Users/김진호/.codex/worktrees/p1-location-protection/birdmap/docs/p1-location-review/.scratch/root/with-pr13",
+      "counts": {
+        "tests": 22,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 1,
+        "todo": 0
+      },
+      "finishedAt": "2026-10-11T14:44:40.000Z"
+    }
+  ]
+}

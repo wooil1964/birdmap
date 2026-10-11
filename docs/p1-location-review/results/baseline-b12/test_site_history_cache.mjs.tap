@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+ok 1 - 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+  ---
+  duration_ms: 2.4389
+  type: 'test'
+  ...
+# Subtest: 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+ok 2 - 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+  ---
+  duration_ms: 1.0756
+  type: 'test'
+  ...
+# Subtest: 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+ok 3 - 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+  ---
+  duration_ms: 0.8089
+  type: 'test'
+  ...
+# Subtest: 승인 제보 갱신이 돌면 기억을 버린다
+ok 4 - 승인 제보 갱신이 돌면 기억을 버린다
+  ---
+  duration_ms: 0.8577
+  type: 'test'
+  ...
+# Subtest: 탐조지마다 따로 기억한다
+ok 5 - 탐조지마다 따로 기억한다
+  ---
+  duration_ms: 0.9281
+  type: 'test'
+  ...
+# Subtest: '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+ok 6 - '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+  ---
+  duration_ms: 0.8054
+  type: 'test'
+  ...
+# Subtest: no-cache 를 붙이지 않아 서버의 60초 캐시를 살린다
+ok 7 - no-cache 를 붙이지 않아 서버의 60초 캐시를 살린다
+  ---
+  duration_ms: 0.9925
+  type: 'test'
+  ...
+# Subtest: 실패해도 null 을 돌려주고 기억에 남기지 않는다
+ok 8 - 실패해도 null 을 돌려주고 기억에 남기지 않는다
+  ---
+  duration_ms: 0.945
+  type: 'test'
+  ...
+# Subtest: 응답 모양이 어긋나면 실패로 본다
+ok 9 - 응답 모양이 어긋나면 실패로 본다
+  ---
+  duration_ms: 0.9473
+  type: 'test'
+  ...
+# Subtest: 응답이 오지 않으면 시간을 끊는다
+ok 10 - 응답이 오지 않으면 시간을 끊는다
+  ---
+  duration_ms: 1.0365
+  type: 'test'
+  ...
+# Subtest: 이력 칸은 접이식이고 기본은 접힌 상태다
+ok 11 - 이력 칸은 접이식이고 기본은 접힌 상태다
+  ---
+  duration_ms: 0.2525
+  type: 'test'
+  ...
+# Subtest: 제목 옆에 승인된 이력 건수를 적는다
+ok 12 - 제목 옆에 승인된 이력 건수를 적는다
+  ---
+  duration_ms: 0.4275
+  type: 'test'
+  ...
+# Subtest: '더 보기'와 이력 조회 방식은 그대로 둔다
+ok 13 - '더 보기'와 이력 조회 방식은 그대로 둔다
+  ---
+  duration_ms: 0.2427
+  type: 'test'
+  ...
+# Subtest: 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+ok 14 - 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+  ---
+  duration_ms: 0.455
+  type: 'test'
+  ...
+# Subtest: 이력을 그릴 때 칸을 다시 찾는다
+ok 15 - 이력을 그릴 때 칸을 다시 찾는다
+  ---
+  duration_ms: 0.371
+  type: 'test'
+  ...
+# Subtest: 서버가 쓰는 캐시 시간과 같은 값을 쓴다
+ok 16 - 서버가 쓰는 캐시 시간과 같은 값을 쓴다
+  ---
+  duration_ms: 15.1768
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 100.5837

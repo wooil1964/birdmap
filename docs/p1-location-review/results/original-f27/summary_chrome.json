@@ -1,0 +1,231 @@
+{
+  "source": "f27e661c3762d7787f976196ed84eeb8d255c3c7",
+  "node": "v24.18.0",
+  "chrome": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "startedAt": "2026-10-11T14:32:39.313Z",
+  "command": "CHROME_PATH=... node --test --test-reporter=tap .github/scripts/test_*.mjs (run one file at a time)",
+  "files": [
+    {
+      "file": "test_briefing_kst_month.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_data_autorefresh.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 31,
+        "pass": 31,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_field_news.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 9,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_location_protection.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 19,
+        "pass": 19,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_month_tide_button.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_notice_close_hit.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 7,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_notice_kst_date.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 9,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_recent_contributors.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 8,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_recommendation_card_display.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 18,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_report_search.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_site_history_cache.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_tide_fallback.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_today_weather_midnight.mjs",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [],
+      "errors": []
+    },
+    {
+      "file": "test_weekly_recommendation.mjs",
+      "exit": 1,
+      "signal": null,
+      "counts": {
+        "tests": 165,
+        "pass": 164,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failures": [
+        "C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다"
+      ],
+      "errors": [
+        "|-"
+      ]
+    }
+  ],
+  "totals": {
+    "tests": 349,
+    "pass": 348,
+    "fail": 1,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "sourceSha": "43bff43301d5915a344bf2c20987698597cf8870",
+  "sourceIndexSha256": "18078e468c4aea691ac548f9c2409f45177c4d3cbafd8b8a717de72c2b8f0fdd",
+  "startedAt": "2026-10-11T14:40:36.565Z",
+  "finishedAt": "2026-10-11T14:40:46.035Z",
+  "node": "v24.18.0",
+  "exitCode": 1,
+  "signal": null,
+  "error": null,
+  "command": "node --test --test-reporter=tap .github/scripts/test_briefing_kst_month.mjs .github/scripts/test_data_autorefresh.mjs .github/scripts/test_field_news.mjs .github/scripts/test_month_tide_button.mjs .github/scripts/test_notice_close_hit.mjs .github/scripts/test_notice_kst_date.mjs .github/scripts/test_recent_contributors.mjs .github/scripts/test_report_search.mjs .github/scripts/test_site_history_cache.mjs .github/scripts/test_tide_fallback.mjs .github/scripts/test_today_weather_midnight.mjs .github/scripts/test_weekly_recommendation.mjs",
+  "environment": {
+    "CHROME_PATH": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "PYTHONUTF8": "1",
+    "PYTHONIOENCODING": "utf-8"
+  },
+  "testFiles": [
+    {
+      "file": ".github/scripts/test_briefing_kst_month.mjs",
+      "sha256": "ef41541b7bbdd49700e56c1f9f136f8cde2e929bacd1901eeb3e85a6072d386b"
+    },
+    {
+      "file": ".github/scripts/test_data_autorefresh.mjs",
+      "sha256": "b6ae410015496ac16d14181e8552be3e23203180b6d288af417c40e3daae0866"
+    },
+    {
+      "file": ".github/scripts/test_field_news.mjs",
+      "sha256": "fc9883f587a0df3ecbacec0480efa8f13a6f1b82f3865ff7870fbc2457c0349f"
+    },
+    {
+      "file": ".github/scripts/test_month_tide_button.mjs",
+      "sha256": "e86e616c88e5044f8babf64db1de6bc16ead24ba038abe7e2ad66b421a03e1da"
+    },
+    {
+      "file": ".github/scripts/test_notice_close_hit.mjs",
+      "sha256": "f35c7f0fcee5e8e1fc1b5235c7cb979291c7a1cc077da91a2b33ee068765a4a3"
+    },
+    {
+      "file": ".github/scripts/test_notice_kst_date.mjs",
+      "sha256": "59c3280dbfe697606e3afe0aabad7f21b0773a4a9b23e6f90f4b3225f3d21f56"
+    },
+    {
+      "file": ".github/scripts/test_recent_contributors.mjs",
+      "sha256": "2b026f2b88ba437ddc63f190165a26db0f3d098c527fc8004aa422e6ee5aea5e"
+    },
+    {
+      "file": ".github/scripts/test_report_search.mjs",
+      "sha256": "2eaec932e536b97f642157b6093e1634fca6682d1e5137fded78838926d28d02"
+    },
+    {
+      "file": ".github/scripts/test_site_history_cache.mjs",
+      "sha256": "2066de66b805277cf1c99cd14c2b16d1d69d5d61efc2b4d38b016fa2ba3a3f7f"
+    },
+    {
+      "file": ".github/scripts/test_tide_fallback.mjs",
+      "sha256": "0f2af7e237b92c028c254d329bdd0a06a78e7c98c9748790132603a2b8c3f585"
+    },
+    {
+      "file": ".github/scripts/test_today_weather_midnight.mjs",
+      "sha256": "fe0a1f902a7dee6a77e5b95539dfa9d2e2955c93355bc3e4b730c14bfd7069dc"
+    },
+    {
+      "file": ".github/scripts/test_weekly_recommendation.mjs",
+      "sha256": "addd561b2ea38d934cf6f303b2220ad09ce3c66e19dca1feb65be2a63071177e"
+    }
+  ],
+  "counts": {
+    "tests": 252,
+    "pass": 250,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "failures": [
+    "카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다",
+    "외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다"
+  ]
+}

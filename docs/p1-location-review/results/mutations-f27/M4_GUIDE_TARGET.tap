@@ -1,0 +1,446 @@
+TAP version 13
+# Subtest: 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+ok 1 - 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+  ---
+  duration_ms: 10.1806
+  type: 'test'
+  ...
+# Subtest: 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+ok 2 - 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+  ---
+  duration_ms: 6.047
+  type: 'test'
+  ...
+# Subtest: 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+ok 3 - 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+  ---
+  duration_ms: 5.5472
+  type: 'test'
+  ...
+# Subtest: 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+ok 4 - 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+  ---
+  duration_ms: 5.4587
+  type: 'test'
+  ...
+# Subtest: 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+ok 5 - 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+  ---
+  duration_ms: 5.2498
+  type: 'test'
+  ...
+# Subtest: 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+not ok 6 - 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+  ---
+  duration_ms: 6.9096
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:145:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    안내 종료
+    + actual - expected
+    
+    + {
+    +   box: {
+    +     parentNode: null,
+    +     querySelector: [Function: querySelector]
+    +   },
+    +   dest: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36.5,
+    +     lng: 126.5
+    +   },
+    +   error: '',
+    +   fitted: true,
+    +   id: 'a',
+    +   line: [Function (anonymous)],
+    +   me: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36,
+    +     lng: 126
+    +   },
+    +   meMarker: [Function (anonymous)],
+    +   ring: [Function (anonymous)],
+    +   watchId: 1
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    id: 'a'
+    dest:
+      lat: 36.5
+      lng: 126.5
+      distanceTo: [Function: distanceTo]
+    me:
+      lat: 36
+      lng: 126
+      distanceTo: [Function: distanceTo]
+    fitted: true
+    error: ''
+    meMarker: [Function (anonymous)]
+    line: [Function (anonymous)]
+    ring: [Function (anonymous)]
+    box:
+      parentNode: ~
+      querySelector: [Function: querySelector]
+    watchId: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:152:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+not ok 7 - 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+  ---
+  duration_ms: 5.4146
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:157:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   box: {
+    +     parentNode: null,
+    +     querySelector: [Function: querySelector]
+    +   },
+    +   dest: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36.5,
+    +     lng: 126.5
+    +   },
+    +   error: '',
+    +   fitted: false,
+    +   id: 'a',
+    +   line: [Function (anonymous)],
+    +   me: null,
+    +   meMarker: [Function (anonymous)],
+    +   ring: [Function (anonymous)],
+    +   watchId: 1
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    id: 'a'
+    dest:
+      lat: 36.5
+      lng: 126.5
+      distanceTo: [Function: distanceTo]
+    me: ~
+    fitted: false
+    error: ''
+    meMarker: [Function (anonymous)]
+    line: [Function (anonymous)]
+    ring: [Function (anonymous)]
+    box:
+      parentNode: ~
+      querySelector: [Function: querySelector]
+    watchId: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:163:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+not ok 8 - 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+  ---
+  duration_ms: 5.4123
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:169:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   box: {
+    +     parentNode: null,
+    +     querySelector: [Function: querySelector]
+    +   },
+    +   dest: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36.6,
+    +     lng: 126.4
+    +   },
+    +   error: '',
+    +   fitted: true,
+    +   id: 'a',
+    +   line: [Function (anonymous)],
+    +   me: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36,
+    +     lng: 126
+    +   },
+    +   meMarker: [Function (anonymous)],
+    +   ring: [Function (anonymous)],
+    +   watchId: 1
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    id: 'a'
+    dest:
+      lat: 36.6
+      lng: 126.4
+      distanceTo: [Function: distanceTo]
+    me:
+      lat: 36
+      lng: 126
+      distanceTo: [Function: distanceTo]
+    fitted: true
+    error: ''
+    meMarker: [Function (anonymous)]
+    line: [Function (anonymous)]
+    ring: [Function (anonymous)]
+    box:
+      parentNode: ~
+      querySelector: [Function: querySelector]
+    watchId: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:176:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+not ok 9 - 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+  ---
+  duration_ms: 5.3672
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:180:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   box: {
+    +     parentNode: null,
+    +     querySelector: [Function: querySelector]
+    +   },
+    +   dest: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36.5,
+    +     lng: 126.5
+    +   },
+    +   error: '',
+    +   fitted: false,
+    +   id: 'h',
+    +   line: [Function (anonymous)],
+    +   me: null,
+    +   meMarker: [Function (anonymous)],
+    +   ring: [Function (anonymous)],
+    +   watchId: 1
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    id: 'h'
+    dest:
+      lat: 36.5
+      lng: 126.5
+      distanceTo: [Function: distanceTo]
+    me: ~
+    fitted: false
+    error: ''
+    meMarker: [Function (anonymous)]
+    line: [Function (anonymous)]
+    ring: [Function (anonymous)]
+    box:
+      parentNode: ~
+      querySelector: [Function: querySelector]
+    watchId: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:184:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+not ok 10 - 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+  ---
+  duration_ms: 5.5456
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:192:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of null (reading 'lat')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    haversineKm (eval at env (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:70:15), <anonymous>:292:32)
+    navigator.geolocation.getCurrentPosition.enableHighAccuracy [as ok] (eval at env (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:70:15), <anonymous>:232:12)
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:199:21)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+not ok 11 - GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+  ---
+  duration_ms: 5.3839
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:206:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   {
+    +     id: 'a',
+    +     message: '현재 위치를 확인하지 못했어요.'
+    +   }
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      id: 'a'
+      message: '현재 위치를 확인하지 못했어요.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:212:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+not ok 12 - 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+  ---
+  duration_ms: 5.4343
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:215:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   box: {
+    +     parentNode: null,
+    +     querySelector: [Function: querySelector]
+    +   },
+    +   dest: {
+    +     distanceTo: [Function: distanceTo],
+    +     lat: 36.5,
+    +     lng: 126.5
+    +   },
+    +   error: '',
+    +   fitted: false,
+    +   id: 'a',
+    +   line: [Function (anonymous)],
+    +   me: null,
+    +   meMarker: [Function (anonymous)],
+    +   ring: [Function (anonymous)],
+    +   watchId: 1
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    id: 'a'
+    dest:
+      lat: 36.5
+      lng: 126.5
+      distanceTo: [Function: distanceTo]
+    me: ~
+    fitted: false
+    error: ''
+    meMarker: [Function (anonymous)]
+    line: [Function (anonymous)]
+    ring: [Function (anonymous)]
+    box:
+      parentNode: ~
+      querySelector: [Function: querySelector]
+    watchId: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:221:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+ok 13 - 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+  ---
+  duration_ms: 10.3474
+  type: 'test'
+  ...
+# Subtest: 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+not ok 14 - 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+  ---
+  duration_ms: 5.322
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:239:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    보호되면 renderFieldMarkers 가 닫는다
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:246:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+ok 15 - 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+  ---
+  duration_ms: 1.6737
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+ok 16 - 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+  ---
+  duration_ms: 1.7455
+  type: 'test'
+  ...
+# Subtest: 정상 순서의 응답은 모두 반영된다(회귀)
+ok 17 - 정상 순서의 응답은 모두 반영된다(회귀)
+  ---
+  duration_ms: 1.2645
+  type: 'test'
+  ...
+# Subtest: 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+ok 18 - 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+  ---
+  duration_ms: 5.5992
+  type: 'test'
+  ...
+# Subtest: 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+ok 19 - 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+  ---
+  duration_ms: 1.1824
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 11
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 104.4977

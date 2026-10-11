@@ -1,0 +1,71 @@
+✔ 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건 (9.4942ms)
+✔ 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다 (6.0424ms)
+✔ 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건 (5.5541ms)
+✔ 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다 (5.378ms)
+✔ 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다 (5.3044ms)
+✔ 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단 (6.0587ms)
+✔ 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다 (5.2787ms)
+✔ 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다 (5.2091ms)
+✔ 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함) (5.2917ms)
+✔ 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다 (10.7005ms)
+✔ GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다 (5.2646ms)
+✔ 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다 (5.3054ms)
+✔ 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀) (10.4282ms)
+✔ 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다 (5.2569ms)
+✖ 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다 (2.5757ms)
+✖ 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함) (1.8075ms)
+✔ 정상 순서의 응답은 모두 반영된다(회귀) (1.272ms)
+✔ 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다 (1.5678ms)
+✔ 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다 (0.9487ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 17
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.527
+
+✖ failing tests:
+
+test at [eval1]:266:1
+✖ 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다 (2.5757ms)
+  AssertionError [ERR_ASSERTION]: 옛 응답은 렌더되지 않음
+  + actual - expected
+  
+    [
+      'approved:keep',
+  +   'approved:keep,withdrawn'
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:272:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at [eval1]:275:1
+✖ 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함) (1.8075ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'approved:x',
+  +   'approved:x'
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:280:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

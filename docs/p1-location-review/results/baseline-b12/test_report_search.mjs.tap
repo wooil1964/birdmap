@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: 이미 받아 둔 승인 자료로 검색 목록을 만든다
+ok 1 - 이미 받아 둔 승인 자료로 검색 목록을 만든다
+  ---
+  duration_ms: 9.3541
+  type: 'test'
+  ...
+# Subtest: 고정 붉은 점에 연결된 제보도 함께 들어간다
+ok 2 - 고정 붉은 점에 연결된 제보도 함께 들어간다
+  ---
+  duration_ms: 0.7693
+  type: 'test'
+  ...
+# Subtest: 종명으로 검색되고 과거 관찰도 걸린다
+ok 3 - 종명으로 검색되고 과거 관찰도 걸린다
+  ---
+  duration_ms: 0.7924
+  type: 'test'
+  ...
+# Subtest: 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+ok 4 - 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+  ---
+  duration_ms: 0.5551
+  type: 'test'
+  ...
+# Subtest: 검색어가 없으면 아무것도 돌려주지 않는다
+ok 5 - 검색어가 없으면 아무것도 돌려주지 않는다
+  ---
+  duration_ms: 0.5957
+  type: 'test'
+  ...
+# Subtest: 공개 API 가 준 공개 좌표만 목록에 들어간다
+ok 6 - 공개 API 가 준 공개 좌표만 목록에 들어간다
+  ---
+  duration_ms: 0.5734
+  type: 'test'
+  ...
+# Subtest: 승인되지 않은 제보는 애초에 목록에 없다
+ok 7 - 승인되지 않은 제보는 애초에 목록에 없다
+  ---
+  duration_ms: 0.5127
+  type: 'test'
+  ...
+# Subtest: 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+ok 8 - 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+  ---
+  duration_ms: 0.5803
+  type: 'test'
+  ...
+# Subtest: 좌표가 없는 제보는 목록에 넣지 않는다
+ok 9 - 좌표가 없는 제보는 목록에 넣지 않는다
+  ---
+  duration_ms: 0.5372
+  type: 'test'
+  ...
+# Subtest: 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+ok 10 - 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+  ---
+  duration_ms: 0.3759
+  type: 'test'
+  ...
+# Subtest: 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+ok 11 - 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+  ---
+  duration_ms: 0.2716
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 89.0019

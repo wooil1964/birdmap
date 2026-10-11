@@ -1,0 +1,198 @@
+{
+  "checkedAt": "2026-10-11T14:38:04.290Z",
+  "sourceSha": "d3efe218ad99f97d8ae6d494031b42e4bdac7ec8",
+  "indexSha256": "451b97e3778cbdfbc7766e8a361941ad6071a8ab195115a39f7fb96d64a4af57",
+  "networkPolicy": "Local GET files and whitelisted CDN GET only; all Workers endpoints intercepted by synthetic in-page API; no operating mutation or Worker GET intended.",
+  "rows": [
+    {
+      "width": 344,
+      "id": "map-real-leaflet-and-sites",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "normal-site-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "visible": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-approved-kakao-tmap-side-by-side",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "sameRow": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "environment-or-harness",
+      "pass": false,
+      "evidence": {
+        "error": "{\"code\":-32000,\"message\":\"Object reference chain is too long\"}"
+      }
+    },
+    {
+      "width": 375,
+      "id": "map-real-leaflet-and-sites",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "normal-site-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "visible": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-approved-kakao-tmap-side-by-side",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "sameRow": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "environment-or-harness",
+      "pass": false,
+      "evidence": {
+        "error": "{\"code\":-32000,\"message\":\"Object reference chain is too long\"}"
+      }
+    },
+    {
+      "width": 768,
+      "id": "map-real-leaflet-and-sites",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "normal-site-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "visible": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-approved-kakao-tmap-side-by-side",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "sameRow": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "environment-or-harness",
+      "pass": false,
+      "evidence": {
+        "error": "{\"code\":-32000,\"message\":\"Object reference chain is too long\"}"
+      }
+    },
+    {
+      "width": 1024,
+      "id": "map-real-leaflet-and-sites",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "normal-site-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "visible": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-approved-kakao-tmap-side-by-side",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "sameRow": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "environment-or-harness",
+      "pass": false,
+      "evidence": {
+        "error": "{\"code\":-32000,\"message\":\"Object reference chain is too long\"}"
+      }
+    },
+    {
+      "width": 1440,
+      "id": "map-real-leaflet-and-sites",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "normal-site-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "visible": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-approved-kakao-tmap-side-by-side",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true,
+        "sameRow": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "environment-or-harness",
+      "pass": false,
+      "evidence": {
+        "error": "{\"code\":-32000,\"message\":\"Object reference chain is too long\"}"
+      }
+    }
+  ],
+  "summary": {
+    "pass": 15,
+    "fail": 5,
+    "skip": 0,
+    "notRun": 0
+  },
+  "separateSecurityLedger": [],
+  "network": {
+    "allowedLocal": 31,
+    "allowedDependencyGet": 91,
+    "blockedOther": 71,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "limits": [
+    "External Kakao/TMAP applications were not opened. Link DOM and platform handler contracts were checked.",
+    "Synthetic coordinates only. No operating user report or D1 mutation.",
+    "Freshness of server responses across a full browser refresh is not enforced by this client-only patch."
+  ]
+}

@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: 발행 시각이 같으면 반영도 다시 그리기도 하지 않는다 (깜빡임 없음)
+ok 1 - 발행 시각이 같으면 반영도 다시 그리기도 하지 않는다 (깜빡임 없음)
+  ---
+  duration_ms: 4.238
+  type: 'test'
+  ...
+# Subtest: 새 자료가 오면 전역을 바꾸고 팝업·주간 추천을 한 번만 다시 그린다
+ok 2 - 새 자료가 오면 전역을 바꾸고 팝업·주간 추천을 한 번만 다시 그린다
+  ---
+  duration_ms: 14.9359
+  type: 'test'
+  ...
+# Subtest: 통신 실패·잘못된 JSON 이면 마지막 정상 자료를 그대로 둔다
+ok 3 - 통신 실패·잘못된 JSON 이면 마지막 정상 자료를 그대로 둔다
+  ---
+  duration_ms: 7.7353
+  type: 'test'
+  ...
+# Subtest: 실패한 다음 확인에서 정상 복구된다
+ok 4 - 실패한 다음 확인에서 정상 복구된다
+  ---
+  duration_ms: 1.9006
+  type: 'test'
+  ...
+# Subtest: 늦게 도착한 응답이 더 최신 자료를 덮어쓰지 않는다
+ok 5 - 늦게 도착한 응답이 더 최신 자료를 덮어쓰지 않는다
+  ---
+  duration_ms: 1.7352
+  type: 'test'
+  ...
+# Subtest: 탭이 숨겨져 있으면 요청하지 않고 주기 타이머도 걸지 않는다
+ok 6 - 탭이 숨겨져 있으면 요청하지 않고 주기 타이머도 걸지 않는다
+  ---
+  duration_ms: 1.5359
+  type: 'test'
+  ...
+# Subtest: 최초 로드는 탭이 숨겨져 있어도 자료를 읽는다
+ok 7 - 최초 로드는 탭이 숨겨져 있어도 자료를 읽는다
+  ---
+  duration_ms: 1.6856
+  type: 'test'
+  ...
+# Subtest: 탭 복귀 때 focus 와 visibilitychange 가 겹쳐도 한 번만 요청한다
+ok 8 - 탭 복귀 때 focus 와 visibilitychange 가 겹쳐도 한 번만 요청한다
+  ---
+  duration_ms: 1.6593
+  type: 'test'
+  ...
+# Subtest: 최초 로드 전에 들어온 focus 는 같은 파일을 두 번 읽지 않는다
+ok 9 - 최초 로드 전에 들어온 focus 는 같은 파일을 두 번 읽지 않는다
+  ---
+  duration_ms: 2.2184
+  type: 'test'
+  ...
+# Subtest: 최소 간격이 지나면 다시 확인한다
+ok 10 - 최소 간격이 지나면 다시 확인한다
+  ---
+  duration_ms: 2.3211
+  type: 'test'
+  ...
+# Subtest: 보이는 탭에서는 10분 주기 타이머를 건다
+ok 11 - 보이는 탭에서는 10분 주기 타이머를 건다
+  ---
+  duration_ms: 1.4954
+  type: 'test'
+  ...
+# Subtest: 캐시된 옛 파일을 그대로 쓰지 않도록 재검증 요청으로 읽는다
+ok 12 - 캐시된 옛 파일을 그대로 쓰지 않도록 재검증 요청으로 읽는다
+  ---
+  duration_ms: 0.6339
+  type: 'test'
+  ...
+# Subtest: 조석 daily 가 오늘이 아니면 월간 자료로 보완하고, 한 번도 못 받으면 월간으로 대체한다
+ok 13 - 조석 daily 가 오늘이 아니면 월간 자료로 보완하고, 한 번도 못 받으면 월간으로 대체한다
+  ---
+  duration_ms: 4.9107
+  type: 'test'
+  ...
+# Subtest: 실제 저장 파일도 stamp 로 구분된다
+ok 14 - 실제 저장 파일도 stamp 로 구분된다
+  ---
+  duration_ms: 33.561
+  type: 'test'
+  ...
+# Subtest: C3 today: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다
+ok 15 - C3 today: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다
+  ---
+  duration_ms: 2.2402
+  type: 'test'
+  ...
+# Subtest: C3 today: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다
+ok 16 - C3 today: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다
+  ---
+  duration_ms: 1.7453
+  type: 'test'
+  ...
+# Subtest: C3 today: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다
+ok 17 - C3 today: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다
+  ---
+  duration_ms: 1.5728
+  type: 'test'
+  ...
+# Subtest: C3 today: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)
+ok 18 - C3 today: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)
+  ---
+  duration_ms: 1.6458
+  type: 'test'
+  ...
+# Subtest: C3 week: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다
+ok 19 - C3 week: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다
+  ---
+  duration_ms: 1.6769
+  type: 'test'
+  ...
+# Subtest: C3 week: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다
+ok 20 - C3 week: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다
+  ---
+  duration_ms: 1.6948
+  type: 'test'
+  ...
+# Subtest: C3 week: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다
+ok 21 - C3 week: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다
+  ---
+  duration_ms: 1.5843
+  type: 'test'
+  ...
+# Subtest: C3 week: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)
+ok 22 - C3 week: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)
+  ---
+  duration_ms: 1.546
+  type: 'test'
+  ...
+# Subtest: F1 today: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다
+ok 23 - F1 today: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다
+  ---
+  duration_ms: 1.6981
+  type: 'test'
+  ...
+# Subtest: F1 today: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부
+ok 24 - F1 today: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부
+  ---
+  duration_ms: 1.7059
+  type: 'test'
+  ...
+# Subtest: F3 today: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음)
+ok 25 - F3 today: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음)
+  ---
+  duration_ms: 6.0892
+  type: 'test'
+  ...
+# Subtest: F1 week: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다
+ok 26 - F1 week: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다
+  ---
+  duration_ms: 1.4325
+  type: 'test'
+  ...
+# Subtest: F1 week: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부
+ok 27 - F1 week: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부
+  ---
+  duration_ms: 1.4439
+  type: 'test'
+  ...
+# Subtest: F3 week: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음)
+ok 28 - F3 week: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음)
+  ---
+  duration_ms: 5.5045
+  type: 'test'
+  ...
+# Subtest: F2-b root10:40/item10:40 강수1 → root10:50/item10:30 혼합 → root10:50/item10:50 교정: 혼합은 거부되고 교정본이 적용된다
+ok 29 - F2-b root10:40/item10:40 강수1 → root10:50/item10:30 혼합 → root10:50/item10:50 교정: 혼합은 거부되고 교정본이 적용된다
+  ---
+  duration_ms: 1.6428
+  type: 'test'
+  ...
+# Subtest: F2-b 혼합(미래 item·누락 item) 뒤에도 정상 10:55 신규 배치가 적용되고, 검증된 같은 발행의 다른 내용·옛 발행·순번 역전은 계속 막는다
+ok 30 - F2-b 혼합(미래 item·누락 item) 뒤에도 정상 10:55 신규 배치가 적용되고, 검증된 같은 발행의 다른 내용·옛 발행·순번 역전은 계속 막는다
+  ---
+  duration_ms: 1.5861
+  type: 'test'
+  ...
+# Subtest: F2-b 아직 검증된 자료가 없으면 혼합 배치도 참고용으로 적용되지만 기준이 되지 않아 이후 교정본이 적용된다
+ok 31 - F2-b 아직 검증된 자료가 없으면 혼합 배치도 참고용으로 적용되지만 기준이 되지 않아 이후 교정본이 적용된다
+  ---
+  duration_ms: 1.5154
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 192.7009

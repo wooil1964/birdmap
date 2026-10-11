@@ -1,0 +1,377 @@
+{
+  "schema": "birdmap-independent-location-security-variants-v1",
+  "label": "f27-original",
+  "recordedAt": "2026-10-11T14:39:09.335Z",
+  "evaluationTime": "2026-10-08 10:00:00 KST",
+  "indexPath": "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\index.html",
+  "indexSha256": "3c4bc3db67deff1e5ed94e4a9438da67678f5170116e5adb29b65df9060c6c72",
+  "scope": {
+    "network": false,
+    "operatingWrites": false,
+    "coordinates": "synthetic only",
+    "functionExecution": "actual product function source; fake DOM/map/fetch",
+    "implementerOriginalSevenMutationList": "not found; not independently verified",
+    "chromeDOM": false,
+    "serverFieldCacheContract": "Existing endpoint and client request use no-store; simulated older server cache is a contract-adversarial scenario",
+    "serverApprovedCacheContract": "Existing endpoint uses public,max-age=60; generatedAt does not equal an authorization revision"
+  },
+  "counts": {
+    "total": 7,
+    "pass": 2,
+    "fail": 5,
+    "error": 0,
+    "skip": 0
+  },
+  "results": [
+    {
+      "id": "V01",
+      "title": "Approved hidden response then older in-flight public response",
+      "expected": {
+        "hiddenNote": true,
+        "kakaoRoute": false,
+        "tmapRoute": false,
+        "coordinates": [
+          36.5,
+          126.5
+        ]
+      },
+      "actual": {
+        "ids": [
+          "synthetic-a"
+        ],
+        "markers": {
+          "synthetic-a": {
+            "coordinates": [
+              36.5,
+              126.5
+            ],
+            "hasKakaoRoute": false,
+            "hasTmapRoute": false,
+            "hiddenNote": true
+          }
+        },
+        "searchCoordinates": [
+          [
+            36.5,
+            126.5
+          ]
+        ]
+      },
+      "pass": true,
+      "status": "pass",
+      "functions": [
+        {
+          "name": "reportResponseCurrent",
+          "line": 2892
+        },
+        {
+          "name": "loadApprovedReports",
+          "line": 4723
+        },
+        {
+          "name": "renderApprovedReports",
+          "line": 4755
+        },
+        {
+          "name": "spotPopupHtml",
+          "line": 1595
+        }
+      ]
+    },
+    {
+      "id": "V02",
+      "title": "Approved withdrawal then older in-flight public response",
+      "expected": {
+        "restoredMarkers": 0
+      },
+      "actual": {
+        "ids": [],
+        "markers": {},
+        "searchCoordinates": []
+      },
+      "pass": true,
+      "status": "pass",
+      "functions": [
+        {
+          "name": "reportResponseCurrent",
+          "line": 2892
+        },
+        {
+          "name": "loadApprovedReports",
+          "line": 4723
+        },
+        {
+          "name": "renderApprovedReports",
+          "line": 4755
+        }
+      ]
+    },
+    {
+      "id": "V03",
+      "title": "Approved hidden state then later request returns older cache",
+      "expected": {
+        "exactCoordinatesRestored": false,
+        "kakaoRoute": false,
+        "tmapRoute": false,
+        "hiddenNote": true
+      },
+      "actual": {
+        "ids": [
+          "synthetic-a"
+        ],
+        "markers": {
+          "synthetic-a": {
+            "coordinates": [
+              36.6,
+              126.4
+            ],
+            "hasKakaoRoute": true,
+            "hasTmapRoute": false,
+            "hiddenNote": false
+          }
+        },
+        "searchCoordinates": [
+          [
+            36.6,
+            126.4
+          ]
+        ]
+      },
+      "pass": false,
+      "status": "fail",
+      "functions": [
+        {
+          "name": "reportResponseCurrent",
+          "line": 2892
+        },
+        {
+          "name": "loadApprovedReports",
+          "line": 4723
+        },
+        {
+          "name": "renderApprovedReports",
+          "line": 4755
+        },
+        {
+          "name": "spotPopupHtml",
+          "line": 1595
+        }
+      ]
+    },
+    {
+      "id": "V04",
+      "title": "Approved withdrawal then later request returns older cache",
+      "expected": {
+        "restoredMarkers": 0,
+        "restoredSearchCoordinates": 0
+      },
+      "actual": {
+        "ids": [
+          "synthetic-a"
+        ],
+        "markers": {
+          "synthetic-a": {
+            "coordinates": [
+              36.6,
+              126.4
+            ],
+            "hasKakaoRoute": true,
+            "hasTmapRoute": false,
+            "hiddenNote": false
+          }
+        },
+        "searchCoordinates": [
+          [
+            36.6,
+            126.4
+          ]
+        ]
+      },
+      "pass": false,
+      "status": "fail",
+      "functions": [
+        {
+          "name": "reportResponseCurrent",
+          "line": 2892
+        },
+        {
+          "name": "loadApprovedReports",
+          "line": 4723
+        },
+        {
+          "name": "renderApprovedReports",
+          "line": 4755
+        },
+        {
+          "name": "buildReportSearchIndex",
+          "line": 1066
+        }
+      ]
+    },
+    {
+      "id": "V05",
+      "title": "Remote field deletion observed then later request returns older cache",
+      "expected": {
+        "restoredUpdates": 0,
+        "restoredMarkers": 0,
+        "navigationEligible": 0
+      },
+      "actual": {
+        "ids": [
+          "synthetic-a"
+        ],
+        "markerIds": [
+          "synthetic-a"
+        ],
+        "navigationEligible": [
+          {
+            "id": "synthetic-a",
+            "allowed": true
+          }
+        ],
+        "hidden": [
+          {
+            "id": "synthetic-a",
+            "hidden": false
+          }
+        ]
+      },
+      "pass": false,
+      "status": "fail",
+      "functions": [
+        {
+          "name": "loadFieldUpdates",
+          "line": 5305
+        },
+        {
+          "name": "fieldGuardIncoming",
+          "line": 5293
+        },
+        {
+          "name": "fieldRemoveLocal",
+          "line": 5812
+        },
+        {
+          "name": "fieldPublicPoint",
+          "line": 5580
+        }
+      ]
+    },
+    {
+      "id": "V06",
+      "title": "Fresh page loses deletion/protection guards and receives older cache",
+      "expected": {
+        "deletedRestored": false,
+        "hiddenNavigationAllowed": false
+      },
+      "actual": {
+        "beforeRefresh": {
+          "ids": [
+            "synthetic-hidden"
+          ],
+          "markerIds": [
+            "synthetic-hidden"
+          ],
+          "navigationEligible": [
+            {
+              "id": "synthetic-hidden",
+              "allowed": false
+            }
+          ],
+          "hidden": [
+            {
+              "id": "synthetic-hidden",
+              "hidden": true
+            }
+          ]
+        },
+        "afterRefresh": {
+          "ids": [
+            "synthetic-deleted",
+            "synthetic-hidden"
+          ],
+          "markerIds": [
+            "synthetic-deleted",
+            "synthetic-hidden"
+          ],
+          "navigationEligible": [
+            {
+              "id": "synthetic-deleted",
+              "allowed": true
+            },
+            {
+              "id": "synthetic-hidden",
+              "allowed": true
+            }
+          ],
+          "hidden": [
+            {
+              "id": "synthetic-deleted",
+              "hidden": false
+            },
+            {
+              "id": "synthetic-hidden",
+              "hidden": false
+            }
+          ]
+        }
+      },
+      "pass": false,
+      "status": "fail",
+      "functions": [
+        {
+          "name": "fieldRemoveLocal",
+          "line": 5812
+        },
+        {
+          "name": "fieldGuardIncoming",
+          "line": 5293
+        },
+        {
+          "name": "loadFieldUpdates",
+          "line": 5305
+        },
+        {
+          "name": "fieldPublicPoint",
+          "line": 5580
+        }
+      ]
+    },
+    {
+      "id": "V07",
+      "title": "Only locationHidden changes at identical coordinates/time: open popup refresh",
+      "expected": {
+        "afterGuideButton": false,
+        "afterHiddenNote": true,
+        "currentNavigationAllowed": false
+      },
+      "actual": {
+        "beforeGuideButton": true,
+        "afterGuideButton": true,
+        "afterHiddenNote": false,
+        "popupContentUpdates": 0,
+        "currentNavigationAllowed": false
+      },
+      "pass": false,
+      "status": "fail",
+      "functions": [
+        {
+          "name": "fieldMarkerSignature",
+          "line": 5327
+        },
+        {
+          "name": "renderFieldMarkers",
+          "line": 5334
+        },
+        {
+          "name": "fieldPopupNode",
+          "line": 5371
+        },
+        {
+          "name": "fieldGuideTarget",
+          "line": 5459
+        }
+      ]
+    }
+  ]
+}

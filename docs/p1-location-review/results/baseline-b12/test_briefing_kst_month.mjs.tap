@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: 월 경계 순간에 브라우저 timezone과 무관하게 KST 기준 월을 쓴다
+ok 1 - 월 경계 순간에 브라우저 timezone과 무관하게 KST 기준 월을 쓴다
+  ---
+  duration_ms: 18.6547
+  type: 'test'
+  ...
+# Subtest: KST 자정 직전·직후에 해석 월이 정확히 바뀐다
+ok 2 - KST 자정 직전·직후에 해석 월이 정확히 바뀐다
+  ---
+  duration_ms: 5.1972
+  type: 'test'
+  ...
+# Subtest: 연말 경계에서도 KST 월을 따른다
+ok 3 - 연말 경계에서도 KST 월을 따른다
+  ---
+  duration_ms: 3.4304
+  type: 'test'
+  ...
+# Subtest: 해석 문구의 계절 표기도 KST 월을 따라간다
+ok 4 - 해석 문구의 계절 표기도 KST 월을 따라간다
+  ---
+  duration_ms: 3.4722
+  type: 'test'
+  ...
+# Subtest: 서울 브라우저에서는 수정 전후 결과가 같다
+ok 5 - 서울 브라우저에서는 수정 전후 결과가 같다
+  ---
+  duration_ms: 2.2142
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 104.9321

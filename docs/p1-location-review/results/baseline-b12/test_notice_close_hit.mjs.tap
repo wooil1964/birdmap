@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: A/B. PC에서 공지 닫기 버튼 중심의 hit target이 닫기 버튼이다 (1366·1920 필수)
+ok 1 - A/B. PC에서 공지 닫기 버튼 중심의 hit target이 닫기 버튼이다 (1366·1920 필수)
+  ---
+  duration_ms: 2552.9805
+  type: 'test'
+  ...
+# Subtest: C. 공지 열린 상태에서 닫기 버튼을 실제로 클릭하면 패널이 닫힌다
+ok 2 - C. 공지 열린 상태에서 닫기 버튼을 실제로 클릭하면 패널이 닫힌다
+  ---
+  duration_ms: 367.2753
+  type: 'test'
+  ...
+# Subtest: D. todayToggleBtn은 공지 열림/닫힘 양쪽에서 정상 클릭된다
+ok 3 - D. todayToggleBtn은 공지 열림/닫힘 양쪽에서 정상 클릭된다
+  ---
+  duration_ms: 497.9255
+  type: 'test'
+  ...
+# Subtest: E. 모바일은 기존 배치와 동작을 그대로 유지한다
+ok 4 - E. 모바일은 기존 배치와 동작을 그대로 유지한다
+  ---
+  duration_ms: 538.9975
+  type: 'test'
+  ...
+# Subtest: F. 다른 overlay(추천 패널·월간 조석 모달)의 stacking 회귀가 없다
+ok 5 - F. 다른 overlay(추천 패널·월간 조석 모달)의 stacking 회귀가 없다
+  ---
+  duration_ms: 429.8001
+  type: 'test'
+  ...
+# Subtest: 정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하고 중복 없이 지도에 연결한다
+ok 6 - 정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하고 중복 없이 지도에 연결한다
+  ---
+  duration_ms: 174.3143
+  type: 'test'
+  ...
+# Subtest: 주간 편집 목록은 지정 순서·표시명과 기존 적격성을 유지하고 날짜로 만료되지 않는다
+ok 7 - 주간 편집 목록은 지정 순서·표시명과 기존 적격성을 유지하고 날짜로 만료되지 않는다
+  ---
+  duration_ms: 242.0792
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4917.3388

@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: A. 3명: 모바일 3명 표시, 전체 보기 없음
+ok 1 - A. 3명: 모바일 3명 표시, 전체 보기 없음
+  ---
+  duration_ms: 0.9295
+  type: 'test'
+  ...
+# Subtest: B. 4명: 모바일 3명 표시, 전체 보기 있음
+ok 2 - B. 4명: 모바일 3명 표시, 전체 보기 있음
+  ---
+  duration_ms: 0.7093
+  type: 'test'
+  ...
+# Subtest: C. 5명: 데스크톱 5명 표시, 전체 보기 없음
+ok 3 - C. 5명: 데스크톱 5명 표시, 전체 보기 없음
+  ---
+  duration_ms: 0.14
+  type: 'test'
+  ...
+# Subtest: D. 6명: 데스크톱 5명 표시, 전체 보기 있음
+ok 4 - D. 6명: 데스크톱 5명 표시, 전체 보기 있음
+  ---
+  duration_ms: 0.1228
+  type: 'test'
+  ...
+# Subtest: 서버 순서를 그대로 쓰고 다시 정렬하지 않는다
+ok 5 - 서버 순서를 그대로 쓰고 다시 정렬하지 않는다
+  ---
+  duration_ms: 0.1705
+  type: 'test'
+  ...
+# Subtest: E. 빈 응답은 유효하고 기여자가 없다
+ok 6 - E. 빈 응답은 유효하고 기여자가 없다
+  ---
+  duration_ms: 0.2462
+  type: 'test'
+  ...
+# Subtest: F. 비정상 응답은 거부한다
+ok 7 - F. 비정상 응답은 거부한다
+  ---
+  duration_ms: 0.2209
+  type: 'test'
+  ...
+# Subtest: H. 운영 응답(2026-10)을 그대로 받아들이고 이름·건수만 남긴다
+ok 8 - H. 운영 응답(2026-10)을 그대로 받아들이고 이름·건수만 남긴다
+  ---
+  duration_ms: 0.2181
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.8639

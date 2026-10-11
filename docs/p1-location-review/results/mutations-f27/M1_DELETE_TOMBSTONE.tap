@@ -1,0 +1,187 @@
+TAP version 13
+# Subtest: 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+not ok 1 - 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+  ---
+  duration_ms: 10.9545
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:81:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    tombstone
+    + actual - expected
+    
+      [
+    +   'a',
+        'b'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'b'
+  actual:
+    0: 'a'
+    1: 'b'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:93:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+ok 2 - 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+  ---
+  duration_ms: 6.1863
+  type: 'test'
+  ...
+# Subtest: 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+ok 3 - 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+  ---
+  duration_ms: 5.5719
+  type: 'test'
+  ...
+# Subtest: 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+ok 4 - 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+  ---
+  duration_ms: 5.4026
+  type: 'test'
+  ...
+# Subtest: 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+not ok 5 - 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+  ---
+  duration_ms: 5.5107
+  type: 'test'
+  location: 'C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\[eval1]:136:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   {
+    +     firstSeenAt: '2026-10-08T00:55:00.000Z',
+    +     history: [],
+    +     id: 'a',
+    +     lastConfirmedAt: null,
+    +     lat: 36.6,
+    +     lon: 126.4,
+    +     species: 'sa',
+    +     status: 'visible',
+    +     updatedAt: '2026-10-08T00:55:00.000Z'
+    +   }
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      id: 'a'
+      species: 'sa'
+      status: 'visible'
+      lat: 36.6
+      lon: 126.4
+      updatedAt: '2026-10-08T00:55:00.000Z'
+      firstSeenAt: '2026-10-08T00:55:00.000Z'
+      lastConfirmedAt: ~
+      history:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/Documents/GitHub/birdmap/[eval1]:141:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+ok 6 - 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+  ---
+  duration_ms: 5.8897
+  type: 'test'
+  ...
+# Subtest: 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+ok 7 - 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+  ---
+  duration_ms: 5.2326
+  type: 'test'
+  ...
+# Subtest: 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+ok 8 - 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+  ---
+  duration_ms: 5.1827
+  type: 'test'
+  ...
+# Subtest: 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+ok 9 - 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+  ---
+  duration_ms: 5.2775
+  type: 'test'
+  ...
+# Subtest: 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+ok 10 - 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+  ---
+  duration_ms: 10.4881
+  type: 'test'
+  ...
+# Subtest: GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+ok 11 - GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+  ---
+  duration_ms: 5.2445
+  type: 'test'
+  ...
+# Subtest: 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+ok 12 - 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+  ---
+  duration_ms: 5.2254
+  type: 'test'
+  ...
+# Subtest: 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+ok 13 - 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+  ---
+  duration_ms: 10.772
+  type: 'test'
+  ...
+# Subtest: 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+ok 14 - 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+  ---
+  duration_ms: 5.2562
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+ok 15 - 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+  ---
+  duration_ms: 1.7155
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+ok 16 - 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+  ---
+  duration_ms: 1.7779
+  type: 'test'
+  ...
+# Subtest: 정상 순서의 응답은 모두 반영된다(회귀)
+ok 17 - 정상 순서의 응답은 모두 반영된다(회귀)
+  ---
+  duration_ms: 1.2572
+  type: 'test'
+  ...
+# Subtest: 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+ok 18 - 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+  ---
+  duration_ms: 4.9712
+  type: 'test'
+  ...
+# Subtest: 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+ok 19 - 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+  ---
+  duration_ms: 0.9561
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 17
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 108.0702

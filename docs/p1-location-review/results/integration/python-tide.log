@@ -1,0 +1,58 @@
+E.....E..E......Es....
+======================================================================
+ERROR: test_all_api_failures_keep_every_site_and_true_counters (__main__.TideTests.test_all_api_failures_keep_every_site_and_true_counters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\test_tide.py", line 198, in test_all_api_failures_keep_every_site_and_true_counters
+    data = daily.build_daily_output("test", NOW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 698, in build_daily_output
+    targets = load_tide_sites()
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 69, in load_tide_sites
+    raise RuntimeError(f"MasterDB not found: {DB_PATH}")
+RuntimeError: MasterDB not found: C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\data\birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx
+
+======================================================================
+ERROR: test_full_run_exact_station_date_dedup_and_dates (__main__.TideTests.test_full_run_exact_station_date_dedup_and_dates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\test_tide.py", line 134, in test_full_run_exact_station_date_dedup_and_dates
+    data = daily.build_daily_output("test", NOW)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 698, in build_daily_output
+    targets = load_tide_sites()
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 69, in load_tide_sites
+    raise RuntimeError(f"MasterDB not found: {DB_PATH}")
+RuntimeError: MasterDB not found: C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\data\birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx
+
+======================================================================
+ERROR: test_later_outage_cannot_downgrade_successful_same_date_predictions (__main__.TideTests.test_later_outage_cannot_downgrade_successful_same_date_predictions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\test_tide.py", line 155, in test_later_outage_cannot_downgrade_successful_same_date_predictions
+    successful = daily.build_daily_output("test", NOW)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 698, in build_daily_output
+    targets = load_tide_sites()
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 69, in load_tide_sites
+    raise RuntimeError(f"MasterDB not found: {DB_PATH}")
+RuntimeError: MasterDB not found: C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\data\birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx
+
+======================================================================
+ERROR: test_official_mapping_and_protected_sites (__main__.TideTests.test_official_mapping_and_protected_sites)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\test_tide.py", line 273, in test_official_mapping_and_protected_sites
+    mapping.validate_mapping(data, daily.load_tide_sites(), mapping.load_catalog())
+                                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\.github\scripts\update_tide.py", line 69, in load_tide_sites
+    raise RuntimeError(f"MasterDB not found: {DB_PATH}")
+RuntimeError: MasterDB not found: C:\Users\김진호\.codex\worktrees\p1-location-protection\birdmap\docs\p1-location-review\.scratch\root\with-pr13\data\birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.061s
+
+FAILED (errors=4, skipped=1)
