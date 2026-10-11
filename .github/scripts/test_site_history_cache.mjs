@@ -72,7 +72,7 @@ function loadApi(options = {}) {
   const src = [
     constantSource('SITE_HISTORY_TTL'),
     constantSource('SITE_HISTORY_TIMEOUT'),
-    'var siteHistoryCache={};',
+    'var siteHistoryCache={};var siteHistoryGen=0;',
     ...NAMES.map(functionSource),
     'return {clearSiteHistoryCache,cachedSiteHistory,fetchSiteHistory,' +
       'SITE_HISTORY_TTL:SITE_HISTORY_TTL,SITE_HISTORY_TIMEOUT:SITE_HISTORY_TIMEOUT,' +
