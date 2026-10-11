@@ -1728,11 +1728,11 @@ test('R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 
 });
 
 test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로', async () => {
-  const loader = functionSource('loadRecentSiteSightings');
+  const loader = functionSource('reportRequestStart') + functionSource('reportResponseCurrent') + functionSource('loadRecentSiteSightings');
   async function run(fetchImpl, previous) {
     const box = { sightings: previous, refreshed: 0, warned: 0 };
     const fn = new Function('box', 'fetch', 'console',
-      'var recentSiteSightings=box.sightings;var REPORTS_API_URL="https://reports.example";' +
+      'var reportRequestSeq={approved:0,pending:0,recent:0},reportAppliedSeq={approved:0,pending:0,recent:0};var recentSiteSightings=box.sightings;var REPORTS_API_URL="https://reports.example";' +
       'function reportsConfigured(){return true;}function refreshTodayPanelIfOpen(){box.refreshed++;}' +
       loader + ';return loadRecentSiteSightings().then(function(ok){box.sightings=recentSiteSightings;return ok;});');
     const ok = await fn(box, fetchImpl, { warn: () => { box.warned++; } });

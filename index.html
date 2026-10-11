@@ -2905,8 +2905,19 @@ function siteHistoryEntryHtml(entry){
 var SITE_HISTORY_TTL=60*1000;
 var SITE_HISTORY_TIMEOUT=6000;
 var siteHistoryCache={};
+var siteHistoryGen=0;   // 승인 제보 갱신으로 기억을 비울 때마다 올린다. 비우기 전에 보낸 요청의 응답은 기억하지 않는다.
 
-function clearSiteHistoryCache(){siteHistoryCache={};}
+function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
+
+/* 오래된 응답 방어. 요청마다 번호를 받고, 이미 반영한 응답보다 먼저 보낸 요청의 응답은 버린다.
+   삭제·공개 취소·위치 가림이 반영된 뒤 늦게 도착한 옛 응답이 마커를 되살리지 못하게 한다. */
+var reportRequestSeq={approved:0,pending:0,recent:0}, reportAppliedSeq={approved:0,pending:0,recent:0};
+function reportRequestStart(kind){return ++reportRequestSeq[kind];}
+function reportResponseCurrent(kind,seq){
+  if(seq<reportAppliedSeq[kind])return false;
+  reportAppliedSeq[kind]=seq;
+  return true;
+}
 
 function cachedSiteHistory(key){
   var hit=siteHistoryCache[key];
@@ -2915,8 +2926,9 @@ function cachedSiteHistory(key){
   return hit.data;
 }
 
-function fetchSiteHistory(site,offset){
+function fetchSiteHistory(site,offset,retried){
   var key=String(site.id);
+  var gen=siteHistoryGen;
   if(!offset){
     var hit=cachedSiteHistory(key);
     // 기억해 둔 값이 있으면 네트워크를 타지 않고 그대로 그린다.
@@ -2932,6 +2944,11 @@ function fetchSiteHistory(site,offset){
       return response.json();
     }).then(function(data){
       if(!data||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
+      // 요청 뒤에 승인 제보가 갱신됐으면 이 응답은 옛 자료일 수 있다. 기억하지 않고 한 번 다시 받는다.
+      if(gen!==siteHistoryGen){
+        if(retried)return null;
+        return fetchSiteHistory(site,offset,true);
+      }
       if(!offset)siteHistoryCache[key]={at:Date.now(),data:data};
       return data;
     }).catch(function(){return null;})
@@ -4126,11 +4143,13 @@ function weeklyRecommendationForSite(site,week){
 var recentSiteSightings={};
 function loadRecentSiteSightings(){
   if(!reportsConfigured())return Promise.resolve(false);
+  var seq=reportRequestStart('recent');
   return fetch(REPORTS_API_URL+'/reports/recent-sites?days=14',{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error('recent-sites '+r.status);
     return r.json();
   }).then(function(data){
     if(!data||data.ok!==true||!Array.isArray(data.sites))throw new Error('recent-sites invalid');
+    if(!reportResponseCurrent('recent',seq))return false;
     var next={};
     data.sites.forEach(function(item){
       if(item&&item.siteId&&/^\d{4}-\d{2}-\d{2}$/.test(String(item.latestDate||''))&&Array.isArray(item.species))
@@ -4605,11 +4624,13 @@ function initReportFeature(){
 /* 승인된 제보만 내려온다. 실패하면 직전 상태를 그대로 두고 조용히 넘어간다. */
 function loadApprovedReports(){
   if(!reportsConfigured())return Promise.resolve(false);
+  var seq=reportRequestStart('approved');
   return fetch(REPORTS_API_URL+'/reports/approved',{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error('reports '+r.status);
     return r.json();
   }).then(function(data){
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('reports invalid');
+    if(!reportResponseCurrent('approved',seq))return false;   // 더 나중에 보낸 요청의 응답이 이미 반영됨: 옛 응답은 버린다
     // 승인 제보가 새로 내려왔으니 탐조지별 이력 기억도 버린다(새 승인 건이 바로 보이게).
     clearSiteHistoryCache();
     reportFixedHistory=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
@@ -4660,11 +4681,13 @@ function renderApprovedReports(spots){
    화면에서 색만 바꿔 승인된 것처럼 만들 수 없다. 실패하면 조용히 직전 상태를 둔다. */
 function loadPendingReports(){
   if(!reportsConfigured())return Promise.resolve(false);
+  var seq=reportRequestStart('pending');
   return fetch(REPORTS_API_URL+'/reports/pending',{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error('pending '+r.status);
     return r.json();
   }).then(function(data){
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('pending invalid');
+    if(!reportResponseCurrent('pending',seq))return false;
     renderPendingReports(data.spots);
     return true;
   }).catch(function(){return false;});
@@ -5080,6 +5103,10 @@ var fieldTurnstileId=null;
 var fieldTurnstileToken='';
 var fieldMemoryDevice='';
 var fieldToastTimer=null;
+/* 오래된 응답·삭제·위치 보호 방어. 요청마다 번호를 받고, ① 이미 반영한 응답보다 먼저 보낸 요청 ② 삭제·보호 전환(barrier) 이전에 보낸 요청의
+   응답은 버린다. 삭제한 id 는 tombstone 으로, 위치 보호가 확인된 id 는 보호 기록으로 남겨 어떤 늦은 응답도 되살리지·정확 좌표로 되돌리지 못하게 한다. */
+var fieldRequestSeq=0, fieldAppliedSeq=0, fieldBarrierSeq=0;
+var fieldTombstones={}, fieldProtectedIds={};
 
 function fieldEl(id){return document.getElementById(id);}
 function fieldMap(){return map_7010a44f6ac2025090f0fe07508ed485;}
@@ -5164,14 +5191,30 @@ function fieldValidUpdate(update){
     &&typeof update.lat==='number'&&typeof update.lon==='number'&&typeof update.updatedAt==='string'
     &&typeof update.firstSeenAt==='string'&&Array.isArray(update.history);
 }
+/* 서버 응답 한 건을 화면에 올려도 되는지 정한다. 반환값이 null 이면 올리지 않는다. */
+function fieldGuardIncoming(update){
+  if(fieldTombstones[update.id])return null;
+  if(update.locationHidden===true){fieldProtectedIds[update.id]=true;return update;}
+  if(!fieldProtectedIds[update.id])return update;
+  var known=fieldFind(update.id);   // 보호 확인된 소식이 보호 없는 좌표로 돌아오려 하면 보호 상태인 기존 것을 유지한다
+  return known&&known.locationHidden===true?known:null;
+}
+/* 삭제·보호 전환 시점: 그 전에 보낸 요청의 응답은 모두 버리고, 새 자료는 다시 받아 온다. */
+function fieldBarrier(refetch){
+  fieldBarrierSeq=fieldRequestSeq;
+  if(refetch)loadFieldUpdates();
+}
 function loadFieldUpdates(){
   if(!reportsConfigured())return Promise.resolve(false);
+  var seq=++fieldRequestSeq;
   return fieldApi('/field-updates','GET').then(function(result){
     if(!result.ok||!Array.isArray(result.body.updates))throw new Error('field-updates '+result.status);
+    if(seq<fieldAppliedSeq||seq<=fieldBarrierSeq)return false;
+    fieldAppliedSeq=seq;
     var serverTime=Date.parse(result.body.serverTime);
     if(!isNaN(serverTime))fieldClockOffset=serverTime-Date.now();
     if(typeof result.body.ttlHours==='number'&&result.body.ttlHours>0)fieldTtlHours=result.body.ttlHours;
-    fieldUpdates=result.body.updates.filter(fieldValidUpdate);
+    fieldUpdates=result.body.updates.filter(fieldValidUpdate).map(fieldGuardIncoming).filter(Boolean);
     if(!fieldAvailable){fieldAvailable=true;fieldEl('fieldToggleBtn').hidden=false;}
     renderFieldMarkers();
     if(!fieldEl('fieldPanel').hidden&&(fieldStepName==='pickThread'))fieldRender();
@@ -5184,7 +5227,7 @@ function fieldMarkerClass(update){
   return 'fieldMarker '+update.status+(fieldAgeMin(update)>FIELD_OLD_MIN?' old':'');
 }
 function fieldMarkerSignature(update){
-  return [update.status,update.updatedAt,update.lastConfirmedAt,update.confirmCount,update.count,update.lat,update.lon,update.history.length,fieldMarkerClass(update)].join('|');
+  return [update.status,update.updatedAt,update.lastConfirmedAt,update.confirmCount,update.count,update.lat,update.lon,update.locationHidden===true,update.history.length,fieldMarkerClass(update)].join('|');
 }
 function fieldFind(id){
   for(var i=0;i<fieldUpdates.length;i++){if(fieldUpdates[i].id===id)return fieldUpdates[i];}
@@ -5217,6 +5260,7 @@ function renderFieldMarkers(){
     delete fieldMarkers[id];
   });
   if(fieldGuide)fieldGuideUpdate();
+  fieldNavChoiceGuard();
   renderFieldNews();
 }
 
@@ -5262,7 +5306,7 @@ function fieldPopupNode(update){
     return button;
   }
   if(update.status==='visible'||update.status==='reappeared'){
-    add('🧭 현장 방향 안내',function(){fieldGuideStart(update.id);}).className='fieldGuideBtn';
+    if(fieldPublicPoint(update))add('🧭 현장 방향 안내',function(){fieldGuideStart(update.id);}).className='fieldGuideBtn';
     add('확인',function(){fieldConfirm(update.id);});
     add('안 보여요',function(){fieldStatusStart(update.id,'not_visible');});
   }else if(update.status==='searching'){
@@ -5313,11 +5357,21 @@ function fieldGuideBox(){
   document.body.appendChild(box);
   return box;
 }
+/* 안내·길안내 대상 확인. 지금 이 순간의 최신 상태에서 유효하고 위치 보호가 아닐 때만 소식을 돌려준다. */
+function fieldGuideTarget(id){
+  var update=fieldFind(id);
+  return update&&fieldIsActive(update)&&fieldPublicPoint(update)?update:null;
+}
 function fieldGuideUpdate(){
   var g=fieldGuide;
   if(!g)return;
-  var update=fieldFind(g.id);
-  if(!update||!fieldIsActive(update)){fieldGuideStop();fieldToast('안내하던 현장소식이 종료되어 안내를 마쳤어요.');return;}
+  var update=fieldGuideTarget(g.id);
+  if(!update){
+    var now=fieldFind(g.id);
+    fieldGuideStop();
+    fieldToast(now&&now.locationHidden===true?'위치 보호로 방향 안내를 종료했어요.':'안내하던 현장소식이 종료되어 안내를 마쳤어요.');
+    return;
+  }
   var dest=L.latLng(update.lat,update.lon);
   g.dest=dest;
   g.ring.setLatLng(dest);
@@ -5344,9 +5398,10 @@ function fieldGuideFit(){
   if(map.getBoundsZoom(bounds,false,L.point(40+right,250))<FIELD_GUIDE_MIN_ZOOM){map.setView(g.dest,FIELD_GUIDE_MIN_ZOOM);return;}
   map.fitBounds(bounds,{paddingTopLeft:[40,80],paddingBottomRight:[right,170],maxZoom:17});
 }
-function fieldGuideOnPosition(position){
+function fieldGuideOnPosition(position,owner){
   var g=fieldGuide;
-  if(!g)return;
+  if(!g||(owner&&owner!==g))return;   // 이미 끝났거나 다른 안내의 늦은 GPS 콜백
+  if(!fieldGuideTarget(g.id)){fieldGuideUpdate();return;}   // 지금 보호·종료 상태면 선·내 위치를 그리기 전에 멈춘다
   g.me=L.latLng(position.coords.latitude,position.coords.longitude);
   g.error='';
   if(!fieldMap().hasLayer(g.meMarker))g.meMarker.addTo(fieldMap());
@@ -5358,9 +5413,9 @@ function fieldGuideWatchStop(g){
   if(g.watchId!==null&&navigator.geolocation)navigator.geolocation.clearWatch(g.watchId);
   g.watchId=null;
 }
-function fieldGuideOnError(error){
+function fieldGuideOnError(error,owner){
   var g=fieldGuide;
-  if(!g)return;
+  if(!g||(owner&&owner!==g))return;
   // 위치를 한 번도 못 받았거나 권한이 꺼졌으면 추적을 멈추고 반쯤 그려진 선·내 위치를 치운다. 안내 박스(와 종료 버튼)는 남긴다.
   if(g.me&&!(error&&error.code===1))return;   // 이동 중 일시적 지연(timeout 등)은 마지막 위치로 계속 안내한다
   fieldGuideWatchStop(g);
@@ -5372,11 +5427,12 @@ function fieldGuideOnError(error){
 function fieldGuideWatch(){
   var g=fieldGuide;
   g.error='';
-  g.watchId=navigator.geolocation.watchPosition(fieldGuideOnPosition,fieldGuideOnError,{enableHighAccuracy:true,timeout:20000,maximumAge:10000});
+  g.watchId=navigator.geolocation.watchPosition(function(position){fieldGuideOnPosition(position,g);},function(error){fieldGuideOnError(error,g);},{enableHighAccuracy:true,timeout:20000,maximumAge:10000});
 }
 function fieldGuideStart(id){
   var map=fieldMap(),update=fieldFind(id);
   if(!update||matchMedia('(pointer:fine)').matches)return;   // 터치 기기 전용(PC 는 버튼도 숨긴다)
+  if(!fieldGuideTarget(id)){fieldToast(update.locationHidden===true?'위치 보호 중인 소식이라 방향 안내를 제공하지 않아요.':'종료된 현장소식이에요.','error');return;}
   map.closePopup();
   if(fieldGuide){
     // 다른 소식으로 바꾸는 경우: 위치 추적은 이어 가고 점선·강조만 새 목적지로 교체한다.
@@ -5513,6 +5569,11 @@ function fieldNavChoiceClose(){
   var box=fieldEl('fieldNavChoice');
   if(box&&box.parentNode)box.parentNode.removeChild(box);
 }
+/* 열려 있는 길안내 선택창의 소식이 보호·삭제·종료되면 정확 좌표 링크가 남지 않게 닫는다. */
+function fieldNavChoiceGuard(){
+  var box=fieldEl('fieldNavChoice');
+  if(box&&!fieldGuideTarget(box.getAttribute('data-field-id')))fieldNavChoiceClose();
+}
 /* GPS 를 쓸 수 없을 때: 자동 전환을 하지 않고 사용자가 고르게 한다. 방향 유도는 현재 위치가 필요하다. */
 function fieldNavChooser(update,message){
   fieldNavChoiceClose();
@@ -5520,6 +5581,7 @@ function fieldNavChooser(update,message){
   if(toast)toast.style.display='none';
   var box=document.createElement('div');
   box.id='fieldNavChoice';box.setAttribute('role','dialog');
+  box.setAttribute('data-field-id',update.id);
   box.appendChild(fieldLine(message));
   box.appendChild(fieldLine('원하는 안내 방식을 골라 주세요.','fieldNewsMeta'));
   var row=document.createElement('div');
@@ -5566,6 +5628,7 @@ function fieldNavManualGuide(id){
   if(!navigator.geolocation){fieldToast(needed,'error');return;}
   navigator.geolocation.getCurrentPosition(function(){
     fieldNavChoiceClose();
+    if(!fieldGuideTarget(id)){fieldToast('위치 보호 또는 종료된 소식이라 방향 안내를 시작하지 않았어요.','error');return;}   // 콜백이 늦게 와도 지금 상태를 다시 본다
     fieldGuideStart(id);
   },function(){fieldToast(needed,'error');},{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
@@ -5577,11 +5640,17 @@ function fieldNewsNavigate(id){
   if(!navigator.geolocation){fieldNavChooser(update,'이 기기에서는 현재 위치를 쓸 수 없어요.');return;}
   fieldToast('현재 위치를 확인하는 중이에요...');
   navigator.geolocation.getCurrentPosition(function(position){
-    var km=haversineKm({lat:position.coords.latitude,lon:position.coords.longitude},point);
-    if(fieldNavMode(km)==='guide')fieldNavGuide(update,km,position.coords.accuracy);
-    else fieldNavExternal(update,km,position.coords.accuracy);
+    // 위치 확인을 기다리는 사이 삭제·보호·종료됐을 수 있다. 처음 읽어 둔 소식이 아니라 지금의 최신 소식을 다시 찾아 쓴다.
+    var current=fieldGuideTarget(id);
+    if(!current){fieldToast('위치 보호 또는 종료된 소식이라 길안내를 시작하지 않았어요.','error');return;}
+    var latest=fieldPublicPoint(current);
+    var km=haversineKm({lat:position.coords.latitude,lon:position.coords.longitude},latest);
+    if(fieldNavMode(km)==='guide')fieldNavGuide(current,km,position.coords.accuracy);
+    else fieldNavExternal(current,km,position.coords.accuracy);
   },function(error){
-    fieldNavChooser(update,error&&error.code===1?'위치 권한이 꺼져 있어 거리를 알 수 없어요.':'현재 위치를 확인하지 못했어요.');
+    var current=fieldGuideTarget(id);
+    if(!current){fieldToast('위치 보호 또는 종료된 소식이라 길안내를 시작하지 않았어요.','error');return;}
+    fieldNavChooser(current,error&&error.code===1?'위치 권한이 꺼져 있어 거리를 알 수 없어요.':'현재 위치를 확인하지 못했어요.');
   },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
 window.addEventListener('resize',function(){if(fieldAvailable)renderFieldNews();});
@@ -5602,8 +5671,11 @@ function fieldToast(text,kind){
   fieldToastTimer=setTimeout(function(){toast.style.display='none';},3500);
 }
 
-function fieldReplace(update){
+function fieldReplace(incoming){
+  var update=fieldGuardIncoming(incoming);
+  if(!update)return;   // 삭제됐거나 보호 상태를 되돌리려는 응답
   var replaced=false;
+  fieldBarrier(false);   // 이 변경보다 먼저 보낸 목록 요청의 옛 응답이 덮어쓰지 못하게 한다
   fieldUpdates=fieldUpdates.map(function(item){if(item.id===update.id){replaced=true;return update;}return item;});
   if(!replaced)fieldUpdates.unshift(update);
   renderFieldMarkers();
@@ -5645,6 +5717,8 @@ function fieldDelete(id){
   }).then(function(){fieldBusy=false;});
 }
 function fieldRemoveLocal(id){
+  fieldTombstones[id]=true;
+  fieldBarrier(true);
   fieldMap().closePopup();
   fieldUpdates=fieldUpdates.filter(function(item){return item.id!==id;});
   renderFieldMarkers();
