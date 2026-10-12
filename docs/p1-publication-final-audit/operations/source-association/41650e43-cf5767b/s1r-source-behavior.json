@@ -1,0 +1,310 @@
+{
+  "candidate": "41650e43f80fadb2bfd9f80b18d958862f673551",
+  "newHead": "cf5767b090275221a516e16112d0e569eedb86e7",
+  "scope": "Actual locally compiled public Worker functions, synthetic strings only, network disabled",
+  "newInputCases": [
+    {
+      "input": "저어새",
+      "before": {
+        "accepted": true,
+        "protected": true
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "저어새 1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "저어새 2마리",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "흰꼬리수리1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "매1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기,저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기;저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기·저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기/저어새1",
+      "before": {
+        "accepted": false,
+        "errorCode": "SPECIES_INVALID"
+      },
+      "after": {
+        "accepted": false,
+        "errorCode": "SPECIES_INVALID"
+      }
+    },
+    {
+      "input": "갈매기\n저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기\r\n저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    }
+  ],
+  "storedInputCases": [
+    {
+      "input": "저어새",
+      "before": {
+        "accepted": true,
+        "protected": true
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "저어새 1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "저어새 2마리",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "흰꼬리수리1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "매1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기,저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기;저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기·저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기/저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기\n저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    },
+    {
+      "input": "갈매기\r\n저어새1",
+      "before": {
+        "accepted": true,
+        "protected": false
+      },
+      "after": {
+        "accepted": true,
+        "protected": true
+      }
+    }
+  ],
+  "ordinaryControls": [
+    {
+      "input": "갈매기",
+      "protected": false
+    },
+    {
+      "input": "알락오리",
+      "protected": false
+    },
+    {
+      "input": "알락할미새",
+      "protected": false
+    },
+    {
+      "input": "동박새",
+      "protected": false
+    },
+    {
+      "input": "한국동박새",
+      "protected": false
+    },
+    {
+      "input": "동박새2",
+      "protected": false
+    },
+    {
+      "input": "갈매기 2마리",
+      "protected": false
+    }
+  ],
+  "newProtectedCasesPassed": 23,
+  "newRejectedSlashInput": 1,
+  "newOrdinaryFalsePositives": 0,
+  "oldAcceptedNewInputMisses": 10,
+  "oldRejectedNewInputs": 1,
+  "oldStoredInputMisses": 11,
+  "harnessCorrection": "Old input rejection is recorded separately from accepted protection misses; original uncaught SPECIES_INVALID failure preserved in behavior-old-harness.log."
+}

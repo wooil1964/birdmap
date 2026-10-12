@@ -1,0 +1,396 @@
+{
+  "at": "2026-10-12T10:21:46.819Z",
+  "sourceSha": "d39f1bd16baaea08f1241a3fb528a1953a343692",
+  "scope": "Local synthetic workerd D1 only; zero remote D1/deployment calls",
+  "runtime": {
+    "node": "v24.18.0",
+    "wrangler": "4.149.0"
+  },
+  "checks": [
+    {
+      "id": "M01-48 operating user DDL objects load unchanged with 68 synthetic reports and canonical counterparts",
+      "status": "pass"
+    },
+    {
+      "id": "M02-Wrangler local migrations apply execution-time mid-DDL CHECK failure exits 1",
+      "status": "pass"
+    },
+    {
+      "id": "M03-failed file rolls back every schema object, column, data row and migration ledger",
+      "status": "pass"
+    },
+    {
+      "id": "M04-no partial state table or row_revision after failed migration",
+      "status": "pass"
+    },
+    {
+      "id": "M05-pre-migration report maintenance activation blocks existing writer insert/update",
+      "status": "pass"
+    },
+    {
+      "id": "M06-valid exact source file installs as one Wrangler local migration",
+      "status": "pass"
+    },
+    {
+      "id": "M07-all report/canonical/child source values unchanged and field row_revision default 1 only",
+      "status": "pass"
+    },
+    {
+      "id": "M08-original user schema preserved apart from additive field column, exactly one ledger entry",
+      "status": "pass"
+    },
+    {
+      "id": "M09-initial epoch valid, revision0 and write_frozen1",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_updates-insert",
+      "status": "fail",
+      "message": "The input did not match the regular expression /reports_write_frozen/. Input:\n\n''\n",
+      "stack": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /reports_write_frozen/. Input:\n\n''\n\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/migration/wrangler_migration_rehearsal.mjs:144:74\n    at check (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/migration/wrangler_migration_rehearsal.mjs:105:39)\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/migration/wrangler_migration_rehearsal.mjs:141:61"
+    }
+  ],
+  "commands": [
+    {
+      "id": "01-failure-seed",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--file",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\fixture.sql",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\failure"
+      ],
+      "startedAt": "2026-10-12T10:21:47.767Z",
+      "endedAt": "2026-10-12T10:21:49.407Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "a998d99e0686fb35475b5da09bacee8093c54023cbf1ae03835e591b13dc34dd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "02-success-seed",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--file",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\fixture.sql",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:21:49.407Z",
+      "endedAt": "2026-10-12T10:21:51.052Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "41f11fc84b83d5aa0d590c4f12d851f40e547d8c5ebc9333f3437365c4e9743e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "03-failure-before",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\failure"
+      ],
+      "startedAt": "2026-10-12T10:21:51.052Z",
+      "endedAt": "2026-10-12T10:21:52.241Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "1fd1f3988210012ba81c1618f9c5c34ab538459ed2798d12586cf0df8c59d0bb",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "04-failure-apply-fault",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "REPORTS_DB",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\failure"
+      ],
+      "startedAt": "2026-10-12T10:21:52.245Z",
+      "endedAt": "2026-10-12T10:21:54.430Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "367f22e22fcf89f7daed5348ed137008c78a70e6fb865299f17f5909fa9550d4",
+      "stderrSha256": "386b756d75450966e0ef781506c333f209574d0e45e96d661693adf7fd923909"
+    },
+    {
+      "id": "05-failure-after",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\failure"
+      ],
+      "startedAt": "2026-10-12T10:21:54.430Z",
+      "endedAt": "2026-10-12T10:21:55.631Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "a249609c9d2674a08e117e23d3125a58a847bcf17cd163cb6e79b54bba6604af",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "06-success-before",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:21:55.636Z",
+      "endedAt": "2026-10-12T10:21:56.845Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "cc3179be790400f418e27b3408695f53d379fc37519b38054df1a83a47113bfd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "07-success-maintenance",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE system_state SET mode='READ_ONLY_MAINTENANCE',generation=generation+1,reason='synthetic coordinated migration',updated_at='2026-10-12T10:21:47.743Z' WHERE id=1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:21:56.849Z",
+      "endedAt": "2026-10-12T10:21:57.998Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "fc456e0f54e14096015866a2238d62e3a3bfa6ea1bfbf1ead743a657b3e9a2c3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "08-success-report-update-frozen",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE reports SET status='pending' WHERE id='10000000-0000-4000-8000-000000000001';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:21:57.999Z",
+      "endedAt": "2026-10-12T10:21:59.157Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "09-success-report-insert-frozen",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO reports SELECT '10000000-0000-4000-8000-000000000099',status,species,lat,lon,public_lat,public_lon,observed_on,received_at,decided_at,bird_count,reporter,note,admin_note,site_id,ip_hash,'synthetic-new-dedupe',name_public,spot_key,approx_lat,approx_lon,pending_public FROM reports LIMIT 1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:21:59.157Z",
+      "endedAt": "2026-10-12T10:22:00.337Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "10-success-apply",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "REPORTS_DB",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:22:00.337Z",
+      "endedAt": "2026-10-12T10:22:02.197Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "357f798afb8eede854a9d8e131ab9fe51d451132dc91240213ea9fd048788710",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "11-success-after",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:22:02.197Z",
+      "endedAt": "2026-10-12T10:22:03.382Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "eb31307200b7c03b187eb93998e610fd9d087f2e15ab3eabd37ca95ac4104d9f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "12-success-state-after",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT epoch,CAST(revision AS TEXT) revision,write_frozen FROM public_publication_state;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:22:03.389Z",
+      "endedAt": "2026-10-12T10:22:04.535Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "b1fab824ed40b8aaf050bf2c6721f0dd0dc9efa79cec8538fd1ff18e06b94f7f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "13-success-frozen-field_updates-insert",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO field_updates(id,species,bird_count,status,lat,lon,public_lat,public_lon,location_hidden,nickname,note,location_source,gps_accuracy,created_at,updated_at,last_confirmed_at,last_activity_at,user_hash,ip_hash,row_revision) SELECT 'synthetic-new-'+table+',species,bird_count,status,lat,lon,public_lat,public_lon,location_hidden,nickname,note,location_source,gps_accuracy,created_at,updated_at,last_confirmed_at,last_activity_at,'synthetic-new-owner',ip_hash,row_revision FROM field_updates WHERE id='synthetic-field-3' LIMIT 1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-shortpersist\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-shortpersist\\success"
+      ],
+      "startedAt": "2026-10-12T10:22:04.536Z",
+      "endedAt": "2026-10-12T10:22:05.731Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "a8b8c150ce3b54857aa8bd7e6ee5396998a2b1c4167c218ed2d205f40b185bed",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "input": {
+    "preflightSchemaSha256": "b13a3203da6a2228f342c131d397c8b8eb8636f8a6d71deb7e1d30ffdcd5e486",
+    "selectedSchemaSha256": "55ea2d19434d4e1cd03286939c34f6949a5198892160b4de5b2edfaaecce72bb",
+    "schemaObjects": 48,
+    "excludedObjects": [
+      "_cf_KV",
+      "sqlite_sequence",
+      "d1_migrations"
+    ],
+    "migrationSha256": "7095e20d185a3ed67fc6a848102997917e2c89bc1f17f2a7612f878424f74632"
+  },
+  "failure": {
+    "message": "The input did not match the regular expression /reports_write_frozen/. Input:\n\n''\n",
+    "stack": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /reports_write_frozen/. Input:\n\n''\n\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/migration/wrangler_migration_rehearsal.mjs:144:74\n    at check (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/migration/wrangler_migration_rehearsal.mjs:105:39)\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/migration/wrangler_migration_rehearsal.mjs:141:61"
+  },
+  "summary": {
+    "pass": 9,
+    "fail": 1,
+    "skip": 0
+  }
+}

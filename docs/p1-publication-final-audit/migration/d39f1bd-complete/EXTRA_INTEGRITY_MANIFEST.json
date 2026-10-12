@@ -1,0 +1,89 @@
+{
+  "sourceSha": "d39f1bd16baaea08f1241a3fb528a1953a343692",
+  "scope": "Additional read-only checks on the already migrated synthetic local D1",
+  "at": "2026-10-12T10:27:20.952Z",
+  "checks": [
+    {
+      "id": "M23-actual canonical schemaReady calls exact SQL against CLI-migrated operational-schema synthetic D1",
+      "status": "pass"
+    },
+    {
+      "id": "M24-underlying migrated synthetic SQLite integrity and foreign keys checked read-only because D1 authorizer rejects integrity_check",
+      "status": "pass"
+    },
+    {
+      "id": "M25-actual publication state SQL accepts all installed guards and current revision",
+      "status": "pass"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,sql FROM sqlite_schema WHERE sql IS NOT NULL AND tbl_name IN ('sites','taxa','raw_submissions','checklists','sightings','reviews','audit_log','backfill_runs','transaction_assertions') ORDER BY type,name",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "d8dd100fe4dea8b2e1c7b22740ad01d43b984b6af3c907dcf39ad6671ee779e0"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,\n (SELECT COUNT(*) FROM sqlite_schema WHERE type='trigger' AND name IN ('publication_state_permanent','publication_state_transition','publication_reports_insert','publication_reports_update','publication_reports_delete','publication_field_updates_insert','publication_field_updates_update','publication_field_updates_delete','field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_freeze_field_updates_insert','field_freeze_field_updates_update','field_freeze_field_updates_delete','field_freeze_field_update_events_insert','field_freeze_field_update_events_update','field_freeze_field_update_events_delete','field_freeze_field_update_confirmations_insert','field_freeze_field_update_confirmations_update','field_freeze_field_update_confirmations_delete')) AS guards\n FROM public_publication_state WHERE id=1",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "252aa0213fbbe823cfc34ceeb6d895aaba9c2f0ef343c993d7a987954dcbe1c4"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT write_frozen FROM public_publication_state WHERE id=1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "5ab920e08c77317b350d5355e6f3df3a0114c3921cb39cc063265c5f372be710"
+    }
+  ],
+  "publicationState": {
+    "epoch": "48b41ecf0b491f764d763d04aae0375d",
+    "revision": "3",
+    "revision_type": "integer",
+    "guards": 22
+  },
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0
+  }
+}

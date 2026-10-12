@@ -1,0 +1,1028 @@
+{
+  "at": "2026-10-12T10:31:38.666Z",
+  "sourceSha": "d39f1bd16baaea08f1241a3fb528a1953a343692",
+  "scope": "Local synthetic workerd D1 only; zero remote D1/deployment calls",
+  "runtime": {
+    "node": "v24.18.0",
+    "wrangler": "4.149.0"
+  },
+  "checks": [
+    {
+      "id": "M01-48 operating user DDL objects load unchanged with 68 synthetic reports and canonical counterparts",
+      "status": "pass"
+    },
+    {
+      "id": "M02-Wrangler local migrations apply execution-time mid-DDL CHECK failure exits 1",
+      "status": "pass"
+    },
+    {
+      "id": "M03-failed file rolls back every schema object, column, data row and migration ledger",
+      "status": "pass"
+    },
+    {
+      "id": "M04-no partial state table or row_revision after failed migration",
+      "status": "pass"
+    },
+    {
+      "id": "M05-pre-migration report maintenance activation blocks existing writer insert/update",
+      "status": "pass"
+    },
+    {
+      "id": "M06-valid exact source file installs as one Wrangler local migration",
+      "status": "pass"
+    },
+    {
+      "id": "M07-all report/canonical/child source values unchanged and field row_revision default 1 only",
+      "status": "pass"
+    },
+    {
+      "id": "M08-original user schema preserved apart from additive field column, exactly one ledger entry",
+      "status": "pass"
+    },
+    {
+      "id": "M09-initial epoch valid, revision0 and write_frozen1",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_updates-insert",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_updates-update",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_updates-delete",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_update_events-insert",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_update_events-update",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_update_events-delete",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_update_confirmations-insert",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_update_confirmations-update",
+      "status": "pass"
+    },
+    {
+      "id": "M10-freeze-field_update_confirmations-delete",
+      "status": "pass"
+    },
+    {
+      "id": "M11-all nine attempted field writes preserve every content row and publication counter",
+      "status": "pass"
+    },
+    {
+      "id": "M12-explicit thaw monotonic epoch-preserving revision and original maintenance restoration",
+      "status": "pass"
+    },
+    {
+      "id": "M13-losing row CAS aborts whole actual CLI batch before child event",
+      "status": "pass"
+    },
+    {
+      "id": "M14-losing CAS leaves original rows, authority, event, assertions and ledger untouched",
+      "status": "pass"
+    },
+    {
+      "id": "M15-winning owner deletion CAS, assertion and child deleted event succeeds atomically",
+      "status": "pass"
+    },
+    {
+      "id": "M16-terminal deleted row blocks late unconditional reappeared",
+      "status": "pass"
+    },
+    {
+      "id": "M17-terminal deleted parent blocks late event",
+      "status": "pass"
+    },
+    {
+      "id": "M18-terminal deleted parent blocks late confirmation",
+      "status": "pass"
+    },
+    {
+      "id": "M19-terminal rejected writes leave every data row unchanged",
+      "status": "pass"
+    },
+    {
+      "id": "M20-normal live field reappearance remains legal and increments row/permission",
+      "status": "pass"
+    },
+    {
+      "id": "M21-reapplying single-file migration is an idempotent no-op via existing ledger",
+      "status": "pass"
+    },
+    {
+      "id": "M22-final report/canonical source values preserved through all synthetic security probes",
+      "status": "pass"
+    }
+  ],
+  "commands": [
+    {
+      "id": "01-failure-seed",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--file",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\fixture.sql",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\failure"
+      ],
+      "startedAt": "2026-10-12T10:31:39.641Z",
+      "endedAt": "2026-10-12T10:31:41.368Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "d7a809e11b2bca12e8dc804409c4c1ed6f239b5f16b910ed7bcfd47e9fcc7f88",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "02-success-seed",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--file",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\fixture.sql",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:41.368Z",
+      "endedAt": "2026-10-12T10:31:43.142Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "6ccfc12b65d0b646adb8b9cbb41ae42123fdcbb806ec6351660346c8402efb55",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "03-failure-before",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\failure"
+      ],
+      "startedAt": "2026-10-12T10:31:43.145Z",
+      "endedAt": "2026-10-12T10:31:44.445Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "e8647be0b6a53b0941cd3cf8327d00a89f5343b9630debe33772e427c6ac1d06",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "04-failure-apply-fault",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "REPORTS_DB",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\failure"
+      ],
+      "startedAt": "2026-10-12T10:31:44.450Z",
+      "endedAt": "2026-10-12T10:31:46.438Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "ccb11c6eae50fa96c8ed66322369f078ebd970fb8cff3b4e5ff1cf25c73a653a",
+      "stderrSha256": "87bcb9d0f83e43cb139c8bd562e5cc0494c39c0841d1d3e2bc43e104ce9c36f0"
+    },
+    {
+      "id": "05-failure-after",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\failure\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\failure"
+      ],
+      "startedAt": "2026-10-12T10:31:46.443Z",
+      "endedAt": "2026-10-12T10:31:47.704Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "a7e185429b30d40cabceb5411d2e76fdcefe25686762cac1e936695fba2caa56",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "06-success-before",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:47.713Z",
+      "endedAt": "2026-10-12T10:31:48.993Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "81454fee64a1596c7727b14003f07156efd4bb45d28396d583fc825eb1f6bf0a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "07-success-maintenance",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE system_state SET mode='READ_ONLY_MAINTENANCE',generation=generation+1,reason='synthetic coordinated migration',updated_at='2026-10-12T10:31:39.616Z' WHERE id=1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:48.999Z",
+      "endedAt": "2026-10-12T10:31:50.250Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "fc456e0f54e14096015866a2238d62e3a3bfa6ea1bfbf1ead743a657b3e9a2c3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "08-success-report-update-frozen",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE reports SET status='pending' WHERE id='10000000-0000-4000-8000-000000000001';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:50.250Z",
+      "endedAt": "2026-10-12T10:31:51.474Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "09-success-report-insert-frozen",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO reports SELECT '10000000-0000-4000-8000-000000000099',status,species,lat,lon,public_lat,public_lon,observed_on,received_at,decided_at,bird_count,reporter,note,admin_note,site_id,ip_hash,'synthetic-new-dedupe',name_public,spot_key,approx_lat,approx_lon,pending_public FROM reports LIMIT 1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:51.475Z",
+      "endedAt": "2026-10-12T10:31:52.673Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "10-success-apply",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "REPORTS_DB",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:52.673Z",
+      "endedAt": "2026-10-12T10:31:54.592Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "eba997943eda41bdcffc587c584ede8998aa349354b2fc910dadb5af8c0be911",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "11-success-after",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:54.597Z",
+      "endedAt": "2026-10-12T10:31:55.890Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "9e25a482edcf56c5a0b421c418319137b1fe47e020c32b0509ac1e2c5e4573dd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "12-success-state-after",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT epoch,CAST(revision AS TEXT) revision,write_frozen FROM public_publication_state;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:55.896Z",
+      "endedAt": "2026-10-12T10:31:57.103Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "a895b5ab2d009af20738ff4f7f04d6272ede56853278d845847bed83d0d48b20",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "13-success-frozen-field_updates-insert",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO field_updates(id,species,bird_count,status,lat,lon,public_lat,public_lon,location_hidden,nickname,note,location_source,gps_accuracy,created_at,updated_at,last_confirmed_at,last_activity_at,user_hash,ip_hash,row_revision) SELECT 'synthetic-new-field_updates',species,bird_count,status,lat,lon,public_lat,public_lon,location_hidden,nickname,note,location_source,gps_accuracy,created_at,updated_at,last_confirmed_at,last_activity_at,'synthetic-new-owner',ip_hash,row_revision FROM field_updates WHERE id='synthetic-field-3' LIMIT 1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:57.104Z",
+      "endedAt": "2026-10-12T10:31:58.351Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "14-success-frozen-field_updates-update",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_updates SET status='reappeared' WHERE id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:58.352Z",
+      "endedAt": "2026-10-12T10:31:59.574Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "15-success-frozen-field_updates-delete",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "DELETE FROM field_updates WHERE id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:31:59.574Z",
+      "endedAt": "2026-10-12T10:32:00.835Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "16-success-frozen-field_update_events-insert",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) SELECT 'synthetic-new-field_update_events',field_update_id,status,nickname,created_at,'synthetic-new-owner',ip_hash FROM field_update_events WHERE field_update_id='synthetic-field-3' LIMIT 1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:00.836Z",
+      "endedAt": "2026-10-12T10:32:02.169Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "17-success-frozen-field_update_events-update",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_update_events SET status='reappeared' WHERE field_update_id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:02.169Z",
+      "endedAt": "2026-10-12T10:32:03.399Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "18-success-frozen-field_update_events-delete",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "DELETE FROM field_update_events WHERE field_update_id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:03.399Z",
+      "endedAt": "2026-10-12T10:32:04.620Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "19-success-frozen-field_update_confirmations-insert",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO field_update_confirmations(id,field_update_id,user_hash,ip_hash,created_at) SELECT 'synthetic-new-field_update_confirmations',field_update_id,'synthetic-new-owner',ip_hash,created_at FROM field_update_confirmations WHERE field_update_id='synthetic-field-3' LIMIT 1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:04.620Z",
+      "endedAt": "2026-10-12T10:32:05.834Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "20-success-frozen-field_update_confirmations-update",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_update_confirmations SET ip_hash='synthetic-new-ip' WHERE field_update_id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:05.834Z",
+      "endedAt": "2026-10-12T10:32:07.037Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "21-success-frozen-field_update_confirmations-delete",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "DELETE FROM field_update_confirmations WHERE field_update_id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:07.037Z",
+      "endedAt": "2026-10-12T10:32:08.281Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "05fbcc3abc375976fc2cae65079ac05984e31b22fc881f927c61afe218d3eeea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "22-success-after-barriers",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:08.285Z",
+      "endedAt": "2026-10-12T10:32:09.509Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "73f58f35b50041535334c02c8ab80c857b4260503a191b2bd02ff13dc04a39fc",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "23-success-thaw",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE public_publication_state SET write_frozen=0,revision=revision+1 WHERE id=1; UPDATE system_state SET mode='NORMAL',generation=generation+1,reason='synthetic verified activation',updated_at='2026-10-12T10:31:39.616Z' WHERE id=1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:09.514Z",
+      "endedAt": "2026-10-12T10:32:10.669Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "f0925dcb6e17535476b82e82d8beb3b62bf50d0d0a9f00d46a904c9362f8fef2",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "24-success-before-cas",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:10.673Z",
+      "endedAt": "2026-10-12T10:32:11.983Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "8f81c973cf3828833ed715f46e9b4a4369c25e34ef5fc6f36bcef40e32d764c4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "25-success-losing-cas",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_updates SET status='deleted',row_revision=row_revision+1 WHERE id='synthetic-field-3' AND row_revision=999; INSERT INTO transaction_assertions(assertion_id,ok) VALUES('synthetic-cas',CASE WHEN changes()=1 THEN 1 ELSE 0 END); DELETE FROM transaction_assertions WHERE assertion_id='synthetic-cas'; INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('synthetic-cas-event','synthetic-field-3','deleted','synthetic','2026-10-12T10:31:39.616Z','synthetic','synthetic');",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:11.987Z",
+      "endedAt": "2026-10-12T10:32:13.193Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "4279ff3012a9a7dcdbbd18f61d6fbcbd89a3d100c5d7f0aa62fe23b7f1d274f6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "26-success-after-losing-cas",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:13.198Z",
+      "endedAt": "2026-10-12T10:32:14.569Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "1659384bd63fb0939ff78ac562afab49403d9215b74b53daa123cd7f1c44d934",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "27-success-winning-delete",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_updates SET status='deleted',row_revision=row_revision+1 WHERE id='synthetic-field-3' AND row_revision=1 AND status<>'deleted'; INSERT INTO transaction_assertions(assertion_id,ok) VALUES('synthetic-delete',CASE WHEN changes()=1 THEN 1 ELSE 0 END); DELETE FROM transaction_assertions WHERE assertion_id='synthetic-delete'; INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('synthetic-delete-event','synthetic-field-3','deleted','synthetic','2026-10-12T10:31:39.616Z','synthetic','synthetic');",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:14.574Z",
+      "endedAt": "2026-10-12T10:32:15.757Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "dbf4f14ee64a8cb70cf39d5e1d9767e4e0fa84d8d9748d48057727e2c5ed47f1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "28-success-deleted",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:15.760Z",
+      "endedAt": "2026-10-12T10:32:16.968Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "033f6fb9da961e0faa915a994f5ac696fb58ac88e3633d96be0a39f6580ea9e8",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "29-success-late-reappeared",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_updates SET status='reappeared' WHERE id='synthetic-field-3';",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:16.972Z",
+      "endedAt": "2026-10-12T10:32:18.187Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "8a84d118dd2b7b5922e900668e1a1a0d4b0b8d7671a4545c9c53804d248dca5c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "30-success-late-event",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('synthetic-late-event','synthetic-field-3','reappeared','synthetic','2026-10-12T10:31:39.616Z','synthetic','synthetic');",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:18.187Z",
+      "endedAt": "2026-10-12T10:32:19.419Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "8a84d118dd2b7b5922e900668e1a1a0d4b0b8d7671a4545c9c53804d248dca5c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "31-success-late-confirm",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "INSERT INTO field_update_confirmations(id,field_update_id,created_at,user_hash,ip_hash) VALUES('synthetic-late-confirm','synthetic-field-3','2026-10-12T10:31:39.616Z','synthetic-other','synthetic');",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:19.420Z",
+      "endedAt": "2026-10-12T10:32:20.629Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "signal": null,
+      "stdoutSha256": "8a84d118dd2b7b5922e900668e1a1a0d4b0b8d7671a4545c9c53804d248dca5c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "32-success-after-late",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:20.633Z",
+      "endedAt": "2026-10-12T10:32:21.862Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "a8f5ac5b5bd72d307bdda58cbd7ba5a9cb37f9644f10d893bcdd270d42ed6b37",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "33-success-normal-reappeared",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "UPDATE field_updates SET status='reappeared',row_revision=row_revision+1 WHERE id='synthetic-field-1' AND row_revision=1 AND status<>'deleted'; INSERT INTO transaction_assertions(assertion_id,ok) VALUES('synthetic-normal',CASE WHEN changes()=1 THEN 1 ELSE 0 END); DELETE FROM transaction_assertions WHERE assertion_id='synthetic-normal'; INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('synthetic-normal-event','synthetic-field-1','reappeared','synthetic','2026-10-12T10:31:39.616Z','synthetic','synthetic');",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:21.867Z",
+      "endedAt": "2026-10-12T10:32:23.110Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "dbf4f14ee64a8cb70cf39d5e1d9767e4e0fa84d8d9748d48057727e2c5ed47f1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "34-success-reapply",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "REPORTS_DB",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:23.110Z",
+      "endedAt": "2026-10-12T10:32:24.709Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "fb9399bb811208664204cff9c6f88dec1bddc2480ed6eabbb90b45c9c671ba9b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "35-success-final",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name; SELECT * FROM audit_log ORDER BY rowid; SELECT * FROM backfill_runs ORDER BY rowid; SELECT * FROM captcha_redemptions ORDER BY rowid; SELECT * FROM checklists ORDER BY rowid; SELECT * FROM field_update_confirmations ORDER BY rowid; SELECT * FROM field_update_events ORDER BY rowid; SELECT * FROM field_updates ORDER BY rowid; SELECT * FROM raw_submissions ORDER BY rowid; SELECT * FROM reports ORDER BY rowid; SELECT * FROM reviews ORDER BY rowid; SELECT * FROM sightings ORDER BY rowid; SELECT * FROM sites ORDER BY rowid; SELECT * FROM system_state ORDER BY rowid; SELECT * FROM taxa ORDER BY rowid; SELECT * FROM transaction_assertions ORDER BY rowid; SELECT * FROM public_publication_state ORDER BY rowid; SELECT * FROM d1_migrations ORDER BY id;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\migration\\d39f1bd-complete-authority\\scratch-d39f1bd1\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\Documents\\GitHub\\birdmap\\.tmp\\p1mig-d39-complete-authority\\success"
+      ],
+      "startedAt": "2026-10-12T10:32:24.713Z",
+      "endedAt": "2026-10-12T10:32:25.941Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "signal": null,
+      "stdoutSha256": "9299fd3f51db35fcd76e32341a1cd821eb76ba3c35b2638b0107aa38b58693be",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "input": {
+    "preflightSchemaSha256": "b13a3203da6a2228f342c131d397c8b8eb8636f8a6d71deb7e1d30ffdcd5e486",
+    "selectedSchemaSha256": "55ea2d19434d4e1cd03286939c34f6949a5198892160b4de5b2edfaaecce72bb",
+    "schemaObjects": 48,
+    "excludedObjects": [
+      "_cf_KV",
+      "sqlite_sequence",
+      "d1_migrations"
+    ],
+    "migrationSha256": "7095e20d185a3ed67fc6a848102997917e2c89bc1f17f2a7612f878424f74632"
+  },
+  "outcome": {
+    "faultRollback": true,
+    "validMigrationAtomic": true,
+    "initialWriteFrozen": true,
+    "nineFieldBarriers": true,
+    "cas": true,
+    "terminal": true,
+    "original68ReportsAndCanonicalPreserved": true,
+    "operatingScope": "not executed; this is a local rehearsal only"
+  },
+  "summary": {
+    "pass": 30,
+    "fail": 0,
+    "skip": 0
+  }
+}

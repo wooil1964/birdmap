@@ -1,0 +1,1093 @@
+{
+  "at": "2026-10-12T10:30:48.801Z",
+  "mode": "authenticated GET only; source recorded as hashes and capability booleans, no user payload",
+  "workers": {
+    "birdmap-reports": {
+      "contentType": "multipart/form-data; boundary=8a1807c6a2473a0f9f8ed3b2622cce81698168f76deee6a44d50aec885dd",
+      "modules": [
+        {
+          "name": "public.js",
+          "file": "public.js",
+          "bytes": 71439,
+          "sha256": "045b544db305deb73a5e745550a613ee10078c918e001045a16549e522e936c4",
+          "capabilities": {
+            "publication": false,
+            "strict": false,
+            "fieldCAS": false,
+            "s1CountParser": false,
+            "cacheAPI": false,
+            "maintenance": true
+          }
+        }
+      ],
+      "deploymentsBefore": {
+        "deployments": [
+          {
+            "id": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-08T05:19:40.077235Z"
+          },
+          {
+            "id": "beb2b759-bf8b-4545-baf3-af1aa3d8badb",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-06T14:58:25.709195Z"
+          },
+          {
+            "id": "3da74402-7355-4fa4-9af9-15f431aae302",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "4bc470a4-7047-45a8-8e7c-10c9a9b055a3",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-06T08:20:06.403846Z"
+          },
+          {
+            "id": "f04d0a02-1b9b-4ee9-927d-c0e379f13134",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "ba4c0f25-82a1-4acb-85f4-cb3b692a615b",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-01T11:58:38.086971Z"
+          },
+          {
+            "id": "3f18e187-8425-47a1-bda7-a91765f8820a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "8936943d-e140-4347-ab3d-9e1f1416682e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-28T00:13:54.116879Z"
+          },
+          {
+            "id": "892b6c21-c47d-4637-a3e5-495239b35c14",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "f1ab44ea-8440-43bf-8a60-fc363a468a10",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:26:45.706623Z"
+          },
+          {
+            "id": "84f78037-01fb-4be5-bedf-0737298a922d",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "897e5325-bc14-4518-aa9c-796a3427ba80",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:20:50.466528Z"
+          },
+          {
+            "id": "e19b9be0-61d8-4cfe-8e38-77bed04fb730",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "a7a71f32-2dc0-4035-bf03-ea774087d247",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T23:40:46.422198Z"
+          },
+          {
+            "id": "cb2618ff-beb8-47ae-b306-404faf6b854a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "9cea851c-5b4d-4295-83b0-e900c0cddc0e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:34:45.725833Z"
+          },
+          {
+            "id": "d3e6c4ac-9bf4-4cd3-bfbb-f02cd6a6224a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "254cc69f-ec47-4f21-bbff-7488bca755cb",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:32:08.099126Z"
+          }
+        ]
+      },
+      "deploymentsAfter": {
+        "deployments": [
+          {
+            "id": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-08T05:19:40.077235Z"
+          },
+          {
+            "id": "beb2b759-bf8b-4545-baf3-af1aa3d8badb",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-06T14:58:25.709195Z"
+          },
+          {
+            "id": "3da74402-7355-4fa4-9af9-15f431aae302",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "4bc470a4-7047-45a8-8e7c-10c9a9b055a3",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-06T08:20:06.403846Z"
+          },
+          {
+            "id": "f04d0a02-1b9b-4ee9-927d-c0e379f13134",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "ba4c0f25-82a1-4acb-85f4-cb3b692a615b",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-01T11:58:38.086971Z"
+          },
+          {
+            "id": "3f18e187-8425-47a1-bda7-a91765f8820a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "8936943d-e140-4347-ab3d-9e1f1416682e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-28T00:13:54.116879Z"
+          },
+          {
+            "id": "892b6c21-c47d-4637-a3e5-495239b35c14",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "f1ab44ea-8440-43bf-8a60-fc363a468a10",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:26:45.706623Z"
+          },
+          {
+            "id": "84f78037-01fb-4be5-bedf-0737298a922d",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "897e5325-bc14-4518-aa9c-796a3427ba80",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:20:50.466528Z"
+          },
+          {
+            "id": "e19b9be0-61d8-4cfe-8e38-77bed04fb730",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "a7a71f32-2dc0-4035-bf03-ea774087d247",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T23:40:46.422198Z"
+          },
+          {
+            "id": "cb2618ff-beb8-47ae-b306-404faf6b854a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "9cea851c-5b4d-4295-83b0-e900c0cddc0e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:34:45.725833Z"
+          },
+          {
+            "id": "d3e6c4ac-9bf4-4cd3-bfbb-f02cd6a6224a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "254cc69f-ec47-4f21-bbff-7488bca755cb",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:32:08.099126Z"
+          }
+        ]
+      },
+      "activeStable": true
+    },
+    "birdmap-reports-admin": {
+      "contentType": "multipart/form-data; boundary=44fd455c56019a14aebd4d048dfa86986fb50494a7d5ed0a7e74d2847198",
+      "modules": [
+        {
+          "name": "admin.js",
+          "file": "admin.js",
+          "bytes": 125295,
+          "sha256": "0f580392471a7e5d286e45f92ee5c4b86c42533704a648a4de3f7717609cb10b",
+          "capabilities": {
+            "publication": false,
+            "strict": false,
+            "fieldCAS": false,
+            "s1CountParser": false,
+            "cacheAPI": false,
+            "maintenance": true
+          }
+        }
+      ],
+      "deploymentsBefore": {
+        "deployments": [
+          {
+            "id": "965135f2-b286-4487-9b32-1c1af08f9734",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-28T00:14:03.141111Z"
+          },
+          {
+            "id": "6c83c475-82d8-4064-bba3-cd54a8f0ccf6",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "f2d69899-7a73-403f-ac06-34aa3261d42a",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T14:52:47.395337Z"
+          },
+          {
+            "id": "bdefefb4-08cf-4220-a3cd-508a4711ceae",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "72031300-6927-421d-beff-7adb0de1849f",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T14:07:21.760026Z"
+          },
+          {
+            "id": "4f714460-8b65-4fb7-96e8-0dcb51f90805",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "1f38bb3b-9dfe-471b-8e87-98ea2b01cc6e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:27:09.973556Z"
+          },
+          {
+            "id": "bdcd2a80-26e6-4cd6-8b32-1039adf6e3c5",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "d800f33a-f2b7-4f4f-8825-1a9a0a7aaadf",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:34:49.509612Z"
+          },
+          {
+            "id": "7d820914-dd08-46af-96e6-b539b16281cd",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "1e069df3-b0f5-48c5-b734-0200a2f0ac1c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:32:09.440364Z"
+          },
+          {
+            "id": "7c2efe9c-e490-49f5-aacc-8af60d9f46bc",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "fd715c35-394f-4c61-9dec-9dd586868798",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:31:58.294025Z"
+          },
+          {
+            "id": "a15e233d-d1f4-4ed9-b311-ffacf2e917c4",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "1eebcf4e-e7e0-4b94-bdf2-65c44962c21a",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T09:44:46.715812Z"
+          },
+          {
+            "id": "eb5e0e3d-fcaa-4520-ba92-4ddecb18cd94",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "6c47b45d-14ce-46b7-96b9-103a36648383",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T07:52:04.384648Z"
+          },
+          {
+            "id": "6f7563f1-f888-4430-b3b1-aebbcd0aa8d8",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "6d416277-3ae3-4a41-a4b3-5d2cde37db2c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T07:29:48.749586Z"
+          }
+        ]
+      },
+      "deploymentsAfter": {
+        "deployments": [
+          {
+            "id": "965135f2-b286-4487-9b32-1c1af08f9734",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-28T00:14:03.141111Z"
+          },
+          {
+            "id": "6c83c475-82d8-4064-bba3-cd54a8f0ccf6",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "f2d69899-7a73-403f-ac06-34aa3261d42a",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T14:52:47.395337Z"
+          },
+          {
+            "id": "bdefefb4-08cf-4220-a3cd-508a4711ceae",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "72031300-6927-421d-beff-7adb0de1849f",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T14:07:21.760026Z"
+          },
+          {
+            "id": "4f714460-8b65-4fb7-96e8-0dcb51f90805",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "1f38bb3b-9dfe-471b-8e87-98ea2b01cc6e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:27:09.973556Z"
+          },
+          {
+            "id": "bdcd2a80-26e6-4cd6-8b32-1039adf6e3c5",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "d800f33a-f2b7-4f4f-8825-1a9a0a7aaadf",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:34:49.509612Z"
+          },
+          {
+            "id": "7d820914-dd08-46af-96e6-b539b16281cd",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "1e069df3-b0f5-48c5-b734-0200a2f0ac1c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:32:09.440364Z"
+          },
+          {
+            "id": "7c2efe9c-e490-49f5-aacc-8af60d9f46bc",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "fd715c35-394f-4c61-9dec-9dd586868798",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:31:58.294025Z"
+          },
+          {
+            "id": "a15e233d-d1f4-4ed9-b311-ffacf2e917c4",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "1eebcf4e-e7e0-4b94-bdf2-65c44962c21a",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T09:44:46.715812Z"
+          },
+          {
+            "id": "eb5e0e3d-fcaa-4520-ba92-4ddecb18cd94",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "6c47b45d-14ce-46b7-96b9-103a36648383",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T07:52:04.384648Z"
+          },
+          {
+            "id": "6f7563f1-f888-4430-b3b1-aebbcd0aa8d8",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "6d416277-3ae3-4a41-a4b3-5d2cde37db2c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T07:29:48.749586Z"
+          }
+        ]
+      },
+      "activeStable": true
+    }
+  },
+  "account": {
+    "settings": {
+      "default_usage_model": "standard",
+      "green_compute": false
+    },
+    "domains": []
+  },
+  "github": {
+    "pages": {
+      "url": "https://api.github.com/repos/wooil1964/birdmap/pages",
+      "status": "built",
+      "cname": null,
+      "custom_404": false,
+      "html_url": "https://wooil1964.github.io/birdmap/",
+      "build_type": "legacy",
+      "source": {
+        "branch": "main",
+        "path": "/"
+      },
+      "public": true,
+      "protected_domain_state": null,
+      "pending_domain_unverified_at": null,
+      "https_enforced": true
+    },
+    "pagesBuild": {
+      "url": "https://api.github.com/repos/wooil1964/birdmap/pages/builds/1278223172",
+      "status": "built",
+      "error": {
+        "message": null
+      },
+      "pusher": {
+        "login": "github-actions[bot]",
+        "id": 41898282,
+        "node_id": "MDM6Qm90NDE4OTgyODI=",
+        "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+        "html_url": "https://github.com/apps/github-actions",
+        "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "commit": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "duration": 37239,
+      "created_at": "2026-10-12T07:28:56Z",
+      "updated_at": "2026-10-12T07:29:33Z"
+    },
+    "deployments": [
+      {
+        "url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7008763401",
+        "id": 7008763401,
+        "node_id": "DE_kwDOSzkdBs8AAAABocE-CQ",
+        "task": "deploy",
+        "original_environment": "github-pages",
+        "environment": "github-pages",
+        "description": null,
+        "created_at": "2026-10-12T07:29:23Z",
+        "updated_at": "2026-10-12T07:29:39Z",
+        "statuses_url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7008763401/statuses",
+        "repository_url": "https://api.github.com/repos/wooil1964/birdmap",
+        "creator": {
+          "login": "github-pages[bot]",
+          "id": 52472962,
+          "node_id": "MDM6Qm90NTI0NzI5NjI=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-pages%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-pages",
+          "followers_url": "https://api.github.com/users/github-pages%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-pages%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-pages%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-pages%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-pages%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-pages%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-pages%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-pages%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-pages%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "sha": "58e1a222845680d5217677242ac1df5ff9bf665b",
+        "ref": "main",
+        "payload": {},
+        "transient_environment": false,
+        "production_environment": false,
+        "performed_via_github_app": null
+      },
+      {
+        "url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7007154331",
+        "id": 7007154331,
+        "node_id": "DE_kwDOSzkdBs8AAAABoaiwmw",
+        "task": "deploy",
+        "original_environment": "github-pages",
+        "environment": "github-pages",
+        "description": null,
+        "created_at": "2026-10-12T05:28:45Z",
+        "updated_at": "2026-10-12T05:28:59Z",
+        "statuses_url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7007154331/statuses",
+        "repository_url": "https://api.github.com/repos/wooil1964/birdmap",
+        "creator": {
+          "login": "wooil1964",
+          "id": 291529435,
+          "node_id": "U_kgDOEWBi2w",
+          "avatar_url": "https://avatars.githubusercontent.com/u/291529435?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/wooil1964",
+          "html_url": "https://github.com/wooil1964",
+          "followers_url": "https://api.github.com/users/wooil1964/followers",
+          "following_url": "https://api.github.com/users/wooil1964/following{/other_user}",
+          "gists_url": "https://api.github.com/users/wooil1964/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/wooil1964/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/wooil1964/subscriptions",
+          "organizations_url": "https://api.github.com/users/wooil1964/orgs",
+          "repos_url": "https://api.github.com/users/wooil1964/repos",
+          "events_url": "https://api.github.com/users/wooil1964/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/wooil1964/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "sha": "e7a36dd7271436db5ee1be665bd5fd8f78b83f31",
+        "ref": "main",
+        "payload": {},
+        "transient_environment": false,
+        "production_environment": false,
+        "performed_via_github_app": {
+          "id": 34598,
+          "client_id": "Iv1.c9ea63bbf6632820",
+          "slug": "github-pages",
+          "node_id": "MDM6QXBwMzQ1OTg=",
+          "owner": {
+            "login": "github",
+            "id": 9919,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/github",
+            "html_url": "https://github.com/github",
+            "followers_url": "https://api.github.com/users/github/followers",
+            "following_url": "https://api.github.com/users/github/following{/other_user}",
+            "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+            "organizations_url": "https://api.github.com/users/github/orgs",
+            "repos_url": "https://api.github.com/users/github/repos",
+            "events_url": "https://api.github.com/users/github/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/github/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "GitHub Pages",
+          "description": "GitHub Pages as a GitHub App",
+          "external_url": "https://pages.github.com",
+          "html_url": "https://github.com/apps/github-pages",
+          "created_at": "2019-07-02T22:54:46Z",
+          "updated_at": "2019-08-08T03:31:15Z",
+          "permissions": {
+            "checks": "write",
+            "contents": "read",
+            "deployments": "write",
+            "members": "read",
+            "metadata": "read",
+            "pages": "write",
+            "statuses": "write"
+          },
+          "events": []
+        }
+      },
+      {
+        "url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7007110132",
+        "id": 7007110132,
+        "node_id": "DE_kwDOSzkdBs8AAAABoagD9A",
+        "task": "deploy",
+        "original_environment": "github-pages",
+        "environment": "github-pages",
+        "description": null,
+        "created_at": "2026-10-12T05:24:58Z",
+        "updated_at": "2026-10-12T05:25:10Z",
+        "statuses_url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7007110132/statuses",
+        "repository_url": "https://api.github.com/repos/wooil1964/birdmap",
+        "creator": {
+          "login": "github-pages[bot]",
+          "id": 52472962,
+          "node_id": "MDM6Qm90NTI0NzI5NjI=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-pages%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-pages",
+          "followers_url": "https://api.github.com/users/github-pages%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-pages%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-pages%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-pages%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-pages%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-pages%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-pages%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-pages%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-pages%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "sha": "9b7dcc66d4b61a31db07b77fd663df87637e1070",
+        "ref": "main",
+        "payload": {},
+        "transient_environment": false,
+        "production_environment": false,
+        "performed_via_github_app": null
+      },
+      {
+        "url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7007013677",
+        "id": 7007013677,
+        "node_id": "DE_kwDOSzkdBs8AAAABoaaLLQ",
+        "task": "deploy",
+        "original_environment": "github-pages",
+        "environment": "github-pages",
+        "description": null,
+        "created_at": "2026-10-12T05:16:32Z",
+        "updated_at": "2026-10-12T05:16:46Z",
+        "statuses_url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7007013677/statuses",
+        "repository_url": "https://api.github.com/repos/wooil1964/birdmap",
+        "creator": {
+          "login": "wooil1964",
+          "id": 291529435,
+          "node_id": "U_kgDOEWBi2w",
+          "avatar_url": "https://avatars.githubusercontent.com/u/291529435?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/wooil1964",
+          "html_url": "https://github.com/wooil1964",
+          "followers_url": "https://api.github.com/users/wooil1964/followers",
+          "following_url": "https://api.github.com/users/wooil1964/following{/other_user}",
+          "gists_url": "https://api.github.com/users/wooil1964/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/wooil1964/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/wooil1964/subscriptions",
+          "organizations_url": "https://api.github.com/users/wooil1964/orgs",
+          "repos_url": "https://api.github.com/users/wooil1964/repos",
+          "events_url": "https://api.github.com/users/wooil1964/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/wooil1964/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "sha": "c5806fffe7af3e934fa0b0be6fb05c3a077bb1aa",
+        "ref": "main",
+        "payload": {},
+        "transient_environment": false,
+        "production_environment": false,
+        "performed_via_github_app": {
+          "id": 34598,
+          "client_id": "Iv1.c9ea63bbf6632820",
+          "slug": "github-pages",
+          "node_id": "MDM6QXBwMzQ1OTg=",
+          "owner": {
+            "login": "github",
+            "id": 9919,
+            "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+            "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/github",
+            "html_url": "https://github.com/github",
+            "followers_url": "https://api.github.com/users/github/followers",
+            "following_url": "https://api.github.com/users/github/following{/other_user}",
+            "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+            "organizations_url": "https://api.github.com/users/github/orgs",
+            "repos_url": "https://api.github.com/users/github/repos",
+            "events_url": "https://api.github.com/users/github/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/github/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "name": "GitHub Pages",
+          "description": "GitHub Pages as a GitHub App",
+          "external_url": "https://pages.github.com",
+          "html_url": "https://github.com/apps/github-pages",
+          "created_at": "2019-07-02T22:54:46Z",
+          "updated_at": "2019-08-08T03:31:15Z",
+          "permissions": {
+            "checks": "write",
+            "contents": "read",
+            "deployments": "write",
+            "members": "read",
+            "metadata": "read",
+            "pages": "write",
+            "statuses": "write"
+          },
+          "events": []
+        }
+      },
+      {
+        "url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7006924195",
+        "id": 7006924195,
+        "node_id": "DE_kwDOSzkdBs8AAAABoaUtow",
+        "task": "deploy",
+        "original_environment": "github-pages",
+        "environment": "github-pages",
+        "description": null,
+        "created_at": "2026-10-12T05:08:44Z",
+        "updated_at": "2026-10-12T05:09:01Z",
+        "statuses_url": "https://api.github.com/repos/wooil1964/birdmap/deployments/7006924195/statuses",
+        "repository_url": "https://api.github.com/repos/wooil1964/birdmap",
+        "creator": {
+          "login": "github-pages[bot]",
+          "id": 52472962,
+          "node_id": "MDM6Qm90NTI0NzI5NjI=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/github-pages%5Bbot%5D",
+          "html_url": "https://github.com/apps/github-pages",
+          "followers_url": "https://api.github.com/users/github-pages%5Bbot%5D/followers",
+          "following_url": "https://api.github.com/users/github-pages%5Bbot%5D/following{/other_user}",
+          "gists_url": "https://api.github.com/users/github-pages%5Bbot%5D/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/github-pages%5Bbot%5D/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/github-pages%5Bbot%5D/subscriptions",
+          "organizations_url": "https://api.github.com/users/github-pages%5Bbot%5D/orgs",
+          "repos_url": "https://api.github.com/users/github-pages%5Bbot%5D/repos",
+          "events_url": "https://api.github.com/users/github-pages%5Bbot%5D/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/github-pages%5Bbot%5D/received_events",
+          "type": "Bot",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "sha": "24b2aa3ccca0245c27124f50a28249c27a5ccbc9",
+        "ref": "main",
+        "payload": {},
+        "transient_environment": false,
+        "production_environment": false,
+        "performed_via_github_app": null
+      }
+    ]
+  },
+  "errors": [
+    {
+      "scope": "account/subscriptions",
+      "error": "API_READ_FAILED 403"
+    }
+  ],
+  "writes": 0,
+  "publicHeaders": [
+    {
+      "path": "/reports/approved",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60",
+        "cf-cache-status": null,
+        "age": null,
+        "etag": null,
+        "vary": "Origin",
+        "server": "cloudflare",
+        "cf-ray": "a4956f179ecc2ddd-HKG"
+      }
+    },
+    {
+      "path": "/reports/public-state?nonce=11111111111141118111111111111111",
+      "status": 404,
+      "headers": {
+        "cache-control": null,
+        "cf-cache-status": null,
+        "age": null,
+        "etag": null,
+        "vary": "Origin",
+        "server": "cloudflare",
+        "cf-ray": "a4956f19cf1d07a7-HKG"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "cf-cache-status": null,
+        "age": null,
+        "etag": null,
+        "vary": "Origin",
+        "server": "cloudflare",
+        "cf-ray": "a4956f1aa8b5166a-HKG"
+      }
+    }
+  ]
+}

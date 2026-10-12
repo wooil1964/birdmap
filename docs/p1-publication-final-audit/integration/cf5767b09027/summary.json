@@ -1,0 +1,660 @@
+{
+  "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+  "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+  "scratch": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+  "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+  "suites": [
+    {
+      "name": "front",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap",
+        ".github/scripts/test_briefing_kst_month.mjs",
+        ".github/scripts/test_data_autorefresh.mjs",
+        ".github/scripts/test_field_news.mjs",
+        ".github/scripts/test_location_popup_guard.mjs",
+        ".github/scripts/test_location_protection.mjs",
+        ".github/scripts/test_month_tide_button.mjs",
+        ".github/scripts/test_notice_close_hit.mjs",
+        ".github/scripts/test_notice_kst_date.mjs",
+        ".github/scripts/test_recent_contributors.mjs",
+        ".github/scripts/test_recommendation_card_display.mjs",
+        ".github/scripts/test_report_search.mjs",
+        ".github/scripts/test_site_history_cache.mjs",
+        ".github/scripts/test_tide_fallback.mjs",
+        ".github/scripts/test_today_weather_midnight.mjs",
+        ".github/scripts/test_weekly_recommendation.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:28:03.893Z",
+      "end": "2026-10-12T10:28:55.940Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 359,
+        "pass": 359,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "failures": []
+    },
+    {
+      "name": "reports",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a\\reports-api",
+      "start": "2026-10-12T10:28:55.942Z",
+      "end": "2026-10-12T10:28:57.300Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 221,
+        "pass": 221,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "failures": []
+    },
+    {
+      "name": "proxy",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap",
+        "weather-proxy/test/freshness.test.mjs",
+        "weather-proxy/test/partial.test.mjs",
+        "weather-proxy/test/worker.test.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:28:57.303Z",
+      "end": "2026-10-12T10:28:57.469Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 36,
+        "pass": 36,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "failures": []
+    },
+    {
+      "name": "weather",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/test_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:28:57.469Z",
+      "end": "2026-10-12T10:28:59.374Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 56,
+        "skipped": 0,
+        "fail": 0,
+        "pass": 56
+      },
+      "failures": []
+    },
+    {
+      "name": "tide",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/test_tide.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:28:59.375Z",
+      "end": "2026-10-12T10:29:00.014Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 22,
+        "skipped": 1,
+        "fail": 0,
+        "pass": 21
+      },
+      "failures": []
+    },
+    {
+      "name": "share_pages",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/test_share_pages.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:29:00.015Z",
+      "end": "2026-10-12T10:29:02.214Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 11,
+        "skipped": 0,
+        "fail": 0,
+        "pass": 11
+      },
+      "failures": []
+    },
+    {
+      "name": "validator-today-current-date",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:29:02.214Z",
+      "end": "2026-10-12T10:29:02.408Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {},
+      "failures": []
+    },
+    {
+      "name": "validator-week-current-date",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather_week.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:29:02.408Z",
+      "end": "2026-10-12T10:29:02.738Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {},
+      "failures": []
+    },
+    {
+      "name": "fixed-recommendations",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        ".github/scripts/compare_p1s_recommendation.mjs",
+        "b12e20c1b6d856a021898a0c1c9221b30393a221",
+        "cf5767b090275221a516e16112d0e569eedb86e7"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+      "start": "2026-10-12T10:29:02.739Z",
+      "end": "2026-10-12T10:29:06.953Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {},
+      "failures": []
+    },
+    {
+      "name": "score-contract",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "docs/p1-publication-security-implementation/scripts/integration_score_matrix.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\integration\\cf5767b09027\\score",
+        "C:/Users/김진호/.codex/worktrees/recommendation-masterplan/birdmap",
+        "cf5767b090275221a516e16112d0e569eedb86e7",
+        "58e1a222845680d5217677242ac1df5ff9bf665b"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap",
+      "start": "2026-10-12T10:29:06.957Z",
+      "end": "2026-10-12T10:29:08.909Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {},
+      "failures": []
+    },
+    {
+      "name": "protection-contract",
+      "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+      "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "tree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+      "sourceSha256": "f940030cb153825f5b9504c39f872eb6159e11360a71e2aa9d9e5ed8d57c5a69",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "docs/p1-publication-security-implementation/scripts/integration_protection.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-3147c1e53a0a",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\integration\\cf5767b09027\\protection",
+        "cf5767b090275221a516e16112d0e569eedb86e7"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap",
+      "start": "2026-10-12T10:29:08.910Z",
+      "end": "2026-10-12T10:29:10.228Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {},
+      "failures": []
+    }
+  ],
+  "automatic": {
+    "pass": 704,
+    "fail": 0,
+    "skip": 1
+  },
+  "score": {
+    "matrixPass": 182,
+    "matrixFail": 0,
+    "specialPass": 21,
+    "specialFail": 0,
+    "popupPass": 12,
+    "popupFail": 0
+  },
+  "protection": {
+    "exactAndQuantityCases": 95,
+    "legacyMixedCases": 76,
+    "protectedRepresentationCases": 171,
+    "repairedProtectedRepresentationCases": 152,
+    "ordinaryControls": 17,
+    "ordinaryFalsePositiveCount": 0,
+    "existingBreedingCases": 6,
+    "recentApiCases": 18,
+    "legacySubmitCases": 9,
+    "fieldSubmitCases": 10,
+    "fieldBreedingCases": 6,
+    "adminPlanCases": 3,
+    "adminAuthenticatedCases": 5,
+    "fieldOwnerDeleteCases": 4,
+    "allAssertionsPassed": true
+  },
+  "fixed": {
+    "clock": "2026-10-08T22:40:00+09:00",
+    "weekGeneratedAt": "2026-10-08 21:04 KST",
+    "withSightings": {
+      "siteCount": 190,
+      "candidates": 176,
+      "allCandidateSignature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+      "allCandidateSignatureEqual": true,
+      "topExact": true,
+      "top": [
+        {
+          "id": "108",
+          "name": "호곡리",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 103,
+          "bonus": 11,
+          "mandatory": true,
+          "reasons": "📢 지금 볼 만한 탐조 이슈",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "112",
+          "name": "알뜨르비행장",
+          "date": "2026-10-13",
+          "time": "09:00",
+          "score": 100,
+          "rank": 100,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "15",
+          "name": "천수만 사기리",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 94,
+          "bonus": 2,
+          "mandatory": true,
+          "reasons": "📢 지금 볼 만한 탐조 이슈",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "194",
+          "name": "천수만 강당리",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 94,
+          "bonus": 2,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "126",
+          "name": "해리천습지",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 94,
+          "bonus": 2,
+          "mandatory": true,
+          "reasons": "📢 지금 볼 만한 탐조 이슈",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "14",
+          "name": "걸매리",
+          "date": "2026-10-11",
+          "time": "18:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": true,
+          "reasons": "🌊 도요 이동기 물때 주목",
+          "tide": "만조 17:08 · 921cm",
+          "basis": "만조 인접 3시간 예보 기준(만조와 52분 차)"
+        },
+        {
+          "id": "107",
+          "name": "매향리",
+          "date": "2026-10-11",
+          "time": "18:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": true,
+          "reasons": "🌊 도요 이동기 물때 주목",
+          "tide": "만조 17:04 · 863cm",
+          "basis": "만조 인접 3시간 예보 기준(만조와 56분 차)"
+        },
+        {
+          "id": "48",
+          "name": "대진항",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "195",
+          "name": "평화의공원",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 108,
+          "bonus": 16,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "3",
+          "name": "굴업도",
+          "date": "2026-10-09",
+          "time": "18:00",
+          "score": 100,
+          "rank": 100,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        }
+      ],
+      "unsafe": []
+    },
+    "withoutSightings": {
+      "siteCount": 190,
+      "candidates": 176,
+      "allCandidateSignature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+      "allCandidateSignatureEqual": true,
+      "topExact": true,
+      "top": [
+        {
+          "id": "112",
+          "name": "알뜨르비행장",
+          "date": "2026-10-13",
+          "time": "09:00",
+          "score": 100,
+          "rank": 100,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "7",
+          "name": "교동도",
+          "date": "2026-10-09",
+          "time": "12:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "8",
+          "name": "석모도",
+          "date": "2026-10-09",
+          "time": "18:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "10",
+          "name": "강화도",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "126",
+          "name": "해리천습지",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": true,
+          "reasons": "📢 지금 볼 만한 탐조 이슈",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "14",
+          "name": "걸매리",
+          "date": "2026-10-11",
+          "time": "18:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": true,
+          "reasons": "🌊 도요 이동기 물때 주목",
+          "tide": "만조 17:08 · 921cm",
+          "basis": "만조 인접 3시간 예보 기준(만조와 52분 차)"
+        },
+        {
+          "id": "107",
+          "name": "매향리",
+          "date": "2026-10-11",
+          "time": "18:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": true,
+          "reasons": "🌊 도요 이동기 물때 주목",
+          "tide": "만조 17:04 · 863cm",
+          "basis": "만조 인접 3시간 예보 기준(만조와 56분 차)"
+        },
+        {
+          "id": "48",
+          "name": "대진항",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "score": 92,
+          "rank": 92,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "3",
+          "name": "굴업도",
+          "date": "2026-10-09",
+          "time": "18:00",
+          "score": 100,
+          "rank": 100,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        },
+        {
+          "id": "5",
+          "name": "대청도",
+          "date": "2026-10-09",
+          "time": "18:00",
+          "score": 100,
+          "rank": 100,
+          "bonus": 0,
+          "mandatory": false,
+          "reasons": "",
+          "tide": "",
+          "basis": "주간 3시간 예보 기준"
+        }
+      ],
+      "unsafe": []
+    }
+  },
+  "noninterference": {
+    "siteCount": 190,
+    "idUnique": 190,
+    "sameAllSiteData": true,
+    "siteDataSha256": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+    "coordinatesSha256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89",
+    "automaticJson": {
+      "weather_today.json": {
+        "sameGitBlob": true,
+        "sha256": "a06a1a955b51f9ac03e89356d122cee4370568010078d0c87b830c855fd23875"
+      },
+      "weather_week.json": {
+        "sameGitBlob": true,
+        "sha256": "f7aa50bcb2a5d896c78613f9423c2a8bb9d618718112173068642cd2ad9f9470"
+      },
+      "tide_today.json": {
+        "sameGitBlob": true,
+        "sha256": "e7d626446307c36f8d31b963842dd0d7bdab09853ce3f01caf9784414b7fb1b3"
+      },
+      "tide_week.json": {
+        "absentInBoth": true
+      },
+      "tide_month.json": {
+        "sameGitBlob": true,
+        "sha256": "713133c8d968755304d7ea39212c3acfe62ba0dcdb42f7d5b671329d62c53760"
+      },
+      "notices.json": {
+        "sameGitBlob": true,
+        "sha256": "c3d5ea3bedee5870ca799644e4c702cbc2a391f63a58a8fa491282d57999e19f"
+      }
+    },
+    "protectedSourceFiles": {
+      "weather-proxy/src/sites.js": {
+        "reference": "58e1a222845680d5217677242ac1df5ff9bf665b",
+        "sameContent": true,
+        "sha256": "07adfbeab561f7ca6876c5b96af5a43a828fe44e38c06a83b1b8597cf338dbc3"
+      },
+      "weather_rules.json": {
+        "reference": "58e1a222845680d5217677242ac1df5ff9bf665b",
+        "sameContent": true,
+        "sha256": "4494c696828c79be677e5aa4d06b81fac2a6bb84b84582ad9d93e57d899d8160"
+      },
+      ".github/scripts/update_weather.py": {
+        "reference": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+        "sameContent": true,
+        "sha256": "99ea84f316cdc4a201e8b96392583d57d48576a42a0eb5ea0681188ea21f237d"
+      },
+      ".github/scripts/validate_weather.py": {
+        "reference": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+        "sameContent": true,
+        "sha256": "148bb2480a2a59fe619bb74dc7ec55454b359f5e6d38a12843c008dc389e351b"
+      },
+      ".github/scripts/validate_weather_week.py": {
+        "reference": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+        "sameContent": true,
+        "sha256": "8b1938e6bf5da6059a6525e0444ef2be8fee3c7deb3564f21ca5b663f3c67d85"
+      }
+    }
+  },
+  "noOperatingRequests": true
+}

@@ -1,0 +1,16 @@
+evalmachine.<anonymous>:135
+      throw new WorkerError(
+            ^
+
+WorkerError: 종명으로 쓸 수 없는 값입니다: 갈매기/저어새1
+    at Object.normalizeSpecies (evalmachine.<anonymous>:135:13)
+    at state (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/operations/source_association_behavior.mjs:4:240)
+    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/operations/source_association_behavior.mjs:4:348
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  code: 'SPECIES_INVALID',
+  status: 400
+}
+
+Node.js v24.18.0
