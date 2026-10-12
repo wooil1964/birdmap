@@ -25,7 +25,11 @@ const migration = () => readFileSync(new URL('../migrations/0005_publication_sec
 function fixture({ migrate = true } = {}) {
   const sqlite = new DatabaseSync(':memory:');
   sqlite.exec(baseline + '\n' + canonical);
-  if (migrate) sqlite.exec(migration());
+  if (migrate) {
+    sqlite.exec(migration());
+    assert.equal(sqlite.prepare('SELECT write_frozen FROM public_publication_state WHERE id=1').get().write_frozen,1,'운영 migration은 닫힌 상태로 설치된다');
+    sqlite.exec('UPDATE public_publication_state SET write_frozen=0,revision=revision+1 WHERE id=1'); // 명시적 local activation 후 정상 기능을 시험한다.
+  }
   const calls = [];
   let beforeBatch = null;
   const db = {
@@ -336,3 +340,4 @@ test('field CAS: normal expire/reappear/reapprove are not permanent tombstones',
   insertReport(sqlite); sqlite.exec("UPDATE reports SET status='rejected'"); assert.equal((await current(env, '/reports/approved')).body.spots.length, 0);
   sqlite.exec("UPDATE reports SET status='approved'"); assert.equal((await current(env, '/reports/approved')).body.spots.length, 1);
 });
+

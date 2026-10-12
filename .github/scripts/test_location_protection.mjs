@@ -61,7 +61,7 @@ function env() {
   const body =
     'var publicationState={ready:true,until:NOW+5000,checkedMono:performance.now(),anchor:AUTHORITY},PUBLICATION_MAX_AGE=5000,publicationExpiryTimer=0,headUnavailable=false,headChecks=0,PUBLICATION_CONTRACT="publication-v1",PUBLICATION_PROJECTION="legacy-public-v1";'+
     // Unit boundary: a synthetic fresh head; use actual validator, renewal and route gate.
-    'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString()};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
+    'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString(),_publicationStartedMono:performance.now()};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
     'var fieldUpdates=[],fieldAvailable=false,fieldClockOffset=0,fieldTtlHours=3,fieldMarkers={},fieldLayer=null,fieldGuide=null;' +
     'var fieldRequestSeq=0,fieldAppliedSeq=0,fieldBarrierSeq=0,fieldTombstones={},fieldProtectedIds={},fieldStepName="menu";' +
     'function fieldNowMs(){return NOW;} function fieldMap(){return map;} function fieldToast(t){toast(t);} function reportsConfigured(){return true;}' +
@@ -383,3 +383,4 @@ test('소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되
     for (const n of needles) assert.ok(src.includes(n), name + ' 에 ' + n);
   }
 });
+

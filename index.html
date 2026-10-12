@@ -1225,7 +1225,7 @@ function renderRecentReports(){
    성공한 응답만 메모리에 두며 새로고침하면 다시 부른다. 실패는 저장하지 않아 탭을 다시 열면 재시도한다. */
 var CONTRIBUTORS_LIMIT_MOBILE=3;
 var CONTRIBUTORS_LIMIT_DESKTOP=5;
-var contributorsData=null;
+var contributorsData=null,contributorsPublication=null,contributorsRequest=0;
 var contributorsLoading=false;
 var recentTab='reports';
 
@@ -1264,11 +1264,18 @@ function contributorRowElement(row){
   item.appendChild(count);
   return item;
 }
+function contributorsCurrent(){return !!contributorsData&&publicationDataAllowed({publication:contributorsPublication});}
+function clearContributors(){
+ contributorsRequest++;contributorsData=null;contributorsPublication=null;contributorsLoading=false;contributorsPromise=null;
+ closeContributorsModal();
+ ['contributorsContent','contributorsMeta'].forEach(function(id){var node=document.getElementById(id);if(node)node.textContent='';});
+ renderContributors();
+}
 function renderContributors(){
   var box=document.getElementById('recentContributors');
   if(!box)return;
   box.innerHTML='';
-  if(!contributorsData){
+  if(!contributorsCurrent()){
     var note=document.createElement('div');
     note.className='recentReportEmpty';
     note.textContent=contributorsLoading?'불러오는 중입니다.':'기여자 정보를 불러오지 못했습니다.';
@@ -1303,24 +1310,24 @@ function renderContributors(){
 var contributorsPromise=null;
 /* 완료되면 성공 자료(실패면 null)로 이행하는 Promise 를 돌려준다. 이미 받았거나 받는 중이면 그걸 그대로 쓴다. */
 function loadContributors(){
-  if(contributorsData)return Promise.resolve(contributorsData);
+  if(contributorsCurrent())return publicationHead(true).then(function(head){if(publicationState.ready&&publicationRenew(head)&&contributorsCurrent())return contributorsData;return loadContributors();}).catch(function(){return null;});
   if(contributorsLoading)return contributorsPromise;
-  contributorsLoading=true;
+  var request=++contributorsRequest;contributorsLoading=true;
   renderContributors();
-  contributorsPromise=publicationFetch('/contributors/monthly').then(function(data){return {ok:true,json:function(){return Promise.resolve(data);}};}).then(function(response){
-    if(!response.ok)throw new Error('contributors '+response.status);
-    return response.json();
-  }).then(function(body){
+  contributorsPromise=publicationFetch('/contributors/monthly').then(function(body){
+    if(request!==contributorsRequest||!publicationDataAllowed(body))return;
     var payload=contributorsPayload(body);
     if(!payload)throw new Error('contributors invalid');
-    contributorsData=payload;
+    contributorsData=payload;contributorsPublication=body.publication;
   }).catch(function(error){
-    contributorsData=null;
+    if(request!==contributorsRequest)return;
+    contributorsData=null;contributorsPublication=null;
     console.warn('이번 달 기여자를 불러오지 못했습니다.',error);
   }).then(function(){
+    if(request!==contributorsRequest)return null;
     contributorsLoading=false;
     renderContributors();
-    return contributorsData;
+    return contributorsCurrent()?contributorsData:null;
   });
   return contributorsPromise;
 }
@@ -1337,7 +1344,7 @@ function selectRecentTab(tab){
   document.getElementById('recentReportsList').hidden=onContributors;
   document.getElementById('recentContributors').hidden=!onContributors;
   if(onContributors){
-    if(contributorsData)renderContributors();else loadContributors();
+    loadContributors();
   }
 }
 /* ?view=contributors 로 들어오면 최근 출현 제보 박스를 이번 달 기여자 탭으로 연다(카페 링크용).
@@ -1351,8 +1358,9 @@ function openViewFromUrl(){
   if(params.get("full")==="1")loadContributors().then(function(data){if(data)openContributorsModal();});
 }
 var contributorsReturnFocus=null;
-function openContributorsModal(){
-  if(!contributorsData)return;
+function openContributorsModal(verified){
+  if(verified!==true){publicationRouteCheck(function(){openContributorsModal(true);});return;}
+  if(!contributorsCurrent())return;
   var modal=document.getElementById('contributorsModal');
   var parts=contributorsMonthParts(contributorsData.month);
   document.getElementById('contributorsTitle').textContent=parts.year+'년 '+parts.month+'월 기여자';
@@ -2967,6 +2975,7 @@ function publicationInvalidate(reason){
  document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
  if(typeof fieldUpdates!=='undefined')fieldUpdates=[];
  if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
+ if(typeof clearContributors==='function')clearContributors();
  if(dynamicPopup&&map&&map.closePopup){map.closePopup(currentPopup);currentPopup._source=null;map._popup=null;}
  if(typeof fieldLayer!=='undefined'&&fieldLayer&&typeof renderFieldMarkers==='function')renderFieldMarkers();
  if(typeof refreshFixedSpotPopups==='function')refreshFixedSpotPopups();
@@ -3026,7 +3035,9 @@ function publicationFetch(path){
 }
 function publicationRefresh(){
  if(publicationRefreshPromise)return publicationRefreshPromise;
- var pending=Promise.allSettled([loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()]);
+ var tasks=[loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()];
+ if(typeof recentTab!=='undefined'&&recentTab==='contributors')tasks.push(loadContributors());
+ var pending=Promise.allSettled(tasks);
  publicationRefreshPromise=pending;pending.then(function(){if(publicationRefreshPromise===pending)publicationRefreshPromise=null;});return pending;
 }
 function publicationRecheck(){

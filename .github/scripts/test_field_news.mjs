@@ -102,15 +102,15 @@ test('외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들�
   function node(tag){return{tag,children:[],style:{},setAttribute(k,v){this[k]=v;},appendChild(child){child.parentNode=this;this.children.push(child);return child;},removeChild(child){this.children=this.children.filter(c=>c!==child);child.parentNode=null;}};}
   const document={body:node('body'),createElement:node};let opened=0;
   const names=['publicationAllowed','fieldPublicPoint','fieldNavDistanceText','spotKakaoRouteUrl','tmapNavigationUrl','openTmapNavigation','fieldLine','fieldNewsButton','fieldNavChoiceClose','fieldNavChooser','fieldNavExternal'];
-  const body='var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};function fieldEl(id){return document.body.children.find(n=>n.id===id)||null;}function fieldNavManualGuide(){}'+names.map(functionSource).join('\n')+';return{fieldNavExternal,fieldNavChoiceClose,unknown(){publicationState.ready=false;}};';
+  const body='var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};function fieldEl(id){return document.body.children.find(n=>n.id===id)||null;}function fieldNavManualGuide(){}'+names.map(functionSource).join('\n')+';return{fieldNavExternal,fieldNavChoiceClose,spotKakaoRouteUrl,tmapNavigationUrl,unknown(){publicationState.ready=false;}};';
   const api=new Function('document','window','navigator','alert',body)(document,{open(){opened++;throw new Error('Must not auto-open');}},{userAgent:'Android synthetic'},()=>{throw new Error('Unexpected desktop alert');});
   const visible=upd('normal','visible',1);api.fieldNavExternal(visible,40,10);
   assert.equal(opened,0);assert.equal(document.body.children.length,1);
   const box=document.body.children[0];assert.equal(box.id,'fieldNavChoice');assert.equal(box['data-field-id'],'normal');
   const anchors=box.children.flatMap(child=>child.children||[]).filter(child=>child.tag==='a');
   assert.deepEqual(anchors.map(a=>a.textContent),['카카오맵','티맵']);
-  assert.equal(anchors[0].href,'https://map.kakao.com/link/to/'+encodeURIComponent(visible.species)+',36.6,126.4');assert.equal(anchors[0].target,'_blank');assert.equal(anchors[0].rel,'noopener');
-  assert.equal(anchors[1].href,'tmap://route?goalname='+encodeURIComponent(visible.species)+'&goalx=126.4&goaly=36.6');
+  assert.equal(anchors[0].href,'#','선행 권한 재확인 전 DOM에 정확 URL을 보관하지 않는다');assert.equal(anchors[0]['data-publication-app'],'kakao');assert.equal(api.spotKakaoRouteUrl(visible,visible.species),'https://map.kakao.com/link/to/'+encodeURIComponent(visible.species)+',36.6,126.4');assert.equal(anchors[0].target,'_blank');assert.equal(anchors[0].rel,'noopener');
+  assert.equal(anchors[1].href,'#','티맵 실행 전에도 정확 URL을 보관하지 않는다');assert.equal(anchors[1]['data-publication-app'],'tmap');assert.equal(api.tmapNavigationUrl(visible,visible.species),'tmap://route?goalname='+encodeURIComponent(visible.species)+'&goalx=126.4&goaly=36.6');
   api.fieldNavChoiceClose();assert.equal(document.body.children.length,0);
   for(const point of [{...visible,locationHidden:true},{...visible,lat:NaN},{...visible,lon:181}]){api.fieldNavExternal(point,40,10);assert.equal(document.body.children.length,0);}
   api.unknown();api.fieldNavExternal(visible,40,10);assert.equal(document.body.children.length,0);assert.equal(opened,0);
@@ -129,3 +129,4 @@ test('내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고
   assert.equal(HTML.split('fieldMineAdd(').length - 1, 2, 'fieldMineAdd 는 정의 1곳 + 등록 성공 1곳');
   assert.ok(create.includes('loadFieldUpdates()'),'좌표없는 receipt 뒤 최신 공개 목록을 다시 확인한다');
 });
+
