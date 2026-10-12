@@ -26,9 +26,10 @@ function functionSource(name) {
 const line = (re) => HTML.match(re)[0];
 
 const NOW = Date.parse('2026-10-08T10:00:00+09:00');
+const AUTHORITY={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
 const iso = (minAgo) => new Date(NOW - minAgo * 60000).toISOString();
 const upd = (id, extra = {}) => Object.assign({ id, species: 's' + id, status: 'visible', lat: 36.6, lon: 126.4, updatedAt: iso(5),
-  firstSeenAt: iso(5), lastConfirmedAt: null, history: [] }, extra);
+  firstSeenAt: iso(5), lastConfirmedAt: null, history: [],rowRevision:'1',expiresAt:new Date(NOW+3*3600000).toISOString() }, extra);
 
 /* 제어 가능한 가짜 환경. fetch/GPS 응답은 테스트가 원하는 순서로 풀어 준다. */
 function env() {
@@ -38,7 +39,7 @@ function env() {
     'fieldMarkerClass', 'fieldMarkerSignature', 'renderFieldMarkers', 'fieldGuideTarget', 'fieldGuideUpdate', 'fieldGuideFit', 'fieldGuideOnPosition',
     'fieldGuideWatchStop', 'fieldGuideOnError', 'fieldGuideWatch', 'fieldGuideStart', 'fieldGuideStop', 'fieldBearing', 'fieldDistanceText',
     'fieldPublicPoint', 'fieldNavMode', 'fieldNavDistanceText', 'fieldNewsNavigate', 'fieldNavManualGuide', 'fieldNavGuide', 'fieldNavChoiceClose',
-    'fieldNavChoiceGuard', 'fieldReplace', 'fieldRemoveLocal', 'fieldNewsList', 'haversineKm', 'fieldAgeText'];
+    'fieldNavChoiceGuard', 'fieldReplace', 'fieldRemoveLocal', 'fieldNewsList', 'haversineKm', 'fieldAgeText', 'publicationAllowed','publicationSame','publicationDataAllowed','publicationRevision','publicationValidate','publicationRenew','publicationRouteCheck'];
   const consts = [line(/var FIELD_TTL_HOURS_DEFAULT=3;/), line(/var FIELD_OLD_MIN=60;/), line(/var FIELD_AGING_MIN=30;/),
     line(/var FIELD_STATUS_LABEL=\{[^\n]+/), line(/var FIELD_GUIDE_MIN_ZOOM=11;/), line(/var FIELD_COMPASS=\[[^\n]+/), line(/var FIELD_NEWS_PC_MAX=[^\n]+/)].join('\n');
   const fakeLatLng = (lat, lng) => ({ lat, lng, distanceTo: () => 1234 });
@@ -50,12 +51,17 @@ function env() {
       watchPosition: (ok, err) => { const id = ++watchSeq; watches.set(id, { ok, err }); return id; },
       clearWatch: (id) => { watches.delete(id); },
       getCurrentPosition: (ok, err) => { geoPending.push({ ok, err }); } } },
-    matchMedia: () => ({ matches: false }), innerWidth: 400, NOW,
+    matchMedia: () => ({ matches: false }), innerWidth: 400, NOW, AUTHORITY,
+    Date:class extends Date{static now(){return NOW;}},
+    setTimeout:()=>1,clearTimeout:()=>{},
     fieldApi: (path, method) => new Promise((resolve) => { calls.push({ path, method, resolve }); }),
     toast: (text) => { toasts.push(text); },
     chooser: [],
   };
   const body =
+    'var publicationState={ready:true,until:NOW+5000,checkedMono:performance.now(),anchor:AUTHORITY},PUBLICATION_MAX_AGE=5000,publicationExpiryTimer=0,headUnavailable=false,headChecks=0,PUBLICATION_CONTRACT="publication-v1",PUBLICATION_PROJECTION="legacy-public-v1";'+
+    // Unit boundary: a synthetic fresh head; use actual validator, renewal and route gate.
+    'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString()};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
     'var fieldUpdates=[],fieldAvailable=false,fieldClockOffset=0,fieldTtlHours=3,fieldMarkers={},fieldLayer=null,fieldGuide=null;' +
     'var fieldRequestSeq=0,fieldAppliedSeq=0,fieldBarrierSeq=0,fieldTombstones={},fieldProtectedIds={},fieldStepName="menu";' +
     'function fieldNowMs(){return NOW;} function fieldMap(){return map;} function fieldToast(t){toast(t);} function reportsConfigured(){return true;}' +
@@ -69,8 +75,9 @@ function env() {
   function constsAndFns() { return consts + '\n' + names.map(functionSource).join('\n'); }
   const api = new Function(...Object.keys(sandbox), body +
     '\nreturn {loadFieldUpdates,fieldReplace,fieldRemoveLocal,fieldGuideStart,fieldGuideOnPosition,fieldNewsNavigate,fieldNavManualGuide,fieldNavChoiceGuard,setNavBox,' +
-    'get fieldUpdates(){return fieldUpdates;},get fieldGuide(){return fieldGuide;},get fieldMarkers(){return fieldMarkers;},fieldPublicPoint};')(...Object.values(sandbox));
-  const respond = (callIndex, updates, ok = true) => calls[callIndex].resolve({ ok, status: ok ? 200 : 500, body: { ok, updates, serverTime: new Date(NOW).toISOString() } });
+    'get fieldUpdates(){return fieldUpdates;},get fieldGuide(){return fieldGuide;},get fieldMarkers(){return fieldMarkers;},fieldPublicPoint,'+
+    'acceptAuthority(revision){if(BigInt(revision)>=BigInt(publicationState.anchor.revision))publicationState.anchor={...AUTHORITY,revision};},blockHead(){headUnavailable=true;},get headChecks(){return headChecks;},expireAuthority(){publicationState.until=0;headUnavailable=true;},unknownAuthority(){publicationState.ready=false;headUnavailable=true;}};')(...Object.values(sandbox));
+  const respond = (callIndex, updates, ok = true, revision=String(callIndex+1)) => {api.acceptAuthority(revision);calls[callIndex].resolve({ ok, status: ok ? 200 : 500, body: { ok, updates,publication:{...AUTHORITY,revision},publicationCheckedAt:new Date(NOW).toISOString(),serverTime: new Date(NOW).toISOString() } });};
   const settle = () => new Promise((r) => setImmediate(r));
   const touchGuide = async (id) => { api.fieldGuideStart(id); };
   return { api, calls, toasts, geoPending, watches, respond, settle, touchGuide, chooser: sandbox.chooser };
@@ -116,7 +123,7 @@ test('위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
   assert.equal(e.api.fieldUpdates[0].locationHidden, true);
   assert.equal(e.api.fieldUpdates[0].lat, 36.5, '가려진 좌표 유지');
   // 세대와 무관하게 이후 요청이 정확 좌표로 돌아와도(서버 캐시 등) 보호 기록이 막는다.
-  const later = e.api.loadFieldUpdates(); e.respond(3, [upd('a')]); await later;
+  const later = e.api.loadFieldUpdates(); e.respond(3, [upd('a')],true,'1'); await later;
   assert.equal(e.api.fieldUpdates[0].locationHidden, true);
   assert.equal(e.api.fieldUpdates[0].lat, 36.5);
 });
@@ -146,8 +153,10 @@ test('길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단', async (
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
   e.api.fieldGuideStart('a');
+  await e.settle();
   assert.ok(e.api.fieldGuide && e.watches.size === 1, '안내 시작 + watch');
   e.watches.get(1).ok({ coords: { latitude: 36.0, longitude: 126.0 } });
+  await e.settle();
   const fresh = e.api.loadFieldUpdates(); e.respond(1, [HIDDEN('a')]); await fresh;
   assert.equal(e.api.fieldGuide, null, '안내 종료');
   assert.equal(e.watches.size, 0, 'watchPosition 해제');
@@ -158,10 +167,12 @@ test('이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 �
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
   e.api.fieldGuideStart('a');
+  await e.settle();
   const lateWatchCb = e.watches.get(1).ok;                       // 이미 큐에 있던 콜백
   const fresh = e.api.loadFieldUpdates(); e.respond(1, [HIDDEN('a')]); await fresh;
   assert.equal(e.api.fieldGuide, null);
   lateWatchCb({ coords: { latitude: 36.0, longitude: 126.0 } }); // 해제 뒤 늦게 실행
+  await e.settle();
   assert.equal(e.api.fieldGuide, null, '재개 0건');
   assert.equal(e.watches.size, 0);
 });
@@ -170,9 +181,11 @@ test('보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
   e.api.fieldGuideStart('a');
+  await e.settle();
   const cb = e.watches.get(1).ok;
   e.api.fieldUpdates[0].locationHidden = true;                   // renderFieldMarkers 를 거치지 않고 상태만 먼저 바뀐 경우
   cb({ coords: { latitude: 36.0, longitude: 126.0 } });
+  await e.settle();
   assert.equal(e.api.fieldGuide, null);
   assert.equal(e.watches.size, 0);
 });
@@ -181,11 +194,14 @@ test('보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포�
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [HIDDEN('h'), upd('ok')]); await p0;
   e.api.fieldGuideStart('h');
+  await e.settle();
   assert.equal(e.api.fieldGuide, null);
   assert.equal(e.watches.size, 0);
   e.api.fieldGuideStart('ok');
+  await e.settle();
   assert.ok(e.api.fieldGuide);
   e.api.fieldGuideStart('h');                                    // 다른 소식으로 바꾸는 경로도 막는다
+  await e.settle();
   assert.equal(e.api.fieldGuide.id, 'ok');
 });
 
@@ -194,9 +210,11 @@ test('지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 �
     const e = env();
     const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
     e.api.fieldNewsNavigate('a');                                 // GPS 응답 대기
+    await e.settle();
     assert.equal(e.geoPending.length, 1);
     if (mutate === 'hide') { const f = e.api.loadFieldUpdates(); e.respond(1, [HIDDEN('a')]); await f; } else e.api.fieldRemoveLocal('a');
     e.geoPending[0].ok({ coords: { latitude: 36.0, longitude: 126.0, accuracy: 10 } });
+    await e.settle();
     assert.equal(e.api.fieldGuide, null, mutate);
     assert.deepEqual(e.chooser, [], mutate + ': 외부 길찾기/선택창 0건');
     assert.ok(e.toasts.some((t) => /시작하지 않았어요/.test(t)));
@@ -207,8 +225,10 @@ test('GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)�
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
   e.api.fieldNewsNavigate('a');
+  await e.settle();
   const f = e.api.loadFieldUpdates(); e.respond(1, [HIDDEN('a')]); await f;
   e.geoPending[0].err({ code: 2 });
+  await e.settle();
   assert.deepEqual(e.chooser, []);
 });
 
@@ -216,8 +236,10 @@ test('수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호�
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
   e.api.fieldNavManualGuide('a');
+  await e.settle();
   const f = e.api.loadFieldUpdates(); e.respond(1, [HIDDEN('a')]); await f;
   e.geoPending[0].ok({ coords: { latitude: 36.0, longitude: 126.0 } });
+  await e.settle();
   assert.equal(e.api.fieldGuide, null);
   assert.equal(e.watches.size, 0);
 });
@@ -226,13 +248,17 @@ test('정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회�
   const e = env();
   const p0 = e.api.loadFieldUpdates(); e.respond(0, [upd('a')]); await p0;
   e.api.fieldNewsNavigate('a');
+  await e.settle();
   e.geoPending[0].ok({ coords: { latitude: 36.6, longitude: 126.5, accuracy: 10 } });   // 가까운 거리 → 방향 유도
+  await e.settle();
   assert.ok(e.api.fieldGuide && e.api.fieldGuide.id === 'a');
   assert.equal(e.watches.size, 1);
   const e2 = env();
   const q0 = e2.api.loadFieldUpdates(); e2.respond(0, [upd('far')]); await q0;
   e2.api.fieldNewsNavigate('far');
+  await e2.settle();
   e2.geoPending[0].ok({ coords: { latitude: 33.0, longitude: 126.5, accuracy: 10 } });  // 멀리 → 외부 길찾기
+  await e2.settle();
   assert.deepEqual(e2.chooser, [{ id: 'far', external: true }]);
 });
 
@@ -250,16 +276,17 @@ test('열려 있던 길안내 선택창은 소식이 보호되면 닫힌다', as
 function reportEnv() {
   const calls = []; const rendered = []; let searchIndexBuilds = 0;
   const names = ['reportRequestStart', 'reportResponseCurrent', 'loadApprovedReports', 'loadPendingReports', 'loadRecentSiteSightings',
-    'clearSiteHistoryCache', 'cachedSiteHistory', 'fetchSiteHistory'];
+    'clearSiteHistoryCache', 'cachedSiteHistory', 'fetchSiteHistory','publicationAllowed','publicationSame','publicationDataAllowed'];
   const decl = line(/var reportRequestSeq=[^\n]+/) + '\n' + line(/var SITE_HISTORY_TTL=[^\n]+/) + '\n' + line(/var SITE_HISTORY_TIMEOUT=[^\n]+/) + '\nvar siteHistoryCache={};var siteHistoryGen=0;var SITE_HISTORY_PAGE=10;';
-  const body = decl + 'var reportFixedHistory={},recentReportsFailed=false,recentSiteSightings={};' +
+  const body = decl + 'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};var reportFixedHistory={},recentReportsFailed=false,recentSiteSightings={};' +
+    'function publicationFetch(path){return fetch(REPORTS_API_URL+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("transport");return r.json();});}'+
     'function reportsConfigured(){return true;} function buildReportSearchIndex(){searchIndexBuilds++;} function renderRecentReports(){} function refreshFixedSpotPopups(){}' +
     'function renderApprovedReports(s){rendered.push("approved:"+s.map(function(x){return x.id;}).join(","));} function renderPendingReports(s){rendered.push("pending:"+s.map(function(x){return x.id;}).join(","));}' +
     'function refreshTodayPanelIfOpen(){} var REPORTS_API_URL="https://x.invalid";' +
     names.map(functionSource).join('\n') + '\nreturn {loadApprovedReports,loadPendingReports,loadRecentSiteSightings,clearSiteHistoryCache,fetchSiteHistory,get gen(){return siteHistoryGen;}};';
   const fetch = (url) => new Promise((resolve) => { calls.push({ url, resolve }); });
-  const api = new Function('fetch', 'rendered', 'searchIndexBuilds', 'AbortController', body)(fetch, rendered, 0, undefined);
-  const ok = (data) => ({ ok: true, json: () => Promise.resolve(data) });
+  const api = new Function('fetch', 'rendered', 'searchIndexBuilds', 'AbortController','AUTHORITY', body)(fetch, rendered, 0, undefined,AUTHORITY);
+  const ok = (data) => ({ ok: true, json: () => Promise.resolve({...data,publication:AUTHORITY}) });
   return { api, calls, rendered, ok, settle: () => new Promise((r) => setImmediate(r)) };
 }
 
@@ -270,6 +297,38 @@ test('승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를
   r.calls[1].resolve(r.ok({ ok: true, spots: [{ id: 'keep', lat: 1, lon: 1 }] })); await fresh;
   r.calls[0].resolve(r.ok({ ok: true, spots: [{ id: 'keep', lat: 1, lon: 1 }, { id: 'withdrawn', lat: 1, lon: 1 }] })); await stale;
   assert.deepEqual(r.rendered, ['approved:keep'], '옛 응답은 렌더되지 않음');
+});
+
+test('권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)',async()=>{
+ for(const method of ['expireAuthority','unknownAuthority']){const e=env();const p=e.api.loadFieldUpdates();e.respond(0,[upd('a')]);await p;e.api[method]();assert.equal(e.api.fieldPublicPoint(e.api.fieldUpdates[0]),null);e.api.fieldNewsNavigate('a');await e.settle();assert.equal(e.geoPending.length,0);assert.deepEqual(e.chooser,[]);}
+});
+
+test('가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)',async()=>{
+ const e=env();const p=e.api.loadFieldUpdates();e.respond(0,[HIDDEN('a')]);await p;assert.equal(e.api.fieldPublicPoint(e.api.fieldUpdates[0]),null);
+ const q=e.api.loadFieldUpdates();e.respond(1,[upd('a')],true,'2');await q;assert.deepEqual(e.api.fieldPublicPoint(e.api.fieldUpdates[0]),{lat:36.6,lon:126.4});
+});
+
+test('캐시 권한이 아직 유효해도 새 head 확인 실패면 직접 방향안내를 시작하지 않는다',async()=>{
+ const e=env();const p=e.api.loadFieldUpdates();e.respond(0,[upd('a')]);await p;
+ assert.ok(e.api.fieldPublicPoint(e.api.fieldUpdates[0]));e.api.blockHead();e.api.fieldGuideStart('a');await e.settle();
+ assert.equal(e.api.headChecks,1);assert.equal(e.api.fieldGuide,null);assert.equal(e.watches.size,0);
+});
+
+test('GPS 응답 뒤 head를 다시 확인하고 실패면 성공·오류·수동 콜백이 안내를 열지 않는다',async()=>{
+ for(const mode of ['success','error','manual']){
+  const e=env();const p=e.api.loadFieldUpdates();e.respond(0,[upd('a')]);await p;
+  if(mode==='manual')e.api.fieldNavManualGuide('a');else e.api.fieldNewsNavigate('a');await e.settle();
+  assert.equal(e.geoPending.length,1);assert.equal(e.api.headChecks,1);e.api.blockHead();
+  if(mode==='error')e.geoPending[0].err({code:2});else e.geoPending[0].ok({coords:{latitude:33,longitude:126.5,accuracy:10}});
+  await e.settle();assert.equal(e.api.headChecks,2,mode);assert.equal(e.api.fieldGuide,null,mode);assert.equal(e.watches.size,0,mode);assert.deepEqual(e.chooser,[],mode);
+ }
+});
+
+test('연속 GPS watch의 정상 위치·오류 반영은 각각 새 권한 head 뒤에만 실행한다',async()=>{
+ const e=env();const p=e.api.loadFieldUpdates();e.respond(0,[upd('a')]);await p;e.api.fieldGuideStart('a');await e.settle();assert.equal(e.api.headChecks,1);
+ const watch=e.watches.get(1);assert.ok(watch);watch.ok({coords:{latitude:36,longitude:126}});assert.equal(e.api.fieldGuide.me,null,'fresh head 전에 위치 선을 갱신하지 않는다');
+ await e.settle();assert.equal(e.api.headChecks,2);assert.ok(e.api.fieldGuide.me);
+ watch.err({code:1});await e.settle();assert.equal(e.api.headChecks,3);assert.equal(e.api.fieldGuide.me,null);assert.equal(e.watches.size,0);
 });
 
 test('승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)', async () => {

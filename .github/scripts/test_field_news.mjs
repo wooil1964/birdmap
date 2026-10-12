@@ -27,12 +27,12 @@ function functionSource(name) {
 const NOW = Date.parse('2026-10-08T10:00:00+09:00');
 function load(updates) {
   const names = ['fieldNewsList', 'fieldPublicPoint', 'fieldNavMode', 'fieldNavDistanceText', 'spotKakaoRouteUrl', 'spotKakaoRouteHtml',
-    'fieldActivityMs', 'fieldAgeMin', 'fieldIsActive', 'haversineKm'];
+    'fieldActivityMs', 'fieldAgeMin', 'fieldIsActive', 'haversineKm', 'publicationAllowed','escapeHtml','tmapNavigationUrl','tmapNavigationLink','spotTmapRouteHtml','spotRouteButtonsHtml'];
   const consts = HTML.match(/var FIELD_NEWS_PC_MAX=[^\n]+/)[0];
   return new Function('updates', 'NOW',
-    "var FIELD_TTL_HOURS_DEFAULT=3,fieldTtlHours=3,fieldClockOffset=0,fieldUpdates=updates;function fieldNowMs(){return NOW;}" +
+    "var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_TTL_HOURS_DEFAULT=3,fieldTtlHours=3,fieldClockOffset=0,fieldUpdates=updates;function fieldNowMs(){return NOW;}" +
     consts + '\n' + names.map(functionSource).join('\n') +
-    '\nreturn {' + names.join(',') + '};')(updates, NOW);
+    '\nreturn {' + names.join(',') + ',expireAuthority(){publicationState.until=0;},expireMonotonic(){publicationState.until=Date.now()+5000;publicationState.checkedMono=performance.now()-5001;},unknownAuthority(){publicationState.ready=false;}};')(updates, NOW);
 }
 const upd = (id, status, minAgo, extra = {}) => Object.assign({ id, species: 's' + id, status, lat: 36.6, lon: 126.4,
   updatedAt: new Date(NOW - minAgo * 60000).toISOString(), lastConfirmedAt: null }, extra);
@@ -67,6 +67,10 @@ test('위치 보호·비정상 좌표는 길안내 좌표가 없다', () => {
   assert.deepEqual(api.fieldPublicPoint(upd('ok', 'visible', 1)), { lat: 36.6, lon: 126.4 });
 });
 
+test('현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다',()=>{
+  for(const mode of ['expireAuthority','expireMonotonic','unknownAuthority']){const api=load([]);api[mode]();assert.equal(api.fieldPublicPoint(upd('ok','visible',1)),null);}
+});
+
 test('거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다', () => {
   const api = load([]);
   assert.equal(api.fieldNavDistanceText(29.94, 20), '직선 약 30 km');
@@ -74,13 +78,18 @@ test('거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함
   assert.match(api.fieldNavDistanceText(30.5, 1500), /위치 오차 ±1500 m/);
 });
 
-test('카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다', () => {
+test('카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다', () => {
   const api = load([]);
   assert.equal(api.spotKakaoRouteUrl({ lat: 36.6, lon: 126.4 }), 'https://map.kakao.com/link/to/' + encodeURIComponent('출현 지점') + ',36.6,126.4');
   assert.equal(api.spotKakaoRouteHtml({ lat: 36.6, lon: 126.4 }),
-    '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/' + encodeURIComponent('출현 지점') + ',36.6,126.4">🚗 카카오맵 찾아가기</a>');
+    '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/' + encodeURIComponent('출현 지점') + ',36.6,126.4">🚗 카카오맵</a>');
   assert.equal(api.spotKakaoRouteHtml({ lat: 'x', lon: 1 }), '');
   assert.equal(api.spotKakaoRouteUrl({ lat: 100, lon: 1 }), '');
+  const tmap='tmap://route?goalname='+encodeURIComponent('출현 지점')+'&goalx=126.4&goaly=36.6';
+  assert.equal(api.tmapNavigationUrl({lat:36.6,lon:126.4},'출현 지점'),tmap);
+  const buttons=api.spotRouteButtonsHtml({lat:36.6,lon:126.4});
+  assert.equal((buttons.match(/<a /g)||[]).length,2);assert.match(buttons,/class="spotRouteButtons"/);assert.match(buttons,/class="spotKakaoRoute"/);assert.match(buttons,/class="spotTmapRoute"/);
+  assert.ok(buttons.includes(api.escapeHtml(tmap)));assert.equal(api.spotRouteButtonsHtml({lat:100,lon:1}),'');
 });
 
 test('위치정보를 저장·전송하는 코드가 새 길안내에 없다', () => {
@@ -89,13 +98,22 @@ test('위치정보를 저장·전송하는 코드가 새 길안내에 없다', (
   for (const banned of ['localStorage', 'sessionStorage', 'fetch(', 'sendBeacon', 'XMLHttpRequest', 'fieldApi(']) assert.ok(!block.includes(banned), banned);
 });
 
-test('외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다', () => {
-  const block = HTML.slice(HTML.indexOf('function fieldNavExternal('), HTML.indexOf('function fieldNavManualGuide('));
-  assert.ok(!block.includes("'_blank','noopener'"), "window.open 의 'noopener' 기능 문자열은 성공해도 null 을 돌려준다");
-  assert.ok(block.includes('opened.opener=null'));
-  assert.ok(block.includes('else fieldNavChooser('));
-  const chooser = HTML.slice(HTML.indexOf('function fieldNavChooser('), HTML.indexOf('function fieldNavGuide('));
-  assert.ok(chooser.includes("link.target='_blank'") && chooser.includes("link.rel='noopener'"));
+test('외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다', () => {
+  function node(tag){return{tag,children:[],style:{},setAttribute(k,v){this[k]=v;},appendChild(child){child.parentNode=this;this.children.push(child);return child;},removeChild(child){this.children=this.children.filter(c=>c!==child);child.parentNode=null;}};}
+  const document={body:node('body'),createElement:node};let opened=0;
+  const names=['publicationAllowed','fieldPublicPoint','fieldNavDistanceText','spotKakaoRouteUrl','tmapNavigationUrl','openTmapNavigation','fieldLine','fieldNewsButton','fieldNavChoiceClose','fieldNavChooser','fieldNavExternal'];
+  const body='var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};function fieldEl(id){return document.body.children.find(n=>n.id===id)||null;}function fieldNavManualGuide(){}'+names.map(functionSource).join('\n')+';return{fieldNavExternal,fieldNavChoiceClose,unknown(){publicationState.ready=false;}};';
+  const api=new Function('document','window','navigator','alert',body)(document,{open(){opened++;throw new Error('Must not auto-open');}},{userAgent:'Android synthetic'},()=>{throw new Error('Unexpected desktop alert');});
+  const visible=upd('normal','visible',1);api.fieldNavExternal(visible,40,10);
+  assert.equal(opened,0);assert.equal(document.body.children.length,1);
+  const box=document.body.children[0];assert.equal(box.id,'fieldNavChoice');assert.equal(box['data-field-id'],'normal');
+  const anchors=box.children.flatMap(child=>child.children||[]).filter(child=>child.tag==='a');
+  assert.deepEqual(anchors.map(a=>a.textContent),['카카오맵','티맵']);
+  assert.equal(anchors[0].href,'https://map.kakao.com/link/to/'+encodeURIComponent(visible.species)+',36.6,126.4');assert.equal(anchors[0].target,'_blank');assert.equal(anchors[0].rel,'noopener');
+  assert.equal(anchors[1].href,'tmap://route?goalname='+encodeURIComponent(visible.species)+'&goalx=126.4&goaly=36.6');
+  api.fieldNavChoiceClose();assert.equal(document.body.children.length,0);
+  for(const point of [{...visible,locationHidden:true},{...visible,lat:NaN},{...visible,lon:181}]){api.fieldNavExternal(point,40,10);assert.equal(document.body.children.length,0);}
+  api.unknown();api.fieldNavExternal(visible,40,10);assert.equal(document.body.children.length,0);assert.equal(opened,0);
 });
 
 test('내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다', () => {
@@ -106,7 +124,8 @@ test('내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고
   assert.ok(del.includes('result.status===403||result.status===404'), '서버 거부 시 기록·화면을 서버 기준으로 맞춘다');
   const popup = HTML.slice(HTML.indexOf('function fieldPopupNode('), HTML.indexOf('/* ── 현장 방향 안내'));
   assert.ok(popup.includes('if(fieldIsMine(update.id))add(') && popup.includes('내 현장소식 삭제'));
-  const create = HTML.slice(HTML.indexOf('fieldMineAdd(result.body.update.id)') - 200, HTML.indexOf('fieldMineAdd(result.body.update.id)') + 200);
+  const create = HTML.slice(HTML.indexOf('fieldMineAdd(result.body.id)') - 300, HTML.indexOf('fieldMineAdd(result.body.id)') + 300);
   assert.ok(create.includes("fieldApi('/field-updates','POST',payload)") || create.includes('fieldValidUpdate'), '등록 성공 때만 내 소식으로 기록');
   assert.equal(HTML.split('fieldMineAdd(').length - 1, 2, 'fieldMineAdd 는 정의 1곳 + 등록 성공 1곳');
+  assert.ok(create.includes('loadFieldUpdates()'),'좌표없는 receipt 뒤 최신 공개 목록을 다시 확인한다');
 });

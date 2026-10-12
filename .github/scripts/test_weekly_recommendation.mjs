@@ -1728,14 +1728,18 @@ test('R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 
 });
 
 test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로', async () => {
-  const loader = functionSource('reportRequestStart') + functionSource('reportResponseCurrent') + functionSource('loadRecentSiteSightings');
+  const authority={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
+  const loader = ['publicationAllowed','publicationSame','publicationDataAllowed','reportRequestStart','reportResponseCurrent','loadRecentSiteSightings'].map(functionSource).join('\n');
   async function run(fetchImpl, previous) {
     const box = { sightings: previous, refreshed: 0, warned: 0 };
-    const fn = new Function('box', 'fetch', 'console',
+    const fn = new Function('box', 'fetch', 'console','AUTHORITY',
       'var reportRequestSeq={approved:0,pending:0,recent:0},reportAppliedSeq={approved:0,pending:0,recent:0};var recentSiteSightings=box.sightings;var REPORTS_API_URL="https://reports.example";' +
+      'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};'+
+      // Isolated recommendation loader: mock already verified transport, not the full authority lifecycle.
+      'function publicationFetch(path){return fetch(REPORTS_API_URL+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("transport");return r.json();});}'+
       'function reportsConfigured(){return true;}function refreshTodayPanelIfOpen(){box.refreshed++;}' +
       loader + ';return loadRecentSiteSightings().then(function(ok){box.sightings=recentSiteSightings;return ok;});');
-    const ok = await fn(box, fetchImpl, { warn: () => { box.warned++; } });
+    const ok = await fn(box, fetchImpl, { warn: () => { box.warned++; } },authority);
     return { ok, ...box };
   }
   const failed = await run(() => Promise.reject(new Error('network')), {});
@@ -1743,8 +1747,10 @@ test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천
   const broken = await run(() => Promise.resolve({ ok: true, json: async () => ({ ok: true, sites: 'x' }) }), { 15: { latestDate: '2026-09-29', species: ['a'] } });
   assert.equal(broken.ok, false);
   assert.deepEqual(broken.sightings, { 15: { latestDate: '2026-09-29', species: ['a'] } }, '직전 자료 유지');
-  const good = await run(() => Promise.resolve({ ok: true, json: async () => ({ ok: true, sites: [{ siteId: '15', latestDate: '2026-09-29', species: ['캐나다기러기'] }, { siteId: '', latestDate: 'bad', species: [] }] }) }), {});
+  const good = await run(() => Promise.resolve({ ok: true, json: async () => ({ ok: true,publication:authority, sites: [{ siteId: '15', latestDate: '2026-09-29', species: ['캐나다기러기'] }, { siteId: '', latestDate: 'bad', species: [] }] }) }), {});
   assert.deepEqual([good.ok, good.sightings, good.refreshed], [true, { 15: { latestDate: '2026-09-29', species: ['캐나다기러기'] } }, 1]);
+  const wrong=await run(()=>Promise.resolve({ok:true,json:async()=>({ok:true,publication:{...authority,revision:'0'},sites:[{siteId:'15',latestDate:'2026-09-29',species:['캐나다기러기']}]})}),{});
+  assert.deepEqual([wrong.ok,wrong.sightings,wrong.refreshed],[false,{},0],'다른권한의 제보는 가점에 적용하지 않는다');
 
   // 자료가 비면(=실패 직후) 추천은 출현 가점이 없는 기존 결과와 같다.
   const sites = recentFieldSites(6);

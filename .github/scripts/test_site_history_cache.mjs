@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const HTML = readFileSync(join(ROOT, 'index.html'), 'utf8');
 const BS = String.fromCharCode(92);
+const AUTHORITY={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
 
 function functionSource(name) {
   const start = HTML.indexOf('function ' + name + '(');
@@ -39,15 +40,15 @@ function constantSource(name) {
   return 'var ' + name + '=' + match[1] + ';';
 }
 
-const NAMES = ['clearSiteHistoryCache', 'cachedSiteHistory', 'fetchSiteHistory'];
+const NAMES = ['clearSiteHistoryCache', 'cachedSiteHistory', 'fetchSiteHistory','publicationAllowed','publicationSame','publicationDataAllowed'];
 
 /* 바깥에서 오는 것(fetch·타이머·시계)만 주입하고 나머지는 실제 소스를 평가한다. */
 function loadApi(options = {}) {
-  const calls = { fetch: [], aborted: 0 };
+  const calls = { fetch: [], options: [], aborted: 0 };
   let now = 1000000;
   const responses = options.responses || (() => ({
     ok: true,
-    json: async () => ({ ok: true, siteId: '190', total: 2, limit: 5, offset: 0, history: [
+    json: async () => ({ ok: true,publication:AUTHORITY, siteId: '190', total: 2, limit: 5, offset: 0, history: [
       { id: 'a', date: '2026-09-07', species: ['바다오리'], reporter: '둥이' },
       { id: 'b', date: '2026-09-04', species: ['긴꼬리도둑갈매기'], reporter: '진정' },
     ] }),
@@ -55,6 +56,7 @@ function loadApi(options = {}) {
 
   const env = {
     REPORTS_API_URL: 'https://api.example',
+    AUTHORITY,
     SITE_HISTORY_PAGE: 5,
     Date: { now: () => now },
     setTimeout: (fn, ms) => ({ fn, ms }),
@@ -65,6 +67,7 @@ function loadApi(options = {}) {
     },
     fetch: (url, opts) => {
       calls.fetch.push(String(url));
+      calls.options.push(opts);
       return Promise.resolve(responses(String(url), opts));
     },
   };
@@ -73,10 +76,13 @@ function loadApi(options = {}) {
     constantSource('SITE_HISTORY_TTL'),
     constantSource('SITE_HISTORY_TIMEOUT'),
     'var siteHistoryCache={};var siteHistoryGen=0;',
+    'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};'+
+      // Transport boundary is a synthetic already verified snapshot, not a nonce/head implementation.
+      'function publicationFetch(path){return fetch(REPORTS_API_URL+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("transport");return r.json();});}',
     ...NAMES.map(functionSource),
     'return {clearSiteHistoryCache,cachedSiteHistory,fetchSiteHistory,' +
       'SITE_HISTORY_TTL:SITE_HISTORY_TTL,SITE_HISTORY_TIMEOUT:SITE_HISTORY_TIMEOUT,' +
-      'cache:function(){return siteHistoryCache;}};',
+      'cache:function(){return siteHistoryCache;},renewAuthority(){publicationState.until=Date.now()+5000;publicationState.checkedMono=performance.now();},unknownAuthority(){publicationState.ready=false;},changeAuthority(){publicationState.anchor={...AUTHORITY,revision:"2"};}};',
   ].join('\n');
 
   const keys = Object.keys(env);
@@ -113,9 +119,11 @@ test('정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
   const { api, calls, advance } = loadApi();
   await api.fetchSiteHistory(SITE, 0);
   advance(api.SITE_HISTORY_TTL - 1);
+  api.renewAuthority(); // Fresh head renewal elsewhere keeps the same permission revision usable.
   await api.fetchSiteHistory(SITE, 0);
   assert.equal(calls.fetch.length, 1, '아직은 기억해 둔 값을 쓴다');
   advance(2);
+  api.renewAuthority();
   await api.fetchSiteHistory(SITE, 0);
   assert.equal(calls.fetch.length, 2, '시간이 지나면 다시 받아 온다');
 });
@@ -146,14 +154,14 @@ test("'더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다", async 
   assert.equal(Object.keys(api.cache()).length, 0, '뒤쪽 페이지는 기억에 남기지 않는다');
 });
 
-test('no-cache 를 붙이지 않아 서버의 60초 캐시를 살린다', async () => {
+test('승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다', async () => {
   const { api, calls } = loadApi();
   await api.fetchSiteHistory(SITE, 0);
   assert.equal(calls.fetch.length, 1);
   // 요청 주소는 예전과 같다(limit·offset 그대로).
   assert.match(calls.fetch[0], /\/reports\/site\/190\?limit=5&offset=0$/);
-  assert.equal(/cache.*no-cache/.test(functionSource('fetchSiteHistory')), false,
-    'fetchSiteHistory 가 no-cache 를 보내면 서버 캐시가 죽는다');
+  assert.equal(calls.options[0].cache,'no-store');
+  assert.match(functionSource('publicationJson'),/cache:'no-store'/,'실제 공통 전송도 오래된 HTTP 캐시를 사용하지 않는다');
 });
 
 test('실패해도 null 을 돌려주고 기억에 남기지 않는다', async () => {
@@ -175,9 +183,9 @@ test('응답 모양이 어긋나면 실패로 본다', async () => {
 test('응답이 오지 않으면 시간을 끊는다', async () => {
   const { api } = loadApi({ responses: () => new Promise(() => {}) });
   assert.ok(api.SITE_HISTORY_TIMEOUT > 0, '시간 제한이 있어야 한다');
-  const source = functionSource('fetchSiteHistory');
+  const source = functionSource('publicationJson');
   assert.match(source, /AbortController/, '중단 장치를 써야 한다');
-  assert.match(source, /SITE_HISTORY_TIMEOUT/, '정해 둔 시간으로 끊어야 한다');
+  assert.match(source, /PUBLICATION_TIMEOUT/, '공통 권한 전송 제한 시간으로 끊어야 한다');
 });
 
 /* 팝업 본문을 문자열로 돌려주면 Leaflet 의 popup.update() 가 본문을 다시 만들어 붙이고,
@@ -226,11 +234,19 @@ test('이력을 그릴 때 칸을 다시 찾는다', () => {
   assert.match(boxIn, /document\.body\.contains\(box\)/, '떨어져 나간 칸은 걸러야 한다');
 });
 
-test('서버가 쓰는 캐시 시간과 같은 값을 쓴다', () => {
+test('승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다', () => {
   const { api } = loadApi();
-  const worker = readFileSync(join(ROOT, 'reports-api', 'src', 'public.js'), 'utf8');
-  const maxAge = /max-age=(\d+)/.exec(worker);
-  assert.ok(maxAge, 'Worker 의 Cache-Control 을 찾지 못했습니다');
-  assert.equal(api.SITE_HISTORY_TTL, Number(maxAge[1]) * 1000,
-    '화면 기억 시간과 서버 캐시 시간이 어긋나면 새 승인 건 반영 시점이 흐려진다');
+  const source=functionSource('cachedSiteHistory');
+  assert.match(source,/publicationDataAllowed\(hit.data\)/);
+  const shared=readFileSync(join(ROOT,'reports-api','src','shared.js'),'utf8');
+  assert.match(shared,/"Cache-Control": "no-store"/);
+  assert.ok(api.SITE_HISTORY_TTL>0);
+});
+
+test('이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다',async()=>{
+  for(const mode of ['unknown','expired','changed']){
+    const {api,advance}=loadApi();await api.fetchSiteHistory(SITE,0);
+    if(mode==='unknown')api.unknownAuthority();else if(mode==='expired')advance(5001);else api.changeAuthority();
+    assert.equal(api.cachedSiteHistory(String(SITE.id)),null,mode);
+  }
 });

@@ -2901,11 +2901,9 @@ function siteHistoryEntryHtml(entry){
     +'<div class="siteHistoryBy">제보자: '+who+'</div></div>';
 }
 
-/* 같은 탐조지를 다시 열 때 첫 페이지를 다시 받아 오지 않도록 잠깐 기억해 둔다.
-   서버가 이미 Cache-Control: max-age=60 을 주므로 같은 60초를 쓴다.
-   새로 승인된 제보는 ① 60초가 지나면, ② 10분마다 도는 승인 제보 갱신이 돌면,
-   ③ 새로고침하면 반영된다(기억은 메모리에만 둔다).
-   '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다. 자주 여는 화면이 아니다. */
+/* 첫 페이지의 메모리 캐시는 현재 공개 권한과 같은 revision이고 lease 안일 때만 재사용한다.
+   60초는 최대 보관 기간일 뿐 공개 권한 확인을 대신하지 않는다. 권한 변경·미확인 때 즉시 비운다.
+   '더 보기'로 받은 뒤쪽 페이지는 기억하지 않는다. */
 var SITE_HISTORY_TTL=60*1000;
 var SITE_HISTORY_TIMEOUT=6000;
 var siteHistoryCache={};
@@ -4733,7 +4731,7 @@ function initReportFeature(){
   setInterval(function(){loadApprovedReports();loadPendingReports();loadRecentSiteSightings();},REPORTS_REFRESH_MS);
 }
 
-/* 승인된 제보만 내려온다. 실패하면 직전 상태를 그대로 두고 조용히 넘어간다. */
+/* 승인된 제보만 내려온다. 공개 권한을 확인하지 못하면 동적 위치를 폐쇄한다. */
 function loadApprovedReports(){
   if(!reportsConfigured())return Promise.resolve(false);
   var seq=reportRequestStart('approved');
@@ -4756,7 +4754,7 @@ function loadApprovedReports(){
     refreshFixedSpotPopups();
     return true;
   }).catch(function(error){
-    // 지도 마커는 예전처럼 직전 상태를 그대로 둔다. 목록만 '못 불러옴'으로 구분해 알린다.
+    // transport/권한 실패의 위치 폐쇄는 publicationFetch가 수행한다. 목록에도 실패를 알린다.
     console.error('승인 제보를 불러오지 못했습니다.',error);
     recentReportsFailed=true;
     renderRecentReports();
