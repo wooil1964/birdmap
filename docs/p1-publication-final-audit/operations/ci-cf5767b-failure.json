@@ -1,0 +1,36 @@
+{
+  "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+  "job": {
+    "id": 114766730129,
+    "head_sha": "cf5767b090275221a516e16112d0e569eedb86e7",
+    "name": "regression",
+    "status": "completed",
+    "conclusion": "failure"
+  },
+  "logTruncated": true,
+  "logScope": "Provider supplied tail; complete log remains at GitHub job URL",
+  "jobUrl": "https://github.com/wooil1964/birdmap/actions/runs/38236007580/job/114766730129",
+  "failureLines": [
+    "2026-10-12T10:24:54.4576151Z # tests 359",
+    "2026-10-12T10:24:54.4576316Z # pass 359",
+    "2026-10-12T10:24:54.4576394Z # fail 0",
+    "2026-10-12T10:24:54.4576569Z # skipped 0",
+    "2026-10-12T10:24:56.4463227Z # tests 221",
+    "2026-10-12T10:24:56.4464196Z # pass 221",
+    "2026-10-12T10:24:56.4464524Z # fail 0",
+    "2026-10-12T10:24:56.4465170Z # skipped 0",
+    "2026-10-12T10:24:56.6798749Z # tests 36",
+    "2026-10-12T10:24:56.6799478Z # pass 36",
+    "2026-10-12T10:24:56.6799931Z # fail 0",
+    "2026-10-12T10:24:56.6806080Z # skipped 0",
+    "2026-10-12T10:24:57.3355550Z Ran 56 tests in 0.342s",
+    "2026-10-12T10:24:57.8216392Z Ran 22 tests in 0.192s",
+    "2026-10-12T10:24:58.0704728Z ERROR: test_card_shows_only_the_name_and_the_group_line (__main__.SharePageTests.test_card_shows_only_the_name_and_the_group_line)",
+    "2026-10-12T10:24:58.0712877Z ModuleNotFoundError: No module named 'PIL'",
+    "2026-10-12T10:24:58.0714690Z ERROR: test_site_name_survives_a_centre_crop (__main__.SharePageTests.test_site_name_survives_a_centre_crop)",
+    "2026-10-12T10:24:58.0720876Z ModuleNotFoundError: No module named 'PIL'",
+    "2026-10-12T10:24:58.0721890Z Ran 11 tests in 0.140s",
+    "2026-10-12T10:24:58.0722195Z FAILED (errors=2)",
+    "2026-10-12T10:24:58.0806494Z ##[error]Process completed with exit code 1."
+  ]
+}
