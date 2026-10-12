@@ -1,0 +1,76 @@
+// Ephemeral Miniflare/workerd D1 proof. Synthetic rows only. No deployment or remote D1.
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { handleRequest } from '../../../../reports-api/src/public.js';
+import { schemaReady } from '../../../../reports-api/src/canonical/control.js';
+import {persistQuick} from '../../../../reports-api/src/canonical/persistence.js';
+const toolchain = process.argv[2];
+if (!toolchain) throw Error('Pass an existing local node_modules path; do not install or deploy');
+const require = createRequire(import.meta.url);
+const { Miniflare, convertV4MiniflareOptions } = require(join(resolve(toolchain), 'miniflare'));
+const mf = new Miniflare(convertV4MiniflareOptions({ name: 'p1-publication-local-only', modules: true, script: 'export default {fetch(){return new Response("synthetic local-only")}}', compatibilityDate: '2026-09-24', d1Databases: { REPORTS_DB: 'p1-publication-synthetic' }, d1Persist: false, host: '127.0.0.1', port: 0, cf: false }));
+const db = await mf.getD1Database('REPORTS_DB');
+const root = new URL('../../../../', import.meta.url);
+const read = path => readFileSync(new URL(path, root), 'utf8');
+function ddl(input) {
+  const sql = input.replace(/--[^\n]*/g, ''), statements = [];
+  let start = 0, trigger = false, depth = 0;
+  for (const token of sql.matchAll(/'(?:''|[^'])*'|"(?:""|[^"])*"|[A-Za-z_]\w*|;/g)) {
+    const word = token[0].toUpperCase();
+    if (word === 'TRIGGER' && /^\s*CREATE\s+(?:TEMP(?:ORARY)?\s+)?TRIGGER\b/i.test(sql.slice(start, token.index + word.length))) trigger = true;
+    if (trigger && (word === 'BEGIN' || word === 'CASE')) depth++;
+    if (trigger && word === 'END') depth--;
+    if (word === ';' && (!trigger || depth === 0)) { statements.push(sql.slice(start, token.index + 1).trim()); start = token.index + 1; trigger = false; depth = 0; }
+  }
+  if (sql.slice(start).trim()) throw Error('Incomplete local DDL input');
+  return statements.filter(Boolean);
+}
+const evidence = { generatedAt: new Date().toISOString(), scope: 'ephemeral local workerd D1; synthetic only; production writes and deploys zero', runtime: { node: process.version, miniflare: require(join(resolve(toolchain), 'miniflare/package.json')).version }, checks: [] };
+async function check(id, run) { try { await run(); evidence.checks.push({ id, status: 'pass' }); } catch (error) { evidence.checks.push({ id, status: 'fail', message: error.message, stack: error.stack }); } }
+const nonce = 'a'.repeat(32), owner = 'publication-owner-aaaaaaaa', other = 'publication-reader-bbbbbbbb';
+const env = { ENVIRONMENT: 'production', REPORTS_DB: db, REPORT_IP_SALT: 'synthetic-salt', TURNSTILE_SECRET_KEY: 'synthetic-key', REPORTS_PUBLICATION_REQUIRED: 'true' };
+let ip = 0;
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async url => { assert.equal(String(url), 'https://challenges.cloudflare.com/turnstile/v0/siteverify'); return Response.json({ success: true }); };
+async function call(path, body, using = env) { const response = await handleRequest(new Request('https://synthetic.publication.test' + path, { method: body ? 'POST' : 'GET', headers: { Origin: 'https://wooil1964.github.io', 'Content-Type': 'application/json', 'CF-Connecting-IP': '203.0.113.' + (++ip % 200 + 1) }, ...(body ? { body: JSON.stringify(body) } : {}) }), using); return { status: response.status, headers: Object.fromEntries(response.headers), body: await response.json() }; }
+const head = () => call('/reports/public-state?nonce=' + nonce);
+const qs = (path, publication) => path + '?' + new URLSearchParams({ contract: 'publication-v1', nonce, expectedEpoch: publication.epoch, expectedRevision: publication.revision });
+const rows = async (sql, ...values) => (await db.prepare(sql).bind(...values).all()).results;
+const first = async (sql, ...values) => db.prepare(sql).bind(...values).first();
+let id;
+function quick(n){const id='10000000-0000-4000-8000-'+String(n).padStart(12,'0'),at=new Date().toISOString();return{row:{id,status:'pending',species:'참새',lat:37.123,lon:127.456,public_lat:null,public_lon:null,approx_lat:37.12,approx_lon:127.45,pending_public:1,observed_on:'2026-10-12',received_at:at,decided_at:null,bird_count:1,reporter:'합성시험',note:null,admin_note:null,site_id:null,name_public:0,spot_key:null,ip_hash:'synthetic',dedupe_hash:'canonical-'+id},input:{species:'참새',lat:37.123,lon:127.456,observedOn:'2026-10-12',non_breeding_confirmed:true},accepted:{ok:true,id,status:'pending',publicVisibility:'approximate'},tokenHash:n.toString(16).padStart(64,'0')}};
+try {
+  const base = readFileSync(new URL('pre-publication-schema.sql', import.meta.url), 'utf8');
+  await db.batch(ddl(base + '\n' + read('docs/long-term-db-phase2a/migrations/0001_core.sql') + '\n' + read('docs/long-term-db-phase2d1/migrations/0003_captcha_redemptions.sql')).map(sql => db.prepare(sql)));
+  await check('D1-01 canonical schemaReady before migration', async () => assert.equal(await schemaReady(db), true));
+  await db.batch(ddl(read('reports-api/migrations/0005_publication_security.sql')).map(sql => db.prepare(sql)));
+  await check('D1-02 additive migration preserves canonical schemaReady', async () => assert.equal(await schemaReady(db), true));
+  await check('D1-03 live public anchor type, nonce, projection, no-store', async () => { const h = await head(); assert.equal(h.status, 200, JSON.stringify(h.body)); assert.equal(h.body.publication.nonce, nonce); assert.match(h.body.publication.revision, /^(0|[1-9][0-9]*)$/); assert.equal(h.headers['cache-control'], 'no-store'); });
+  await check('D1-04 actual field create and authority+parent+events/count snapshot', async () => { const made = await call('/field-updates', { species: '참새', status: 'visible', lat: 37.123, lon: 127.456, deviceId: owner, turnstileToken: 'synthetic-token' }); assert.equal(made.status, 201, JSON.stringify(made.body)); id = made.body.update?.id ?? made.body.id; assert.equal(typeof id, 'string'); const h = await head(), got = await call(qs('/field-updates', h.body.publication)); assert.equal(got.status, 200, JSON.stringify(got.body)); assert.equal(got.body.publication.revision, h.body.publication.revision); assert.equal(got.body.updates[0].id, id); assert.equal(got.body.updates[0].history.length, 1); assert.equal(got.body.updates[0].rowRevision, '1'); });
+  await check('D1-05 UPDATE→changes assertion with publication triggers', async () => { await db.batch([db.prepare('UPDATE field_updates SET row_revision=row_revision+1 WHERE id=? AND row_revision=1').bind(id), db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('d1-parent',CASE WHEN changes()=1 THEN 1 ELSE 0 END)"), db.prepare("DELETE FROM transaction_assertions WHERE assertion_id='d1-parent'")]); assert.equal((await first('SELECT CAST(row_revision AS TEXT) AS r FROM field_updates WHERE id=?', id)).r, '2'); });
+  await check('D1-06 zero CAS rolls back event and permission counter', async () => { const before = (await head()).body.publication.revision; await assert.rejects(db.batch([db.prepare("UPDATE field_updates SET status='not_visible',row_revision=row_revision+1 WHERE id=? AND row_revision=1").bind(id), db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('d1-cas-fail',CASE WHEN changes()=1 THEN 1 ELSE 0 END)"), db.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('injected',?,'not_visible','合成',?,'synthetic','synthetic')").bind(id,new Date().toISOString())])); assert.equal((await head()).body.publication.revision, before); assert.equal((await first('SELECT status FROM field_updates WHERE id=?', id)).status, 'visible'); assert.equal((await rows("SELECT id FROM field_update_events WHERE id='injected'")).length, 0); });
+  await check('D1-07 hide/withdraw expected revision rejects old snapshot', async () => { const old = (await head()).body.publication; await db.prepare('UPDATE field_updates SET location_hidden=1,public_lat=38,public_lon=128 WHERE id=?').bind(id).run(); const stale = await call(qs('/field-updates', old)); assert.equal(stale.status, 409); assert.equal(stale.body.error.code, 'PUBLICATION_CHANGED'); assert.equal(JSON.stringify(stale.body).includes('37.123'), false); });
+  await check('D1-08 handler late status loses CAS to owner delete, no phantom event', async () => { let once = true; const binding = { prepare: sql => db.prepare(sql), batch: async statements => { if (once) { once = false; const deleted = await call('/field-updates/' + id + '/delete', { deviceId: owner }); assert.equal(deleted.status, 200, JSON.stringify(deleted.body)); } return db.batch(statements); } }; const late = await call('/field-updates/' + id + '/status', { status: 'not_visible', deviceId: other, turnstileToken: 'synthetic-token' }, { ...env, REPORTS_DB: binding }); assert.ok([404,409].includes(late.status),JSON.stringify(late.body)); assert.equal((await first('SELECT status FROM field_updates WHERE id=?', id)).status, 'deleted'); assert.deepEqual((await rows('SELECT status FROM field_update_events WHERE field_update_id=? ORDER BY rowid', id)).map(r => r.status), ['visible','deleted']); });
+  await check('D1-09 old unconditional writer cannot revive deleted field', async () => { await assert.rejects(db.prepare("UPDATE field_updates SET status='reappeared' WHERE id=?").bind(id).run()); assert.equal((await first('SELECT status FROM field_updates WHERE id=?',id)).status,'deleted'); });
+  await check('D1-10 child confirmation/event cannot append to deleted parent', async () => { await assert.rejects(db.prepare("INSERT INTO field_update_confirmations(id,field_update_id,user_hash,ip_hash,created_at) VALUES('lateconfirm',?,'synthetic-other','synthetic',?)").bind(id,new Date().toISOString()).run()); await assert.rejects(db.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('lateevent',?,'reappeared','合成',?,'synthetic','synthetic')").bind(id,new Date().toISOString()).run()); });
+  await check('D1-11 owner deletion replay event remains exactly one', async () => { const result = await call('/field-updates/' + id + '/delete', { deviceId: owner }); assert.equal(result.status,200); assert.equal((await first("SELECT COUNT(*) AS n FROM field_update_events WHERE field_update_id=? AND status='deleted'",id)).n,1); });
+  await check('D1-12 strict old GET does not leak coordinate payload', async () => { const result=await call('/field-updates'); assert.ok([400,503].includes(result.status)); assert.equal(result.headers['cache-control'],'no-store'); });
+  await check('D1-13 publication epoch/direct counter mutation is guarded', async()=>{const before=(await head()).body.publication;await assert.rejects(db.prepare("UPDATE public_publication_state SET epoch='gggggggggggggggggggggggggggggggg' WHERE id=1").run());await assert.rejects(db.prepare('UPDATE public_publication_state SET revision=revision+2 WHERE id=1').run());assert.deepEqual((await head()).body.publication,before);});
+  await check('D1-14 partial guard installation fails closed until restored',async()=>{const trigger=await first("SELECT sql FROM sqlite_schema WHERE name='publication_reports_delete'");await db.prepare('DROP TRIGGER publication_reports_delete').run();assert.equal((await head()).status,503);await db.prepare(trigger.sql).run();assert.equal((await head()).status,200);});
+  await check('D1-17 canonical dual batch success includes publication counter',async()=>{const before=BigInt((await head()).body.publication.revision),input=quick(1);await persistQuick(db,input.row,input.input,input.accepted,input.tokenHash);assert.ok(BigInt((await head()).body.publication.revision)>before);for(const table of ['reports','raw_submissions','checklists','sightings','captcha_redemptions'])assert.equal((await first('SELECT COUNT(*) AS n FROM '+table)).n,1,table);assert.equal(await schemaReady(db),true);});
+  await check('D1-18 canonical dual injected failure rolls back counter and all stored material',async()=>{const before=(await head()).body.publication.revision,input=quick(2),binding={prepare:sql=>db.prepare(sql),batch:statements=>{const copy=[...statements];copy.splice(5,0,db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('d1-canonical-injected',0)"));return db.batch(copy);}};await assert.rejects(persistQuick(binding,input.row,input.input,input.accepted,input.tokenHash));assert.equal((await head()).body.publication.revision,before);for(const table of ['reports','raw_submissions','checklists','sightings','captcha_redemptions'])assert.equal((await first('SELECT COUNT(*) AS n FROM '+table)).n,1,table);});
+  await check('D1-15 over-2^53 revision round-trips and exact prior version rejects',async()=>{const trigger=await first("SELECT sql FROM sqlite_schema WHERE name='publication_state_transition'");await db.batch([db.prepare('DROP TRIGGER publication_state_transition'),db.prepare('UPDATE public_publication_state SET revision=9007199254740993 WHERE id=1'),db.prepare(trigger.sql)]);const before=(await head()).body.publication;assert.equal(before.revision,'9007199254740993');const made=await call('/field-updates',{species:'박새',status:'visible',lat:37.123,lon:127.456,deviceId:owner,turnstileToken:'synthetic-token'});assert.equal(made.status,201,JSON.stringify(made.body));assert.equal((await head()).body.publication.revision,'9007199254740994');assert.equal((await call(qs('/field-updates',before))).status,409);});
+  await check('D1-16 integer overflow aborts source write with no new field/event',async()=>{const trigger=await first("SELECT sql FROM sqlite_schema WHERE name='publication_state_transition'");await db.batch([db.prepare('DROP TRIGGER publication_state_transition'),db.prepare('UPDATE public_publication_state SET revision=9223372036854775807 WHERE id=1'),db.prepare(trigger.sql)]);const countBefore=await first('SELECT COUNT(*) AS n FROM field_updates'),eventsBefore=await first('SELECT COUNT(*) AS n FROM field_update_events');const made=await call('/field-updates',{species:'딱새',status:'visible',lat:37.123,lon:127.456,deviceId:owner,turnstileToken:'synthetic-token'});assert.ok(made.status>=400,JSON.stringify(made.body));assert.deepEqual(await first('SELECT COUNT(*) AS n FROM field_updates'),countBefore);assert.deepEqual(await first('SELECT COUNT(*) AS n FROM field_update_events'),eventsBefore);assert.equal((await head()).body.publication.revision,'9223372036854775807');});
+} catch (error) {
+  evidence.checks.push({ id: 'Local D1 setup/run completed', status: 'fail', message: error.message, stack: error.stack });
+} finally {
+  globalThis.fetch = originalFetch;
+  await mf.dispose();
+  evidence.summary = { pass: evidence.checks.filter(c => c.status === 'pass').length, fail: evidence.checks.filter(c => c.status === 'fail').length, skip: 0 };
+  const path = fileURLToPath(new URL('local-d1-publication.json',import.meta.url)); writeFileSync(path,JSON.stringify(evidence,null,2)+'\n');
+  process.stdout.write(JSON.stringify(evidence.summary)+'\n');
+  if (evidence.summary.fail) process.exitCode = 1;
+}

@@ -1,0 +1,29 @@
+{
+  "analysisOnly": true,
+  "sourceCommit": "245298981e27f88ac26bad8b46d819a7df899c86",
+  "sqliteVersion": "3.53.1",
+  "statusSqlSha256": "7574534417e4320c9ccfe7063ad730940818cf3e20fb7115431bbcc9d0e07403",
+  "deleteSqlSha256": "2e9cba923d57244dfce1a156db7c21c59d1619c302ae771f627782d20277feb5",
+  "rows": [
+    {
+      "id": "existing-sql-delete-then-late-status",
+      "before": "not_visible",
+      "deleteCommitted": "deleted",
+      "afterLateOriginalUpdate": "reappeared",
+      "publicListEligibleCount": 1,
+      "terminalPropertyHolds": false,
+      "classification": "existing product SQL ordering defect reproduced; not full authenticated API concurrency test"
+    },
+    {
+      "id": "proposed-terminal-guard-model",
+      "lateUpdateAborted": true,
+      "after": "deleted",
+      "classification": "design-only model, guard not implemented in product"
+    }
+  ],
+  "limits": [
+    "Only SQL ordering modeled; no Turnstile/authentication/full handler execution",
+    "No remote D1, network, production coordinates or user data",
+    "Proposed guard is not implementation acceptance evidence"
+  ]
+}

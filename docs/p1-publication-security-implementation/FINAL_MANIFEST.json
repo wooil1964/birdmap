@@ -1,0 +1,187 @@
+{
+  "checkedAtUtc": "2026-10-12T04:43:37.058192+00:00",
+  "implementationHead": "f7aee08f8bab6371cdffb8e2099d85b51a76765e",
+  "main": "25e1fbae781c19fad53e770e4396fc625865f3b3",
+  "pr13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "pr16": "245298981e27f88ac26bad8b46d819a7df899c86",
+  "approvedDesign": "c128666203bb5c483258b8231d0eb410c38e38f9",
+  "temporaryCombinedTree": "a599638f3a0b8d95b367b94eaa4eb098127abba3",
+  "sourceGitBlobSha256": {
+    "index.html": "57a4282813ebbf0fd105131ebe52a35c39d8c6969b3ab99e4fe22d7c03eb4970",
+    "reports-api/migrations/0005_publication_security.sql": "1f47cc8f917de18aa63c2598bfc596825da0c55f1fad278824d97bd6040ef9b8",
+    "reports-api/schema.sql": "d39741bc408aeca5f4babb84bdcd2eb11406baba89703abd59fd4e3f6aac332c",
+    "reports-api/src/canonical/data.js": "bb8ea3d8d3f236288d4d2ba736b61893de92c8499f5acbd97344feb519dc4b18",
+    "reports-api/src/canonical/shadow.js": "19a2e1c72f4b4b3d5322bd40df9426db0ca7149333375667fea7d40ee6a4e0b2",
+    "reports-api/src/field-updates.js": "5bcb396fe0ddbe6d3c61e04a10a5b4152d36df616023f993718490bf823f8349",
+    "reports-api/src/public.js": "68c9a5c686896349f675e5362183c1c04e2239e12b18df853e00c3b7bebd9fcb",
+    "reports-api/src/publication.js": "c9a69b364eb81291e4c28d400fc178e83315032ff91d169755a8a511c9f790f7",
+    "reports-api/src/shared.js": "ef29c94e6ff3dc691c6ef10ec64e0c4c09148a0be1e88bcfbec73d34050b243f",
+    "reports-api/wrangler.admin.toml": "d5d34de0f1a911ccab1161ab35a51ed8b3e738cc06dbc57ec528f40e2ec4da90",
+    "reports-api/wrangler.public.toml": "226819618a6616d33b38f5f8973f4d0cbcaeef088d21d7ad382b5a43de86f427"
+  },
+  "automaticCombined": {
+    "pass": 704,
+    "fail": 0,
+    "skip": 1,
+    "suites": [
+      {
+        "name": "front",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--test",
+          "--test-reporter=tap",
+          ".github/scripts/test_briefing_kst_month.mjs",
+          ".github/scripts/test_data_autorefresh.mjs",
+          ".github/scripts/test_field_news.mjs",
+          ".github/scripts/test_location_popup_guard.mjs",
+          ".github/scripts/test_location_protection.mjs",
+          ".github/scripts/test_month_tide_button.mjs",
+          ".github/scripts/test_notice_close_hit.mjs",
+          ".github/scripts/test_notice_kst_date.mjs",
+          ".github/scripts/test_recent_contributors.mjs",
+          ".github/scripts/test_recommendation_card_display.mjs",
+          ".github/scripts/test_report_search.mjs",
+          ".github/scripts/test_site_history_cache.mjs",
+          ".github/scripts/test_tide_fallback.mjs",
+          ".github/scripts/test_today_weather_midnight.mjs",
+          ".github/scripts/test_weekly_recommendation.mjs"
+        ],
+        "exit": 0,
+        "counts": {
+          "tests": 359,
+          "pass": 359,
+          "fail": 0,
+          "skipped": 0,
+          "cancelled": 0,
+          "todo": 0
+        }
+      },
+      {
+        "name": "reports",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--test",
+          "--test-reporter=tap"
+        ],
+        "exit": 0,
+        "counts": {
+          "tests": 221,
+          "pass": 221,
+          "fail": 0,
+          "skipped": 0,
+          "cancelled": 0,
+          "todo": 0
+        }
+      },
+      {
+        "name": "proxy",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "--test",
+          "--test-reporter=tap",
+          "weather-proxy/test/freshness.test.mjs",
+          "weather-proxy/test/partial.test.mjs",
+          "weather-proxy/test/worker.test.mjs"
+        ],
+        "exit": 0,
+        "counts": {
+          "tests": 36,
+          "pass": 36,
+          "fail": 0,
+          "skipped": 0,
+          "cancelled": 0,
+          "todo": 0
+        }
+      },
+      {
+        "name": "weather",
+        "command": [
+          "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+          ".github/scripts/test_weather.py"
+        ],
+        "exit": 0,
+        "counts": {
+          "tests": 56,
+          "skipped": 0,
+          "fail": 0,
+          "pass": 56
+        }
+      },
+      {
+        "name": "tide",
+        "command": [
+          "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+          ".github/scripts/test_tide.py"
+        ],
+        "exit": 0,
+        "counts": {
+          "tests": 22,
+          "skipped": 1,
+          "fail": 0,
+          "pass": 21
+        }
+      },
+      {
+        "name": "share_pages",
+        "command": [
+          "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+          ".github/scripts/test_share_pages.py"
+        ],
+        "exit": 0,
+        "counts": {
+          "tests": 11,
+          "skipped": 0,
+          "fail": 0,
+          "pass": 11
+        }
+      }
+    ]
+  },
+  "chromeCombined": {
+    "pass": 165,
+    "fail": 0,
+    "skip": 0,
+    "notRun": 0
+  },
+  "localWorkerdD1": {
+    "pass": 18,
+    "fail": 0,
+    "skip": 0
+  },
+  "contractProofs": {
+    "score": {
+      "matrixPass": 182,
+      "matrixFail": 0,
+      "specialPass": 21,
+      "specialFail": 0,
+      "popupPass": 12,
+      "popupFail": 0
+    },
+    "protection": {
+      "exactAndQuantityCases": 95,
+      "legacyMixedCases": 76,
+      "protectedRepresentationCases": 171,
+      "repairedProtectedRepresentationCases": 152,
+      "ordinaryControls": 17,
+      "ordinaryFalsePositiveCount": 0,
+      "existingBreedingCases": 6,
+      "recentApiCases": 18,
+      "legacySubmitCases": 9,
+      "fieldSubmitCases": 10,
+      "fieldBreedingCases": 6,
+      "adminPlanCases": 3,
+      "adminAuthenticatedCases": 5,
+      "fieldOwnerDeleteCases": 4,
+      "allAssertionsPassed": true
+    }
+  },
+  "noOperatingChanges": true,
+  "remainingOperatingConditions": [
+    "Independent Draft PR review",
+    "Actual primary D1 schema/triggers and atomic installation/write-drain approval",
+    "Paired public/admin source/version/bindings and protective rollback version mapping",
+    "CDN hard purge/bypass and old-client transition evidence",
+    "5s lease/poll and 4s timeout operating approval",
+    "Physical GPS/native apps/distributed operating POP not exercised"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "checked_at_utc": "2026-10-11T23:06:35.9046063Z",
+  "scope": "synthetic local SQLite and ephemeral workerd D1 only",
+  "basis_head": "daca2e7308059565db01c6ecd9bbb2847786f59f",
+  "observed_origin_main": "66ff787d848ad9483e8671811cf1b8edb5ab696b",
+  "node": "v24.18.0",
+  "sqlite": {
+    "exit_code": 0,
+    "command": "node --test reports-api/test/publication-security.test.mjs",
+    "fail": 0,
+    "pass": 40,
+    "skip": 0
+  },
+  "workerd_d1": {
+    "miniflare": "5.20261006.1-alpha",
+    "command": "node docs/p1-publication-security-implementation/results/server-audit/local-d1-publication.mjs <existing local node_modules>",
+    "pass": 18,
+    "exit_code": 0,
+    "fail": 0,
+    "skip": 0
+  },
+  "operations": {
+    "remote_requests": 0,
+    "packages_installed": 0,
+    "remote_d1_changes": 0,
+    "pages_deploy": 0,
+    "actual_user_changes": 0,
+    "worker_deploy": 0
+  },
+  "source_sha256": {
+    "reports-api/src/field-updates.js": "52c801bff5cd05069ef45ac4bd6d90003d4ba83c85d399542921c267e04e0263",
+    "reports-api/migrations/0005_publication_security.sql": "993eecea791f3ffc516e1dd49a46466fbfa2ce5e1cf06392317ddd6e55bfd28c",
+    "reports-api/schema.sql": "ece682623b9f67558fbb7f59afe7aa99a9cd81da425950d3d010bf0b40a13539",
+    "reports-api/src/publication.js": "ce0258c9eb0b58689f173834c52ad360078feb3c6c7b67c4fb93e245b830083c",
+    "reports-api/src/canonical/data.js": "466e4deccce052e225ead8da7b1b0d47e07294d4f2d1852b159c5d94fc8b5ea8",
+    "reports-api/test/publication-security.test.mjs": "a260659e0b78848a276d74d5ca440553f5ada61cf9254da93025c51ae3fa298e",
+    "reports-api/src/canonical/shadow.js": "07c784886e8b0cf814e4d8bc179e4a9b644c5d6b1795541494744a22cc3cece6",
+    "reports-api/src/shared.js": "c4c72f733c31c09b1bf8fa29f04eac564751b210d6354e75adc9d3ff16811842",
+    "docs/p1-publication-security-implementation/results/server-audit/pre-publication-schema.sql": "e51ddff8abbb9ab67069c566896b005bdad535232e2a7395f8155e3e8eb39b4b",
+    "docs/p1-publication-security-implementation/results/server-audit/local-d1-publication.mjs": "03e6666dafe943e552a4aa64db59b8761fbea0522aa053557e68fa1ce1a98209",
+    "reports-api/src/public.js": "4419531daa77e6fbf6a4f209a096d103a1ba3312d98cfe8a2d8fee69dd4c6cd9"
+  },
+  "prior_failures_preserved": [
+    "sqlite-expanded-initial.tap",
+    "sqlite-expanded-after-receipt.tap",
+    "local-d1-initial.log",
+    "local-d1-harness-initial.json"
+  ]
+}

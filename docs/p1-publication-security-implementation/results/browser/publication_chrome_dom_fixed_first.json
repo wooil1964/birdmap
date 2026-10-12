@@ -1,0 +1,1586 @@
+{
+  "schema": "birdmap-publication-browser-security-v1",
+  "checkedAt": "2026-10-11T23:15:45.136Z",
+  "sourceSha": "188b390c2cddeb8dd8d92abd651d428feb95726b",
+  "indexSha256": "53d4cea7a188a2fed53e421d4f77ffd7edec802652e1e5f16e0565da0663fa57",
+  "widths": [
+    344,
+    375,
+    768,
+    1024,
+    1440
+  ],
+  "rows": [
+    {
+      "width": 344,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 15,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 27,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 152,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 15,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 27,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "head-timeout-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 62,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "permission-lease-expires-while-offline",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 65,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "strict-head-epoch-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-epoch-array",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-number",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-array",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-leading-zero",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-negative",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-overflow",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-projection-boolean",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-contract-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-nonce-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-nonce-array",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 250,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 15,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 27,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 152,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 15,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 27,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 152,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 15,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 27,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 152,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "both-independent-clients-normal",
+      "pass": false,
+      "evidence": {
+        "pages": [
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "second-device-route-rechecks-current-authority",
+      "pass": true,
+      "evidence": {
+        "routeClosed": true,
+        "pagesProtected": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "remote-removal-both-current-snapshots",
+      "pass": true,
+      "evidence": {
+        "pages": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "new-explicit-authority-restores-both-devices",
+      "pass": true,
+      "evidence": {
+        "pages": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "width": "concurrency",
+      "id": "earlier-request-arrives-after-new-protected-snapshot",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": true,
+        "kakao": false,
+        "tmap": false,
+        "point": [
+          36.9,
+          126.9
+        ],
+        "rawSearch": false
+      }
+    }
+  ],
+  "summary": {
+    "pass": 138,
+    "fail": 1,
+    "skip": 0,
+    "notRun": 0
+  },
+  "previousChrome15": [
+    {
+      "width": 344,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    }
+  ],
+  "network": {
+    "allowedLocal": 78,
+    "allowedDependencyGet": 197,
+    "blockedOther": 266,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "limits": [
+    "Synthetic in-page API emulates the publication protocol; actual D1 atomicity is tested separately.",
+    "All dynamic coordinates and reports are synthetic. Static190 public sites are loaded from the product.",
+    "Two independent Chrome pages are coordinated with the same mock authority revisions; distributed production POP consistency is not certified.",
+    "No external Kakao/TMAP application or physical GPS device was opened.",
+    "Foreground permission lease and polling operational values require separate operating approval.",
+    "Synthetic authority changes are observed at fetch/postflight boundaries; zero-ms revocation is not guaranteed."
+  ]
+}

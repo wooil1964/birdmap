@@ -1,0 +1,2107 @@
+TAP version 13
+# Subtest: 월 경계 순간에 브라우저 timezone과 무관하게 KST 기준 월을 쓴다
+ok 1 - 월 경계 순간에 브라우저 timezone과 무관하게 KST 기준 월을 쓴다
+  ---
+  duration_ms: 39.2429
+  type: 'test'
+  ...
+# Subtest: KST 자정 직전·직후에 해석 월이 정확히 바뀐다
+ok 2 - KST 자정 직전·직후에 해석 월이 정확히 바뀐다
+  ---
+  duration_ms: 8.1272
+  type: 'test'
+  ...
+# Subtest: 연말 경계에서도 KST 월을 따른다
+ok 3 - 연말 경계에서도 KST 월을 따른다
+  ---
+  duration_ms: 4.5688
+  type: 'test'
+  ...
+# Subtest: 해석 문구의 계절 표기도 KST 월을 따라간다
+ok 4 - 해석 문구의 계절 표기도 KST 월을 따라간다
+  ---
+  duration_ms: 5.0243
+  type: 'test'
+  ...
+# Subtest: 서울 브라우저에서는 수정 전후 결과가 같다
+ok 5 - 서울 브라우저에서는 수정 전후 결과가 같다
+  ---
+  duration_ms: 2.9966
+  type: 'test'
+  ...
+# Subtest: 발행 시각이 같으면 반영도 다시 그리기도 하지 않는다 (깜빡임 없음)
+ok 6 - 발행 시각이 같으면 반영도 다시 그리기도 하지 않는다 (깜빡임 없음)
+  ---
+  duration_ms: 4.248
+  type: 'test'
+  ...
+# Subtest: 새 자료가 오면 전역을 바꾸고 팝업·주간 추천을 한 번만 다시 그린다
+ok 7 - 새 자료가 오면 전역을 바꾸고 팝업·주간 추천을 한 번만 다시 그린다
+  ---
+  duration_ms: 29.4824
+  type: 'test'
+  ...
+# Subtest: 통신 실패·잘못된 JSON 이면 마지막 정상 자료를 그대로 둔다
+ok 8 - 통신 실패·잘못된 JSON 이면 마지막 정상 자료를 그대로 둔다
+  ---
+  duration_ms: 9.0097
+  type: 'test'
+  ...
+# Subtest: 실패한 다음 확인에서 정상 복구된다
+ok 9 - 실패한 다음 확인에서 정상 복구된다
+  ---
+  duration_ms: 2.3363
+  type: 'test'
+  ...
+# Subtest: 늦게 도착한 응답이 더 최신 자료를 덮어쓰지 않는다
+ok 10 - 늦게 도착한 응답이 더 최신 자료를 덮어쓰지 않는다
+  ---
+  duration_ms: 1.7262
+  type: 'test'
+  ...
+# Subtest: 탭이 숨겨져 있으면 요청하지 않고 주기 타이머도 걸지 않는다
+ok 11 - 탭이 숨겨져 있으면 요청하지 않고 주기 타이머도 걸지 않는다
+  ---
+  duration_ms: 1.7955
+  type: 'test'
+  ...
+# Subtest: 최초 로드는 탭이 숨겨져 있어도 자료를 읽는다
+ok 12 - 최초 로드는 탭이 숨겨져 있어도 자료를 읽는다
+  ---
+  duration_ms: 1.999
+  type: 'test'
+  ...
+# Subtest: 탭 복귀 때 focus 와 visibilitychange 가 겹쳐도 한 번만 요청한다
+ok 13 - 탭 복귀 때 focus 와 visibilitychange 가 겹쳐도 한 번만 요청한다
+  ---
+  duration_ms: 1.7421
+  type: 'test'
+  ...
+# Subtest: 최초 로드 전에 들어온 focus 는 같은 파일을 두 번 읽지 않는다
+ok 14 - 최초 로드 전에 들어온 focus 는 같은 파일을 두 번 읽지 않는다
+  ---
+  duration_ms: 2.3892
+  type: 'test'
+  ...
+# Subtest: 최소 간격이 지나면 다시 확인한다
+ok 15 - 최소 간격이 지나면 다시 확인한다
+  ---
+  duration_ms: 2.3826
+  type: 'test'
+  ...
+# Subtest: 보이는 탭에서는 10분 주기 타이머를 건다
+ok 16 - 보이는 탭에서는 10분 주기 타이머를 건다
+  ---
+  duration_ms: 1.4217
+  type: 'test'
+  ...
+# Subtest: 캐시된 옛 파일을 그대로 쓰지 않도록 재검증 요청으로 읽는다
+ok 17 - 캐시된 옛 파일을 그대로 쓰지 않도록 재검증 요청으로 읽는다
+  ---
+  duration_ms: 0.78
+  type: 'test'
+  ...
+# Subtest: 조석 daily 가 오늘이 아니면 월간 자료로 보완하고, 한 번도 못 받으면 월간으로 대체한다
+ok 18 - 조석 daily 가 오늘이 아니면 월간 자료로 보완하고, 한 번도 못 받으면 월간으로 대체한다
+  ---
+  duration_ms: 8.5944
+  type: 'test'
+  ...
+# Subtest: 실제 저장 파일도 stamp 로 구분된다
+ok 19 - 실제 저장 파일도 stamp 로 구분된다
+  ---
+  duration_ms: 43.6511
+  type: 'test'
+  ...
+# Subtest: 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순
+ok 20 - 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순
+  ---
+  duration_ms: 17.3744
+  type: 'test'
+  ...
+# Subtest: 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다
+not ok 21 - 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다
+  ---
+  duration_ms: 12.1459
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_field_news.mjs:48:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(api.fieldPublicPoint(api.fieldNewsList()[0]) && api.fieldPublicPoint(api.fieldNewsList()[1]))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: ~
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_field_news.mjs:51:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션
+ok 22 - 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션
+  ---
+  duration_ms: 3.7303
+  type: 'test'
+  ...
+# Subtest: 위치 보호·비정상 좌표는 길안내 좌표가 없다
+not ok 23 - 위치 보호·비정상 좌표는 길안내 좌표가 없다
+  ---
+  duration_ms: 3.7661
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_field_news.mjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   lat: 36.6,
+    -   lon: 126.4
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    lat: 36.6
+    lon: 126.4
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_field_news.mjs:67:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다
+ok 24 - 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다
+  ---
+  duration_ms: 5.0169
+  type: 'test'
+  ...
+# Subtest: 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다
+ok 25 - 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다
+  ---
+  duration_ms: 3.0872
+  type: 'test'
+  ...
+# Subtest: 카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다
+ok 26 - 카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다
+  ---
+  duration_ms: 3.248
+  type: 'test'
+  ...
+# Subtest: 위치정보를 저장·전송하는 코드가 새 길안내에 없다
+ok 27 - 위치정보를 저장·전송하는 코드가 새 길안내에 없다
+  ---
+  duration_ms: 0.5512
+  type: 'test'
+  ...
+# Subtest: 외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다
+not ok 28 - 외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다
+  ---
+  duration_ms: 2.1729
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_field_news.mjs:101:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_field_news.mjs:108:33)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다
+ok 29 - 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다
+  ---
+  duration_ms: 1.7937
+  type: 'test'
+  ...
+# Subtest: 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다
+ok 30 - 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다
+  ---
+  duration_ms: 5.1109
+  type: 'test'
+  ...
+# Subtest: 동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤 캡처한 원 좌표를 재사용하지 않는다
+not ok 31 - 동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤 캡처한 원 좌표를 재사용하지 않는다
+  ---
+  duration_ms: 1.5143
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_popup_guard.mjs:25:1'
+  failureType: 'testCodeFailure'
+  error: 'FIELD_STATUS_LABEL is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    eval (eval at <anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_popup_guard.mjs:30:12), <anonymous>:31:104)
+    Array.forEach (<anonymous>)
+    Object.renderFieldMarkers [as render] (eval at <anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_popup_guard.mjs:30:12), <anonymous>:25:38)
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_popup_guard.mjs:35:25)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: publicationForgetLayer는 이전 팝업·source·binding을 제거하고 지도에서 레이어를 내린다
+ok 32 - publicationForgetLayer는 이전 팝업·source·binding을 제거하고 지도에서 레이어를 내린다
+  ---
+  duration_ms: 0.6533
+  type: 'test'
+  ...
+# Subtest: 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+not ok 33 - 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+  ---
+  duration_ms: 16.6072
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:88:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   'a',
+    -   'b'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'a'
+    1: 'b'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:91:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+not ok 34 - 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+  ---
+  duration_ms: 9.6682
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:104:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   'b'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'b'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:111:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+not ok 35 - 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+  ---
+  duration_ms: 11.6595
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:115:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'locationHidden')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:121:38)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+ok 36 - 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+  ---
+  duration_ms: 12.1965
+  type: 'test'
+  ...
+# Subtest: 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+ok 37 - 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+  ---
+  duration_ms: 8.0682
+  type: 'test'
+  ...
+# Subtest: 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+not ok 38 - 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+  ---
+  duration_ms: 8.5923
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:152:1'
+  failureType: 'testCodeFailure'
+  error: '안내 시작 + watch'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: ~
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:156:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+not ok 39 - 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+  ---
+  duration_ms: 7.1732
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:164:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'ok')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:168:39)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+not ok 40 - 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+  ---
+  duration_ms: 6.9017
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:176:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'ok')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:180:30)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+not ok 41 - 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+  ---
+  duration_ms: 10.6096
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:187:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(e.api.fieldGuide)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: ~
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:194:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+not ok 42 - 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+  ---
+  duration_ms: 21.3798
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:199:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:205:12)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+not ok 43 - GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+  ---
+  duration_ms: 7.8299
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:214:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'err')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:220:19)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+not ok 44 - 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+  ---
+  duration_ms: 7.9185
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:224:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'ok')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:230:19)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+not ok 45 - 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+  ---
+  duration_ms: 7.6752
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:235:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'ok')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:240:19)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+not ok 46 - 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+  ---
+  duration_ms: 6.9496
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:251:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    공개 소식이면 유지
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:256:39)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+not ok 47 - 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+  ---
+  duration_ms: 3.984
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:279:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    옛 응답은 렌더되지 않음
+    + actual - expected
+    
+    + []
+    - [
+    -   'approved:keep'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'approved:keep'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:285:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)
+ok 48 - 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)
+  ---
+  duration_ms: 15.4969
+  type: 'test'
+  ...
+# Subtest: 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)
+not ok 49 - 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)
+  ---
+  duration_ms: 6.953
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:292:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   lat: 36.6,
+    -   lon: 126.4
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    lat: 36.6
+    lon: 126.4
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:294:83)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+not ok 50 - 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+  ---
+  duration_ms: 2.6155
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:297:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   'approved:x'
+    - ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'approved:x'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:302:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 정상 순서의 응답은 모두 반영된다(회귀)
+not ok 51 - 정상 순서의 응답은 모두 반영된다(회귀)
+  ---
+  duration_ms: 2.9124
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:312:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:314:128)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+not ok 52 - 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+  ---
+  duration_ms: 5.4683
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_location_protection.mjs:319:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    한 번 다시 요청
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_location_protection.mjs:326:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+ok 53 - 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+  ---
+  duration_ms: 1.367
+  type: 'test'
+  ...
+# Subtest: 월간 조석 대상 ID 집합이 tide_month.json과 정확히 일치한다
+ok 54 - 월간 조석 대상 ID 집합이 tide_month.json과 정확히 일치한다
+  ---
+  duration_ms: 2.0868
+  type: 'test'
+  ...
+# Subtest: ID 188 이천항에서 한 달 조석 보기 버튼이 표시된다
+ok 55 - ID 188 이천항에서 한 달 조석 보기 버튼이 표시된다
+  ---
+  duration_ms: 0.4354
+  type: 'test'
+  ...
+# Subtest: 기존 월간 대상 27곳의 버튼 노출이 그대로 유지된다
+ok 56 - 기존 월간 대상 27곳의 버튼 노출이 그대로 유지된다
+  ---
+  duration_ms: 0.4387
+  type: 'test'
+  ...
+# Subtest: 월간 대상이 아닌 site에는 버튼이 생기지 않는다
+ok 57 - 월간 대상이 아닌 site에는 버튼이 생기지 않는다
+  ---
+  duration_ms: 0.2899
+  type: 'test'
+  ...
+# Subtest: 버튼이 나오는 site 수가 월간 대상 수와 같다
+ok 58 - 버튼이 나오는 site 수가 월간 대상 수와 같다
+  ---
+  duration_ms: 0.2281
+  type: 'test'
+  ...
+# Subtest: ID 14 는 runtime 이름이 걸매리이고 월간 조석 자료에는 과거 명칭이 남아 있다
+ok 59 - ID 14 는 runtime 이름이 걸매리이고 월간 조석 자료에는 과거 명칭이 남아 있다
+  ---
+  duration_ms: 0.1591
+  type: 'test'
+  ...
+# Subtest: 월간 조석 모달 제목은 과거 명칭이 아니라 현재 탐조지명을 쓴다
+ok 60 - 월간 조석 모달 제목은 과거 명칭이 아니라 현재 탐조지명을 쓴다
+  ---
+  duration_ms: 768.7583
+  type: 'test'
+  ...
+# Subtest: 이름이 같은 일반 탐조지의 제목은 그대로다
+ok 61 - 이름이 같은 일반 탐조지의 제목은 그대로다
+  ---
+  duration_ms: 680.7788
+  type: 'test'
+  ...
+# Subtest: runtime 이름을 쓸 수 없으면 월간 자료의 이름으로 대체한다
+ok 62 - runtime 이름을 쓸 수 없으면 월간 자료의 이름으로 대체한다
+  ---
+  duration_ms: 693.1675
+  type: 'test'
+  ...
+# Subtest: 조석 값이 있는 최신 자료에는 이전 자료 배지가 없다
+ok 63 - 조석 값이 있는 최신 자료에는 이전 자료 배지가 없다
+  ---
+  duration_ms: 650.4443
+  type: 'test'
+  ...
+# Subtest: 조석 값이 있는 stale 자료에는 기존 이전 자료 경고를 그대로 유지한다
+ok 64 - 조석 값이 있는 stale 자료에는 기존 이전 자료 경고를 그대로 유지한다
+  ---
+  duration_ms: 625.169
+  type: 'test'
+  ...
+# Subtest: 조석 자료가 없는 날짜에는 자료 없음만 표시하고 이전 자료 배지를 붙이지 않는다
+ok 65 - 조석 자료가 없는 날짜에는 자료 없음만 표시하고 이전 자료 배지를 붙이지 않는다
+  ---
+  duration_ms: 646.8767
+  type: 'test'
+  ...
+# Subtest: 자료 없음과 stale 자료가 한 달에 섞여 있어도 각 날짜가 제 상태로 표시된다
+ok 66 - 자료 없음과 stale 자료가 한 달에 섞여 있어도 각 날짜가 제 상태로 표시된다
+  ---
+  duration_ms: 660.3752
+  type: 'test'
+  ...
+# Subtest: A/B. PC에서 공지 닫기 버튼 중심의 hit target이 닫기 버튼이다 (1366·1920 필수)
+ok 67 - A/B. PC에서 공지 닫기 버튼 중심의 hit target이 닫기 버튼이다 (1366·1920 필수)
+  ---
+  duration_ms: 3493.5083
+  type: 'test'
+  ...
+# Subtest: C. 공지 열린 상태에서 닫기 버튼을 실제로 클릭하면 패널이 닫힌다
+ok 68 - C. 공지 열린 상태에서 닫기 버튼을 실제로 클릭하면 패널이 닫힌다
+  ---
+  duration_ms: 516.5169
+  type: 'test'
+  ...
+# Subtest: D. todayToggleBtn은 공지 열림/닫힘 양쪽에서 정상 클릭된다
+ok 69 - D. todayToggleBtn은 공지 열림/닫힘 양쪽에서 정상 클릭된다
+  ---
+  duration_ms: 851.25
+  type: 'test'
+  ...
+# Subtest: E. 모바일은 기존 배치와 동작을 그대로 유지한다
+ok 70 - E. 모바일은 기존 배치와 동작을 그대로 유지한다
+  ---
+  duration_ms: 578.3958
+  type: 'test'
+  ...
+# Subtest: F. 다른 overlay(추천 패널·월간 조석 모달)의 stacking 회귀가 없다
+ok 71 - F. 다른 overlay(추천 패널·월간 조석 모달)의 stacking 회귀가 없다
+  ---
+  duration_ms: 615.7463
+  type: 'test'
+  ...
+# Subtest: 정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하고 중복 없이 지도에 연결한다
+ok 72 - 정원 밖 공지 연계 장소는 적격·안전한 경우만 표시하고 중복 없이 지도에 연결한다
+  ---
+  duration_ms: 195.6514
+  type: 'test'
+  ...
+# Subtest: 주간 편집 목록은 지정 순서·표시명과 기존 적격성을 유지하고 날짜로 만료되지 않는다
+ok 73 - 주간 편집 목록은 지정 순서·표시명과 기존 적격성을 유지하고 날짜로 만료되지 않는다
+  ---
+  duration_ms: 186.9055
+  type: 'test'
+  ...
+# Subtest: 같은 순간이면 브라우저 timezone과 무관하게 오늘 날짜가 KST 기준으로 같다
+ok 74 - 같은 순간이면 브라우저 timezone과 무관하게 오늘 날짜가 KST 기준으로 같다
+  ---
+  duration_ms: 31.2457
+  type: 'test'
+  ...
+# Subtest: A. 6/1 시작 공지는 2027-06-01 00:30 KST 순간에 모든 timezone에서 활성이다
+ok 75 - A. 6/1 시작 공지는 2027-06-01 00:30 KST 순간에 모든 timezone에서 활성이다
+  ---
+  duration_ms: 3.8471
+  type: 'test'
+  ...
+# Subtest: B. 5/31 종료 공지는 2027-06-01 00:30 KST 순간에 모든 timezone에서 비활성이다
+ok 76 - B. 5/31 종료 공지는 2027-06-01 00:30 KST 순간에 모든 timezone에서 비활성이다
+  ---
+  duration_ms: 2.6091
+  type: 'test'
+  ...
+# Subtest: C~F. start/end 경계의 기존 inclusive 의미를 그대로 유지한다
+ok 77 - C~F. start/end 경계의 기존 inclusive 의미를 그대로 유지한다
+  ---
+  duration_ms: 6.4968
+  type: 'test'
+  ...
+# Subtest: KST 자정 직전/직후에 날짜가 정확히 바뀐다
+ok 78 - KST 자정 직전/직후에 날짜가 정확히 바뀐다
+  ---
+  duration_ms: 12.2131
+  type: 'test'
+  ...
+# Subtest: 연말·월말·윤년 경계에서도 KST 날짜와 비교가 정상이다
+ok 79 - 연말·월말·윤년 경계에서도 KST 날짜와 비교가 정상이다
+  ---
+  duration_ms: 23.0606
+  type: 'test'
+  ...
+# Subtest: 실제 activeNotice()로 감사 원문 fixture 두 벌을 세 timezone에서 검증한다
+ok 80 - 실제 activeNotice()로 감사 원문 fixture 두 벌을 세 timezone에서 검증한다
+  ---
+  duration_ms: 4.3138
+  type: 'test'
+  ...
+# Subtest: published:false 와 start/end 미기재 기본값 정책은 그대로다
+ok 81 - published:false 와 start/end 미기재 기본값 정책은 그대로다
+  ---
+  duration_ms: 3.4458
+  type: 'test'
+  ...
+# Subtest: 서울 브라우저에서는 수정 전후 동작이 달라지지 않는다
+ok 82 - 서울 브라우저에서는 수정 전후 동작이 달라지지 않는다
+  ---
+  duration_ms: 4.4781
+  type: 'test'
+  ...
+# Subtest: A. 3명: 모바일 3명 표시, 전체 보기 없음
+ok 83 - A. 3명: 모바일 3명 표시, 전체 보기 없음
+  ---
+  duration_ms: 2.542
+  type: 'test'
+  ...
+# Subtest: B. 4명: 모바일 3명 표시, 전체 보기 있음
+ok 84 - B. 4명: 모바일 3명 표시, 전체 보기 있음
+  ---
+  duration_ms: 1.0403
+  type: 'test'
+  ...
+# Subtest: C. 5명: 데스크톱 5명 표시, 전체 보기 없음
+ok 85 - C. 5명: 데스크톱 5명 표시, 전체 보기 없음
+  ---
+  duration_ms: 0.1836
+  type: 'test'
+  ...
+# Subtest: D. 6명: 데스크톱 5명 표시, 전체 보기 있음
+ok 86 - D. 6명: 데스크톱 5명 표시, 전체 보기 있음
+  ---
+  duration_ms: 0.1763
+  type: 'test'
+  ...
+# Subtest: 서버 순서를 그대로 쓰고 다시 정렬하지 않는다
+ok 87 - 서버 순서를 그대로 쓰고 다시 정렬하지 않는다
+  ---
+  duration_ms: 0.2469
+  type: 'test'
+  ...
+# Subtest: E. 빈 응답은 유효하고 기여자가 없다
+ok 88 - E. 빈 응답은 유효하고 기여자가 없다
+  ---
+  duration_ms: 0.3295
+  type: 'test'
+  ...
+# Subtest: F. 비정상 응답은 거부한다
+ok 89 - F. 비정상 응답은 거부한다
+  ---
+  duration_ms: 0.2887
+  type: 'test'
+  ...
+# Subtest: H. 운영 응답(2026-10)을 그대로 받아들이고 이름·건수만 남긴다
+ok 90 - H. 운영 응답(2026-10)을 그대로 받아들이고 이름·건수만 남긴다
+  ---
+  duration_ms: 0.3178
+  type: 'test'
+  ...
+# Subtest: 이미 받아 둔 승인 자료로 검색 목록을 만든다
+ok 91 - 이미 받아 둔 승인 자료로 검색 목록을 만든다
+  ---
+  duration_ms: 17.8618
+  type: 'test'
+  ...
+# Subtest: 고정 붉은 점에 연결된 제보도 함께 들어간다
+ok 92 - 고정 붉은 점에 연결된 제보도 함께 들어간다
+  ---
+  duration_ms: 1.022
+  type: 'test'
+  ...
+# Subtest: 종명으로 검색되고 과거 관찰도 걸린다
+ok 93 - 종명으로 검색되고 과거 관찰도 걸린다
+  ---
+  duration_ms: 0.9117
+  type: 'test'
+  ...
+# Subtest: 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+ok 94 - 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+  ---
+  duration_ms: 0.6818
+  type: 'test'
+  ...
+# Subtest: 검색어가 없으면 아무것도 돌려주지 않는다
+ok 95 - 검색어가 없으면 아무것도 돌려주지 않는다
+  ---
+  duration_ms: 0.6743
+  type: 'test'
+  ...
+# Subtest: 공개 API 가 준 공개 좌표만 목록에 들어간다
+ok 96 - 공개 API 가 준 공개 좌표만 목록에 들어간다
+  ---
+  duration_ms: 0.6583
+  type: 'test'
+  ...
+# Subtest: 승인되지 않은 제보는 애초에 목록에 없다
+ok 97 - 승인되지 않은 제보는 애초에 목록에 없다
+  ---
+  duration_ms: 0.6093
+  type: 'test'
+  ...
+# Subtest: 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+ok 98 - 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+  ---
+  duration_ms: 0.6796
+  type: 'test'
+  ...
+# Subtest: 좌표가 없는 제보는 목록에 넣지 않는다
+ok 99 - 좌표가 없는 제보는 목록에 넣지 않는다
+  ---
+  duration_ms: 0.6295
+  type: 'test'
+  ...
+# Subtest: 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+ok 100 - 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+  ---
+  duration_ms: 0.5088
+  type: 'test'
+  ...
+# Subtest: 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+ok 101 - 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+  ---
+  duration_ms: 0.3661
+  type: 'test'
+  ...
+# Subtest: 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+not ok 102 - 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+  ---
+  duration_ms: 3.6259
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_site_history_cache.mjs:95:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of null (reading 'total')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_site_history_cache.mjs:99:22)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+not ok 103 - 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+  ---
+  duration_ms: 1.7317
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_site_history_cache.mjs:107:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of null (reading 'history')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_site_history_cache.mjs:112:12)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+not ok 104 - 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+  ---
+  duration_ms: 2.0278
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_site_history_cache.mjs:118:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    아직은 기억해 둔 값을 쓴다
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_site_history_cache.mjs:124:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: 승인 제보 갱신이 돌면 기억을 버린다
+ok 105 - 승인 제보 갱신이 돌면 기억을 버린다
+  ---
+  duration_ms: 1.4418
+  type: 'test'
+  ...
+# Subtest: 탐조지마다 따로 기억한다
+not ok 106 - 탐조지마다 따로 기억한다
+  ---
+  duration_ms: 1.7275
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_site_history_cache.mjs:139:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    둘 다 기억해 둔 값을 쓴다
+    
+    4 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_site_history_cache.mjs:146:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+ok 107 - '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+  ---
+  duration_ms: 1.3691
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+ok 108 - 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+  ---
+  duration_ms: 1.5642
+  type: 'test'
+  ...
+# Subtest: 실패해도 null 을 돌려주고 기억에 남기지 않는다
+ok 109 - 실패해도 null 을 돌려주고 기억에 남기지 않는다
+  ---
+  duration_ms: 1.6717
+  type: 'test'
+  ...
+# Subtest: 응답 모양이 어긋나면 실패로 본다
+ok 110 - 응답 모양이 어긋나면 실패로 본다
+  ---
+  duration_ms: 1.6887
+  type: 'test'
+  ...
+# Subtest: 응답이 오지 않으면 시간을 끊는다
+ok 111 - 응답이 오지 않으면 시간을 끊는다
+  ---
+  duration_ms: 1.6507
+  type: 'test'
+  ...
+# Subtest: 이력 칸은 접이식이고 기본은 접힌 상태다
+ok 112 - 이력 칸은 접이식이고 기본은 접힌 상태다
+  ---
+  duration_ms: 0.4825
+  type: 'test'
+  ...
+# Subtest: 제목 옆에 승인된 이력 건수를 적는다
+ok 113 - 제목 옆에 승인된 이력 건수를 적는다
+  ---
+  duration_ms: 0.6161
+  type: 'test'
+  ...
+# Subtest: '더 보기'와 이력 조회 방식은 그대로 둔다
+ok 114 - '더 보기'와 이력 조회 방식은 그대로 둔다
+  ---
+  duration_ms: 0.6171
+  type: 'test'
+  ...
+# Subtest: 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+ok 115 - 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+  ---
+  duration_ms: 0.5142
+  type: 'test'
+  ...
+# Subtest: 이력을 그릴 때 칸을 다시 찾는다
+ok 116 - 이력을 그릴 때 칸을 다시 찾는다
+  ---
+  duration_ms: 0.5998
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+ok 117 - 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+  ---
+  duration_ms: 1.6338
+  type: 'test'
+  ...
+# Subtest: 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+ok 118 - 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+  ---
+  duration_ms: 3.658
+  type: 'test'
+  ...
+# Subtest: A. daily HTTP 실패 + monthly exact-date 정상 → 월간 fallback을 실제로 불러와 오늘 조석을 쓴다
+ok 119 - A. daily HTTP 실패 + monthly exact-date 정상 → 월간 fallback을 실제로 불러와 오늘 조석을 쓴다
+  ---
+  duration_ms: 28.473
+  type: 'test'
+  ...
+# Subtest: B. daily HTTP 실패 + monthly에 오늘 날짜가 없음 → 오늘 조석 사용 불가(미확인)
+ok 120 - B. daily HTTP 실패 + monthly에 오늘 날짜가 없음 → 오늘 조석 사용 불가(미확인)
+  ---
+  duration_ms: 4.7884
+  type: 'test'
+  ...
+# Subtest: C. daily root는 오늘이지만 site 누락 + 메모리 monthly exact-date → 월간 값을 쓴다
+ok 121 - C. daily root는 오늘이지만 site 누락 + 메모리 monthly exact-date → 월간 값을 쓴다
+  ---
+  duration_ms: 2.3685
+  type: 'test'
+  ...
+# Subtest: D. daily site 누락 + 메모리 monthly가 다른 날짜뿐 → null
+ok 122 - D. daily site 누락 + 메모리 monthly가 다른 날짜뿐 → null
+  ---
+  duration_ms: 4.4215
+  type: 'test'
+  ...
+# Subtest: E. daily site가 정상이면 monthly가 있어도 daily 값을 그대로 쓴다
+ok 123 - E. daily site가 정상이면 monthly가 있어도 daily 값을 그대로 쓴다
+  ---
+  duration_ms: 1.916
+  type: 'test'
+  ...
+# Subtest: F. daily site는 있으나 조석값이 자료 없음 + monthly exact-date 유효 → 월간 fallback
+ok 124 - F. daily site는 있으나 조석값이 자료 없음 + monthly exact-date 유효 → 월간 fallback
+  ---
+  duration_ms: 2.1687
+  type: 'test'
+  ...
+# Subtest: G. monthly에 오늘 row가 있어도 조석값이 없으면 쓰지 않는다
+ok 125 - G. monthly에 오늘 row가 있어도 조석값이 없으면 쓰지 않는다
+  ---
+  duration_ms: 1.8628
+  type: 'test'
+  ...
+# Subtest: G2. daily도 monthly도 자료 없음이면 기존 daily 표시를 유지한다
+ok 126 - G2. daily도 monthly도 자료 없음이면 기존 daily 표시를 유지한다
+  ---
+  duration_ms: 1.7723
+  type: 'test'
+  ...
+# Subtest: H. monthly exact-date가 stale이면 기존 stale 표시 의미를 그대로 보존한다
+ok 127 - H. monthly exact-date가 stale이면 기존 stale 표시 의미를 그대로 보존한다
+  ---
+  duration_ms: 2.2404
+  type: 'test'
+  ...
+# Subtest: H2. daily가 오늘이면 월간 fallback에 daily 갱신 지연 경고를 붙이지 않는다
+ok 128 - H2. daily가 오늘이면 월간 fallback에 daily 갱신 지연 경고를 붙이지 않는다
+  ---
+  duration_ms: 1.9842
+  type: 'test'
+  ...
+# Subtest: H3. daily root 날짜가 어제면 기존 staleDaily 경고를 그대로 유지한다
+ok 129 - H3. daily root 날짜가 어제면 기존 staleDaily 경고를 그대로 유지한다
+  ---
+  duration_ms: 1.8807
+  type: 'test'
+  ...
+# Subtest: H4. daily 갱신이 늦어도 전날 미리 받은 오늘 예보를 99개 사이트 경로에서 사용한다
+ok 130 - H4. daily 갱신이 늦어도 전날 미리 받은 오늘 예보를 99개 사이트 경로에서 사용한다
+  ---
+  duration_ms: 2.0126
+  type: 'test'
+  ...
+# Subtest: H5. 전날 사전예보가 stale이면 정상 월간 exact-date 자료를 우선한다
+ok 131 - H5. 전날 사전예보가 stale이면 정상 월간 exact-date 자료를 우선한다
+  ---
+  duration_ms: 1.7594
+  type: 'test'
+  ...
+# Subtest: I/J. 월 경계에서도 그날의 exact row만 쓴다 (9/30, 10/1, 12/31, 1/1, 2/28, 윤년 2/29, 3/1)
+ok 132 - I/J. 월 경계에서도 그날의 exact row만 쓴다 (9/30, 10/1, 12/31, 1/1, 2/28, 윤년 2/29, 3/1)
+  ---
+  duration_ms: 26.0041
+  type: 'test'
+  ...
+# Subtest: K. monthly가 이미 메모리에 있으면 추가 fetch 0회
+ok 133 - K. monthly가 이미 메모리에 있으면 추가 fetch 0회
+  ---
+  duration_ms: 2.2419
+  type: 'test'
+  ...
+# Subtest: L. daily 실패 후 monthly 요청은 기존 loader 기준 1회뿐이다
+ok 134 - L. daily 실패 후 monthly 요청은 기존 loader 기준 1회뿐이다
+  ---
+  duration_ms: 1.7845
+  type: 'test'
+  ...
+# Subtest: L2. daily 성공(오늘)이면 monthly를 추가로 요청하지 않는다
+ok 135 - L2. daily 성공(오늘)이면 monthly를 추가로 요청하지 않는다
+  ---
+  duration_ms: 2.1432
+  type: 'test'
+  ...
+# Subtest: L3. monthly fetch까지 실패하면 기존처럼 미확인으로 끝난다
+ok 136 - L3. monthly fetch까지 실패하면 기존처럼 미확인으로 끝난다
+  ---
+  duration_ms: 1.9738
+  type: 'test'
+  ...
+# Subtest: 모달을 먼저 열었는지 여부가 오늘 조석 가용성을 바꾸지 않는다
+ok 137 - 모달을 먼저 열었는지 여부가 오늘 조석 가용성을 바꾸지 않는다
+  ---
+  duration_ms: 17.7699
+  type: 'test'
+  ...
+# Subtest: 월간 fallback은 같은 site의 stationCode만 쓰고 다른 site row를 빌려오지 않는다
+ok 138 - 월간 fallback은 같은 site의 stationCode만 쓰고 다른 site row를 빌려오지 않는다
+  ---
+  duration_ms: 7.1892
+  type: 'test'
+  ...
+# Subtest: 실제 tide_month.json 구조에서 오늘 exact row를 찾고 stationCode가 daily와 일치한다
+ok 139 - 실제 tide_month.json 구조에서 오늘 exact row를 찾고 stationCode가 daily와 일치한다
+  ---
+  duration_ms: 103.3784
+  type: 'test'
+  ...
+# Subtest: 자정 전 23:59 에는 기존 오늘 저장값이 그대로 쓰인다
+ok 140 - 자정 전 23:59 에는 기존 오늘 저장값이 그대로 쓰인다
+  ---
+  duration_ms: 5.7807
+  type: 'test'
+  ...
+# Subtest: 자정 직후 저장 일일 자료만으로는 오늘 적합도를 낼 수 없다 (원인 재현)
+ok 141 - 자정 직후 저장 일일 자료만으로는 오늘 적합도를 낼 수 없다 (원인 재현)
+  ---
+  duration_ms: 22.5654
+  type: 'test'
+  ...
+# Subtest: 자정 직후 오늘 날짜 주간 예보가 있으면 출처와 예보 시각을 밝히고 적합도를 낸다
+ok 142 - 자정 직후 오늘 날짜 주간 예보가 있으면 출처와 예보 시각을 밝히고 적합도를 낸다
+  ---
+  duration_ms: 4.8602
+  type: 'test'
+  ...
+# Subtest: 오늘 예보가 없거나 필수값이 모자라면 미확인을 유지한다
+ok 143 - 오늘 예보가 없거나 필수값이 모자라면 미확인을 유지한다
+  ---
+  duration_ms: 11.009
+  type: 'test'
+  ...
+# Subtest: 야간 시간대 예보만 남아 있으면 대체하지 않는다
+ok 144 - 야간 시간대 예보만 남아 있으면 대체하지 않는다
+  ---
+  duration_ms: 2.8238
+  type: 'test'
+  ...
+# Subtest: 새 일일 자료가 도착하면 주간 대체에서 오늘 저장값으로 되돌아온다
+ok 145 - 새 일일 자료가 도착하면 주간 대체에서 오늘 저장값으로 되돌아온다
+  ---
+  duration_ms: 2.4287
+  type: 'test'
+  ...
+# Subtest: 저장 일일 자료가 오늘이면 주간 예보로 갈아타지 않는다
+ok 146 - 저장 일일 자료가 오늘이면 주간 예보로 갈아타지 않는다
+  ---
+  duration_ms: 3.4635
+  type: 'test'
+  ...
+# Subtest: 실제 저장 파일로 자정 직후를 재현하면 유부도·월포리해변이 미확인에서 벗어난다
+ok 147 - 실제 저장 파일로 자정 직후를 재현하면 유부도·월포리해변이 미확인에서 벗어난다
+  ---
+  duration_ms: 62.4368
+  type: 'test'
+  ...
+# Subtest: 오늘 날짜라도 예보 시각이 예정 갱신보다 오래되면 일일 자료만으로는 적합도를 낼 수 없다 (원인 재현)
+ok 148 - 오늘 날짜라도 예보 시각이 예정 갱신보다 오래되면 일일 자료만으로는 적합도를 낼 수 없다 (원인 재현)
+  ---
+  duration_ms: 2.9222
+  type: 'test'
+  ...
+# Subtest: 갱신 지연 구간에도 오늘 주간 예보가 있으면 주간 저장 예보로 대체한다
+ok 149 - 갱신 지연 구간에도 오늘 주간 예보가 있으면 주간 저장 예보로 대체한다
+  ---
+  duration_ms: 4.0871
+  type: 'test'
+  ...
+# Subtest: 갱신 지연이어도 오늘 주간 예보가 없거나 쓸 수 없으면 미확인을 유지한다
+ok 150 - 갱신 지연이어도 오늘 주간 예보가 없거나 쓸 수 없으면 미확인을 유지한다
+  ---
+  duration_ms: 17.3123
+  type: 'test'
+  ...
+# Subtest: 늦은 일일 자료가 도착하면 갱신 지연 대체에서 오늘 저장값으로 되돌아온다
+ok 151 - 늦은 일일 자료가 도착하면 갱신 지연 대체에서 오늘 저장값으로 되돌아온다
+  ---
+  duration_ms: 3.4871
+  type: 'test'
+  ...
+# Subtest: 실제 저장 파일을 갱신 지연 시각으로 되돌리면 해리천습지·유부도·월포리해변이 미확인에서 벗어난다
+ok 152 - 실제 저장 파일을 갱신 지연 시각으로 되돌리면 해리천습지·유부도·월포리해변이 미확인에서 벗어난다
+  ---
+  duration_ms: 88.5981
+  type: 'test'
+  ...
+# Subtest: 일출·일몰이 공표된 서울 하지/동지 값과 일치한다
+ok 153 - 일출·일몰이 공표된 서울 하지/동지 값과 일치한다
+  ---
+  duration_ms: 32.125
+  type: 'test'
+  ...
+# Subtest: 일출~일몰 경계: 계산된 일출·일몰 직전은 제외하고 정각과 그 사이는 포함한다
+ok 154 - 일출~일몰 경계: 계산된 일출·일몰 직전은 제외하고 정각과 그 사이는 포함한다
+  ---
+  duration_ms: 94.7748
+  type: 'test'
+  ...
+# Subtest: 동점이면 오전 우선, 오전 안에서는 더 이른 시각
+ok 155 - 동점이면 오전 우선, 오전 안에서는 더 이른 시각
+  ---
+  duration_ms: 22.3873
+  type: 'test'
+  ...
+# Subtest: scoreEligible false 는 후보에서 완전히 제외된다
+ok 156 - scoreEligible false 는 후보에서 완전히 제외된다
+  ---
+  duration_ms: 14.879
+  type: 'test'
+  ...
+# Subtest: 유효 sample 이 없는 날짜와 사이트는 후보에서 빠진다
+ok 157 - 유효 sample 이 없는 날짜와 사이트는 후보에서 빠진다
+  ---
+  duration_ms: 13.8555
+  type: 'test'
+  ...
+# Subtest: 오늘은 이미 지난 시각을 대표값으로 고르지 않는다
+ok 158 - 오늘은 이미 지난 시각을 대표값으로 고르지 않는다
+  ---
+  duration_ms: 23.4827
+  type: 'test'
+  ...
+# Subtest: 내일 이후는 isPastAtGeneration 이 true 여도 낮 sample 을 사용한다
+ok 159 - 내일 이후는 isPastAtGeneration 이 true 여도 낮 sample 을 사용한다
+  ---
+  duration_ms: 13.7154
+  type: 'test'
+  ...
+# Subtest: 주간 대표 날짜는 최고점, 동점이면 더 가까운 날짜
+ok 160 - 주간 대표 날짜는 최고점, 동점이면 더 가까운 날짜
+  ---
+  duration_ms: 17.4136
+  type: 'test'
+  ...
+# Subtest: 9월 동남해안 동풍 mandatory 는 8.0m/s 부터 충족
+ok 161 - 9월 동남해안 동풍 mandatory 는 8.0m/s 부터 충족
+  ---
+  duration_ms: 125.5738
+  type: 'test'
+  ...
+# Subtest: 10월에는 동풍 mandatory 가 적용되지 않는다
+ok 162 - 10월에는 동풍 mandatory 가 적용되지 않는다
+  ---
+  duration_ms: 10.7236
+  type: 'test'
+  ...
+# Subtest: 갯벌 물때 mandatory 는 기준 조위 이상에서만 충족
+ok 163 - 갯벌 물때 mandatory 는 기준 조위 이상에서만 충족
+  ---
+  duration_ms: 89.2517
+  type: 'test'
+  ...
+# Subtest: 월포리해변(193)은 송림갯벌(122)과 같은 갯벌 추천 조건으로 엔진에 연결된다
+ok 164 - 월포리해변(193)은 송림갯벌(122)과 같은 갯벌 추천 조건으로 엔진에 연결된다
+  ---
+  duration_ms: 33.6828
+  type: 'test'
+  ...
+# Subtest: weather_week 가 없으면 주간 헬퍼가 예외 없이 빈 결과를 준다
+ok 165 - weather_week 가 없으면 주간 헬퍼가 예외 없이 빈 결과를 준다
+  ---
+  duration_ms: 11.3258
+  type: 'test'
+  ...
+# Subtest: 주간 창은 오늘부터 7일이며 과거 날짜를 포함하지 않는다
+ok 166 - 주간 창은 오늘부터 7일이며 과거 날짜를 포함하지 않는다
+  ---
+  duration_ms: 10.4678
+  type: 'test'
+  ...
+# Subtest: 실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다
+ok 167 - 실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다
+  ---
+  duration_ms: 36.5632
+  type: 'test'
+  ...
+# Subtest: 가을 핵심 5곳과 실제 env token 분류
+ok 168 - 가을 핵심 5곳과 실제 env token 분류
+  ---
+  duration_ms: 14.1064
+  type: 'test'
+  ...
+# Subtest: 들판은 score → core → 날짜 → 안정 순서 → ID로 정렬
+ok 169 - 들판은 score → core → 날짜 → 안정 순서 → ID로 정렬
+  ---
+  duration_ms: 11.0796
+  type: 'test'
+  ...
+# Subtest: 선상 분류는 pelagic true만 사용하며 독도를 제외
+ok 170 - 선상 분류는 pelagic true만 사용하며 독도를 제외
+  ---
+  duration_ms: 10.2326
+  type: 'test'
+  ...
+# Subtest: 선상 추천 3개 기준의 inclusive 경계, 결측과 기존 score rule 독립
+ok 171 - 선상 추천 3개 기준의 inclusive 경계, 결측과 기존 score rule 독립
+  ---
+  duration_ms: 37.7286
+  type: 'test'
+  ...
+# Subtest: 선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서
+ok 172 - 선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서
+  ---
+  duration_ms: 12.9877
+  type: 'test'
+  ...
+# Subtest: 선상도 밤/오늘 과거 sample 제외, 다른 날짜 동풍 근거로 위험 sample 승격 금지
+ok 173 - 선상도 밤/오늘 과거 sample 제외, 다른 날짜 동풍 근거로 위험 sample 승격 금지
+  ---
+  duration_ms: 12.057
+  type: 'test'
+  ...
+# Subtest: soft target은 4/3/1/2, 복합형 dedupe와 mandatory 독점 방지
+ok 174 - soft target은 4/3/1/2, 복합형 dedupe와 mandatory 독점 방지
+  ---
+  duration_ms: 11.3124
+  type: 'test'
+  ...
+# Subtest: 들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허용
+ok 175 - 들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허용
+  ---
+  duration_ms: 11.3432
+  type: 'test'
+  ...
+# Subtest: weather_week/rules 실패에도 today 일반 추천, 선상만 제외
+ok 176 - weather_week/rules 실패에도 today 일반 추천, 선상만 제외
+  ---
+  duration_ms: 20.7892
+  type: 'test'
+  ...
+# Subtest: 공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 못한다
+ok 177 - 공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 못한다
+  ---
+  duration_ms: 10.9376
+  type: 'test'
+  ...
+# Subtest: 물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않고 추천에서 제외한다
+ok 178 - 물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않고 추천에서 제외한다
+  ---
+  duration_ms: 14.8628
+  type: 'test'
+  ...
+# Subtest: 원거리 섬 제외/봄 정책과 structured notice linkage 유지
+ok 179 - 원거리 섬 제외/봄 정책과 structured notice linkage 유지
+  ---
+  duration_ms: 41.0424
+  type: 'test'
+  ...
+# Subtest: 전체 inline JavaScript 문법 정상
+ok 180 - 전체 inline JavaScript 문법 정상
+  ---
+  duration_ms: 26.745
+  type: 'test'
+  ...
+# Subtest: 실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 보고
+ok 181 - 실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 보고
+  ---
+  duration_ms: 979.3244
+  type: 'test'
+  ...
+# Subtest: 추천 caution은 mandatory/점수와 무관하며 미확인은 별도 상태
+ok 182 - 추천 caution은 mandatory/점수와 무관하며 미확인은 별도 상태
+  ---
+  duration_ms: 10.9
+  type: 'test'
+  ...
+# Subtest: 다른 시각의 caution 근거 대신 카드 표시 기상만 판단
+ok 183 - 다른 시각의 caution 근거 대신 카드 표시 기상만 판단
+  ---
+  duration_ms: 10.3931
+  type: 'test'
+  ...
+# Subtest: 최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음
+ok 184 - 최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음
+  ---
+  duration_ms: 31.4231
+  type: 'test'
+  ...
+# Subtest: 물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외
+ok 185 - 물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외
+  ---
+  duration_ms: 14.8422
+  type: 'test'
+  ...
+# Subtest: 실데이터 caution 전후 비교와 동풍·공지 보존
+ok 186 - 실데이터 caution 전후 비교와 동풍·공지 보존
+  ---
+  duration_ms: 648.8129
+  type: 'test'
+  ...
+# Subtest: 동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충
+ok 187 - 동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충
+  ---
+  duration_ms: 15.0186
+  type: 'test'
+  ...
+# Subtest: 동풍과 선상 gate는 지역·풍향·풍속에서 독립
+ok 188 - 동풍과 선상 gate는 지역·풍향·풍속에서 독립
+  ---
+  duration_ms: 93.4682
+  type: 'test'
+  ...
+# Subtest: 봄·가을 선상과 겨울 별도 허용, seasons 무관하며 독도 제외
+ok 189 - 봄·가을 선상과 겨울 별도 허용, seasons 무관하며 독도 제외
+  ---
+  duration_ms: 65.9328
+  type: 'test'
+  ...
+# Subtest: 강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으며 전부 위험하면 0
+ok 190 - 강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으며 전부 위험하면 0
+  ---
+  duration_ms: 11.1877
+  type: 'test'
+  ...
+# Subtest: 실제 동풍·선상 후보별 gate와 최종 선발 보고
+ok 191 - 실제 동풍·선상 후보별 gate와 최종 선발 보고
+  ---
+  duration_ms: 488.3663
+  type: 'test'
+  ...
+# Subtest: 봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충
+ok 192 - 봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충
+  ---
+  duration_ms: 19.43
+  type: 'test'
+  ...
+# Subtest: 겨울 추천 달 경계와 전역 가을/이동기 정의 독립
+ok 193 - 겨울 추천 달 경계와 전역 가을/이동기 정의 독립
+  ---
+  duration_ms: 65.4871
+  type: 'test'
+  ...
+# Subtest: 겨울 실제 핵심 들판 5곳과 습지/해안 복합환경 유지
+ok 194 - 겨울 실제 핵심 들판 5곳과 습지/해안 복합환경 유지
+  ---
+  duration_ms: 13.7156
+  type: 'test'
+  ...
+# Subtest: 겨울은 score → core → 날짜 → stable → ID, bonus와 강제 선발 없음
+ok 195 - 겨울은 score → core → 날짜 → stable → ID, bonus와 강제 선발 없음
+  ---
+  duration_ms: 12.5869
+  type: 'test'
+  ...
+# Subtest: 겨울 3/3/3/최대1과 부족 보충 및 전역 dedupe
+ok 196 - 겨울 3/3/3/최대1과 부족 보충 및 전역 dedupe
+  ---
+  duration_ms: 10.0973
+  type: 'test'
+  ...
+# Subtest: 겨울 명시 제외는 정확한 ID/이름만, 미등록 7곳을 다른 site로 추정하지 않는다
+ok 197 - 겨울 명시 제외는 정확한 ID/이름만, 미등록 7곳을 다른 site로 추정하지 않는다
+  ---
+  duration_ms: 10.9674
+  type: 'test'
+  ...
+# Subtest: 겨울 섬 예외와 환경 정확 token, 이름으로 산/섬을 추정하지 않음
+ok 198 - 겨울 섬 예외와 환경 정확 token, 이름으로 산/섬을 추정하지 않음
+  ---
+  duration_ms: 9.9215
+  type: 'test'
+  ...
+# Subtest: 겨울 선상 5곳은 기존 safety 재사용, 항구 3곳은 육상 coast 유지
+ok 199 - 겨울 선상 5곳은 기존 safety 재사용, 항구 3곳은 육상 coast 유지
+  ---
+  duration_ms: 28.6989
+  type: 'test'
+  ...
+# Subtest: 겨울 통합: 실제 190 site + 합성 겨울 예보, 10곳/점수/caution/시간/공지 보존
+ok 200 - 겨울 통합: 실제 190 site + 합성 겨울 예보, 10곳/점수/caution/시간/공지 보존
+  ---
+  duration_ms: 224.8266
+  type: 'test'
+  ...
+# Subtest: 겨울 today fallback 미확인 의미 유지, 선상 fallback 승격 금지
+ok 201 - 겨울 today fallback 미확인 의미 유지, 선상 fallback 승격 금지
+  ---
+  duration_ms: 15.4277
+  type: 'test'
+  ...
+# Subtest: 겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)
+ok 202 - 겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)
+  ---
+  duration_ms: 12.5327
+  type: 'test'
+  ...
+# Subtest: 겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전부 탈락 보충
+ok 203 - 겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전부 탈락 보충
+  ---
+  duration_ms: 175.545
+  type: 'test'
+  ...
+# Subtest: 봄 추천 3/1~5/31 경계, 3월 선상 미확대
+ok 204 - 봄 추천 3/1~5/31 경계, 3월 선상 미확대
+  ---
+  duration_ms: 650.7456
+  type: 'test'
+  ...
+# Subtest: 봄 핵심 도서 6개 정확 이름의 19개 ID, 환경과 점수 무변경
+ok 205 - 봄 핵심 도서 6개 정확 이름의 19개 ID, 환경과 점수 무변경
+  ---
+  duration_ms: 9.8482
+  type: 'test'
+  ...
+# Subtest: 봄 24시간 선행 강수 + W/NW 정확 경계 및 미래/결측 제외
+ok 206 - 봄 24시간 선행 강수 + W/NW 정확 경계 및 미래/결측 제외
+  ---
+  duration_ms: 294.3256
+  type: 'test'
+  ...
+# Subtest: 봄 degree 풍향은 기존 Worker 8방위 변환과 일치
+ok 207 - 봄 degree 풍향은 기존 Worker 8방위 변환과 일치
+  ---
+  duration_ms: 13.4016
+  type: 'test'
+  ...
+# Subtest: 봄 유입 사유는 표시 sample에서만 판정, caution을 우회하지 않음
+ok 208 - 봄 유입 사유는 표시 sample에서만 판정, caution을 우회하지 않음
+  ---
+  duration_ms: 15.6567
+  type: 'test'
+  ...
+# Subtest: 걸매리 5/1~10 우선은 추천일 기준이며 점수·가을 조석을 바꾸지 않는다
+ok 209 - 걸매리 5/1~10 우선은 추천일 기준이며 점수·가을 조석을 바꾸지 않는다
+  ---
+  duration_ms: 62.0144
+  type: 'test'
+  ...
+# Subtest: 걸매리 특별 우선은 일반 갯벌보다 앞서지만 caution/부적격/결측 승격 금지
+ok 210 - 걸매리 특별 우선은 일반 갯벌보다 앞서지만 caution/부적격/결측 승격 금지
+  ---
+  duration_ms: 18.2958
+  type: 'test'
+  ...
+# Subtest: 유부도는 봄에만 추천 제외, 가을·겨울 후보 및 원본 유지
+ok 211 - 유부도는 봄에만 추천 제외, 가을·겨울 후보 및 원본 유지
+  ---
+  duration_ms: 93.006
+  type: 'test'
+  ...
+# Subtest: 봄 통합 4/3/최대1/2와 core 동점 우선, 부족 보충/dedupe/점수 보존
+ok 212 - 봄 통합 4/3/최대1/2와 core 동점 우선, 부족 보충/dedupe/점수 보존
+  ---
+  duration_ms: 107.167
+  type: 'test'
+  ...
+# Subtest: 봄 일반 today fallback의 null 안전 의미 유지
+ok 213 - 봄 일반 today fallback의 null 안전 의미 유지
+  ---
+  duration_ms: 9.6096
+  type: 'test'
+  ...
+# Subtest: 봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가 아님)
+ok 214 - 봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가 아님)
+  ---
+  duration_ms: 9.3832
+  type: 'test'
+  ...
+# Subtest: 여름 6/1~8/31 월 경계
+ok 215 - 여름 6/1~8/31 월 경계
+  ---
+  duration_ms: 77.0233
+  type: 'test'
+  ...
+# Subtest: 여름 실제 산림/수계/해안 및 릉 token, 이름과 weatherRuleKey 추정 금지
+ok 216 - 여름 실제 산림/수계/해안 및 릉 token, 이름과 weatherRuleKey 추정 금지
+  ---
+  duration_ms: 9.8803
+  type: 'test'
+  ...
+# Subtest: 여름 농경지/섬은 복합 환경과 100점 공지에서도 제외
+ok 217 - 여름 농경지/섬은 복합 환경과 100점 공지에서도 제외
+  ---
+  duration_ms: 39.8046
+  type: 'test'
+  ...
+# Subtest: 봄 핵심 6개 섬 전 ID는 여름 제외, 원본/봄 정책 유지
+ok 218 - 봄 핵심 6개 섬 전 ID는 여름 제외, 원본/봄 정책 유지
+  ---
+  duration_ms: 53.6712
+  type: 'test'
+  ...
+# Subtest: 여름 실제 188 후보 배분 6월 3/3/2/1/1, 7~8월 3/3/2/2 및 점수 불변
+ok 219 - 여름 실제 188 후보 배분 6월 3/3/2/1/1, 7~8월 3/3/2/2 및 점수 불변
+  ---
+  duration_ms: 283.9902
+  type: 'test'
+  ...
+# Subtest: 여름 부족 보충은 허용 축만, 복합 dedupe와 unsafe/미분류 제외
+ok 220 - 여름 부족 보충은 허용 축만, 복합 dedupe와 unsafe/미분류 제외
+  ---
+  duration_ms: 22.782
+  type: 'test'
+  ...
+# Subtest: 여름 선상은 대진항48 pelagic=true의 6월 sample만, 6/30 주간 경계
+ok 221 - 여름 선상은 대진항48 pelagic=true의 6월 sample만, 6/30 주간 경계
+  ---
+  duration_ms: 77.4537
+  type: 'test'
+  ...
+# Subtest: 여름 대진항 선상 안전 경계/결측/비수치와 caution 이중 검사
+ok 222 - 여름 대진항 선상 안전 경계/결측/비수치와 caution 이중 검사
+  ---
+  duration_ms: 99.908
+  type: 'test'
+  ...
+# Subtest: 여름 daylight/과거/최고점/날짜 tie 및 가을 조석 비활성
+ok 223 - 여름 daylight/과거/최고점/날짜 tie 및 가을 조석 비활성
+  ---
+  duration_ms: 19.2758
+  type: 'test'
+  ...
+# Subtest: 여름 공지로 부적격 sample 승격 금지, today fallback 미확인 유지
+ok 224 - 여름 공지로 부적격 sample 승격 금지, today fallback 미확인 유지
+  ---
+  duration_ms: 32.9835
+  type: 'test'
+  ...
+# Subtest: 여름 실제 환경 전수 보고
+ok 225 - 여름 실제 환경 전수 보고
+  ---
+  duration_ms: 11.1858
+  type: 'test'
+  ...
+# Subtest: C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다
+ok 226 - C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다
+  ---
+  duration_ms: 522.5404
+  type: 'test'
+  ...
+# Subtest: C01 생성 JSON은 선상 안전판정에 필요한 원자료 precision을 잃지 않는다
+ok 227 - C01 생성 JSON은 선상 안전판정에 필요한 원자료 precision을 잃지 않는다
+  ---
+  duration_ms: 158.6066
+  type: 'test'
+  ...
+# Subtest: C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 경계가 그대로다
+ok 228 - C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 경계가 그대로다
+  ---
+  duration_ms: 765.0833
+  type: 'test'
+  ...
+# Subtest: H01 다음 계절 날짜의 sample에 현재 계절 정책을 적용하지 않는다
+ok 229 - H01 다음 계절 날짜의 sample에 현재 계절 정책을 적용하지 않는다
+  ---
+  duration_ms: 183.7014
+  type: 'test'
+  ...
+# Subtest: H01 CASE E 11/1 주문진항은 가을 선상이 아니라 겨울 해안·항구 육상 후보다
+ok 230 - H01 CASE E 11/1 주문진항은 가을 선상이 아니라 겨울 해안·항구 육상 후보다
+  ---
+  duration_ms: 26.0313
+  type: 'test'
+  ...
+# Subtest: H01 CASE G 8/31에 열어도 9/1 가을 들판 후보는 여름 제외로 사라지지 않는다
+ok 231 - H01 CASE G 8/31에 열어도 9/1 가을 들판 후보는 여름 제외로 사라지지 않는다
+  ---
+  duration_ms: 26.4276
+  type: 'test'
+  ...
+# Subtest: H01 계절 적격 sample 중에서만 주간 대표 날짜와 사유를 고른다
+ok 232 - H01 계절 적격 sample 중에서만 주간 대표 날짜와 사유를 고른다
+  ---
+  duration_ms: 36.6741
+  type: 'test'
+  ...
+# Subtest: H01 계절 경계 8곳에서 그 날짜의 계절 정책이 적용된다
+ok 233 - H01 계절 경계 8곳에서 그 날짜의 계절 정책이 적용된다
+  ---
+  duration_ms: 89.9673
+  type: 'test'
+  ...
+# Subtest: H01 계절 판정은 12개월을 중첩·공백 없이 한 번씩 덮는다
+ok 234 - H01 계절 판정은 12개월을 중첩·공백 없이 한 번씩 덮는다
+  ---
+  duration_ms: 8.9117
+  type: 'test'
+  ...
+# Subtest: M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아나지 않는다
+ok 235 - M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아나지 않는다
+  ---
+  duration_ms: 83.9767
+  type: 'test'
+  ...
+# Subtest: M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다
+ok 236 - M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다
+  ---
+  duration_ms: 101.2868
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 기준 물높이 경계값을 포함하고 미달은 제외한다
+ok 237 - 물때 관문: 기준 물높이 경계값을 포함하고 미달은 제외한다
+  ---
+  duration_ms: 89.1854
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 오늘 이미 지난 만조는 세지 않는다
+ok 238 - 물때 관문: 오늘 이미 지난 만조는 세지 않는다
+  ---
+  duration_ms: 28.309
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 일출 전·일몰 후 만조는 적합으로 세지 않는다
+ok 239 - 물때 관문: 일출 전·일몰 후 만조는 적합으로 세지 않는다
+  ---
+  duration_ms: 28.8576
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 이번 주 밖의 충족일은 세지 않고, 주 안으로 들어오면 다시 후보가 된다
+ok 240 - 물때 관문: 이번 주 밖의 충족일은 세지 않고, 주 안으로 들어오면 다시 후보가 된다
+  ---
+  duration_ms: 26.2246
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 조석 자료가 없거나 비어 있으면 적합으로 추정하지 않는다
+ok 241 - 물때 관문: 조석 자료가 없거나 비어 있으면 적합으로 추정하지 않는다
+  ---
+  duration_ms: 46.1233
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 공지·기상 어느 경로로도 우회할 수 없다
+ok 242 - 물때 관문: 공지·기상 어느 경로로도 우회할 수 없다
+  ---
+  duration_ms: 28.5575
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 고정 추천 목록도 우회하지 못한다
+ok 243 - 물때 관문: 고정 추천 목록도 우회하지 못한다
+  ---
+  duration_ms: 21.6302
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 추천 사유 날짜와 카드에 표시되는 만조가 같은 날이다
+ok 244 - 물때 관문: 추천 사유 날짜와 카드에 표시되는 만조가 같은 날이다
+  ---
+  duration_ms: 10.6186
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 규칙이 없는 탐조지는 영향을 받지 않는다
+ok 245 - 물때 관문: 규칙이 없는 탐조지는 영향을 받지 않는다
+  ---
+  duration_ms: 55.5297
+  type: 'test'
+  ...
+# Subtest: 고정 자료 2026-09-17 기준 매향리가 이번 주 추천에서 빠진다
+ok 246 - 고정 자료 2026-09-17 기준 매향리가 이번 주 추천에서 빠진다
+  ---
+  duration_ms: 20.3896
+  type: 'test'
+  ...
+# Subtest: 실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지의 후보일과 일치한다
+ok 247 - 실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지의 후보일과 일치한다
+  ---
+  duration_ms: 2.4257
+  type: 'test'
+  ...
+# Subtest: R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16
+ok 248 - R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16
+  ---
+  duration_ms: 11.1782
+  type: 'test'
+  ...
+# Subtest: R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점
+ok 249 - R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점
+  ---
+  duration_ms: 9.1785
+  type: 'test'
+  ...
+# Subtest: R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다
+ok 250 - R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다
+  ---
+  duration_ms: 28.0137
+  type: 'test'
+  ...
+# Subtest: R01 동점 tie-break: rankScore 같으면 더 최근 출현, 그다음 고유 종수
+ok 251 - R01 동점 tie-break: rankScore 같으면 더 최근 출현, 그다음 고유 종수
+  ---
+  duration_ms: 8.8323
+  type: 'test'
+  ...
+# Subtest: R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외되고, 큰 감점은 가점으로 뒤집히지 않는다
+ok 252 - R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외되고, 큰 감점은 가점으로 뒤집히지 않는다
+  ---
+  duration_ms: 18.5447
+  type: 'test'
+  ...
+# Subtest: R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다
+ok 253 - R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다
+  ---
+  duration_ms: 27.3875
+  type: 'test'
+  ...
+# Subtest: R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 점수 + 출현 가점이다
+ok 254 - R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 점수 + 출현 가점이다
+  ---
+  duration_ms: 26.8434
+  type: 'test'
+  ...
+# Subtest: R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로
+not ok 255 - R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로
+  ---
+  duration_ms: 2.4376
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs:1730:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   false,
+    +   {},
+    +   0
+    -   true,
+    -   {
+    -     '15': {
+    -       latestDate: '2026-09-29',
+    -       species: [
+    -         '캐나다기러기'
+    -       ]
+    -     }
+    -   },
+    -   1
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: true
+    1:
+      15:
+        latestDate: '2026-09-29'
+        species:
+          0: '캐나다기러기'
+    2: 1
+  actual:
+    0: false
+    1:
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_weekly_recommendation.mjs:1751:10)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: R02 A·D 편집 목록이 있어도 자동 rankScore 순서이고, 탈락한 편집 장소를 끼워 넣지 않는다
+ok 256 - R02 A·D 편집 목록이 있어도 자동 rankScore 순서이고, 탈락한 편집 장소를 끼워 넣지 않는다
+  ---
+  duration_ms: 33.0417
+  type: 'test'
+  ...
+# Subtest: R02 B·E 편집 목록이 없으면 자동 추천 그대로이고, 출현 자료가 없으면 기존 결과와 같다
+ok 257 - R02 B·E 편집 목록이 없으면 자동 추천 그대로이고, 출현 자료가 없으면 기존 결과와 같다
+  ---
+  duration_ms: 19.2283
+  type: 'test'
+  ...
+# Subtest: R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙이고 점수·순위는 그대로다
+ok 258 - R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙이고 점수·순위는 그대로다
+  ---
+  duration_ms: 28.5498
+  type: 'test'
+  ...
+# Subtest: P0-1 유부도·매향리·걸매리: 만조에 가장 가까운 예보로 평가하고 하루 최고점 시각을 쓰지 않는다
+ok 259 - P0-1 유부도·매향리·걸매리: 만조에 가장 가까운 예보로 평가하고 하루 최고점 시각을 쓰지 않는다
+  ---
+  duration_ms: 28.8689
+  type: 'test'
+  ...
+# Subtest: P0-1 조석 기준값 경계: 유부도 710 / 매향리·걸매리 850 이상만 후보, 1cm 미달은 제외
+ok 260 - P0-1 조석 기준값 경계: 유부도 710 / 매향리·걸매리 850 이상만 후보, 1cm 미달은 제외
+  ---
+  duration_ms: 55.77
+  type: 'test'
+  ...
+# Subtest: P0-1 대표성: 만조와 예보 간격 절반(90분) 이내만 쓰고 넘으면 추정 없이 추천 제외
+ok 261 - P0-1 대표성: 만조와 예보 간격 절반(90분) 이내만 쓰고 넘으면 추정 없이 추천 제외
+  ---
+  duration_ms: 27.7614
+  type: 'test'
+  ...
+# Subtest: P0-1 일출·일몰 밖 예보는 만조 평가에 쓰지 않고 유효 예보가 없으면 기존처럼 후보 제외
+ok 262 - P0-1 일출·일몰 밖 예보는 만조 평가에 쓰지 않고 유효 예보가 없으면 기존처럼 후보 제외
+  ---
+  duration_ms: 9.1604
+  type: 'test'
+  ...
+# Subtest: P0-2 흑산도형: 위험 시각의 높은 점수가 안전한 시각 예보 선택을 막지 않는다
+ok 263 - P0-2 흑산도형: 위험 시각의 높은 점수가 안전한 시각 예보 선택을 막지 않는다
+  ---
+  duration_ms: 27.6859
+  type: 'test'
+  ...
+# Subtest: P0-2 부적격 예보는 승격되지 않고 선상 안전 기준(6.0m/s·0.7m·0mm·결측 제외)은 그대로다
+ok 264 - P0-2 부적격 예보는 승격되지 않고 선상 안전 기준(6.0m/s·0.7m·0mm·결측 제외)은 그대로다
+  ---
+  duration_ms: 17.9522
+  type: 'test'
+  ...
+# Subtest: P0-2 최근 출현 가점·공지는 안전 제외를 우회하지 못한다
+ok 265 - P0-2 최근 출현 가점·공지는 안전 제외를 우회하지 못한다
+  ---
+  duration_ms: 9.5215
+  type: 'test'
+  ...
+# Subtest: P0-3 강수 판정: 화면 카드의 비권장 기준(1mm)과 추천 안전 기준이 같고 결측은 무강수가 아니다
+ok 266 - P0-3 강수 판정: 화면 카드의 비권장 기준(1mm)과 추천 안전 기준이 같고 결측은 무강수가 아니다
+  ---
+  duration_ms: 8.9462
+  type: 'test'
+  ...
+# Subtest: P0-4 최근 출현 근거에 실제 관찰일이 포함되고 예보 자료 생성 시각이 표시된다
+ok 267 - P0-4 최근 출현 근거에 실제 관찰일이 포함되고 예보 자료 생성 시각이 표시된다
+  ---
+  duration_ms: 9.0485
+  type: 'test'
+  ...
+# Subtest: P0-B1 만조 기상 미확인: 물때 조건만으로는 최종 추천에 들어오지 못한다
+ok 268 - P0-B1 만조 기상 미확인: 물때 조건만으로는 최종 추천에 들어오지 못한다
+  ---
+  duration_ms: 19.1905
+  type: 'test'
+  ...
+# Subtest: P0-B2 모든 적격 만조 검사: 첫날 900cm 위험 기상, 다음날 880cm 적격이면 다음날을 추천한다
+ok 269 - P0-B2 모든 적격 만조 검사: 첫날 900cm 위험 기상, 다음날 880cm 적격이면 다음날을 추천한다
+  ---
+  duration_ms: 10.9726
+  type: 'test'
+  ...
+# Subtest: P0-B2 같은 날 두 번의 만조도 각각 검사한다
+ok 270 - P0-B2 같은 날 두 번의 만조도 각각 검사한다
+  ---
+  duration_ms: 10.4727
+  type: 'test'
+  ...
+# Subtest: P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다
+ok 271 - P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다
+  ---
+  duration_ms: 100.7553
+  type: 'test'
+  ...
+# Subtest: P0-B4 강수·파고 경계와 반올림: 원자료 1mm/2.0m 기준, 표시 반올림이 기준을 넘지 못하고 결측은 판정하지 않는다
+ok 272 - P0-B4 강수·파고 경계와 반올림: 원자료 1mm/2.0m 기준, 표시 반올림이 기준을 넘지 못하고 결측은 판정하지 않는다
+  ---
+  duration_ms: 27.1553
+  type: 'test'
+  ...
+# Subtest: P0-B5 고정 입력 회귀: 최근 출현 가점·관찰일은 기준일에만 의존한다
+ok 273 - P0-B5 고정 입력 회귀: 최근 출현 가점·관찰일은 기준일에만 의존한다
+  ---
+  duration_ms: 17.8208
+  type: 'test'
+  ...
+# Subtest: P0-C1 90분 절대 상한: 간격 3h 90분 허용·91분 제외, 6h·24h 간격은 120분 차이를 허용하지 않는다
+ok 274 - P0-C1 90분 절대 상한: 간격 3h 90분 허용·91분 제외, 6h·24h 간격은 120분 차이를 허용하지 않는다
+  ---
+  duration_ms: 92.6997
+  type: 'test'
+  ...
+# Subtest: P0-C2 잘못된 간격 metadata는 3시간(90분)으로 보고, 어떤 값도 90분을 넘기지 못한다
+ok 275 - P0-C2 잘못된 간격 metadata는 3시간(90분)으로 보고, 어떤 값도 90분을 넘기지 못한다
+  ---
+  duration_ms: 194.9576
+  type: 'test'
+  ...
+# Subtest: P0-C3 예보 시각 결측·형식 오류는 만조 기상으로 쓰지 않는다
+ok 276 - P0-C3 예보 시각 결측·형식 오류는 만조 기상으로 쓰지 않는다
+  ---
+  duration_ms: 54.7971
+  type: 'test'
+  ...
+# Subtest: P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다
+ok 277 - P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다
+  ---
+  duration_ms: 28.2725
+  type: 'test'
+  ...
+# Subtest: P0-C5 상한을 넘는 만조는 건너뛰고 90분 안의 다른 만조(다른 날짜·같은 날 두 번째)를 쓴다
+ok 278 - P0-C5 상한을 넘는 만조는 건너뛰고 90분 안의 다른 만조(다른 날짜·같은 날 두 번째)를 쓴다
+  ---
+  duration_ms: 20.8212
+  type: 'test'
+  ...
+1..278
+# tests 278
+# suites 0
+# pass 252
+# fail 26
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19877.6235

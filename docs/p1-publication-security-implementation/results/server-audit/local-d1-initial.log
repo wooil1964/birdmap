@@ -1,0 +1,18 @@
+{"pass":1,"fail":0,"skip":0}
+node:internal/process/task_queues:104
+    runMicrotasks();
+    ^
+
+Error: D1_ERROR: incomplete input: SQLITE_ERROR
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/docs/p1-publication-security-implementation/results/server-audit/local-d1-publication.mjs:35:3 {
+  [cause]: Error: incomplete input: SQLITE_ERROR
+      at D1DatabaseSessionAlwaysPrimary._sendOrThrow (cloudflare-internal:d1-api:189:24)
+      at async cloudflare-internal:d1-api:137:19
+      at async #fetch (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5040:18)
+      at async ProxyServer.fetch (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/miniflare/dist/src/workers/core/entry.worker.js:4929:14) {
+    [cause]: undefined
+  }
+}
+
+Node.js v24.18.0

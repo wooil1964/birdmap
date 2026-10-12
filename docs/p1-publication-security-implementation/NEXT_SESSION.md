@@ -1,20 +1,26 @@
 # 재개 지침
 
-## 현재 상태
+## 완료와 정확한 상태
 
-직전 checkpoint HEAD: `188b390c2cddeb8dd8d92abd651d428feb95726b`. 이 문서는 다음 checkpoint commit에 포함한다. 실제 마지막 commit은 `git log -1`로 확인한다.
-작업 경로: `C:/Users/김진호/.codex/worktrees/p1-publication-security-guards/birdmap`.
-제품 편집자는 root만, 하위 검증 담당은 test/docs/results만 수정했다.
+제품/시험 checkpoint `f7aee08f8bab6371cdffb8e2099d85b51a76765e`. 이후 문서 커밋을 포함한 실제 마지막 head는 `git log -1`과 Draft PR head를 확인한다.
+작업 branch `codex/p1-publication-security-guards`, 경로 `C:/Users/김진호/.codex/worktrees/p1-publication-security-guards/birdmap`.
+설계 `c128666203bb5c483258b8231d0eb410c38e38f9`, main `25e1fbae781c19fad53e770e4396fc625865f3b3`, PR13 `b12e20c1b6d856a021898a0c1c9221b30393a221`, PR16 `245298981e27f88ac26bad8b46d819a7df899c86`.
 
-## 이어서 할 일
+FINDINGS.md / FINAL_MANIFEST.json / results/browser/README.md / server-audit/FRONT_HARNESS_REVIEW.md를 먼저 읽는다. 구현 및 필수 local 검증 완료. 초기 실패를 반복하거나 기존 P1A~D 분석을 다시 시작하지 않는다.
 
-1. PROGRESS.md와 results/browser/README.md, results/server-audit/README.md를 읽는다.
-2. GPS 보강 이후 프런트/Chrome 원장 실제 pass/fail/skip를 확인한다. 기존 원형 실패를 삭제하지 않는다.
-3. 제품/시험 checkpoint 이후 `git merge-tree --write-tree HEAD b12e20c1b6d856a021898a0c1c9221b30393a221`을 임시 tree로만 검사하고 archive에서 회귀를 실행한다. 실제 merge/main 수정 금지.
-4. `node docs/p1-publication-security-implementation/scripts/run_suites.mjs <root> <out> front|reports|proxy|weather|tide`.
-5. PR13 `.github/scripts/compare_p1s_recommendation.mjs`의 tree-hash 비교로 고정190/176 ON/OFF 전체 signature 확인. 정상 입력에서 동일해야 한다.
-6. latest main/PR heads를 다시 확인한 후 증거/미실행/잔여운영조건 문서화. 별도 branch push 및 독립 검증용 Draft PR 생성/attach/readback. 기존 PR13/16은 변경하지 않는다.
+## 검증 명령
+
+1. `git fetch origin` 후 main/PR heads 고정. docs-only head가 product checkpoint와 동일 코드인지 확인.
+2. `node docs/p1-publication-security-implementation/scripts/integration.mjs f7aee08f8bab6371cdffb8e2099d85b51a76765e 25e1fbae781c19fad53e770e4396fc625865f3b3`. 실제 main merge 금지. 임시 archive를 `.tmp`에 재생성한다.
+3. `node docs/p1-publication-security-implementation/scripts/source_proofs.mjs`와 `noninterference.mjs`.
+4. Chrome 환경: CHROME_PATH=`C:/Program Files/Google/Chrome/Application/chrome.exe`, PUBLICATION_TEST_INDEX_REF=`a599638f3a0b8d95b367b94eaa4eb098127abba3`. `node docs/p1-publication-security-implementation/scripts/publication_chrome.mjs`.
+5. local D1 proof는 기존 cache runtime `C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules`를 인자로 실행. 패키지 설치·운영 접속 없음.
+
+## 제출 / 남은 작업
+
+전용 branch push 및 새 Draft PR 생성/attach/readback. 기존 PR13·16 수정 금지. 독립 검증자가 정확 새 head를 재검증한다.
+운영 승인 전 실제 schema/13trigger SQL·paired source/version/bindings·safe rollback versions·CDN hard purge/bypass·구client전환·5초lease/poll·4초timeout을 확인한다. 물리GPS/외부앱/운영POP 미실행을 유지한다.
 
 ## 금지
 
-운영 D1·실사용자 자료 변경, Worker/Pages upload/deploy/rollback, main 병합 금지. 민감 원자료·비밀정보를 저장하지 않는다.
+운영 D1/실사용자 변경, Worker/Pages upload/deploy/rollback, main merge 금지. 코드와 canonical/epoch/delete 기록을 되돌리는 롤백 금지. 민감 원자료·비밀정보를 저장하지 않는다.
