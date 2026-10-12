@@ -3,7 +3,7 @@ import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,split
 import {fieldSnapshotStatements,fieldSnapshotPayload} from './field-updates.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='legacy-public-v1';
-export const PUBLICATION_GUARDS=['publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live'];
+export const PUBLICATION_GUARDS=['publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
 const MAX_REV=9223372036854775807n;
 export function publicationRevision(value,minimum=0n) {
  if(typeof value!=='string'||!/^(0|[1-9][0-9]{0,18})$/.test(value))return false;

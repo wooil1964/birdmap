@@ -55,6 +55,9 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
     assert set(sites) == set(runtime), "Weekly weather IDs mismatch"
     assert data["siteCount"] == len(sites) == len(runtime), "Weekly siteCount mismatch"
 
+    # 프런트(weeklyDocVerified)와 같은 계약: 발행 시각은 엄격한 KST 형식이고 미래가 아니어야 한다.
+    generated = parse_forecast_time(data.get("generatedAt"), "generatedAt")
+    assert generated <= datetime.now(KST), f"generatedAt is in the future: {data['generatedAt']!r}"
     start = parse_date(data["startDate"], "startDate")
     end = parse_date(data["endDate"], "endDate")
     assert start <= end, "Weekly startDate is after endDate"
@@ -93,6 +96,11 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_week.json"):
                 direction = sample["windDirectionDeg"]
                 assert direction is None or direction < 360, \
                     f"{label} windDirectionDeg is outside the stored 0-359 range: {direction!r}"
+                # P1-S2: 적격 여부는 bool, 결측 사유는 list 여야 한다(truthiness 로 추천 적격을 추정하지 않는다).
+                assert isinstance(sample["scoreEligible"], bool), \
+                    f"{label} scoreEligible is not a boolean: {sample['scoreEligible']!r}"
+                assert isinstance(sample["missingScoreFields"], list), \
+                    f"{label} missingScoreFields is not a list: {sample['missingScoreFields']!r}"
                 if sample["scoreEligible"]:
                     eligible_count += 1
                     assert not sample["missingScoreFields"], f"{label} is eligible with missing fields"

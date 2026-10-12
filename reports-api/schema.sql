@@ -108,9 +108,10 @@ CREATE INDEX IF NOT EXISTS field_update_confirmations_ip ON field_update_confirm
 CREATE TABLE public_publication_state (
  id INTEGER PRIMARY KEY CHECK(id=1),
  epoch TEXT NOT NULL CHECK(typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*'),
- revision INTEGER NOT NULL CHECK(typeof(revision)='integer' AND revision>=0 AND revision<=9223372036854775807)
+ revision INTEGER NOT NULL CHECK(typeof(revision)='integer' AND revision>=0 AND revision<=9223372036854775807),
+ write_frozen INTEGER NOT NULL DEFAULT 0 CHECK(typeof(write_frozen)='integer' AND write_frozen IN(0,1))
 );
-INSERT INTO public_publication_state VALUES(1,lower(hex(randomblob(16))),0);
+INSERT INTO public_publication_state VALUES(1,lower(hex(randomblob(16))),0,0);
 CREATE TRIGGER publication_state_permanent BEFORE DELETE ON public_publication_state
 BEGIN SELECT RAISE(ABORT,'publication_state_permanent'); END;
 CREATE TRIGGER publication_state_transition BEFORE UPDATE ON public_publication_state
@@ -161,3 +162,39 @@ BEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END;
 CREATE TRIGGER field_confirmation_live BEFORE INSERT ON field_update_confirmations
 WHEN NOT EXISTS(SELECT 1 FROM field_updates WHERE id=NEW.field_update_id AND status<>'deleted')
 BEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END;
+
+CREATE TRIGGER field_freeze_field_updates_insert BEFORE INSERT ON field_updates
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_updates_update BEFORE UPDATE ON field_updates
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_updates_delete BEFORE DELETE ON field_updates
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_update_events_insert BEFORE INSERT ON field_update_events
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_update_events_update BEFORE UPDATE ON field_update_events
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_update_events_delete BEFORE DELETE ON field_update_events
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_update_confirmations_insert BEFORE INSERT ON field_update_confirmations
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_update_confirmations_update BEFORE UPDATE ON field_update_confirmations
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;
+
+CREATE TRIGGER field_freeze_field_update_confirmations_delete BEFORE DELETE ON field_update_confirmations
+WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)
+BEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END;

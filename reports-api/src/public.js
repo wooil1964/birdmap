@@ -480,6 +480,13 @@ export async function handleLegacyRequest(request, env, ctx) {
       return await handleRecentSites(request, env, url);
     }
     // 현장소식은 reports 와 별도 테이블·별도 경로다. 경로가 맞지 않으면 null 이라 아래 기존 라우팅이 그대로 이어진다.
+    if(request.method==='POST'&&/^\/field-updates(?:\/[0-9a-f-]{36}\/(?:status|confirm|delete))?$/.test(url.pathname)) {
+      await assertWriteGate(env,'public');
+      if(env.REPORTS_PUBLICATION_REQUIRED==='true'){
+        let state;try{state=await database(env).prepare('SELECT write_frozen FROM public_publication_state WHERE id=1').first();}catch{}
+        if(!state||state.write_frozen!==0)throw new WorkerError('WRITE_MAINTENANCE','현장소식 쓰기를 잠시 중지했습니다.',503);
+      }
+    }
     const fieldResponse = await handleFieldUpdates(request, env, url, { database, readJsonBody });
     if (fieldResponse) return fieldResponse;
     if (request.method === "GET" && url.pathname === "/contributors/monthly") {

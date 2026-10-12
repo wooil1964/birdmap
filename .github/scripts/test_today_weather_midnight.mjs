@@ -37,8 +37,9 @@ const NAMES = [
   'storedWeatherLabel', 'weatherTodayForSite', 'todayWeatherFromWeek',
   'weeklyKstDateParts', 'weeklyDateFromText', 'weeklyDateTextFromUtc', 'weeklyTodayDateText',
   'weeklyNowKstMinutes', 'weeklySampleMinutes', 'weeklySampleDateText', 'weeklySunTimes',
-  'weeklyWeekSite', 'weeklyDaySamples', 'weeklyDaylightCandidates', 'weeklyDailyBestSample',
+  'weeklyWeekSite', 'weeklyDaySamples', 'weeklyKstTimestamp', 'weeklyForecastTimestamp', 'weeklyDocVerified', 'weeklyScoreValid', 'weeklyNonNegativeNumber', 'weeklyOwn', 'weeklySampleRecommendable', 'weeklyTodayRequiredDataValid', 'weeklyTodayRecommendable', 'weeklyDaylightCandidates', 'weeklyDailyBestSample',
   'weeklySampleAsWeather',
+  'v23Value', 'v251RainInfo', 'v251EffectiveScore', 'v251GradeStars', 'v251ScoreDisplayText',
 ];
 
 /* 브라우저 전역 대신 테스트가 주입하는 상태만 두고 함수를 평가한다. */
@@ -77,7 +78,7 @@ function todayDoc(date, generatedAt, sites) {
 
 function storedDay(date, forecastTime, generatedAt, score) {
   return {
-    date, forecastTime, generatedAt, stale: false, scoreEligible: true, score,
+    date, forecastTime, generatedAt, stale: false, scoreEligible: true, missingScoreFields: [], score,
     grade: '★★★★★', wind: '북풍 4.7m/s', rain: '강수 없음', temperature: '23.1°C',
     visibility: '19.0km', cloud: '16%', wave: null,
   };
@@ -343,4 +344,68 @@ test('실제 저장 파일을 갱신 지연 시각으로 되돌리면 해리천�
     assert.ok(fixed.forecastTime > date + ' 08:20', site.name + ' 지난 시각 예보를 쓰지 않는다');
     assert.match(api.storedWeatherLabel(fixed), /^주간 저장 예보 · 예보 /, site.name);
   }
+});
+
+/* ===== PR #13 독립 검증 보완 R2: 팝업 점수 표시는 검증된 적격 출처만 인정한다 ===== */
+const R2_NOW = BEFORE_MIDNIGHT;
+const R2_DATE = '2026-09-16';
+const r2Day = (extra = {}) => Object.assign(storedDay(R2_DATE, R2_DATE + ' 23:30 KST', R2_DATE + ' 23:44 KST', 92), extra);
+const r2Popup = (site, extra, siteExtra = {}) => {
+  const target = Object.assign({}, site, siteExtra);
+  const api = loadApi({ now: R2_NOW, siteData: [target], weatherToday: todayDoc(R2_DATE, R2_DATE + ' 23:44 KST', { [target.id]: r2Day(extra) }) });
+  const today = api.weatherTodayForSite(target);
+  return { api, today, text: api.v251ScoreDisplayText(today) };
+};
+
+test('R2-1 검증된 저장 자료는 정상 점수(0·100·92.5 포함)와 별점을 그대로 표시한다', () => {
+  assert.equal(r2Popup(SITE, {}).text, '★★★★★ 92점');
+  assert.match(r2Popup(SITE, { score: 100 }).text, /100점/);
+  assert.match(r2Popup(SITE, { score: 92.5 }).text, /92\.5점/);
+  assert.match(r2Popup(SITE, { score: 0, grade: '★' }).text, /0점/);
+  assert.equal(r2Popup(SITE, { wave: null }).text, '★★★★★ 92점', '파고 필수가 아닌 곳의 wave null');
+  assert.equal(r2Popup(SITE, { wave: '0.5m' }, { showWave: true }).text, '★★★★★ 92점');
+});
+
+test('R2-2 적격 metadata 가 없거나 필수 기상값이 결측인 저장 자료는 점수·별점을 내지 않고 참고 기상은 남긴다', () => {
+  const cases = [['scoreEligible 누락', { scoreEligible: undefined }], ['scoreEligible null', { scoreEligible: null }],
+    ['missingScoreFields 누락', { missingScoreFields: undefined }], ['missingScoreFields null', { missingScoreFields: null }],
+    ['missingScoreFields 목록', { missingScoreFields: ['wave'] }], ['wind null', { wind: null }], ['rain null', { rain: null }]];
+  for (const [label, extra] of cases) {
+    const { today, text, api } = r2Popup(SITE, extra);
+    assert.equal(text, '오늘 적합도 미확인', label);
+    assert.equal(api.weatherScoreAllowed(today), false, label);
+    assert.ok(!/★/.test(text) && !/92/.test(text), label);
+    assert.equal(today.temperature, '23.1°C', label + ': 기온 참고 정보 유지');
+    if (!('wind' in extra)) assert.equal(today.wind, '북풍 4.7m/s', label + ': 풍속 참고 정보 유지');
+  }
+  const wave = r2Popup(SITE, { wave: null }, { showWave: true });
+  assert.equal(wave.text, '오늘 적합도 미확인', '파고 필수 지역의 wave null');
+  assert.equal(wave.today.rain, '강수 없음');
+});
+
+test('R2-3 이전 저장 자료는 참고 값만 남기고 점수는 미확인이며, 주간 파생 점수는 검증된 표본일 때만 표시한다', () => {
+  const prev = '2026-09-15';
+  const api = loadApi({ now: R2_NOW, siteData: [SITE], weatherToday: todayDoc(prev, prev + ' 23:44 KST', { 19: storedDay(prev, prev + ' 23:30 KST', prev + ' 23:44 KST', 92) }) });
+  const today = api.weatherTodayForSite(SITE);
+  assert.equal(api.v251ScoreDisplayText(today), '오늘 적합도 미확인');
+  assert.equal(today.score, 92, '이전 저장 숫자는 참고로 보존');
+  assert.equal(today.wind, '북풍 4.7m/s');
+  /* 자정 직후: 어제 저장값 대신 오늘 날짜의 주간 예보를 쓰며, 검증된 표본의 점수는 계속 표시한다. */
+  const after = loadApi({ now: AFTER_MIDNIGHT, siteData: [SITE], weatherToday: SAVED_TODAY, weatherWeek: SAVED_WEEK });
+  const derived = after.weatherTodayForSite(SITE);
+  assert.equal(derived._weatherState.kind, 'week_forecast');
+  assert.equal(derived._weatherState.scoreEligible, true);
+  assert.equal(after.v251ScoreDisplayText(derived), '★★★★★ 94점');
+  /* 같은 주간 표본이라도 필수 기상값이 결측이면 파생 점수를 내지 않는다. */
+  for (const bad of [{ precipitation3h: null }, { windSpeed: null }, { scoreEligible: undefined }, { missingScoreFields: null }, { score: null }]) {
+    const week = weekDoc({ 19: { '2026-09-17': [sample('2026-09-17 09:00 KST', 90, bad)] } });
+    const broken = loadApi({ now: AFTER_MIDNIGHT, siteData: [SITE], weatherToday: SAVED_TODAY, weatherWeek: week });
+    assert.equal(broken.v251ScoreDisplayText(broken.weatherTodayForSite(SITE)), '오늘 적합도 미확인', JSON.stringify(bad));
+  }
+});
+
+test('R2-4 출처 정보(_weatherState)가 없는 객체는 점수를 내지 않는다(적격성 미확인)', () => {
+  const api = loadApi({ now: R2_NOW, siteData: [SITE], weatherToday: todayDoc(R2_DATE, R2_DATE + ' 23:44 KST', {}) });
+  assert.equal(api.v251ScoreDisplayText({ score: 92, grade: '★★★★★', wind: '북풍 3m/s', rain: '강수 없음' }), '오늘 적합도 미확인');
+  assert.equal(api.v251ScoreDisplayText({ score: 92, grade: '★★★★★', _weatherState: { scoreEligible: 1, dataCurrent: true } }), '오늘 적합도 미확인', 'truthy 는 검증된 true 가 아니다');
 });

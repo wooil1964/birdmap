@@ -1,0 +1,2 @@
+## PR #13 — F1·F2·F3 보완 · 마지막 독립 검증 요청
+이전 SHA `2e48507`. F1 미래 발행은 발행 버전 기준이 되지 못함(`birdmapDataTime`), F2 적격 item 의 `generatedAt` 은 배치 root 와 같아야 함(`storedWeatherState` + `validate_weather.py` parity), F3 시각 원본은 `typeof string` 일 때만 해석. 상세·수치는 `docs/p1-s-implementation/NEXT_SESSION.md`, 증거 `results/f/`. 회귀 615 pass/0 fail/1 skip, Sol loader Node 28/28·Chrome 140/140, 최종 DOM core 245/245, 고정 190곳·176후보·ON/OFF 동일, main(bf74095) merge-tree 충돌 없음. 라이프사이클 2단계는 Sol fixture 가 root>item(F2 형태)라 불일치. PR CI 없음(시험 전용 CI 별도 승인 권장). main 병합·배포·D1 변경 없음.

@@ -8,7 +8,7 @@
 //   POST /field-updates/<id>/delete    등록한 브라우저(user_hash 일치)만 자기 소식을 지운다. 소프트 삭제(아래 참고).
 //
 // 삭제는 행을 지우지 않는다. status 를 'deleted' 로 바꾸고 field_update_events 에 'deleted' 이벤트(시각·user_hash)를 남긴다.
-// 새 컬럼이 필요 없어 기존 운영 DB 스키마를 바꾸지 않는다. 목록·확인·상태 변경은 'deleted' 를 없는 소식으로 취급한다.
+// row_revision과 공개 권한 쓰기 freeze는 additive migration에서 설치한다. 목록·확인·상태 변경은 'deleted' 를 없는 소식으로 취급한다.
 //
 // 위치 추적 기능은 없다. 좌표는 등록하는 순간 사용자가 확인한 한 점만 저장된다.
 import {
@@ -21,6 +21,7 @@ import {
   normalizeSpecies,
   sha256Hex,
   verifyTurnstile,
+  rethrowIfFrozen,
 } from "./shared.js";
 import { assertion,clearAssertion } from "./canonical/data.js";
 
@@ -200,6 +201,7 @@ async function loadActive(db, id, now) {
 
 
 async function fieldWriteFailure(db,id,error) {
+ rethrowIfFrozen(error);
  const row=await db.prepare('SELECT status,last_activity_at FROM field_updates WHERE id=?1').bind(id).first();
  if(!row||row.status===DELETED)throw new WorkerError('FIELD_NOT_FOUND','찾을 수 없는 현장소식이에요.',404);
  if(row.last_activity_at<cutoffIso(new Date()))throw new WorkerError('FIELD_EXPIRED','시간이 지나 이미 사라진 현장소식이에요.',410);
@@ -267,7 +269,7 @@ async function handleCreate(request, env, helpers) {
   const publicPoint = sensitiveSpecies ? approximateCoordinate(lat, lon) : { lat, lon };
   const id = crypto.randomUUID();
   const at = iso(now);
-  await db.batch([
+  try{await db.batch([
     db.prepare(
       `INSERT INTO field_updates
          (id, species, bird_count, status, lat, lon, public_lat, public_lon, location_hidden, nickname, note,
@@ -279,7 +281,7 @@ async function handleCreate(request, env, helpers) {
       `INSERT INTO field_update_events (id, field_update_id, status, nickname, created_at, user_hash, ip_hash)
        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
     ).bind(crypto.randomUUID(), id, status, nickname, at, user, hash),
-  ]);
+  ]);}catch(error){rethrowIfFrozen(error);throw error;}
   const row = await db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`).bind(id).first();
   const [update] = await loadEntries(db, [row]);
   return fieldResponse(request, env, { ok: true, update }, 201);
