@@ -4,4 +4,4 @@
 
 PR13 임시 tree `a599638f3a0b8d95b367b94eaa4eb098127abba3`: 자동704pass/0fail/1skip, Chrome165/165, D1별도18/18, S2 182/21/12, S1R171·일반17오탐0, 고정190/176 ON/OFF 전체signature동일. 별도 branch front281/281·Chrome165/165. 세부 범위·subset·실패 원형·미실행은 FINDINGS.md와 FINAL_MANIFEST.json을 따른다.
 
-다음은 문서·증거 commit/push와 독립 검증용 Draft PR 생성/본문·head 재확인이다. 운영 배포는 별도 승인까지 보류한다. 실제 migration/Worker/Pages/D1/사용자자료/PR13/16 변경0.
+문서·증거 commit/push 완료, 독립 검증용 Draft PR #17 생성/attach 및 본문·head/draft 재확인 완료. 제출 원장은 SUBMISSION.json. 다음은 독립 검증과 운영 선행조건 확인이다. 운영 배포는 별도 승인까지 보류한다. 실제 migration/Worker/Pages/D1/사용자자료/PR13/16 변경0.

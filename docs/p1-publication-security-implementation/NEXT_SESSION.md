@@ -18,7 +18,7 @@ FINDINGS.md / FINAL_MANIFEST.json / results/browser/README.md / server-audit/FRO
 
 ## 제출 / 남은 작업
 
-전용 branch push 및 새 Draft PR 생성/attach/readback. 기존 PR13·16 수정 금지. 독립 검증자가 정확 새 head를 재검증한다.
+전용 branch push 완료. 새 Draft PR #17: https://github.com/wooil1964/birdmap/pull/17 . 생성/head/body/draft를 읽어서 검증하고 채팅에 첨부했다. 생성 문서 checkpoint f63b52a7c56ed3c7b2bec6dffb541ca46571712a; 이 제출 원장을 저장한 실제 최신 docs-only head는 git log -1 / PR head로 확인한다. 기존 PR13·16의 head/body/updatedAt 불변을 확인했다. 독립 검증자가 정확 새 head를 재검증한다.
 운영 승인 전 실제 schema/13trigger SQL·paired source/version/bindings·safe rollback versions·CDN hard purge/bypass·구client전환·5초lease/poll·4초timeout을 확인한다. 물리GPS/외부앱/운영POP 미실행을 유지한다.
 
 ## 금지

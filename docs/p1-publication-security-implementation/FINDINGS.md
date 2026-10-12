@@ -102,3 +102,9 @@ source baseline은 `f7aee08f8bab6371cdffb8e2099d85b51a76765e`와 검증된 결�
 - `node docs/p1-publication-security-implementation/results/server-audit/local-d1-publication.mjs <existing local node_modules>` (Miniflare5.20261006.1-alpha, 운영 연결 없음).
 
 원장: FINAL_MANIFEST.json, results/browser/README.md, results/server-audit/README.md, FRONT_HARNESS_REVIEW.md, results/integration/f7aee08/summary.json. 변경 파일은 `git diff --name-only 25e1fbae781c19fad53e770e4396fc625865f3b3 HEAD`로 확인한다.
+
+## 제출 완료
+
+Draft PR #17: https://github.com/wooil1964/birdmap/pull/17 . 생성 문서 SHA f63b52a7c56ed3c7b2bec6dffb541ca46571712a, 본문/head/draft readback 일치. 이후 제출 원장 커밋은 docs-only다. PR13·16 head/body/updatedAt 불변, 원래 작업 트리는 clean이다. main×PR13 직접 merge-tree도 exit0/treeba57ba3062870ef45af66836466fae024045a37b로 확인했다. 초기 GitHub mergeable=false는 transient 값으로 실제 충돌이라고 단정하지 않았다.
+
+자동 승인 검토가 이전 검증 증거 디렉터리 삭제를 거부하여 폴더를 보존하고 새 문서만 명시적으로 stage했다. 해당 보존 폴더와 임시 archive/pycache는 로컬 untracked로 남아 있으며 PR에는 포함하지 않았다.
