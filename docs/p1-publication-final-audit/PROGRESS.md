@@ -1,15 +1,13 @@
-# PR17 최종 독립 감사 체크포인트
+# PR17 최종 감사 진행 상태
 
-2026-10-12. 검증 제품 소스 cf5767b / 6d0f435(동일 제품blob), 통합main58e1a22. 사용자의 최신 지시로 Workers Free의10·20명 실제 호출·하루한도를 먼저 보고하며 운영 반영은 보류한다.
+2026-10-13 KST. 판정: **BLOCKED — 운영 배포 중단**. 사용자는 Workers Free 확인 및10/20명 한도 결과를 먼저 보고하도록 지시했다. main/트래픽/Pages/D1 운영 쓰기0.
 
-완료: 새 독립결함 B1 field maintenance/writefreeze, B2 stale HEAD 공유, B3 RTT가 늘린lease, B4 동적href 우회, B5 기여자 동의cache를 보완했다. 회귀704/0/1skip, Chrome241/241 5폭, actualworkerd22, 실제localWrangler migration30+정합성3 통과. 전체시험 과거실패 로그는 그대로 보존했다.190/176 고정2026-10-08 22:40KST ON/OFF signature 불변; 최신main curated route21 통과와자동JSON/좌표보존 확인.
+1. B1~B5 독립 결함을 보완하고 PR13전체·PR16을 통합한 제품에 자동704/Chrome241/localworkerd22/migration30+3을 독립 실행했다. 원형 실패 보존.
+2. 추가 저장 현장소식 읽기 B6 발견: 7f 실제 workerd10/3, 정확 protected점·길찾기 허용. c025d75f964ab36f6f2eae541a99461f6de59b70에서 기존S1R 재판정+same snapshot마스킹 proof로 알수없는 좌표를null로 보류했다. 원형13/13,확장25/25,신규6 old2/4→new6/0. DB원값/authority 조회hash불변. 임의random/ID jitter/S1P 적용 없음.
+3. c025 자동710/0/1skip,S2 182+21+12,고정190/176 ON/OFF 전체signature/상위10/75추천함수 유지. 실제Chrome기본241/241, 저장DTO5폭 170 / 140 통과 근거를 최종 원장에 반영한다. pre-B6 source와c025 indexbyte동일, publicDTO만수정.
+4. Workers Free: Chrome10/20명 raw65초를 초기/steady분리해570/1140steady. root와독립Python63조건으로 새 c025 workerd103 HEAD행비용과예산교차계산. 기존계정1242Worker/62111D1read를합산하면10명1h4320535read,20명1h8554671read;20명1hD1초과,10/20명8h는둘다초과. 5초poll/lease경계6expiry/user→4목록 재조회가증폭. **용량관문미통과**. 긴lease/cache/failopen/Paid가입 없음.
+5. 최신main b41와 c025 임시merge-tree a69496e7 충돌0,자동5JSON byte보존. b41today12→현재13 batch mismatch exit1을원형보존,발행일고정구조0/weekly현재0. actual현재fresh batch/추천176은미입증. JSON/validator날짜수정 없음.
+6. c025 read-only CI38272115326/job114888649072 success(710+Chrome241). Pagesartifact11757876081 ZIP90aac4...388파일CImerge882620...byte동일,indexc025LFbyte동일. 운영배포아님.
+7. 신규B6 public대기version16ab210b-68d5-4066-875c-b2d2c6692425/maintenance4862c354-a4c9-4758-bfde-8c35244535de upload완료. 정상/점검admincf2b8b90.../9ba936ff...은재빌드c025와byte동일. remote metadata/stricttrue/D1/peer/시크릿이름/previewfalse 확인. 운영active494b97/0134cd9a 불변. 기존preB6public1f00/d403은안전승격금지.
 
-읽기전용 CI: cf5767b run38236007580 실패(Pillow누락2), 환경만보완한6d0f435 run38236592619 성공(704+Chrome241). 테스트 삭제/판정 완화 없음. 보호Pages artifact11741316486 388파일 Gitblob과같음, ZIPsha f6e161e7e07757491de859991572f68ea1ebf4092b97f8203e419e7fef626167. CItestmerge7b136fc이고main배포아님.
-
-실제업로드된 보호유지standby: public1f00aa4e-cdff-4f79-aab1-3d76e62669b0/admincf2b8b90-b00d-4356-ad85-78ae1e8bb4c0. 같은보호소스의maintenance: publicd403e20b-f2f7-4024-b702-b756d17a924a/admin9ba936ff-b3a7-4e9f-9c72-440a8a03c50e. stricttrue,D1/peer/secret바인딩유지,previewroutingfalse검증. trafficactivation0/D1writes0. 현운영494b97/0134cd9a 그대로이며 둘 다 Git41650e43 exactbundle. S1R/권한guard없는 기존버전은 안전rollback으로 승인불가. 이전16dae 미증명.
-
-운영 D1 metadata:79objects(51defined28implicit), coreReadytrue, ledger0001/0002/0003, publicationstate없음. field3; reports는오후55approved에서60으로자연변경됐으나 우리쓰기는0. 실제68개원본을복제했다거나운영자료모두불변을검증했다고주장하지말 것. migration전용dir0005만사용,0004등기설치SQL재생금지.
-
-현재진행: 실제Chrome10·20명65초 이상 foreground/background/복구호출 측정 + localD1endpoint costmap. 사용자제공Free1230queries58000reads496writes1.44MB와 GraphQL24h전체계정Worker1242/D1reads62111자료를별도표기. D1query수≠Workerreq. Free5mreads/100krequests는계정전체한도다. physicalGPS/native앱/운영POP/실제migration/traffic배포/Pages신규반영은미실행.
-
-다음: 최신head/main확인→부하실험완료근거수집→endpoint실측과Chromecounts로일별증분/10·20명/활성이용시간분석→최종FINDINGS/NEXT_SESSION/원장→PR17/Issue9게시본문재확인. 최신사용자는현재수치로배포승인금지,결과먼저요청했다. 용량관문을통과하지못하면BLOCKED로보고한다. polling/lease연장,private좌표cache,failopen으로비용을줄이지않는다.
+미완료: Free부하/가용성 보완 및별도운영승인, 실제 writer통제/drain·migration·pairedserver·CDN/옛client전환·main/Pages·새 자동기상배치·운영회귀·관찰. 물리GPS/native앱/edgeCPU·운영POP는미실행. S1P/R5별도. 상세 FINDINGS.md 및 FINAL_MANIFEST.json 참조.

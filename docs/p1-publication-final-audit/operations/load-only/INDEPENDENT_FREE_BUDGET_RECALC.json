@@ -1,0 +1,561 @@
+{
+  "scope": "Independent arithmetic only using normalized actual Chrome counts/exposure and independent actual local workerd c025 endpoint costs. Not measured production load. Model/leases/product unchanged.",
+  "inputHashes": {
+    "chrome": {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\docs\\p1-publication-final-audit\\operations\\chrome-load\\LOAD_MANIFEST.json",
+      "sha256": "953553bb43925951671ab6967a9af1743a9a262173a382dd49a8144d8ea0735f"
+    },
+    "budget": {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\docs\\p1-publication-final-audit\\operations\\FREE_CAPACITY_BUDGET.json",
+      "sha256": "9c3f4a5d4b7fe353161723d7f21cdc18653ff8723eef2f230d78fe49b42929a7"
+    },
+    "analytics": {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\docs\\p1-publication-final-audit\\operations\\usage-readonly\\20261012T104513-analytics.json",
+      "sha256": "cd5febce5426a131399832dbb14fb13b38a0a9e8f0455042f67d35b9d1f0bee4"
+    },
+    "costs": {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\operations\\load-only\\c025d75-73-c20\\LOAD_MANIFEST.json",
+      "sha256": "3ba8ee2059929bd39071a10882809859ed38c00a7e04a6e4e4e6618280ce7190"
+    }
+  },
+  "chromeSource": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+  "sqlSource": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "endpointUnitRowsRead": {
+    "/reports/approved": 224,
+    "/reports/pending": 104,
+    "/reports/recent-sites": 224,
+    "/field-updates": 140,
+    "/reports/site/92": 285,
+    "/contributors/monthly": 227,
+    "/reports/public-state": 103
+  },
+  "baseline": {
+    "workerRequests": 1242,
+    "d1RowsRead": 62111,
+    "d1RowsWritten": 665
+  },
+  "baselineWindow": {
+    "start": "2026-10-11T10:45:13.009Z",
+    "end": "2026-10-12T10:45:13.009Z",
+    "requestedHours": 24,
+    "d1Granularity": "datetimeHour; partial endpoint buckets may differ from dashboard rolling24h"
+  },
+  "userProvided": {
+    "periodHours": 24,
+    "d1Queries": 1230,
+    "d1RowsRead": 58000,
+    "d1RowsWritten": 496,
+    "databaseMB": 1.44,
+    "workerPlan": "Free",
+    "note": "User-provided aggregate; D1 queries are not Worker HTTP requests. No observed increase may be equated directly with this query count."
+  },
+  "checks": [
+    {
+      "id": "baseline actual account Worker requests",
+      "pass": true,
+      "recalculated": 1242,
+      "reported": 1242
+    },
+    {
+      "id": "baseline actual account D1 read rows",
+      "pass": true,
+      "recalculated": 62111,
+      "reported": 62111
+    },
+    {
+      "id": "baseline actual account D1 write rows",
+      "pass": true,
+      "recalculated": 665,
+      "reported": 665
+    },
+    {
+      "id": "baseline window",
+      "pass": true,
+      "recalculated": {
+        "start": "2026-10-11T10:45:13.009Z",
+        "end": "2026-10-12T10:45:13.009Z",
+        "requestedHours": 24,
+        "d1Granularity": "datetimeHour; partial endpoint buckets may differ from dashboard rolling24h"
+      },
+      "reported": {
+        "start": "2026-10-11T10:45:13.009Z",
+        "end": "2026-10-12T10:45:13.009Z",
+        "requestedHours": 24,
+        "d1Granularity": "datetimeHour; partial endpoint buckets may differ from dashboard rolling24h"
+      }
+    },
+    {
+      "id": "user-provided D1 queries separate baseline",
+      "pass": true,
+      "recalculated": 1230,
+      "reported": 1230
+    },
+    {
+      "id": "user-provided read rows separate baseline",
+      "pass": true,
+      "recalculated": 58000,
+      "reported": 58000
+    },
+    {
+      "id": "user-provided write rows separate baseline",
+      "pass": true,
+      "recalculated": 496,
+      "reported": 496
+    },
+    {
+      "id": "10 endpoints request sums",
+      "pass": true,
+      "recalculated": 570,
+      "reported": 570
+    },
+    {
+      "id": "10 initial request sums",
+      "pass": true,
+      "recalculated": 130,
+      "reported": 130
+    },
+    {
+      "id": "10 exposure raw client sum",
+      "pass": true,
+      "recalculated": 644350.200000002,
+      "reported": 644350.200000002
+    },
+    {
+      "id": "10 budget exposure",
+      "pass": true,
+      "recalculated": 644350.200000002,
+      "reported": 644350.200000002
+    },
+    {
+      "id": "10 steady total",
+      "pass": true,
+      "recalculated": 570,
+      "reported": 570
+    },
+    {
+      "id": "10 weighted reads",
+      "pass": true,
+      "recalculated": 75880,
+      "reported": 75880
+    },
+    {
+      "id": "10 per-user reads",
+      "pass": true,
+      "recalculated": 7588.0,
+      "reported": 7588
+    },
+    {
+      "id": "10 initial requests",
+      "pass": true,
+      "recalculated": 130,
+      "reported": 130
+    },
+    {
+      "id": "10 initial read demand",
+      "pass": true,
+      "recalculated": 18990,
+      "reported": 18990
+    },
+    {
+      "id": "10 initial reads/user",
+      "pass": true,
+      "recalculated": 1899.0,
+      "reported": 1899
+    },
+    {
+      "id": "10 requests/user/hour",
+      "pass": true,
+      "recalculated": 3184.603651865078,
+      "reported": 3184.6036518650785
+    },
+    {
+      "id": "10 reads/user/hour",
+      "pass": true,
+      "recalculated": 423943.3773746002,
+      "reported": 423943.37737460027
+    },
+    {
+      "id": "10 pure authority/user/hour",
+      "pass": true,
+      "recalculated": 328014.17614210304,
+      "reported": 328014.1761421031
+    },
+    {
+      "id": "10 pure authority cohort one hour",
+      "pass": true,
+      "recalculated": 3280142,
+      "reported": 3280142
+    },
+    {
+      "id": "10x1h Workers demand",
+      "pass": true,
+      "recalculated": 33219,
+      "reported": 33219
+    },
+    {
+      "id": "10x1h D1 demand",
+      "pass": true,
+      "recalculated": 4320535,
+      "reported": 4320535
+    },
+    {
+      "id": "10x1h Worker threshold",
+      "pass": true,
+      "recalculated": false,
+      "reported": false
+    },
+    {
+      "id": "10x1h D1 threshold",
+      "pass": true,
+      "recalculated": false,
+      "reported": false
+    },
+    {
+      "id": "10x8h Workers demand",
+      "pass": true,
+      "recalculated": 256141,
+      "reported": 256141
+    },
+    {
+      "id": "10x8h D1 demand",
+      "pass": true,
+      "recalculated": 33996572,
+      "reported": 33996572
+    },
+    {
+      "id": "10x8h Worker threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "10x8h D1 threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "10x24h Workers demand",
+      "pass": true,
+      "recalculated": 765677,
+      "reported": 765677
+    },
+    {
+      "id": "10x24h D1 demand",
+      "pass": true,
+      "recalculated": 101827512,
+      "reported": 101827512
+    },
+    {
+      "id": "10x24h Worker threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "10x24h D1 threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "10 theoretical Worker hours each",
+      "pass": true,
+      "recalculated": 3.0970259028070273,
+      "reported": 3.0970259028070273
+    },
+    {
+      "id": "10 theoretical D1 hours each",
+      "pass": true,
+      "recalculated": 1.1602726360444158,
+      "reported": 1.1602726360444158
+    },
+    {
+      "id": "20 endpoints request sums",
+      "pass": true,
+      "recalculated": 1140,
+      "reported": 1140
+    },
+    {
+      "id": "20 initial request sums",
+      "pass": true,
+      "recalculated": 260,
+      "reported": 260
+    },
+    {
+      "id": "20 exposure raw client sum",
+      "pass": true,
+      "recalculated": 1292402.5999999982,
+      "reported": 1292402.5999999982
+    },
+    {
+      "id": "20 budget exposure",
+      "pass": true,
+      "recalculated": 1292402.5999999982,
+      "reported": 1292402.5999999982
+    },
+    {
+      "id": "20 steady total",
+      "pass": true,
+      "recalculated": 1140,
+      "reported": 1140
+    },
+    {
+      "id": "20 weighted reads",
+      "pass": true,
+      "recalculated": 151760,
+      "reported": 151760
+    },
+    {
+      "id": "20 per-user reads",
+      "pass": true,
+      "recalculated": 7588.0,
+      "reported": 7588
+    },
+    {
+      "id": "20 initial requests",
+      "pass": true,
+      "recalculated": 260,
+      "reported": 260
+    },
+    {
+      "id": "20 initial read demand",
+      "pass": true,
+      "recalculated": 37980,
+      "reported": 37980
+    },
+    {
+      "id": "20 initial reads/user",
+      "pass": true,
+      "recalculated": 1899.0,
+      "reported": 1899
+    },
+    {
+      "id": "20 requests/user/hour",
+      "pass": true,
+      "recalculated": 3175.4810768718708,
+      "reported": 3175.4810768718708
+    },
+    {
+      "id": "20 reads/user/hour",
+      "pass": true,
+      "recalculated": 422728.9545842764,
+      "reported": 422728.9545842764
+    },
+    {
+      "id": "20 pure authority/user/hour",
+      "pass": true,
+      "recalculated": 327074.55091780267,
+      "reported": 327074.55091780267
+    },
+    {
+      "id": "20 pure authority cohort one hour",
+      "pass": true,
+      "recalculated": 6541492,
+      "reported": 6541492
+    },
+    {
+      "id": "20x1h Workers demand",
+      "pass": true,
+      "recalculated": 65012,
+      "reported": 65012
+    },
+    {
+      "id": "20x1h D1 demand",
+      "pass": true,
+      "recalculated": 8554671,
+      "reported": 8554671
+    },
+    {
+      "id": "20x1h Worker threshold",
+      "pass": true,
+      "recalculated": false,
+      "reported": false
+    },
+    {
+      "id": "20x1h D1 threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "20x8h Workers demand",
+      "pass": true,
+      "recalculated": 509579,
+      "reported": 509579
+    },
+    {
+      "id": "20x8h D1 demand",
+      "pass": true,
+      "recalculated": 67736724,
+      "reported": 67736724
+    },
+    {
+      "id": "20x8h Worker threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "20x8h D1 threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "20x24h Workers demand",
+      "pass": true,
+      "recalculated": 1525733,
+      "reported": 1525733
+    },
+    {
+      "id": "20x24h D1 demand",
+      "pass": true,
+      "recalculated": 203009990,
+      "reported": 203009990
+    },
+    {
+      "id": "20x24h Worker threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "20x24h D1 threshold",
+      "pass": true,
+      "recalculated": true,
+      "reported": true
+    },
+    {
+      "id": "20 theoretical Worker hours each",
+      "pass": true,
+      "recalculated": 1.550914611291421,
+      "reported": 1.550914611291421
+    },
+    {
+      "id": "20 theoretical D1 hours each",
+      "pass": true,
+      "recalculated": 0.5795568232153282,
+      "reported": 0.5795568232153282
+    }
+  ],
+  "cohorts": [
+    {
+      "users": 10,
+      "counts": {
+        "/reports/public-state": 320,
+        "/reports/approved": 60,
+        "/reports/pending": 60,
+        "/reports/recent-sites": 60,
+        "/field-updates": 70
+      },
+      "sumExposureMs": 644350.200000002,
+      "initialRequests": 130,
+      "initialReads": 18990,
+      "requestsPerUserHour": 3184.603651865078,
+      "D1ReadsPerUserHour": 423943.3773746002,
+      "dailyDemand": [
+        {
+          "activeHoursEach": 1,
+          "WorkerRequestsMeasuredBaseline": 33219,
+          "D1ReadsMeasuredBaseline": 4320535,
+          "WorkerFreePercent": 33.219,
+          "D1FreePercent": 86.41069999999999,
+          "D1ReadsUserProvidedBaselineForComparisonOnly": 4316424,
+          "baselineD1Difference": 4111
+        },
+        {
+          "activeHoursEach": 8,
+          "WorkerRequestsMeasuredBaseline": 256141,
+          "D1ReadsMeasuredBaseline": 33996572,
+          "WorkerFreePercent": 256.141,
+          "D1FreePercent": 679.9314400000001,
+          "D1ReadsUserProvidedBaselineForComparisonOnly": 33992461,
+          "baselineD1Difference": 4111
+        },
+        {
+          "activeHoursEach": 24,
+          "WorkerRequestsMeasuredBaseline": 765677,
+          "D1ReadsMeasuredBaseline": 101827512,
+          "WorkerFreePercent": 765.677,
+          "D1FreePercent": 2036.55024,
+          "D1ReadsUserProvidedBaselineForComparisonOnly": 101823401,
+          "baselineD1Difference": 4111
+        }
+      ],
+      "theoreticalBudgetHoursEach": {
+        "worker": 3.0970259028070273,
+        "d1": 1.1602726360444158
+      }
+    },
+    {
+      "users": 20,
+      "counts": {
+        "/reports/public-state": 640,
+        "/reports/approved": 120,
+        "/reports/pending": 120,
+        "/reports/recent-sites": 120,
+        "/field-updates": 140
+      },
+      "sumExposureMs": 1292402.5999999982,
+      "initialRequests": 260,
+      "initialReads": 37980,
+      "requestsPerUserHour": 3175.4810768718708,
+      "D1ReadsPerUserHour": 422728.9545842764,
+      "dailyDemand": [
+        {
+          "activeHoursEach": 1,
+          "WorkerRequestsMeasuredBaseline": 65012,
+          "D1ReadsMeasuredBaseline": 8554671,
+          "WorkerFreePercent": 65.012,
+          "D1FreePercent": 171.09342,
+          "D1ReadsUserProvidedBaselineForComparisonOnly": 8550560,
+          "baselineD1Difference": 4111
+        },
+        {
+          "activeHoursEach": 8,
+          "WorkerRequestsMeasuredBaseline": 509579,
+          "D1ReadsMeasuredBaseline": 67736724,
+          "WorkerFreePercent": 509.579,
+          "D1FreePercent": 1354.7344799999998,
+          "D1ReadsUserProvidedBaselineForComparisonOnly": 67732613,
+          "baselineD1Difference": 4111
+        },
+        {
+          "activeHoursEach": 24,
+          "WorkerRequestsMeasuredBaseline": 1525733,
+          "D1ReadsMeasuredBaseline": 203009990,
+          "WorkerFreePercent": 1525.733,
+          "D1FreePercent": 4060.1998000000003,
+          "D1ReadsUserProvidedBaselineForComparisonOnly": 203005879,
+          "baselineD1Difference": 4111
+        }
+      ],
+      "theoreticalBudgetHoursEach": {
+        "worker": 1.550914611291421,
+        "d1": 0.5795568232153282
+      }
+    }
+  ],
+  "metricSeparation": {
+    "accountMeasuredWorkerRequests": 1242,
+    "accountMeasuredD1ReadQueries": 1071,
+    "accountMeasuredD1WriteQueries": 271,
+    "accountMeasuredD1QueriesTotal": 1342,
+    "userProvidedD1Queries": 1230,
+    "sameMetricAndWindowKnown": false,
+    "accountMeasuredD1RowsRead": 62111,
+    "userProvidedD1RowsRead": 58000,
+    "D1ReadDifference": 4111,
+    "accountMeasuredWrites": 665,
+    "userProvidedWrites": 496,
+    "D1WriteDifference": 169,
+    "note": "No Worker baseline substitution with D1 queries. Both baselines differ in source/window; rolling24h is not current UTC remaining quota."
+  },
+  "summary": {
+    "checks": 63,
+    "pass": 63,
+    "fail": 0,
+    "numericMismatches": []
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "at": "2026-10-12T15:21:45.632Z",
+  "oldMain": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "main": "b41b03cc717a0154f520a3ab4ace24c990e62b3b",
+  "head": "7f493b1c60bc6002465a44d4ced39ac129afbba7",
+  "currentOriginMain": "b41b03cc717a0154f520a3ab4ace24c990e62b3b",
+  "mergeBase": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "latestMainCommit": "2026-10-12T13:17:15Z\nchore: update birding weather",
+  "mainChanges": [
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "productCodeChangesSinceCf5767b": false,
+  "mergeTree": "8bacc69b6beccb2a10bffd041a47f325abd9636e",
+  "mergeTreeExit": 0,
+  "conflicts": 0,
+  "mergedDiffFromHead": [
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "unchangedIndexSourceSha256": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+  "siteData": {
+    "count": 190,
+    "unique": 190,
+    "sameAllMainFields": true,
+    "sha256": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+    "coordinateSha256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89"
+  },
+  "automaticArtifacts": {
+    "weather_today.json": {
+      "mainBlob": "9d42b205c3e71599aaddb32c19695389fa6b1dd2",
+      "mergeBlob": "9d42b205c3e71599aaddb32c19695389fa6b1dd2",
+      "sha256": "0e72c23b45cc2086e442c462acdc0717d76ecf617624f4de86db1bc8ee185c31",
+      "byteExactMain": true
+    },
+    "weather_week.json": {
+      "mainBlob": "5ea0e5219663fe3b889f9f89a6c4c26e89c4b933",
+      "mergeBlob": "5ea0e5219663fe3b889f9f89a6c4c26e89c4b933",
+      "sha256": "377ce0dfdcba4de479a3dc727b3c19450329cbec0e34b7e85964feeeaa5d4119",
+      "byteExactMain": true
+    },
+    "tide_today.json": {
+      "mainBlob": "25f0ac83f3974e9f3bf32d868832ccc518353c66",
+      "mergeBlob": "25f0ac83f3974e9f3bf32d868832ccc518353c66",
+      "sha256": "e7d626446307c36f8d31b963842dd0d7bdab09853ce3f01caf9784414b7fb1b3",
+      "byteExactMain": true
+    },
+    "tide_month.json": {
+      "mainBlob": "80cc3867a99b675471c8e8b08cd407334aab2513",
+      "mergeBlob": "80cc3867a99b675471c8e8b08cd407334aab2513",
+      "sha256": "713133c8d968755304d7ea39212c3acfe62ba0dcdb42f7d5b671329d62c53760",
+      "byteExactMain": true
+    },
+    "notices.json": {
+      "mainBlob": "9af45bd1776850a8ea182f9539fe77189294bc9b",
+      "mergeBlob": "9af45bd1776850a8ea182f9539fe77189294bc9b",
+      "sha256": "c3d5ea3bedee5870ca799644e4c702cbc2a391f63a58a8fa491282d57999e19f",
+      "byteExactMain": true
+    }
+  },
+  "weatherMetadata": {
+    "today": {
+      "date": "2026-10-12",
+      "generatedAt": "2026-10-12 22:13 KST",
+      "siteCount": 190
+    },
+    "week": {
+      "startDate": "2026-10-12",
+      "endDate": "2026-10-18",
+      "generatedAt": "2026-10-12 22:13 KST",
+      "siteCount": 190
+    }
+  },
+  "validators": {
+    "todayCurrent": {
+      "exit": 1,
+      "result": "Expected temporal rejection: archived latest-main today date is2026-10-12; current KST date2026-10-13"
+    },
+    "todayOriginalGeneratedClock": {
+      "exit": 0,
+      "validatedDate": "2026-10-12",
+      "result": "Actual unchanged validator with isolated clock frozen to original generatedAt; JSON unchanged"
+    },
+    "weeklyCurrent": {
+      "exit": 0
+    }
+  },
+  "relatedTests": {
+    "exit": 0,
+    "counts": {
+      "tests": 48,
+      "pass": 48,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "receipts": [
+    {
+      "label": "today-current-kst-date",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\latest-main-b41b03cc717a-8bacc69b6bec",
+      "started": "2026-10-12T15:21:44.517Z",
+      "ended": "2026-10-12T15:21:44.814Z",
+      "exit": 1,
+      "signal": null
+    },
+    {
+      "label": "week-current-clock",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather_week.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\latest-main-b41b03cc717a-8bacc69b6bec",
+      "started": "2026-10-12T15:21:44.814Z",
+      "ended": "2026-10-12T15:21:45.110Z",
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "label": "today-original-generated-clock",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "-c",
+        "import sys,json\nfrom pathlib import Path\nfrom datetime import datetime\nsys.path.insert(0,str(Path('.github/scripts').resolve()))\nimport validate_weather as v\ndata=json.loads(Path('weather_today.json').read_text(encoding='utf8'))\nfixed=datetime.strptime(data['generatedAt'][:-4],'%Y-%m-%d %H:%M').replace(tzinfo=v.KST)\nclass Frozen(datetime):\n @classmethod\n def now(cls,tz=None): return fixed.astimezone(tz) if tz else fixed.replace(tzinfo=None)\nv.datetime=Frozen\nv.validate()\nprint('CLOCK_FIXED_TO_ORIGINAL_GENERATED_AT='+data['generatedAt'])\n"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\latest-main-b41b03cc717a-8bacc69b6bec",
+      "started": "2026-10-12T15:21:45.110Z",
+      "ended": "2026-10-12T15:21:45.272Z",
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "label": "midnight-and-autorefresh-related",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap",
+        ".github/scripts/test_today_weather_midnight.mjs",
+        ".github/scripts/test_data_autorefresh.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\latest-main-b41b03cc717a-8bacc69b6bec",
+      "started": "2026-10-12T15:21:45.272Z",
+      "ended": "2026-10-12T15:21:45.632Z",
+      "exit": 0,
+      "signal": null
+    }
+  ],
+  "scope": {
+    "recommendation": "Function source unchanged; previous fixed6d/main58 signature190/176 evidence retained. Current fresh-data ranking not reanalysed and no live176-candidate claim.",
+    "newMainFeatures": "None; only auto weather JSON changed",
+    "server": "Every server source/config blob from PRhead preserved in merged tree",
+    "tide": "No new main changes and merged bytes equal latestmain",
+    "worktreeOrMainRefChanged": false,
+    "productionWrites": 0,
+    "deployments": 0,
+    "gitObjectWrites": "Temporary merge-tree creates tree objects only; no merge commit, index or branch update",
+    "deploymentDecision": "Read-only latest-main compatibility evidence only. Free-capacity BLOCKED remains; no authorization change."
+  }
+}

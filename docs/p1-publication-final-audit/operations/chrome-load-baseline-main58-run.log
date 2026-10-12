@@ -1,0 +1,31 @@
+BASELINE65 START 2026-10-12T10:54:37.160Z
+{
+  "bootstrap": {
+    "requests": 40,
+    "perUser": 4,
+    "endpoints": {
+      "/reports/approved": 10,
+      "/reports/pending": 10,
+      "/reports/recent-sites": 10,
+      "/field-updates": 10
+    }
+  },
+  "steady": {
+    "requests": 10,
+    "perUser": 1,
+    "endpoints": {
+      "/field-updates": 10
+    },
+    "allForeground": true,
+    "workerRequestsPerUserHour": 55.369495253219235,
+    "workerRequestsPerUserContinuousDay": 1328.8678860772616
+  },
+  "network": {
+    "allowedLocal": 61,
+    "allowedDependencyGet": 190,
+    "blockedOther": 125,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserExceptions": 0
+}

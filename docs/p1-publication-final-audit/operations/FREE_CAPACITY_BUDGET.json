@@ -1,0 +1,130 @@
+{
+  "sourceSha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+  "mainSha": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "plan": "Workers Free, user confirmed",
+  "mode": "Actual Chrome request counts multiplied by actual local workerd SQL metadata; production new Worker not deployed",
+  "baseline": {
+    "workerRequests": 1242,
+    "d1RowsRead": 62111,
+    "d1RowsWritten": 665
+  },
+  "baselineWindow": {
+    "start": "2026-10-11T10:45:13.009Z",
+    "end": "2026-10-12T10:45:13.009Z",
+    "requestedHours": 24,
+    "d1Granularity": "datetimeHour; partial endpoint buckets may differ from dashboard rolling24h"
+  },
+  "utcToday": {
+    "readQueries": 603,
+    "writeQueries": 176,
+    "rowsRead": 31388,
+    "rowsWritten": 450,
+    "groupCount": 2,
+    "allGroupsReceived": true
+  },
+  "limits": {
+    "workerRequests": 100000,
+    "d1RowsRead": 5000000,
+    "d1RowsWritten": 100000
+  },
+  "assumptions": [
+    "Initial and steady disjoint; rates use sum of actual foreground user durations.",
+    "Demand model repeats successful same service. After quota failure actual traffic/billing changes; demand is not accrued consumption.",
+    "Baseline rolling24h repeated for conservative daily scenario; it is not exact UTC current remainder.",
+    "Additional cohort model may overlap old readers; pure authority SQL lower bound does not assume old payload reads are additional.",
+    "History/contributors/capabilities/mutations and extra reloads are not in default steady counts.",
+    "Synthetic73 reports/3 field parents use aggregate shape, no private original data.",
+    "Old main baseline65s only observed field refresh; source longer timers are separately described."
+  ],
+  "cohorts": [
+    {
+      "users": 10,
+      "measured": {
+        "steadyRequests": 570,
+        "steadyReadDemand": 75880,
+        "perUserReads": 7588,
+        "initialRequests": 130,
+        "initialReadDemand": 18990,
+        "perUserInitialReads": 1899,
+        "sumExposureMs": 644350.200000002,
+        "perUserWorkerRequestsHour": 3184.6036518650785,
+        "perUserD1RowsHour": 423943.37737460027,
+        "pureNewAuthorityRowsPerUserHour": 328014.1761421031,
+        "steadyRequestsVsLegacyMeasuredPerUserHour": 3129.234156611859
+      },
+      "dailyDemand": [
+        {
+          "activeHoursEach": 1,
+          "workerRequests": 33219,
+          "d1RowsRead": 4320535,
+          "workerFreeLimitExceeded": false,
+          "d1FreeLimitExceeded": false
+        },
+        {
+          "activeHoursEach": 8,
+          "workerRequests": 256141,
+          "d1RowsRead": 33996572,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        },
+        {
+          "activeHoursEach": 24,
+          "workerRequests": 765677,
+          "d1RowsRead": 101827512,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        }
+      ],
+      "theoreticalBudgetHoursEach": {
+        "worker": 3.0970259028070273,
+        "d1": 1.1602726360444158
+      },
+      "pureAuthorityOneHourCohort": 3280142
+    },
+    {
+      "users": 20,
+      "measured": {
+        "steadyRequests": 1140,
+        "steadyReadDemand": 151760,
+        "perUserReads": 7588,
+        "initialRequests": 260,
+        "initialReadDemand": 37980,
+        "perUserInitialReads": 1899,
+        "sumExposureMs": 1292402.5999999982,
+        "perUserWorkerRequestsHour": 3175.4810768718708,
+        "perUserD1RowsHour": 422728.9545842764,
+        "pureNewAuthorityRowsPerUserHour": 327074.55091780267,
+        "steadyRequestsVsLegacyMeasuredPerUserHour": 3120.1115816186516
+      },
+      "dailyDemand": [
+        {
+          "activeHoursEach": 1,
+          "workerRequests": 65012,
+          "d1RowsRead": 8554671,
+          "workerFreeLimitExceeded": false,
+          "d1FreeLimitExceeded": true
+        },
+        {
+          "activeHoursEach": 8,
+          "workerRequests": 509579,
+          "d1RowsRead": 67736724,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        },
+        {
+          "activeHoursEach": 24,
+          "workerRequests": 1525733,
+          "d1RowsRead": 203009990,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        }
+      ],
+      "theoreticalBudgetHoursEach": {
+        "worker": 1.550914611291421,
+        "d1": 0.5795568232153282
+      },
+      "pureAuthorityOneHourCohort": 6541492
+    }
+  ],
+  "verdict": "BLOCKED — Free capacity gate fails; report before operational deployment"
+}

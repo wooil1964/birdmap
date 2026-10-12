@@ -1,0 +1,72 @@
+{
+  "verifiedAt": "2026-10-12T15:48:09.567Z",
+  "headRevision": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "job": {
+    "id": 114888649072,
+    "head_sha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+    "name": "regression",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "checks": [
+    {
+      "id": 114888649072,
+      "name": "regression",
+      "head_sha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/wooil1964/birdmap/actions/runs/38272115326/job/114888649072",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 2
+      }
+    }
+  ],
+  "annotations": [
+    {
+      "path": ".github",
+      "start_line": 2,
+      "end_line": 2,
+      "annotation_level": "warning",
+      "message": "Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/",
+      "title": "",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "start_line": 1,
+      "end_line": 1,
+      "annotation_level": "notice",
+      "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"",
+      "title": "",
+      "raw_details": ""
+    }
+  ],
+  "logTruncated": true,
+  "observedSummaryLines": [
+    "2026-10-12T15:43:22.4616696Z # tests 359",
+    "2026-10-12T15:43:22.4616899Z # pass 359",
+    "2026-10-12T15:43:22.4616978Z # fail 0",
+    "2026-10-12T15:43:22.4617151Z # skipped 0",
+    "2026-10-12T15:43:24.6299058Z # tests 227",
+    "2026-10-12T15:43:24.6299428Z # pass 227",
+    "2026-10-12T15:43:24.6299606Z # fail 0",
+    "2026-10-12T15:43:24.6299978Z # skipped 0",
+    "2026-10-12T15:43:24.8404043Z # tests 36",
+    "2026-10-12T15:43:24.8404986Z # pass 36",
+    "2026-10-12T15:43:24.8405425Z # fail 0",
+    "2026-10-12T15:43:24.8406791Z # skipped 0",
+    "2026-10-12T15:43:25.4738637Z Ran 56 tests in 0.332s",
+    "2026-10-12T15:43:25.9640699Z Ran 22 tests in 0.197s",
+    "2026-10-12T15:43:25.9641152Z OK (skipped=1)",
+    "2026-10-12T15:43:26.4455257Z Ran 11 tests in 0.373s",
+    "2026-10-12T15:44:24.5491472Z     \"pass\": 241,",
+    "2026-10-12T15:44:26.1321699Z Artifact protected-pages-88262001d82643f809690349e2e0a997903a045b.zip successfully finalized. Artifact ID 11757876081",
+    "2026-10-12T15:44:26.1323446Z Artifact protected-pages-88262001d82643f809690349e2e0a997903a045b has been successfully uploaded! Final size is 4731269 bytes. Artifact ID is 11757876081",
+    "2026-10-12T15:44:26.9578526Z Artifact publication-security-diagnostics-88262001d82643f809690349e2e0a997903a045b.zip successfully finalized. Artifact ID 11757472788",
+    "2026-10-12T15:44:26.9581618Z Artifact publication-security-diagnostics-88262001d82643f809690349e2e0a997903a045b has been successfully uploaded! Final size is 662794 bytes. Artifact ID is 11757472788"
+  ],
+  "scope": "Purpose-built read-only CI checks/logs; no workflow dispatch or deployment; local complete logs independently retained"
+}

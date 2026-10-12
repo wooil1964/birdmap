@@ -1,0 +1,69 @@
+{
+  "before": "7f493b1c60bc6002465a44d4ced39ac129afbba7",
+  "after": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "mode": "Archived pinned product source; only new test file copied into pre-fix archive. Synthetic SQLite/Turnstile only; no operating requests.",
+  "testFile": "reports-api/test/publication-security.test.mjs",
+  "testGitBlob": "8102065ab5766cd40be574a04eb5419c8ffb8ddd",
+  "newTestSha256": "db3b892283864d8f5a5c142040f910bfd4bd31835477275cd0dd81cd98c340f4",
+  "runs": [
+    {
+      "ref": "7f493b1c60bc6002465a44d4ced39ac129afbba7",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^B6",
+        "test/publication-security.test.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\b6-independent-7f493b1c60bc\\reports-api",
+      "started": "2026-10-12T15:44:32.182Z",
+      "ended": "2026-10-12T15:44:32.501Z",
+      "exit": 1,
+      "signal": null,
+      "counts": {
+        "tests": 6,
+        "pass": 2,
+        "fail": 4,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "failures": [
+        "B6 saved protected quantities: strict current snapshot omits unverified coordinates and does not write",
+        "B6 legacy GET uses the same saved-protection projection as strict GET",
+        "B6 hidden flag alone cannot authorize exact stored coordinates",
+        "B6 unknown historical masking does not break owner deletion or normal reappearance receipts"
+      ],
+      "productFieldSourceSha256": "40db3a9260c9f052b63f0b94277055e002bcf84b34f40cba0a5ba8d36e31adf5",
+      "sourceUnmodified": true,
+      "newTestCopied": true,
+      "exactTestFileSha256": "db3b892283864d8f5a5c142040f910bfd4bd31835477275cd0dd81cd98c340f4"
+    },
+    {
+      "ref": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^B6",
+        "test/publication-security.test.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\b6-independent-c025d75f964a\\reports-api",
+      "started": "2026-10-12T15:44:32.732Z",
+      "ended": "2026-10-12T15:44:33.001Z",
+      "exit": 0,
+      "signal": null,
+      "counts": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "failures": [],
+      "productFieldSourceSha256": "45afe2b2a543d67f1816bbc0d7348ebd2fd5cedc7ebb7dbccb49081937c8fb61",
+      "sourceUnmodified": true,
+      "newTestCopied": false,
+      "exactTestFileSha256": "db3b892283864d8f5a5c142040f910bfd4bd31835477275cd0dd81cd98c340f4"
+    }
+  ]
+}

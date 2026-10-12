@@ -1,0 +1,106 @@
+{
+  "at": "2026-10-12T10:45:13.009Z",
+  "window": {
+    "start": "2026-10-11T10:45:13.009Z",
+    "end": "2026-10-12T10:45:13.009Z",
+    "requestedHours": 24,
+    "d1Granularity": "datetimeHour; partial endpoint buckets may differ from dashboard rolling24h"
+  },
+  "mode": "One authenticated GraphQL query and one metadata GET only. No D1 SQL/query strings, location payload, mutation, upload or deployment.",
+  "userProvidedBaseline": {
+    "source": "Human user report passed through root agent; not independently measured by this subagent",
+    "plan": "Free",
+    "window": "recent24h reported by user, exact endpoints unspecified",
+    "database": "birdmap-reports",
+    "queries": 1230,
+    "rowsRead": 58000,
+    "rowsWritten": 496,
+    "storageMB": 1.44,
+    "accountOtherDatabaseUsage": "unknown until account-wide analytics succeeds"
+  },
+  "graphql": {
+    "attempts": 1,
+    "query": "query ReadOnlyPublicationUsage($accountTag: string, $start: string, $end: string) { viewer { accounts(filter: {accountTag: $accountTag}) { d1Account: d1AnalyticsAdaptiveGroups(limit: 10000, filter: {datetimeHour_geq: $start, datetimeHour_leq: $end}) { sum {readQueries writeQueries rowsRead rowsWritten} dimensions {databaseId} } workersAccount: workersInvocationsAdaptive(limit: 10000, filter: {datetime_geq: $start, datetime_leq: $end}) {sum {requests errors subrequests} dimensions {scriptName status}} } } }",
+    "variables": {
+      "accountTag": "1d697c22a32447b386b9fac6a3538597",
+      "start": "2026-10-11T10:45:13.009Z",
+      "end": "2026-10-12T10:45:13.009Z"
+    },
+    "httpStatus": 200,
+    "errors": [],
+    "success": true,
+    "accountD1": {
+      "readQueries": 1071,
+      "writeQueries": 271,
+      "rowsRead": 62111,
+      "rowsWritten": 665,
+      "groupCount": 2,
+      "allGroupsReceived": true,
+      "databaseCount": 2
+    },
+    "birdmapD1": {
+      "readQueries": 1064,
+      "writeQueries": 173,
+      "rowsRead": 56381,
+      "rowsWritten": 538
+    },
+    "otherD1": {
+      "readQueries": 7,
+      "writeQueries": 98,
+      "rowsRead": 5730,
+      "rowsWritten": 127
+    },
+    "accountWorkers": {
+      "requests": 1242,
+      "errors": 0,
+      "subrequests": 205,
+      "groupCount": 4,
+      "allGroupsReceived": true
+    },
+    "targetWorkers": {
+      "birdmap-reports": {
+        "requests": 985,
+        "errors": 0,
+        "subrequests": 18,
+        "statusGroups": [
+          {
+            "status": "success",
+            "errors": 0,
+            "requests": 985,
+            "subrequests": 18
+          }
+        ]
+      },
+      "birdmap-reports-admin": {
+        "requests": 129,
+        "errors": 0,
+        "subrequests": 139,
+        "statusGroups": [
+          {
+            "status": "success",
+            "errors": 0,
+            "requests": 129,
+            "subrequests": 139
+          }
+        ]
+      }
+    }
+  },
+  "workerInventory": {
+    "httpStatus": 200,
+    "success": true,
+    "count": 6,
+    "targetWorkersPresent": {
+      "birdmap-reports": true,
+      "birdmap-reports-admin": true
+    },
+    "note": "Current script inventory count, not requests usage, plan proof or deployed version count"
+  },
+  "operations": {
+    "d1SQL": 0,
+    "d1Writes": 0,
+    "graphQLMutations": 0,
+    "workerWrites": 0,
+    "realUserWrites": 0
+  }
+}

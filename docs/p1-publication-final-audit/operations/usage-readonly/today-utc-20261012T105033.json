@@ -1,0 +1,114 @@
+{
+  "at": "2026-10-12T10:51:48.568Z",
+  "clockVerification": {
+    "source": "clock__curr_time",
+    "current_time": "2026-10-12 10:50:33 UTC",
+    "queriedUpperBound": "2026-10-12T10:50:33Z"
+  },
+  "window": {
+    "start": "2026-10-12T00:00:00Z",
+    "end": "2026-10-12T10:50:33Z",
+    "label": "Current UTC quota day to verified clock upper bound",
+    "d1Bucket": "datetimeHour; current hour partial/analytics ingestion lag possible",
+    "workersBucket": "datetime filter; analytics ingestion lag/sampling may apply"
+  },
+  "mode": "One authenticated GraphQL query only. No inventory request, D1 SQL, mutation, upload, deployment or user payload.",
+  "graphql": {
+    "attempts": 1,
+    "query": "query ReadOnlyUtcDayPublicationUsage($accountTag: string, $start: string, $end: string) { viewer { accounts(filter: {accountTag: $accountTag}) { d1Account: d1AnalyticsAdaptiveGroups(limit: 10000, filter: {datetimeHour_geq: $start, datetimeHour_leq: $end}) {sum {readQueries writeQueries rowsRead rowsWritten} dimensions {databaseId}} workersAccount: workersInvocationsAdaptive(limit: 10000, filter: {datetime_geq: $start, datetime_leq: $end}) {sum {requests errors subrequests} dimensions {scriptName status}} } } }",
+    "variables": {
+      "accountTag": "1d697c22a32447b386b9fac6a3538597",
+      "start": "2026-10-12T00:00:00Z",
+      "end": "2026-10-12T10:50:33Z"
+    },
+    "httpStatus": 200,
+    "errors": [],
+    "success": true,
+    "accountD1": {
+      "readQueries": 603,
+      "writeQueries": 176,
+      "rowsRead": 31388,
+      "rowsWritten": 450,
+      "groupCount": 2,
+      "allGroupsReceived": true
+    },
+    "birdmapD1": {
+      "readQueries": 599,
+      "writeQueries": 117,
+      "rowsRead": 28281,
+      "rowsWritten": 375
+    },
+    "otherD1": {
+      "readQueries": 4,
+      "writeQueries": 59,
+      "rowsRead": 3107,
+      "rowsWritten": 75
+    },
+    "accountWorkers": {
+      "requests": 687,
+      "errors": 0,
+      "subrequests": 111,
+      "groupCount": 4,
+      "allGroupsReceived": true
+    },
+    "targetWorkers": {
+      "birdmap-reports": {
+        "requests": 570,
+        "errors": 0,
+        "subrequests": 15
+      },
+      "birdmap-reports-admin": {
+        "requests": 52,
+        "errors": 0,
+        "subrequests": 57
+      }
+    }
+  },
+  "userProvidedPlan": {
+    "source": "Human user confirmation passed through root",
+    "plan": "Free"
+  },
+  "operations": {
+    "graphqlQueries": 1,
+    "graphqlMutations": 0,
+    "d1SQL": 0,
+    "d1Writes": 0,
+    "workerWrites": 0,
+    "realUserWrites": 0
+  },
+  "illustrativeQuotaBudget": [
+    {
+      "metric": "workerRequests",
+      "freeLimitPerUtcDay": 100000,
+      "todayObserved": 687,
+      "todayCapMinusObserved": 99313,
+      "previousRollingObserved": 1242,
+      "conservativeObservedUsage": 1242,
+      "conservativeCapMinusObserved": 98758,
+      "certifiedRemainingLowerBound": null,
+      "note": "Cap-minus-observed is an analytics-based provisional balance, not a guaranteed lower bound; ingest lag/sampling/ongoing traffic are unknown. Conservative column includes yesterday from prior rolling window and is deliberately stricter."
+    },
+    {
+      "metric": "d1RowsRead",
+      "freeLimitPerUtcDay": 5000000,
+      "todayObserved": 31388,
+      "todayCapMinusObserved": 4968612,
+      "previousRollingObserved": 62111,
+      "conservativeObservedUsage": 62111,
+      "conservativeCapMinusObserved": 4937889,
+      "certifiedRemainingLowerBound": null,
+      "note": "Cap-minus-observed is an analytics-based provisional balance, not a guaranteed lower bound; ingest lag/sampling/ongoing traffic are unknown. Conservative column includes yesterday from prior rolling window and is deliberately stricter."
+    },
+    {
+      "metric": "d1RowsWritten",
+      "freeLimitPerUtcDay": 100000,
+      "todayObserved": 450,
+      "todayCapMinusObserved": 99550,
+      "previousRollingObserved": 665,
+      "conservativeObservedUsage": 665,
+      "conservativeCapMinusObserved": 99335,
+      "certifiedRemainingLowerBound": null,
+      "note": "Cap-minus-observed is an analytics-based provisional balance, not a guaranteed lower bound; ingest lag/sampling/ongoing traffic are unknown. Conservative column includes yesterday from prior rolling window and is deliberately stricter."
+    }
+  ]
+}

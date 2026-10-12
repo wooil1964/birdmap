@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: B6 saved protected quantities: strict current snapshot omits unverified coordinates and does not write
+ok 1 - B6 saved protected quantities: strict current snapshot omits unverified coordinates and does not write
+  ---
+  duration_ms: 44.9255
+  type: 'test'
+  ...
+# Subtest: B6 legacy GET uses the same saved-protection projection as strict GET
+ok 2 - B6 legacy GET uses the same saved-protection projection as strict GET
+  ---
+  duration_ms: 5.6588
+  type: 'test'
+  ...
+# Subtest: B6 normal stored species retain exact public coordinates without false positives
+ok 3 - B6 normal stored species retain exact public coordinates without false positives
+  ---
+  duration_ms: 10.054
+  type: 'test'
+  ...
+# Subtest: B6 verified saved masked coordinates remain stable across strict and legacy reads
+ok 4 - B6 verified saved masked coordinates remain stable across strict and legacy reads
+  ---
+  duration_ms: 7.3526
+  type: 'test'
+  ...
+# Subtest: B6 hidden flag alone cannot authorize exact stored coordinates
+ok 5 - B6 hidden flag alone cannot authorize exact stored coordinates
+  ---
+  duration_ms: 6.4659
+  type: 'test'
+  ...
+# Subtest: B6 unknown historical masking does not break owner deletion or normal reappearance receipts
+ok 6 - B6 unknown historical masking does not break owner deletion or normal reappearance receipts
+  ---
+  duration_ms: 9.0434
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 226.7681

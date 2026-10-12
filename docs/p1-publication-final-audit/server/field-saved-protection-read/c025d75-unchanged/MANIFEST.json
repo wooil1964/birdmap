@@ -1,0 +1,315 @@
+{
+  "at": "2026-10-12T15:44:04.949Z",
+  "sourceSha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "scope": "One synthetic local workerd D1 fixture; actual new product code only; no operations or user rows accessed; no product edits",
+  "runtime": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha"
+  },
+  "checks": [
+    {
+      "id": "P01-DB freeze blocks legacy-shaped field INSERT before explicit thaw",
+      "status": "pass"
+    },
+    {
+      "id": "P02-legacy-shaped INSERT is accepted after thaw and advances current publication revision",
+      "status": "pass"
+    },
+    {
+      "id": "P03-strict preflight/GET/postflight current nonce epoch revision all validate",
+      "status": "pass"
+    },
+    {
+      "id": "P04-stale authority still rejects with409",
+      "status": "pass"
+    },
+    {
+      "id": "S1R-SAVED-저어새1 must not expose exact point or reopen directions",
+      "status": "pass"
+    },
+    {
+      "id": "S1R-SAVED-흰꼬리수리1 must not expose exact point or reopen directions",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-갈매기 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-알락오리 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-알락할미새 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-동박새 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-한국동박새 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "HIDDEN-known-protected reference retains coarse marker and disables directions",
+      "status": "pass"
+    },
+    {
+      "id": "S1R-SAVED-매1 must not expose exact point or reopen directions",
+      "status": "pass"
+    }
+  ],
+  "cases": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "species": "저어새1",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000002",
+      "species": "흰꼬리수리1",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000003",
+      "species": "갈매기",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EA%B0%88%EB%A7%A4%EA%B8%B0,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EA%B0%88%EB%A7%A4%EA%B8%B0&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000004",
+      "species": "알락오리",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EC%95%8C%EB%9D%BD%EC%98%A4%EB%A6%AC,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EC%95%8C%EB%9D%BD%EC%98%A4%EB%A6%AC&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000005",
+      "species": "알락할미새",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EC%95%8C%EB%9D%BD%ED%95%A0%EB%AF%B8%EC%83%88,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EC%95%8C%EB%9D%BD%ED%95%A0%EB%AF%B8%EC%83%88&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000006",
+      "species": "동박새",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EB%8F%99%EB%B0%95%EC%83%88,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EB%8F%99%EB%B0%95%EC%83%88&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000007",
+      "species": "한국동박새",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%ED%95%9C%EA%B5%AD%EB%8F%99%EB%B0%95%EC%83%88,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%ED%95%9C%EA%B5%AD%EB%8F%99%EB%B0%95%EC%83%88&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000008",
+      "species": "저어새1",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 1,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.12,
+      "returnedLon": 127.65,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000009",
+      "species": "매1",
+      "phase": "legacy-shaped-write-after-thaw",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    }
+  ],
+  "http": [
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "0bc02198bf648060fc51de5d6d598fbb",
+        "revision": "2",
+        "projection": "legacy-public-v1",
+        "nonce": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "0bc02198bf648060fc51de5d6d598fbb",
+        "revision": "2",
+        "projection": "legacy-public-v1",
+        "nonce": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "0bc02198bf648060fc51de5d6d598fbb",
+        "revision": "2",
+        "projection": "legacy-public-v1",
+        "nonce": "cccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 409,
+      "cacheControl": "no-store",
+      "error": {
+        "code": "PUBLICATION_CHANGED",
+        "message": "공개 위치 상태가 변경됐습니다. 다시 확인해 주세요."
+      }
+    }
+  ],
+  "protectedFailed": 0,
+  "classifierKnownProtected": true,
+  "summary": {
+    "pass": 13,
+    "fail": 0,
+    "skip": 0
+  },
+  "verdict": "See individual assertions"
+}
