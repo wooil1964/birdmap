@@ -312,6 +312,9 @@ body.rightPanelOpen #recentReportsBox{display:none}
 .noticeRouteActions a{display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:0;min-height:42px;padding:6px 4px;border-radius:7px;text-decoration:none;font-size:12px;font-weight:bold;white-space:nowrap}
 .noticeKakaoRoute{background:#fff8cc;color:#6b5600!important;border:1px solid #c8a800}
 .noticeTmapRoute{background:#e8f3fc;color:#12466d!important;border:1px solid #155c90}
+.noticeRouteAccess{margin:2px 0 7px;color:#175438;font-size:11px;font-weight:bold;overflow-wrap:anywhere}
+.noticeRouteLineBtn{display:block;box-sizing:border-box;width:100%;min-height:42px;margin-top:7px;padding:7px;border:1px solid #bd742d;border-radius:7px;background:#fff1de;color:#824010;font-size:12px;font-weight:bold;cursor:pointer}
+.noticeRouteCaution{margin-top:5px;color:#795230;font-size:11px;line-height:1.45}
 .noticeImage{display:block;width:100%;max-height:170px;object-fit:contain;margin:7px 0;border:1px solid #ddd;border-radius:6px;background:#f7f7f7}
 .yubudoAccessPin{border-radius:50%;color:white;font-weight:bold;text-align:center;line-height:28px;border:2px solid white;box-shadow:0 1px 5px rgba(0,0,0,.35)}
 .yubudoAccessLabel{background:rgba(255,255,255,.96);border:1px solid #777;border-radius:4px;color:#111;font-size:12px;font-weight:bold;padding:2px 5px;box-shadow:0 1px 4px rgba(0,0,0,.22);white-space:nowrap}
@@ -3495,20 +3498,50 @@ function noticeLinkedSites(notice){
   return found;
 }
 
-/* 공지에 직접 제공된 관찰 포인트만 표시한다. 지도 저장점수·추천 결과와 분리한다. */
+/* 공지에 직접 제공된 관찰 좌표만 사용한다. 접근 좌표는 길찾기 목적지와 구분해 검증한다. */
+function noticeValidCoordinate(point){
+  return !!point&&typeof point.lat==='number'&&typeof point.lon==='number'&&
+    isFinite(point.lat)&&isFinite(point.lon)&&point.lat>=-90&&point.lat<=90&&
+    point.lon>=-180&&point.lon<=180&&!(point.lat===0&&point.lon===0);
+}
+
+/* 공지 지도에서만 쓰는 일회성 안내선: 실제 경로 탐색이 아닌 두 좌표의 직선 연결이다. */
+var noticeGuidanceLayer=null;
+function showNoticeGuidanceLine(point){
+  if(!noticeValidCoordinate(point)||!noticeValidCoordinate(point.access)||typeof L==='undefined')return false;
+  var map=map_7010a44f6ac2025090f0fe07508ed485;
+  if(!map)return false;
+  if(noticeGuidanceLayer){map.removeLayer(noticeGuidanceLayer);noticeGuidanceLayer=null;}
+  var access=[point.access.lat,point.access.lon],observation=[point.lat,point.lon];
+  var line=L.polyline([access,observation],{color:'#cb7625',weight:4,opacity:0.9,dashArray:'9, 8',interactive:false});
+  var accessMarker=L.circleMarker(access,{radius:9,color:'#135a39',fillColor:'#2da363',fillOpacity:1,weight:2})
+    .bindTooltip('차량 길찾기 도착점',{permanent:true,direction:'top'})
+    .bindPopup('<b>차량 길찾기 도착점</b><br>제공 좌표: '+point.access.lat.toFixed(6)+', '+point.access.lon.toFixed(6)+
+      '<br><a target="_blank" rel="noopener" href="'+escapeHtml(spotKakaoRouteUrl(point.access,point.name+' 차량 도착점'))+'">🚗 카카오맵</a>'+
+      ' · <a href="'+escapeHtml(tmapNavigationUrl(point.access,point.name+' 차량 도착점'))+'" onclick="return openTmapNavigation()">🚙 티맵</a>');
+  var observationMarker=L.circleMarker(observation,{radius:9,color:'#982f1f',fillColor:'#e74b3b',fillOpacity:1,weight:2})
+    .bindTooltip('물수리 관찰 포인트',{permanent:true,direction:'top'})
+    .bindPopup('<b>물수리 관찰 포인트</b><br>'+point.lat.toFixed(6)+', '+point.lon.toFixed(6)+
+      '<br>점선은 직선 참고선이며 실제 이동 경로가 아닙니다.');
+  noticeGuidanceLayer=L.featureGroup([line,accessMarker,observationMarker]).addTo(map);
+  toggleNoticePanel(false);
+  toggleTodayPanel(false);
+  map.fitBounds(noticeGuidanceLayer.getBounds(),{padding:[45,45],maxZoom:14});
+  return true;
+}
+
+/* 공지에 제공된 별도 접근점이 있을 때만 차량 길찾기의 목적지를 전환한다. */
 function appendNoticeRoutePoints(container,notice){
   if(!notice||!Array.isArray(notice.points))return;
   var group=document.createElement('div');
   group.className='noticeRoutePoints';
   notice.points.forEach(function(point){
-    if(!point||typeof point.name!=='string'||!point.name.trim()||
-       typeof point.lat!=='number'||typeof point.lon!=='number')return;
-    var lat=point.lat,lon=point.lon;
-    if(!isFinite(lat)||!isFinite(lon)||lat<-90||lat>90||lon<-180||lon>180||
-       (lat===0&&lon===0))return;
-    var destination={lat:lat,lon:lon};
-    var kakao=spotKakaoRouteUrl(destination,point.name);
-    var tmap=tmapNavigationUrl(destination,point.name);
+    if(!point||typeof point.name!=='string'||!point.name.trim()||!noticeValidCoordinate(point))return;
+    var hasAccess=point.access!==undefined&&point.access!==null;
+    if(hasAccess&&!noticeValidCoordinate(point.access))return; // 잘못된 접근좌표는 관찰좌표로 대체하지 않는다.
+    var destination=hasAccess?point.access:point;
+    var kakao=spotKakaoRouteUrl(destination,hasAccess?point.name+' 차량 도착점':point.name);
+    var tmap=tmapNavigationUrl(destination,hasAccess?point.name+' 차량 도착점':point.name);
     if(!kakao||!tmap)return;
     var item=document.createElement('div');
     item.className='noticeRoutePoint';
@@ -3518,8 +3551,14 @@ function appendNoticeRoutePoints(container,notice){
     item.appendChild(name);
     var coords=document.createElement('div');
     coords.className='noticeRouteCoord';
-    coords.textContent=lat.toFixed(6)+'°N, '+lon.toFixed(6)+'°E';
+    coords.textContent=(hasAccess?'물수리 관찰점: ':'')+point.lat.toFixed(6)+'°N, '+point.lon.toFixed(6)+'°E';
     item.appendChild(coords);
+    if(hasAccess){
+      var accessCoords=document.createElement('div');
+      accessCoords.className='noticeRouteAccess';
+      accessCoords.textContent='🚗 차량 길찾기 목적지: '+destination.lat.toFixed(6)+'°N, '+destination.lon.toFixed(6)+'°E';
+      item.appendChild(accessCoords);
+    }
     var actions=document.createElement('div');
     actions.className='noticeRouteActions';
     var kakaoLink=document.createElement('a');
@@ -3537,6 +3576,18 @@ function appendNoticeRoutePoints(container,notice){
     tmapLink.onclick=function(){return openTmapNavigation();};
     actions.appendChild(tmapLink);
     item.appendChild(actions);
+    if(hasAccess){
+      var lineBtn=document.createElement('button');
+      lineBtn.type='button';
+      lineBtn.className='noticeRouteLineBtn';
+      lineBtn.textContent='🗺️ 지도에서 관찰점까지 안내선 보기';
+      lineBtn.onclick=function(){showNoticeGuidanceLine(point);};
+      item.appendChild(lineBtn);
+      var caution=document.createElement('div');
+      caution.className='noticeRouteCaution';
+      caution.textContent='도착점에서 관찰점까지 직선 약 '+haversineKm(destination,point).toFixed(2)+'km · 점선은 도로·보행로가 아닌 방향 참고선입니다.';
+      item.appendChild(caution);
+    }
     group.appendChild(item);
   });
   if(group.children.length)container.appendChild(group);
