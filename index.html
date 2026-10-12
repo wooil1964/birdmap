@@ -304,6 +304,14 @@ body.rightPanelOpen #recentReportsBox{display:none}
 #noticeBadge{display:inline-block;min-width:17px;height:17px;line-height:17px;margin-left:4px;padding:0 3px;border-radius:10px;background:#a30000;color:white;font-size:10px;text-align:center}
 #noticePanel{display:none;position:fixed;top:206px;right:52px;z-index:10000;width:350px;max-height:68vh;overflow-y:auto;background:white;border:2px solid #a67800;border-radius:9px;padding:12px 14px;font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.28)}
 .noticeCard{padding:10px 2px;border-bottom:1px solid #e4e4e4}.noticeTitle{font-size:14px;font-weight:bold;color:#533500;margin-bottom:4px}.noticeSummary{margin-bottom:5px;font-weight:bold;color:#8a4d00}.noticeDate{font-size:11px;color:#777;margin-bottom:5px}.noticeContent{line-height:1.55;white-space:pre-line;color:#222}.noticeLink{display:inline-block;margin-top:7px;padding:5px 8px;background:#5b2c83;color:white;border-radius:5px;text-decoration:none;font-weight:bold}
+.noticeRoutePoints{margin-top:10px}
+.noticeRoutePoint{margin-top:8px;padding:9px;border:1px solid #e7d5a3;border-radius:7px;background:#fffdf5}
+.noticeRouteName{font-size:13px;font-weight:bold;color:#533500}
+.noticeRouteCoord{margin:3px 0 7px;color:#666;font-size:11px;overflow-wrap:anywhere}
+.noticeRouteActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.noticeRouteActions a{display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:0;min-height:42px;padding:6px 4px;border-radius:7px;text-decoration:none;font-size:12px;font-weight:bold;white-space:nowrap}
+.noticeKakaoRoute{background:#fff8cc;color:#6b5600!important;border:1px solid #c8a800}
+.noticeTmapRoute{background:#e8f3fc;color:#12466d!important;border:1px solid #155c90}
 .noticeImage{display:block;width:100%;max-height:170px;object-fit:contain;margin:7px 0;border:1px solid #ddd;border-radius:6px;background:#f7f7f7}
 .yubudoAccessPin{border-radius:50%;color:white;font-weight:bold;text-align:center;line-height:28px;border:2px solid white;box-shadow:0 1px 5px rgba(0,0,0,.35)}
 .yubudoAccessLabel{background:rgba(255,255,255,.96);border:1px solid #777;border-radius:4px;color:#111;font-size:12px;font-weight:bold;padding:2px 5px;box-shadow:0 1px 4px rgba(0,0,0,.22);white-space:nowrap}
@@ -3335,6 +3343,53 @@ function noticeLinkedSites(notice){
   return found;
 }
 
+/* 공지에 직접 제공된 관찰 포인트만 표시한다. 지도 저장점수·추천 결과와 분리한다. */
+function appendNoticeRoutePoints(container,notice){
+  if(!notice||!Array.isArray(notice.points))return;
+  var group=document.createElement('div');
+  group.className='noticeRoutePoints';
+  notice.points.forEach(function(point){
+    if(!point||typeof point.name!=='string'||!point.name.trim()||
+       typeof point.lat!=='number'||typeof point.lon!=='number')return;
+    var lat=point.lat,lon=point.lon;
+    if(!isFinite(lat)||!isFinite(lon)||lat<-90||lat>90||lon<-180||lon>180||
+       (lat===0&&lon===0))return;
+    var destination={lat:lat,lon:lon};
+    var kakao=spotKakaoRouteUrl(destination,point.name);
+    var tmap=tmapNavigationUrl(destination,point.name);
+    if(!kakao||!tmap)return;
+    var item=document.createElement('div');
+    item.className='noticeRoutePoint';
+    var name=document.createElement('div');
+    name.className='noticeRouteName';
+    name.textContent=point.name;
+    item.appendChild(name);
+    var coords=document.createElement('div');
+    coords.className='noticeRouteCoord';
+    coords.textContent=lat.toFixed(6)+'°N, '+lon.toFixed(6)+'°E';
+    item.appendChild(coords);
+    var actions=document.createElement('div');
+    actions.className='noticeRouteActions';
+    var kakaoLink=document.createElement('a');
+    kakaoLink.className='noticeKakaoRoute';
+    kakaoLink.href=kakao;
+    kakaoLink.target='_blank';
+    kakaoLink.rel='noopener';
+    kakaoLink.textContent='🚗 카카오맵';
+    actions.appendChild(kakaoLink);
+    var tmapLink=document.createElement('a');
+    tmapLink.className='noticeTmapRoute';
+    tmapLink.href=tmap;
+    tmapLink.title='티맵 앱이 설치된 스마트폰에서 열기';
+    tmapLink.textContent='🚙 티맵';
+    tmapLink.onclick=function(){return openTmapNavigation();};
+    actions.appendChild(tmapLink);
+    item.appendChild(actions);
+    group.appendChild(item);
+  });
+  if(group.children.length)container.appendChild(group);
+}
+
 function noticeCard(i){
   var c=document.createElement('div');
   c.className='noticeCard';
@@ -3367,6 +3422,7 @@ function noticeCard(i){
   x.className='noticeContent';
   x.textContent=i.content||'';
   c.appendChild(x);
+  appendNoticeRoutePoints(c,i);
   if(i.link){
     var a=document.createElement('a');
     a.className='noticeLink';
@@ -4254,6 +4310,7 @@ function todayIssueCard(notice,linkedTop5Ids){
     btn.onclick=function(){goToSiteFromTodayPanel(site.id);};
     card.appendChild(btn);
   });
+  appendNoticeRoutePoints(card,notice);
   return card;
 }
 
