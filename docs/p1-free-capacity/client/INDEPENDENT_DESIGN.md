@@ -1,0 +1,44 @@
+# P1 Free capacity: independent frontend design
+
+Product inspected: `c025d75f964ab36f6f2eae541a99461f6de59b70`. This is a design and independent audit, not a product patch. No operational API calls, deployments, D1 changes, or private coordinates were made.
+
+## Findings from actual source
+
+`publicationInvalidate` closes maps, popups, routes/GPS, contributor names, recent bonus and history, increments generation, and discards all four list stores. `publicationRenew` correctly expires permission at the HEAD request start plus 5,000 ms. `publicationRecheck` runs every 5,000 ms, but its request arrives after the preceding lease has expired. The expiry timer calls the destructive invalidator before the next response; therefore recheck sees `ready=false` and invokes all four list loaders. The observed RTT-sized closure is correct; the subsequent full data reload is avoidable when unchanged current authority and an unchanged temporal view are independently proven.
+
+Startup has three independently scheduled sources: publication load/pageshow refresh, report-feature initialization loading approved/pending/recent, and field-feature initialization loading field updates. `publicationRefreshPromise` only coalesces callers of publicationRefresh; it does not coalesce direct calls of the four list functions. Root's prior Chrome evidence recorded 13 initial API requests per user and six repeated lease-expiry reload cycles in about 65 seconds.
+
+## Minimum candidate
+
+1. Keep exactly one ordinary page bootstrap. Initialization functions still install buttons, listeners, and refresh timers. They should not independently read the same four lists. Initial `pageshow` with `persisted=false` does not require a second bootstrap; restored BFCache pages require destructive close and fresh bootstrap. Add path-scoped in-flight fetch coalescing for genuine overlap (e.g. periodic refresh and manual refresh), keyed by the complete view query plus authority generation. Never share a pending result across a destructive invalidation.
+2. Separate **temporary lease expiry suspension** from **destructive authority invalidation**. Suspension immediately disables publicationAllowed, clears visible dynamic markers/popups/links, stops GPS/navigation, and removes names/bonus/history from active UI stores. A sealed in-memory snapshot may survive suspension only; it must never be consumed by direct rendering or navigation while suspended. Unknown/error, authority tuple change/regression, mutation/delete, visibility loss or persisted page restoration permanently purge the sealed snapshots and advance the generation barrier. No localStorage/sessionStorage persistence.
+3. At each ordinary 5-second recheck, capture eligible sealed snapshots first and issue a newly started primary HEAD with a new nonce (`publicationHead(true)`). The HEAD must begin after capturing those cached inputs, so it is fresh postflight for this local read, not an earlier in-flight response. Each snapshot already has its original successful preflight + atomic projection read + fresh postflight. Restore only after this new HEAD proves exactly the same contract/epoch/revision/projection and generation, while the request-start lease is still valid. A stale pending HEAD cannot substitute. If any proof fails, remain closed; no cached names, coordinates, bonus or routes return. Newly fetched network projections keep the existing full preflight/data/fresh-postflight process.
+4. Retain original response provenance separately from the new permission observation. Do not manufacture a nonce, replace old serverTime with a new value, or relabel a cached body as a new server response. Local `_publicationStartedMono` is assigned only by actual HEAD issuance. Cache returns must not bypass the original payload schema or per-response validation.
+5. Use endpoint temporal view keys: approved/pending have no current time filter in actual SQL; recent-sites has KST day + days query; contributors has KST month; history has site/limit/offset; field entries retain their original expiresAt and are filtered against fresh postflight serverTime. Expired field records never reappear just because epoch/revision is unchanged. At day/month boundaries, affected temporal views are fetched again. The existing normal 10-minute report and 60-second field refresh schedules may remain as conservative upper bounds.
+
+The 5-second polling interval, 5-second request-start lease and original primary/nonce/postflight contract remain unchanged. Scheduling polls earlier than expiry could improve availability but increases request rate and is not needed for this minimum candidate. A verified result received after its request-start plus five seconds is unusable even when every tuple is identical.
+
+## Race and privacy risks to test
+
+- Same authority is insufficient if the DB query depends on KST date, monthly boundaries, field expiresAt, or query parameters.
+- Revocation while a cached snapshot awaits HEAD: generation/tuple mismatch must purge it before any marker or contributor restore.
+- Revocation after a successful HEAD is limited by the existing five-second permission model; external coordinates already delivered cannot be remotely erased. Do not claim instantaneous or retroactive deletion.
+- Concurrent poll plus route/GPS/postflight: an action requiring fresh authority must issue a new read after that action, retaining the current head-freshness regression tests.
+- A soft expiry must not silently become a generic soft error. Offline, malformed metadata, timeout, regressed revision, and authority change are destructive, not reusable closure.
+- Old request completion after strong invalidation cannot reinstall a sealed cache or restart route guidance.
+- All render call sites must check active lease; hidden snapshots are not an alternate path to fieldPublicPoint, reportPublicSpots, contributor modal, recent bonus or history UI.
+- Mutation receipts, owner-delete tombstones and terminal status rules are preserved. B6 legacy protected rows remain hidden with null coordinates; cache reuse cannot reconstruct removed points or promote stored unverified masking.
+- Sealed snapshots are private memory, contain no private server fields and are erased on strong invalidation. Copying to a persistent cache would require a different approved policy.
+- Server reader projection changes require an authority revision/epoch transition; otherwise unchanged revision cannot prove reader equivalence across incompatible deployments.
+
+## Required independent comparisons
+
+Run actual Chrome on all five widths with 10/20 isolated clients and the same RTT/window/foreground conditions as the earlier experiment. Record raw initial, steady, field periodic, route/history/contributor extras and error counts separately. Check sampled expired/unknown dynamic exposure is zero, and document the expected RTT-sized closed gap. Force revision change, hide/delete, consent withdrawal, GPS delay, concurrent response inversion, offline recovery, field expiry, midnight/month change and B6 DTOs. Re-run the existing source-level head-freshness and request-start upper-bound tests unchanged. Re-run normal recommendation signatures (190/176 historical fixed input) and curated site routes.
+
+This design does not claim Free suitability: unchanged 5-second HEAD polling alone is 720 requests per user-hour and 115,200 requests for 20 users x 8 hours, already over the account's 100,000/day Free request allowance before other APIs. Savings can remove avoidable calls and rows read; they cannot remove this mathematical lower bound without a separately approved different delivery architecture.
+
+## Additional concrete consumer hazards
+
+`loadApprovedReports` assigns `data.fixedSpots` to reportFixedHistory and then rewrites each value from `{history:[...]}` to an array. Retaining the same mutable response object in a cache would corrupt later restores (the second pass would read `array.history`, lose the history, and default to an empty array). Cache a separate JSON clone before consumer mutation and provide a fresh clone on reuse, or refactor only this narrow consumer to build a new object without mutating the DTO. Freezing a shared object while the existing consumer still tries to mutate it is not sufficient.
+
+`loadFieldUpdates` currently sets fieldClockOffset from body.serverTime, while publicationRenew sets it from fresh HEAD serverTime. Applying an old cached body after a fresh permission renewal would reset the clock offset back to the original observation, potentially showing incorrect age or delaying local expiry behavior. Keep original serverTime as response provenance, but pass/use the new postflight observation separately for the active clock and expiresAt filtering. `publicationCheckedAt` already has this distinct postflight purpose; do not pretend the cached source was issued again.

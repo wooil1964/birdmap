@@ -1,0 +1,26 @@
+import { execFileSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const repo=process.argv[2],out=process.argv[3];
+if(!repo||!out)throw new Error('Usage: node baseline-expiry.mjs <repo> <output.json>');
+const sha='c025d75f964ab36f6f2eae541a99461f6de59b70';
+const html=execFileSync('git',['show',`${sha}:index.html`],{cwd:repo,encoding:'utf8',maxBuffer:20e6});
+function source(name){const start=html.indexOf('function '+name+'(');assert.ok(start>=0,name);const stop=html.indexOf('\nfunction ',start+1);assert.ok(stop>start,name);const candidate=html.slice(start,stop),end=candidate.indexOf('\n}');return end<0?candidate:candidate.slice(0,end+2);}
+let mono=10000,wall=Date.parse('2026-10-13T00:00:00+09:00');
+const calls=[],effects=[];
+const a={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'100',nonce:'b'.repeat(32)};
+const ctx={Promise,BigInt,Number,Error,Date:class extends Date{static now(){return wall;}},performance:{now:()=>mono},setTimeout:()=>1,clearTimeout:()=>{},PUBLICATION_CONTRACT:'publication-v1',PUBLICATION_PROJECTION:'legacy-public-v1',PUBLICATION_MAX_AGE:5000,publicationHeadPromise:null,publicationExpiryTimer:0,publicationRefreshPromise:null,publicationState:{generation:2,ready:true,anchor:a,until:wall+5000,checkedMono:mono},document:{hidden:false,getElementById:()=>({hidden:true}),querySelectorAll:()=>[]},reportPublicSpots:{sample:{lat:37.1,lon:127.1}},reportSearchIndex:[{kind:'spot'}],reportFixedHistory:{sample:[{}]},recentSiteSightings:{'19':{species:['직박구리']}},reportSpotLayers:{},reportPendingLayers:{},fieldMarkers:{},fieldUpdates:[{id:'synthetic',species:'직박구리',lat:37.1,lon:127.1}],fieldLayer:null,fieldGuide:{active:true},fieldGuideStop:()=>{effects.push('GPS stopped');ctx.fieldGuide=null},fieldNavChoiceClose:()=>effects.push('route choices closed'),clearSiteHistoryCache:()=>effects.push('history cleared'),clearContributors:()=>effects.push('names cleared'),reportsConfigured:()=>true,publicationNonce:()=>a.nonce,publicationJson:async path=>{calls.push(path);return {ok:true,serverTime:new Date(wall).toISOString(),publication:{...a}}},loadApprovedReports:async()=>calls.push('approved'),loadPendingReports:async()=>calls.push('pending'),loadRecentSiteSightings:async()=>calls.push('recent'),loadFieldUpdates:async()=>calls.push('field')};
+vm.createContext(ctx);
+vm.runInContext(['publicationRevision','publicationSame','publicationAllowed','publicationNotice','publicationForgetLayer','publicationInvalidate','publicationRenew','publicationValidate','publicationHead','publicationRefresh','publicationRecheck'].map(source).join('\n'),ctx);
+const before={generation:ctx.publicationState.generation,allowed:ctx.publicationAllowed()};assert.equal(before.allowed,true);
+mono+=5001;wall+=5001;assert.equal(ctx.publicationAllowed(),false);
+ctx.publicationInvalidate('expired');
+assert.equal(ctx.publicationState.ready,false);assert.equal(ctx.publicationState.generation,3);
+assert.equal(Object.keys(ctx.reportPublicSpots).length,0);assert.equal(ctx.reportSearchIndex.length,0);assert.equal(Object.keys(ctx.recentSiteSightings).length,0);assert.equal(ctx.fieldUpdates.length,0);
+await ctx.publicationRecheck();
+assert.equal(calls.filter(x=>x.startsWith('/reports/public-state')).length,1);
+assert.deepEqual(calls.filter(x=>!x.startsWith('/')),['approved','pending','recent','field']);
+const result={inputSha:sha,indexSha256:createHash('sha256').update(html).digest('hex'),input:'Lease expires at prior HEAD request start +5000ms; next HEAD proves exactly the same authority tuple',baselineExpected:'Destructive expiry closes UI and requires four new projections despite same revision',before,after:{generation:ctx.publicationState.generation,allowed:ctx.publicationAllowed(),headRequests:1,projectionLoads:4,activeCoordinates:0},calls,effects,assertions:10,exitCode:0,operationalRequests:0,productModified:false};
+writeFileSync(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

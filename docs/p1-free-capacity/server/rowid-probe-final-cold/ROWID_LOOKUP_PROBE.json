@@ -1,0 +1,513 @@
+{
+  "basis": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "scope": "synthetic local workerd D1; product and production untouched",
+  "sourcePublicationSha256": "778402af3531882cabddcb753db5a0b87acf964005ef7b522174647f2da63fe4",
+  "checks": [
+    {
+      "id": "S01 same state and guard count primary single-query snapshot",
+      "status": "pass"
+    },
+    {
+      "id": "S02 indexed rowid IN lookup measured 45 reads and zero writes",
+      "status": "pass"
+    },
+    {
+      "id": "S01b same-query cold locator discovery costs103 reads writes0",
+      "status": "pass"
+    },
+    {
+      "id": "S02b scalar rowid/name exactly23 reads writes0",
+      "status": "pass"
+    },
+    {
+      "id": "S03 query plan uses INTEGER PRIMARY KEY for catalog",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_state_permanent immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_state_permanent",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_state_transition immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_state_transition",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_reports_insert immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_reports_insert",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_reports_update immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_reports_update",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_reports_delete immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_reports_delete",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_field_updates_insert immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_field_updates_insert",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_field_updates_update immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_field_updates_update",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_field_updates_delete immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_field_updates_delete",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_deleted_terminal immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_deleted_terminal",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_revision_valid immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_revision_valid",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_revision_advance immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_revision_advance",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_event_live immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_event_live",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_confirmation_live immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_confirmation_live",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_updates_insert immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_updates_insert",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_updates_update immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_updates_update",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_updates_delete immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_updates_delete",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_update_events_insert immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_update_events_insert",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_update_events_update immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_update_events_update",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_update_events_delete immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_update_events_delete",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_update_confirmations_insert immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_update_confirmations_insert",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_update_confirmations_update immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_update_confirmations_update",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop field_freeze_field_update_confirmations_delete immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan field_freeze_field_update_confirmations_delete",
+      "status": "pass"
+    },
+    {
+      "id": "S06 unrelated schema changes do not invalidate intact trigger names",
+      "status": "pass"
+    },
+    {
+      "id": "S07 reused rowid with wrong name cannot satisfy allowlist",
+      "status": "pass"
+    }
+  ],
+  "samples": [
+    {
+      "id": "baseline",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 0,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 103,
+        "rows_written": 0
+      },
+      "guardCount": 22
+    },
+    {
+      "id": "rowid lookup hints only",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 1,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 45,
+        "rows_written": 0
+      },
+      "guardCount": 22
+    },
+    {
+      "id": "cold locator scan",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 1,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 102,
+        "rows_written": 0
+      }
+    },
+    {
+      "id": "cold state plus locators same snapshot",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 1,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 103,
+        "rows_written": 0
+      },
+      "locators": [
+        {
+          "name": "publication_state_permanent",
+          "rowid": 80
+        },
+        {
+          "name": "publication_state_transition",
+          "rowid": 81
+        },
+        {
+          "name": "publication_reports_insert",
+          "rowid": 82
+        },
+        {
+          "name": "publication_reports_update",
+          "rowid": 83
+        },
+        {
+          "name": "publication_reports_delete",
+          "rowid": 84
+        },
+        {
+          "name": "publication_field_updates_insert",
+          "rowid": 85
+        },
+        {
+          "name": "publication_field_updates_update",
+          "rowid": 86
+        },
+        {
+          "name": "publication_field_updates_delete",
+          "rowid": 87
+        },
+        {
+          "name": "field_deleted_terminal",
+          "rowid": 88
+        },
+        {
+          "name": "field_revision_valid",
+          "rowid": 89
+        },
+        {
+          "name": "field_revision_advance",
+          "rowid": 90
+        },
+        {
+          "name": "field_event_live",
+          "rowid": 91
+        },
+        {
+          "name": "field_confirmation_live",
+          "rowid": 92
+        },
+        {
+          "name": "field_freeze_field_updates_insert",
+          "rowid": 93
+        },
+        {
+          "name": "field_freeze_field_updates_update",
+          "rowid": 94
+        },
+        {
+          "name": "field_freeze_field_updates_delete",
+          "rowid": 95
+        },
+        {
+          "name": "field_freeze_field_update_events_insert",
+          "rowid": 96
+        },
+        {
+          "name": "field_freeze_field_update_events_update",
+          "rowid": 97
+        },
+        {
+          "name": "field_freeze_field_update_events_delete",
+          "rowid": 98
+        },
+        {
+          "name": "field_freeze_field_update_confirmations_insert",
+          "rowid": 99
+        },
+        {
+          "name": "field_freeze_field_update_confirmations_update",
+          "rowid": 100
+        },
+        {
+          "name": "field_freeze_field_update_confirmations_delete",
+          "rowid": 101
+        }
+      ]
+    },
+    {
+      "id": "scalar rowid/name",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 1,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 23,
+        "rows_written": 0
+      },
+      "guardCount": 22
+    },
+    {
+      "id": "restored publication_state_permanent",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_state_transition",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_reports_insert",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_reports_update",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_reports_delete",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_field_updates_insert",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_field_updates_update",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored publication_field_updates_delete",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_deleted_terminal",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_revision_valid",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_revision_advance",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_event_live",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_confirmation_live",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_updates_insert",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_updates_update",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_updates_delete",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_update_events_insert",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_update_events_update",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_update_events_delete",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_update_confirmations_insert",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_update_confirmations_update",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    },
+    {
+      "id": "restored field_freeze_field_update_confirmations_delete",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    }
+  ],
+  "queryPlan": [
+    {
+      "id": 2,
+      "parent": 0,
+      "notused": 33,
+      "detail": "SEARCH public_publication_state USING INTEGER PRIMARY KEY (rowid=?)"
+    },
+    {
+      "id": 12,
+      "parent": 0,
+      "notused": 0,
+      "detail": "SCALAR SUBQUERY 1"
+    },
+    {
+      "id": 17,
+      "parent": 12,
+      "notused": 90,
+      "detail": "SEARCH sqlite_schema USING INTEGER PRIMARY KEY (rowid=?)"
+    }
+  ],
+  "pragmaError": "D1_ERROR: not authorized: SQLITE_AUTH",
+  "tableValuedPragmaError": "D1_ERROR: not authorized: SQLITE_AUTH",
+  "sql": {
+    "optimized": "SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,(SELECT COUNT(*) FROM sqlite_schema WHERE rowid IN (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) AND type='trigger' AND name IN (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)) AS guards FROM public_publication_state WHERE id=1",
+    "scalar": "SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,((SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=? AND type='trigger' AND name=?)) AS guards FROM public_publication_state WHERE id=1",
+    "hintsUse": "Lookup locators only; every read verifies primary schema existence/type/name and singleton state; no positive guard-proof cache"
+  },
+  "total": {
+    "pass": 51,
+    "fail": 0,
+    "skip": 0
+  }
+}

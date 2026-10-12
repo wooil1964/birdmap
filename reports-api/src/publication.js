@@ -17,10 +17,38 @@ export function publicationRequest(url,head=false) {
  if(!head&&(url.searchParams.get('contract')!==PUBLICATION_CONTRACT||!token(url.searchParams.get('expectedEpoch'))||!publicationRevision(url.searchParams.get('expectedRevision'))))fail('PUBLICATION_REQUEST_INVALID','공개 위치 확인 요청이 유효하지 않습니다.',400);
  return {nonce,epoch:url.searchParams.get('expectedEpoch'),revision:url.searchParams.get('expectedRevision')};
 }
-export function publicationStateStatement(db) {
- return db.prepare(`SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,
- (SELECT COUNT(*) FROM sqlite_schema WHERE type='trigger' AND name IN (${PUBLICATION_GUARDS.map(()=>'?').join(',')})) AS guards
+// Cache only lookup positions, never permission or a positive guard result.
+// Every warm read still verifies all required trigger names/types in its own
+// primary snapshot. A stale locator falls back to a complete cold snapshot.
+const guardLookupHints=new WeakMap();
+function guardLocators(row) {
+ if(!row||typeof row.guardLocators!=='string')return null;
+ let slots;try{slots=JSON.parse(row.guardLocators);}catch{return null;}
+ if(!Array.isArray(slots)||slots.length!==PUBLICATION_GUARDS.length)return null;
+ const byName=new Map();
+ for(const slot of slots){
+  if(!slot||!PUBLICATION_GUARDS.includes(slot.name)||byName.has(slot.name)||typeof slot.rowid!=='string'||!/^[1-9][0-9]{0,18}$/.test(slot.rowid)||BigInt(slot.rowid)>MAX_REV)return null;
+  byName.set(slot.name,slot.rowid);
+ }
+ return PUBLICATION_GUARDS.map(name=>[name,byName.get(name)]);
+}
+export function publicationStateStatement(db,slots=null) {
+ const columns="epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type";
+ if(slots){
+  const checks=slots.map((_,i)=>`(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=?${i*2+1} AND type='trigger' AND name=?${i*2+2})`);
+  return db.prepare(`SELECT ${columns},(${checks.join('+')}) AS guards FROM public_publication_state WHERE id=1`).bind(...slots.flatMap(([name,rowid])=>[rowid,name]));
+ }
+ return db.prepare(`SELECT ${columns},
+ (SELECT json_group_array(json_object('name',name,'rowid',CAST(rowid AS TEXT))) FROM sqlite_schema WHERE type='trigger' AND name IN (${PUBLICATION_GUARDS.map(()=>'?').join(',')})) AS guardLocators
  FROM public_publication_state WHERE id=1`).bind(...PUBLICATION_GUARDS);
+}
+function verifiedState(row,slots) {
+ if(slots)return row;
+ const discovered=guardLocators(row);
+ return discovered?{...row,guards:discovered.length}:null;
+}
+function rememberGuardLocators(binding,row) {
+ const slots=guardLocators(row);if(slots)guardLookupHints.set(binding,slots);
 }
 function validateState(row,request,head) {
  if(!row||!token(row.epoch)||row.revision_type!=='integer'||!publicationRevision(row.revision)||Number(row.guards)!==PUBLICATION_GUARDS.length)fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');
@@ -28,8 +56,14 @@ function validateState(row,request,head) {
  return {contract:PUBLICATION_CONTRACT,epoch:row.epoch,revision:row.revision,projection:PUBLICATION_PROJECTION,nonce:request.nonce};
 }
 function primary(db){return typeof db.withSession==='function'?db.withSession('first-primary'):db;}
-export async function publicationAnchor(db,request) {
- try{return validateState(await publicationStateStatement(primary(db)).first(),request,true);}catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');}
+export async function publicationAnchor(binding,request) {
+ try{
+  const db=primary(binding),slots=guardLookupHints.get(binding)||null;
+  let row=await publicationStateStatement(db,slots).first();
+  if(slots&&Number(row?.guards)!==PUBLICATION_GUARDS.length){guardLookupHints.delete(binding);row=await publicationStateStatement(db).first();}
+  const anchor=validateState(verifiedState(row,slots&&Object.hasOwn(row||{},'guards')?slots:null),request,true);
+  rememberGuardLocators(binding,row);return anchor;
+ }catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');}
 }
 const paths=new Set(['/reports/approved','/reports/pending','/reports/recent-sites','/field-updates','/contributors/monthly']);
 export function isPublicationPath(path){return paths.has(path)||path.startsWith('/reports/site/');}
@@ -65,9 +99,20 @@ export async function handlePublicationRead(request,env,url) {
  const now=new Date();
  if(head)return jsonResponse(request,env,{ok:true,publication:await publicationAnchor(binding,input),serverTime:now.toISOString()},200,{'Cache-Control':'no-store'});
  try {
-  const db=primary(binding),plan=readPlan(db,url,now),sets=await db.batch([publicationStateStatement(db),...plan.statements]);
+  const db=primary(binding),plan=readPlan(db,url,now),slots=guardLookupHints.get(binding)||null;
+  let sets=await db.batch([publicationStateStatement(db,slots),...plan.statements]);
   if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
-  const publication=validateState(sets[0].results?.[0],input,false),payload=plan.build(sets.slice(1));
+  let row=sets[0].results?.[0],usedSlots=slots;
+  if(slots&&Number(row?.guards)!==PUBLICATION_GUARDS.length){
+   // Never bless the first payload using a later schema-only check. Reread
+   // state and every payload statement together from the primary instead.
+   guardLookupHints.delete(binding);usedSlots=null;
+   sets=await db.batch([publicationStateStatement(db),...plan.statements]);
+   if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
+   row=sets[0].results?.[0];
+  }
+  const publication=validateState(verifiedState(row,usedSlots),input,false),payload=plan.build(sets.slice(1));
+  rememberGuardLocators(binding,row);
   return jsonResponse(request,env,{...payload,publication,serverTime:now.toISOString()},200,{'Cache-Control':'no-store'});
  } catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');}
 }

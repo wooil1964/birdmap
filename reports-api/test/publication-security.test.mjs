@@ -5,7 +5,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { handleRequest, handleLegacyRequest } from '../src/public.js';
 import { schemaReady } from '../src/canonical/control.js';
-import { publicationRevision } from '../src/publication.js';
+import { publicationRevision, PUBLICATION_GUARDS } from '../src/publication.js';
 import { persistQuick } from '../src/canonical/persistence.js';
 import { shadowRead } from '../src/canonical/shadow.js';
 
@@ -429,4 +429,41 @@ test('B6 unknown historical masking does not break owner deletion or normal reap
   const removed = await post(env, id, 'delete', { deviceId: DEVICE_A });
   assert.equal(removed.status, 200); assert.equal(field(sqlite, id).status, 'deleted');
   assert.equal((await current(env, '/field-updates')).body.updates.length, 0);
+});
+
+
+for (const guard of PUBLICATION_GUARDS) {
+  test('Free SQL: warm lookup still rejects missing guard ' + guard, async () => {
+    const { env, sqlite } = fixture();
+    assert.equal((await head(env)).status, 200); // Cold hint discovery.
+    assert.equal((await head(env)).status, 200); // Physically rechecks warm locators.
+    sqlite.exec('DROP TRIGGER ' + guard);
+    const result = await head(env);
+    assert.equal(result.status, 503);
+    assert.equal(result.body.error.code, 'PUBLICATION_UNAVAILABLE'); noCoordinates(result);
+  });
+}
+
+test('Free SQL: stale lookup repair reruns state and data together, never relabels an earlier payload', async () => {
+  const { env, db, sqlite } = fixture(); insertReport(sqlite);
+  const anchor = (await head(env)).body.publication;
+  const trigger = sqlite.prepare("SELECT sql FROM sqlite_schema WHERE name='field_confirmation_live'").get().sql;
+  sqlite.exec("DROP TRIGGER field_confirmation_live; CREATE TRIGGER unrelated_lookup_shift AFTER INSERT ON transaction_assertions BEGIN SELECT 1; END;");
+  sqlite.exec(trigger); // Same required names, different rowid hint.
+  const original = db.batch.bind(db); let batches = 0;
+  db.batch = async statements => {
+    const result = await original(statements); batches++;
+    if (batches === 1) sqlite.exec("UPDATE reports SET public_lat=37.2,public_lon=127.5 WHERE id='synthetic-approved'");
+    return result;
+  };
+  const result = await call(env, query('/reports/approved', anchor));
+  assert.equal(batches, 2, 'Cold recovery must reread the full snapshot');
+  assert.equal(result.status, 409); assert.equal(result.body.error.code, 'PUBLICATION_CHANGED'); noCoordinates(result);
+});
+
+test('Free SQL: different D1 bindings cannot share lookup hints', async () => {
+  const good = fixture(), bad = fixture(); assert.equal((await head(good.env)).status, 200);
+  bad.sqlite.exec('DROP TRIGGER field_deleted_terminal');
+  assert.equal((await head(bad.env)).status, 503);
+  assert.equal((await head(good.env)).status, 200);
 });
