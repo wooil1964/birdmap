@@ -149,7 +149,20 @@ export function publicEntry(row, events, confirmCount) {
     confirmCount,
     history: events.map((event) => ({ status: event.status, at: event.created_at, nickname: event.nickname })),
   };
-  if (Number(row.location_hidden) === 1) entry.locationHidden = true;
+  // S1-R applies on saved-data reads too. Old writers may have stored a protected
+  // quantity expression with location_hidden=0 and public_lat/lon equal to exact.
+  // Trust an existing masked point only when the same SQL snapshot proves it
+  // differs from the private point. Otherwise keep the receipt/reference metadata
+  // but disclose no coordinates. Never generate a new random point on each read.
+  const storedHidden = Number(row.location_hidden) === 1;
+  const sensitiveSpecies = protection(row.species, "").sensitiveSpecies;
+  if (storedHidden || sensitiveSpecies) {
+    entry.locationHidden = true;
+    if (!storedHidden || row.public_point_masked !== 1) {
+      entry.lat = null;
+      entry.lon = null;
+    }
+  }
   return entry;
 }
 
@@ -184,6 +197,8 @@ async function loadEntries(db, rows) {
 }
 
 const COLUMNS = `id, species, bird_count, status, public_lat, public_lon, location_hidden, nickname, note,
+                 CASE WHEN public_lat IS NOT NULL AND public_lon IS NOT NULL
+                   AND (public_lat <> lat OR public_lon <> lon) THEN 1 ELSE 0 END AS public_point_masked,
                  created_at, updated_at, last_confirmed_at, last_activity_at, user_hash, CAST(row_revision AS TEXT) AS row_revision`;
 
 async function loadActive(db, id, now) {

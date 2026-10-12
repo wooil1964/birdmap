@@ -341,3 +341,92 @@ test('field CAS: normal expire/reappear/reapprove are not permanent tombstones',
   sqlite.exec("UPDATE reports SET status='approved'"); assert.equal((await current(env, '/reports/approved')).body.spots.length, 1);
 });
 
+
+
+// Historical writer-shaped rows are synthetic. No production rows are repaired
+// during a read; unknown masking proof closes the coordinate projection only.
+async function legacyField(env, sqlite, species, hidden = 0, masked = false) {
+  const id = await create(env);
+  sqlite.prepare("UPDATE field_updates SET species=?,location_hidden=?,public_lat=?,public_lon=?,row_revision=row_revision+1 WHERE id=?")
+    .run(species, hidden, masked ? 37.12 : 37.123, masked ? 127.45 : 127.456, id);
+  return id;
+}
+
+test('B6 saved protected quantities: strict current snapshot omits unverified coordinates and does not write', async () => {
+  const { env, sqlite } = fixture();
+  const names = ['저어새1', '저어새 2마리', '흰꼬리수리1', '매1', '참새/저어새1', '참새\n매1'];
+  const ids = [];
+  for (const name of names) ids.push(await legacyField(env, sqlite, name));
+  const before = ids.map(id => ({ ...field(sqlite, id) })), rev = revision(sqlite);
+  for (let i = 0; i < 3; i++) {
+    const response = await current(env, '/field-updates');
+    assert.equal(response.status, 200);
+    assert.equal(response.body.publication.revision, rev);
+    for (const id of ids) {
+      const entry = response.body.updates.find(row => row.id === id);
+      assert.equal(entry.locationHidden, true);
+      assert.equal(entry.lat, null); assert.equal(entry.lon, null);
+      assert.equal(Object.hasOwn(entry, 'public_point_masked'), false);
+      assert.equal(Object.hasOwn(entry, 'user_hash'), false);
+    }
+    noCoordinates(response);
+  }
+  assert.deepEqual(ids.map(id => ({ ...field(sqlite, id) })), before);
+  assert.equal(revision(sqlite), rev);
+});
+
+test('B6 legacy GET uses the same saved-protection projection as strict GET', async () => {
+  const { env, sqlite } = fixture(); await legacyField(env, sqlite, '저어새1');
+  env.REPORTS_PUBLICATION_REQUIRED = 'false';
+  const response = await call(env, '/field-updates');
+  assert.equal(response.status, 200); noCoordinates(response);
+  assert.equal(response.body.updates[0].locationHidden, true);
+  assert.equal(response.body.updates[0].lat, null);
+});
+
+test('B6 normal stored species retain exact public coordinates without false positives', async () => {
+  const { env, sqlite } = fixture();
+  const names = ['갈매기', '알락오리', '알락할미새', '동박새', '한국동박새', '검은어깨매'];
+  const ids = [];
+  for (const name of names) ids.push(await legacyField(env, sqlite, name));
+  const response = await current(env, '/field-updates'); assert.equal(response.status, 200);
+  for (const id of ids) {
+    const entry = response.body.updates.find(row => row.id === id);
+    assert.equal(entry.locationHidden, undefined);
+    assert.equal(entry.lat, 37.123); assert.equal(entry.lon, 127.456);
+  }
+});
+
+test('B6 verified saved masked coordinates remain stable across strict and legacy reads', async () => {
+  const { env, sqlite } = fixture(); const id = await legacyField(env, sqlite, '저어새1', 1, true);
+  for (let i = 0; i < 3; i++) {
+    const response = await current(env, '/field-updates');
+    const entry = response.body.updates.find(row => row.id === id);
+    assert.equal(entry.locationHidden, true);
+    assert.equal(entry.lat, 37.12); assert.equal(entry.lon, 127.45);
+  }
+  env.REPORTS_PUBLICATION_REQUIRED = 'false';
+  const entry = (await call(env, '/field-updates')).body.updates.find(row => row.id === id);
+  assert.equal(entry.lat, 37.12); assert.equal(entry.lon, 127.45);
+});
+
+test('B6 hidden flag alone cannot authorize exact stored coordinates', async () => {
+  const { env, sqlite } = fixture(); await legacyField(env, sqlite, '저어새1', 1, false);
+  const response = await current(env, '/field-updates'); assert.equal(response.status, 200);
+  assert.equal(response.body.updates[0].locationHidden, true); noCoordinates(response);
+  assert.equal(response.body.updates[0].lat, null); assert.equal(response.body.updates[0].lon, null);
+});
+
+test('B6 unknown historical masking does not break owner deletion or normal reappearance receipts', async () => {
+  const { env, sqlite } = fixture(); const id = await legacyField(env, sqlite, '매1');
+  for (const status of ['not_visible', 'reappeared']) {
+    const result = await post(env, id, 'status', { status, deviceId: DEVICE_B, turnstileToken: 'synthetic-token' });
+    assert.equal(result.status, 201); assert.equal(result.body.id, id); assert.equal(result.body.status, status);
+    noCoordinates(result);
+    const entry = (await current(env, '/field-updates')).body.updates.find(row => row.id === id);
+    assert.equal(entry.status, status); assert.equal(entry.locationHidden, true); assert.equal(entry.lat, null);
+  }
+  const removed = await post(env, id, 'delete', { deviceId: DEVICE_A });
+  assert.equal(removed.status, 200); assert.equal(field(sqlite, id).status, 'deleted');
+  assert.equal((await current(env, '/field-updates')).body.updates.length, 0);
+});
