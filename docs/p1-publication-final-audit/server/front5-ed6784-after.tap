@@ -1,0 +1,1356 @@
+TAP version 13
+# Subtest: 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순
+ok 1 - 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순
+  ---
+  duration_ms: 15.9132
+  type: 'test'
+  ...
+# Subtest: 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다
+ok 2 - 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다
+  ---
+  duration_ms: 3.2211
+  type: 'test'
+  ...
+# Subtest: 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션
+ok 3 - 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션
+  ---
+  duration_ms: 3.439
+  type: 'test'
+  ...
+# Subtest: 위치 보호·비정상 좌표는 길안내 좌표가 없다
+ok 4 - 위치 보호·비정상 좌표는 길안내 좌표가 없다
+  ---
+  duration_ms: 2.6435
+  type: 'test'
+  ...
+# Subtest: 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다
+ok 5 - 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다
+  ---
+  duration_ms: 8.7817
+  type: 'test'
+  ...
+# Subtest: 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다
+ok 6 - 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다
+  ---
+  duration_ms: 2.3226
+  type: 'test'
+  ...
+# Subtest: 카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다
+ok 7 - 카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다
+  ---
+  duration_ms: 2.9315
+  type: 'test'
+  ...
+# Subtest: 위치정보를 저장·전송하는 코드가 새 길안내에 없다
+ok 8 - 위치정보를 저장·전송하는 코드가 새 길안내에 없다
+  ---
+  duration_ms: 0.4842
+  type: 'test'
+  ...
+# Subtest: 외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다
+ok 9 - 외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다
+  ---
+  duration_ms: 2.1644
+  type: 'test'
+  ...
+# Subtest: 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다
+ok 10 - 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다
+  ---
+  duration_ms: 1.4629
+  type: 'test'
+  ...
+# Subtest: 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다
+ok 11 - 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다
+  ---
+  duration_ms: 5.4434
+  type: 'test'
+  ...
+# Subtest: 동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤 캡처한 원 좌표를 재사용하지 않는다
+ok 12 - 동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤 캡처한 원 좌표를 재사용하지 않는다
+  ---
+  duration_ms: 1.9401
+  type: 'test'
+  ...
+# Subtest: publicationForgetLayer는 이전 팝업·source·binding을 제거하고 지도에서 레이어를 내린다
+ok 13 - publicationForgetLayer는 이전 팝업·source·binding을 제거하고 지도에서 레이어를 내린다
+  ---
+  duration_ms: 1.5507
+  type: 'test'
+  ...
+# Subtest: 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+ok 14 - 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+  ---
+  duration_ms: 20.2501
+  type: 'test'
+  ...
+# Subtest: 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+ok 15 - 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+  ---
+  duration_ms: 7.4295
+  type: 'test'
+  ...
+# Subtest: 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+ok 16 - 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+  ---
+  duration_ms: 7.6725
+  type: 'test'
+  ...
+# Subtest: 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+ok 17 - 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+  ---
+  duration_ms: 7.341
+  type: 'test'
+  ...
+# Subtest: 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+ok 18 - 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+  ---
+  duration_ms: 6.5911
+  type: 'test'
+  ...
+# Subtest: 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+ok 19 - 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+  ---
+  duration_ms: 9.8255
+  type: 'test'
+  ...
+# Subtest: 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+ok 20 - 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+  ---
+  duration_ms: 6.8839
+  type: 'test'
+  ...
+# Subtest: 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+ok 21 - 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+  ---
+  duration_ms: 6.5705
+  type: 'test'
+  ...
+# Subtest: 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+ok 22 - 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+  ---
+  duration_ms: 6.5696
+  type: 'test'
+  ...
+# Subtest: 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+ok 23 - 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+  ---
+  duration_ms: 14.4868
+  type: 'test'
+  ...
+# Subtest: GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+ok 24 - GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+  ---
+  duration_ms: 6.6762
+  type: 'test'
+  ...
+# Subtest: 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+ok 25 - 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+  ---
+  duration_ms: 7.5457
+  type: 'test'
+  ...
+# Subtest: 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+ok 26 - 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+  ---
+  duration_ms: 14.3291
+  type: 'test'
+  ...
+# Subtest: 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+ok 27 - 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+  ---
+  duration_ms: 6.3369
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+ok 28 - 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+  ---
+  duration_ms: 2.4388
+  type: 'test'
+  ...
+# Subtest: 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)
+ok 29 - 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)
+  ---
+  duration_ms: 13.3309
+  type: 'test'
+  ...
+# Subtest: 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)
+ok 30 - 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)
+  ---
+  duration_ms: 6.1701
+  type: 'test'
+  ...
+# Subtest: 캐시 권한이 아직 유효해도 새 head 확인 실패면 직접 방향안내를 시작하지 않는다
+ok 31 - 캐시 권한이 아직 유효해도 새 head 확인 실패면 직접 방향안내를 시작하지 않는다
+  ---
+  duration_ms: 7.905
+  type: 'test'
+  ...
+# Subtest: GPS 응답 뒤 head를 다시 확인하고 실패면 성공·오류·수동 콜백이 안내를 열지 않는다
+ok 32 - GPS 응답 뒤 head를 다시 확인하고 실패면 성공·오류·수동 콜백이 안내를 열지 않는다
+  ---
+  duration_ms: 19.6151
+  type: 'test'
+  ...
+# Subtest: 연속 GPS watch의 정상 위치·오류 반영은 각각 새 권한 head 뒤에만 실행한다
+ok 33 - 연속 GPS watch의 정상 위치·오류 반영은 각각 새 권한 head 뒤에만 실행한다
+  ---
+  duration_ms: 6.9064
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+ok 34 - 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+  ---
+  duration_ms: 2.7909
+  type: 'test'
+  ...
+# Subtest: 정상 순서의 응답은 모두 반영된다(회귀)
+ok 35 - 정상 순서의 응답은 모두 반영된다(회귀)
+  ---
+  duration_ms: 1.8576
+  type: 'test'
+  ...
+# Subtest: 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+ok 36 - 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+  ---
+  duration_ms: 2.7438
+  type: 'test'
+  ...
+# Subtest: 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+ok 37 - 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+  ---
+  duration_ms: 1.3158
+  type: 'test'
+  ...
+# Subtest: 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+ok 38 - 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+  ---
+  duration_ms: 5.4883
+  type: 'test'
+  ...
+# Subtest: 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+ok 39 - 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+  ---
+  duration_ms: 1.4607
+  type: 'test'
+  ...
+# Subtest: 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+ok 40 - 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+  ---
+  duration_ms: 1.334
+  type: 'test'
+  ...
+# Subtest: 승인 제보 갱신이 돌면 기억을 버린다
+ok 41 - 승인 제보 갱신이 돌면 기억을 버린다
+  ---
+  duration_ms: 1.2743
+  type: 'test'
+  ...
+# Subtest: 탐조지마다 따로 기억한다
+ok 42 - 탐조지마다 따로 기억한다
+  ---
+  duration_ms: 1.8789
+  type: 'test'
+  ...
+# Subtest: '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+ok 43 - '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+  ---
+  duration_ms: 2.1337
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+ok 44 - 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+  ---
+  duration_ms: 1.4392
+  type: 'test'
+  ...
+# Subtest: 실패해도 null 을 돌려주고 기억에 남기지 않는다
+ok 45 - 실패해도 null 을 돌려주고 기억에 남기지 않는다
+  ---
+  duration_ms: 1.2848
+  type: 'test'
+  ...
+# Subtest: 응답 모양이 어긋나면 실패로 본다
+ok 46 - 응답 모양이 어긋나면 실패로 본다
+  ---
+  duration_ms: 1.1307
+  type: 'test'
+  ...
+# Subtest: 응답이 오지 않으면 시간을 끊는다
+ok 47 - 응답이 오지 않으면 시간을 끊는다
+  ---
+  duration_ms: 1.1985
+  type: 'test'
+  ...
+# Subtest: 이력 칸은 접이식이고 기본은 접힌 상태다
+ok 48 - 이력 칸은 접이식이고 기본은 접힌 상태다
+  ---
+  duration_ms: 0.2807
+  type: 'test'
+  ...
+# Subtest: 제목 옆에 승인된 이력 건수를 적는다
+ok 49 - 제목 옆에 승인된 이력 건수를 적는다
+  ---
+  duration_ms: 0.4536
+  type: 'test'
+  ...
+# Subtest: '더 보기'와 이력 조회 방식은 그대로 둔다
+ok 50 - '더 보기'와 이력 조회 방식은 그대로 둔다
+  ---
+  duration_ms: 0.2358
+  type: 'test'
+  ...
+# Subtest: 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+ok 51 - 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+  ---
+  duration_ms: 0.3944
+  type: 'test'
+  ...
+# Subtest: 이력을 그릴 때 칸을 다시 찾는다
+ok 52 - 이력을 그릴 때 칸을 다시 찾는다
+  ---
+  duration_ms: 0.3209
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+ok 53 - 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+  ---
+  duration_ms: 1.4563
+  type: 'test'
+  ...
+# Subtest: 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+ok 54 - 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+  ---
+  duration_ms: 2.9177
+  type: 'test'
+  ...
+# Subtest: 일출·일몰이 공표된 서울 하지/동지 값과 일치한다
+ok 55 - 일출·일몰이 공표된 서울 하지/동지 값과 일치한다
+  ---
+  duration_ms: 16.7053
+  type: 'test'
+  ...
+# Subtest: 일출~일몰 경계: 계산된 일출·일몰 직전은 제외하고 정각과 그 사이는 포함한다
+ok 56 - 일출~일몰 경계: 계산된 일출·일몰 직전은 제외하고 정각과 그 사이는 포함한다
+  ---
+  duration_ms: 67.7644
+  type: 'test'
+  ...
+# Subtest: 동점이면 오전 우선, 오전 안에서는 더 이른 시각
+ok 57 - 동점이면 오전 우선, 오전 안에서는 더 이른 시각
+  ---
+  duration_ms: 13.2863
+  type: 'test'
+  ...
+# Subtest: scoreEligible false 는 후보에서 완전히 제외된다
+ok 58 - scoreEligible false 는 후보에서 완전히 제외된다
+  ---
+  duration_ms: 11.5662
+  type: 'test'
+  ...
+# Subtest: 유효 sample 이 없는 날짜와 사이트는 후보에서 빠진다
+ok 59 - 유효 sample 이 없는 날짜와 사이트는 후보에서 빠진다
+  ---
+  duration_ms: 15.8056
+  type: 'test'
+  ...
+# Subtest: 오늘은 이미 지난 시각을 대표값으로 고르지 않는다
+ok 60 - 오늘은 이미 지난 시각을 대표값으로 고르지 않는다
+  ---
+  duration_ms: 20.4223
+  type: 'test'
+  ...
+# Subtest: 내일 이후는 isPastAtGeneration 이 true 여도 낮 sample 을 사용한다
+ok 61 - 내일 이후는 isPastAtGeneration 이 true 여도 낮 sample 을 사용한다
+  ---
+  duration_ms: 13.9237
+  type: 'test'
+  ...
+# Subtest: 주간 대표 날짜는 최고점, 동점이면 더 가까운 날짜
+ok 62 - 주간 대표 날짜는 최고점, 동점이면 더 가까운 날짜
+  ---
+  duration_ms: 11.9237
+  type: 'test'
+  ...
+# Subtest: 9월 동남해안 동풍 mandatory 는 8.0m/s 부터 충족
+ok 63 - 9월 동남해안 동풍 mandatory 는 8.0m/s 부터 충족
+  ---
+  duration_ms: 118.6386
+  type: 'test'
+  ...
+# Subtest: 10월에는 동풍 mandatory 가 적용되지 않는다
+ok 64 - 10월에는 동풍 mandatory 가 적용되지 않는다
+  ---
+  duration_ms: 11.0882
+  type: 'test'
+  ...
+# Subtest: 갯벌 물때 mandatory 는 기준 조위 이상에서만 충족
+ok 65 - 갯벌 물때 mandatory 는 기준 조위 이상에서만 충족
+  ---
+  duration_ms: 91.6964
+  type: 'test'
+  ...
+# Subtest: 월포리해변(193)은 송림갯벌(122)과 같은 갯벌 추천 조건으로 엔진에 연결된다
+ok 66 - 월포리해변(193)은 송림갯벌(122)과 같은 갯벌 추천 조건으로 엔진에 연결된다
+  ---
+  duration_ms: 36.7361
+  type: 'test'
+  ...
+# Subtest: weather_week 가 없으면 주간 헬퍼가 예외 없이 빈 결과를 준다
+ok 67 - weather_week 가 없으면 주간 헬퍼가 예외 없이 빈 결과를 준다
+  ---
+  duration_ms: 11.8273
+  type: 'test'
+  ...
+# Subtest: 주간 창은 오늘부터 7일이며 과거 날짜를 포함하지 않는다
+ok 68 - 주간 창은 오늘부터 7일이며 과거 날짜를 포함하지 않는다
+  ---
+  duration_ms: 11.0929
+  type: 'test'
+  ...
+# Subtest: 실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다
+ok 69 - 실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다
+  ---
+  duration_ms: 39.0597
+  type: 'test'
+  ...
+# Subtest: 가을 핵심 5곳과 실제 env token 분류
+ok 70 - 가을 핵심 5곳과 실제 env token 분류
+  ---
+  duration_ms: 12.2085
+  type: 'test'
+  ...
+# Subtest: 들판은 score → core → 날짜 → 안정 순서 → ID로 정렬
+ok 71 - 들판은 score → core → 날짜 → 안정 순서 → ID로 정렬
+  ---
+  duration_ms: 12.8522
+  type: 'test'
+  ...
+# Subtest: 선상 분류는 pelagic true만 사용하며 독도를 제외
+ok 72 - 선상 분류는 pelagic true만 사용하며 독도를 제외
+  ---
+  duration_ms: 11.6013
+  type: 'test'
+  ...
+# Subtest: 선상 추천 3개 기준의 inclusive 경계, 결측과 기존 score rule 독립
+ok 73 - 선상 추천 3개 기준의 inclusive 경계, 결측과 기존 score rule 독립
+  ---
+  duration_ms: 32.4768
+  type: 'test'
+  ...
+# Subtest: 선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서
+ok 74 - 선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서
+  ---
+  duration_ms: 12.8347
+  type: 'test'
+  ...
+# Subtest: 선상도 밤/오늘 과거 sample 제외, 다른 날짜 동풍 근거로 위험 sample 승격 금지
+ok 75 - 선상도 밤/오늘 과거 sample 제외, 다른 날짜 동풍 근거로 위험 sample 승격 금지
+  ---
+  duration_ms: 13.2154
+  type: 'test'
+  ...
+# Subtest: soft target은 4/3/1/2, 복합형 dedupe와 mandatory 독점 방지
+ok 76 - soft target은 4/3/1/2, 복합형 dedupe와 mandatory 독점 방지
+  ---
+  duration_ms: 11.773
+  type: 'test'
+  ...
+# Subtest: 들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허용
+ok 77 - 들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허용
+  ---
+  duration_ms: 12.1659
+  type: 'test'
+  ...
+# Subtest: weather_week/rules 실패에도 today 일반 추천, 선상만 제외
+ok 78 - weather_week/rules 실패에도 today 일반 추천, 선상만 제외
+  ---
+  duration_ms: 25.0017
+  type: 'test'
+  ...
+# Subtest: 공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 못한다
+ok 79 - 공지/동풍 mandatory도 안전한 선상 sample 부재를 우회하지 못한다
+  ---
+  duration_ms: 12.0452
+  type: 'test'
+  ...
+# Subtest: 물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않고 추천에서 제외한다
+ok 80 - 물때 날짜에 기상이 없으면 다른 날짜 sample을 복사하지 않고 추천에서 제외한다
+  ---
+  duration_ms: 11.6164
+  type: 'test'
+  ...
+# Subtest: 원거리 섬 제외/봄 정책과 structured notice linkage 유지
+ok 81 - 원거리 섬 제외/봄 정책과 structured notice linkage 유지
+  ---
+  duration_ms: 45.5707
+  type: 'test'
+  ...
+# Subtest: 전체 inline JavaScript 문법 정상
+ok 82 - 전체 inline JavaScript 문법 정상
+  ---
+  duration_ms: 14.88
+  type: 'test'
+  ...
+# Subtest: 실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 보고
+ok 83 - 실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 보고
+  ---
+  duration_ms: 864.6986
+  type: 'test'
+  ...
+# Subtest: 추천 caution은 mandatory/점수와 무관하며 미확인은 별도 상태
+ok 84 - 추천 caution은 mandatory/점수와 무관하며 미확인은 별도 상태
+  ---
+  duration_ms: 11.6456
+  type: 'test'
+  ...
+# Subtest: 다른 시각의 caution 근거 대신 카드 표시 기상만 판단
+ok 85 - 다른 시각의 caution 근거 대신 카드 표시 기상만 판단
+  ---
+  duration_ms: 11.1704
+  type: 'test'
+  ...
+# Subtest: 최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음
+ok 86 - 최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음
+  ---
+  duration_ms: 46.8733
+  type: 'test'
+  ...
+# Subtest: 물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외
+ok 87 - 물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외
+  ---
+  duration_ms: 13.1038
+  type: 'test'
+  ...
+# Subtest: 실데이터 caution 전후 비교와 동풍·공지 보존
+ok 88 - 실데이터 caution 전후 비교와 동풍·공지 보존
+  ---
+  duration_ms: 525.5479
+  type: 'test'
+  ...
+# Subtest: 동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충
+ok 89 - 동풍 mandatory 현장주의는 이슈를 유지하고 다음 갯벌 후보로 보충
+  ---
+  duration_ms: 15.6701
+  type: 'test'
+  ...
+# Subtest: 동풍과 선상 gate는 지역·풍향·풍속에서 독립
+ok 90 - 동풍과 선상 gate는 지역·풍향·풍속에서 독립
+  ---
+  duration_ms: 120.2544
+  type: 'test'
+  ...
+# Subtest: 봄·가을 선상과 겨울 별도 허용, seasons 무관하며 독도 제외
+ok 91 - 봄·가을 선상과 겨울 별도 허용, seasons 무관하며 독도 제외
+  ---
+  duration_ms: 72.5884
+  type: 'test'
+  ...
+# Subtest: 강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으며 전부 위험하면 0
+ok 92 - 강한 동풍 이슈는 안전 선상 날짜·사유로 섞이지 않으며 전부 위험하면 0
+  ---
+  duration_ms: 23.416
+  type: 'test'
+  ...
+# Subtest: 실제 동풍·선상 후보별 gate와 최종 선발 보고
+ok 93 - 실제 동풍·선상 후보별 gate와 최종 선발 보고
+  ---
+  duration_ms: 445.8609
+  type: 'test'
+  ...
+# Subtest: 봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충
+ok 94 - 봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충
+  ---
+  duration_ms: 22.953
+  type: 'test'
+  ...
+# Subtest: 겨울 추천 달 경계와 전역 가을/이동기 정의 독립
+ok 95 - 겨울 추천 달 경계와 전역 가을/이동기 정의 독립
+  ---
+  duration_ms: 80.1872
+  type: 'test'
+  ...
+# Subtest: 겨울 실제 핵심 들판 5곳과 습지/해안 복합환경 유지
+ok 96 - 겨울 실제 핵심 들판 5곳과 습지/해안 복합환경 유지
+  ---
+  duration_ms: 13.9467
+  type: 'test'
+  ...
+# Subtest: 겨울은 score → core → 날짜 → stable → ID, bonus와 강제 선발 없음
+ok 97 - 겨울은 score → core → 날짜 → stable → ID, bonus와 강제 선발 없음
+  ---
+  duration_ms: 11.9947
+  type: 'test'
+  ...
+# Subtest: 겨울 3/3/3/최대1과 부족 보충 및 전역 dedupe
+ok 98 - 겨울 3/3/3/최대1과 부족 보충 및 전역 dedupe
+  ---
+  duration_ms: 12.2932
+  type: 'test'
+  ...
+# Subtest: 겨울 명시 제외는 정확한 ID/이름만, 미등록 7곳을 다른 site로 추정하지 않는다
+ok 99 - 겨울 명시 제외는 정확한 ID/이름만, 미등록 7곳을 다른 site로 추정하지 않는다
+  ---
+  duration_ms: 14.0967
+  type: 'test'
+  ...
+# Subtest: 겨울 섬 예외와 환경 정확 token, 이름으로 산/섬을 추정하지 않음
+ok 100 - 겨울 섬 예외와 환경 정확 token, 이름으로 산/섬을 추정하지 않음
+  ---
+  duration_ms: 11.6376
+  type: 'test'
+  ...
+# Subtest: 겨울 선상 5곳은 기존 safety 재사용, 항구 3곳은 육상 coast 유지
+ok 101 - 겨울 선상 5곳은 기존 safety 재사용, 항구 3곳은 육상 coast 유지
+  ---
+  duration_ms: 49.0036
+  type: 'test'
+  ...
+# Subtest: 겨울 통합: 실제 190 site + 합성 겨울 예보, 10곳/점수/caution/시간/공지 보존
+ok 102 - 겨울 통합: 실제 190 site + 합성 겨울 예보, 10곳/점수/caution/시간/공지 보존
+  ---
+  duration_ms: 159.6239
+  type: 'test'
+  ...
+# Subtest: 겨울 today fallback: 필수 기상자료가 있어야 추천하고, 선상 fallback 승격 금지
+ok 103 - 겨울 today fallback: 필수 기상자료가 있어야 추천하고, 선상 fallback 승격 금지
+  ---
+  duration_ms: 25.2611
+  type: 'test'
+  ...
+# Subtest: 겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)
+ok 104 - 겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)
+  ---
+  duration_ms: 12.4457
+  type: 'test'
+  ...
+# Subtest: 겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전부 탈락 보충
+ok 105 - 겨울 실제 오늘 지난 시각 제외와 선상 inclusive 경계/전부 탈락 보충
+  ---
+  duration_ms: 169.8267
+  type: 'test'
+  ...
+# Subtest: 봄 추천 3/1~5/31 경계, 3월 선상 미확대
+ok 106 - 봄 추천 3/1~5/31 경계, 3월 선상 미확대
+  ---
+  duration_ms: 555.9006
+  type: 'test'
+  ...
+# Subtest: 봄 핵심 도서 6개 정확 이름의 19개 ID, 환경과 점수 무변경
+ok 107 - 봄 핵심 도서 6개 정확 이름의 19개 ID, 환경과 점수 무변경
+  ---
+  duration_ms: 11.6195
+  type: 'test'
+  ...
+# Subtest: 봄 24시간 선행 강수 + W/NW 정확 경계 및 미래/결측 제외
+ok 108 - 봄 24시간 선행 강수 + W/NW 정확 경계 및 미래/결측 제외
+  ---
+  duration_ms: 324.607
+  type: 'test'
+  ...
+# Subtest: 봄 degree 풍향은 기존 Worker 8방위 변환과 일치
+ok 109 - 봄 degree 풍향은 기존 Worker 8방위 변환과 일치
+  ---
+  duration_ms: 13.8543
+  type: 'test'
+  ...
+# Subtest: 봄 유입 사유는 표시 sample에서만 판정, caution을 우회하지 않음
+ok 110 - 봄 유입 사유는 표시 sample에서만 판정, caution을 우회하지 않음
+  ---
+  duration_ms: 14.7022
+  type: 'test'
+  ...
+# Subtest: 걸매리 5/1~10 우선은 추천일 기준이며 점수·가을 조석을 바꾸지 않는다
+ok 111 - 걸매리 5/1~10 우선은 추천일 기준이며 점수·가을 조석을 바꾸지 않는다
+  ---
+  duration_ms: 73.8082
+  type: 'test'
+  ...
+# Subtest: 걸매리 특별 우선은 일반 갯벌보다 앞서지만 caution/부적격/결측 승격 금지
+ok 112 - 걸매리 특별 우선은 일반 갯벌보다 앞서지만 caution/부적격/결측 승격 금지
+  ---
+  duration_ms: 21.7815
+  type: 'test'
+  ...
+# Subtest: 유부도는 봄에만 추천 제외, 가을·겨울 후보 및 원본 유지
+ok 113 - 유부도는 봄에만 추천 제외, 가을·겨울 후보 및 원본 유지
+  ---
+  duration_ms: 105.5921
+  type: 'test'
+  ...
+# Subtest: 봄 통합 4/3/최대1/2와 core 동점 우선, 부족 보충/dedupe/점수 보존
+ok 114 - 봄 통합 4/3/최대1/2와 core 동점 우선, 부족 보충/dedupe/점수 보존
+  ---
+  duration_ms: 99.751
+  type: 'test'
+  ...
+# Subtest: 봄 일반 today fallback: 필수 기상자료가 있어야 추천한다
+ok 115 - 봄 일반 today fallback: 필수 기상자료가 있어야 추천한다
+  ---
+  duration_ms: 29.8004
+  type: 'test'
+  ...
+# Subtest: 봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가 아님)
+ok 116 - 봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가 아님)
+  ---
+  duration_ms: 11.8094
+  type: 'test'
+  ...
+# Subtest: 여름 6/1~8/31 월 경계
+ok 117 - 여름 6/1~8/31 월 경계
+  ---
+  duration_ms: 86.622
+  type: 'test'
+  ...
+# Subtest: 여름 실제 산림/수계/해안 및 릉 token, 이름과 weatherRuleKey 추정 금지
+ok 118 - 여름 실제 산림/수계/해안 및 릉 token, 이름과 weatherRuleKey 추정 금지
+  ---
+  duration_ms: 11.9278
+  type: 'test'
+  ...
+# Subtest: 여름 농경지/섬은 복합 환경과 100점 공지에서도 제외
+ok 119 - 여름 농경지/섬은 복합 환경과 100점 공지에서도 제외
+  ---
+  duration_ms: 46.9612
+  type: 'test'
+  ...
+# Subtest: 봄 핵심 6개 섬 전 ID는 여름 제외, 원본/봄 정책 유지
+ok 120 - 봄 핵심 6개 섬 전 ID는 여름 제외, 원본/봄 정책 유지
+  ---
+  duration_ms: 57.2375
+  type: 'test'
+  ...
+# Subtest: 여름 실제 188 후보 배분 6월 3/3/2/1/1, 7~8월 3/3/2/2 및 점수 불변
+ok 121 - 여름 실제 188 후보 배분 6월 3/3/2/1/1, 7~8월 3/3/2/2 및 점수 불변
+  ---
+  duration_ms: 228.1465
+  type: 'test'
+  ...
+# Subtest: 여름 부족 보충은 허용 축만, 복합 dedupe와 unsafe/미분류 제외
+ok 122 - 여름 부족 보충은 허용 축만, 복합 dedupe와 unsafe/미분류 제외
+  ---
+  duration_ms: 16.8256
+  type: 'test'
+  ...
+# Subtest: 여름 선상은 대진항48 pelagic=true의 6월 sample만, 6/30 주간 경계
+ok 123 - 여름 선상은 대진항48 pelagic=true의 6월 sample만, 6/30 주간 경계
+  ---
+  duration_ms: 69.1939
+  type: 'test'
+  ...
+# Subtest: 여름 대진항 선상 안전 경계/결측/비수치와 caution 이중 검사
+ok 124 - 여름 대진항 선상 안전 경계/결측/비수치와 caution 이중 검사
+  ---
+  duration_ms: 101.0754
+  type: 'test'
+  ...
+# Subtest: 여름 daylight/과거/최고점/날짜 tie 및 가을 조석 비활성
+ok 125 - 여름 daylight/과거/최고점/날짜 tie 및 가을 조석 비활성
+  ---
+  duration_ms: 11.9198
+  type: 'test'
+  ...
+# Subtest: 여름 공지로 부적격 sample 승격 금지, today fallback 미확인 유지
+ok 126 - 여름 공지로 부적격 sample 승격 금지, today fallback 미확인 유지
+  ---
+  duration_ms: 44.6947
+  type: 'test'
+  ...
+# Subtest: 여름 실제 환경 전수 보고
+ok 127 - 여름 실제 환경 전수 보고
+  ---
+  duration_ms: 11.4144
+  type: 'test'
+  ...
+# Subtest: C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다
+not ok 128 - C01 원자료가 선상 기준을 넘으면 생성 반올림과 무관하게 최종 추천에서 빠진다
+  ---
+  duration_ms: 172.17
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\server-ed678460\\.github\\scripts\\test_weekly_recommendation.mjs:1193:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    wind
+    + actual - expected
+    
+      [
+    +   '��ǳ 6.0m/s',
+    -   '북풍 6.0m/s',
+        '0.7m',
+        '강수 없음'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '북풍 6.0m/s'
+    1: '0.7m'
+    2: '강수 없음'
+  actual:
+    0: '��ǳ 6.0m/s'
+    1: '0.7m'
+    2: '강수 없음'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/server-ed678460/.github/scripts/test_weekly_recommendation.mjs:1203:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: C01 생성 JSON은 선상 안전판정에 필요한 원자료 precision을 잃지 않는다
+ok 129 - C01 생성 JSON은 선상 안전판정에 필요한 원자료 precision을 잃지 않는다
+  ---
+  duration_ms: 172.103
+  type: 'test'
+  ...
+# Subtest: C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 경계가 그대로다
+ok 130 - C01 수정 뒤에도 봄·여름·가을·겨울 선상 정책과 안전 경계가 그대로다
+  ---
+  duration_ms: 808.4538
+  type: 'test'
+  ...
+# Subtest: H01 다음 계절 날짜의 sample에 현재 계절 정책을 적용하지 않는다
+ok 131 - H01 다음 계절 날짜의 sample에 현재 계절 정책을 적용하지 않는다
+  ---
+  duration_ms: 183.0629
+  type: 'test'
+  ...
+# Subtest: H01 CASE E 11/1 주문진항은 가을 선상이 아니라 겨울 해안·항구 육상 후보다
+ok 132 - H01 CASE E 11/1 주문진항은 가을 선상이 아니라 겨울 해안·항구 육상 후보다
+  ---
+  duration_ms: 30.0439
+  type: 'test'
+  ...
+# Subtest: H01 CASE G 8/31에 열어도 9/1 가을 들판 후보는 여름 제외로 사라지지 않는다
+ok 133 - H01 CASE G 8/31에 열어도 9/1 가을 들판 후보는 여름 제외로 사라지지 않는다
+  ---
+  duration_ms: 30.1382
+  type: 'test'
+  ...
+# Subtest: H01 계절 적격 sample 중에서만 주간 대표 날짜와 사유를 고른다
+ok 134 - H01 계절 적격 sample 중에서만 주간 대표 날짜와 사유를 고른다
+  ---
+  duration_ms: 44.566
+  type: 'test'
+  ...
+# Subtest: H01 계절 경계 8곳에서 그 날짜의 계절 정책이 적용된다
+ok 135 - H01 계절 경계 8곳에서 그 날짜의 계절 정책이 적용된다
+  ---
+  duration_ms: 120.7633
+  type: 'test'
+  ...
+# Subtest: H01 계절 판정은 12개월을 중첩·공백 없이 한 번씩 덮는다
+ok 136 - H01 계절 판정은 12개월을 중첩·공백 없이 한 번씩 덮는다
+  ---
+  duration_ms: 10.7409
+  type: 'test'
+  ...
+# Subtest: M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아나지 않는다
+ok 137 - M01 주간 유효 sample이 0이면 공지로 최종 추천에 되살아나지 않는다
+  ---
+  duration_ms: 102.3868
+  type: 'test'
+  ...
+# Subtest: M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다
+ok 138 - M02 today fallback의 명시적 scoreEligible=false는 계절·공지·mandatory와 무관하게 제외된다
+  ---
+  duration_ms: 124.5174
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 기준 물높이 경계값을 포함하고 미달은 제외한다
+ok 139 - 물때 관문: 기준 물높이 경계값을 포함하고 미달은 제외한다
+  ---
+  duration_ms: 112.0811
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 오늘 이미 지난 만조는 세지 않는다
+ok 140 - 물때 관문: 오늘 이미 지난 만조는 세지 않는다
+  ---
+  duration_ms: 34.2343
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 일출 전·일몰 후 만조는 적합으로 세지 않는다
+ok 141 - 물때 관문: 일출 전·일몰 후 만조는 적합으로 세지 않는다
+  ---
+  duration_ms: 35.4365
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 이번 주 밖의 충족일은 세지 않고, 주 안으로 들어오면 다시 후보가 된다
+ok 142 - 물때 관문: 이번 주 밖의 충족일은 세지 않고, 주 안으로 들어오면 다시 후보가 된다
+  ---
+  duration_ms: 23.047
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 조석 자료가 없거나 비어 있으면 적합으로 추정하지 않는다
+ok 143 - 물때 관문: 조석 자료가 없거나 비어 있으면 적합으로 추정하지 않는다
+  ---
+  duration_ms: 56.6948
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 공지·기상 어느 경로로도 우회할 수 없다
+ok 144 - 물때 관문: 공지·기상 어느 경로로도 우회할 수 없다
+  ---
+  duration_ms: 35.9577
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 고정 추천 목록도 우회하지 못한다
+ok 145 - 물때 관문: 고정 추천 목록도 우회하지 못한다
+  ---
+  duration_ms: 26.8333
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 추천 사유 날짜와 카드에 표시되는 만조가 같은 날이다
+ok 146 - 물때 관문: 추천 사유 날짜와 카드에 표시되는 만조가 같은 날이다
+  ---
+  duration_ms: 12.8273
+  type: 'test'
+  ...
+# Subtest: 물때 관문: 규칙이 없는 탐조지는 영향을 받지 않는다
+ok 147 - 물때 관문: 규칙이 없는 탐조지는 영향을 받지 않는다
+  ---
+  duration_ms: 68.3593
+  type: 'test'
+  ...
+# Subtest: 고정 자료 2026-09-17 기준 매향리가 이번 주 추천에서 빠진다
+ok 148 - 고정 자료 2026-09-17 기준 매향리가 이번 주 추천에서 빠진다
+  ---
+  duration_ms: 24.2701
+  type: 'test'
+  ...
+# Subtest: 실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지의 후보일과 일치한다
+ok 149 - 실제 저장 자료: 관문이 고른 적합 만조가 매향리 공지의 후보일과 일치한다
+  ---
+  duration_ms: 2.5775
+  type: 'test'
+  ...
+# Subtest: R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16
+ok 150 - R01 B 가점은 최근성 12/9/5/2/0, 종수 +0/+2/+4, 상한 16
+  ---
+  duration_ms: 12.9683
+  type: 'test'
+  ...
+# Subtest: R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점
+ok 151 - R01 C 같은 종 5건은 1종, D 서로 다른 4종은 종수 가점
+  ---
+  duration_ms: 10.8436
+  type: 'test'
+  ...
+# Subtest: R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다
+ok 152 - R01 A 같은 기상에서 최근 출현 장소가 92점 동점을 넘어 선정되고 표시 점수는 그대로다
+  ---
+  duration_ms: 35.7908
+  type: 'test'
+  ...
+# Subtest: R01 동점 tie-break: rankScore 같으면 더 최근 출현, 그다음 고유 종수
+ok 153 - R01 동점 tie-break: rankScore 같으면 더 최근 출현, 그다음 고유 종수
+  ---
+  duration_ms: 11.4491
+  type: 'test'
+  ...
+# Subtest: R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외되고, 큰 감점은 가점으로 뒤집히지 않는다
+ok 154 - R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외되고, 큰 감점은 가점으로 뒤집히지 않는다
+  ---
+  duration_ms: 23.982
+  type: 'test'
+  ...
+# Subtest: R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다
+ok 155 - R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다
+  ---
+  duration_ms: 33.8843
+  type: 'test'
+  ...
+# Subtest: R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 점수 + 출현 가점이다
+ok 156 - R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 점수 + 출현 가점이다
+  ---
+  duration_ms: 43.6001
+  type: 'test'
+  ...
+# Subtest: R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로
+ok 157 - R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로
+  ---
+  duration_ms: 24.5729
+  type: 'test'
+  ...
+# Subtest: R02 A·D 편집 목록이 있어도 자동 rankScore 순서이고, 탈락한 편집 장소를 끼워 넣지 않는다
+ok 158 - R02 A·D 편집 목록이 있어도 자동 rankScore 순서이고, 탈락한 편집 장소를 끼워 넣지 않는다
+  ---
+  duration_ms: 39.5904
+  type: 'test'
+  ...
+# Subtest: R02 B·E 편집 목록이 없으면 자동 추천 그대로이고, 출현 자료가 없으면 기존 결과와 같다
+ok 159 - R02 B·E 편집 목록이 없으면 자동 추천 그대로이고, 출현 자료가 없으면 기존 결과와 같다
+  ---
+  duration_ms: 23.4006
+  type: 'test'
+  ...
+# Subtest: R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙이고 점수·순위는 그대로다
+ok 160 - R02 C 자동 추천에 뽑힌 편집 장소에는 편집 사유만 덧붙이고 점수·순위는 그대로다
+  ---
+  duration_ms: 34.8499
+  type: 'test'
+  ...
+# Subtest: P0-1 유부도·매향리·걸매리: 만조에 가장 가까운 예보로 평가하고 하루 최고점 시각을 쓰지 않는다
+ok 161 - P0-1 유부도·매향리·걸매리: 만조에 가장 가까운 예보로 평가하고 하루 최고점 시각을 쓰지 않는다
+  ---
+  duration_ms: 35.0368
+  type: 'test'
+  ...
+# Subtest: P0-1 조석 기준값 경계: 유부도 710 / 매향리·걸매리 850 이상만 후보, 1cm 미달은 제외
+ok 162 - P0-1 조석 기준값 경계: 유부도 710 / 매향리·걸매리 850 이상만 후보, 1cm 미달은 제외
+  ---
+  duration_ms: 68.0515
+  type: 'test'
+  ...
+# Subtest: P0-1 대표성: 만조와 예보 간격 절반(90분) 이내만 쓰고 넘으면 추정 없이 추천 제외
+ok 163 - P0-1 대표성: 만조와 예보 간격 절반(90분) 이내만 쓰고 넘으면 추정 없이 추천 제외
+  ---
+  duration_ms: 33.4687
+  type: 'test'
+  ...
+# Subtest: P0-1 일출·일몰 밖 예보는 만조 평가에 쓰지 않고 유효 예보가 없으면 기존처럼 후보 제외
+ok 164 - P0-1 일출·일몰 밖 예보는 만조 평가에 쓰지 않고 유효 예보가 없으면 기존처럼 후보 제외
+  ---
+  duration_ms: 11.1403
+  type: 'test'
+  ...
+# Subtest: P0-2 흑산도형: 위험 시각의 높은 점수가 안전한 시각 예보 선택을 막지 않는다
+ok 165 - P0-2 흑산도형: 위험 시각의 높은 점수가 안전한 시각 예보 선택을 막지 않는다
+  ---
+  duration_ms: 33.8989
+  type: 'test'
+  ...
+# Subtest: P0-2 부적격 예보는 승격되지 않고 선상 안전 기준(6.0m/s·0.7m·0mm·결측 제외)은 그대로다
+ok 166 - P0-2 부적격 예보는 승격되지 않고 선상 안전 기준(6.0m/s·0.7m·0mm·결측 제외)은 그대로다
+  ---
+  duration_ms: 22.2818
+  type: 'test'
+  ...
+# Subtest: P0-2 최근 출현 가점·공지는 안전 제외를 우회하지 못한다
+ok 167 - P0-2 최근 출현 가점·공지는 안전 제외를 우회하지 못한다
+  ---
+  duration_ms: 11.5268
+  type: 'test'
+  ...
+# Subtest: P0-3 강수 판정: 화면 카드의 비권장 기준(1mm)과 추천 안전 기준이 같고 결측은 무강수가 아니다
+ok 168 - P0-3 강수 판정: 화면 카드의 비권장 기준(1mm)과 추천 안전 기준이 같고 결측은 무강수가 아니다
+  ---
+  duration_ms: 10.7124
+  type: 'test'
+  ...
+# Subtest: P0-4 최근 출현 근거에 실제 관찰일이 포함되고 예보 자료 생성 시각이 표시된다
+ok 169 - P0-4 최근 출현 근거에 실제 관찰일이 포함되고 예보 자료 생성 시각이 표시된다
+  ---
+  duration_ms: 11.1543
+  type: 'test'
+  ...
+# Subtest: P0-B1 만조 기상 미확인: 물때 조건만으로는 최종 추천에 들어오지 못한다
+ok 170 - P0-B1 만조 기상 미확인: 물때 조건만으로는 최종 추천에 들어오지 못한다
+  ---
+  duration_ms: 23.1077
+  type: 'test'
+  ...
+# Subtest: P0-B2 모든 적격 만조 검사: 첫날 900cm 위험 기상, 다음날 880cm 적격이면 다음날을 추천한다
+ok 171 - P0-B2 모든 적격 만조 검사: 첫날 900cm 위험 기상, 다음날 880cm 적격이면 다음날을 추천한다
+  ---
+  duration_ms: 13.0836
+  type: 'test'
+  ...
+# Subtest: P0-B2 같은 날 두 번의 만조도 각각 검사한다
+ok 172 - P0-B2 같은 날 두 번의 만조도 각각 검사한다
+  ---
+  duration_ms: 12.0343
+  type: 'test'
+  ...
+# Subtest: P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다
+ok 173 - P0-B3 오늘 자료 fallback: 만조와 예보 시각 간격(90분)·날짜·적격·안전을 똑같이 적용한다
+  ---
+  duration_ms: 124.6961
+  type: 'test'
+  ...
+# Subtest: P0-B4 강수·파고 경계와 반올림: 원자료 1mm/2.0m 기준, 표시 반올림이 기준을 넘지 못하고 결측은 판정하지 않는다
+ok 174 - P0-B4 강수·파고 경계와 반올림: 원자료 1mm/2.0m 기준, 표시 반올림이 기준을 넘지 못하고 결측은 판정하지 않는다
+  ---
+  duration_ms: 35.0013
+  type: 'test'
+  ...
+# Subtest: P0-B5 고정 입력 회귀: 최근 출현 가점·관찰일은 기준일에만 의존한다
+ok 175 - P0-B5 고정 입력 회귀: 최근 출현 가점·관찰일은 기준일에만 의존한다
+  ---
+  duration_ms: 21.6117
+  type: 'test'
+  ...
+# Subtest: P0-C1 90분 절대 상한: 간격 3h 90분 허용·91분 제외, 6h·24h 간격은 120분 차이를 허용하지 않는다
+ok 176 - P0-C1 90분 절대 상한: 간격 3h 90분 허용·91분 제외, 6h·24h 간격은 120분 차이를 허용하지 않는다
+  ---
+  duration_ms: 113.4231
+  type: 'test'
+  ...
+# Subtest: P0-C2 잘못된 간격 metadata는 3시간(90분)으로 보고, 어떤 값도 90분을 넘기지 못한다
+ok 177 - P0-C2 잘못된 간격 metadata는 3시간(90분)으로 보고, 어떤 값도 90분을 넘기지 못한다
+  ---
+  duration_ms: 228.1235
+  type: 'test'
+  ...
+# Subtest: P0-C3 예보 시각 결측·형식 오류는 만조 기상으로 쓰지 않는다
+ok 178 - P0-C3 예보 시각 결측·형식 오류는 만조 기상으로 쓰지 않는다
+  ---
+  duration_ms: 65.4079
+  type: 'test'
+  ...
+# Subtest: P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다
+ok 179 - P0-C4 90분 밖 예보는 공지·최근 출현 가점·mandatory 로도 추천되지 않고, 오늘 자료 fallback 도 같은 상한이다
+  ---
+  duration_ms: 33.7414
+  type: 'test'
+  ...
+# Subtest: P0-C5 상한을 넘는 만조는 건너뛰고 90분 안의 다른 만조(다른 날짜·같은 날 두 번째)를 쓴다
+ok 180 - P0-C5 상한을 넘는 만조는 건너뛰고 90분 안의 다른 만조(다른 날짜·같은 날 두 번째)를 쓴다
+  ---
+  duration_ms: 23.4844
+  type: 'test'
+  ...
+# Subtest: S2-A1 잘못된 점수는 scoreEligible=true 여도 추천 후보가 되지 않는다(null 이 0점이 되지 않는다)
+ok 181 - S2-A1 잘못된 점수는 scoreEligible=true 여도 추천 후보가 되지 않는다(null 이 0점이 되지 않는다)
+  ---
+  duration_ms: 239.5898
+  type: 'test'
+  ...
+# Subtest: S2-A2 정상 점수 0·100·92.5 는 유효하고, 0~100 상한은 가점이 붙은 내부 순위점수에 적용되지 않는다
+ok 182 - S2-A2 정상 점수 0·100·92.5 는 유효하고, 0~100 상한은 가점이 붙은 내부 순위점수에 적용되지 않는다
+  ---
+  duration_ms: 44.9001
+  type: 'test'
+  ...
+# Subtest: S2-A3 잘못된 최고 점수 하나가 정상 차선 예보를 가리지 않는다
+ok 183 - S2-A3 잘못된 최고 점수 하나가 정상 차선 예보를 가리지 않는다
+  ---
+  duration_ms: 121.3122
+  type: 'test'
+  ...
+# Subtest: S2-A4 scoreEligible 는 원본이 boolean true 일 때만 인정하고 누락·null·숫자·문자열은 거부한다
+ok 184 - S2-A4 scoreEligible 는 원본이 boolean true 일 때만 인정하고 누락·null·숫자·문자열은 거부한다
+  ---
+  duration_ms: 101.1684
+  type: 'test'
+  ...
+# Subtest: S2-A5 missingScoreFields 가 배열이 아니거나 비어 있지 않으면 적격으로 보지 않는다
+ok 185 - S2-A5 missingScoreFields 가 배열이 아니거나 비어 있지 않으면 적격으로 보지 않는다
+  ---
+  duration_ms: 67.1437
+  type: 'test'
+  ...
+# Subtest: S2-A6 필수 기상자료(풍속·풍향·강수)가 없거나 형식이 틀리면 거부하고, 비필수 자료의 null 은 허용한다
+ok 186 - S2-A6 필수 기상자료(풍속·풍향·강수)가 없거나 형식이 틀리면 거부하고, 비필수 자료의 null 은 허용한다
+  ---
+  duration_ms: 121.4594
+  type: 'test'
+  ...
+# Subtest: S2-A7 만조: 잘못된 점수의 인접 예보는 쓰지 않고 정상 차선 만조·예보를 고른다
+ok 187 - S2-A7 만조: 잘못된 점수의 인접 예보는 쓰지 않고 정상 차선 만조·예보를 고른다
+  ---
+  duration_ms: 23.2806
+  type: 'test'
+  ...
+# Subtest: S2-A8 오늘 기상 fallback(주간 자료 없음)도 같은 점수 계약을 쓴다
+ok 188 - S2-A8 오늘 기상 fallback(주간 자료 없음)도 같은 점수 계약을 쓴다
+  ---
+  duration_ms: 155.6457
+  type: 'test'
+  ...
+# Subtest: S2-A9 기상 없는 공지만으로는 최종 추천에 들어오지 못하지만 공지 자체는 유지된다
+ok 189 - S2-A9 기상 없는 공지만으로는 최종 추천에 들어오지 못하지만 공지 자체는 유지된다
+  ---
+  duration_ms: 21.9245
+  type: 'test'
+  ...
+# Subtest: S2-A10 선상 안전 판정도 점수 범위를 검사하고 기존 경계(6.0m/s·0.7m·0mm)는 그대로다
+ok 190 - S2-A10 선상 안전 판정도 점수 범위를 검사하고 기존 경계(6.0m/s·0.7m·0mm)는 그대로다
+  ---
+  duration_ms: 10.7552
+  type: 'test'
+  ...
+# Subtest: R1-1 today 정상 자료(0·100·92.5, 비필수 wave null)는 추천되고, 정상 형식만 인정한다
+ok 191 - R1-1 today 정상 자료(0·100·92.5, 비필수 wave null)는 추천되고, 정상 형식만 인정한다
+  ---
+  duration_ms: 54.9303
+  type: 'test'
+  ...
+# Subtest: R1-2 today 필수 풍속·풍향·강수가 없거나 형식이 틀리면 metadata 가 true/[] 여도 공지·가점이 있어도 추천하지 않는다
+ok 192 - R1-2 today 필수 풍속·풍향·강수가 없거나 형식이 틀리면 metadata 가 true/[] 여도 공지·가점이 있어도 추천하지 않는다
+  ---
+  duration_ms: 283.958
+  type: 'test'
+  ...
+# Subtest: R1-3 파고가 필요한 지역은 wave 결측·형식 오류를 거부하고, 비필수 지역의 비정상 wave 도 거부한다
+ok 193 - R1-3 파고가 필요한 지역은 wave 결측·형식 오류를 거부하고, 비필수 지역의 비정상 wave 도 거부한다
+  ---
+  duration_ms: 130.5876
+  type: 'test'
+  ...
+# Subtest: R1-4 today 적격 metadata: scoreEligible 누락·null, missingScoreFields 누락·null·비어있지 않음, 상속된 값은 거부한다
+ok 194 - R1-4 today 적격 metadata: scoreEligible 누락·null, missingScoreFields 누락·null·비어있지 않음, 상속된 값은 거부한다
+  ---
+  duration_ms: 64.5959
+  type: 'test'
+  ...
+# Subtest: R1-5 만조 today fallback: 필수 기상 결측이면 12:00 만조 900cm 도 선택하지 않는다
+ok 195 - R1-5 만조 today fallback: 필수 기상 결측이면 12:00 만조 900cm 도 선택하지 않는다
+  ---
+  duration_ms: 43.9995
+  type: 'test'
+  ...
+# Subtest: R1-6 주간 만조: 필수 강수가 없는 인접 예보는 쓰지 않고 안전한 차선 만조를 고른다
+ok 196 - R1-6 주간 만조: 필수 강수가 없는 인접 예보는 쓰지 않고 안전한 차선 만조를 고른다
+  ---
+  duration_ms: 11.764
+  type: 'test'
+  ...
+# Subtest: R1-7 mandatory·정원 보충: 부적격 today 자료는 공지·가점·부족분 보충으로 다시 들어오지 않는다
+ok 197 - R1-7 mandatory·정원 보충: 부적격 today 자료는 공지·가점·부족분 보충으로 다시 들어오지 않는다
+  ---
+  duration_ms: 13.6082
+  type: 'test'
+  ...
+# Subtest: R3-1 주간 표본: 비필수 wave 는 null 만 허용하고 문자열·음수·NaN 은 거부한다
+ok 198 - R3-1 주간 표본: 비필수 wave 는 null 만 허용하고 문자열·음수·NaN 은 거부한다
+  ---
+  duration_ms: 77.7565
+  type: 'test'
+  ...
+# Subtest: R3-2 주간 표본: 상속된 scoreEligible·missingScoreFields 는 인정하지 않는다
+ok 199 - R3-2 주간 표본: 상속된 scoreEligible·missingScoreFields 는 인정하지 않는다
+  ---
+  duration_ms: 10.6318
+  type: 'test'
+  ...
+# Subtest: R6-4 weeklyTodayWeather(C 정책): 최신 정상 자료만 객체를 돌려주고 참고 상태·검증 불가 자료는 후보 근거(null)가 된다
+ok 200 - R6-4 weeklyTodayWeather(C 정책): 최신 정상 자료만 객체를 돌려주고 참고 상태·검증 불가 자료는 후보 근거(null)가 된다
+  ---
+  duration_ms: 11.587
+  type: 'test'
+  ...
+# Subtest: R6-5 만조·일반 fallback: 정상은 적격 출처를 받고 참고 상태는 후보 근거가 되지 못한다(두 경로 동일)
+ok 201 - R6-5 만조·일반 fallback: 정상은 적격 출처를 받고 참고 상태는 후보 근거가 되지 못한다(두 경로 동일)
+  ---
+  duration_ms: 36.8605
+  type: 'test'
+  ...
+# Subtest: C-1 반례: date=오늘, forecastTime=어제 12:00, 만조=오늘 12:00(1,440분)은 점수 92·제보 16·공지·mandatory 에도 후보와 최종 목록에서 제외된다
+ok 202 - C-1 반례: date=오늘, forecastTime=어제 12:00, 만조=오늘 12:00(1,440분)은 점수 92·제보 16·공지·mandatory 에도 후보와 최종 목록에서 제외된다
+  ---
+  duration_ms: 23.6461
+  type: 'test'
+  ...
+# Subtest: C-2 참고·검증 불능 today 는 만조/일반 모두 후보에서 제외된다(예보 시각 누락·해석 불가·잘못된 생성 시각·갱신 지연·미래 생성·previous_saved)
+ok 203 - C-2 참고·검증 불능 today 는 만조/일반 모두 후보에서 제외된다(예보 시각 누락·해석 불가·잘못된 생성 시각·갱신 지연·미래 생성·previous_saved)
+  ---
+  duration_ms: 178.135
+  type: 'test'
+  ...
+# Subtest: C-3 정상 today(생성 10:30)는 만조·일반 모두 허용되고 제보 16 가점 rank 108·0/92.5/100 점수가 유지된다
+ok 204 - C-3 정상 today(생성 10:30)는 만조·일반 모두 허용되고 제보 16 가점 rank 108·0/92.5/100 점수가 유지된다
+  ---
+  duration_ms: 58.7319
+  type: 'test'
+  ...
+# Subtest: C-4 만조 절대 시각: 같은 날 90분 허용·91분 제외, 예보-만조 날짜가 다르면 시·분이 같아도 제외된다
+ok 205 - C-4 만조 절대 시각: 같은 날 90분 허용·91분 제외, 예보-만조 날짜가 다르면 시·분이 같아도 제외된다
+  ---
+  duration_ms: 43.9302
+  type: 'test'
+  ...
+# Subtest: C-5 절대 시각 계산: 자정 넘김 60분 허용·전날 12시 vs 다음날 12시 1,440분·월말/연말/윤년·ISO(+09:00)·모호한 값 제외
+ok 206 - C-5 절대 시각 계산: 자정 넘김 60분 허용·전날 12시 vs 다음날 12시 1,440분·월말/연말/윤년·ISO(+09:00)·모호한 값 제외
+  ---
+  duration_ms: 10.7147
+  type: 'test'
+  ...
+# Subtest: C-6 주간 예보: 추천일과 날짜가 다른 표본·시각 누락 표본은 후보가 못 되고 정상 차선 예보·다른 안전 만조가 선택된다
+ok 207 - C-6 주간 예보: 추천일과 날짜가 다른 표본·시각 누락 표본은 후보가 못 되고 정상 차선 예보·다른 안전 만조가 선택된다
+  ---
+  duration_ms: 23.2839
+  type: 'test'
+  ...
+# Subtest: C-7 최종 방어 predicate: 검증된 표본·적격 출처만 통과하고 참고/출처 불명/표본 부적격 entry 는 거부한다
+ok 208 - C-7 최종 방어 predicate: 검증된 표본·적격 출처만 통과하고 참고/출처 불명/표본 부적격 entry 는 거부한다
+  ---
+  duration_ms: 10.6009
+  type: 'test'
+  ...
+# Subtest: C-8 mandatory·공지·제보·정원 보충: 일부 장소만 참고 상태여도 정상 장소만 10곳을 채우고 부적격 장소는 어떤 단계에서도 되살아나지 않는다
+ok 209 - C-8 mandatory·공지·제보·정원 보충: 일부 장소만 참고 상태여도 정상 장소만 10곳을 채우고 부적격 장소는 어떤 단계에서도 되살아나지 않는다
+  ---
+  duration_ms: 26.7634
+  type: 'test'
+  ...
+# Subtest: C1 주간 발행 시각 누락·null·빈 문자열·무효·미래, dataUnavailable 은 일반·갯벌·섬 모두 후보·최종에서 제외되고 정상 발행·정상 미래 예보는 허용된다
+ok 210 - C1 주간 발행 시각 누락·null·빈 문자열·무효·미래, dataUnavailable 은 일반·갯벌·섬 모두 후보·최종에서 제외되고 정상 발행·정상 미래 예보는 허용된다
+  ---
+  duration_ms: 382.0699
+  type: 'test'
+  ...
+# Subtest: C1 검증되지 않은 주간 발행본은 없는 것으로 보아 정상 today 로 대체되고, 공지·가점으로 되살아나지 않는다
+ok 211 - C1 검증되지 않은 주간 발행본은 없는 것으로 보아 정상 today 로 대체되고, 공지·가점으로 되살아나지 않는다
+  ---
+  duration_ms: 11.0066
+  type: 'test'
+  ...
+# Subtest: C2 무효 예보 시각(12:60·시간대 없음·UTC·꼬리 문자열)의 99점은 점수 비교 전에 제외되고 정상 80점이 rank 96 으로 선택된다
+ok 212 - C2 무효 예보 시각(12:60·시간대 없음·UTC·꼬리 문자열)의 99점은 점수 비교 전에 제외되고 정상 80점이 rank 96 으로 선택된다
+  ---
+  duration_ms: 223.8022
+  type: 'test'
+  ...
+# Subtest: C2 today 예보 시각도 같은 엄격 parser: 시간대 없음·UTC·24:00·꼬리 문자열은 현재 자료가 아니다
+ok 213 - C2 today 예보 시각도 같은 엄격 parser: 시간대 없음·UTC·24:00·꼬리 문자열은 현재 자료가 아니다
+  ---
+  duration_ms: 53.6161
+  type: 'test'
+  ...
+# Subtest: F3 weeklyForecastTimestamp/weatherTimeMs: 문자열이 아닌 원본은 null/NaN(TypeError 없음), 정상 KST·ISO +09:00 는 유지
+ok 214 - F3 weeklyForecastTimestamp/weatherTimeMs: 문자열이 아닌 원본은 null/NaN(TypeError 없음), 정상 KST·ISO +09:00 는 유지
+  ---
+  duration_ms: 10.6499
+  type: 'test'
+  ...
+# Subtest: F3 배열·객체 예보 시각의 99점은 일반·갯벌·섬 모두 제외되고 정상 80점이 rank 96 으로 선택된다(예외 없음)
+ok 215 - F3 배열·객체 예보 시각의 99점은 일반·갯벌·섬 모두 제외되고 정상 80점이 rank 96 으로 선택된다(예외 없음)
+  ---
+  duration_ms: 146.8747
+  type: 'test'
+  ...
+# Subtest: F3 배열·객체 발행 시각(주간 generatedAt·today generatedAt)은 후보가 아니다
+ok 216 - F3 배열·객체 발행 시각(주간 generatedAt·today generatedAt)은 후보가 아니다
+  ---
+  duration_ms: 107.98
+  type: 'test'
+  ...
+# Subtest: F2 배치 일관성: 장소별 generatedAt 이 root 발행과 다른 적격 item 은 새 자료로 인정하지 않고, 같은 발행 item 은 허용한다
+ok 217 - F2 배치 일관성: 장소별 generatedAt 이 root 발행과 다른 적격 item 은 새 자료로 인정하지 않고, 같은 발행 item 은 허용한다
+  ---
+  duration_ms: 32.4502
+  type: 'test'
+  ...
+# Subtest: F2-a 적격 today: item generatedAt 이 누락·null·빈 값·비문자열·미래·무효면 root 시각으로 대체해 적격이 되지 못한다
+ok 218 - F2-a 적격 today: item generatedAt 이 누락·null·빈 값·비문자열·미래·무효면 root 시각으로 대체해 적격이 되지 못한다
+  ---
+  duration_ms: 205.9486
+  type: 'test'
+  ...
+# Subtest: F3 storedWeatherState·팝업·카드 소비 경로: 비문자열 forecastTime/date/generatedAt 은 TypeError 없이 부적격이고 정상 80점이 선택된다
+ok 219 - F3 storedWeatherState·팝업·카드 소비 경로: 비문자열 forecastTime/date/generatedAt 은 TypeError 없이 부적격이고 정상 80점이 선택된다
+  ---
+  duration_ms: 169.6228
+  type: 'test'
+  ...
+1..219
+# tests 219
+# suites 0
+# pass 218
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12471.6474

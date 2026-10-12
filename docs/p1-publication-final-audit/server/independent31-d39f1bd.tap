@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: route/GPS check does not treat a pre-action in-flight authority response as fresh
+ok 1 - route/GPS check does not treat a pre-action in-flight authority response as fresh
+  ---
+  duration_ms: 7.8427
+  type: 'test'
+  ...
+# Subtest: postflight after delayed payload initiates authority read after payload delivery
+ok 2 - postflight after delayed payload initiates authority read after payload delivery
+  ---
+  duration_ms: 2.626
+  type: 'test'
+  ...
+# Subtest: normal current route remains allowed after an independent fresh read
+ok 3 - normal current route remains allowed after an independent fresh read
+  ---
+  duration_ms: 2.5048
+  type: 'test'
+  ...
+# Subtest: normal matching preflight payload and postflight remain usable
+ok 4 - normal matching preflight payload and postflight remain usable
+  ---
+  duration_ms: 2.0894
+  type: 'test'
+  ...
+# Subtest: authority lease ends at primary-request-start plus5s, response latency 0ms
+ok 5 - authority lease ends at primary-request-start plus5s, response latency 0ms
+  ---
+  duration_ms: 1.4719
+  type: 'test'
+  ...
+# Subtest: authority lease ends at primary-request-start plus5s, response latency 4000ms
+ok 6 - authority lease ends at primary-request-start plus5s, response latency 4000ms
+  ---
+  duration_ms: 0.9584
+  type: 'test'
+  ...
+# Subtest: authority lease ends at primary-request-start plus5s, response latency 4999ms
+ok 7 - authority lease ends at primary-request-start plus5s, response latency 4999ms
+  ---
+  duration_ms: 0.7892
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed undefined
+ok 8 - invalid or expired local request-start metadata fails closed undefined
+  ---
+  duration_ms: 0.8965
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed null
+ok 9 - invalid or expired local request-start metadata fails closed null
+  ---
+  duration_ms: 0.7798
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed NaN
+ok 10 - invalid or expired local request-start metadata fails closed NaN
+  ---
+  duration_ms: 0.7776
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed Infinity
+ok 11 - invalid or expired local request-start metadata fails closed Infinity
+  ---
+  duration_ms: 0.6674
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed -Infinity
+ok 12 - invalid or expired local request-start metadata fails closed -Infinity
+  ---
+  duration_ms: 0.6419
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 6000
+ok 13 - invalid or expired local request-start metadata fails closed 6000
+  ---
+  duration_ms: 0.6035
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 
+ok 14 - invalid or expired local request-start metadata fails closed 
+  ---
+  duration_ms: 0.673
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed [object Object]
+ok 15 - invalid or expired local request-start metadata fails closed [object Object]
+  ---
+  duration_ms: 0.6246
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed true
+ok 16 - invalid or expired local request-start metadata fails closed true
+  ---
+  duration_ms: 0.5963
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed -1
+ok 17 - invalid or expired local request-start metadata fails closed -1
+  ---
+  duration_ms: 0.65
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 10001
+ok 18 - invalid or expired local request-start metadata fails closed 10001
+  ---
+  duration_ms: 0.6267
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 5000
+ok 19 - invalid or expired local request-start metadata fails closed 5000
+  ---
+  duration_ms: 0.7162
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 4999
+ok 20 - invalid or expired local request-start metadata fails closed 4999
+  ---
+  duration_ms: 1.5301
+  type: 'test'
+  ...
+# Subtest: writer drain READ_ONLY_MAINTENANCE closes field create before commit
+ok 21 - writer drain READ_ONLY_MAINTENANCE closes field create before commit
+  ---
+  duration_ms: 35.7561
+  type: 'test'
+  ...
+# Subtest: writer drain invalid-mode closes field create before commit
+ok 22 - writer drain invalid-mode closes field create before commit
+  ---
+  duration_ms: 5.9043
+  type: 'test'
+  ...
+# Subtest: writer drain maintenance closes field status without mutation
+ok 23 - writer drain maintenance closes field status without mutation
+  ---
+  duration_ms: 15.0881
+  type: 'test'
+  ...
+# Subtest: writer drain maintenance closes field confirm without mutation
+ok 24 - writer drain maintenance closes field confirm without mutation
+  ---
+  duration_ms: 7.6962
+  type: 'test'
+  ...
+# Subtest: writer drain maintenance closes field delete without mutation
+ok 25 - writer drain maintenance closes field delete without mutation
+  ---
+  duration_ms: 7.1467
+  type: 'test'
+  ...
+# Subtest: fresh primary independently invoked for head and whole payload batch
+ok 26 - fresh primary independently invoked for head and whole payload batch
+  ---
+  duration_ms: 8.3223
+  type: 'test'
+  ...
+# Subtest: hide and withdraw exact coordinates absent from public payload, errors, history, aggregates
+ok 27 - hide and withdraw exact coordinates absent from public payload, errors, history, aggregates
+  ---
+  duration_ms: 9.3202
+  type: 'test'
+  ...
+# Subtest: each required guard definition causes public fail closed
+ok 28 - each required guard definition causes public fail closed
+  ---
+  duration_ms: 111.1157
+  type: 'test'
+  ...
+# Subtest: migration installs frozen and explicit same-epoch thaw advances authority once
+ok 29 - migration installs frozen and explicit same-epoch thaw advances authority once
+  ---
+  duration_ms: 7.8729
+  type: 'test'
+  ...
+# Subtest: DB freeze rejects all nine legacy parent/child mutations and preserves every row/revision
+ok 30 - DB freeze rejects all nine legacy parent/child mutations and preserves every row/revision
+  ---
+  duration_ms: 12.3079
+  type: 'test'
+  ...
+# Subtest: freeze during already-running status verification aborts entire mutation without event/revision changes
+ok 31 - freeze during already-running status verification aborts entire mutation without event/revision changes
+  ---
+  duration_ms: 7.9444
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 319.941

@@ -1,0 +1,31 @@
+TAP version 13
+# Subtest: route/GPS check does not treat a pre-action in-flight authority response as fresh
+not ok 1 - route/GPS check does not treat a pre-action in-flight authority response as fresh
+  ---
+  duration_ms: 1.9958
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\head-freshness.test.mjs:11:1'
+  failureType: 'testCodeFailure'
+  error: 'window is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    evalmachine.<anonymous>:24:1
+    Script.runInContext (node:vm:149:12)
+    Object.runInContext (node:vm:301:6)
+    fixture (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/head-freshness.test.mjs:8:874)
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/head-freshness.test.mjs:11:108)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.start (node:internal/test_runner/test:1191:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 71.6563

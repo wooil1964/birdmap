@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: route/GPS check does not treat a pre-action in-flight authority response as fresh
+ok 1 - route/GPS check does not treat a pre-action in-flight authority response as fresh
+  ---
+  duration_ms: 5.8977
+  type: 'test'
+  ...
+# Subtest: postflight after delayed payload initiates authority read after payload delivery
+ok 2 - postflight after delayed payload initiates authority read after payload delivery
+  ---
+  duration_ms: 2.5978
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 80.9292

@@ -1,0 +1,54 @@
+TAP version 13
+# Subtest: route/GPS check does not treat a pre-action in-flight authority response as fresh
+not ok 1 - route/GPS check does not treat a pre-action in-flight authority response as fresh
+  ---
+  duration_ms: 6.31
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\head-freshness.test.mjs:11:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"allowed":true,"calls":[{"path":"/reports/public-state?nonce=00000000000000000000000000000001","revision":"100"}],"events":[]}
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/head-freshness.test.mjs:11:407)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: postflight after delayed payload initiates authority read after payload delivery
+not ok 2 - postflight after delayed payload initiates authority read after payload delivery
+  ---
+  duration_ms: 2.6701
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\head-freshness.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"applied":true,"error":null,"calls":[{"path":"/reports/public-state?nonce=00000000000000000000000000000001","revision":"100"},{"path":"/reports/approved?contract=publication-v1&nonce=00000000000000000000000000000002&expectedEpoch=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&expectedRevision=100","revision":"100"},{"path":"/reports/public-state?nonce=00000000000000000000000000000003","revision":"100"}],"events":[]}
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/head-freshness.test.mjs:13:755)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 79.8526

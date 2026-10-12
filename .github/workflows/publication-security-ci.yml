@@ -1,0 +1,78 @@
+name: Publication security regression
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publication-security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: '1'
+      PYTHONIOENCODING: utf-8
+      PYTHONDONTWRITEBYTECODE: '1'
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Require installed Chrome
+        shell: bash
+        run: |
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || true)
+          test -n "$chrome"
+          echo "CHROME_PATH=$chrome" >> "$GITHUB_ENV"
+          "$chrome" --version
+      - name: Front regression with actual Chrome
+        run: node --test --test-reporter=tap .github/scripts/test_*.mjs
+      - name: Public and admin API and SQLite security
+        working-directory: reports-api
+        run: node --test --test-reporter=tap
+      - name: Weather proxy
+        run: node --test --test-reporter=tap weather-proxy/test/*.test.mjs
+      - name: Python weather, tide and shared pages
+        shell: bash
+        run: |
+          python .github/scripts/test_weather.py
+          python .github/scripts/test_tide.py
+          python .github/scripts/test_share_pages.py
+      - name: Exact normal recommendation signatures
+        run: node .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221
+      - name: Chrome publication and consent security with local mock only
+        env:
+          PUBLICATION_TEST_OUTPUT: .ci-results/chrome
+        run: node docs/p1-publication-final-audit/browser/publication_chrome_final_r4.mjs
+      - name: Prepare protective Pages rollback artifact
+        run: node .github/scripts/package_protected_pages.mjs .ci-results/protected-pages
+      - name: Upload protective standby artifact (no deployment)
+        uses: actions/upload-artifact@v4
+        with:
+          name: protected-pages-${{ github.sha }}
+          path: .ci-results/protected-pages
+          retention-days: 30
+          if-no-files-found: error
+      - name: Upload synthetic browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publication-security-diagnostics-${{ github.sha }}
+          path: .ci-results/chrome
+          retention-days: 14
+          if-no-files-found: ignore

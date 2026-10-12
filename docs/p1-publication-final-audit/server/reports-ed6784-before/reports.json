@@ -1,0 +1,50 @@
+{
+  "scope": "reports",
+  "root": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\server-ed678460",
+  "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\server-ed678460\\reports-api",
+  "cmd": "C:\\Program Files\\nodejs\\node.exe",
+  "args": [
+    "--test",
+    "--test-reporter=tap"
+  ],
+  "env": {
+    "CHROME_PATH": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "PYTHONUTF8": "1",
+    "PYTHONIOENCODING": "utf-8"
+  },
+  "start": "2026-10-12T05:20:21.813Z",
+  "end": "2026-10-12T05:20:23.233Z",
+  "exit": 1,
+  "signal": null,
+  "counts": {
+    "tests": 221,
+    "pass": 200,
+    "fail": 21,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "failures": [
+    "publication: strict legacy /reports/approved cannot expose a raw coordinate response",
+    "publication: atomic state/data and matching authority for /reports/approved",
+    "publication: strict legacy /reports/pending cannot expose a raw coordinate response",
+    "publication: atomic state/data and matching authority for /reports/pending",
+    "publication: strict legacy /reports/recent-sites cannot expose a raw coordinate response",
+    "publication: atomic state/data and matching authority for /reports/recent-sites",
+    "publication: strict legacy /reports/site/1 cannot expose a raw coordinate response",
+    "publication: atomic state/data and matching authority for /reports/site/1",
+    "publication: strict legacy /field-updates cannot expose a raw coordinate response",
+    "publication: atomic state/data and matching authority for /field-updates",
+    "field CAS: deleted is terminal against old unconditional status/activity/coordinate writes",
+    "field CAS: late child event or confirmation cannot append after deletion",
+    "field CAS: row revision advancement terminates even with recursive SQLite triggers",
+    "field CAS: old normal writer advances row revision and old CAS cannot perform ABA write",
+    "field CAS: row revision over 2^53 is serialized and compared as exact text",
+    "field CAS: status read before delete cannot restore deleted or append a status event",
+    "field CAS: confirm read before delete rolls back confirmation/activity and publication",
+    "field CAS: concurrent owner deletion is idempotent and appends exactly one event",
+    "field CAS: concurrent confirmations have one CAS winner and normal loser retry succeeds",
+    "field CAS: status expiry during asynchronous validation cannot revive expired item",
+    "field CAS: normal expire/reappear/reapprove are not permanent tombstones"
+  ]
+}
