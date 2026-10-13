@@ -136,3 +136,15 @@ test('writer fence: frozen canonical-only operator writes keep their own atomic 
  assert.equal(f.sqlite.prepare('SELECT count(*) AS n FROM transaction_assertions').get().n,0);
  await assert.rejects(f.db.prepare(late).run(),e=>e.code==='WRITE_MAINTENANCE');
 });
+
+test('remote migration: six publication guards use D1 query-compatible conditional RAISE',()=>{
+ for(const name of ['../schema.sql','../migrations/0005_publication_security.sql']){
+  const sql=readFileSync(new URL(name,import.meta.url),'utf8');
+  const triggers=sql.match(/CREATE TRIGGER publication_(?:reports|field_updates)_(?:insert|update|delete)\s+AFTER[\s\S]*?\nEND;/g);
+  assert.equal(triggers.length,6);
+  for(const trigger of triggers){
+   assert.match(trigger,/SELECT RAISE\(ABORT,'publication_state_unavailable'\) WHERE NOT EXISTS\(/);
+   assert.doesNotMatch(trigger,/SELECT CASE/,'Actual remote D1 /query rejects nested CASE trigger as incomplete input');
+  }
+ }
+});

@@ -14,32 +14,32 @@ WHEN NEW.id IS NOT OLD.id OR NEW.epoch IS NOT OLD.epoch OR typeof(NEW.revision)<
 BEGIN SELECT RAISE(ABORT,'publication_state_transition'); END;
 CREATE TRIGGER publication_reports_insert AFTER INSERT ON reports
 BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807) THEN RAISE(ABORT,'publication_state_unavailable') END;
+ SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
 CREATE TRIGGER publication_reports_update AFTER UPDATE ON reports
 BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807) THEN RAISE(ABORT,'publication_state_unavailable') END;
+ SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
 CREATE TRIGGER publication_reports_delete AFTER DELETE ON reports
 BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807) THEN RAISE(ABORT,'publication_state_unavailable') END;
+ SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
 CREATE TRIGGER publication_field_updates_insert AFTER INSERT ON field_updates
 BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807) THEN RAISE(ABORT,'publication_state_unavailable') END;
+ SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
 CREATE TRIGGER publication_field_updates_update AFTER UPDATE ON field_updates
 BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807) THEN RAISE(ABORT,'publication_state_unavailable') END;
+ SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
 CREATE TRIGGER publication_field_updates_delete AFTER DELETE ON field_updates
 BEGIN
- SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807) THEN RAISE(ABORT,'publication_state_unavailable') END;
+ SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
 CREATE TRIGGER field_deleted_terminal BEFORE UPDATE ON field_updates
