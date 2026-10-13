@@ -30,7 +30,7 @@ function load(updates) {
     'fieldActivityMs', 'fieldAgeMin', 'fieldIsActive', 'haversineKm', 'publicationAllowed','escapeHtml','tmapNavigationUrl','tmapNavigationLink','spotTmapRouteHtml','spotRouteButtonsHtml'];
   const consts = HTML.match(/var FIELD_NEWS_PC_MAX=[^\n]+/)[0];
   return new Function('updates', 'NOW',
-    "var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_TTL_HOURS_DEFAULT=3,fieldTtlHours=3,fieldClockOffset=0,fieldUpdates=updates;function fieldNowMs(){return NOW;}" +
+    "var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_TTL_HOURS_DEFAULT=3,fieldTtlHours=3,fieldClockOffset=0,fieldUpdates=updates;function fieldNowMs(){return NOW;}" +
     consts + '\n' + names.map(functionSource).join('\n') +
     '\nreturn {' + names.join(',') + ',expireAuthority(){publicationState.until=0;},expireMonotonic(){publicationState.until=Date.now()+5000;publicationState.checkedMono=performance.now()-5001;},unknownAuthority(){publicationState.ready=false;}};')(updates, NOW);
 }
@@ -102,7 +102,7 @@ test('외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들�
   function node(tag){return{tag,children:[],style:{},setAttribute(k,v){this[k]=v;},appendChild(child){child.parentNode=this;this.children.push(child);return child;},removeChild(child){this.children=this.children.filter(c=>c!==child);child.parentNode=null;}};}
   const document={body:node('body'),createElement:node};let opened=0;
   const names=['publicationAllowed','fieldPublicPoint','fieldNavDistanceText','spotKakaoRouteUrl','tmapNavigationUrl','openTmapNavigation','fieldLine','fieldNewsButton','fieldNavChoiceClose','fieldNavChooser','fieldNavExternal'];
-  const body='var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};function fieldEl(id){return document.body.children.find(n=>n.id===id)||null;}function fieldNavManualGuide(){}'+names.map(functionSource).join('\n')+';return{fieldNavExternal,fieldNavChoiceClose,spotKakaoRouteUrl,tmapNavigationUrl,unknown(){publicationState.ready=false;}};';
+  const body='document.hidden=false;function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};function fieldEl(id){return document.body.children.find(n=>n.id===id)||null;}function fieldNavManualGuide(){}'+names.map(functionSource).join('\n')+';return{fieldNavExternal,fieldNavChoiceClose,spotKakaoRouteUrl,tmapNavigationUrl,unknown(){publicationState.ready=false;}};';
   const api=new Function('document','window','navigator','alert',body)(document,{open(){opened++;throw new Error('Must not auto-open');}},{userAgent:'Android synthetic'},()=>{throw new Error('Unexpected desktop alert');});
   const visible=upd('normal','visible',1);api.fieldNavExternal(visible,40,10);
   assert.equal(opened,0);assert.equal(document.body.children.length,1);

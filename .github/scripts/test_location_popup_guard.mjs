@@ -12,7 +12,7 @@ test('가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 
  const marker={setLatLng(){return this;},setIcon(){return this;},getElement(){return null;},isPopupOpen(){return true;},getPopup(){return {setContent(node){popup=node;updates++;}};}};
  const L={divIcon(){return {};},layerGroup(){return {addTo(){return this;}};}};
  const api=new Function('L','marker',
-  'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_OLD_MIN=60,fieldUpdates=[],fieldMarkers={},fieldLayer={},fieldGuide=null;'+
+  'var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_OLD_MIN=60,fieldUpdates=[],fieldMarkers={},fieldLayer={},fieldGuide=null;'+
   'function fieldAgeMin(){return 0;}function fieldIsActive(){return true;}function fieldMap(){return {};}function fieldNavChoiceGuard(){}function renderFieldNews(){}'+
   'function fieldPopupNode(u){return {protected:u.locationHidden===true,route:!!fieldPublicPoint(u)};}'+
   ['publicationAllowed','fieldMarkerClass','fieldMarkerSignature','fieldPublicPoint','fieldFind','renderFieldMarkers'].map(source).join('\n')+
@@ -27,7 +27,7 @@ test('동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤
  let popupFactory;
  const marker={options:{},bindPopup(fn){popupFactory=fn;return this;},addTo(){return this;},setLatLng(){return this;},setIcon(){return this;},isPopupOpen(){return false;}};
  const L={divIcon(){return {};},marker(){return marker;},layerGroup(){return{addTo(){return this;},removeLayer(){}};}};
- const api=new Function('L','var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()},FIELD_OLD_MIN=60,fieldUpdates=[],fieldMarkers={},fieldLayer=null,fieldGuide=null;'+html.match(/var FIELD_STATUS_LABEL=\{[^\n]+/)[0]+
+ const api=new Function('L','var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()},FIELD_OLD_MIN=60,fieldUpdates=[],fieldMarkers={},fieldLayer=null,fieldGuide=null;'+html.match(/var FIELD_STATUS_LABEL=\{[^\n]+/)[0]+
   'function fieldAgeMin(){return 0;}function fieldIsActive(){return true;}function fieldMap(){return {};}function fieldNavChoiceGuard(){}function renderFieldNews(){}'+
   'function fieldPopupNode(u){return {id:u.id,lat:u.lat,hidden:u.locationHidden===true,route:fieldPublicPoint(u)};}function fieldLine(text){return {text};}'+
   ['publicationAllowed','fieldMarkerClass','fieldMarkerSignature','fieldPublicPoint','fieldFind','renderFieldMarkers'].map(source).join('\n')+

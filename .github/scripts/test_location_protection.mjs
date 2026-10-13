@@ -46,7 +46,7 @@ function env() {
   const sandbox = {
     L: { latLng: fakeLatLng, latLngBounds: () => ({}), circleMarker: proxy, polyline: proxy, marker: proxy, divIcon: proxy, layerGroup: proxy, point: () => ({}) },
     map: { closePopup() {}, hasLayer: () => true, removeLayer() {}, addLayer() {}, getBoundsZoom: () => 15, setView() {}, fitBounds() {}, getZoom: () => 12 },
-    document: { body: { classList: { add() {}, remove() {} }, appendChild() {} }, createElement: proxy },
+    document: { hidden:false, body: { classList: { add() {}, remove() {} }, appendChild() {} }, createElement: proxy },
     navigator: { geolocation: {
       watchPosition: (ok, err) => { const id = ++watchSeq; watches.set(id, { ok, err }); return id; },
       clearWatch: (id) => { watches.delete(id); },
@@ -59,9 +59,9 @@ function env() {
     chooser: [],
   };
   const body =
-    'var publicationState={ready:true,until:NOW+5000,checkedMono:performance.now(),anchor:AUTHORITY},PUBLICATION_MAX_AGE=5000,publicationExpiryTimer=0,headUnavailable=false,headChecks=0,PUBLICATION_CONTRACT="publication-v1",PUBLICATION_PROJECTION="legacy-public-v1";'+
+    'var publicationState={generation:0,ready:true,until:NOW+5000,checkedMono:performance.now(),anchor:AUTHORITY},PUBLICATION_MAX_AGE=5000,publicationExpiryTimer=0,headUnavailable=false,headChecks=0,PUBLICATION_CONTRACT="publication-v1",PUBLICATION_PROJECTION="legacy-public-v1";'+
     // Unit boundary: a synthetic fresh head; use actual validator, renewal and route gate.
-    'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString(),_publicationStartedMono:performance.now()};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
+    'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString(),_publicationStartedMono:performance.now(),_publicationGeneration:publicationState.generation};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationInvalidate(){publicationState.generation++;publicationState.ready=false;publicationState.until=0;}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
     'var fieldUpdates=[],fieldAvailable=false,fieldClockOffset=0,fieldTtlHours=3,fieldMarkers={},fieldLayer=null,fieldGuide=null;' +
     'var fieldRequestSeq=0,fieldAppliedSeq=0,fieldBarrierSeq=0,fieldTombstones={},fieldProtectedIds={},fieldStepName="menu";' +
     'function fieldNowMs(){return NOW;} function fieldMap(){return map;} function fieldToast(t){toast(t);} function reportsConfigured(){return true;}' +
@@ -278,7 +278,7 @@ function reportEnv() {
   const names = ['reportRequestStart', 'reportResponseCurrent', 'loadApprovedReports', 'loadPendingReports', 'loadRecentSiteSightings',
     'clearSiteHistoryCache', 'cachedSiteHistory', 'fetchSiteHistory','publicationAllowed','publicationSame','publicationDataAllowed'];
   const decl = line(/var reportRequestSeq=[^\n]+/) + '\n' + line(/var SITE_HISTORY_TTL=[^\n]+/) + '\n' + line(/var SITE_HISTORY_TIMEOUT=[^\n]+/) + '\nvar siteHistoryCache={};var siteHistoryGen=0;var SITE_HISTORY_PAGE=10;';
-  const body = decl + 'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};var reportFixedHistory={},recentReportsFailed=false,recentSiteSightings={};' +
+  const body = decl + 'var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};var reportFixedHistory={},recentReportsFailed=false,recentSiteSightings={};' +
     'function publicationFetch(path){return fetch(REPORTS_API_URL+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("transport");return r.json();});}'+
     'function reportsConfigured(){return true;} function buildReportSearchIndex(){searchIndexBuilds++;} function renderRecentReports(){} function refreshFixedSpotPopups(){}' +
     'function renderApprovedReports(s){rendered.push("approved:"+s.map(function(x){return x.id;}).join(","));} function renderPendingReports(s){rendered.push("pending:"+s.map(function(x){return x.id;}).join(","));}' +

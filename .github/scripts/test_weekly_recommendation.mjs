@@ -1759,7 +1759,7 @@ test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천
     const box = { sightings: previous, refreshed: 0, warned: 0 };
     const fn = new Function('box', 'fetch', 'console','AUTHORITY',
       'var reportRequestSeq={approved:0,pending:0,recent:0},reportAppliedSeq={approved:0,pending:0,recent:0};var recentSiteSightings=box.sightings;var REPORTS_API_URL="https://reports.example";' +
-      'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};'+
+      'var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};'+
       // Isolated recommendation loader: mock already verified transport, not the full authority lifecycle.
       'function publicationFetch(path){return fetch(REPORTS_API_URL+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("transport");return r.json();});}'+
       'function reportsConfigured(){return true;}function refreshTodayPanelIfOpen(){box.refreshed++;}' +

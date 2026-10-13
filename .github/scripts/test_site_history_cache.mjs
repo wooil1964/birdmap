@@ -55,6 +55,7 @@ function loadApi(options = {}) {
   }));
 
   const env = {
+    document: {hidden:false},
     REPORTS_API_URL: 'https://api.example',
     AUTHORITY,
     SITE_HISTORY_PAGE: 5,
@@ -76,13 +77,13 @@ function loadApi(options = {}) {
     constantSource('SITE_HISTORY_TTL'),
     constantSource('SITE_HISTORY_TIMEOUT'),
     'var siteHistoryCache={};var siteHistoryGen=0;',
-    'var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};'+
+    'function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;clearSiteHistoryCache();}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now(),anchor:AUTHORITY};'+
       // Transport boundary is a synthetic already verified snapshot, not a nonce/head implementation.
       'function publicationFetch(path){return fetch(REPORTS_API_URL+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("transport");return r.json();});}',
     ...NAMES.map(functionSource),
     'return {clearSiteHistoryCache,cachedSiteHistory,fetchSiteHistory,' +
       'SITE_HISTORY_TTL:SITE_HISTORY_TTL,SITE_HISTORY_TIMEOUT:SITE_HISTORY_TIMEOUT,' +
-      'cache:function(){return siteHistoryCache;},renewAuthority(){publicationState.until=Date.now()+5000;publicationState.checkedMono=performance.now();},unknownAuthority(){publicationState.ready=false;},changeAuthority(){publicationState.anchor={...AUTHORITY,revision:"2"};}};',
+      'cache:function(){return siteHistoryCache;},renewAuthority(){publicationState.ready=true;publicationState.until=Date.now()+5000;publicationState.checkedMono=performance.now();},unknownAuthority(){publicationState.ready=false;},changeAuthority(){publicationState.anchor={...AUTHORITY,revision:"2"};}};',
   ].join('\n');
 
   const keys = Object.keys(env);

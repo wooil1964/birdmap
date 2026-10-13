@@ -1172,11 +1172,13 @@ function recentReportDateText(date){
 }
 
 function renderRecentReports(){
+  var allowed=publicationAllowed();   // Clear expired data before rendering names.
   var list=document.getElementById('recentReportsList');
   var count=document.getElementById('recentReportsCount');
   if(!list)return;
   list.innerHTML='';
   if(count)count.textContent='';
+  if(!allowed){list.innerHTML='<div class="recentReportEmpty">공개 제보의 최신 상태를 확인할 수 없습니다.</div>';return;}
   if(recentReportsFailed&&!reportSearchIndex.length){
     // 자료가 없는 것과 못 불러온 것을 구분한다. 원인은 콘솔에 남겨 둔다.
     list.innerHTML='<div class="recentReportEmpty">제보 목록을 불러오지 못했습니다.</div>';
@@ -2954,7 +2956,12 @@ var reportPublicSpots={};
 function publicationRevision(value){return typeof value==='string'&&/^(0|[1-9][0-9]{0,18})$/.test(value)&&BigInt(value)<=9223372036854775807n;}
 function publicationNonce(){var bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
 function publicationSame(a,b){return !!a&&!!b&&a.contract===b.contract&&a.epoch===b.epoch&&a.revision===b.revision&&a.projection===b.projection;}
-function publicationAllowed(){return publicationState.ready&&Date.now()<publicationState.until&&typeof publicationState.checkedMono==='number'&&performance.now()-publicationState.checkedMono<PUBLICATION_MAX_AGE;}
+function publicationAllowed(){
+ var allowed=publicationState.ready&&!document.hidden&&Date.now()<publicationState.until&&typeof publicationState.checkedMono==='number'&&performance.now()-publicationState.checkedMono<PUBLICATION_MAX_AGE;
+ // Detection closes live data synchronously, including when the expiry timer is delayed.
+ if(publicationState.ready&&!allowed)publicationInvalidate(document.hidden?'hidden':'expired');
+ return allowed;
+}
 function publicationNotice(show){
  var box=document.getElementById('publicationNotice');
  if(!box){box=document.createElement('div');box.id='publicationNotice';box.setAttribute('role','status');box.style.cssText='position:fixed;left:8px;bottom:8px;z-index:999;max-width:min(430px,calc(100vw - 16px));background:#fff8e1;padding:6px 9px;border-radius:6px;font:12px/1.5 Arial';document.body.appendChild(box);}
@@ -2969,13 +2976,14 @@ function publicationForgetLayer(layer,map){
 }
 function publicationInvalidate(reason){
  publicationState.generation++;publicationState.until=0;publicationState.ready=false;publicationState.needsRefresh=true;
+ publicationHeadPromise=null;publicationRefreshPromise=null;publicationState.pending={};
  if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
  if(typeof fieldGuideStop==='function'&&typeof fieldGuide!=='undefined'&&fieldGuide)fieldGuideStop();
  if(typeof fieldNavChoiceClose==='function')fieldNavChoiceClose();
  var map=typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'?map_7010a44f6ac2025090f0fe07508ed485:null;
  var currentPopup=map&&map._popup,dynamicPopup=currentPopup&&currentPopup._source&&currentPopup._source.options&&currentPopup._source.options.publicationDynamic;
  [typeof reportSpotLayers==='undefined'?{}:reportSpotLayers,typeof reportPendingLayers==='undefined'?{}:reportPendingLayers].forEach(function(layers){Object.keys(layers).forEach(function(id){publicationForgetLayer(layers[id],map);delete layers[id];});});
- if(typeof fieldMarkers!=='undefined')Object.keys(fieldMarkers).forEach(function(id){publicationForgetLayer(fieldMarkers[id].marker,map);});
+ if(typeof fieldMarkers!=='undefined')Object.keys(fieldMarkers).forEach(function(id){publicationForgetLayer(fieldMarkers[id].marker,typeof fieldLayer!=='undefined'&&fieldLayer?fieldLayer:map);delete fieldMarkers[id];});
  document.querySelectorAll('a[data-publication-report],.fieldPop').forEach(function(node){var popup=node.closest('.leaflet-popup');if(popup)popup.remove();else node.remove();});
  reportPublicSpots={};reportSearchIndex=[];reportFixedHistory={};recentSiteSightings={};
  document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
@@ -2983,19 +2991,23 @@ function publicationInvalidate(reason){
  if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
  if(typeof clearContributors==='function')clearContributors();
  if(dynamicPopup&&map&&map.closePopup){map.closePopup(currentPopup);currentPopup._source=null;map._popup=null;}
- if(typeof fieldLayer!=='undefined'&&fieldLayer&&typeof renderFieldMarkers==='function')renderFieldMarkers();
+ if(typeof renderFieldNews==='function')renderFieldNews();
+ if(typeof fieldRender==='function'&&typeof fieldStepName!=='undefined'&&(fieldStepName==='pickThread'||fieldStepName==='status'))fieldRender();
  if(typeof refreshFixedSpotPopups==='function')refreshFixedSpotPopups();
  if(typeof renderRecentReports==='function')renderRecentReports();
  if(typeof refreshTodayPanelIfOpen==='function')refreshTodayPanelIfOpen();
  publicationNotice(true);
 }
 function publicationRenew(head){
+ if(document.hidden||!head||head._publicationGeneration!==publicationState.generation||!publicationSame(head.publication,publicationState.anchor)){
+  if(publicationState.ready)publicationInvalidate('permission context changed');return false;
+ }
  if(!publicationState.ready)return false;
  var started=head&&head._publicationStartedMono,now=performance.now(),remaining=PUBLICATION_MAX_AGE-(now-started);
  if(typeof started!=='number'||!Number.isFinite(started)||started<0||started>now||remaining<=0){publicationInvalidate('permission response expired');return false;}
  publicationState.until=Date.now()+remaining;publicationState.checkedMono=started;
  if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
- publicationExpiryTimer=setTimeout(function(){if(!publicationAllowed())publicationInvalidate('expired');},remaining+1);
+ publicationExpiryTimer=setTimeout(function(){publicationAllowed();},remaining+1);
  if(typeof fieldClockOffset!=='undefined')fieldClockOffset=Date.parse(head.serverTime)-Date.now();
  publicationNotice(false);return true;
 }
@@ -3012,9 +3024,14 @@ function publicationValidate(body,nonce){
  return a;
 }
 function publicationHead(fresh){
- if(publicationHeadPromise){if(!fresh)return publicationHeadPromise;return publicationHeadPromise.catch(function(){return null;}).then(function(){return publicationHead();});}
+ if(document.hidden){publicationAllowed();return Promise.reject(new Error('publication hidden'));}
+ var generation=publicationState.generation;
+ if(publicationHeadPromise){if(!fresh)return publicationHeadPromise;return publicationHeadPromise.catch(function(){return null;}).then(function(){
+  if(document.hidden||generation!==publicationState.generation)throw new Error('publication context changed');return publicationHead();
+ });}
  var nonce=publicationNonce(),started=performance.now();
  var pending=publicationJson('/reports/public-state?nonce='+nonce).then(function(body){
+  if(document.hidden||generation!==publicationState.generation)throw new Error('publication context changed');
   var a=publicationValidate(body,nonce),old=publicationState.anchor;
   if(old&&old.epoch===a.epoch&&BigInt(a.revision)<BigInt(old.revision))throw new Error('publication regressed');
   if(old&&!publicationSame(old,a))publicationInvalidate('authority changed');
@@ -3022,36 +3039,40 @@ function publicationHead(fresh){
   var day=new Date(Date.parse(body.serverTime)+9*3600000).toISOString().slice(0,10);
   if(publicationState.day&&publicationState.day!==day)publicationInvalidate('calendar changed');
   publicationState.day=day;
-  publicationState.anchor=a;body._publicationStartedMono=started;return body;
- }).catch(function(error){publicationInvalidate('authority unknown');throw error;});
+  publicationState.anchor=a;body._publicationStartedMono=started;body._publicationGeneration=publicationState.generation;return body;
+ }).catch(function(error){if(generation===publicationState.generation)publicationInvalidate('authority unknown');throw error;});
  publicationHeadPromise=pending;
  pending.then(function(){if(publicationHeadPromise===pending)publicationHeadPromise=null;},function(){if(publicationHeadPromise===pending)publicationHeadPromise=null;});
  return pending;
 }
 function publicationDataAllowed(body){return publicationAllowed()&&body&&publicationSame(body.publication,publicationState.anchor);}
 function publicationFetch(path){
+ if(document.hidden){publicationAllowed();return Promise.reject(new Error('publication hidden'));}
  // Merge only overlapping reads of the same endpoint in the same local
  // generation. Completed responses/permission decisions are never cached.
  var requests=publicationState.pending||(publicationState.pending={});
  var key=publicationState.generation+'|'+path;
  if(requests[key])return requests[key];
- var generation;
+ var generation=publicationState.generation;
  var pending=publicationHead().then(function(head){
-  generation=publicationState.generation;var a=head.publication,nonce=publicationNonce();
+  if(document.hidden||head._publicationGeneration!==publicationState.generation)throw new Error('publication context changed');
+  generation=head._publicationGeneration;var a=head.publication,nonce=publicationNonce();
   var url=path+(path.indexOf('?')<0?'?':'&')+'contract='+PUBLICATION_CONTRACT+'&nonce='+nonce+'&expectedEpoch='+a.epoch+'&expectedRevision='+a.revision;
   return publicationJson(url).then(function(body){
+   if(document.hidden||generation!==publicationState.generation||!publicationSame(a,publicationState.anchor))throw new Error('publication context changed');
    var b=publicationValidate(body,nonce);if(!publicationSame(a,b))throw new Error('publication snapshot mismatch');
    return publicationHead(true).then(function(after){
-    if(generation!==publicationState.generation||!publicationSame(b,after.publication))throw new Error('publication changed during read');
+    if(document.hidden||generation!==publicationState.generation||after._publicationGeneration!==publicationState.generation||!publicationSame(b,after.publication))throw new Error('publication changed during read');
     publicationState.ready=true;if(!publicationRenew(after))throw new Error('publication expired');body.publicationCheckedAt=after.serverTime;return body;
    });
   });
- }).catch(function(error){if(generation===undefined||generation===publicationState.generation)publicationInvalidate('data unverified');throw error;});
+ }).catch(function(error){if(generation===publicationState.generation)publicationInvalidate('data unverified');throw error;});
  requests[key]=pending;
  function clear(){if(requests[key]===pending)delete requests[key];}
  pending.then(clear,clear);return pending;
 }
 function publicationRefresh(){
+ if(document.hidden){publicationAllowed();return Promise.resolve(false);}
  if(publicationRefreshPromise)return publicationRefreshPromise;
  var generation=publicationState.generation;
  var tasks=[loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()];
@@ -3065,10 +3086,11 @@ function publicationRefresh(){
 }
 function publicationRecheck(){
  if(!reportsConfigured()||document.hidden)return Promise.resolve(false);
- return publicationHead().then(function(head){if(publicationState.ready){if(!publicationRenew(head))return false;if(typeof fieldLayer!=='undefined'&&fieldLayer)renderFieldMarkers();return publicationState.needsRefresh?publicationRefresh():true;}return publicationRefresh();}).catch(function(){return false;});
+ return publicationHead().then(function(head){if(document.hidden||head._publicationGeneration!==publicationState.generation)return false;if(publicationState.ready){if(!publicationRenew(head))return false;if(typeof fieldLayer!=='undefined'&&fieldLayer)renderFieldMarkers();return publicationState.needsRefresh?publicationRefresh():true;}return publicationRefresh();}).catch(function(){return false;});
 }
 function publicationRouteCheck(fn){
- return publicationHead(true).then(function(head){if(!publicationState.ready){publicationRefresh();return false;}if(!publicationRenew(head)||!publicationAllowed())return false;return fn()!==false;}).catch(function(){return false;});
+ if(document.hidden){publicationAllowed();return Promise.resolve(false);}
+ return publicationHead(true).then(function(head){if(document.hidden||head._publicationGeneration!==publicationState.generation)return false;if(!publicationState.ready){publicationRefresh();return false;}if(!publicationRenew(head)||!publicationAllowed())return false;return fn()!==false;}).catch(function(){return false;});
 }
 window.addEventListener('pageshow',function(event){
  // Initial pageshow belongs to this page's already-running bootstrap.
@@ -3082,12 +3104,13 @@ document.addEventListener('click',function(event){
  var link=event.target.closest&&event.target.closest('a[data-publication-report],#fieldNavChoice a');if(!link)return;
  var reportId=link.getAttribute('data-publication-report'),box=link.closest('#fieldNavChoice'),fieldId=box&&box.getAttribute('data-field-id'),isTmap=link.getAttribute('data-publication-app')==='tmap';
  event.preventDefault();event.stopImmediatePropagation();
- var opened=!isTmap?window.open('about:blank','_blank'):null;
- if(opened)try{opened.opener=null;}catch(ignore){}
+ var opened=null;
  publicationRouteCheck(function(){
   var spot=reportPublicSpots[reportId],dest=fieldId?fieldPublicPoint(fieldGuideTarget(fieldId)):spot&&spot.locationHidden!==true?spot:null;
   if(!dest||dest.locationHidden===true){if(opened)opened.close();return false;}
   var url=isTmap?tmapNavigationUrl(dest,fieldId?(fieldFind(fieldId)||{}).species:'출현 지점'):spotKakaoRouteUrl(dest,fieldId?(fieldFind(fieldId)||{}).species:'출현 지점');
+  // Open after the fresh check; a new window must not invalidate its own preflight.
+  if(!isTmap){opened=window.open('about:blank','_blank');if(opened)try{opened.opener=null;}catch(ignore){}}
   if(isTmap){if(openTmapNavigation())location.href=url;}else if(opened)opened.location.href=url;else fieldToast('팝업이 차단됐어요. 브라우저 설정을 확인한 뒤 다시 눌러 주세요.','error');
   fieldNavChoiceClose();return true;
  }).then(function(ok){if(!ok&&opened)opened.close();});
@@ -5005,7 +5028,7 @@ function initReportFeature(){
   loadApprovedReports();
   loadPendingReports();
   loadRecentSiteSightings();
-  setInterval(function(){loadApprovedReports();loadPendingReports();loadRecentSiteSightings();},REPORTS_REFRESH_MS);
+  setInterval(function(){if(!document.hidden){loadApprovedReports();loadPendingReports();loadRecentSiteSightings();}},REPORTS_REFRESH_MS);
 }
 
 /* 승인된 제보만 내려온다. 공개 권한을 확인하지 못하면 동적 위치를 폐쇄한다. */
@@ -5630,6 +5653,7 @@ function fieldFind(id){
   return null;
 }
 function renderFieldMarkers(){
+  if(!publicationAllowed())return;
   var map=fieldMap();
   if(!fieldLayer)fieldLayer=L.layerGroup().addTo(map);
   var seen={};
@@ -5668,6 +5692,7 @@ function fieldLine(text,className){
   return line;
 }
 function fieldPopupNode(update){
+  if(!publicationAllowed())return fieldLine('공개 위치의 최신 상태를 확인할 수 없습니다.');
   var node=document.createElement('div');
   node.className='fieldPop';
   var title=document.createElement('h4');
@@ -5912,7 +5937,7 @@ function fieldNewsButton(label,handler,disabled,title){
 function renderFieldNews(){
   var box=fieldEl('fieldNewsBox');
   if(!box)return;
-  var list=fieldAvailable?fieldNewsList():[];
+  var list=publicationAllowed()&&fieldAvailable?fieldNewsList():[];
   box.textContent='';
   if(!list.length){box.hidden=true;return;}
   box.hidden=false;
@@ -5957,6 +5982,7 @@ function renderFieldNews(){
 }
 /* 마커 보기: 기존 마커와 팝업을 그대로 열고 잠깐 강조한다. */
 function fieldNewsShow(id){
+  if(!publicationAllowed())return;
   var update=fieldFind(id),entry=fieldMarkers[id],map=fieldMap();
   if(!update||!entry){fieldToast('이 현장소식은 지도에서 찾을 수 없어요.','error');return;}
   map.setView([update.lat,update.lon],Math.max(map.getZoom(),FIELD_NEWS_FOCUS_ZOOM));
@@ -5978,6 +6004,7 @@ function fieldNavChoiceGuard(){
 }
 /* GPS 를 쓸 수 없을 때: 자동 전환을 하지 않고 사용자가 고르게 한다. 방향 유도는 현재 위치가 필요하다. */
 function fieldNavChooser(update,message){
+  if(!publicationAllowed())return;
   fieldNavChoiceClose();
   var toast=fieldEl('fieldToast');   // 같은 안내가 선택창에 있으므로 겹치지 않게 토스트는 거둔다
   if(toast)toast.style.display='none';
@@ -6280,7 +6307,7 @@ function fieldStartThreads(status){
 }
 function fieldRenderThreads(body){
   var wanted=fieldDraft.status==='reappeared'?['not_visible']:['visible','reappeared','searching'];
-  var items=fieldUpdates.filter(function(update){return fieldIsActive(update)&&wanted.indexOf(update.status)>=0;});
+  var items=publicationAllowed()?fieldUpdates.filter(function(update){return fieldIsActive(update)&&wanted.indexOf(update.status)>=0;}):[];
   var intro=document.createElement('div');
   intro.className='fieldHelp';
   intro.textContent=items.length?'어떤 소식인가요?':(fieldDraft.status==='reappeared'
@@ -6302,7 +6329,7 @@ function fieldRenderThreads(body){
   body.appendChild(list);
 }
 function fieldRenderStatus(body){
-  var update=fieldFind(fieldDraft.id);
+  var update=publicationAllowed()?fieldFind(fieldDraft.id):null;
   if(!update){body.appendChild(fieldLine('사라졌거나 찾을 수 없는 소식이에요.','fieldHelp'));return;}
   var question=document.createElement('div');
   question.textContent=update.species+' 소식을 ‘'+FIELD_STATUS_LABEL[fieldDraft.status]+'’ 상태로 올릴까요?';
