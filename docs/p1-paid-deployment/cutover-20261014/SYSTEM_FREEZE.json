@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-13T22:27:21.370250+00:00",
+  "command": [
+    "C:/Program Files/nodejs/node.exe",
+    "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+    "d1",
+    "execute",
+    "REPORTS_DB",
+    "--remote",
+    "--command",
+    "UPDATE system_state SET mode='READ_ONLY_MAINTENANCE',generation=generation+1,reason='Approved P1 publication writer-fence cutover',updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=1 AND mode='NORMAL' AND generation=2",
+    "--config",
+    "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\cutover-20261014\\wrangler.migrate.toml"
+  ],
+  "exitCode": 0,
+  "after": [
+    {
+      "mode": "READ_ONLY_MAINTENANCE",
+      "generation": 3
+    }
+  ],
+  "status": "PASS",
+  "systemMetadataTransitionOnly": true,
+  "realUserMutations": 0
+}

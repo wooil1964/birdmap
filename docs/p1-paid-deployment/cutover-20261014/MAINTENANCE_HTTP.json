@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-13T22:26:23.869Z",
+  "scope": "Operating approved read-only GETs plus empty POST rejected before input/Turnstile/persistence; no user payload saved",
+  "checks": [
+    {
+      "id": "capability",
+      "status": 200,
+      "expected": 200,
+      "pass": true,
+      "noStore": true,
+      "errorCode": null
+    },
+    {
+      "id": "closed-write",
+      "status": 503,
+      "expected": 503,
+      "pass": true,
+      "noStore": true,
+      "errorCode": "WRITE_MAINTENANCE"
+    },
+    {
+      "id": "legacy-location-denied",
+      "status": 400,
+      "expected": 400,
+      "pass": true,
+      "noStore": true,
+      "errorCode": "PUBLICATION_REQUEST_INVALID"
+    },
+    {
+      "id": "pre-schema-state",
+      "status": 400,
+      "expected": 503,
+      "pass": false,
+      "noStore": true,
+      "errorCode": "PUBLICATION_REQUEST_INVALID"
+    }
+  ],
+  "pass": 3,
+  "fail": 1
+}

@@ -1,0 +1,39 @@
+{
+  "scope": "Memory-only synthetic; no API; no plaintext file",
+  "checks": [
+    {
+      "id": "normal-memory",
+      "pass": true
+    },
+    {
+      "id": "temp-file",
+      "pass": true
+    },
+    {
+      "id": "temp-directory",
+      "pass": true
+    },
+    {
+      "id": "attach",
+      "pass": true
+    },
+    {
+      "id": "extension",
+      "pass": true
+    },
+    {
+      "id": "auth-redirect",
+      "pass": true
+    },
+    {
+      "id": "download-http",
+      "pass": true
+    },
+    {
+      "id": "download-no-auth",
+      "pass": true
+    }
+  ],
+  "pass": 8,
+  "fail": 0
+}

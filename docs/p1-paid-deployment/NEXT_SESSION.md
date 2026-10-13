@@ -1,3 +1,9 @@
+# 현재 실제 운영 단계 — STATE_D1_VERIFIED.json 우선
+공개/관리 Worker는 보호 maintenance100%이며 운영system_state maintenance/gen3와publication frozen1/rev0이다. 0004b/0005는 실제원자적용·정확guard34/claim0/FK0확인. 동결/후속DPAPIbackups와원본17애플리케이션테이블 모든값 보존검증PASS. PRIVATE평문은Git/로그/파일에없다. 원FINAL_MANIFEST의미배포0문구는역사이며최신STATE가우선한다. main미병합/Pages미배포/normal미활성. 다음은실제보안probe(rollbackonly) 및CI최종증거→maintenance안에서두freeze모두정상전환/검증→보호normal pair→main/Pages/live. CFKV내부정의는기존동결메타와동일,공식export에는CFKV내용이없음을구분한다. 실패STATE·SQL·로그는삭제/덮어쓰지않는다.
+
+# 2026-10-14 07시 이후 승인 응답 반영
+사용자가 Paid 활성화와 전체 private D1 지정 DPAPI 저장/메모리 복구 범위를 명시 승인했다. 이전 승인 대기는 해소됐다. cutover-20261014/STATE.json이 최신 단계이며 initial hardened backup PASS/평문0/실제 운영 활성화0이다. 새 통합 제품d04997a6b2ce3448ae13d95ececca90455dfa931은571과자동JSON4개만다르고 main d6e3f92a912406a120e5dd8cd490196a48698b5d를부모로포함한다. exactCI38476944742확인 후 진행. private DPAPI 파일은 Git 밖에만 있으며 어떠한 내용도 댓글/로그/에이전트에전달하지않는다.
+
 # 재개 지침 — 최종5718402
 제품57184029864139fcf8603f34b39b0089c33ba9c5, PR17동일head/Draft·미병합.
 checkpoint는codex/p1-publication-paid-deploy,worktree C:/Users/김진호/.codex/worktrees/p1-paid-deploy/birdmap. git log -1 --format=%H로전체SHA조회.

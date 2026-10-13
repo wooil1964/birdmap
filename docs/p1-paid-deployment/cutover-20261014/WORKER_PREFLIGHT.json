@@ -1,0 +1,104 @@
+{
+  "at": "2026-10-13T22:21:13.519272+00:00",
+  "action": "read",
+  "standbys": [
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "normal",
+      "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "maintenance",
+      "versionId": "7e398695-aad7-4e58-962c-034513776960",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "normal",
+      "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "maintenance",
+      "versionId": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    }
+  ],
+  "before": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+      "versions": [
+        {
+          "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "965135f2-b286-4487-9b32-1c1af08f9734",
+      "versions": [
+        {
+          "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "realUserMutations": 0,
+  "privatePayloadSaved": false,
+  "systemState": [
+    {
+      "id": 1,
+      "mode": "NORMAL",
+      "generation": 2
+    }
+  ],
+  "after": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+      "versions": [
+        {
+          "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "965135f2-b286-4487-9b32-1c1af08f9734",
+      "versions": [
+        {
+          "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "status": "PASS"
+}

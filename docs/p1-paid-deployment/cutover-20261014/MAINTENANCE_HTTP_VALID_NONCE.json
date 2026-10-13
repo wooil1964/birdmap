@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-13T22:27:04.030Z",
+  "harnessCorrection": "Original UUID nonce violates actual 32hex contract; original 3PASS/1FAIL retained. Same state-unavailable assertion with valid nonce.",
+  "checks": [
+    {
+      "id": "capability",
+      "status": 200,
+      "expected": 200,
+      "pass": true,
+      "noStore": true,
+      "errorCode": null
+    },
+    {
+      "id": "closed-write",
+      "status": 503,
+      "expected": 503,
+      "pass": true,
+      "noStore": true,
+      "errorCode": "WRITE_MAINTENANCE"
+    },
+    {
+      "id": "legacy-location-denied",
+      "status": 400,
+      "expected": 400,
+      "pass": true,
+      "noStore": true,
+      "errorCode": "PUBLICATION_REQUEST_INVALID"
+    },
+    {
+      "id": "pre-schema-state",
+      "status": 503,
+      "expected": 503,
+      "pass": true,
+      "noStore": true,
+      "errorCode": "PUBLICATION_UNAVAILABLE"
+    }
+  ],
+  "pass": 4,
+  "fail": 0,
+  "realUserMutations": 0,
+  "privatePayloadLogged": false
+}

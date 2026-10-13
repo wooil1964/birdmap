@@ -1,0 +1,118 @@
+{
+  "at": "2026-10-13T22:37:47.320810+00:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "table": "audit_log",
+      "beforeRows": 96,
+      "afterRows": 96,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "backfill_runs",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "captcha_redemptions",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "checklists",
+      "beforeRows": 74,
+      "afterRows": 74,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "d1_migrations",
+      "beforeRows": 4,
+      "afterRows": 5,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "field_update_confirmations",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "field_update_events",
+      "beforeRows": 9,
+      "afterRows": 9,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "field_updates",
+      "beforeRows": 3,
+      "afterRows": 3,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "publication_writer_claim",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "raw_submissions",
+      "beforeRows": 74,
+      "afterRows": 74,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "reports",
+      "beforeRows": 74,
+      "afterRows": 74,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "reviews",
+      "beforeRows": 96,
+      "afterRows": 96,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "sightings",
+      "beforeRows": 74,
+      "afterRows": 74,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "sites",
+      "beforeRows": 190,
+      "afterRows": 190,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "system_state",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "taxa",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "originalColumnsAndAllValuesPreserved": true
+    },
+    {
+      "table": "transaction_assertions",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "originalColumnsAndAllValuesPreserved": true
+    }
+  ],
+  "pass": 17,
+  "fail": 0,
+  "onlyExpectedAdditions": [
+    "field_updates.row_revision=1",
+    "public_publication_state initial frozen1/revision0",
+    "one0005 ledger record"
+  ],
+  "allUserRowsAndAllOriginalFieldsPreserved": true,
+  "privatePayloadLogged": false,
+  "platformNote": "Official D1 SQL dump omits _cf_KV; its prior schema definition was verified unchanged separately. No internal data was edited or restored. No backward snapshot restore is authorized."
+}
