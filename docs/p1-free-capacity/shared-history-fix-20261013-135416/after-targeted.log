@@ -1,0 +1,202 @@
+TAP version 13
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO
+ok 1 - overlapping approved consumers preserve fixed history and shared DTO
+  ---
+  duration_ms: 13.2245
+  type: 'test'
+  ...
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO (frozen)
+ok 2 - overlapping approved consumers preserve fixed history and shared DTO (frozen)
+  ---
+  duration_ms: 0.8294
+  type: 'test'
+  ...
+# Subtest: unverified approved response cannot restore fixed history or popup names
+ok 3 - unverified approved response cannot restore fixed history or popup names
+  ---
+  duration_ms: 0.5781
+  type: 'test'
+  ...
+# Subtest: approved withdrawal clears previously linked fixed history
+ok 4 - approved withdrawal clears previously linked fixed history
+  ---
+  duration_ms: 0.6173
+  type: 'test'
+  ...
+# Subtest: 이미 받아 둔 승인 자료로 검색 목록을 만든다
+ok 5 - 이미 받아 둔 승인 자료로 검색 목록을 만든다
+  ---
+  duration_ms: 10.2769
+  type: 'test'
+  ...
+# Subtest: 고정 붉은 점에 연결된 제보도 함께 들어간다
+ok 6 - 고정 붉은 점에 연결된 제보도 함께 들어간다
+  ---
+  duration_ms: 0.8389
+  type: 'test'
+  ...
+# Subtest: 종명으로 검색되고 과거 관찰도 걸린다
+ok 7 - 종명으로 검색되고 과거 관찰도 걸린다
+  ---
+  duration_ms: 1.1614
+  type: 'test'
+  ...
+# Subtest: 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+ok 8 - 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+  ---
+  duration_ms: 0.6956
+  type: 'test'
+  ...
+# Subtest: 검색어가 없으면 아무것도 돌려주지 않는다
+ok 9 - 검색어가 없으면 아무것도 돌려주지 않는다
+  ---
+  duration_ms: 0.6544
+  type: 'test'
+  ...
+# Subtest: 공개 API 가 준 공개 좌표만 목록에 들어간다
+ok 10 - 공개 API 가 준 공개 좌표만 목록에 들어간다
+  ---
+  duration_ms: 0.5835
+  type: 'test'
+  ...
+# Subtest: 승인되지 않은 제보는 애초에 목록에 없다
+ok 11 - 승인되지 않은 제보는 애초에 목록에 없다
+  ---
+  duration_ms: 0.5336
+  type: 'test'
+  ...
+# Subtest: 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+ok 12 - 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+  ---
+  duration_ms: 0.6334
+  type: 'test'
+  ...
+# Subtest: 좌표가 없는 제보는 목록에 넣지 않는다
+ok 13 - 좌표가 없는 제보는 목록에 넣지 않는다
+  ---
+  duration_ms: 0.6852
+  type: 'test'
+  ...
+# Subtest: 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+ok 14 - 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+  ---
+  duration_ms: 0.5094
+  type: 'test'
+  ...
+# Subtest: 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+ok 15 - 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+  ---
+  duration_ms: 0.431
+  type: 'test'
+  ...
+# Subtest: 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+ok 16 - 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+  ---
+  duration_ms: 5.2591
+  type: 'test'
+  ...
+# Subtest: 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+ok 17 - 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+  ---
+  duration_ms: 1.6595
+  type: 'test'
+  ...
+# Subtest: 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+ok 18 - 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+  ---
+  duration_ms: 1.3963
+  type: 'test'
+  ...
+# Subtest: 승인 제보 갱신이 돌면 기억을 버린다
+ok 19 - 승인 제보 갱신이 돌면 기억을 버린다
+  ---
+  duration_ms: 1.2465
+  type: 'test'
+  ...
+# Subtest: 탐조지마다 따로 기억한다
+ok 20 - 탐조지마다 따로 기억한다
+  ---
+  duration_ms: 1.5641
+  type: 'test'
+  ...
+# Subtest: '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+ok 21 - '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+  ---
+  duration_ms: 1.4724
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+ok 22 - 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+  ---
+  duration_ms: 1.5775
+  type: 'test'
+  ...
+# Subtest: 실패해도 null 을 돌려주고 기억에 남기지 않는다
+ok 23 - 실패해도 null 을 돌려주고 기억에 남기지 않는다
+  ---
+  duration_ms: 1.7756
+  type: 'test'
+  ...
+# Subtest: 응답 모양이 어긋나면 실패로 본다
+ok 24 - 응답 모양이 어긋나면 실패로 본다
+  ---
+  duration_ms: 1.5434
+  type: 'test'
+  ...
+# Subtest: 응답이 오지 않으면 시간을 끊는다
+ok 25 - 응답이 오지 않으면 시간을 끊는다
+  ---
+  duration_ms: 1.2635
+  type: 'test'
+  ...
+# Subtest: 이력 칸은 접이식이고 기본은 접힌 상태다
+ok 26 - 이력 칸은 접이식이고 기본은 접힌 상태다
+  ---
+  duration_ms: 0.2877
+  type: 'test'
+  ...
+# Subtest: 제목 옆에 승인된 이력 건수를 적는다
+ok 27 - 제목 옆에 승인된 이력 건수를 적는다
+  ---
+  duration_ms: 0.5209
+  type: 'test'
+  ...
+# Subtest: '더 보기'와 이력 조회 방식은 그대로 둔다
+ok 28 - '더 보기'와 이력 조회 방식은 그대로 둔다
+  ---
+  duration_ms: 0.3407
+  type: 'test'
+  ...
+# Subtest: 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+ok 29 - 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+  ---
+  duration_ms: 0.3776
+  type: 'test'
+  ...
+# Subtest: 이력을 그릴 때 칸을 다시 찾는다
+ok 30 - 이력을 그릴 때 칸을 다시 찾는다
+  ---
+  duration_ms: 0.3047
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+ok 31 - 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+  ---
+  duration_ms: 16.712
+  type: 'test'
+  ...
+# Subtest: 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+ok 32 - 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+  ---
+  duration_ms: 3.6165
+  type: 'test'
+  ...
+1..32
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 128.8799

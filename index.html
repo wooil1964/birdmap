@@ -5018,11 +5018,14 @@ function loadApprovedReports(){
     if(!reportResponseCurrent('approved',seq))return false;   // 더 나중에 보낸 요청의 응답이 이미 반영됨: 옛 응답은 버린다
     // 승인 제보가 새로 내려왔으니 탐조지별 이력 기억도 버린다(새 승인 건이 바로 보이게).
     clearSiteHistoryCache();
-    reportFixedHistory=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
-    // fixedSpots 는 {키:{history:[…]}} 형태라 이력 배열만 꺼내 둔다.
-    Object.keys(reportFixedHistory).forEach(function(key){
-      reportFixedHistory[key]=(reportFixedHistory[key]&&reportFixedHistory[key].history)||[];
+    // 같은 응답을 여러 소비자가 공유하므로 수신 DTO를 제자리 변환하지 않는다.
+    var fixedSpots=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
+    var nextFixedHistory={};
+    Object.keys(fixedSpots).forEach(function(key){
+      var history=fixedSpots[key]&&fixedSpots[key].history;
+      nextFixedHistory[key]=Array.isArray(history)?history.slice():[];
     });
+    reportFixedHistory=nextFixedHistory;
     // 검색 대상과 최근 제보 목록도 같은 자료로 다시 만든다. 따로 받아 오지 않는다.
     buildReportSearchIndex(data.spots);
     recentReportsFailed=false;

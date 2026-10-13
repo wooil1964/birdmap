@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO
+not ok 1 - overlapping approved consumers preserve fixed history and shared DTO
+  ---
+  duration_ms: 27.556
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_approved_shared_history.mjs:34:34'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        2,
+    +   0
+    -   2
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 2
+    1: 2
+  actual:
+    0: 2
+    1: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_approved_shared_history.mjs:39:9)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO (frozen)
+not ok 2 - overlapping approved consumers preserve fixed history and shared DTO (frozen)
+  ---
+  duration_ms: 0.9383
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_approved_shared_history.mjs:34:34'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   false,
+    +   false
+    -   true,
+    -   true
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: true
+    1: true
+  actual:
+    0: false
+    1: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_approved_shared_history.mjs:37:21)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: unverified approved response cannot restore fixed history or popup names
+ok 3 - unverified approved response cannot restore fixed history or popup names
+  ---
+  duration_ms: 0.6039
+  type: 'test'
+  ...
+# Subtest: approved withdrawal clears previously linked fixed history
+ok 4 - approved withdrawal clears previously linked fixed history
+  ---
+  duration_ms: 0.6442
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 2
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 109.8859
