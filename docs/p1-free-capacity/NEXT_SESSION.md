@@ -1,3 +1,21 @@
+# 2026-10-13 공유 고정 이력 표적 수정 완료
+
+이번 사용자 범위는 공유 승인 응답의 고정 지점 이력 손실 수정·표적검증·로컬 체크포인트까지다. 이 단계는 완료했고 여기서 종료한다.
+브랜치 codex/p1-publication-free-capacity. 기준 체크포인트8583890a264d1bc453406d2eb90e1d7b5b38c15f, 수정 제품9b129940ae484f9f9f777eaecc1ce4473e840f05. 이 파일 포함 최종 문서 체크포인트는 git log -1로 확인한다. 원격main 읽기 확인8bf31d3bb6104186a167048eccdb3c44737eb840; main은 수정하지 않았다.
+
+원인: loadApprovedReports의fixedSpots 제자리 변환이 공유DTO를변형해두번째소비자의이력을지웠다. 별도 nextFixedHistory와history.slice()만으로해결했다. 나머지index·서버권한·CAS·철회·terminal·nonce·freshpostflight·5000ms 소스는같다.
+신규 재발방지 테스트: .github/scripts/test_approved_shared_history.mjs의4건(겹친mutable/frozenDTO소비,미적격응답복귀차단,승인철회후이력비움). 수정전2pass/2fail,수정후4pass. 관련승인검색/이력cache포함32pass/0fail/0skip.
+실제publication 공유재현은payload1회/두loader true/이력[1,1]·최종1. 표적Chrome344/375/768/1024/1440px는10pass/0fail/0skip, 권한집중8/8.190개·id190unique·전필드/좌표불변.
+
+새 증거 폴더: docs/p1-free-capacity/shared-history-fix-20261013-135416. 기존 docs/p1-free-capacity/resume-20261013 및임시자료는삭제·덮어쓰지않았다. 원형Chrome검색 helper가대문자토큰을정규화없이전달한5/5실패도새폴더에보존한다. 실제UI와같은normalizeQuery를입력에만적용한별도복사본은같은assertion으로수정전5pass/5fail→수정후10pass였다. 제품검색정책을바꾸거나assertion을완화하지않았다.
+
+수행하지 않은 작업: 전체회귀·원형Chrome241·부하/숨김DOM/고지연·날짜validator·GitHubCI·Paid비용·서브에이전트·원격push·PR·병합·main·Worker·Pages·운영D1. 이전736/170은과거3d 실행이며새9b의전체검증으로재분류하지않는다.
+남은 문제: 기존Chrome2실패·날짜validator·숨김10분조회/약1초DOM잔류와고지연미완료·실제GitHubCI·용량/운영준비. 운영BLOCKED 유지. 이번수정은배포승인이아니다. 별도다음지시없이다른단계로진행하지않는다.
+다음세션은이완료단계를반복하지말고새지시범위만진행한다. 필요한재현명령은해당폴더FINDINGS/JSON/log 참조. 기존미추적자료는새관련폴더만선택stage하며git add .금지.
+
+---
+아래는기존체크포인트의원형인수인계이며새제품의전체실행결과로해석하지않는다.
+
 # 다음 세션 재개 지침
 
 ## 기준과 중단 상태

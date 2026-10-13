@@ -1,0 +1,80 @@
+{
+  "schema": "p1-free-shared-approved-history-regression-v1",
+  "checkedAt": "2026-10-13T04:56:56.056Z",
+  "scope": "Two overlapping actual loadApprovedReports calls with actual publicationFetch; synthetic API fixedSpots DTO; no DOM/Chrome/operating data.",
+  "before": {
+    "sha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+    "indexSha256": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+    "loaderStartLine": 4988,
+    "payloadCalls": 2,
+    "results": [
+      true,
+      true
+    ],
+    "historyCountsAfterEachConsumption": [
+      1,
+      1
+    ],
+    "finalHistoryCount": 1,
+    "publicationAllowed": true,
+    "actions": [
+      {
+        "path": "/reports/public-state",
+        "nonce": "c0e10bd3f50843d3e12a284c1e9942b1"
+      },
+      {
+        "path": "/reports/approved",
+        "nonce": "471e6518cfa50b5ac7ef5769b835c6cb"
+      },
+      {
+        "path": "/reports/approved",
+        "nonce": "0bd3877bedc0966cff784c3c95f9661e"
+      },
+      {
+        "path": "/reports/public-state",
+        "nonce": "64fa6ca439365622b59c3d322804bcc1"
+      },
+      {
+        "path": "/reports/public-state",
+        "nonce": "009a316757a2aa9bc2a3523e368085fc"
+      }
+    ]
+  },
+  "after": {
+    "sha": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+    "indexSha256": "f7839dbd318b808d4155ce135a56c5f172c5f0ea973c4095b42d6da8a5c07b84",
+    "loaderStartLine": 5012,
+    "payloadCalls": 1,
+    "results": [
+      true,
+      true
+    ],
+    "historyCountsAfterEachConsumption": [
+      1,
+      1
+    ],
+    "finalHistoryCount": 1,
+    "publicationAllowed": true,
+    "actions": [
+      {
+        "path": "/reports/public-state",
+        "nonce": "7e539a9a8196676c2a713c72a31432a9"
+      },
+      {
+        "path": "/reports/approved",
+        "nonce": "09c280047a21dac89f0c8555611327a1"
+      },
+      {
+        "path": "/reports/public-state",
+        "nonce": "b9c78b396ca5d506052894ef8f8bb81d"
+      }
+    ]
+  },
+  "expected": "Ordinary fixed-point history remains one entry after both successful consumers, irrespective of request coalescing.",
+  "summary": {
+    "baselinePass": true,
+    "finalPass": true,
+    "regressionReproduced": false
+  },
+  "operatingRequests": 0
+}
