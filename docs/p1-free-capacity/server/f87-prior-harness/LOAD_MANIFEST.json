@@ -1,0 +1,68 @@
+{
+  "at": "2026-10-12T23:58:58.284Z",
+  "scope": "Actual local Miniflare workerd D1; synthetic data; zero production/dashboards/deployments",
+  "sourceSha": "f87b9a8994d8b4a07896714cbdda50d1c3dec238",
+  "runtime": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha",
+    "wrangler": "4.149.0"
+  },
+  "checks": [
+    {
+      "id": "L01-operating DDL clone contains exact22 permission guards and head SQL writes zero",
+      "status": "fail",
+      "message": "Expected values to be strictly equal:\n\nundefined !== 22\n",
+      "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nundefined !== 22\n\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/docs/p1-publication-final-audit/operations/load-only/publication_local_load.mjs:53:112\n    at check (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/docs/p1-publication-final-audit/operations/load-only/publication_local_load.mjs:27:39)\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/docs/p1-publication-final-audit/operations/load-only/publication_local_load.mjs:53:8\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+    }
+  ],
+  "samples": [],
+  "scenarios": [],
+  "input": {
+    "preflightSchemaSha256": "b13a3203da6a2228f342c131d397c8b8eb8636f8a6d71deb7e1d30ffdcd5e486",
+    "selectedDdlCount": 48,
+    "selectedDdlSha256": "55ea2d19434d4e1cd03286939c34f6949a5198892160b4de5b2edfaaecce72bb",
+    "migrationSha256": "7095e20d185a3ed67fc6a848102997917e2c89bc1f17f2a7612f878424f74632",
+    "privateRowsCopied": 0,
+    "syntheticFixture": {
+      "reports": 73,
+      "approved": 60,
+      "rejected": 13,
+      "fieldUpdates": 3,
+      "fieldEvents": 3,
+      "fieldConfirmations": 3
+    }
+  },
+  "catalog": {
+    "objects": 102,
+    "byType": [
+      {
+        "type": "index",
+        "n": 49
+      },
+      {
+        "type": "table",
+        "n": 19
+      },
+      {
+        "type": "trigger",
+        "n": 34
+      }
+    ]
+  },
+  "directSql": {
+    "rowsRead": 103,
+    "rowsWritten": 0,
+    "d1DurationMs": 0,
+    "changedDb": false,
+    "sessionApiAvailable": true
+  },
+  "failure": {
+    "message": "Expected values to be strictly equal:\n\nundefined !== 22\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nundefined !== 22\n\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/docs/p1-publication-final-audit/operations/load-only/publication_local_load.mjs:53:112\n    at check (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/docs/p1-publication-final-audit/operations/load-only/publication_local_load.mjs:27:39)\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/docs/p1-publication-final-audit/operations/load-only/publication_local_load.mjs:53:8\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+  },
+  "summary": {
+    "pass": 0,
+    "fail": 1,
+    "skip": 0
+  }
+}

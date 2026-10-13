@@ -1,0 +1,177 @@
+{
+  "at": "2026-10-13T00:10:38.324Z",
+  "oldMain": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "main": "07680616b62771bc0102c8c886e149345c25347e",
+  "head": "9b4555a0be19250a301fec47e5f8fe76cc1e87a5",
+  "currentOriginMain": "07680616b62771bc0102c8c886e149345c25347e",
+  "mergeBase": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "latestMainCommit": "2026-10-12T22:37:11Z\nchore: update birding weather",
+  "mainChanges": [
+    "tide_health.json",
+    "tide_today.json",
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "productCodeChangesSinceCf5767b": [
+    "index.html",
+    "reports-api/src/field-updates.js",
+    "reports-api/src/publication.js",
+    "reports-api/test/publication-security.test.mjs"
+  ],
+  "mergeTree": "34c89f05b83d275133bf0f3ffbac9bd89e83163c",
+  "mergeTreeExit": 0,
+  "conflicts": 0,
+  "mergedDiffFromHead": [
+    "tide_health.json",
+    "tide_today.json",
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "unchangedIndexSourceSha256": "ec8515032e823317469733a495223c73ca278fa699cdf49284ed6709f3773571",
+  "siteData": {
+    "count": 190,
+    "unique": 190,
+    "sameAllMainFields": true,
+    "sha256": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+    "coordinateSha256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89"
+  },
+  "automaticArtifacts": {
+    "weather_today.json": {
+      "mainBlob": "911a52b7a655d36ad206719b328d1c68ba975575",
+      "mergeBlob": "911a52b7a655d36ad206719b328d1c68ba975575",
+      "sha256": "544a467f12106a34288de8675a86a8565353c4d5f3b335d30e89aa8f4a5402f2",
+      "byteExactMain": true
+    },
+    "weather_week.json": {
+      "mainBlob": "75963d680bddd93f673941c054f08d1daf7a8019",
+      "mergeBlob": "75963d680bddd93f673941c054f08d1daf7a8019",
+      "sha256": "f0e775511fa18acec1a65bb6aa277f54f2832f6e5814db3684d6696a0e3d57fc",
+      "byteExactMain": true
+    },
+    "tide_today.json": {
+      "mainBlob": "48f648f048236bd9845df4ae2f6e5172f3ef2c0d",
+      "mergeBlob": "48f648f048236bd9845df4ae2f6e5172f3ef2c0d",
+      "sha256": "9e9a2d76e47225a9dc00a5e22532521bdcd3f0cf00acf3dbd4f691c6074917a1",
+      "byteExactMain": true
+    },
+    "tide_health.json": {
+      "mainBlob": "8ec6564a042892119fb18c2f40bba2467f45ecf1",
+      "mergeBlob": "8ec6564a042892119fb18c2f40bba2467f45ecf1",
+      "sha256": "deee63043b0362f9035fff4508c84870bd0a0a5c87913109b19d5b1eb7d4bd6f",
+      "byteExactMain": true
+    },
+    "tide_month.json": {
+      "mainBlob": "80cc3867a99b675471c8e8b08cd407334aab2513",
+      "mergeBlob": "80cc3867a99b675471c8e8b08cd407334aab2513",
+      "sha256": "713133c8d968755304d7ea39212c3acfe62ba0dcdb42f7d5b671329d62c53760",
+      "byteExactMain": true
+    },
+    "notices.json": {
+      "mainBlob": "9af45bd1776850a8ea182f9539fe77189294bc9b",
+      "mergeBlob": "9af45bd1776850a8ea182f9539fe77189294bc9b",
+      "sha256": "c3d5ea3bedee5870ca799644e4c702cbc2a391f63a58a8fa491282d57999e19f",
+      "byteExactMain": true
+    }
+  },
+  "weatherMetadata": {
+    "today": {
+      "date": "2026-10-13",
+      "generatedAt": "2026-10-13 07:34 KST",
+      "siteCount": 190
+    },
+    "week": {
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-19",
+      "generatedAt": "2026-10-13 07:34 KST",
+      "siteCount": 190
+    }
+  },
+  "validators": {
+    "todayCurrent": {
+      "exit": 0,
+      "result": "Fresh 07680616 latest-main batch dated2026-10-13 validates on actual current KST date. This is separate from preserved c025/9b old10/12 input rejection and does not relabel that failure as PASS"
+    },
+    "todayOriginalGeneratedClock": {
+      "exit": 0,
+      "validatedDate": "2026-10-13",
+      "result": "Actual unchanged validator with isolated clock frozen to original generatedAt; JSON unchanged"
+    },
+    "weeklyCurrent": {
+      "exit": 0
+    }
+  },
+  "relatedTests": {
+    "exit": 0,
+    "counts": {
+      "tests": 48,
+      "pass": 48,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "receipts": [
+    {
+      "label": "today-current-kst-date",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.tmp\\latest-main-07680616b627-34c89f05b83d",
+      "started": "2026-10-13T00:10:37.158Z",
+      "ended": "2026-10-13T00:10:37.469Z",
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "label": "week-current-clock",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather_week.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.tmp\\latest-main-07680616b627-34c89f05b83d",
+      "started": "2026-10-13T00:10:37.469Z",
+      "ended": "2026-10-13T00:10:37.802Z",
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "label": "today-original-generated-clock",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "-c",
+        "import sys,json\nfrom pathlib import Path\nfrom datetime import datetime\nsys.path.insert(0,str(Path('.github/scripts').resolve()))\nimport validate_weather as v\ndata=json.loads(Path('weather_today.json').read_text(encoding='utf8'))\nfixed=datetime.strptime(data['generatedAt'][:-4],'%Y-%m-%d %H:%M').replace(tzinfo=v.KST)\nclass Frozen(datetime):\n @classmethod\n def now(cls,tz=None): return fixed.astimezone(tz) if tz else fixed.replace(tzinfo=None)\nv.datetime=Frozen\nv.validate()\nprint('CLOCK_FIXED_TO_ORIGINAL_GENERATED_AT='+data['generatedAt'])\n"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.tmp\\latest-main-07680616b627-34c89f05b83d",
+      "started": "2026-10-13T00:10:37.802Z",
+      "ended": "2026-10-13T00:10:37.964Z",
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "label": "midnight-and-autorefresh-related",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "--test-reporter=tap",
+        ".github/scripts/test_today_weather_midnight.mjs",
+        ".github/scripts/test_data_autorefresh.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.tmp\\latest-main-07680616b627-34c89f05b83d",
+      "started": "2026-10-13T00:10:37.965Z",
+      "ended": "2026-10-13T00:10:38.323Z",
+      "exit": 0,
+      "signal": null
+    }
+  ],
+  "scope": {
+    "recommendation": "Fixed9b/main58 signature190/176 verified separately; latest-main merged source byte equals9b. No live176-candidate claim.",
+    "newMainFeatures": "No product-source changes; automatic weather_today/week and tide_today/health changed against main58",
+    "server": "Every server source/config blob from PRhead preserved in merged tree",
+    "tide": "tide_today/health updated in main; merged bytes equal latestmain without changing product sources",
+    "worktreeOrMainRefChanged": false,
+    "productionWrites": 0,
+    "deployments": 0,
+    "gitObjectWrites": "Temporary merge-tree creates tree objects only; no merge commit, index or branch update",
+    "deploymentDecision": "Read-only latest-main compatibility evidence only. Free-capacity BLOCKED remains; no authorization change."
+  }
+}
