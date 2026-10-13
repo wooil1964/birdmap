@@ -1,0 +1,665 @@
+{
+  "at": "2026-10-13T14:56:47.501002+00:00",
+  "mode": "Readonly metadata + SELECT-only D1 REST queries; no user row/coordinate serialization",
+  "account": "1d697c22a32447b386b9fac6a3538597",
+  "checks": {
+    "subscriptions": {
+      "status": 403,
+      "success": false
+    },
+    "workersAccountSettings": {
+      "status": 200,
+      "success": true
+    },
+    "birdmap-reports.deployments": {
+      "status": 200,
+      "success": true
+    },
+    "birdmap-reports.settings": {
+      "status": 200,
+      "success": true
+    },
+    "birdmap-reports.subdomain": {
+      "status": 200,
+      "success": true
+    },
+    "birdmap-reports-admin.deployments": {
+      "status": 200,
+      "success": true
+    },
+    "birdmap-reports-admin.settings": {
+      "status": 200,
+      "success": true
+    },
+    "birdmap-reports-admin.subdomain": {
+      "status": 200,
+      "success": true
+    },
+    "schema": {
+      "status": 200,
+      "success": true
+    },
+    "counts": {
+      "status": 200,
+      "success": true
+    },
+    "ledger": {
+      "status": 200,
+      "success": true
+    }
+  },
+  "subscriptions": null,
+  "workersAccountSettings": {
+    "default_usage_model": "standard",
+    "green_compute": false
+  },
+  "workers": {
+    "birdmap-reports": {
+      "deployments": {
+        "deployments": [
+          {
+            "id": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-08T05:19:40.077235Z"
+          },
+          {
+            "id": "beb2b759-bf8b-4545-baf3-af1aa3d8badb",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "16dae92a-4bd7-4fda-ba90-d5075604d4db",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-06T14:58:25.709195Z"
+          },
+          {
+            "id": "3da74402-7355-4fa4-9af9-15f431aae302",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "4bc470a4-7047-45a8-8e7c-10c9a9b055a3",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-06T08:20:06.403846Z"
+          },
+          {
+            "id": "f04d0a02-1b9b-4ee9-927d-c0e379f13134",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "ba4c0f25-82a1-4acb-85f4-cb3b692a615b",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-10-01T11:58:38.086971Z"
+          },
+          {
+            "id": "3f18e187-8425-47a1-bda7-a91765f8820a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "8936943d-e140-4347-ab3d-9e1f1416682e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-28T00:13:54.116879Z"
+          },
+          {
+            "id": "892b6c21-c47d-4637-a3e5-495239b35c14",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "f1ab44ea-8440-43bf-8a60-fc363a468a10",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:26:45.706623Z"
+          },
+          {
+            "id": "84f78037-01fb-4be5-bedf-0737298a922d",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "897e5325-bc14-4518-aa9c-796a3427ba80",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:20:50.466528Z"
+          },
+          {
+            "id": "e19b9be0-61d8-4cfe-8e38-77bed04fb730",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "a7a71f32-2dc0-4035-bf03-ea774087d247",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T23:40:46.422198Z"
+          },
+          {
+            "id": "cb2618ff-beb8-47ae-b306-404faf6b854a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "9cea851c-5b4d-4295-83b0-e900c0cddc0e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:34:45.725833Z"
+          },
+          {
+            "id": "d3e6c4ac-9bf4-4cd3-bfbb-f02cd6a6224a",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "254cc69f-ec47-4f21-bbff-7488bca755cb",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:32:08.099126Z"
+          }
+        ]
+      },
+      "settings": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard",
+        "limits": null,
+        "bindings": [
+          {
+            "type": "plain_text",
+            "name": "ADMIN_PAGE_URL",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "ENVIRONMENT",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "NOTIFY_EMAIL_FROM",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "NOTIFY_EMAIL_TO",
+            "database_id": null
+          },
+          {
+            "type": "secret_text",
+            "name": "REPORT_IP_SALT",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_ACTIVATION_ID",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_CONFIRMATION_REQUIRED",
+            "database_id": null
+          },
+          {
+            "type": "d1",
+            "name": "REPORTS_DB",
+            "database_id": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_DUAL_WRITE_ENABLED",
+            "database_id": null
+          },
+          {
+            "type": "secret_text",
+            "name": "REPORTS_GATE_TOKEN",
+            "database_id": null
+          },
+          {
+            "type": "service",
+            "name": "REPORTS_PEER",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_PEER_RELEASE_ID",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_PENDING_PUBLIC",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_PUBLICATION_REQUIRED",
+            "database_id": null,
+            "value": "true"
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_RELEASE_ID",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_REMOTE_VERIFIED",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_SCHEMA_VERSION",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_WRITE_MODE",
+            "database_id": null,
+            "value": "READ_ONLY_MAINTENANCE"
+          },
+          {
+            "type": "secret_text",
+            "name": "RESEND_API_KEY",
+            "database_id": null
+          },
+          {
+            "type": "secret_text",
+            "name": "TURNSTILE_SECRET_KEY",
+            "database_id": null
+          }
+        ]
+      },
+      "subdomain": {
+        "enabled": true,
+        "previews_enabled": false
+      }
+    },
+    "birdmap-reports-admin": {
+      "deployments": {
+        "deployments": [
+          {
+            "id": "965135f2-b286-4487-9b32-1c1af08f9734",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-28T00:14:03.141111Z"
+          },
+          {
+            "id": "6c83c475-82d8-4064-bba3-cd54a8f0ccf6",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "f2d69899-7a73-403f-ac06-34aa3261d42a",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T14:52:47.395337Z"
+          },
+          {
+            "id": "bdefefb4-08cf-4220-a3cd-508a4711ceae",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "72031300-6927-421d-beff-7adb0de1849f",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T14:07:21.760026Z"
+          },
+          {
+            "id": "4f714460-8b65-4fb7-96e8-0dcb51f90805",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "1f38bb3b-9dfe-471b-8e87-98ea2b01cc6e",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-27T13:27:09.973556Z"
+          },
+          {
+            "id": "bdcd2a80-26e6-4cd6-8b32-1039adf6e3c5",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "d800f33a-f2b7-4f4f-8825-1a9a0a7aaadf",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:34:49.509612Z"
+          },
+          {
+            "id": "7d820914-dd08-46af-96e6-b539b16281cd",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "secret"
+            },
+            "versions": [
+              {
+                "version_id": "1e069df3-b0f5-48c5-b734-0200a2f0ac1c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:32:09.440364Z"
+          },
+          {
+            "id": "7c2efe9c-e490-49f5-aacc-8af60d9f46bc",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "fd715c35-394f-4c61-9dec-9dd586868798",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-26T22:31:58.294025Z"
+          },
+          {
+            "id": "a15e233d-d1f4-4ed9-b311-ffacf2e917c4",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "1eebcf4e-e7e0-4b94-bdf2-65c44962c21a",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T09:44:46.715812Z"
+          },
+          {
+            "id": "eb5e0e3d-fcaa-4520-ba92-4ddecb18cd94",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "6c47b45d-14ce-46b7-96b9-103a36648383",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T07:52:04.384648Z"
+          },
+          {
+            "id": "6f7563f1-f888-4430-b3b1-aebbcd0aa8d8",
+            "source": "wrangler",
+            "strategy": "percentage",
+            "author_email": "wooil2000@gmail.com",
+            "annotations": {
+              "workers/triggered_by": "deployment"
+            },
+            "versions": [
+              {
+                "version_id": "6d416277-3ae3-4a41-a4b3-5d2cde37db2c",
+                "percentage": 100
+              }
+            ],
+            "created_on": "2026-09-22T07:29:48.749586Z"
+          }
+        ]
+      },
+      "settings": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard",
+        "limits": null,
+        "bindings": [
+          {
+            "type": "plain_text",
+            "name": "ACCESS_AUD",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "ACCESS_TEAM_DOMAIN",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "ADMIN_EMAILS",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "ENVIRONMENT",
+            "database_id": null
+          },
+          {
+            "type": "d1",
+            "name": "EVENTS_DB",
+            "database_id": "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_ACTIVATION_ID",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_CONFIRMATION_REQUIRED",
+            "database_id": null
+          },
+          {
+            "type": "d1",
+            "name": "REPORTS_DB",
+            "database_id": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_DUAL_WRITE_ENABLED",
+            "database_id": null
+          },
+          {
+            "type": "secret_text",
+            "name": "REPORTS_GATE_TOKEN",
+            "database_id": null
+          },
+          {
+            "type": "service",
+            "name": "REPORTS_PEER",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_PEER_RELEASE_ID",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_PENDING_PUBLIC",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_PUBLICATION_REQUIRED",
+            "database_id": null,
+            "value": "true"
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_RELEASE_ID",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_REMOTE_VERIFIED",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_SCHEMA_VERSION",
+            "database_id": null
+          },
+          {
+            "type": "plain_text",
+            "name": "REPORTS_WRITE_MODE",
+            "database_id": null,
+            "value": "READ_ONLY_MAINTENANCE"
+          }
+        ]
+      },
+      "subdomain": {
+        "enabled": true,
+        "previews_enabled": false
+      }
+    }
+  },
+  "database": {
+    "id": "b48201cc-0abd-4a64-bb61-9dd2a7813d21",
+    "objects": 50,
+    "schemaSha256": "380c610bcfcffa38d9e21856b9ad9639762209be7cca60c7e3751c062c69f5c7",
+    "hasPublicationState": false,
+    "tables": [
+      "_cf_KV",
+      "audit_log",
+      "backfill_runs",
+      "captcha_redemptions",
+      "checklists",
+      "d1_migrations",
+      "field_update_confirmations",
+      "field_update_events",
+      "field_updates",
+      "raw_submissions",
+      "reports",
+      "reviews",
+      "sightings",
+      "sites",
+      "system_state",
+      "taxa",
+      "transaction_assertions"
+    ],
+    "triggers": [
+      "audit_log_no_update",
+      "checklists_raw_source",
+      "checklists_source_immutable",
+      "raw_submissions_no_update",
+      "reports_freeze_insert",
+      "reports_freeze_update",
+      "reviews_no_update",
+      "sightings_source_immutable",
+      "sites_id_immutable",
+      "system_state_permanent",
+      "system_state_transition",
+      "taxa_no_update"
+    ],
+    "counts": [
+      {
+        "reports": 74,
+        "field_updates": 3
+      }
+    ],
+    "ledger": [
+      {
+        "id": 1,
+        "name": "0001_core.sql"
+      },
+      {
+        "id": 2,
+        "name": "0002_system_state.sql"
+      },
+      {
+        "id": 3,
+        "name": "0003_captcha_redemptions.sql"
+      }
+    ]
+  }
+}

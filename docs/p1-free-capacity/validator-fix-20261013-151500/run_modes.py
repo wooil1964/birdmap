@@ -47,10 +47,10 @@ for mode, validator, file, freeze, expected in [
                  "validationPassed":error is None,"error":error,"expectationMet":met})
 
 # Different immutable input, not the archived batch with its date rewritten.
-commit=subprocess.check_output(["git","rev-parse","07680616"],cwd=root,text=True).strip()
+commit=subprocess.check_output(["git","rev-parse",sys.argv[3] if len(sys.argv)>3 else "origin/main"],cwd=root,text=True).strip()
 raw=subprocess.check_output(["git","show",commit+":weather_today.json"],cwd=root)
 current=json.loads(raw)
-path=out/"actual-main-20261013-today.json";path.write_bytes(raw)
+path=out/"actual-main-current-today.json";path.write_bytes(raw)
 buf=io.StringIO(); error=None
 try:
     with contextlib.redirect_stdout(buf): tv.validate(path)

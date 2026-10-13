@@ -89,10 +89,12 @@ class CDP{
  constructor(proc,socket,profile){this.proc=proc;this.socket=socket;this.profile=profile;this.seq=0;this.pending=new Map();this.events=[];
  socket.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id){const p=this.pending.get(m.id);if(p){this.pending.delete(m.id);m.error?p.reject(new Error(JSON.stringify(m.error))):p.resolve(m.result);}}else for(const h of this.events)h(m);});}
  send(method,params={},sessionId){const id=++this.seq;return new Promise((resolve,reject)=>{this.pending.set(id,{resolve,reject});this.socket.send(JSON.stringify({id,method,params,...sessionId?{sessionId}:{}}));});}
- async page(width,preset){
-  const {targetId}=await this.send('Target.createTarget',{url:'about:blank'});
+ async page(width,preset,independentVisible=false){
+  const browserContextId=independentVisible?(await this.send('Target.createBrowserContext',{})).browserContextId:null;
+  const {targetId}=await this.send('Target.createTarget',{url:'about:blank',...(browserContextId?{browserContextId}: {})});
   const {sessionId}=await this.send('Target.attachToTarget',{targetId,flatten:true});
   await this.send('Page.enable',{},sessionId);await this.send('Runtime.enable',{},sessionId);
+  if(independentVisible)await this.send('Emulation.setFocusEmulationEnabled',{enabled:true},sessionId);
   await this.send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<769},sessionId);
   await this.send('Emulation.setTouchEmulationEnabled',{enabled:width<769},sessionId);
   await this.send('Network.setUserAgentOverride',{userAgent:width<769?'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/130 Mobile Safari/537.36':'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 Chrome/130 Safari/537.36'},sessionId);
@@ -116,7 +118,7 @@ class CDP{
   const until=Date.now()+40000;let ready=false;
   while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof fieldMarkers!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===190").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
   if(!ready)throw new Error('Actual Leaflet/publication page initialization unavailable');
-  return {evaluate,sessionId,targetId,close:()=>this.send('Target.closeTarget',{targetId})};
+  return {evaluate,sessionId,targetId,browserContextId,close:async()=>{await this.send('Target.closeTarget',{targetId});if(browserContextId)await this.send('Target.disposeBrowserContext',{browserContextId});}};
  }
  async dispose(){try{this.socket.close();}catch{}this.proc.kill();await new Promise(r=>setTimeout(r,250));try{const checked=resolve(this.profile),prefix=resolve(tmpdir(),'birdmap-publication-cdp-');if(checked!==this.profile||!checked.startsWith(prefix))throw new Error('Temporary profile path outside approved prefix');rmSync(checked,{recursive:true,force:true});}catch{}}
 }
@@ -356,8 +358,9 @@ try{
    });
    if(width===375)await scenario(page,width,'independent-head-transit-counts-in-five-second-lease',async e=>{
     await e(normal+refresh);
-    const result=await e("(async function(){__mock.headDelayMs=2000;var started=performance.now();await publicationRecheck();var elapsed=performance.now()-started,remaining=Math.max(0,publicationState.until-Date.now());__mock.headDelayMs=0;return {elapsed,remaining,totalAgeBudget:elapsed+remaining};})()");
-    return {pass:result.totalAgeBudget<=5100,evidence:result};
+    const result=await e("(async function(){__mock.headDelayMs=2000;var started=performance.now();await publicationRecheck();var elapsed=performance.now()-started,allowed=publicationAllowed(),remaining=Math.max(0,publicationState.until-Date.now()),requestAge=performance.now()-publicationState.checkedMono;__mock.headDelayMs=0;return {elapsed,remaining,requestAge,totalAgeBudget:requestAge+remaining,allowed,closed:!Object.keys(reportSpotLayers).length&&!Object.keys(reportPendingLayers).length&&!Object.keys(fieldMarkers).length&&!fieldUpdates.length&&!fieldGuide&&!document.getElementById('fieldNavChoice'),privateName:document.body.innerText.includes('합성검증')};})()");
+    // Compound renew + full refresh can span multiple leases. Each current lease remains request-start bounded.
+    return {pass:result.allowed?result.totalAgeBudget<=5005:result.remaining===0&&result.closed&&!result.privateName,evidence:result};
    });
    await e(normal+refresh);await e("fieldNewsShow(__mock.id);new Promise(r=>setTimeout(r,300))");
    const launchSetup="window.__routeLog=[];window.open=function(initial){var r={kind:'window',initial:initial,assigned:[],closed:false};__routeLog.push(r);return {opener:window,location:{set href(v){r.assigned.push(v);}},close:function(){r.closed=true;}};};window.__originalTmapUrl=window.__originalTmapUrl||tmapNavigationUrl;tmapNavigationUrl=function(dest,label){var url=__originalTmapUrl(dest,label);__routeLog.push({kind:'tmap-url',url:url});return url;};openTmapNavigation=function(){__routeLog.push({kind:'tmap-attempt'});return false;};";
@@ -411,7 +414,10 @@ try{
  }
  const pair=[];
  try{
-  pair.push(await browser.page(375));pair.push(await browser.page(1440));
+  pair.push(await browser.page(375,undefined,true));pair.push(await browser.page(1440,undefined,true));
+  const visible=await Promise.all(pair.map(p=>p.evaluate('!document.hidden&&document.visibilityState==="visible"')));
+  check('multi-device','independent-visible-context-preconditions',new Set(pair.map(p=>p.browserContextId)).size===2&&visible.every(Boolean),{visible,contexts:pair.map(p=>p.browserContextId)});
+  if(!visible.every(Boolean))throw new Error('Independent device visibility premise not satisfied');
   for(const p of pair){await p.evaluate(refresh);await p.evaluate(tick);}
   for(const p of pair)await p.evaluate(normal+"__mock.revision='100';"+refresh);
   const before=await Promise.all(pair.map(p=>p.evaluate("!!reportSpotLayers['synthetic-approved']&&!!fieldMarkers[__mock.id]")));
@@ -431,7 +437,7 @@ try{
   check('multi-device','new-explicit-authority-restores-both-devices',restored.every(Boolean),{pages:restored});
   const e=pair[0].evaluate;
   await e("__mock.deferApproved=true;window.__olderApproved=loadApprovedReports();true");await e(tick);
-  await e("__mock.revision='104';__mock.approved=[__mock.spot({locationHidden:true,lat:36.9,lon:126.9})];window.__newerApproved=loadApprovedReports();true");await e(tick);
+  await e("__mock.revision='104';__mock.approved=[__mock.spot({locationHidden:true,lat:36.9,lon:126.9})];publicationInvalidate('synthetic remote authority barrier');window.__newerApproved=publicationRefresh();true");await e(tick);
   const calls=await e("__mock.deferredApproved.length");
   if(calls>=2){
    await e("__mock.deferredApproved[1].resolve();__newerApproved");

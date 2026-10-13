@@ -1,0 +1,5 @@
+from pathlib import Path
+p=Path('.github/scripts/package_protected_pages.mjs');s=p.read_text(encoding='utf-8');s=s.replace("import fs from'node:fs';", "import vm from'node:vm';import fs from'node:fs';")
+old="'function fieldGuideOnPosition(position,owner,verified)'";new=old+",'function publicationForgetLayer(layer,map)','performance.now()-publicationState.checkedMono<PUBLICATION_MAX_AGE',\"publicationInvalidate(document.hidden?'hidden':'expired')\",\"querySelectorAll('[data-publication-entry]')\"";assert old in s;s=s.replace(old,new)
+needle="const selected=tracked.filter";s=s.replace(needle,"const ctx=vm.createContext({});vm.runInContext(html.match(/var siteData=([^\\n]+);/)[0]+'\\n'+html.match(/siteData=siteData\\.concat\\([\\s\\S]*?\\);/)[0],ctx);const sites=JSON.parse(JSON.stringify(ctx.siteData));assert.equal(sites.length,190);assert.equal(new Set(sites.map(x=>x.id)).size,190);const coordinateHash=createHash('sha256').update(JSON.stringify(sites.map(x=>[x.id,x.lat,x.lon]))).digest('hex');\n"+needle)
+s=s.replace('siteDataCount:190,role:', 'siteDataCount:sites.length,coordinatesSha256:coordinateHash,role:');p.write_text(s,encoding='utf-8')
