@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "valid-two-gate-atomic",
+      "pass": true
+    },
+    {
+      "id": "wrong-epoch-complete-rollback",
+      "pass": true
+    }
+  ],
+  "scope": "Private encrypted clone memory-only; no operating thaw yet",
+  "pairedMaintenanceRequired": true,
+  "onlyMetadataTransitions": true
+}

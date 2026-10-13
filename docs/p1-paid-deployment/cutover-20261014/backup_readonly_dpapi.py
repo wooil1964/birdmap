@@ -1,3 +1,4 @@
+import subprocess
 import argparse,base64,ctypes,datetime,hashlib,json,pathlib,sqlite3,sys,time,tomllib,re,os,urllib.parse,urllib.request,urllib.error
 from ctypes import wintypes
 ACCOUNT="1d697c22a32447b386b9fac6a3538597"
@@ -32,7 +33,15 @@ class HttpsOnlyRedirect(urllib.request.HTTPRedirectHandler):
 def api(path,body=None):
  token=tomllib.loads(pathlib.Path("C:/Users/김진호/AppData/Roaming/xdg.config/.wrangler/config/default.toml").read_text(encoding="utf-8"))["oauth_token"]
  req=urllib.request.Request("https://api.cloudflare.com/client/v4/accounts/"+ACCOUNT+path,data=None if body is None else json.dumps(body).encode(),headers={"Authorization":"Bearer "+token,"Content-Type":"application/json"})
- with urllib.request.build_opener(NoAuthRedirect()).open(req,timeout=45) as response:result=json.load(response)
+ try:
+  with urllib.request.build_opener(NoAuthRedirect()).open(req,timeout=45) as response:result=json.load(response)
+ except urllib.error.HTTPError as error:
+  if error.code!=401:raise
+  refreshed=subprocess.run(["C:/Program Files/nodejs/node.exe","C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js","whoami"],capture_output=True,timeout=45)
+  if refreshed.returncode:raise RuntimeError("OFFICIAL_OAUTH_REFRESH_FAILED")
+  token=tomllib.loads(pathlib.Path("C:/Users/김진호/AppData/Roaming/xdg.config/.wrangler/config/default.toml").read_text(encoding="utf-8"))["oauth_token"]
+  req.add_header("Authorization","Bearer "+token)
+  with urllib.request.build_opener(NoAuthRedirect()).open(req,timeout=45) as response:result=json.load(response)
  if not result.get("success"):raise RuntimeError("CF_API_FAILURE")
  return result["result"]
 def query(sql):

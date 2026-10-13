@@ -1,0 +1,118 @@
+{
+  "at": "2026-10-13T23:29:31.135939+00:00",
+  "action": "normal",
+  "standbys": [
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "normal",
+      "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "maintenance",
+      "versionId": "7e398695-aad7-4e58-962c-034513776960",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "normal",
+      "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "maintenance",
+      "versionId": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    }
+  ],
+  "before": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "200ae9b4-548b-4744-9021-1c638e8ce5b9",
+      "versions": [
+        {
+          "version_id": "7e398695-aad7-4e58-962c-034513776960",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "2ec8a46a-c1a5-4c75-95c5-3b044bc0d298",
+      "versions": [
+        {
+          "version_id": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "realUserMutations": 0,
+  "privatePayloadSaved": false,
+  "systemState": [
+    {
+      "id": 1,
+      "mode": "NORMAL",
+      "generation": 4
+    }
+  ],
+  "deployed": [
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "9470f6a3-db3d-4a95-bf8c-562a59d4e064",
+      "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+      "percentage": 100
+    },
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "798600be-ca51-48e0-9fe7-ed6df0aa1383",
+      "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+      "percentage": 100
+    }
+  ],
+  "after": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "798600be-ca51-48e0-9fe7-ed6df0aa1383",
+      "versions": [
+        {
+          "version_id": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "9470f6a3-db3d-4a95-bf8c-562a59d4e064",
+      "versions": [
+        {
+          "version_id": "a7723404-a3c2-4739-91ff-44049e1302cb",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "status": "PASS"
+}

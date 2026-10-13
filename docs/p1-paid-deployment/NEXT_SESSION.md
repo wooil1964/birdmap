@@ -1,3 +1,9 @@
+# 최신 운영 단계 — NORMAL_ACTIVATED.json / THAW_VERIFIED.json 우선
+2026-10-14 KST: 공개 normal f1f24698-8388-4f36-ae31-38f2dd8e9446, 관리자 normal a7723404-a3c2-4739-91ff-44049e1302cb 각각 100% 실제 활성화. system NORMAL/gen4, publication revision1/frozen0, epoch 미초기화, claims0/FK0. 사용자 데이터 DML0. 실제 additive migration 0004b/0005/0005c 및 metadata activation이 적용됨. 아래 옛 기록의 미배포·0운영쓰기·백업승인 대기는 역사적 상태이며 이 최신 단계가 우선한다.
+제품 ddc3bc3fb20eec33c47328ac2eb00154865eb377. 정확 CI38481187572/job115583898586 실제20단계 성공: 자동812/0/1,Chrome242/0/0,native13/0,CAS10/0.190/176fixed ON/OFF signature 동일. 검증된 protected Pages388assets artifact11856944380/ZIP707cf4e6… 확보. 아직 main 병합/Pages반영 완료 아님. 다음은 live API readiness/privacy → 최신 Git 보호규칙/PRhead 검증 → 정확통합소스 main 병합 → Pages 운영 반영/hash → 5폭 live Chrome/기상갱신 검증. 완료 테스트는 소스 변화가 없으면 반복하지 않는다.
+전체 private D1 승인된 CurrentUser DPAPI 암호화 백업/메모리복구 PASS, POST_PROBE_INTEGRITY 원본 사용자값 보존 PASS. private원문은 파일·Git·로그·댓글에 없으며 _cf_KV 플랫폼 내부 내용은 공식export 범위 밖임을 구분한다. 실제 운영 rollback-only CAS/삭제terminal synthetic probe은 예상 실패 후 전체원복/실제 사용자변경0. 보호 롤백은 public maintenance7e398695/admin maintenance11e97856만, 과거 보호기능없는 버전/DB전체복원 금지. 배포 판단은 main/Pages/live 모두 완료 전 DEPLOYED 아님. 이미 사용자 운영승인 있음, 반복 승인 질문 불필요.
+
+# 이하 이전 체크포인트 기록 (최신 단계와 충돌하면 최신 우선)
 # 현재 실제 운영 단계 — STATE_D1_VERIFIED.json 우선
 공개/관리 Worker는 보호 maintenance100%이며 운영system_state maintenance/gen3와publication frozen1/rev0이다. 0004b/0005는 실제원자적용·정확guard34/claim0/FK0확인. 동결/후속DPAPIbackups와원본17애플리케이션테이블 모든값 보존검증PASS. PRIVATE평문은Git/로그/파일에없다. 원FINAL_MANIFEST의미배포0문구는역사이며최신STATE가우선한다. main미병합/Pages미배포/normal미활성. 다음은실제보안probe(rollbackonly) 및CI최종증거→maintenance안에서두freeze모두정상전환/검증→보호normal pair→main/Pages/live. CFKV내부정의는기존동결메타와동일,공식export에는CFKV내용이없음을구분한다. 실패STATE·SQL·로그는삭제/덮어쓰지않는다.
 
