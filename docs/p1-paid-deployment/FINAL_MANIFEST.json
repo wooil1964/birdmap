@@ -286,5 +286,35 @@
   ],
   "evidenceRoot": "docs/p1-paid-deployment/cutover-20261014",
   "historicalManifest": "FINAL_MANIFEST_5718402_PRE_CUTOVER_20261014.json",
-  "githubFinalComments": "PENDING final checkpoint publication/readback"
+  "githubFinalComments": {
+    "status": "PASS",
+    "bodyExactReadback": true,
+    "prBodyExact": true,
+    "comments": [
+      {
+        "thread": 17,
+        "id": 6157691802,
+        "found": true,
+        "bodyExact": true,
+        "url": "https://github.com/wooil1964/birdmap/pull/17#issuecomment-6157691802"
+      },
+      {
+        "thread": 9,
+        "id": 6157692413,
+        "found": true,
+        "bodyExact": true,
+        "url": "https://github.com/wooil1964/birdmap/issues/9#issuecomment-6157692413"
+      }
+    ],
+    "commentSHA256": "f72326ef698f40349ce5e29544abb8a79c46f33ff584d301c5f6d5010b6c243c",
+    "deploymentEvidenceCheckpoint": "4419fd531a9e38bd1957d81a58606f209f6f0041"
+  },
+  "independentFinalConsistencyReview": {
+    "scope": "Independent read-only consistency review; no tests rerun or operations",
+    "reviewer": "ws_capacity_contract",
+    "pass": 18,
+    "fail": 0,
+    "newSecurityBlockers": 0,
+    "reviewedManifestSHA256": "9aa4e3b9fbe8d3137362d7e6845607aa4f9dd6fcaf968bcb4698254864725d1c"
+  }
 }
