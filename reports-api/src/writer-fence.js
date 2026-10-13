@@ -15,6 +15,12 @@ const readonly=sql=>{
   (/^PRAGMA\s+(?:table_info|foreign_key_check|index_list|index_info)\b/i.test(text)&&!text.includes('='))||
   (/^WITH\b/i.test(text)&&! /\b(?:INSERT|UPDATE|DELETE|REPLACE)\b/i.test(text));
 };
+// Only fixed, known canonical-only mutations may avoid the publication claim.
+// Their existing operator authentication and in-batch freeze/CAS guards still apply.
+// Unknown/native statements require a claim; DB triggers stop every protected write.
+const canonicalOnly=sql=>typeof sql==='string'&&
+ /^(?:INSERT\s+(?:OR\s+\w+\s+)?INTO|UPDATE|DELETE\s+FROM)\s+(?:sites|taxa|raw_submissions|checklists|sightings|reviews|audit_log|backfill_runs|transaction_assertions|captcha_redemptions)\b/i.test(clean(sql))&&
+ !/\b(?:INSERT\s+(?:OR\s+\w+\s+)?INTO|UPDATE|DELETE\s+FROM)\s+(?:reports|field_updates|field_update_events|field_update_confirmations)\b/i.test(clean(sql));
 function unavailable(){return new WorkerError('WRITE_MAINTENANCE','제보 쓰기를 잠시 중지했습니다. 잠시 후 다시 시도해 주세요.',503);}
 export async function writerFenceReady(db) {
  try {
@@ -31,7 +37,7 @@ export function strictWriterDb(binding,required=false) {
  async function batch(statements) {
   const sqls=statements.map(s=>prepared.get(s)?.sql);
   const body=statements.map(s=>prepared.get(s)?.raw||s);
-  if(sqls.every(readonly))return binding.batch(body);
+  if(sqls.every(sql=>readonly(sql)||canonicalOnly(sql)))return binding.batch(body);
   // Plain INSERT rejects an orphan. CHECK aborts failed permission acquisition.
   const claim=binding.prepare(`INSERT INTO publication_writer_claim(id,ok)
    VALUES (1,CASE WHEN EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)

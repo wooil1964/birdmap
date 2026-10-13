@@ -1,3 +1,4 @@
+import { assertLegacyPurgeCompatible } from './purge-publication-guard.mjs';
 // Forbidden-content purge with an external safety ledger (separate D1, outside the main restore domain).
 //   --check     --target t.json                          READ ONLY: residue of every ledger event in main
 //   --purge     --target t.json --source-id UUID --policy-version V --actor-ref R --confirm PURGE_FORBIDDEN_CONTENT
@@ -27,6 +28,7 @@ async function residue(id, tb) {
   return { ...r, clean: Object.values(rest).every(v => v === 0) && (tombstone === undefined || tombstone === 1) };
 }
 async function writable(tb) {
+  assertLegacyPurgeCompatible(tb); // Before ledger intent and the first main DELETE.
   const state = tb.has('system_state') ? (await read(t, main, 'SELECT mode,generation FROM system_state WHERE id=1'))[0] : null;
   if (state?.mode === 'READ_ONLY_MAINTENANCE') return { gate: 'system_state', generation: state.generation };
   const barrier = await ingressClosed(t);

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync,writeFileSync,mkdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath,pathToFileURL } from 'node:url';
+import {resolve} from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { localDb,installAuthStubs,environments,input,post,adminPost,failingBinding,uuid,ADMIN,ORIGIN } from './helpers.mjs';
 import { rows,first,insert,fingerprint,stable,canonicalProjection,canonicalReadDb,applicationDb,TRANSFORM_VERSION,initialSighting } from '../src/canonical/data.js';
@@ -14,7 +15,7 @@ import { prepareSiteSeed,seedSitesLocally } from '../tools/sites-seed.mjs';
 import { baseline } from '../../docs/long-term-db-phase2a/proof/fixture.mjs';
 
 const toolchain=process.argv[2];if(!toolchain)throw Error('Pass the installed node_modules toolchain directory');
-const out=new URL('../../docs/long-term-db-phase2b/.local/',import.meta.url);mkdirSync(out,{recursive:true});
+const out=process.argv[3]?pathToFileURL(resolve(process.argv[3])+'/'):new URL('../../docs/long-term-db-phase2b/.local/',import.meta.url);mkdirSync(out,{recursive:true});
 const evidence={started_at:new Date().toISOString(),scope:'local D1 only; synthetic observations; production calls 0',tests:[]};
 const check=async(name,fn)=>{await fn();evidence.tests.push({name,result:'PASS'});console.log('PASS '+name);};
 let local,auth;

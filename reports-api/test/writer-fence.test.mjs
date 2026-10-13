@@ -126,3 +126,13 @@ test('writer fence: 20 simultaneous current batches cannot borrow or leak a clai
 });
 
 test('writer fence: read-only statistics CTE does not allocate a writer claim',async()=>{const f=fixture();const before=f.batches.length;const r=await f.db.prepare("WITH grouped AS(SELECT id FROM reports) SELECT id FROM grouped").all();assert.equal(r.results[0].id,'r');assert.equal(f.batches.length,before);assert.equal(claims(f.sqlite),0);});
+
+test('writer fence: frozen canonical-only operator writes keep their own atomic guards',async()=>{
+ const f=fixture();f.sqlite.exec('UPDATE public_publication_state SET write_frozen=1,revision=revision+1');
+ const before=version(f.sqlite);
+ const result=await f.db.batch([f.db.prepare("INSERT INTO transaction_assertions VALUES('operator',1)"),f.db.prepare("DELETE FROM transaction_assertions WHERE assertion_id='operator'")]);
+ assert.equal(result.length,2);assert.equal(claims(f.sqlite),0);assert.equal(version(f.sqlite),before);
+ await assert.rejects(f.db.batch([f.db.prepare("INSERT INTO transaction_assertions VALUES('partial',1)"),f.db.prepare("INSERT INTO transaction_assertions VALUES('failure',0)")]),/CHECK constraint failed/);
+ assert.equal(f.sqlite.prepare('SELECT count(*) AS n FROM transaction_assertions').get().n,0);
+ await assert.rejects(f.db.prepare(late).run(),e=>e.code==='WRITE_MAINTENANCE');
+});
