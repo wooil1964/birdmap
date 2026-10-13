@@ -1,0 +1,603 @@
+{
+  "at": "2026-10-13T23:43:06.417280+00:00",
+  "sourceSha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+  "mainMerge": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+  "productAndMergeTree": "845f32968323b6bd3d99b9e90ac496d82eaf9c6f",
+  "scope": "Independent read-only review of persisted authenticated root/agent evidence and Git/runtime bytes. No new operating request or existing passed test repeated. Not the final automatic-weather completion statement.",
+  "sourceEvidenceSha256": {
+    "THAW_VERIFIED.json": "cab5a1f21d43fa9243697bdbd10b989626869c04ea7f6358db4b7dbc3d3f7169",
+    "NORMAL_ACTIVATED.json": "0b9b4c1ddb847332c62e61baa5c8a17fa5a9c6cb71aac117e626280dd937bf60",
+    "POST_PROBE_INTEGRITY.json": "0ceba6c9ac68a12684a08c8c5d940b732f29ce6d65e85c7117ae3bd66bf31ce1",
+    "ORIGINAL_DATA_INTEGRITY.json": "0179d2b2f4eb63fb69e0e2f78acf7f23f2c462013ebe99526e5128022f4ea099",
+    "PUBLICATION_SCHEMA_VERIFIED.json": "627810a7ebc9672d9380051500247d3d0ae936905293627e49d7ef2d0b351c5f",
+    "ROLLBACK_PROBE_OPERATING.json": "60bb25c8529d9b13e2f228f534afe4e5bc9dfbc9f62750a5ed754f21b049d826",
+    "ROOT_OPERATING_GATE.json": "56dee98eabb56daa9e840b8a9d3ee6babb14fe7c7ffd79724b4d480e938905fa",
+    "MAIN_MERGED.json": "803c4aaa20b3c0d406d45b0a2c60f8da08f788adf8f3496c1de379d21b13e159",
+    "ci-ddc/INDEPENDENT_CI_RECEIPT.json": "4a5acf05e9183d0dd2b8db3a0bc56149f48d014f209f5cd2fd3d8b57acd75085",
+    "ci-ddc/ASSET_GIT_VERIFICATION.json": "53dc7eace48c5a84ae6c418ab83785b578014d2ddfb820794f4602787a696bdc",
+    "OPERATING_API_VERIFICATION.json": "eb0761b9ccd01d19c0dcdd7516f37f70cf1ba43ae5f6db226e1069ec54c0830c",
+    "OPERATING_API_CONTRACT_SUPPLEMENT.json": "b09ea9a85115462427d40e8ffb8d08fd6293f0983e7ff9fa4ce7ef95f63a6f7a",
+    "LIVE_CHROME.json": "c5262e9f1b1521c68bc2629ecf822c21227834fb535bc79fa46f0ce29a7afbcc"
+  },
+  "WorkerStage": {
+    "activeNormal": [
+      {
+        "worker": "birdmap-reports",
+        "deploymentId": "798600be-ca51-48e0-9fe7-ed6df0aa1383",
+        "versions": [
+          {
+            "version_id": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+            "percentage": 100
+          }
+        ]
+      },
+      {
+        "worker": "birdmap-reports-admin",
+        "deploymentId": "9470f6a3-db3d-4a95-bf8c-562a59d4e064",
+        "versions": [
+          {
+            "version_id": "a7723404-a3c2-4739-91ff-44049e1302cb",
+            "percentage": 100
+          }
+        ]
+      }
+    ],
+    "configuredBindingsVerified": [
+      {
+        "worker": "birdmap-reports",
+        "role": "public",
+        "mode": "normal",
+        "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+        "previewOff": true,
+        "publicationRequired": true,
+        "operatingD1BindingVerified": true,
+        "peerVerified": true,
+        "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+      },
+      {
+        "worker": "birdmap-reports",
+        "role": "public",
+        "mode": "maintenance",
+        "versionId": "7e398695-aad7-4e58-962c-034513776960",
+        "previewOff": true,
+        "publicationRequired": true,
+        "operatingD1BindingVerified": true,
+        "peerVerified": true,
+        "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+      },
+      {
+        "worker": "birdmap-reports-admin",
+        "role": "admin",
+        "mode": "normal",
+        "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+        "previewOff": true,
+        "publicationRequired": true,
+        "operatingD1BindingVerified": true,
+        "peerVerified": true,
+        "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+      },
+      {
+        "worker": "birdmap-reports-admin",
+        "role": "admin",
+        "mode": "maintenance",
+        "versionId": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+        "previewOff": true,
+        "publicationRequired": true,
+        "operatingD1BindingVerified": true,
+        "peerVerified": true,
+        "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+      }
+    ],
+    "actualPublicPeerGate": {
+      "atRecorded": "2026-10-13T23:39:29.100351+00:00",
+      "execution": "Root actual tool HTTP tests before main merge, output retained in task transcript",
+      "publicCapabilitiesHTTP": 200,
+      "publicStateHTTP": 200,
+      "contract": "publication-v1",
+      "revision": "1",
+      "epoch32Hex": true,
+      "nonce32HexEcho": true,
+      "cacheControl": "no-store",
+      "emptyPOST": {
+        "path": "/reports",
+        "body": "{}",
+        "HTTP": 400,
+        "errorCode": "NON_BREEDING_CONFIRMATION_REQUIRED",
+        "realUserPayload": false,
+        "userDML": 0
+      },
+      "sourceSHA256": "111249637cbe65c96ac4a94d1f926502f93ac43b94f4c8fb92c52bfd48c00f54",
+      "peerEvidence": "assertWriteGate(public) precedes handleSubmit; invalid input 400 after gate is actual peer-token/build/mode/schema readiness, not a successful real submission or admin SSO test"
+    },
+    "runtimeCodeConfigAndIndexBlobsMatched": 35,
+    "runtimeMapping": [
+      {
+        "path": "events-worker/src/index.js",
+        "sha256": "b2117c54992307d35925a7816e2f83805d0c0b4a43711351a4c84bb84f6e7d69",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "events-worker/wrangler.toml",
+        "sha256": "6f8135e56eaf1b442c489f70856bc521e058d261e1376d271306b5e585fde6fe",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "index.html",
+        "sha256": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/admin-actions.js",
+        "sha256": "dca76fd90d02d64ea3f40f8ffefbdb86d1e0cd7d59ed5edbc9cea277f7df105b",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/admin-page.js",
+        "sha256": "17e907f6e2e8916e5ab6de74a027da0aaa8094120567934291acf7faec2ad8bb",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/admin-stats.js",
+        "sha256": "2173144f87f618768dce7ee450df3ec913aa775a266f71144cc008a70ca600bd",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/admin-usage.js",
+        "sha256": "07e1271bbb084e48c8006fe91347cbf91475defdb452f1bdfe43913dc0083caa",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/admin.js",
+        "sha256": "48f813fe0156bb39f9a74ed56f912942353162a18eab8700baad2cd0b4f1ac30",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/canonical/control.js",
+        "sha256": "04a09ab6677547762e3d7641d1351ecb70184ab04b82198b70619eab789e16ab",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/canonical/data.js",
+        "sha256": "bb8ea3d8d3f236288d4d2ba736b61893de92c8499f5acbd97344feb519dc4b18",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/canonical/ops.js",
+        "sha256": "5c9dd14bc81b39880e12b04adaf9dba2249798a7fb0cd57a7f5f961176a6e1da",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/canonical/persistence.js",
+        "sha256": "8e40615b7cce05f3f0863a9bde2f64be5afcc7422b005c293ed34488e870dcd6",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/canonical/purge.js",
+        "sha256": "fe974c692c702ac3c7629fa7a92ba1a117d49b63342152393a0683789dfa5f9f",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/canonical/shadow.js",
+        "sha256": "19a2e1c72f4b4b3d5322bd40df9426db0ca7149333375667fea7d40ee6a4e0b2",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/field-updates.js",
+        "sha256": "45afe2b2a543d67f1816bbc0d7348ebd2fd5cedc7ebb7dbccb49081937c8fb61",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/notify.js",
+        "sha256": "022c3b26cd051833500ab8bd5a2a60f58b99538d145e24232e66ae3d4edaacc4",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/public.js",
+        "sha256": "5afcfe3f8cf9ab7ead6f737dd8c9a75a9e31b849a3423c99874434c58ef7c318",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/publication.js",
+        "sha256": "291137121365f9b1e68615e5a2c86e90e730e4b49cd9ba47ec69203808a1afd3",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/shared.js",
+        "sha256": "ef29c94e6ff3dc691c6ef10ec64e0c4c09148a0be1e88bcfbec73d34050b243f",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/site-picker.js",
+        "sha256": "b8a251554290ba7855e7e4de3987f94c279aa155ccf8f8d190e3b38e448178bb",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/src/writer-fence.js",
+        "sha256": "aed59e364415430ef16da9b0514da2abcfe0da8ea3117829a940d9a50c636cd5",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/backfill-lib.mjs",
+        "sha256": "ba6fa546b7d1d5b01485f23e29640d526a6a8737474a0c8558a2bd1d84708fb3",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/backfill-runner.mjs",
+        "sha256": "74d584fac65e2e2709387e2e7f0719e7260d098f3bd99a9d5aceea203c9c9304",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/d1-rest.mjs",
+        "sha256": "4a1b18627a133e6fec8a010f83014501565e6aaff3d5470c924e2e0911f2c5f8",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/freeze.mjs",
+        "sha256": "b99d975fbf366d842442e790b47bd4533ece6af699c8636f485854293e2c3d4c",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/prepare-backfill.mjs",
+        "sha256": "6d5bed740fb95839833b4e8ed89d6bf3589cd8e3ec31441dfc24a2530606d555",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/prepare-sites.mjs",
+        "sha256": "36e4a08a7b72196959f6e2ad2df1b89340bfb7c67a28a1f4c4f1fcd382b18964",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/purge-publication-guard.mjs",
+        "sha256": "8df5d232030d3a07f24bc2570c68f41b846571a2bb870a620cc4c2cc12e710cc",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/purge-runner.mjs",
+        "sha256": "ae92a23128c63fc6ca8d77e32b45cc2a1e1f7e671f0dc8f6f8526d7aefda092d",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/tools/sites-seed.mjs",
+        "sha256": "9d3816662c0997e71353889fe9ca861ea0af8b8ae131ccc68dbf2f52bce27a56",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/wrangler.admin.toml",
+        "sha256": "d5d34de0f1a911ccab1161ab35a51ed8b3e738cc06dbc57ec528f40e2ec4da90",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "reports-api/wrangler.public.toml",
+        "sha256": "226819618a6616d33b38f5f8973f4d0cbcaeef088d21d7ad382b5a43de86f427",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "weather-proxy/src/index.js",
+        "sha256": "c30b700c3234c6666510846df9eab46b6ca7c31e7fe7336ab48fdcaf56af6d65",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "weather-proxy/src/sites.js",
+        "sha256": "07adfbeab561f7ca6876c5b96af5a43a828fe44e38c06a83b1b8597cf338dbc3",
+        "identicalToUploaded9f8Input": true
+      },
+      {
+        "path": "weather-proxy/wrangler.toml",
+        "sha256": "3902e05dc506a869a4ae527bb97349eebbbbab93171de4d4e0745813de174796",
+        "identicalToUploaded9f8Input": true
+      }
+    ],
+    "uploadedVersionAssociations": [
+      {
+        "worker": "birdmap-reports",
+        "mode": "normal",
+        "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+        "bundleSha256": "0722f40204d58200c4066e1a822171c2e28bff0c74dbf4f8c9d9e0ced2ae995f",
+        "sourceMapInputsMatched": 10,
+        "reuseSource": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+        "annotationStillLabels9f8": true
+      },
+      {
+        "worker": "birdmap-reports",
+        "mode": "maintenance",
+        "versionId": "7e398695-aad7-4e58-962c-034513776960",
+        "bundleSha256": "0722f40204d58200c4066e1a822171c2e28bff0c74dbf4f8c9d9e0ced2ae995f",
+        "sourceMapInputsMatched": 10,
+        "reuseSource": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+        "annotationStillLabels9f8": true
+      },
+      {
+        "worker": "birdmap-reports-admin",
+        "mode": "normal",
+        "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+        "bundleSha256": "4dadf8b307cd7cd28c8851cde8505b8891ce6282d547be6f86ae55a111c5e3d9",
+        "sourceMapInputsMatched": 13,
+        "reuseSource": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+        "annotationStillLabels9f8": true
+      },
+      {
+        "worker": "birdmap-reports-admin",
+        "mode": "maintenance",
+        "versionId": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+        "bundleSha256": "4dadf8b307cd7cd28c8851cde8505b8891ce6282d547be6f86ae55a111c5e3d9",
+        "sourceMapInputsMatched": 13,
+        "reuseSource": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+        "annotationStillLabels9f8": true
+      }
+    ],
+    "metadataVersusRuntimeProof": "Upload labels remain9f8. Local uploaded module/source-map bytes match exactddc Git inputs; root authenticated version/activation receipts supply remote association. No remote body re-download by reviewer."
+  },
+  "D1Stage": {
+    "thaw": {
+      "at": "2026-10-13T23:26:11.961670+00:00",
+      "status": "PASS",
+      "exitCode": 0,
+      "system": [
+        {
+          "mode": "NORMAL",
+          "generation": 4
+        }
+      ],
+      "publication": [
+        {
+          "revision": "1",
+          "write_frozen": 0
+        }
+      ],
+      "claims": [
+        {
+          "claims": 0
+        }
+      ],
+      "assertionsRemaining": [
+        {
+          "n": 0
+        }
+      ],
+      "activationLedger": [
+        {
+          "name": "0005c_publication_enable.sql"
+        }
+      ],
+      "foreignKeyViolations": 0,
+      "pairedMaintenanceRetainedUntilVerified": true,
+      "epochReset": false,
+      "realUserDML": 0,
+      "scope": "Two metadata gates changed in one documented atomic migration with each CAS changes()=1 assertion; no user rows changed"
+    },
+    "schema": {
+      "guards": 34,
+      "claims": 0,
+      "epochValid": true,
+      "FKViolations": 0,
+      "initialFrozenAtMigration": 1
+    },
+    "rollbackOnlyProbe": {
+      "at": "2026-10-13T22:48:12.341114+00:00",
+      "status": "PASS",
+      "expectedFailureExit1": true,
+      "terminalGuardReached": true,
+      "priorWrongAndValidCASAssertionsReached": true,
+      "schemaPublicationSystemClaimCountsLedgerExactUnchanged": true,
+      "syntheticPersistedRows": 0,
+      "realUserMutations": 0,
+      "privatePayloadLogged": false,
+      "beforeSha256": "f2272da2e83f4d19c79e35cd1a5bb488b13737e6136dabb06920a48007c50e43",
+      "afterSha256": "f2272da2e83f4d19c79e35cd1a5bb488b13737e6136dabb06920a48007c50e43",
+      "scope": "Approved operating synthetic transaction only; documented atomic failed migration; required terminal error and all persisted state unchanged; private data rechecked next"
+    },
+    "postProbeIntegrity": {
+      "status": "PASS",
+      "allApplicationTablesColumnsAndValuesExactlyUnchanged": true,
+      "schemaExactlyUnchanged": true,
+      "persistedSyntheticRows": 0,
+      "privatePayloadLogged": false,
+      "scope": "Encrypted snapshots memory-only comparison before/after operating failed security migration"
+    },
+    "originalPreservation": {
+      "pass": 17,
+      "fail": 0,
+      "allUserRowsAndAllOriginalFieldsPreserved": true,
+      "onlyExpectedAdditions": [
+        "field_updates.row_revision=1",
+        "public_publication_state initial frozen1/revision0",
+        "one0005 ledger record"
+      ]
+    },
+    "internalPlatformLimit": "Official D1 SQL dump omits _cf_KV; its prior schema definition was verified unchanged separately. No internal data was edited or restored. No backward snapshot restore is authorized.",
+    "metadataD1ChangesOccurred": true,
+    "realUserDMLPerformedByDeployment": 0
+  },
+  "CI": {
+    "run": 38481187572,
+    "job": 115583898586,
+    "merge": "df5a72b34d5fc5e22d5c18e4af32c3603e7da7d4",
+    "automatic": {
+      "pass": 812,
+      "fail": 0,
+      "skip": 1
+    },
+    "Chrome": {
+      "pass": 242,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    },
+    "nativeFence": {
+      "pass": 13,
+      "fail": 0,
+      "skip": 0
+    },
+    "nativeCAS": {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    },
+    "fullFixedRecommendationSignatures": {
+      "withSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      },
+      "withoutSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      }
+    },
+    "testsNotRepeatedByReviewer": true
+  },
+  "PagesStage": {
+    "artifactId": 11856944380,
+    "artifactZipSha256": "707cf4e6968b03dac4b44724a92b4a68f1dcdfb2c4b30d4848da18ae3ba9d011",
+    "runtimeAssets": 388,
+    "manifestHashMismatches": 0,
+    "GitByteVerification": "Read independent ASSET_GIT_VERIFICATION all388 exactddc plus independently verified ZIP hash/every manifest entry; did not rerun prior Git byte experiment.",
+    "usesNewDdcArtifactNotOld9f8": true,
+    "builtMergeSha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+    "pagesBuildStatus": "built",
+    "liveIndexHash": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb",
+    "byteIdenticalToCandidate": true,
+    "liveChrome": {
+      "summary": {
+        "pass": 70,
+        "fail": 0,
+        "skip": 0
+      },
+      "browserErrors": [],
+      "scope": "Actual deployed Chrome/Leaflet/API GET. Outage and hidden simulated only client-side. Physical GPS, native app launch and real user mutations not performed.",
+      "network": {
+        "workerGet": 187,
+        "blockedNonGet": 20,
+        "simulatedFailure": 5
+      }
+    },
+    "weatherWorkflowAtRecordedObservation": {
+      "id": 38485167154,
+      "name": "Update birding weather four times daily",
+      "path": ".github/workflows/update-weather.yml",
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "head_branch": "main",
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-13T23:35:25Z",
+      "updated_at": "2026-10-13T23:35:29Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38485167154",
+      "run_attempt": 1
+    }
+  },
+  "OperatingApiStage": {
+    "original": {
+      "pass": 39,
+      "fail": 2,
+      "notRun": 3,
+      "requests": 16,
+      "productionMutations": 0
+    },
+    "originalFailureIds": [
+      "contributors-monthly-fresh-contract",
+      "request-start-five-second-cycle"
+    ],
+    "supplement": {
+      "pass": 8,
+      "fail": 0,
+      "requests": 3,
+      "productionMutations": 0
+    },
+    "classification": [
+      {
+        "id": "contributors-monthly-fresh-contract",
+        "classification": "HARNESS_CONTRACT_MISMATCH",
+        "reason": "Monthly endpoint server constructor returns month/approvedReports/publicContributors/contributors; actual contributorsPayload and publicationValidate do not require an ok field.",
+        "source": {
+          "server": "reports-api/src/publication.js:91",
+          "clientPayload": "index.html:1237",
+          "clientAuthority": "index.html:3021"
+        },
+        "assertionKept": true,
+        "originalReceiptPreserved": true
+      },
+      {
+        "id": "request-start-five-second-cycle",
+        "classification": "DERIVED_HARNESS_CONTRACT_MISMATCH",
+        "reason": "455ms initial head/list/postflight met five-second time bound; conjunction rejected the same legitimate monthly no-ok body. This supplement independently executes actual client authority/parser on a fresh three-GET cycle.",
+        "originalReceiptPreserved": true
+      }
+    ],
+    "actualGateValidationIsNotRegisteredUserSubmission": true,
+    "adminUnauthenticatedClosed": true,
+    "authenticatedAdminSSOAndUserActionsNotRun": true
+  },
+  "safeRollback": {
+    "publicMaintenanceVersion": "7e398695-aad7-4e58-962c-034513776960",
+    "adminMaintenanceVersion": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+    "preserveWriterFenceAndPublicationGuards": true,
+    "preserveEpochRevisionDeletedHistory": true,
+    "doNotRestoreOldD1Snapshot": true,
+    "doNotActivateWeakOldWorkerVersions": true,
+    "protectivePagesArtifact": "CI exactddc artifact11856944380; old protected UI code equal but weatherJSON differs; do not label old9f8 artifact as whole-ddc byte match."
+  },
+  "PaidCapacity": {
+    "currentPlanConfirmed": true,
+    "browserReceiptHash": "51e1f29273d09d88e8ba06502329cd76f2ce1b91d2aa437b13a1294309aea2e1",
+    "modelHash": "d6698f90b3d91f612c8e0ef40061c2e1483dacc7d923e766eca972ba31dc4e36",
+    "reusableBecauseWorkerRuntimeUnchanged": true,
+    "requestMonthRange": [
+      5283000,
+      6147000
+    ],
+    "warmConservativeD1ReadMonthRange": [
+      211127400,
+      268247400
+    ],
+    "actualBillableCPUOrAccountTotalsMeasured": false,
+    "notASpendingCapOrGuaranteedInvoice": true,
+    "DOProductionDisabled": true
+  },
+  "residualConditions": [
+    {
+      "id": "AUTO-WEATHER-COMPLETION",
+      "status": "PENDING_AT_SAVED_OBSERVATION",
+      "condition": "Record successful main automatic weather/tide update and resulting current validator/source preservation before final full completion claim."
+    },
+    {
+      "id": "HISTORICAL-CLIENT-DATA",
+      "status": "INHERENT_LIMITATION",
+      "condition": "Strict new server denies stale/missing contract and nonce. Already delivered or locally stored public data cannot be remotely erased; no historical incident is asserted."
+    },
+    {
+      "id": "S1-P-POLICY",
+      "status": "SEPARATE_POLICY_SCOPE",
+      "condition": "Do not claim approved S1-R representation protection implements new S1-P after-approval nonpublication or removes all indirect location inference."
+    },
+    {
+      "id": "PHYSICAL-GPS-NATIVE-APPS",
+      "status": "NOT_RUN",
+      "condition": "Synthetic delayed GPS/URI guards and actual Chrome/Leaflet do not establish real sensor or installed Kakao/Tmap launch. No new disclosure bypass was identified by this read audit; root must state this boundary and its release judgment explicitly."
+    },
+    {
+      "id": "AUTHENTICATED-ADMIN-WRITES",
+      "status": "NOT_RUN",
+      "condition": "Actual public internal peer gate is proved by pre-handler blank POST validation. Real admin Access SSO, approval/deletion and actual user mutations were not performed; native handler/CAS and operating rollback-only SQL are distinct evidence."
+    },
+    {
+      "id": "PAID-ACTUAL-LOAD",
+      "status": "UNMEASURED",
+      "condition": "Existing Paid account state is confirmed. Monthly account totals/billed CPU/storage/logs/reconnect/edgeP99 and future report-volume growth remain estimates; retain monitoring and maintain fail-closed5s contract."
+    }
+  ],
+  "reviewerActions": {
+    "operatingRequests": 0,
+    "privateBackupDecryptOrPayloadReads": 0,
+    "productOrHarnessEdits": 0,
+    "testReexecutions": 0
+  },
+  "verdict": "Recorded protected Worker/D1/main/Pages/live stages satisfy the reviewed contracts. Final full deployment completion still requires latest auto-weather completion evidence and explicit reporting of non-executed physical/admin actions; this receipt is not a claim that every historical/raw test had zero failure."
+}

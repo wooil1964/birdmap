@@ -1,3 +1,61 @@
+# 2026-10-14 운영 배포 완료 — DEPLOYED
+
+최종 제품 `ddc3bc3fb20eec33c47328ac2eb00154865eb377`를 PR #17로 병합했다. 병합 main `cb3dd3b2b10752dd59cccec9e0a449eaca48cefb`의 전체 tree가 검증 제품과 같다. 이후 정상 자동 기상 갱신 main `99740ff11ca3a19d1437de8ffd457899407943c1`은 weather_today/week 두 JSON만 바뀌었으며 보호 코드·index·190개 지점 좌표는 같다. PR #13·#16을 중복 병합하거나 직접 변경하지 않았다.
+
+공개 Worker `f1f24698-8388-4f36-ae31-38f2dd8e9446`, 관리자 Worker `a7723404-a3c2-4739-91ff-44049e1302cb`가 각각 100% 활성화됐다. 운영 Pages도 실제 built/deployment success이며 일반 공개 URL의 index SHA256 `9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb`가 제품과 정확히 같다. 마지막 공개 core asset 5개(index/weather2/tide2)도 최신 main과 바이트 단위로 같다.
+
+## 보안 수정과 실제 전환
+
+index.html의 현재 권한·nonce·fresh postflight·요청 시작 기준 5초 만료·숨김/지연 GPS 폐쇄를 유지했다. reports-api/src/publication.js는 primary D1 권한과 공개 payload를 같은 batch에서 읽는다. field-updates.js의 CAS·deleted terminal, shared.js의 S1-R·consent projection, 공개/관리 peer gate가 통합돼 있다. 독립 감사에서 발견한 구 Writer의 지연 쓰기는 writer-fence.js와 0004b의 claim/12 SQL guards로 차단했고, purge-runner/publication-guard는 fenced DB에서 첫 쓰기 전에 중단한다. 실제 원격 D1이 거부한 nested CASE trigger 문법은 같은 의미의 WHERE RAISE로 최소 수정해 정상/실패 원자성을 검증했다. R5 숫자 문자열 overflow와 Python/JS 시각·점수 검증 계약도 동일 source에서 통과했다. S1-P의 새로운 승인 후 비공개 정책은 구현하지 않았다.
+
+실제 운영 D1 변경은 additive atomic 0004b_publication_writer_fence.sql, 0005_publication_security.sql, metadata 전환 0005c_publication_enable.sql이다. system NORMAL/gen2→maintenance/gen3→NORMAL/gen4, publication frozen1/rev0→frozen0/rev1; epoch 재설정은 없다. 34 guards, writer claim0, FK0, assertion 잔존0을 확인했다. 기존 14개 사용자/application 데이터 테이블의 원래 모든 열·값은 전환 전후 동일하며 의도된 system gate·migration ledger 변경은 비교에서 분리했다. 실제 사용자의 제보·좌표·동의·삭제·메모를 변경하거나 삭제하지 않았다.
+
+사용자 명시 승인의 전체 D1 백업은 Git 밖 CurrentUser DPAPI 암호문만 저장했고, 평문 복구는 메모리 SQLite에서 수행했다. 전환 전·동결·후속·최종 백업 모두 복구/정합성 PASS. 공식 SQL export에 포함되지 않는 Cloudflare 내부 _cf_KV 내용은 플랫폼 경계로 구분하며 수동 재설정/복원하지 않는다. provider bookmark도 보존했다. 실제 운영 rollback-only 합성 transaction에서 잘못된 CAS·정상 CAS·deleted 후 reappeared terminal을 검사했고 예상 terminal 실패 뒤 schema/system/publication/claim/counts/ledger가 전부 동일, 합성 잔존0으로 원복됐다. 실제 사용자 DML은 없다.
+
+## 정확한 검증 결과
+
+| 범위 | 실제 결과 | 근거 |
+|---|---:|---|
+| 정확 제품 CI 자동 회귀 | 812 PASS / 0 FAIL / 1 SKIP | run38481187572/job115583898586, 20단계 모두 성공 |
+| CI Chrome·Leaflet 합성 5폭 | 242 PASS / 0 FAIL / 0 SKIP | local mock, operating requests0 |
+| native writer fence / handler D1 CAS | 13/13 / 10/10 | exact CI 실제 로그 |
+| 정상 고정 자료 | 190곳·176후보, ON/OFF 전체 signature·top10·점수·시각·좌표 동일 | Oct8 22:40KST 고정 자료 |
+| 실제 운영 Chrome 5폭 | 70 PASS / 0 FAIL | 권한·목록·만료·숨김·오류·복구·reload |
+| 새 자동 기상+보이는 패널·팝업 5폭 | 25 PASS / 0 FAIL | 344/375/768/1024/1440px, 카드10/부적격0 |
+| 현재 날짜 today/week Validator | 2/2 PASS | 날짜 검사/시계 override 없음 |
+| 실제 운영 GET 최초 | 39 PASS / 2 FAIL | 월별 응답에 없는 ok:true를 하네스가 요구, 원장 보존 |
+| 월별 실제 클라이언트 계약 보충 | 8 PASS / 0 FAIL | 기존 contributorsPayload/publicationValidate, 원 읽기455ms/보충427ms |
+| 실제 approved private-memory 대조 | PASS | 백업의 approved61/공개 spots61, 가림1의 정확좌표 누출0, 미승인 이력0 |
+
+자동812에는 front379/API294/proxy36/weather60/time11/tide21/share11이 포함된다. skip1은 rolling monthly tide window 밖 과거 공식 표본이다. 서로 겹치는 별도 스위트를 합산해 고유 시험 수로 주장하지 않는다. 최초 API 두 실패는 삭제하지 않았으며 실제 기존 월별 계약과 parser/DOM 결과로 하네스 결함으로 분류했다. 원 배포 전 schema FAIL은 실제 SQL 설치 실패가 아니라 공식 export에 없는 플랫폼 _cf_KV 정의 비교 문제였고, 실제 정의 불변 및 application schema 정확성을 별도 증거로 확인했다. 권한을 약화하거나 assertion을 제거해 통과시키지 않았다.
+
+운영 API는 no-store/CORS, nonce/revision, fresh postflight, missing/old contract400, stale epoch409, invalid nonce400, 불신 Origin403, unauthenticated admin302를 실제 확인했다. 빈 POST {}는 peer gate를 통과한 뒤 NON_BREEDING_CONFIRMATION_REQUIRED400으로 입력 거절됐다. 성공한 실제 제보 등록이나 관리자 SSO 시험으로 확대해 보고하지 않는다. 운영 approved payload 전체가 암호화된 원본의 기존 공개 좌표/name_public 정책과 일치한다.
+
+## Pages·자동 갱신
+
+초기 Pages run38485165105/deployment7052725353와 자동 기상 이후 run38485449472/deployment7052768616 모두 success. Weather run38485167154/job115596935177에서 Build→Validate→Commit 실제 실행 성공. 10월14일08:35KST 자료는 today190 eligible, weekly190/10640 eligible samples, unavailable/stale0이다. Windy→Open-Meteo fallback190은 기존 정상 공급자 대체 경로이며 미확인 자료를 적격 승격한 것이 아니다.
+
+조석 최신 실제 예약 run38463425157/job115524140279는 생성·현재14일 freshness(success100)·health 검증 성공이다. 해당 run과 배포 제품의 관련9개 Git blob은 동일하다. 이번 main push는 조석 workflow 경로 필터에 해당하지 않아 새 조석 실행이 없으며, 이를 새 성공 실행으로 꾸며내거나 임의 dispatch하지 않았다. 정확 제품 CI는 PR 조건으로 실행됐고 main push에 자동 재실행됐다고 주장하지 않는다.
+
+## 실제 안전 롤백
+
+실제 업로드/검증 및 이번 전환 중 활성화한 보호 v4 maintenance 쌍을 사용한다: public `7e398695-aad7-4e58-962c-034513776960`, admin `11e97856-990e-4a17-9c28-f18cf92ca46d`. 장애 시 이 보호 쌍으로 쓰기를 닫고 데이터·epoch/revision·삭제 terminal을 보존한다. 새 output 영수증으로 worker_control.py --action maintenance를 실행하고 실제 active를 확인한다. unknown 완료/timeout이면 먼저 active/state를 조회하며 무작정 재시도하지 않는다.
+
+Pages 보호 기준은 검증/실제 발행된 main cb3dd3b2... 및 CI artifact11856944380(388 assets, ZIP707cf4e6968b03dac4b44724a92b4a68f1dcdfb2c4b30d4848da18ae3ba9d011)이다. Pages 장애 복구는 동일 보호 runtime을 새 commit으로 복원하되 최신 자동 기상·조석 JSON을 보존한다. old494/16dae/초기5719 Worker 또는 c025 Pages로 보호 후퇴하는 롤백, main force-reset, D1 과거 전체 백업 복원, publication epoch/revision 초기화, 실제 사용자 purge는 금지한다. 데이터는 보존한 채 보호 버전 유지/roll-forward가 원칙이다.
+
+## 미실행·잔여 위험과 배포 판단
+
+실제 GPS 센서·설치된 카카오/티맵 실행, authenticated admin SSO 및 실제 사용자의 등록·승인·삭제는 수행하지 않았다. 합성 지연 GPS/실행 직전 primary gate/URI와 실제 Chrome 두 링크, handler native CAS·운영 rollback-only 원자 probe·peer handshake가 통과했고 인증 소스도 그대로이므로 이 물리/실사용자 행동은 보안 배포 차단 항목으로 판단하지 않았다. 미실행을 PASS로 합산하지 않는다. 실제 등록자 삭제/재승인/재출현은 합성 브라우저·실제 handler/native D1 증거와 구분한다.
+
+이미 과거 브라우저/다른 앱에 전달·저장된 데이터를 원격 지웠다고 주장할 수 없다. 새 응답은 엄격한 권한 계약·nonce·no-store로 차단되지만 역사적 공개 자료와 S1-P 승인 후 공개/간접 위치 정책은 별도 범위다. 실제 사고가 발생했다고 단정하지 않는다. 관리자가 보유한 과거 privileged purge 사본/직접 D1 권한도 자동 안전 경로로 사용하면 안 된다.
+
+Paid 활성화는 실제 계정 Current plan 및 사용자 확인으로 검증했다. 기존 HTTP4750ms renew/5000ms lease, WS/DO 비활성을 유지한다. 20명×8시간×30일+다른 Worker10000/day 가정의 월 요청528.3만~614.7만, warm 보수 D1읽기2.11억~2.68억(모두 cold인 감도5.80억~7.01억, 상한보증 아님), avgCPU10ms+guard1ms 요금감도$5.56~$5.75이다. 실제 계정 전체 CPU·청구·storage/logs/tax/재접속 폭증은 측정되지 않았으므로 운영 관찰이 필요하다. 결제·요금제 변경은 하지 않았다. SQL 대기시간을 CPU로 계산하지 않았다.
+
+필수 보안 차단 결함0, 원본 사용자값/190좌표 보존, 필수 회귀0실패, 실제 main/Worker/Pages 및 공개 운영 안전 검사, 실제 보호 롤백을 확인했으므로 **DEPLOYED**로 판정한다. 이 판정은 위 미실행 항목을 성공했다고 뜻하지 않는다. 증거는 cutover-20261014 및 FINAL_MANIFEST.json에 저장했고 기존 실패/미추적 자료는 보존했다. 최종 문서·댓글도 서버 readback으로 확인한다.
+
+---
+# 아래 이전 감사 기록은 당시 상태의 역사이며 위 최종 운영 상태가 우선한다
+
 # 최종 보완 검증 —2026-10-14 현행 판정
 제품57184029864139fcf8603f34b39b0089c33ba9c5, 통합main6feac41ae485bf16080324e40104de6d7b1ee8e5. PR17 Draft·미병합.
 판정 BLOCKED: 수정·전체 회귀·원격 합성 전환 통과. 민감자료 backup의 정확 범위 승인 및 실제 복구 검증 대기. 아래 이전c756 기록은 역사이며 현재 관문/롤백은 이 절과 FINAL_MANIFEST가 우선한다.

@@ -1,0 +1,123 @@
+{
+  "at": "2026-10-13T23:41:37.170090+00:00",
+  "status": "PASS",
+  "scope": "All existing application table columns/values preserved; intentional system gate and migration ledger metadata excluded. New row_revision column and new publication/writer metadata separately verified. No comparison publishes original values.",
+  "checks": [
+    {
+      "table": "audit_log",
+      "originalColumnsCompared": 9,
+      "originalRows": 96,
+      "finalRows": 96,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "backfill_runs",
+      "originalColumnsCompared": 6,
+      "originalRows": 1,
+      "finalRows": 1,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "captcha_redemptions",
+      "originalColumnsCompared": 3,
+      "originalRows": 1,
+      "finalRows": 1,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "checklists",
+      "originalColumnsCompared": 38,
+      "originalRows": 74,
+      "finalRows": 74,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "field_update_confirmations",
+      "originalColumnsCompared": 5,
+      "originalRows": 0,
+      "finalRows": 0,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "field_update_events",
+      "originalColumnsCompared": 7,
+      "originalRows": 9,
+      "finalRows": 9,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "field_updates",
+      "originalColumnsCompared": 19,
+      "originalRows": 3,
+      "finalRows": 3,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "raw_submissions",
+      "originalColumnsCompared": 12,
+      "originalRows": 74,
+      "finalRows": 74,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "reports",
+      "originalColumnsCompared": 22,
+      "originalRows": 74,
+      "finalRows": 74,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "reviews",
+      "originalColumnsCompared": 16,
+      "originalRows": 96,
+      "finalRows": 96,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "sightings",
+      "originalColumnsCompared": 13,
+      "originalRows": 74,
+      "finalRows": 74,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "sites",
+      "originalColumnsCompared": 9,
+      "originalRows": 190,
+      "finalRows": 190,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "taxa",
+      "originalColumnsCompared": 9,
+      "originalRows": 0,
+      "finalRows": 0,
+      "allOriginalValuesIdentical": true
+    },
+    {
+      "table": "transaction_assertions",
+      "originalColumnsCompared": 2,
+      "originalRows": 0,
+      "finalRows": 0,
+      "allOriginalValuesIdentical": true
+    }
+  ],
+  "metadata": {
+    "system": [
+      {
+        "mode": "NORMAL",
+        "generation": 4
+      }
+    ],
+    "publication": [
+      {
+        "revision": "1",
+        "write_frozen": 0
+      }
+    ],
+    "claims": 0
+  },
+  "privatePlaintextFiles": 0,
+  "privateContentLogged": false,
+  "fkViolations": 0
+}

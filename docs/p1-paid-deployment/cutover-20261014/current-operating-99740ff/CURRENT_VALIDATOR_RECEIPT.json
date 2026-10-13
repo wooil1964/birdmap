@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-13T23:42:48.691415+00:00",
+  "mainSha": "99740ff11ca3a19d1437de8ffd457899407943c1",
+  "changedSinceMerge": [
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "onlyAutoWeatherJSON": true,
+  "checks": [
+    {
+      "file": "weather_today.json",
+      "sha256": "1cdc74aa1a9d8d2b93a823dd7ae822288481e1993b5a6c6831925ced843f976f",
+      "date": "2026-10-14",
+      "generatedAt": "2026-10-14 08:35 KST",
+      "status": "ok",
+      "siteCount": 190,
+      "validator": "PASS",
+      "clock": "actual current KST, no date override"
+    },
+    {
+      "file": "weather_week.json",
+      "sha256": "d1a7f1be0955b97a37fc77dbb6e0014a29d4a7de25c12251706754a2c4d523c9",
+      "date": null,
+      "generatedAt": "2026-10-14 08:35 KST",
+      "status": "ok",
+      "siteCount": 190,
+      "validator": "PASS",
+      "clock": "actual current KST, no date override"
+    }
+  ],
+  "sourceIndexUnchanged": true,
+  "status": "PASS"
+}

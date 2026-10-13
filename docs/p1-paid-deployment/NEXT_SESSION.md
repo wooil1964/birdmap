@@ -1,3 +1,9 @@
+# 최종 운영 상태 — DEPLOYED / FINAL_MANIFEST.json 우선
+제품ddc3bc3fb20eec33c47328ac2eb00154865eb377, PR17 main병합cb3dd3b2b10752dd59cccec9e0a449eaca48cefb, 자동기상main99740ff11ca3a19d1437de8ffd457899407943c1(2JSON만). Worker public f1f24698-8388-4f36-ae31-38f2dd8e9446/admin a7723404-a3c2-4739-91ff-44049e1302cb 각각100% 보호normal. DB정상gen4/PUBrev1frozen0/epoch보존/claim0/guard34/FK0. 실제Pages 최신7052768616 success/index exact. 백업/메모리복구/원본값 보존PASS. 운영client70/70+새기상표시25/25, CI812/0/1+Chrome242/native13/CAS10, currentvalidators2/2. 실제API원형39/2하네스실패는actualparser8/8로분류·원장보존. actualapproved projection은암호화원본과같고가림정확좌표누출0.
+전용문서브랜치codex/p1-publication-paid-deploy의최종checkpoint는 git log -1 --format=%H로확인한다. rootworktree C:/Users/김진호/.codex/worktrees/p1-paid-deploy/birdmap. 제품브랜치와문서branch를혼동하지않는다. 기존Free/WS/미추적/실패자료삭제금지. 완료시험 재시작금지. 새업무없으면전체회귀·재배포를실행하지않는다. 최종남은작업은보고/댓글readback/checkpoint이며제품변경아님.
+안전rollback은public maintenance7e398695-aad7-4e58-962c-034513776960/admin maintenance11e97856-990e-4a17-9c28-f18cf92ca46d. Pages기준cb3dd3b2/실제보호artifact11856944380 ZIP707cf4e6…/388assets. 최신autoJSON보존. D1 epoch/revision/삭제/동의 과거복원·old무보호버전·main force reset금지. 물리GPS/native앱/adminSSO실행/실사용자승인삭제 NOT_RUN, 월실청구CPU unknown; 판단근거FINDINGS. S1-P 별도정책을마음대로구현하지않는다. 이미전달된구데이터원격소급삭제를주장하지않는다. privateDPAPI밖백업원문은Git/로그/댓글/에이전트공유금지.
+
+# 이하 과거 단계 기록 (현재 배포 완료와 충돌하면 역사로 읽는다)
 # 최신 운영 기록 — MAIN_MERGED.json 우선
 PR17 실제병합 cb3dd3b2b10752dd59cccec9e0a449eaca48cefb, 제품ddc와전체tree동일확인. 공개strict state200/nonce rev1/empty submit400 nonbreeding 입력검증으로 peer gate정상확인, 실사용자POST0. 보호normalpair활성/DBnormalgen4/PUBrev1frozen0. mainbranch Pages자동빌드진행, 아직actualPages/5폭live검증완료아님. 다음은Pagesbuilt/index SHA9c519ed2…확인→live_chrome_readonly.mjs(GETonly)→자동weather/tidecurrentbatch→최종원장/댓글readback. 아래미병합문구는과거상태. 사용자운영권한있음/반복승인불필요/구보호없는rollback금지.
 

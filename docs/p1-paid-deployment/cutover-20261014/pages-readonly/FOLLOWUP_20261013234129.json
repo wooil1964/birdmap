@@ -1,0 +1,259 @@
+{
+  "at": "2026-10-13T23:41:29.681695+00:00",
+  "mainSha": "99740ff11ca3a19d1437de8ffd457899407943c1",
+  "mergeSha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+  "candidateSha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+  "postMergeChangedPaths": [
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "onlyAutomaticDataJsonChanged": true,
+  "ordinaryPublicIndex": {
+    "http": 200,
+    "bytes": 1384042,
+    "sha256": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb",
+    "headers": {
+      "Date": "Tue, 13 Oct 2026 23:41:33 GMT",
+      "ETag": "\"6acec112-151e6a\"",
+      "Age": "0",
+      "Last-Modified": "Tue, 13 Oct 2026 23:38:58 GMT",
+      "Cache-Control": "max-age=600",
+      "X-Cache": "MISS"
+    },
+    "byteIdenticalToCandidate": true
+  },
+  "weatherRun": {
+    "id": 38485167154,
+    "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-13T23:35:25Z",
+    "updated_at": "2026-10-13T23:38:18Z",
+    "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38485167154"
+  },
+  "weatherJobs": [
+    {
+      "id": 115596935177,
+      "name": "update-weather",
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-13T23:35:28Z",
+      "completed_at": "2026-10-13T23:38:17Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-13T23:35:29Z",
+          "completed_at": "2026-10-13T23:35:30Z"
+        },
+        {
+          "name": "Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-13T23:35:30Z",
+          "completed_at": "2026-10-13T23:35:32Z"
+        },
+        {
+          "name": "Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-13T23:35:32Z",
+          "completed_at": "2026-10-13T23:35:33Z"
+        },
+        {
+          "name": "Check updater syntax",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-13T23:35:33Z",
+          "completed_at": "2026-10-13T23:35:39Z"
+        },
+        {
+          "name": "Build weather_today.json and weather_week.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-13T23:35:39Z",
+          "completed_at": "2026-10-13T23:38:12Z"
+        },
+        {
+          "name": "Validate weather_today.json and weather_week.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-13T23:38:12Z",
+          "completed_at": "2026-10-13T23:38:13Z"
+        },
+        {
+          "name": "Commit updated weather",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-13T23:38:13Z",
+          "completed_at": "2026-10-13T23:38:15Z"
+        },
+        {
+          "name": "Post Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-13T23:38:15Z",
+          "completed_at": "2026-10-13T23:38:15Z"
+        },
+        {
+          "name": "Post Check out repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-13T23:38:15Z",
+          "completed_at": "2026-10-13T23:38:15Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-13T23:38:15Z",
+          "completed_at": "2026-10-13T23:38:15Z"
+        }
+      ]
+    }
+  ],
+  "latestTideRuns": [
+    {
+      "id": 38463425157,
+      "head_sha": "6feac41ae485bf16080324e40104de6d7b1ee8e5",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-13T20:30:57Z",
+      "updated_at": "2026-10-13T20:31:27Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38463425157"
+    },
+    {
+      "id": 38368023345,
+      "head_sha": "43ac2b60fee9d0f6c72e283837528a7f88d6568f",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-13T08:15:27Z",
+      "updated_at": "2026-10-13T08:15:39Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38368023345"
+    },
+    {
+      "id": 38343346821,
+      "head_sha": "acc3a281f1f0b1fe20ed672d71108e2430650c8a",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-13T03:47:15Z",
+      "updated_at": "2026-10-13T03:47:27Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38343346821"
+    },
+    {
+      "id": 38337304335,
+      "head_sha": "8bf31d3bb6104186a167048eccdb3c44737eb840",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-13T02:31:42Z",
+      "updated_at": "2026-10-13T02:32:10Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38337304335"
+    },
+    {
+      "id": 38316446349,
+      "head_sha": "2e853947cb16cae9156e8c8f5d4d60ff6b0f06d9",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-12T22:24:11Z",
+      "updated_at": "2026-10-12T22:34:29Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38316446349"
+    }
+  ],
+  "tideWorkflowTriggerBlock": "  push:\n    branches:\n      - main\n    paths:\n      - \".github/scripts/update_tide.py\"\n      - \".github/scripts/audit_tide_health.py\"\n      - \".github/scripts/build_tide_station_mapping.py\"\n      - \".github/scripts/tide_official_stations.json\"\n      - \".github/scripts/test_tide.py\"\n      - \".github/scripts/test_tide_fallback.mjs\"\n      - \"tide_station_mapping.json\"\n      - \".github/workflows/update-tide.yml\"\n      - \"data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx\"\n  schedule:\n    # GitHub Actions cron uses UTC. 15:05 UTC is 00:05 KST the following day.\n    - cron: \"5 15 * * *\"\n    # Backup refresh: 21:05 UTC is 06:05 KST, preventing stale daily tide data if the midnight run is missed or conflicts.\n    - cron: \"5 21 * * *\"\n    # Recovery refreshes: 23:35/01:35 UTC are 08:35/10:35 KST; complete data makes them no-ops.\n    - cron: \"35 23 * * *\"\n    - cron: \"35 1 * * *\"\n  workflow_dispatch:\n\n",
+  "pagesJobs": [
+    {
+      "id": 115596933474,
+      "name": "build",
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-13T23:35:29Z",
+      "completed_at": "2026-10-13T23:35:56Z"
+    },
+    {
+      "id": 115597095634,
+      "name": "report-build-status",
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-13T23:35:59Z",
+      "completed_at": "2026-10-13T23:36:02Z"
+    },
+    {
+      "id": 115597095733,
+      "name": "deploy",
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-13T23:36:00Z",
+      "completed_at": "2026-10-13T23:36:09Z"
+    }
+  ],
+  "deploymentStatuses": [
+    {
+      "state": "success",
+      "created_at": "2026-10-13T23:36:10Z",
+      "updated_at": "2026-10-13T23:36:10Z",
+      "description": "",
+      "environment_url": "https://wooil1964.github.io/birdmap/",
+      "log_url": "https://github.com/wooil1964/birdmap/actions/runs/38485165105/job/115597095733"
+    },
+    {
+      "state": "in_progress",
+      "created_at": "2026-10-13T23:36:01Z",
+      "updated_at": "2026-10-13T23:36:01Z",
+      "description": "",
+      "environment_url": "",
+      "log_url": "https://github.com/wooil1964/birdmap/actions/runs/38485165105/job/115597095733"
+    },
+    {
+      "state": "queued",
+      "created_at": "2026-10-13T23:35:58Z",
+      "updated_at": "2026-10-13T23:35:58Z",
+      "description": "",
+      "environment_url": "",
+      "log_url": "https://github.com/wooil1964/birdmap/actions/runs/38485165105/job/115597095733"
+    },
+    {
+      "state": "waiting",
+      "created_at": "2026-10-13T23:35:57Z",
+      "updated_at": "2026-10-13T23:35:57Z",
+      "description": "",
+      "environment_url": "",
+      "log_url": "https://github.com/wooil1964/birdmap/actions/runs/38485165105/job/115597095733"
+    }
+  ],
+  "latestBuild": {
+    "status": "built",
+    "commit": "99740ff11ca3a19d1437de8ffd457899407943c1",
+    "created_at": "2026-10-13T23:38:15Z",
+    "updated_at": "2026-10-13T23:38:59Z",
+    "error": {
+      "message": null
+    }
+  },
+  "operatingApiRequests": 0,
+  "dispatches": 0,
+  "testReexecutions": 0,
+  "productEdits": 0,
+  "credentialsInMemoryOnly": true,
+  "externalAuthorizationForwarded": false
+}

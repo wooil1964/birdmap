@@ -1,0 +1,12 @@
+observed-command: python .github/scripts/update_weather.py
+observed-command: python .github/scripts/test_weather.py
+Ran 60 tests in 0.364s
+OK
+# tests 36
+# pass 36
+# fail 0
+# skipped 0
+observed-command: python .github/scripts/validate_weather.py
+observed-command: python .github/scripts/validate_weather_week.py
+{"date": "2026-10-14", "generatedAt": "2026-10-14 08:35 KST", "refreshedAt": "2026-10-14 08:38 KST", "status": "ok", "siteCount": 190, "successCount": 190, "failedCount": 0, "upstreamSuccessCount": 190, "staleCount": 0, "unavailableSiteCount": 0, "scoreEligibleCount": 190, "providerFallbackCount": 190}
+{"startDate": "2026-10-14", "endDate": "2026-10-20", "generatedAt": "2026-10-14 08:35 KST", "refreshedAt": "2026-10-14 08:38 KST", "status": "ok", "siteCount": 190, "siteWithSamplesCount": 190, "unavailableSiteCount": 0, "sampleCount": 10640, "scoreEligibleSampleCount": 10640}

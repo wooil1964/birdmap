@@ -1,0 +1,11 @@
+observed-command: python .github/scripts/update_tide.py
+observed-command: python .github/scripts/build_tide_station_mapping.py
+Ran 22 tests in 0.204s
+OK (skipped=1)
+# tests 21
+# pass 21
+# fail 0
+# skipped 0
+tide_today.json is fresh: {today}, successCount={data.get('successCount')}")[0m
+tide_today.json is fresh: 2026-10-14, successCount=100
+observed-command: python .github/scripts/audit_tide_health.py

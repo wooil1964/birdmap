@@ -1,0 +1,320 @@
+{
+  "at": "2026-10-13T23:37:57.275Z",
+  "scope": "Operating anonymous GET-only, no raw response bodies or user content saved",
+  "workerVersions": {
+    "public": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+    "admin": "a7723404-a3c2-4739-91ff-44049e1302cb"
+  },
+  "versionEvidence": "NORMAL_ACTIVATED.json; runtime identity verified by root separately",
+  "sourceFacts": {
+    "primary": "Source publication.js uses withSession(first-primary); public JSON exposes no D1 served_by_primary metadata.",
+    "allCurrentReadPlans": "Publication state and payload SELECTs are in one D1 batch; fresh nonce postflight is separately checked.",
+    "approvedPolicy": "Approved reports retain existing approval/masked public coordinate policy; S1-P is not newly implemented.",
+    "historyPolicy": "Reporter emitted only for name_public=1; history endpoint emits no coordinates.",
+    "fieldPolicy": "Sensitive saved field rows require locationHidden; raw/unproven protected point becomes null; deleted/expired rows filtered.",
+    "privateAbsenceScope": "Live response forbidden-field projection scan; not a comparison against private D1 coordinate values."
+  },
+  "checks": [
+    {
+      "id": "public-capabilities",
+      "status": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "id": "public-capabilities-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "initial-primary-anchor",
+      "status": "PASS",
+      "httpStatus": 200,
+      "nonceEcho": true,
+      "contract": "publication-v1",
+      "revision": "1"
+    },
+    {
+      "id": "initial-anchor-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "approved-fresh-contract",
+      "status": "PASS",
+      "httpStatus": 200,
+      "count": 61,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "approved-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "pending-fresh-contract",
+      "status": "PASS",
+      "httpStatus": 200,
+      "count": 0,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "pending-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "recent-sites-fresh-contract",
+      "status": "PASS",
+      "httpStatus": 200,
+      "count": 10,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "recent-sites-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "field-updates-fresh-contract",
+      "status": "PASS",
+      "httpStatus": 200,
+      "count": 0,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "field-updates-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "contributors-monthly-fresh-contract",
+      "status": "FAIL",
+      "httpStatus": 200,
+      "count": 8,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "contributors-monthly-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "site-history-fresh-contract",
+      "status": "PASS",
+      "httpStatus": 200,
+      "count": 0,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "site-history-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "fresh-postflight",
+      "status": "PASS",
+      "httpStatus": 200,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "postflight-headers",
+      "status": "PASS",
+      "httpStatus": 200,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "request-start-five-second-cycle",
+      "status": "FAIL",
+      "cycleElapsedMs": 455,
+      "leaseStartsAtInitialHeadRequest": true
+    },
+    {
+      "id": "approved-projection-private-field-absence",
+      "status": "PASS",
+      "forbiddenFieldCount": 0
+    },
+    {
+      "id": "pending-projection-private-field-absence",
+      "status": "PASS",
+      "forbiddenFieldCount": 0
+    },
+    {
+      "id": "recent-sites-projection-private-field-absence",
+      "status": "PASS",
+      "forbiddenFieldCount": 0
+    },
+    {
+      "id": "field-updates-projection-private-field-absence",
+      "status": "PASS",
+      "forbiddenFieldCount": 0
+    },
+    {
+      "id": "contributors-monthly-projection-private-field-absence",
+      "status": "PASS",
+      "forbiddenFieldCount": 0
+    },
+    {
+      "id": "site-history-projection-private-field-absence",
+      "status": "PASS",
+      "forbiddenFieldCount": 0
+    },
+    {
+      "id": "approved-fixed-history-preserved-shape",
+      "status": "PASS",
+      "fixedHistoryGroupCount": 0
+    },
+    {
+      "id": "pending-privacy-projection",
+      "status": "PASS",
+      "count": 0
+    },
+    {
+      "id": "recent-sites-sensitive-species-exclusion",
+      "status": "PASS",
+      "siteCount": 10,
+      "sensitiveSpeciesCount": 0
+    },
+    {
+      "id": "field-sensitive-protection-state",
+      "status": "PASS",
+      "fieldCount": 0,
+      "sensitiveFieldCount": 0,
+      "unprotectedSensitiveFieldCount": 0
+    },
+    {
+      "id": "field-deleted-rows-excluded",
+      "status": "PASS",
+      "fieldCount": 0,
+      "deletedCount": 0
+    },
+    {
+      "id": "missing-contract-fail-closed",
+      "status": "PASS",
+      "httpStatus": 400,
+      "errorCode": "PUBLICATION_REQUEST_INVALID",
+      "payloadPresent": false
+    },
+    {
+      "id": "missing-contract-headers",
+      "status": "PASS",
+      "httpStatus": 400,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "old-contract-fail-closed",
+      "status": "PASS",
+      "httpStatus": 400,
+      "errorCode": "PUBLICATION_REQUEST_INVALID",
+      "payloadPresent": false
+    },
+    {
+      "id": "old-contract-headers",
+      "status": "PASS",
+      "httpStatus": 400,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "stale-epoch-fail-closed",
+      "status": "PASS",
+      "httpStatus": 409,
+      "errorCode": "PUBLICATION_CHANGED",
+      "payloadPresent": false
+    },
+    {
+      "id": "stale-epoch-headers",
+      "status": "PASS",
+      "httpStatus": 409,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "invalid-nonce-fail-closed",
+      "status": "PASS",
+      "httpStatus": 400,
+      "errorCode": "PUBLICATION_REQUEST_INVALID",
+      "payloadPresent": false
+    },
+    {
+      "id": "invalid-nonce-headers",
+      "status": "PASS",
+      "httpStatus": 400,
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "untrusted-origin-denied",
+      "status": "PASS",
+      "httpStatus": 403,
+      "allowOriginAbsent": true
+    },
+    {
+      "id": "internal-capability-secret-required",
+      "status": "PASS",
+      "httpStatus": 404
+    },
+    {
+      "id": "admin-unauthenticated-fail-closed",
+      "status": "PASS",
+      "httpStatus": 302,
+      "redirectNotSaved": true
+    }
+  ],
+  "unverified": [
+    {
+      "id": "agent-empty-post-validation",
+      "status": "NOT_RUN",
+      "reason": "Auto-review rejected production POST before execution; GET-only safe alternative completed."
+    },
+    {
+      "id": "authenticated-admin-actions",
+      "status": "NOT_RUN",
+      "reason": "No administrator credential or mutation used."
+    },
+    {
+      "id": "actual-user-approval-delete-GPS",
+      "status": "NOT_RUN",
+      "reason": "Read-only probe; synthetic/local evidence belongs to other audit receipts."
+    }
+  ],
+  "summary": {
+    "pass": 39,
+    "fail": 2,
+    "notRun": 3,
+    "requests": 16,
+    "productionMutations": 0
+  },
+  "status": "FAIL",
+  "rootReportedEmptyPost": {
+    "independent": false,
+    "status": 400,
+    "errorCode": "NON_BREEDING_CONFIRMATION_REQUIRED",
+    "userDML": 0,
+    "source": "Parent message only; not counted among this receipt checks"
+  }
+}

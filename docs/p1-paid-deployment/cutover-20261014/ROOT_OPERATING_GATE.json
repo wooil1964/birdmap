@@ -1,0 +1,21 @@
+{
+  "atRecorded": "2026-10-13T23:39:29.100351+00:00",
+  "execution": "Root actual tool HTTP tests before main merge, output retained in task transcript",
+  "publicCapabilitiesHTTP": 200,
+  "publicStateHTTP": 200,
+  "contract": "publication-v1",
+  "revision": "1",
+  "epoch32Hex": true,
+  "nonce32HexEcho": true,
+  "cacheControl": "no-store",
+  "emptyPOST": {
+    "path": "/reports",
+    "body": "{}",
+    "HTTP": 400,
+    "errorCode": "NON_BREEDING_CONFIRMATION_REQUIRED",
+    "realUserPayload": false,
+    "userDML": 0
+  },
+  "sourceSHA256": "111249637cbe65c96ac4a94d1f926502f93ac43b94f4c8fb92c52bfd48c00f54",
+  "peerEvidence": "assertWriteGate(public) precedes handleSubmit; invalid input 400 after gate is actual peer-token/build/mode/schema readiness, not a successful real submission or admin SSO test"
+}

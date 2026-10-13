@@ -1,0 +1,449 @@
+{
+  "at": "2026-10-13T23:46:49.391903+00:00",
+  "candidateSha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+  "actualMergeSha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+  "mainAfterAutomaticRefresh": "99740ff11ca3a19d1437de8ffd457899407943c1",
+  "postmergeChangedPaths": [
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "postmergeOnlyAutomaticJsonChanged": true,
+  "pages": {
+    "latestBuild": {
+      "status": "built",
+      "commit": "99740ff11ca3a19d1437de8ffd457899407943c1",
+      "created_at": "2026-10-13T23:38:15Z",
+      "updated_at": "2026-10-13T23:38:59Z",
+      "error": {
+        "message": null
+      }
+    },
+    "matchingRuns": [
+      {
+        "id": 38485449472,
+        "head_sha": "99740ff11ca3a19d1437de8ffd457899407943c1",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-13T23:38:16Z",
+        "updated_at": "2026-10-13T23:39:03Z",
+        "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38485449472"
+      },
+      {
+        "id": 38485165105,
+        "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-13T23:35:24Z",
+        "updated_at": "2026-10-13T23:36:10Z",
+        "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38485165105"
+      }
+    ],
+    "deployments": [
+      {
+        "id": 7052768616,
+        "sha": "99740ff11ca3a19d1437de8ffd457899407943c1",
+        "latestState": "success",
+        "latestCreatedAt": "2026-10-13T23:39:03Z",
+        "environment": "github-pages"
+      },
+      {
+        "id": 7052725353,
+        "sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+        "latestState": "success",
+        "latestCreatedAt": "2026-10-13T23:36:10Z",
+        "environment": "github-pages"
+      }
+    ],
+    "ordinaryPublicIndex": {
+      "http": 200,
+      "bytes": 1384042,
+      "sha256": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb",
+      "headers": {
+        "Date": "Tue, 13 Oct 2026 23:46:53 GMT",
+        "ETag": "\"6acec112-151e6a\"",
+        "Age": "0",
+        "Last-Modified": "Tue, 13 Oct 2026 23:38:58 GMT",
+        "Cache-Control": "max-age=600",
+        "X-Cache": "MISS"
+      },
+      "byteIdenticalToCandidate": true
+    },
+    "actualBuiltAndSourceMatch": true
+  },
+  "weather": {
+    "run": {
+      "id": 38485167154,
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-13T23:35:25Z",
+      "updated_at": "2026-10-13T23:38:18Z"
+    },
+    "jobs": [
+      {
+        "id": 115596935177,
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-13T23:35:29Z",
+            "completed_at": "2026-10-13T23:35:30Z"
+          },
+          {
+            "name": "Check out repository",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-13T23:35:30Z",
+            "completed_at": "2026-10-13T23:35:32Z"
+          },
+          {
+            "name": "Set up Python",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-13T23:35:32Z",
+            "completed_at": "2026-10-13T23:35:33Z"
+          },
+          {
+            "name": "Check updater syntax",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-13T23:35:33Z",
+            "completed_at": "2026-10-13T23:35:39Z"
+          },
+          {
+            "name": "Build weather_today.json and weather_week.json",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-13T23:35:39Z",
+            "completed_at": "2026-10-13T23:38:12Z"
+          },
+          {
+            "name": "Validate weather_today.json and weather_week.json",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-13T23:38:12Z",
+            "completed_at": "2026-10-13T23:38:13Z"
+          },
+          {
+            "name": "Commit updated weather",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-13T23:38:13Z",
+            "completed_at": "2026-10-13T23:38:15Z"
+          },
+          {
+            "name": "Post Set up Python",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-13T23:38:15Z",
+            "completed_at": "2026-10-13T23:38:15Z"
+          },
+          {
+            "name": "Post Check out repository",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-13T23:38:15Z",
+            "completed_at": "2026-10-13T23:38:15Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-10-13T23:38:15Z",
+            "completed_at": "2026-10-13T23:38:15Z"
+          }
+        ]
+      }
+    ],
+    "buildValidateCommitAllExecuted": true,
+    "independentCurrentValidator": "../current-operating-99740ff/CURRENT_VALIDATOR_RECEIPT.json owned by root; not rerun here"
+  },
+  "tide": {
+    "latestActualScheduleRun": 38463425157,
+    "sourceSha": "6feac41ae485bf16080324e40104de6d7b1ee8e5",
+    "jobs": [
+      {
+        "id": 115524140279,
+        "name": "update-tides",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-13T20:31:01Z",
+            "completed_at": "2026-10-13T20:31:01Z"
+          },
+          {
+            "name": "Check out repository",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-13T20:31:01Z",
+            "completed_at": "2026-10-13T20:31:02Z"
+          },
+          {
+            "name": "Set up Python",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-13T20:31:02Z",
+            "completed_at": "2026-10-13T20:31:03Z"
+          },
+          {
+            "name": "Decide whether scheduled recovery is needed",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-13T20:31:03Z",
+            "completed_at": "2026-10-13T20:31:03Z"
+          },
+          {
+            "name": "Check updater syntax",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-13T20:31:03Z",
+            "completed_at": "2026-10-13T20:31:03Z"
+          },
+          {
+            "name": "Test tide reliability",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-13T20:31:03Z",
+            "completed_at": "2026-10-13T20:31:04Z"
+          },
+          {
+            "name": "Validate curated official station mapping",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-13T20:31:04Z",
+            "completed_at": "2026-10-13T20:31:04Z"
+          },
+          {
+            "name": "Validate station mapping",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-13T20:31:04Z",
+            "completed_at": "2026-10-13T20:31:04Z"
+          },
+          {
+            "name": "Build tide_today.json",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-13T20:31:05Z",
+            "completed_at": "2026-10-13T20:31:22Z"
+          },
+          {
+            "name": "Validate tide_today.json",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-13T20:31:22Z",
+            "completed_at": "2026-10-13T20:31:22Z"
+          },
+          {
+            "name": "Check tide_today freshness",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-13T20:31:22Z",
+            "completed_at": "2026-10-13T20:31:22Z"
+          },
+          {
+            "name": "Build tide health report",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-13T20:31:22Z",
+            "completed_at": "2026-10-13T20:31:22Z"
+          },
+          {
+            "name": "Validate tide_health.json",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-13T20:31:22Z",
+            "completed_at": "2026-10-13T20:31:22Z"
+          },
+          {
+            "name": "Upload tide diagnostics",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-13T20:31:22Z",
+            "completed_at": "2026-10-13T20:31:23Z"
+          },
+          {
+            "name": "Commit updated tides",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-10-13T20:31:23Z",
+            "completed_at": "2026-10-13T20:31:24Z"
+          },
+          {
+            "name": "Post Set up Python",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 29,
+            "started_at": "2026-10-13T20:31:24Z",
+            "completed_at": "2026-10-13T20:31:24Z"
+          },
+          {
+            "name": "Post Check out repository",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 30,
+            "started_at": "2026-10-13T20:31:24Z",
+            "completed_at": "2026-10-13T20:31:25Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 31,
+            "started_at": "2026-10-13T20:31:25Z",
+            "completed_at": "2026-10-13T20:31:25Z"
+          }
+        ]
+      }
+    ],
+    "sourceFilesAllIdentical": true,
+    "sourceFileProof": [
+      {
+        "path": ".github/scripts/update_tide.py",
+        "scheduledSourceBlob": "c27394e6ea4a8309e7642b2fa268eb8810e3b63b",
+        "candidateBlob": "c27394e6ea4a8309e7642b2fa268eb8810e3b63b",
+        "identical": true
+      },
+      {
+        "path": ".github/scripts/audit_tide_health.py",
+        "scheduledSourceBlob": "fd8a4699a85ceb0f0b155f4fe0ac6cbf528f440f",
+        "candidateBlob": "fd8a4699a85ceb0f0b155f4fe0ac6cbf528f440f",
+        "identical": true
+      },
+      {
+        "path": ".github/scripts/build_tide_station_mapping.py",
+        "scheduledSourceBlob": "2832fc73bf735901dc1d756dca86d1860433c8d8",
+        "candidateBlob": "2832fc73bf735901dc1d756dca86d1860433c8d8",
+        "identical": true
+      },
+      {
+        "path": ".github/scripts/tide_official_stations.json",
+        "scheduledSourceBlob": "6079df7753295fce6c32158964f9735d5e4e2e5e",
+        "candidateBlob": "6079df7753295fce6c32158964f9735d5e4e2e5e",
+        "identical": true
+      },
+      {
+        "path": ".github/scripts/test_tide.py",
+        "scheduledSourceBlob": "47dd30bab9803bee78f77578fcc26d737df82f59",
+        "candidateBlob": "47dd30bab9803bee78f77578fcc26d737df82f59",
+        "identical": true
+      },
+      {
+        "path": ".github/scripts/test_tide_fallback.mjs",
+        "scheduledSourceBlob": "c99f5e112468b5009f43cb5c3ddf5a4392892f60",
+        "candidateBlob": "c99f5e112468b5009f43cb5c3ddf5a4392892f60",
+        "identical": true
+      },
+      {
+        "path": "tide_station_mapping.json",
+        "scheduledSourceBlob": "2d24fb0d2e6310f2d2bf84681527ab700f1180e3",
+        "candidateBlob": "2d24fb0d2e6310f2d2bf84681527ab700f1180e3",
+        "identical": true
+      },
+      {
+        "path": ".github/workflows/update-tide.yml",
+        "scheduledSourceBlob": "4c50dd76d1898b93d2db44c7b092aec744e5c95e",
+        "candidateBlob": "4c50dd76d1898b93d2db44c7b092aec744e5c95e",
+        "identical": true
+      },
+      {
+        "path": "data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx",
+        "scheduledSourceBlob": "d8eb89ed459cc51ff41a46590b4ccc820551ad27",
+        "candidateBlob": "d8eb89ed459cc51ff41a46590b4ccc820551ad27",
+        "identical": true
+      }
+    ],
+    "newMergePushTideRun": "NOT_TRIGGERED: no changed path matches tide workflow push filter; not falsely counted as a new successful run",
+    "conditionalSkippedSteps": []
+  },
+  "safeDownloadedLogEvidence": [
+    {
+      "kind": "weather",
+      "job": 115596935177,
+      "actualRawLogBytes": 71488,
+      "actualRawLogSha256": "97c70f1d79de2b288e09d189e32bf33d0a9d5e2af9eb18864fa4677307733ebc",
+      "safeLog": "weather-job-115596935177-validation-safe.log",
+      "safeLogSha256": "f84d9dec4e507ffe965ebda16fc1158f77a2014b2d020b67dca900488fe6dd76",
+      "metadata": [
+        {
+          "date": "2026-10-14",
+          "generatedAt": "2026-10-14 08:35 KST",
+          "refreshedAt": "2026-10-14 08:38 KST",
+          "status": "ok",
+          "siteCount": 190,
+          "successCount": 190,
+          "failedCount": 0,
+          "upstreamSuccessCount": 190,
+          "staleCount": 0,
+          "unavailableSiteCount": 0,
+          "scoreEligibleCount": 190,
+          "providerFallbackCount": 190
+        },
+        {
+          "startDate": "2026-10-14",
+          "endDate": "2026-10-20",
+          "generatedAt": "2026-10-14 08:35 KST",
+          "refreshedAt": "2026-10-14 08:38 KST",
+          "status": "ok",
+          "siteCount": 190,
+          "siteWithSamplesCount": 190,
+          "unavailableSiteCount": 0,
+          "sampleCount": 10640,
+          "scoreEligibleSampleCount": 10640
+        }
+      ],
+      "scope": "Existing actual CI log downloaded into memory; only public batch fields/validation summaries/recognized script paths persisted. No raw credentials or private payload."
+    },
+    {
+      "kind": "tide",
+      "job": 115524140279,
+      "actualRawLogBytes": 48158,
+      "actualRawLogSha256": "3418962bf38efdc33ddae20f59d0d78fa98bc35d3a52e423dd0b34bbc63cef6d",
+      "safeLog": "tide-job-115524140279-validation-safe.log",
+      "safeLogSha256": "889d281b1e46ff96738d80bb3601fdd9522362e45b9dcb1eba1beb2496f15c0c",
+      "metadata": [],
+      "scope": "Existing actual CI log downloaded into memory; only public batch fields/validation summaries/recognized script paths persisted. No raw credentials or private payload."
+    }
+  ],
+  "result": "Pages actual built/source identical; postmerge weather update/validator/commit succeeded; latest actual tide schedule succeeded with unchanged source. No new tide dispatch or tests.",
+  "credentialsInMemoryOnly": true,
+  "authorizationForwardedToDownloadsOrPages": false,
+  "operatingWorkerApiRequests": 0,
+  "dispatches": 0,
+  "productEdits": 0,
+  "testReexecutions": 0,
+  "deploymentsPerformed": 0
+}

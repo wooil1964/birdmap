@@ -1,0 +1,112 @@
+{
+  "at": "2026-10-13T23:38:55.271Z",
+  "scope": "Supplement only, original 39 PASS / 2 FAIL raw sanitized receipt preserved; no operating writes",
+  "checks": [
+    {
+      "id": "fresh-head-real-client-contract",
+      "status": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "id": "monthly-real-client-publication-validator",
+      "status": "PASS",
+      "httpStatus": 200,
+      "nonceEcho": true,
+      "revision": "1"
+    },
+    {
+      "id": "monthly-real-client-payload-parser",
+      "status": "PASS",
+      "count": 8,
+      "approvedReportsType": "number",
+      "publicContributorsType": "number"
+    },
+    {
+      "id": "monthly-current-source-schema",
+      "status": "PASS",
+      "okPropertyPresent": false,
+      "serverMonthlyConstructorOmitsOk": true,
+      "clientContractDoesNotRequireOk": true
+    },
+    {
+      "id": "monthly-no-store-cors",
+      "status": "PASS",
+      "noStore": true,
+      "allowOriginExact": true
+    },
+    {
+      "id": "monthly-fresh-postflight",
+      "status": "PASS",
+      "httpStatus": 200,
+      "nonceEcho": true
+    },
+    {
+      "id": "monthly-request-start-five-second-cycle",
+      "status": "PASS",
+      "cycleElapsedMs": 427,
+      "startsAtInitialHeadRequest": true
+    },
+    {
+      "id": "initial-all-other-contracts-preserved",
+      "status": "PASS",
+      "originalPass": 39,
+      "originalFail": 2,
+      "originalCycleElapsedMs": 455
+    }
+  ],
+  "classifications": [
+    {
+      "id": "contributors-monthly-fresh-contract",
+      "classification": "HARNESS_CONTRACT_MISMATCH",
+      "reason": "Monthly endpoint server constructor returns month/approvedReports/publicContributors/contributors; actual contributorsPayload and publicationValidate do not require an ok field.",
+      "source": {
+        "server": "reports-api/src/publication.js:91",
+        "clientPayload": "index.html:1237",
+        "clientAuthority": "index.html:3021"
+      },
+      "assertionKept": true,
+      "originalReceiptPreserved": true
+    },
+    {
+      "id": "request-start-five-second-cycle",
+      "classification": "DERIVED_HARNESS_CONTRACT_MISMATCH",
+      "reason": "455ms initial head/list/postflight met five-second time bound; conjunction rejected the same legitimate monthly no-ok body. This supplement independently executes actual client authority/parser on a fresh three-GET cycle.",
+      "originalReceiptPreserved": true
+    }
+  ],
+  "summary": {
+    "pass": 8,
+    "fail": 0,
+    "requests": 3,
+    "productionMutations": 0
+  },
+  "sourceSha256": {
+    "index": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb",
+    "publication": "ab302c102ec38063aa99731589d58c02f9115c2212f1502e1dd5dd3d7e4dd2b4"
+  },
+  "sourcePrimaryScope": "Source first-primary verified; public API does not expose D1 served_by_primary metadata.",
+  "unverified": [
+    {
+      "id": "agent-empty-post-validation",
+      "status": "NOT_RUN",
+      "reason": "Auto-review rejected production POST before execution; GET-only safe alternative completed."
+    },
+    {
+      "id": "authenticated-admin-actions",
+      "status": "NOT_RUN",
+      "reason": "No administrator credential or mutation used."
+    },
+    {
+      "id": "actual-user-approval-delete-GPS",
+      "status": "NOT_RUN",
+      "reason": "Read-only probe; synthetic/local evidence belongs to other audit receipts."
+    }
+  ],
+  "rootReportedChrome": {
+    "independent": false,
+    "pass": 70,
+    "fail": 0,
+    "source": "Parent reported LIVE_CHROME.json incl contributorsCurrent at five widths; not counted in this independent receipt."
+  },
+  "status": "PASS"
+}
