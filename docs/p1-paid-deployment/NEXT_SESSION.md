@@ -17,3 +17,5 @@ remote실행은pinnedWrangler4.149 d1 migrations apply --remote:dedicateddir첫0
 D1삭제/철회revision/epoch초기화·과거backup전체자동restore금지. 사용자데이터삭제·파괴적purge자동실행금지. 필요auth/물리시험못한범위는명시.
 운영D1/main/Worker활성화/Pages/실사용자변경은현재0. 안전backup/복구관문전operatingtransition시작하지않는다. 이미위임된병합·배포권한은유지되므로외부관문이외반복승인질문금지.
 최종결과는PR17·Issue9에게시·본문재확인. 현재BLOCKED는수정가능결함방치가아닌specificprivatebackup승인/실제복구대기;DEPLOYED아님.
+
+게시 완료: PR17 #issuecomment-6152444439 / Issue9 #issuecomment-6152445516. 두 본문과 PR 최신 설명 모두 서버 readback exact 일치. PUBLICATION_READBACK_5718402.json 및 COMMENT_FINAL_5718402.md를 읽는다. 증거 체크포인트 b36cd773069e59d46866c325a4a218b6364341ce 이후 커밋은 게시 영수증·문서뿐이며 PR 제품571/정확CI를 유지한다. 문서 폴더 .gitattributes -text로 기록 원본의 줄바꿈/해시를 보존한다.
