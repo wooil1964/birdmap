@@ -1,3 +1,4 @@
+import { strictWriterDb } from './writer-fence.js';
 // 공개 제보 접수 Worker.
 // - POST /reports              로그인 없이 누구나 제보한다. 항상 status='pending' 으로만 들어간다.
 // - GET  /reports/approved     승인된 제보의 종과 공개 좌표만 내보낸다(붉은 점).
@@ -58,7 +59,7 @@ function database(env) {
       503,
     );
   }
-  return env.REPORTS_DB;
+  return strictWriterDb(env.REPORTS_DB,env.REPORTS_PUBLICATION_REQUIRED==='true');
 }
 
 async function readJsonBody(request) {

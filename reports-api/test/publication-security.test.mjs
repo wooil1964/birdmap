@@ -1,3 +1,5 @@
+import { strictWriterDb } from '../src/writer-fence.js';
+import { trustedFixtureSqlite } from './fixture-writer.mjs';
 // Independent synthetic SQLite/D1-shaped contract tests. No production requests.
 import assert from 'node:assert/strict';
 import test, { mock } from 'node:test';
@@ -61,7 +63,7 @@ function fixture({ migrate = true } = {}) {
     },
   };
   const env = { ENVIRONMENT: 'production', REPORTS_DB: db, REPORT_IP_SALT: 'synthetic-salt', TURNSTILE_SECRET_KEY: 'synthetic-key', REPORTS_PUBLICATION_REQUIRED: 'true' };
-  return { sqlite, db, env };
+  return { sqlite:migrate?trustedFixtureSqlite(sqlite):sqlite, db, env };
 }
 
 let ip = 0;
@@ -222,25 +224,26 @@ test('publication: insert/update/delete coverage and failed batch rollback inclu
   insertReport(sqlite); assert.ok(BigInt(revision(sqlite)) > begin);
   const afterInsert = BigInt(revision(sqlite)); sqlite.prepare("UPDATE reports SET name_public=0,note='합성 변경' WHERE id=?").run('synthetic-approved'); assert.ok(BigInt(revision(sqlite)) > afterInsert);
   const beforeFailure = revision(sqlite);
-  await assert.rejects(db.batch([db.prepare("UPDATE reports SET status='rejected' WHERE id='synthetic-approved'"), db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('injected-failure',0)")]));
+  await assert.rejects(strictWriterDb(db,true).batch([db.prepare("UPDATE reports SET status='rejected' WHERE id='synthetic-approved'"), db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('injected-failure',0)")]),/CHECK constraint failed/);
   assert.equal(revision(sqlite), beforeFailure); assert.equal(sqlite.prepare('SELECT status FROM reports').get().status, 'approved');
   sqlite.exec("DELETE FROM reports WHERE id='synthetic-approved'"); assert.ok(BigInt(revision(sqlite)) > BigInt(beforeFailure));
 });
 
 test('canonical dual write: success and injected failure keep publication/report/raw/checklist/redemption atomic',async()=>{
   const {db,sqlite}=fixture(); const firstInput=canonicalInput(1),before=revision(sqlite);
-  await persistQuick(db,firstInput.row,firstInput.input,firstInput.accepted,firstInput.tokenHash);
+  await persistQuick(strictWriterDb(db,true),firstInput.row,firstInput.input,firstInput.accepted,firstInput.tokenHash);
   assert.ok(BigInt(revision(sqlite))>BigInt(before));
   for(const table of ['reports','raw_submissions','checklists','sightings','captcha_redemptions'])assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM '+table).get().n,1,table);
-  const frozen=revision(sqlite),second=canonicalInput(2),failing={prepare:sql=>db.prepare(sql),batch:list=>{const copy=[...list];copy.splice(5,0,db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('canonical-injected',0)"));return db.batch(copy);}};
-  await assert.rejects(persistQuick(failing,second.row,second.input,second.accepted,second.tokenHash));
+  let injectedCause; const frozen=revision(sqlite),second=canonicalInput(2),failing={prepare:sql=>db.prepare(sql),batch:list=>{const copy=[...list];copy.splice(5,0,db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('canonical-injected',0)"));return strictWriterDb(db,true).batch(copy).catch(error=>{injectedCause=error;throw error;});}};
+  await assert.rejects(persistQuick(failing,second.row,second.input,second.accepted,second.tokenHash),e=>e.code==='WRITE_FAILED');
+  assert.match(String(injectedCause),/CHECK constraint failed/,'Injected middle failure reached original CHECK, not writer fence');
   assert.equal(revision(sqlite),frozen);
   for(const table of ['reports','raw_submissions','checklists','sightings','captcha_redemptions'])assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM '+table).get().n,1,table);
   assert.equal(await schemaReady(db),true);
 });
 
 test('canonical shadow: same authority snapshots compare and changed authority is explicitly inconclusive',async()=>{
-  const {db,env,sqlite}=fixture(),input=canonicalInput(3); await persistQuick(db,input.row,input.input,input.accepted,input.tokenHash);
+  const {db,env,sqlite}=fixture(),input=canonicalInput(3); await persistQuick(strictWriterDb(db,true),input.row,input.input,input.accepted,input.tokenHash);
   const publication=(await head(env)).body.publication,path=query('/reports/pending',publication);
   const req=()=>new Request('https://publication.test'+path,{headers:{Origin:ORIGIN}});
   const original=await handleLegacyRequest(req(),env),logs=[];
@@ -254,15 +257,15 @@ test('field CAS: deleted is terminal against old unconditional status/activity/c
   const { env, sqlite } = fixture(); const id = await create(env);
   assert.equal((await post(env, id, 'delete', { deviceId: DEVICE_A })).status, 200);
   const before = field(sqlite, id), version = revision(sqlite);
-  for (const set of ["status='reappeared'", "last_activity_at='2099-01-01T00:00:00.000Z'", 'public_lat=38,public_lon=128']) assert.throws(() => sqlite.prepare('UPDATE field_updates SET ' + set + ' WHERE id=?').run(id));
+  for (const set of ["status='reappeared'", "last_activity_at='2099-01-01T00:00:00.000Z'", 'public_lat=38,public_lon=128']) assert.throws(() => sqlite.prepare('UPDATE field_updates SET ' + set + ' WHERE id=?').run(id),/field_deleted_terminal/);
   assert.deepEqual(field(sqlite, id), before); assert.equal(revision(sqlite), version);
 });
 
 test('field CAS: late child event or confirmation cannot append after deletion', async () => {
   const { env, sqlite }=fixture(); const id=await create(env); await post(env,id,'delete',{deviceId:DEVICE_A});
   const before=revision(sqlite),beforeEvents=events(sqlite,id),at=new Date().toISOString();
-  assert.throws(()=>sqlite.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('late-event',?,'reappeared','합성',?,'synthetic','synthetic')").run(id,at));
-  assert.throws(()=>sqlite.prepare("INSERT INTO field_update_confirmations(id,field_update_id,user_hash,ip_hash,created_at) VALUES('late-confirm',?,'synthetic-other','synthetic',?)").run(id,at));
+  assert.throws(()=>sqlite.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES('late-event',?,'reappeared','합성',?,'synthetic','synthetic')").run(id,at),/field_deleted_terminal/);
+  assert.throws(()=>sqlite.prepare("INSERT INTO field_update_confirmations(id,field_update_id,user_hash,ip_hash,created_at) VALUES('late-confirm',?,'synthetic-other','synthetic',?)").run(id,at),/field_deleted_terminal/);
   assert.equal(revision(sqlite),before); assert.deepEqual(events(sqlite,id),beforeEvents); assert.equal(count(sqlite,id),0);
 });
 
@@ -277,7 +280,7 @@ test('field CAS: old normal writer advances row revision and old CAS cannot perf
   sqlite.prepare("UPDATE field_updates SET status='not_visible' WHERE id=?").run(id);
   sqlite.prepare("UPDATE field_updates SET status='reappeared' WHERE id=?").run(id);
   const now = field(sqlite,id); assert.equal(now.status,'reappeared'); assert.equal(now.row_revision,3);
-  await assert.rejects(db.batch([db.prepare("UPDATE field_updates SET status='not_visible',row_revision=row_revision+1 WHERE id=? AND row_revision=1").bind(id),db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('aba-failure',CASE WHEN changes()=1 THEN 1 ELSE 0 END)")]));
+  await assert.rejects(strictWriterDb(db,true).batch([db.prepare("UPDATE field_updates SET status='not_visible',row_revision=row_revision+1 WHERE id=? AND row_revision=1").bind(id),db.prepare("INSERT INTO transaction_assertions(assertion_id,ok) VALUES('aba-failure',CASE WHEN changes()=1 THEN 1 ELSE 0 END)")]),/CHECK constraint failed/);
   assert.equal(field(sqlite,id).status,'reappeared'); assert.equal(field(sqlite,id).row_revision,3);
 });
 

@@ -1,9 +1,10 @@
+import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
 import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString} from './shared.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload} from './field-updates.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='legacy-public-v1';
-export const PUBLICATION_GUARDS=['publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
+export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
 const MAX_REV=9223372036854775807n;
 export function publicationRevision(value,minimum=0n) {
  if(typeof value!=='string'||!/^(0|[1-9][0-9]{0,18})$/.test(value))return false;
@@ -33,7 +34,7 @@ function guardLocators(row) {
  return PUBLICATION_GUARDS.map(name=>[name,byName.get(name)]);
 }
 export function publicationStateStatement(db,slots=null) {
- const columns="epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type";
+ const columns="epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,(SELECT COUNT(*) FROM publication_writer_claim) AS writerClaims";
  if(slots){
   const checks=slots.map((_,i)=>`(SELECT COUNT(*) FROM sqlite_schema WHERE rowid=?${i*2+1} AND type='trigger' AND name=?${i*2+2})`);
   return db.prepare(`SELECT ${columns},(${checks.join('+')}) AS guards FROM public_publication_state WHERE id=1`).bind(...slots.flatMap(([name,rowid])=>[rowid,name]));
@@ -51,7 +52,7 @@ function rememberGuardLocators(binding,row) {
  const slots=guardLocators(row);if(slots)guardLookupHints.set(binding,slots);
 }
 function validateState(row,request,head) {
- if(!row||!token(row.epoch)||row.revision_type!=='integer'||!publicationRevision(row.revision)||Number(row.guards)!==PUBLICATION_GUARDS.length)fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');
+ if(!row||row.writerClaims!==0||!token(row.epoch)||row.revision_type!=='integer'||!publicationRevision(row.revision)||Number(row.guards)!==PUBLICATION_GUARDS.length)fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');
  if(!head&&(row.epoch!==request.epoch||row.revision!==request.revision))fail('PUBLICATION_CHANGED','공개 위치 상태가 변경됐습니다. 다시 확인해 주세요.',409);
  return {contract:PUBLICATION_CONTRACT,epoch:row.epoch,revision:row.revision,projection:PUBLICATION_PROJECTION,nonce:request.nonce};
 }

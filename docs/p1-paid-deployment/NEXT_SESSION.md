@@ -17,3 +17,10 @@ paired maintenance 100%/legacy0%없음/preview off → 모든 writer통제 및fr
 업로드 정상/유지보수 versionIDs는 VERIFIED_STANDBYS.json/FINDINGS를 사용한다. public494/16dae나c025Pages로 되돌리지 않는다. D1의 삭제·철회·revision을 초기화하거나 과거backup으로 자동복구하지 않는다.
 운영 auth나 물리 GPS/외부앱 시험을 못했으면 미실행으로 명시한다. source/CI PASS를 실제운영 PASS로 바꾸지 않는다.
 최종 결과를 PR17과 Issue9에 게시하고 본문을 재확인한다. 현재 사용자 승인은 수정·병합·배포까지 이미 있으므로 관문 이외의 반복승인을 묻지 않는다.
+
+## 진행 중 추가 보완 — writer fence
+구버전 지연 writer 전환 결함을 직접 수정: prebarrier0004b(0005 전 별도 atomic commit), 현재 코드의 raw D1.batch claim/body/delete, 공개 guard34/claim0, capability v4. 운영 변경 없음.
+기존 원형 실패와 신규 target-first/second/reports-first/second/native-first/second 모두 보존.
+최신 표적 API284/0, actual native fence13/0(실제 COMMIT후 응답손실·prebarrier rollback·원본 보존 포함), 실제 제품 nativeCAS10/0. 이전 native-third N08은 응답손실 주입 전이므로 확대 해석 금지.
+현재 root만 소스 수정. 전체 회귀·Chrome·정확 CI와 새4Worker standby/Pages artifact는 새 제품SHA에서 진행해야 함.
+Paid 실제 활성화 확인 및 승인 검토가 거부한 private D1 암호화 export 범위 승인은 계속 대기. 기존5719 normal standby는 새 fence 미포함이므로 안전 롤백으로 재사용 금지.

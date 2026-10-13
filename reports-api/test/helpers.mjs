@@ -1,3 +1,5 @@
+import { strictWriterDb } from '../src/writer-fence.js';
+import { trustedFixtureSqlite } from './fixture-writer.mjs';
 // 테스트용 D1 대역. Node 내장 SQLite 로 실제 schema.sql 을 올려 두고,
 // D1 의 prepare/bind/all/first/run/batch 모양만 맞춘다.
 // 손으로 만든 질의 분기 대신 진짜 SQL 이 돌기 때문에 UNIQUE 인덱스와 LIKE 조건까지 그대로 검증된다.
@@ -42,7 +44,7 @@ export function fakeDb(initialRows = []) {
   const db = new DatabaseSync(":memory:");
   db.exec(SCHEMA);
   db.exec(readFileSync(new URL("../../docs/long-term-db-phase2a/migrations/0001_core.sql",import.meta.url),"utf8"));
-  for (const row of initialRows) insertRow(db, row);
+  for (const row of initialRows) insertRow(trustedFixtureSqlite(db), row);
 
   function prepare(sql) {
     let params = [];
@@ -67,7 +69,7 @@ export function fakeDb(initialRows = []) {
     return statement;
   }
 
-  return {
+  return strictWriterDb({
     prepare,
     async batch(statements) {
       db.exec("BEGIN");
@@ -77,7 +79,7 @@ export function fakeDb(initialRows = []) {
     get rows() {
       return db.prepare("SELECT * FROM reports ORDER BY received_at").all();
     },
-  };
+  },true);
 }
 
 export const ORIGIN = { Origin: "https://wooil1964.github.io" };
@@ -149,13 +151,13 @@ export function canonicalDb() {
     };
     return s;
   };
-  return {
+  return strictWriterDb({
     prepare,
     async batch(list) {
       db.exec("BEGIN");
       try { const result=[];for (const s of list)result.push(await s.batchResult());db.exec("COMMIT");return result;}catch(e){db.exec("ROLLBACK");throw e;}
     },
     count: (sql) => db.prepare(sql).get().n,
-    sqlite: db,
-  };
+    sqlite: trustedFixtureSqlite(db),
+  },true);
 }

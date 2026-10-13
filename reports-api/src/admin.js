@@ -1,3 +1,4 @@
+import { strictWriterDb } from './writer-fence.js';
 // 관리자 승인 Worker. 이 Worker 의 workers.dev 주소에는 Cloudflare Access 를 건다.
 // Access 가 앞에서 로그인을 강제하고, 여기서 Access JWT 를 한 번 더 검증한다.
 // 설정값(ACCESS_TEAM_DOMAIN / ACCESS_AUD / ADMIN_EMAILS)이 비어 있으면 503 으로 닫는다.
@@ -27,7 +28,7 @@ function database(env) {
   if (!env?.REPORTS_DB) {
     throw new WorkerError("NOT_CONFIGURED", "저장소가 연결되지 않았습니다.", 503);
   }
-  return env.REPORTS_DB;
+  return strictWriterDb(env.REPORTS_DB,env.REPORTS_PUBLICATION_REQUIRED==='true');
 }
 
 function accessToken(request) {

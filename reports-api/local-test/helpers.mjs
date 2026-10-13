@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import { strictWriterDb } from '../src/writer-fence.js';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, join } from 'node:path';
@@ -7,13 +9,24 @@ import { SCHEMA_VERSION } from '../src/canonical/data.js';
 export const uuid=n=>`10000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 export const ORIGIN='https://wooil1964.github.io';
 export const ADMIN='local-admin@example.test';
-export function splitDDL(sql) {return sql.replace(/--[^\n]*/g,'').match(/\s*CREATE TRIGGER[\s\S]*?END\s*;|[^;]+;/gi).map(s=>s.trim()).filter(Boolean);}
+// Token-aware splitter retains nested CASE/END inside trigger BEGIN/END.
+export function splitDDL(input){
+ const sql=input.replace(/--[^\n]*/g,''),list=[];let start=0,trigger=false,depth=0;
+ for(const t of sql.matchAll(/'(?:''|[^'])*'|"(?:""|[^"])*"|[A-Za-z_]\w*|;/g)){
+  const w=t[0].toUpperCase();
+  if(w==='TRIGGER'&&/^\s*CREATE\s+(?:TEMP(?:ORARY)?\s+)?TRIGGER\b/i.test(sql.slice(start,t.index+w.length)))trigger=true;
+  if(trigger&&(w==='BEGIN'||w==='CASE'))depth++;
+  if(trigger&&w==='END')depth--;
+  if(w===';'&&(!trigger||depth===0)){list.push(sql.slice(start,t.index+1).trim());start=t.index+1;trigger=false;depth=0;}
+ }assert.equal(sql.slice(start).trim(),'');return list.filter(Boolean);
+}
+
 export async function localDb(toolchain) {
   const require=createRequire(import.meta.url),{Miniflare,convertV4MiniflareOptions}=require(join(resolve(toolchain),'miniflare'));
   const mf=new Miniflare(convertV4MiniflareOptions({name:'phase2b-local',modules:true,script:'export default {fetch(){return new Response("local-only")}}',compatibilityDate:'2026-09-24',d1Databases:{REPORTS_DB:'phase2b-local-only'},d1Persist:false,host:'127.0.0.1',port:0,cf:false}));
   const db=await mf.getD1Database('REPORTS_DB');
   for(const path of ['../schema.sql','../../docs/long-term-db-phase2a/migrations/0001_core.sql','../../docs/long-term-db-phase2d1/migrations/0003_captcha_redemptions.sql'])await db.batch(splitDDL(readFileSync(new URL(path,import.meta.url),'utf8')).map(s=>db.prepare(s)));
-  return {db,close:()=>mf.dispose()};
+  return {db:strictWriterDb(db,true),close:()=>mf.dispose()};
 }
 export async function installAuthStubs() {
   const pair=await crypto.subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
