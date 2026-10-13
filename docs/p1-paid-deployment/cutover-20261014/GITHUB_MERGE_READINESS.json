@@ -1,0 +1,210 @@
+{
+  "at": "2026-10-13T23:34:02.514599+00:00",
+  "repository": "wooil1964/birdmap",
+  "sourceProductSha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+  "currentMainSha": "9c6ab91cdab1d235e3d4ed32bd2b2247cf9ccce8",
+  "repo": {
+    "default_branch": "main",
+    "has_pages": true,
+    "allow_merge_commit": true,
+    "allow_squash_merge": true,
+    "allow_rebase_merge": true,
+    "allow_auto_merge": false,
+    "archived": false,
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "push": true,
+      "triage": true,
+      "pull": true
+    }
+  },
+  "pages": {
+    "http": 200,
+    "method": "GitHub Pages branch build: push/merge to main at / triggers built-in pages-build-deployment",
+    "configuration": {
+      "status": "built",
+      "cname": null,
+      "html_url": "https://wooil1964.github.io/birdmap/",
+      "build_type": "legacy",
+      "source": {
+        "branch": "main",
+        "path": "/"
+      },
+      "https_enforced": true
+    },
+    "latestBuild": {
+      "status": "built",
+      "commit": "9c6ab91cdab1d235e3d4ed32bd2b2247cf9ccce8",
+      "created_at": "2026-10-13T22:39:51Z",
+      "updated_at": "2026-10-13T22:40:31Z",
+      "duration": 40511,
+      "error": {
+        "message": null
+      }
+    },
+    "latestBuildHttp": 200,
+    "environment": {
+      "name": "github-pages",
+      "protection_rules": [
+        {
+          "id": 56690518,
+          "node_id": "GA_kwDOSzkdBs4DYQdW",
+          "type": "branch_policy"
+        }
+      ],
+      "deployment_branch_policy": {
+        "protected_branches": false,
+        "custom_branch_policies": true
+      }
+    }
+  },
+  "branch": {
+    "protected": false,
+    "classicProtectionHttp": 404,
+    "classicProtectionAbsentConfirmed": true,
+    "classicProtection": {
+      "error": "Branch not protected"
+    },
+    "rulesetsHttp": 200,
+    "activeRulesets": [],
+    "branchRulesHttp": 200,
+    "applicableRules": [],
+    "requiredReviewCount": 0,
+    "requiredContexts": [],
+    "requiredContextResults": []
+  },
+  "pr17": {
+    "number": 17,
+    "state": "open",
+    "draft": false,
+    "mergeable": true,
+    "mergeable_state": "clean",
+    "rebaseable": false,
+    "merged": false,
+    "merge_commit_sha": "df5a72b34d5fc5e22d5c18e4af32c3603e7da7d4",
+    "updated_at": "2026-10-13T23:32:01Z",
+    "commits": 68,
+    "changed_files": 1288,
+    "headSha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+    "baseSha": "9c6ab91cdab1d235e3d4ed32bd2b2247cf9ccce8",
+    "requestedReviewersCount": 0,
+    "requestedTeamsCount": 0
+  },
+  "reviews": {
+    "total": 0,
+    "latestByReviewer": [],
+    "approvalCount": 0,
+    "exactHeadApprovalCount": 0,
+    "changesRequestedCount": 0
+  },
+  "ci": {
+    "headCombinedStatusHttp": 200,
+    "combinedState": "pending",
+    "legacyStatusCount": 0,
+    "checkRunsHttp": 200,
+    "checkRuns": [
+      {
+        "id": 115583898586,
+        "name": "regression",
+        "head_sha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-13T22:57:32Z",
+        "completed_at": "2026-10-13T23:00:25Z",
+        "details_url": "https://github.com/wooil1964/birdmap/actions/runs/38481187572/job/115583898586"
+      }
+    ],
+    "exactRun": {
+      "id": 38481187572,
+      "head_sha": "ddc3bc3fb20eec33c47328ac2eb00154865eb377",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-13T22:57:29Z",
+      "updated_at": "2026-10-13T23:00:25Z"
+    },
+    "exactHeadCiVerified": true,
+    "independentReceipt": "ci-ddc/INDEPENDENT_CI_RECEIPT.json",
+    "artifactId": 11856944380,
+    "verifiedRuntimeAssets": 388
+  },
+  "expectedPostMergeWorkflows": [
+    {
+      "path": ".github/workflows/build-share-pages.yml",
+      "sha256": "683a0fb1744ecf16679370897bb72c5455687db74201bed9c3f677afc2d70b2e",
+      "events": [
+        "workflow_dispatch"
+      ],
+      "triggerBlock": "  workflow_dispatch:\n    inputs:\n      site_ids:\n        description: \"커밋할 탐조지 ID (공백으로 구분). 비우면 바뀐 파일을 모두 커밋한다.\"\n        required: false\n        default: \"15 16 194\"",
+      "includesDeploymentCommand": false,
+      "writesOrPushesGeneratedFiles": true
+    },
+    {
+      "path": ".github/workflows/publication-security-ci.yml",
+      "sha256": "e470d42deb4d6da1de32c90554cb6f9a5906268560f42b0a8c7e97ab7c413b20",
+      "events": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "triggerBlock": "  pull_request:\n    branches: [main]\n  workflow_dispatch:",
+      "includesDeploymentCommand": false,
+      "writesOrPushesGeneratedFiles": false
+    },
+    {
+      "path": ".github/workflows/update-tide-month.yml",
+      "sha256": "7cf9f215c23d3332bd6f496d3007571ef28c20f1796a6c4294c0aee43a57e5a8",
+      "events": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "triggerBlock": "  schedule:\n    # GitHub Actions cron uses UTC. 18:15 UTC is 03:15 KST the following day.\n    - cron: \"15 18 * * *\"\n  workflow_dispatch:\n    inputs:\n      days:\n        description: Number of days to generate\n        required: true\n        default: \"31\"\n        type: string",
+      "includesDeploymentCommand": false,
+      "writesOrPushesGeneratedFiles": true
+    },
+    {
+      "path": ".github/workflows/update-tide.yml",
+      "sha256": "7a1197befe32ae12153c3bb109f34ad333faa3a0d5b2e4477a4be3107a3eee28",
+      "events": [
+        "push",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "triggerBlock": "  push:\n    branches:\n      - main\n    paths:\n      - \".github/scripts/update_tide.py\"\n      - \".github/scripts/audit_tide_health.py\"\n      - \".github/scripts/build_tide_station_mapping.py\"\n      - \".github/scripts/tide_official_stations.json\"\n      - \".github/scripts/test_tide.py\"\n      - \".github/scripts/test_tide_fallback.mjs\"\n      - \"tide_station_mapping.json\"\n      - \".github/workflows/update-tide.yml\"\n      - \"data/birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx\"\n  schedule:\n    # GitHub Actions cron uses UTC. 15:05 UTC is 00:05 KST the following day.\n    - cron: \"5 15 * * *\"\n    # Backup refresh: 21:05 UTC is 06:05 KST, preventing stale daily tide data if the midnight run is missed or conflicts.\n    - cron: \"5 21 * * *\"\n    # Recovery refreshes: 23:35/01:35 UTC are 08:35/10:35 KST; complete data makes them no-ops.\n    - cron: \"35 23 * * *\"\n    - cron: \"35 1 * * *\"\n  workflow_dispatch:",
+      "includesDeploymentCommand": false,
+      "writesOrPushesGeneratedFiles": true
+    },
+    {
+      "path": ".github/workflows/update-weather.yml",
+      "sha256": "f7062bf1ea9c95e02de9d4f3311aefe031b9c96bde1e8fa5d990ae35869a2f8c",
+      "events": [
+        "push",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "triggerBlock": "  push:\n    branches:\n      - main\n    paths:\n      - \".github/scripts/update_weather.py\"\n      - \".github/scripts/site_data.py\"\n      - \".github/scripts/test_weather.py\"\n      - \".github/scripts/validate_weather.py\"\n      - \".github/scripts/validate_weather_week.py\"\n      - \"weather_rules.json\"\n      - \"weather-proxy/src/sites.js\"\n      - \"weather-proxy/test/**\"\n      - \"index.html\"\n      - \".github/workflows/update-weather.yml\"\n  schedule:\n    # GitHub Actions cron uses UTC. 15:20 UTC is 00:20 KST: it refills the daily\n    # file right after midnight, when the saved date has just gone stale. The\n    # 00:05 KST tide run shares birdmap-data-refresh, so it finishes first.\n    - cron: \"20 15 * * *\"\n    # 05:35 KST, before the 06:05 KST tide refresh in the same group.\n    - cron: \"35 20 * * *\"\n    - cron: \"17 1 * * *\"\n    - cron: \"17 5 * * *\"\n    - cron: \"17 9 * * *\"\n  workflow_dispatch:",
+      "includesDeploymentCommand": false,
+      "writesOrPushesGeneratedFiles": true
+    }
+  ],
+  "blockers": [],
+  "unknowns": [],
+  "readiness": "READY_FOR_AUTHORIZED_MERGE_RECHECK",
+  "interpretation": [
+    "Pages branch mode can publish automatically upon main merge; merging and frontend publishing are coupled operational actions.",
+    "Publication security CI only follows its recorded trigger block; main push is not assumed to rerun it.",
+    "Scheduled/path-triggered data workflows can create later automatic JSON commits and further Pages builds.",
+    "Recheck current main/head and required checks immediately before actual merge."
+  ],
+  "scope": {
+    "githubReadOnlyGetRequests": true,
+    "credentialsInMemoryOnly": true,
+    "secretsPrinted": false,
+    "posts": 0,
+    "merge": 0,
+    "deploy": 0,
+    "operatingApiRequests": 0,
+    "productEdits": 0
+  }
+}
