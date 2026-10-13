@@ -56,6 +56,7 @@ jobs:
         shell: bash
         run: |
           python .github/scripts/test_weather.py
+          python .github/scripts/test_validator_time_contract.py
           python .github/scripts/test_tide.py
           python .github/scripts/test_share_pages.py
       - name: Exact normal recommendation signatures

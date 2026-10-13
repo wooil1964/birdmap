@@ -13,14 +13,23 @@ from validate_weather_week import parse_forecast_time
 # 수치 필드가 today 에는 존재하지 않는다.
 COORDINATE_FIELDS = ("waveLat", "waveLon")
 # 생성기(update_weather.py build_site_result)가 만드는 표시 문자열. 프런트 weeklyTodayRequiredDataValid 와 같은 형식이다.
-WIND_PATTERN = re.compile(r"^(?:북|북동|동|남동|남|남서|서|북서)풍\s*\d+(?:\.\d+)?\s*m/s$")
-RAIN_PATTERN = re.compile(r"^(?:강수 없음|3시간 강수 \d+(?:\.\d+)?mm)$")
-WAVE_PATTERN = re.compile(r"^\d+(?:\.\d+)?m$")
+WIND_PATTERN = re.compile(r"^(?:북|북동|동|남동|남|남서|서|북서)풍\s*(\d+(?:\.\d+)?)\s*m/s$")
+RAIN_PATTERN = re.compile(r"^(?:강수 없음|3시간 강수 (\d+(?:\.\d+)?)mm)$")
+WAVE_PATTERN = re.compile(r"^(\d+(?:\.\d+)?)m$")
 
 
 def finite_number(value):
     """유한한 숫자만 인정한다. Python에서 bool은 int의 서브클래스라 명시적으로 제외한다."""
     return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+
+
+def finite_formatted_number(value, pattern):
+    """표시 단위 문자열도 형식과 유한한 양을 함께 검증한다. 강수 없음은 0이다."""
+    match = pattern.fullmatch(value.strip()) if isinstance(value, str) else None
+    if not match:
+        return False
+    number = float(match.group(1)) if match.group(1) is not None else 0.0
+    return math.isfinite(number) and number >= 0
 
 
 def reject_constant(name):
@@ -60,14 +69,14 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_today.json"):
             # 발행 시각만 미래를 거부한다. 같은 날의 정상 미래 예보는 유지한다.
             assert generated <= now, f"{site_id} generatedAt is in the future: {day['generatedAt']!r}"
             # 적격(true)인 항목은 추천·팝업 점수에 쓰이므로 실제 필수 기상 표시값도 있어야 한다(index.html 의 today 검사와 같은 형식).
-            assert isinstance(day.get("wind"), str) and WIND_PATTERN.match(day["wind"]),                 f"{site_id} eligible without a valid wind: {day.get('wind')!r}"
-            assert isinstance(day.get("rain"), str) and RAIN_PATTERN.match(day["rain"]),                 f"{site_id} eligible without a valid rain: {day.get('rain')!r}"
+            assert finite_formatted_number(day.get("wind"), WIND_PATTERN),                 f"{site_id} eligible without a valid wind: {day.get('wind')!r}"
+            assert finite_formatted_number(day.get("rain"), RAIN_PATTERN),                 f"{site_id} eligible without a valid rain: {day.get('rain')!r}"
             wave = day.get("wave")
             site = runtime[site_id]
             if site.get("showWave") or site.get("island") or site.get("pelagic"):
-                assert isinstance(wave, str) and WAVE_PATTERN.match(wave),                     f"{site_id} eligible without a valid required wave: {wave!r}"
+                assert finite_formatted_number(wave, WAVE_PATTERN),                     f"{site_id} eligible without a valid required wave: {wave!r}"
             else:
-                assert wave is None or (isinstance(wave, str) and WAVE_PATTERN.match(wave)),                     f"{site_id} eligible with an invalid optional wave: {wave!r}"
+                assert wave is None or (finite_formatted_number(wave, WAVE_PATTERN)),                     f"{site_id} eligible with an invalid optional wave: {wave!r}"
     print(json.dumps({k: v for k, v in data.items() if k != "sites"}, ensure_ascii=True))
     if data["status"] != "ok":
         print("::warning::Weather contains fallback, stale or incomplete data; inspect counts above")

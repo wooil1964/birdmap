@@ -480,6 +480,34 @@ class WeatherWeekTests(unittest.TestCase):
                 with self.assertRaisesRegex(AssertionError, message):
                     self.run_today_validator(self.today_document(**fields))
 
+    def test_today_validator_rejects_overflow_wind_units(self):
+        with self.assertRaisesRegex(AssertionError, "valid wind"):
+            self.run_today_validator(self.today_document(wind="북풍 " + "9" * 400 + "m/s"))
+
+    def test_today_validator_rejects_overflow_rain_units(self):
+        with self.assertRaisesRegex(AssertionError, "valid rain"):
+            self.run_today_validator(self.today_document(rain="3시간 강수 " + "9" * 400 + "mm"))
+
+    def test_today_validator_rejects_overflow_wave_units(self):
+        document = self.today_document(wave="9" * 400 + "m")
+        with self.assertRaisesRegex(AssertionError, "invalid optional wave"):
+            self.run_today_validator(document)
+        original = self.site
+        try:
+            for flag in ("showWave", "island", "pelagic"):
+                self.site = dict(original, **{flag: True})
+                with self.subTest(flag=flag), self.assertRaisesRegex(AssertionError, "valid required wave"):
+                    self.run_today_validator(document)
+        finally:
+            self.site = original
+
+    def test_today_validator_keeps_normal_finite_units(self):
+        for score in (0, 92, 92.5, 100):
+            with self.subTest(score=score):
+                result = self.run_today_validator(self.today_document(score=score, wind="북풍 0m/s",
+                    rain="3시간 강수 0mm", wave="0m"))
+                self.assertEqual(result["sites"]["1"]["score"], score)
+
     def test_today_validator_rejects_json_special_numbers(self):
         """1e999 는 inf 로 파싱되고 NaN·Infinity 리터럴은 parse_constant 가 막는다."""
         self.assertEqual(json.loads("1e999"), float("inf"))

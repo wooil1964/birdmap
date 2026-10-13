@@ -2677,3 +2677,46 @@ test('F3 storedWeatherState·팝업·카드 소비 경로: 비문자열 forecast
     }
   }
 });
+/* R5: 단위 문자열도 유한한 양을 나타내야 한다. 실제 함수·후보·최종선발·표시 출처를 검사한다. */
+const R5_HUGE = '9'.repeat(400);
+const R5_BOOST = { notices: R1_NOTICE(510), recentSiteSightings: { 510: { latestDate: P0_DATE, species: ['a', 'b', 'c', 'd'] } } };
+for (const field of ['wind', 'rain', 'wave']) {
+  test('R5 today ' + field + ' overflow는 공지·16점·mandatory·정원으로 복구되지 않는다', () => {
+    const extra = { [field]: field === 'wind' ? '북풍 ' + R5_HUGE + 'm/s' : field === 'rain' ? '3시간 강수 ' + R5_HUGE + 'mm' : R5_HUGE + 'm' };
+    for (const flags of [{}, { island: true }, { showWave: true }, { pelagic: true }]) {
+      const site = { ...R1_SITE, ...flags };
+      const raw = r1Raw(extra);
+      const api = loadApi({ now: P0_TODAY_NOW, month: 10, siteData: [site],
+        weatherToday: { generatedAt: raw.generatedAt, sites: { [site.id]: raw } }, ...R5_BOOST });
+      assert.equal(api.weeklyTodayRequiredDataValid(raw, site), false, JSON.stringify(flags));
+      assert.equal(api.weeklyTodayWeather(site, raw), null);
+      assert.equal(api.weeklyRecommendationForSite(site, api.weeklyInfo()), null);
+      assert.equal(api.todayRecommendedSites().length, 0);
+      const state = api.storedWeatherState(raw, { generatedAt: raw.generatedAt }, undefined, site);
+      assert.equal(state.scoreEligible, false, '팝업 적합도 출처도 부적격');
+      assert.equal(raw.wind, r1Raw(extra).wind, '참고 원자료는 보존');
+    }
+  });
+}
+test('R5 정상 0·92·92.5·100점과 내부rank108, 비필수파고null은 유지한다', () => {
+  for (const score of [0, 92, 92.5, 100]) {
+    const raw = r1Raw({ score, wind: '북풍 0m/s', rain: '3시간 강수 0mm', wave: null });
+    const api = loadApi({ now: P0_TODAY_NOW, month: 10, siteData: [R1_SITE],
+      weatherToday: { generatedAt: raw.generatedAt, sites: { [R1_SITE.id]: raw } }, ...R5_BOOST });
+    const top = api.todayRecommendedSites();
+    assert.equal(top.length, 1); assert.equal(top[0].score, score); assert.equal(top[0].rankScore, score + 16);
+    assert.equal(api.storedWeatherState(raw, { generatedAt: raw.generatedAt }, undefined, R1_SITE).scoreEligible, true);
+  }
+});
+test('R5 비정상 today 만조는 차단하고 정상 주간 대체 만조는 유지한다', () => {
+  const site = RUNTIME.find((s) => s.id === '14');
+  const raw = r1Raw({ wind: '북풍 ' + R5_HUGE + 'm/s' });
+  const api = loadApi({ now: P0_TODAY_NOW, month: 10, siteData: [site], tideMonth: p0Tide('14', P0_DATE, '12:00', 900),
+    weatherToday: { generatedAt: raw.generatedAt, sites: { 14: raw } }, notices: R1_NOTICE(14), recentSiteSightings: R1_SIGHT(14) });
+  assert.equal(api.weeklyRecommendationForSite(site, api.weeklyInfo()), null);
+  assert.equal(api.todayRecommendedSites().length, 0);
+  const healthy = p0Api(site, [['12:00', 99, { windSpeed: Infinity }], ['15:00', 80]],
+    p0Tide('14', P0_DATE, '12:00,15:30', '900,870'), {});
+  const chosen = healthy.weeklyRecommendationForSite(site, healthy.weeklyInfo());
+  assert.ok(chosen); assert.equal(chosen.score, 80); assert.match(chosen.tideText, /15:30 · 870cm/);
+});

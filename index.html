@@ -4216,11 +4216,16 @@ function weeklySampleRecommendable(site,sample){
    파고는 showWave/island/pelagic 지역에서만 필수이고, 필수가 아니어도 값이 있으면 형식이 맞아야 한다.
    site 를 모르면(null) 파고 필수 여부를 판단할 수 없으므로 null 파고를 허용하지 않는다(fail closed). */
 function weeklyTodayRequiredDataValid(raw,site){
-  if(typeof raw.wind!=='string'||!/^(?:북|북동|동|남동|남|남서|서|북서)풍\s*\d+(?:\.\d+)?\s*m\/s$/.test(raw.wind.trim()))return false;
-  if(typeof raw.rain!=='string'||!/^(?:강수 없음|3시간 강수 \d+(?:\.\d+)?mm)$/.test(raw.rain.trim()))return false;
+  if(!raw||typeof raw!=='object')return false;
+  /* 단위 문자열의 형식만으로 적격을 추정하지 않는다. 긴 숫자도 변환 후 유한한 양이어야 한다. */
+  var wind=typeof raw.wind==='string'&&/^(?:북|북동|동|남동|남|남서|서|북서)풍\s*(\d+(?:\.\d+)?)\s*m\/s$/.exec(raw.wind.trim());
+  if(!wind||!weeklyNonNegativeNumber(Number(wind[1])))return false;
+  var rain=typeof raw.rain==='string'&&/^(?:강수 없음|3시간 강수 (\d+(?:\.\d+)?)mm)$/.exec(raw.rain.trim());
+  if(!rain||!weeklyNonNegativeNumber(rain[1]===undefined?0:Number(rain[1])))return false;
   var required=!site||!!(site.showWave||site.island||site.pelagic), wave=raw.wave;
   if(!required&&(wave===null||wave===undefined))return true;
-  return typeof wave==='string'&&/^\d+(?:\.\d+)?m$/.test(wave.trim());
+  var height=typeof wave==='string'&&/^(\d+(?:\.\d+)?)m$/.exec(wave.trim());
+  return !!height&&weeklyNonNegativeNumber(Number(height[1]));
 }
 function weeklyTodayRecommendable(raw,site){
   if(!raw||typeof raw!=='object'||raw.stale||raw.dataUnavailable)return false;
