@@ -1,0 +1,753 @@
+{
+  "at": "2026-10-13T10:19:15.322Z",
+  "baselineSha": "26ad356418bbef61f8a583821ad63353cb85843a",
+  "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "branch": "codex/p1-publication-free-capacity",
+  "sourceProtection": {
+    "paths": 64,
+    "beforePaths": 64,
+    "currentPaths": 64,
+    "unchanged": true,
+    "checks": [
+      {
+        "path": "reports-api/.gitignore",
+        "baselineBlob": "8cf4404e85208964e5b81f205b5e5c40879e2e02",
+        "currentBlob": "8cf4404e85208964e5b81f205b5e5c40879e2e02",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "f900ca304cb576df21e1684fc9e465e1a8c2ce777468f893afcd183a4e0f9cc3"
+      },
+      {
+        "path": "reports-api/README.md",
+        "baselineBlob": "f73fc6f002238a9730bf7385f78530cb592e9d12",
+        "currentBlob": "f73fc6f002238a9730bf7385f78530cb592e9d12",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "c0c92fae981bf6fb0a02e71a835152e9f06422ac446db080215aa7ceba2776d8"
+      },
+      {
+        "path": "reports-api/local-test/baseline-regression.mjs",
+        "baselineBlob": "70fe8d5088362550cd3345a2978fc570c987ba42",
+        "currentBlob": "70fe8d5088362550cd3345a2978fc570c987ba42",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "424f3d2fc5985ad640ad4db8d9ff73eb2229cbab6b6725c06a0337af68139099"
+      },
+      {
+        "path": "reports-api/local-test/helpers.mjs",
+        "baselineBlob": "f227d33abc1c4c21cc953ffc8ee7fddbe73267f4",
+        "currentBlob": "f227d33abc1c4c21cc953ffc8ee7fddbe73267f4",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "7eb5ad99b9bd1a010f06b8d0c0998e6e438ef780a0d94f2ddbc960023825ef61"
+      },
+      {
+        "path": "reports-api/local-test/hide-location-d1.mjs",
+        "baselineBlob": "9b76d8f73030aced9c405440948f4ebcace5eb4e",
+        "currentBlob": "9b76d8f73030aced9c405440948f4ebcace5eb4e",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "feca614c2a1955773e51ef316a72c74d099e9e799f30244ae1a0505521b823b4"
+      },
+      {
+        "path": "reports-api/local-test/protocol-check.mjs",
+        "baselineBlob": "aa64ea5ff7521e0d4cd3810abf2af6860f64af01",
+        "currentBlob": "aa64ea5ff7521e0d4cd3810abf2af6860f64af01",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "a3424cc1ab6a40d66a91df88821be70f90ca79251d36a5fb36f9a23ec0ceb99c"
+      },
+      {
+        "path": "reports-api/local-test/repeat-phase2a.mjs",
+        "baselineBlob": "6b7133f324d978de0d3b28432de8927fad4872f4",
+        "currentBlob": "6b7133f324d978de0d3b28432de8927fad4872f4",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "cab5c216ad93c829147483491b4b8c85cd6a61c41815dec24615add23aa0888d"
+      },
+      {
+        "path": "reports-api/local-test/run.mjs",
+        "baselineBlob": "e0f2e49e321bfb2010fbbda3594d4566f8b93026",
+        "currentBlob": "e0f2e49e321bfb2010fbbda3594d4566f8b93026",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "421322cc39ad1b1c5605f4eaac96a137830a2ae22b06ce273edba950d6dda6e2"
+      },
+      {
+        "path": "reports-api/migrations/0002_pending_public.sql",
+        "baselineBlob": "99783d635cf45c832a2557d4fd76f5d731907141",
+        "currentBlob": "99783d635cf45c832a2557d4fd76f5d731907141",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "ceb2b49bd4e3d3666c9f27a35a33e500e4533c205a6ab1a44ae3ed190794fbb0"
+      },
+      {
+        "path": "reports-api/migrations/0003_site_history_index.sql",
+        "baselineBlob": "053b808b2517898a11ae5e0b683ca389fe84c7ca",
+        "currentBlob": "053b808b2517898a11ae5e0b683ca389fe84c7ca",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "7cd47549d41aa1c4a8963317651ef79fcc6b175f4e941c549e97f983695a25fe"
+      },
+      {
+        "path": "reports-api/migrations/0004_field_updates.sql",
+        "baselineBlob": "c25d58fdba7d029b5a16c33d32e8600bd37652ce",
+        "currentBlob": "c25d58fdba7d029b5a16c33d32e8600bd37652ce",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "471ddcad92ed570478a47d741aa9632f8895e56dddc9f2f59c1115ae2610db3a"
+      },
+      {
+        "path": "reports-api/migrations/0005_publication_security.sql",
+        "baselineBlob": "edc2bcdc4dd7cd5677e7a0fc315ee0ece3c6604e",
+        "currentBlob": "edc2bcdc4dd7cd5677e7a0fc315ee0ece3c6604e",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "d5da565a90d0217c0390ad4b9c54e797fbaaa76de4b19e063fcf3fad3159ccdc"
+      },
+      {
+        "path": "reports-api/package.json",
+        "baselineBlob": "8ee2a62489b61f53c2b21ed2b5274e9880a476c2",
+        "currentBlob": "8ee2a62489b61f53c2b21ed2b5274e9880a476c2",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "4948130f9e153d19f5c20698d57262ddb93fa041895a910b087c13ff0a3336d7"
+      },
+      {
+        "path": "reports-api/schema.sql",
+        "baselineBlob": "03d2cade162445f2295acfed6dd357bfb83969b3",
+        "currentBlob": "03d2cade162445f2295acfed6dd357bfb83969b3",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "d6dca6c146b2770fe7edf39653d7c1a4e389530483583e036939eb5915219580"
+      },
+      {
+        "path": "reports-api/src/admin-actions.js",
+        "baselineBlob": "3db5f82edd3adebccd47a543a256d818874ba98e",
+        "currentBlob": "3db5f82edd3adebccd47a543a256d818874ba98e",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "dca76fd90d02d64ea3f40f8ffefbdb86d1e0cd7d59ed5edbc9cea277f7df105b"
+      },
+      {
+        "path": "reports-api/src/admin-page.js",
+        "baselineBlob": "a1f0b089b7f9594835202b45372ccadd99de5027",
+        "currentBlob": "a1f0b089b7f9594835202b45372ccadd99de5027",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "17e907f6e2e8916e5ab6de74a027da0aaa8094120567934291acf7faec2ad8bb"
+      },
+      {
+        "path": "reports-api/src/admin-stats.js",
+        "baselineBlob": "278234d832420116d8d7f0f296d55098e02e955b",
+        "currentBlob": "278234d832420116d8d7f0f296d55098e02e955b",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "2173144f87f618768dce7ee450df3ec913aa775a266f71144cc008a70ca600bd"
+      },
+      {
+        "path": "reports-api/src/admin-usage.js",
+        "baselineBlob": "d37460f3544a2626d7f53f1ca1b2fa54ff0574a8",
+        "currentBlob": "d37460f3544a2626d7f53f1ca1b2fa54ff0574a8",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "07e1271bbb084e48c8006fe91347cbf91475defdb452f1bdfe43913dc0083caa"
+      },
+      {
+        "path": "reports-api/src/admin.js",
+        "baselineBlob": "e6b40f4c6ff12dd01bbb9f3e288f8f1ca07b9c09",
+        "currentBlob": "e6b40f4c6ff12dd01bbb9f3e288f8f1ca07b9c09",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "99a36d8b06dcb8b3648c614ffef1c2aa1a9fbb772c63756e34885796e96eb512"
+      },
+      {
+        "path": "reports-api/src/canonical/control.js",
+        "baselineBlob": "23077260845f76bfe6cb5a3505f23a9a0f40d056",
+        "currentBlob": "23077260845f76bfe6cb5a3505f23a9a0f40d056",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "66086960e503afcb95c62cb3b0fd049a576269a001c22ce0375c524f92506dd4"
+      },
+      {
+        "path": "reports-api/src/canonical/data.js",
+        "baselineBlob": "b9b8f5fcf7c9aade6b8309e776854b55cca1cd42",
+        "currentBlob": "b9b8f5fcf7c9aade6b8309e776854b55cca1cd42",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "bb8ea3d8d3f236288d4d2ba736b61893de92c8499f5acbd97344feb519dc4b18"
+      },
+      {
+        "path": "reports-api/src/canonical/ops.js",
+        "baselineBlob": "7018a5f96b5932480944b4f91a771e21bd74646f",
+        "currentBlob": "7018a5f96b5932480944b4f91a771e21bd74646f",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "5c9dd14bc81b39880e12b04adaf9dba2249798a7fb0cd57a7f5f961176a6e1da"
+      },
+      {
+        "path": "reports-api/src/canonical/persistence.js",
+        "baselineBlob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0",
+        "currentBlob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "8e40615b7cce05f3f0863a9bde2f64be5afcc7422b005c293ed34488e870dcd6"
+      },
+      {
+        "path": "reports-api/src/canonical/purge.js",
+        "baselineBlob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b",
+        "currentBlob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "fe974c692c702ac3c7629fa7a92ba1a117d49b63342152393a0683789dfa5f9f"
+      },
+      {
+        "path": "reports-api/src/canonical/shadow.js",
+        "baselineBlob": "17d03426beac5ff95cbe70203d2ecf7903dae747",
+        "currentBlob": "17d03426beac5ff95cbe70203d2ecf7903dae747",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "19a2e1c72f4b4b3d5322bd40df9426db0ca7149333375667fea7d40ee6a4e0b2"
+      },
+      {
+        "path": "reports-api/src/field-updates.js",
+        "baselineBlob": "3da582a40529cc54129e8ac9f2fa60a8bcc3b732",
+        "currentBlob": "3da582a40529cc54129e8ac9f2fa60a8bcc3b732",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "45afe2b2a543d67f1816bbc0d7348ebd2fd5cedc7ebb7dbccb49081937c8fb61"
+      },
+      {
+        "path": "reports-api/src/notify.js",
+        "baselineBlob": "9a9d6b8284ae002b4982e72b940e76ba8ec8055d",
+        "currentBlob": "9a9d6b8284ae002b4982e72b940e76ba8ec8055d",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "022c3b26cd051833500ab8bd5a2a60f58b99538d145e24232e66ae3d4edaacc4"
+      },
+      {
+        "path": "reports-api/src/public.js",
+        "baselineBlob": "b5bda2135fc02cb1f56e5bf5f518c317e54214a2",
+        "currentBlob": "b5bda2135fc02cb1f56e5bf5f518c317e54214a2",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "63038672af0f3ae859789a1e6ea9634638efc0f9ae2eddaf09847d72be7d8c4b"
+      },
+      {
+        "path": "reports-api/src/publication.js",
+        "baselineBlob": "6f457e6d1887706555edbdfbb887db286b94a276",
+        "currentBlob": "6f457e6d1887706555edbdfbb887db286b94a276",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "365a475b611dcf4db2982f724dec80f2f81fb94e4e2dd752b46c51dd319d4cb9"
+      },
+      {
+        "path": "reports-api/src/shared.js",
+        "baselineBlob": "a3a00f90b6d3ad31f556bf58ec415886bba732f8",
+        "currentBlob": "a3a00f90b6d3ad31f556bf58ec415886bba732f8",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "ef29c94e6ff3dc691c6ef10ec64e0c4c09148a0be1e88bcfbec73d34050b243f"
+      },
+      {
+        "path": "reports-api/src/site-picker.js",
+        "baselineBlob": "6da93897c1e747e3fc8c93f72fcfcbc5b4420456",
+        "currentBlob": "6da93897c1e747e3fc8c93f72fcfcbc5b4420456",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "b8a251554290ba7855e7e4de3987f94c279aa155ccf8f8d190e3b38e448178bb"
+      },
+      {
+        "path": "reports-api/test/admin-stats.test.mjs",
+        "baselineBlob": "9a2767bf6ebc9a23a755cfb0c1575611291b803e",
+        "currentBlob": "9a2767bf6ebc9a23a755cfb0c1575611291b803e",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "797022ce977e5921c7d318934d4b96c29bb7859e058ed1d43a0915f8c88466ff"
+      },
+      {
+        "path": "reports-api/test/admin-usage.test.mjs",
+        "baselineBlob": "73d60c5aa51832f563c842f793ea83b06d601af0",
+        "currentBlob": "73d60c5aa51832f563c842f793ea83b06d601af0",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "8beb19b7e9abb0b373daac5e76b9e523989322a31bf1915916489ba9a1ea7989"
+      },
+      {
+        "path": "reports-api/test/admin-worker.test.mjs",
+        "baselineBlob": "1b971e3c9e17acbaa74624187665ad7e1370119b",
+        "currentBlob": "1b971e3c9e17acbaa74624187665ad7e1370119b",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "83af1dc2d81ee4757dd7cf8048b608951f46fb61e1744a1889232d867bc83ebb"
+      },
+      {
+        "path": "reports-api/test/field-updates.test.mjs",
+        "baselineBlob": "6ca3d731c94f1a9b44059b5b42fbb91d0da922fc",
+        "currentBlob": "6ca3d731c94f1a9b44059b5b42fbb91d0da922fc",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "ee78a5fd6e918404fe13bd9c0d7326f8afb56c09c25434d1619f0009c954b789"
+      },
+      {
+        "path": "reports-api/test/helpers.mjs",
+        "baselineBlob": "729a07bb634c0e61b543659a65a8d5e0cd363177",
+        "currentBlob": "729a07bb634c0e61b543659a65a8d5e0cd363177",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "be23172ed967b314e10230c80e55f5390a891301f7763bbe21ba53b67fcd76e0"
+      },
+      {
+        "path": "reports-api/test/hide-location.test.mjs",
+        "baselineBlob": "51b812852c587027c45d779ef6689b1edf9ef61a",
+        "currentBlob": "51b812852c587027c45d779ef6689b1edf9ef61a",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "567a3ae8d03852c70d9e0f5bc39c5d3e3024201d4093a44206fada687893877e"
+      },
+      {
+        "path": "reports-api/test/monthly-contributors.test.mjs",
+        "baselineBlob": "7105fd799f856adcc1819462f3832ba5818f6c16",
+        "currentBlob": "7105fd799f856adcc1819462f3832ba5818f6c16",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "406a5f8065ba1b317889625e1f0daa58d02ec03303ecad865ff6ced8e2ac62f6"
+      },
+      {
+        "path": "reports-api/test/notify.test.mjs",
+        "baselineBlob": "b4a3ea17c3f57323ea7df1d2f7fadc78bae8655e",
+        "currentBlob": "b4a3ea17c3f57323ea7df1d2f7fadc78bae8655e",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "0435371dc1baef07b3df5dad6d69b5e2fdfb3d23abe2cb0a5ffc819e5d2335ff"
+      },
+      {
+        "path": "reports-api/test/protection.test.mjs",
+        "baselineBlob": "227a0f3448848db4d856a953e33b6ae627178a96",
+        "currentBlob": "227a0f3448848db4d856a953e33b6ae627178a96",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "9c1dda62b68b6ae1e97734cdd91611665d9b3ff512d364b64b461e19657678d9"
+      },
+      {
+        "path": "reports-api/test/public-worker.test.mjs",
+        "baselineBlob": "68b20636abc41d498e847582b7855ad41a8ab854",
+        "currentBlob": "68b20636abc41d498e847582b7855ad41a8ab854",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "e024e615400789b1e083f62229bf51eecb97148fd84b69ee0579caee97104a2e"
+      },
+      {
+        "path": "reports-api/test/publication-path.test.mjs",
+        "baselineBlob": "e9773a28ef2751e550b2610dbce78a5e6b57c9a2",
+        "currentBlob": "e9773a28ef2751e550b2610dbce78a5e6b57c9a2",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "0dc15cbfbcf0c8dff29ff20f1ed5802e3ba2ace48f014cf5f387d79d036f097e"
+      },
+      {
+        "path": "reports-api/test/publication-security.test.mjs",
+        "baselineBlob": "bd8e16b4375e5521aac84533c459dc36ec1486c1",
+        "currentBlob": "bd8e16b4375e5521aac84533c459dc36ec1486c1",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "96d39d10c5146fbcf23f946ca94c1edd2d9f929cc008cff389dca1196591308f"
+      },
+      {
+        "path": "reports-api/test/recent-sites.test.mjs",
+        "baselineBlob": "68ddb1e933d8a99bff08fb860b37451e9ea578bc",
+        "currentBlob": "68ddb1e933d8a99bff08fb860b37451e9ea578bc",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "9221b40972854974839e4895c8cccf7fd9544331ad092aba0d4f8cdd2dd7b7c0"
+      },
+      {
+        "path": "reports-api/test/site-picker.test.mjs",
+        "baselineBlob": "603ed095f3289643865fe5ddf545fefd56afdd79",
+        "currentBlob": "603ed095f3289643865fe5ddf545fefd56afdd79",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "24bb468560085dc91b7c62197821c32917fbc697fa03ff7c49ed699ba1103f4c"
+      },
+      {
+        "path": "reports-api/test/validation.test.mjs",
+        "baselineBlob": "7d1c1aa1ac3b27a8dd65cd1e815666dc68b87ddd",
+        "currentBlob": "7d1c1aa1ac3b27a8dd65cd1e815666dc68b87ddd",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "e6048d86001dd9a8903d565d3c4401a1223102afb75e63831545041758ec6936"
+      },
+      {
+        "path": "reports-api/tools/backfill-lib.mjs",
+        "baselineBlob": "a4833ba9ebf631c409feaeadc493018527524dfd",
+        "currentBlob": "a4833ba9ebf631c409feaeadc493018527524dfd",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "ba6fa546b7d1d5b01485f23e29640d526a6a8737474a0c8558a2bd1d84708fb3"
+      },
+      {
+        "path": "reports-api/tools/backfill-runner.mjs",
+        "baselineBlob": "58d3cadc3dae9b6f63044e648df1be753039aaab",
+        "currentBlob": "58d3cadc3dae9b6f63044e648df1be753039aaab",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "74d584fac65e2e2709387e2e7f0719e7260d098f3bd99a9d5aceea203c9c9304"
+      },
+      {
+        "path": "reports-api/tools/d1-rest.mjs",
+        "baselineBlob": "3bfc02d989e3752b46422647e9762a29a2af12c0",
+        "currentBlob": "3bfc02d989e3752b46422647e9762a29a2af12c0",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "4a1b18627a133e6fec8a010f83014501565e6aaff3d5470c924e2e0911f2c5f8"
+      },
+      {
+        "path": "reports-api/tools/freeze.mjs",
+        "baselineBlob": "de62e18433b1432a8c3442abaa15c66210756889",
+        "currentBlob": "de62e18433b1432a8c3442abaa15c66210756889",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "b99d975fbf366d842442e790b47bd4533ece6af699c8636f485854293e2c3d4c"
+      },
+      {
+        "path": "reports-api/tools/prepare-backfill.mjs",
+        "baselineBlob": "47703a17142a35f9d1564a3791cdeddfddebe90f",
+        "currentBlob": "47703a17142a35f9d1564a3791cdeddfddebe90f",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "6d5bed740fb95839833b4e8ed89d6bf3589cd8e3ec31441dfc24a2530606d555"
+      },
+      {
+        "path": "reports-api/tools/prepare-sites.mjs",
+        "baselineBlob": "51888f811fae7c6fc468a05420ac83c87da8dbe6",
+        "currentBlob": "51888f811fae7c6fc468a05420ac83c87da8dbe6",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "36e4a08a7b72196959f6e2ad2df1b89340bfb7c67a28a1f4c4f1fcd382b18964"
+      },
+      {
+        "path": "reports-api/tools/purge-runner.mjs",
+        "baselineBlob": "8be124f381bddc445263c95432e94c1ec79b861a",
+        "currentBlob": "8be124f381bddc445263c95432e94c1ec79b861a",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "e6bd41b4aed2e3e3d001bd756d0b507d07ba02e130d87d92c9ea14f66fcacc1d"
+      },
+      {
+        "path": "reports-api/tools/sites-seed.mjs",
+        "baselineBlob": "5fd81166d976066dea7fdd2ebe3ed98bd2e4627a",
+        "currentBlob": "5fd81166d976066dea7fdd2ebe3ed98bd2e4627a",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "9d3816662c0997e71353889fe9ca861ea0af8b8ae131ccc68dbf2f52bce27a56"
+      },
+      {
+        "path": "reports-api/wrangler.admin.toml",
+        "baselineBlob": "b40dfce739c2b600da1e42f7c4a732f436f16c0a",
+        "currentBlob": "b40dfce739c2b600da1e42f7c4a732f436f16c0a",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "d5d34de0f1a911ccab1161ab35a51ed8b3e738cc06dbc57ec528f40e2ec4da90"
+      },
+      {
+        "path": "reports-api/wrangler.public.toml",
+        "baselineBlob": "4573d334f45cacb3956df80f6198e0fdce2100f4",
+        "currentBlob": "4573d334f45cacb3956df80f6198e0fdce2100f4",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "226819618a6616d33b38f5f8973f4d0cbcaeef088d21d7ad382b5a43de86f427"
+      },
+      {
+        "path": "weather-proxy/.gitignore",
+        "baselineBlob": "8cf4404e85208964e5b81f205b5e5c40879e2e02",
+        "currentBlob": "8cf4404e85208964e5b81f205b5e5c40879e2e02",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "f900ca304cb576df21e1684fc9e465e1a8c2ce777468f893afcd183a4e0f9cc3"
+      },
+      {
+        "path": "weather-proxy/package.json",
+        "baselineBlob": "11fcf60623521dbd049c39f606112d8a64d5ed92",
+        "currentBlob": "11fcf60623521dbd049c39f606112d8a64d5ed92",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "e6669866609d94560a045383372e21e912f5190e727451b7310fba9cc91f4aa5"
+      },
+      {
+        "path": "weather-proxy/src/index.js",
+        "baselineBlob": "e21fa0ca541ccdea226f9dfd41fbd8f6f34637a6",
+        "currentBlob": "e21fa0ca541ccdea226f9dfd41fbd8f6f34637a6",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "c30b700c3234c6666510846df9eab46b6ca7c31e7fe7336ab48fdcaf56af6d65"
+      },
+      {
+        "path": "weather-proxy/src/sites.js",
+        "baselineBlob": "d75d633da91dba32ce920159c8f826375ff10fd4",
+        "currentBlob": "d75d633da91dba32ce920159c8f826375ff10fd4",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "07adfbeab561f7ca6876c5b96af5a43a828fe44e38c06a83b1b8597cf338dbc3"
+      },
+      {
+        "path": "weather-proxy/test/freshness.test.mjs",
+        "baselineBlob": "5d87d82ba0bc628e15c29eaf8b16fbbf6df52013",
+        "currentBlob": "5d87d82ba0bc628e15c29eaf8b16fbbf6df52013",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "6b0a0f933b3f136bbb9d407d74f882b75f294356c08557172d03f614659b069d"
+      },
+      {
+        "path": "weather-proxy/test/partial.test.mjs",
+        "baselineBlob": "4c852acc01566c1ff21e7f6c8fce651ec625cba5",
+        "currentBlob": "4c852acc01566c1ff21e7f6c8fce651ec625cba5",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "264324c0a5120bc9fad27326c9a9e99d2afc428c35ec78adf282ec4aa4129df7"
+      },
+      {
+        "path": "weather-proxy/test/worker.test.mjs",
+        "baselineBlob": "834d9d066d884ffb9578e2223108797647f42c7c",
+        "currentBlob": "834d9d066d884ffb9578e2223108797647f42c7c",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "8f5b01ce12fb03faa468289dce0793607dad1706e4fc2ab77f59b70f412135bd"
+      },
+      {
+        "path": "weather-proxy/wrangler.toml",
+        "baselineBlob": "512a41f86e0bb21c9c0d7cd14b33eac0ee16e7d3",
+        "currentBlob": "512a41f86e0bb21c9c0d7cd14b33eac0ee16e7d3",
+        "gitBlobIdentical": true,
+        "workingMatchesCurrent": true,
+        "normalizedSourceSha256": "3902e05dc506a869a4ae527bb97349eebbbbab93171de4d4e0745813de174796"
+      }
+    ]
+  },
+  "harnessProvenance": {
+    "originalSha256": "17c3bc456db64c54d2e5d70f9999fd1c0db74fac4c3de3dae55c6a17c2daf23a",
+    "copySha256": "e908a0ed819d7706e89caba53a6f78bf19aaad1763ee911d83e1c1ed04a45ec1",
+    "onlyExactShaChanged": true,
+    "productHandlersSqlAssertionsUnchanged": true
+  },
+  "targetedInitial": {
+    "tests": 108,
+    "pass": 88,
+    "fail": 20,
+    "skip": 0,
+    "exitCode": 1,
+    "classification": "All20 head-freshness VM tests lack document global required by new visibility condition. Server tests88/88 pass. Original test file and failure log unchanged."
+  },
+  "nativeMutation": {
+    "summary": {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    },
+    "exitCode": 0,
+    "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+    "checks": [
+      {
+        "id": "M1 same-row approve/reject concurrency 2",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            409
+          ],
+          "revision": 2,
+          "reviewCount": 1,
+          "auditCount": 1
+        }
+      },
+      {
+        "id": "M1 same-row approve/reject concurrency 10",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409
+          ],
+          "revision": 2,
+          "reviewCount": 1,
+          "auditCount": 1
+        }
+      },
+      {
+        "id": "M1 same-row approve/reject concurrency 20",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409,
+            409
+          ],
+          "revision": 2,
+          "reviewCount": 1,
+          "auditCount": 1
+        }
+      },
+      {
+        "id": "M2 old GET anchor fails after hide and exact coordinates disappear",
+        "status": "PASS",
+        "details": {
+          "oldStatus": 200,
+          "staleStatus": 409,
+          "newStatus": 200,
+          "protected": true
+        }
+      },
+      {
+        "id": "M3 concurrent unpublish/hide/consent one atomic CAS winner then withdrawal excludes coordinate",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            409,
+            409
+          ],
+          "withdrawn": true,
+          "reapprove": true
+        }
+      },
+      {
+        "id": "M4 concurrent terminal deletion 2",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            200
+          ],
+          "deleteEvents": 1,
+          "lateStatus": 404
+        }
+      },
+      {
+        "id": "M4 concurrent terminal deletion 10",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200
+          ],
+          "deleteEvents": 1,
+          "lateStatus": 404
+        }
+      },
+      {
+        "id": "M4 concurrent terminal deletion 20",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200
+          ],
+          "deleteEvents": 1,
+          "lateStatus": 404
+        }
+      },
+      {
+        "id": "M5 concurrent confirmation versus delete cannot survive terminal state",
+        "status": "PASS",
+        "details": {
+          "statuses": [
+            201,
+            409
+          ],
+          "retryStatus": 200,
+          "confirmations": 1,
+          "interpretation": "Confirmation may precede winning delete; terminal row cannot revive."
+        }
+      },
+      {
+        "id": "M6 native batch injected failed CAS fully rolls back source and authority",
+        "status": "PASS",
+        "details": {
+          "rollback": true
+        }
+      }
+    ]
+  },
+  "notRun": [
+    "Repeated nativeisolate15×3/1800load",
+    "Entire regression",
+    "Operational API,D1,Worker,Pages",
+    "Chrome (root own evidence)"
+  ],
+  "constraints": "No product editing/commit/push. No old load-audit evidence change.",
+  "targetedFinal": {
+    "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+    "tests": 108,
+    "pass": 108,
+    "fail": 0,
+    "skip": 0,
+    "exitCode": 0,
+    "breakdown": {
+      "publication72": 72,
+      "hide5": 5,
+      "independent11": 11,
+      "headFreshness20": 20
+    },
+    "log": "targeted-contract-final.log",
+    "fixtureProvenance": {
+      "path": "docs/p1-publication-final-audit/server/head-freshness.test.mjs",
+      "sourceAt38Sha256": "fc187ffcc2116020c4b757fc30b75484ce0ff66391a9df92b97bd97841c01036",
+      "currentSha256": "cde914c0ce82749fbcd05000d3b4c95ff2bfe06625a116a4cb1f22315d05bace",
+      "onlyFixtureDependenciesAdded": true,
+      "expectedValuesAndAssertionsUnchanged": true,
+      "diff": "head-freshness-fixture.diff",
+      "changedBy": "root agent",
+      "note": "document.hidden=false x2, lease generation/anchor, actual publicationSame function, tested heads generation/anchor. Source function imports and all original assertions remain; no expected value relaxed."
+    }
+  }
+}

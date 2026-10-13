@@ -1,0 +1,275 @@
+{
+  "schema": "birdmap-free-latency-resume-browser-v1",
+  "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "assetsInput": "689c128e7e1686d34adca634d395403562c0dd53",
+  "checkedAt": "2026-10-13T10:18:52.767Z",
+  "phases": [
+    {
+      "name": "rtt300",
+      "wallStart": "2026-10-13T10:16:57.289Z",
+      "wallEnd": "2026-10-13T10:17:42.297Z",
+      "start": 793.9000000022352,
+      "end": 45795,
+      "durationMs": 45001.099999997765,
+      "counts": {
+        "/reports/public-state": 18,
+        "/reports/approved": 3,
+        "/reports/pending": 3,
+        "/reports/recent-sites": 3,
+        "/field-updates": 3
+      },
+      "requests": 30,
+      "snapshot": {
+        "at": 45801.900000002235,
+        "hidden": false,
+        "ready": true,
+        "needsRefresh": false,
+        "allowed": true,
+        "checkedMono": 44340.5,
+        "remaining": 3538.599999997765,
+        "approved": 1,
+        "fields": 1,
+        "generation": 3
+      }
+    },
+    {
+      "name": "jitter75-75-400",
+      "wallStart": "2026-10-13T10:17:42.299Z",
+      "wallEnd": "2026-10-13T10:18:27.324Z",
+      "start": 45804.20000000298,
+      "end": 90816.70000000298,
+      "durationMs": 45012.5,
+      "counts": {
+        "/reports/public-state": 23,
+        "/field-updates": 4,
+        "/reports/approved": 3,
+        "/reports/pending": 3,
+        "/reports/recent-sites": 3
+      },
+      "requests": 36,
+      "snapshot": {
+        "at": 90828.80000000075,
+        "hidden": false,
+        "ready": false,
+        "needsRefresh": true,
+        "allowed": false,
+        "checkedMono": 81098.60000000149,
+        "remaining": -4730.199999999255,
+        "approved": 0,
+        "fields": 0,
+        "generation": 6
+      }
+    },
+    {
+      "name": "timeout4500",
+      "wallStart": "2026-10-13T10:18:27.328Z",
+      "wallEnd": "2026-10-13T10:18:38.348Z",
+      "start": 90833.5,
+      "end": 101838.5,
+      "durationMs": 11005,
+      "counts": {
+        "/reports/public-state": 3
+      },
+      "requests": 3,
+      "snapshot": {
+        "at": 101853.20000000298,
+        "hidden": false,
+        "ready": false,
+        "needsRefresh": true,
+        "allowed": false,
+        "checkedMono": 90832.60000000149,
+        "remaining": -6020.699999999255,
+        "approved": 0,
+        "fields": 0,
+        "generation": 8
+      }
+    },
+    {
+      "name": "recovery75",
+      "wallStart": "2026-10-13T10:18:38.351Z",
+      "wallEnd": "2026-10-13T10:18:52.377Z",
+      "start": 101856.70000000298,
+      "end": 115867.10000000149,
+      "durationMs": 14010.39999999851,
+      "counts": {
+        "/reports/public-state": 6,
+        "/reports/approved": 1,
+        "/reports/pending": 1,
+        "/reports/recent-sites": 1,
+        "/field-updates": 1
+      },
+      "requests": 10,
+      "snapshot": {
+        "at": 115882.5,
+        "hidden": false,
+        "ready": true,
+        "needsRefresh": false,
+        "allowed": true,
+        "checkedMono": 114356.30000000075,
+        "remaining": 3473.800000000745,
+        "approved": 1,
+        "fields": 1,
+        "generation": 9
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "bootstrap",
+      "pass": true,
+      "evidence": {
+        "at": 787.9000000022352,
+        "hidden": false,
+        "ready": true,
+        "needsRefresh": false,
+        "allowed": true,
+        "checkedMono": 572.9000000022352,
+        "remaining": 4785,
+        "approved": 1,
+        "fields": 1,
+        "generation": 0
+      }
+    },
+    {
+      "id": "rtt300-request-start-five-second-lease-and-destructive-close",
+      "pass": true,
+      "evidence": {
+        "badRenew": [],
+        "badClos": [],
+        "renewals": 16,
+        "closures": 3,
+        "snapshot": {
+          "at": 45801.900000002235,
+          "hidden": false,
+          "ready": true,
+          "needsRefresh": false,
+          "allowed": true,
+          "checkedMono": 44340.5,
+          "remaining": 3538.599999997765,
+          "approved": 1,
+          "fields": 1,
+          "generation": 3
+        }
+      }
+    },
+    {
+      "id": "jitter75-75-400-request-start-five-second-lease-and-destructive-close",
+      "pass": true,
+      "evidence": {
+        "badRenew": [],
+        "badClos": [],
+        "renewals": 14,
+        "closures": 3,
+        "snapshot": {
+          "at": 90828.80000000075,
+          "hidden": false,
+          "ready": false,
+          "needsRefresh": true,
+          "allowed": false,
+          "checkedMono": 81098.60000000149,
+          "remaining": -4730.199999999255,
+          "approved": 0,
+          "fields": 0,
+          "generation": 6
+        }
+      }
+    },
+    {
+      "id": "timeout4500-request-start-five-second-lease-and-destructive-close",
+      "pass": true,
+      "evidence": {
+        "badRenew": [],
+        "badClos": [],
+        "renewals": 1,
+        "closures": 2,
+        "snapshot": {
+          "at": 101853.20000000298,
+          "hidden": false,
+          "ready": false,
+          "needsRefresh": true,
+          "allowed": false,
+          "checkedMono": 90832.60000000149,
+          "remaining": -6020.699999999255,
+          "approved": 0,
+          "fields": 0,
+          "generation": 8
+        }
+      }
+    },
+    {
+      "id": "timeout-dynamic-closed",
+      "pass": true,
+      "evidence": {
+        "at": 101853.20000000298,
+        "hidden": false,
+        "ready": false,
+        "needsRefresh": true,
+        "allowed": false,
+        "checkedMono": 90832.60000000149,
+        "remaining": -6020.699999999255,
+        "approved": 0,
+        "fields": 0,
+        "generation": 8
+      }
+    },
+    {
+      "id": "recovery75-request-start-five-second-lease-and-destructive-close",
+      "pass": true,
+      "evidence": {
+        "badRenew": [],
+        "badClos": [],
+        "renewals": 6,
+        "closures": 1,
+        "snapshot": {
+          "at": 115882.5,
+          "hidden": false,
+          "ready": true,
+          "needsRefresh": false,
+          "allowed": true,
+          "checkedMono": 114356.30000000075,
+          "remaining": 3473.800000000745,
+          "approved": 1,
+          "fields": 1,
+          "generation": 9
+        }
+      }
+    },
+    {
+      "id": "recovery-completes-all-required-lists",
+      "pass": true,
+      "evidence": {
+        "at": 115882.5,
+        "hidden": false,
+        "ready": true,
+        "needsRefresh": false,
+        "allowed": true,
+        "checkedMono": 114356.30000000075,
+        "remaining": 3473.800000000745,
+        "approved": 1,
+        "fields": 1,
+        "generation": 9
+      }
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "fail": 0,
+    "skip": 0
+  },
+  "network": {
+    "allowedLocal": 8,
+    "allowedDependencyGet": 19,
+    "blockedOther": 9,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "method": "Previously interrupted phases only; actual one Chrome375px context, real45/45/11/14second wall time with per-request configured300ms/75·75·400 jitter/4500ms/75ms responses; not measured operating RTT.",
+  "limits": [
+    "No operating Worker/D1 calls.",
+    "One actual Chrome context, not10/20 high-latency fleet.",
+    "Product timers/lease unchanged; browser instrumentation can add scheduling load.",
+    "Warm D1 cost weighting is a model from separately measured local workerd costs."
+  ]
+}

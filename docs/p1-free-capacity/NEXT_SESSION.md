@@ -1,3 +1,55 @@
+# 2026-10-13 P1-A/P1-B 숨김·만료 최소 수정 완료 — 여기서 종료
+
+브랜치: `codex/p1-publication-free-capacity`.
+기준 체크포인트: `26ad356418bbef61f8a583821ad63353cb85843a`.
+수정 제품: `38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd`.
+이 문서를 포함한 최종 체크포인트는 `git log -1`로 확인한다. index는 제품 SHA와 동일하다. push하지 않았고 운영 BLOCKED를 유지한다.
+
+먼저 `visibility-expiry-fix-20261013/FINDINGS.md`, `FINAL_MANIFEST.json`, `INVARIANTS.json`, `expiry-review/REVIEW.md`, `server/FINDINGS.md`, `chrome/FINDINGS.md`를 읽는다. 완료 시험·620초 관측·이전 P1 분석을 반복하지 않는다.
+
+완료 결과:
+- 숨김 Chrome 5폭: 10/30 → 30/30.
+- 독립 visible 만료 DOM: 4/8 → 8/8. GPS/unknown 보충: 0/4 → 4/4.
+- 신규 실제-source 시험: 2/11 → 11/11.
+- 관련 JS80/80(DTO32 포함), 추천·자정182/182, 서버108/108, native D1 CAS10/10.
+- 동시10/20 코호트18/18, 300ms·지터·timeout·복구7/7, Validator8/8.
+- 190곳·모든 좌표/필드/순서, 추천 core, 보호파일473개, Worker/CAS/schema 불변.
+- MAX_AGE5000/POLL5000/RENEW_MARGIN250/실효4750/TIMEOUT4000/REPORTS_REFRESH600000 불변.
+
+변경은 index의 현재 권한 기준, hidden·generation·anchor 진입/완료 검사, 이전 promise 분리, 만료 감지 시 live layer/store/이름/현장소식 카드·팝업·길찾기 동기 정리다. 새 revision의 fresh 복구와 정상 Kakao/TMAP를 유지했다. 기존 VM에 새 필수 의존성만 보충했고 assertion은 그대로다.
+
+원형 Chrome은237PASS/4FAIL/0SKIP로 그대로 남겼다. 복합 작업 총시간5100ms 기대값과 같은 context의 숨김 첫 탭을 두 visible 기기로 간주한 가정을 실측으로 구분했다. 별도 contract16/compound1/native8/tab3/독립 visible context 철회·재승인5는 통과했다. 원형·초기 fixture 실패를 성공으로 재분류하지 않았다. 과거 hidden-dependent8은 일부 branch 미실행이므로, 별도 동일 visible 하네스의4/8→8/8로 비교한다.
+
+한계: 첫 만료 감지 즉시 정리하며, 브라우저 eventloop 동결 중 정확5000ms 실행을 보장하지 않는다. 물리 GPS·외부 앱·iOS popup·실제 다기기·edge CPU·분산·CI·배포/rollback은 미검증이다. Workers Free20명×8h의5초HEAD 최소115200>100000/동일UTC일 차단은 불변이다. 오래된 today의 현재 날짜 Validator 실패도 유지한다(이번8/8은 원발행 시각 고정 모드).
+
+이번 단계는 완료했다. 새 사용자 승인 전에는 다음 작업을 시작하지 않는다. push·병합·main/PR13·Worker/Pages·운영D1·실사용자·요금제 변경은 금지한다. 기존 미추적·실패 자료를 삭제/덮어쓰지 않는다. 새 관련 증거만 선택해 로컬 체크포인트로 저장한다.
+
+---
+아래는 이전 단계 기록이며 최신 완료 판정과 구분한다.
+
+# 2026-10-13 Load·동시성·권한 철회 원인 분석 완료 — 수정 승인 전 종료
+
+현재HEAD/체크포인트26ad356418bbef61f8a583821ad63353cb85843a,제품c060f505ab95e5a3854f0e1be77fd8214de6b126,브랜치codex/p1-publication-free-capacity. 이번단계제품코드수정/commit/push/병합/배포/운영D1·실사용자·요금제변경0. 새증거폴더`docs/p1-free-capacity/load-audit-20261013/`는로컬저장상태다.
+
+먼저새FINDINGS.md/FINAL_MANIFEST.json/LOAD_BUDGET.json/NON_INTERFERENCE.json,server/SERVER_MANIFEST.json,chrome/MANIFEST.json을읽는다. 완료620초·기존P1분석을반복하지않는다.
+
+완료:현행10/20Chrome65초코호트18/18;미완료300ms45초·지터45초·4500timeout11초·75ms복구14초7/7. 서버108/108,CAS10/10,native15조건×cold0/10/20세반복(1800warmHEAD오류0/23행). DTO표적32/32재확인,Validator동일8/8일치.190곳/전체좌표·권한CAS·430파일불변.
+
+실패보존:Chrome원형241=239PASS/2FAIL(공유payload2가정과복합전체시간=단일lease가정의하네스계약),초기서버5PASS/5FAIL(합성중복4/CAS200고정기대1),숨김30=10PASS/20FAIL,expiry8=4PASS/4FAIL,같은375조건개인정보추가2PASS/2FAIL.독립Chrome16/16+compound1/1.20숨김FAIL중실제timer/directloader복귀5와추가요청/rawHEAD가정실패15를구분;15를좌표노출15건으로보고하지않는다.
+
+필수수정차단:L-H1숨김중원본10분timer/직접Fetch·Head·Refresh/asynccompletion이ready/마커를복구한다. L-H2허가age>5000~약5974ms에정확map/store좌표와#길찾기UI가남고,합성제보자명live history·팝업도잔류한다. fresh철회route실행과lateGPS동작은차단됨. 외부URL실행/실제운영유출사고를주장하지않는다. sourcegeneration/visibilitybarrier·숨김entry/completion폐쇄를최소수정권고했지만구현하지않았다.
+
+Free차단:같은UTC quota day20×8h의5초HEAD최소115200>100000.75ms+timer추가HEAD36/h+과거계정baseline모형159845Worker/4277044warmrows;10%cold5545866rows.모형이지하루실측이아님.300ms는45초38요청/4폐쇄·전체4목록복구로약3039/user-hour외삽.5초상한/nonce/primary/postflight/unknown폐쇄완화금지.
+
+미실행:제품수정,전체회귀,CI,운영/분산replica/CPU10ms·DB성장·1/8시간실측·물리GPS/native앱. 현재기본today의과거10월12일fixture/현재날짜FAIL은지난정상거부로유지. 이번작업을그해결이나배포통과로해석하지않는다.
+
+다음 단계는사용자별도승인후에만L-H1/L-H2의index공개권한블록·10분timer최소수정,이번표적/카카오nativepopup·티맵/GPS/190곳비간섭재검증. fresh前about:blank가visibility를바꾸는정상Kakao동작을깨지않도록검증한다.서버CAS/business/D1schema·기상JSON은이번증거에서수정요구없음. 지금은원인분석까지만완료하고운영BLOCKED 유지.
+
+명령/정확SHA/exit는새FINDINGS와각하위문서. 원형raw·실패assertion·기존미추적자료를삭제/덮어쓰기금지. 새output경로를사용하며timer수동콜백관측과620초실제관측을구분한다.
+
+---
+아래는이전완료체크포인트의인수인계다.
+
 # 2026-10-13 Validator 최소 수정 완료 — 여기서 종료
 
 제품 커밋: `c060f505ab95e5a3854f0e1be77fd8214de6b126`. 기준 체크포인트: `799ba3c6ba4bd2f62df4666696e0f9e167d02937`. 현재 브랜치 `codex/p1-publication-free-capacity`. 이 파일 포함 문서 체크포인트 SHA는 `git log -1`로 확인한다. push하지 않았다.

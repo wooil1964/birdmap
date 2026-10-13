@@ -1,0 +1,222 @@
+{
+  "schema": "birdmap-two-context-authority-diagnostic-v1",
+  "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "diagnostics": [
+    {
+      "id": "original-same-context-first-tab-hidden",
+      "pass": true,
+      "evidence": [
+        {
+          "hidden": true,
+          "visibility": "hidden",
+          "ready": false,
+          "allowed": false,
+          "approved": 0,
+          "pending": 0,
+          "fields": 0,
+          "fieldData": 0,
+          "coords": [],
+          "routeAnchors": 0,
+          "guide": false,
+          "choice": false
+        },
+        {
+          "hidden": false,
+          "visibility": "visible",
+          "ready": true,
+          "allowed": true,
+          "approved": 1,
+          "pending": 1,
+          "fields": 1,
+          "fieldData": 1,
+          "coords": [
+            {
+              "lat": 37,
+              "lon": 127
+            }
+          ],
+          "routeAnchors": 0,
+          "guide": false,
+          "choice": false
+        }
+      ]
+    },
+    {
+      "id": "activated-first-tab-fresh-recovery",
+      "pass": true,
+      "evidence": {
+        "hidden": false,
+        "visibility": "visible",
+        "ready": true,
+        "allowed": true,
+        "approved": 1,
+        "pending": 1,
+        "fields": 1,
+        "fieldData": 1,
+        "coords": [
+          {
+            "lat": 37,
+            "lon": 127
+          }
+        ],
+        "routeAnchors": 0,
+        "guide": false,
+        "choice": false
+      }
+    },
+    {
+      "id": "two-independent-contexts-visible-normal",
+      "pass": true,
+      "evidence": {
+        "browserContextIds": [
+          "47D2B235D05AED4B638FBAF817931D55",
+          "46988335B546EE48B574DDE19DBE18B4"
+        ],
+        "states": [
+          {
+            "hidden": false,
+            "visibility": "visible",
+            "ready": true,
+            "allowed": true,
+            "approved": 1,
+            "pending": 1,
+            "fields": 1,
+            "fieldData": 1,
+            "coords": [
+              {
+                "lat": 37,
+                "lon": 127
+              }
+            ],
+            "routeAnchors": 0,
+            "guide": false,
+            "choice": false
+          },
+          {
+            "hidden": false,
+            "visibility": "visible",
+            "ready": true,
+            "allowed": true,
+            "approved": 1,
+            "pending": 1,
+            "fields": 1,
+            "fieldData": 1,
+            "coords": [
+              {
+                "lat": 37,
+                "lon": 127
+              }
+            ],
+            "routeAnchors": 0,
+            "guide": false,
+            "choice": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "two-independent-contexts-withdrawal-removes-coordinates-routes",
+      "pass": true,
+      "evidence": {
+        "states": [
+          {
+            "hidden": false,
+            "visibility": "visible",
+            "ready": true,
+            "allowed": true,
+            "approved": 0,
+            "pending": 1,
+            "fields": 0,
+            "fieldData": 0,
+            "coords": [],
+            "routeAnchors": 0,
+            "guide": false,
+            "choice": false
+          },
+          {
+            "hidden": false,
+            "visibility": "visible",
+            "ready": true,
+            "allowed": true,
+            "approved": 0,
+            "pending": 1,
+            "fields": 0,
+            "fieldData": 0,
+            "coords": [],
+            "routeAnchors": 0,
+            "guide": false,
+            "choice": false
+          }
+        ],
+        "routeGates": [
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "two-independent-contexts-explicit-reapproval-restores",
+      "pass": true,
+      "evidence": [
+        {
+          "hidden": false,
+          "visibility": "visible",
+          "ready": true,
+          "allowed": true,
+          "approved": 1,
+          "pending": 1,
+          "fields": 1,
+          "fieldData": 1,
+          "coords": [
+            {
+              "lat": 37,
+              "lon": 127
+            }
+          ],
+          "routeAnchors": 0,
+          "guide": false,
+          "choice": false
+        },
+        {
+          "hidden": false,
+          "visibility": "visible",
+          "ready": true,
+          "allowed": true,
+          "approved": 1,
+          "pending": 1,
+          "fields": 1,
+          "fieldData": 1,
+          "coords": [
+            {
+              "lat": 37,
+              "lon": 127
+            }
+          ],
+          "routeAnchors": 0,
+          "guide": false,
+          "choice": false
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "pass": 5,
+    "fail": 0,
+    "skip": 0
+  },
+  "network": {
+    "allowedLocal": 29,
+    "allowedDependencyGet": 75,
+    "blockedOther": 50,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "method": "Original two tabs in same context: measured document.hidden and fresh recovery after activation. Then two separate browser contexts with explicit focus emulation, normal/withdrawal/reapproval. Original241 assertions and results are unchanged.",
+  "limits": [
+    "Synthetic API changes model authority states; SQL CAS measured elsewhere.",
+    "Independent Chrome contexts with focus emulation are not physical two-device proof.",
+    "No actual native GPS/app or operating request."
+  ]
+}

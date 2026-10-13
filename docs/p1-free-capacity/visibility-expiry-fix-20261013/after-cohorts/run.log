@@ -1,0 +1,626 @@
+START cohort 10 2026-10-13T10:16:53.768Z
+STEADY complete 10 2026-10-13T10:18:02.156Z
+{
+  "users": 10,
+  "summary": {
+    "bootstrap": {
+      "total": 84,
+      "perUserMean": 8.4,
+      "perUserCounts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        9,
+        9,
+        8,
+        9,
+        9
+      ],
+      "endpoints": {
+        "/reports/public-state": 34,
+        "/reports/approved": 20,
+        "/reports/pending": 10,
+        "/reports/recent-sites": 10,
+        "/field-updates": 10
+      }
+    },
+    "phases": {
+      "steady-foreground": {
+        "durationMsMean": 65015.48999999948,
+        "durationMsMin": 65015.199999999255,
+        "durationMsMax": 65015.699999999255,
+        "requests": 168,
+        "endpoints": {
+          "/reports/public-state": 158,
+          "/field-updates": 10
+        },
+        "perUser": 16.8,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 168,
+        "errors": 0,
+        "statuses": {
+          "200": 168
+        },
+        "measuredRttMsMean": 82.3339285713044,
+        "workerRequestsPerUserHour": 930.2398551483728,
+        "workerRequestsPerUserContinuousDay": 22325.756523560947
+      },
+      "background": {
+        "durationMsMean": 12017.149999999256,
+        "durationMsMin": 12017,
+        "durationMsMax": 12017.300000000745,
+        "requests": 0,
+        "endpoints": {},
+        "perUser": 0,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 0,
+        "errors": 0,
+        "statuses": {},
+        "measuredRttMsMean": 0,
+        "workerRequestsPerUserHour": 0,
+        "workerRequestsPerUserContinuousDay": 0
+      },
+      "visibility-return": {
+        "durationMsMean": 12059.219999999925,
+        "durationMsMin": 12017.5,
+        "durationMsMax": 12075.300000000745,
+        "requests": 98,
+        "endpoints": {
+          "/reports/public-state": 58,
+          "/reports/approved": 10,
+          "/reports/pending": 10,
+          "/reports/recent-sites": 10,
+          "/field-updates": 10
+        },
+        "perUser": 9.8,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 98,
+        "errors": 0,
+        "statuses": {
+          "200": 98
+        },
+        "measuredRttMsMean": 84.15510204096077,
+        "workerRequestsPerUserHour": 2925.562349803737,
+        "workerRequestsPerUserContinuousDay": 70213.4963952897
+      },
+      "interaction-contributors-history": {
+        "durationMsMean": 1514.620000000298,
+        "durationMsMin": 1514.5,
+        "durationMsMax": 1514.800000000745,
+        "requests": 50,
+        "endpoints": {
+          "/reports/public-state": 30,
+          "/contributors/monthly": 10,
+          "/reports/site/1": 10
+        },
+        "perUser": 5,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 50,
+        "errors": 0,
+        "statuses": {
+          "200": 50
+        },
+        "measuredRttMsMean": 80.26200000040234,
+        "workerRequestsPerUserHour": 11884.168966471101,
+        "workerRequestsPerUserContinuousDay": 285220.0551953064
+      },
+      "latency-lease-expiry": {
+        "durationMsMean": 11001.490000000224,
+        "durationMsMin": 11001.39999999851,
+        "durationMsMax": 11001.60000000149,
+        "requests": 54,
+        "endpoints": {
+          "/reports/public-state": 30,
+          "/reports/approved": 6,
+          "/reports/pending": 6,
+          "/reports/recent-sites": 6,
+          "/field-updates": 6
+        },
+        "perUser": 5.4,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 54,
+        "errors": 0,
+        "statuses": {
+          "200": 54
+        },
+        "measuredRttMsMean": 1512.9314814814263,
+        "workerRequestsPerUserHour": 1767.033374570136,
+        "workerRequestsPerUserContinuousDay": 42408.80098968327
+      },
+      "authority-hide": {
+        "durationMsMean": 6504.060000000894,
+        "durationMsMin": 6503.89999999851,
+        "durationMsMax": 6504.20000000298,
+        "requests": 120,
+        "endpoints": {
+          "/reports/public-state": 64,
+          "/reports/approved": 14,
+          "/reports/pending": 14,
+          "/reports/recent-sites": 14,
+          "/field-updates": 14
+        },
+        "perUser": 12,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 120,
+        "errors": 0,
+        "statuses": {
+          "200": 120
+        },
+        "measuredRttMsMean": 78.26583333335196,
+        "workerRequestsPerUserHour": 6642.005147553076,
+        "workerRequestsPerUserContinuousDay": 159408.12354127382
+      },
+      "authority-delete": {
+        "durationMsMean": 6500.809999999777,
+        "durationMsMin": 6500.699999999255,
+        "durationMsMax": 6500.900000002235,
+        "requests": 80,
+        "endpoints": {
+          "/reports/public-state": 40,
+          "/reports/approved": 10,
+          "/reports/pending": 10,
+          "/reports/recent-sites": 10,
+          "/field-updates": 10
+        },
+        "perUser": 8,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 80,
+        "errors": 0,
+        "statuses": {
+          "200": 80
+        },
+        "measuredRttMsMean": 78.34624999980443,
+        "workerRequestsPerUserHour": 4430.217157554364,
+        "workerRequestsPerUserContinuousDay": 106325.21178130475
+      },
+      "normal-restore": {
+        "durationMsMean": 6504.919999999181,
+        "durationMsMin": 6504.89999999851,
+        "durationMsMax": 6505,
+        "requests": 114,
+        "endpoints": {
+          "/reports/public-state": 64,
+          "/reports/approved": 10,
+          "/reports/pending": 10,
+          "/reports/recent-sites": 10,
+          "/field-updates": 20
+        },
+        "perUser": 11.4,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 114,
+        "errors": 0,
+        "statuses": {
+          "200": 114
+        },
+        "measuredRttMsMean": 79.79736842110492,
+        "workerRequestsPerUserHour": 6309.070672660873,
+        "workerRequestsPerUserContinuousDay": 151417.69614386096
+      },
+      "network-failure": {
+        "durationMsMean": 6512.35,
+        "durationMsMin": 6512.300000000745,
+        "durationMsMax": 6512.400000002235,
+        "requests": 16,
+        "endpoints": {
+          "/reports/public-state": 16
+        },
+        "perUser": 1.6,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 16,
+        "errors": 16,
+        "statuses": {
+          "network-error": 16
+        },
+        "measuredRttMsMean": 78.65000000037253,
+        "workerRequestsPerUserHour": 884.4733467949358,
+        "workerRequestsPerUserContinuousDay": 21227.360323078457
+      },
+      "network-recovery": {
+        "durationMsMean": 6510.610000000149,
+        "durationMsMin": 6510.29999999702,
+        "durationMsMax": 6511,
+        "requests": 80,
+        "endpoints": {
+          "/reports/public-state": 40,
+          "/reports/approved": 10,
+          "/reports/pending": 10,
+          "/reports/recent-sites": 10,
+          "/field-updates": 10
+        },
+        "perUser": 8,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 80,
+        "errors": 0,
+        "statuses": {
+          "200": 80
+        },
+        "measuredRttMsMean": 79.8087499997113,
+        "workerRequestsPerUserHour": 4423.548638299536,
+        "workerRequestsPerUserContinuousDay": 106165.16731918887
+      }
+    },
+    "invalidations": {
+      "visibility": 20,
+      "expired": 10,
+      "authority changed": 40,
+      "authority unknown": 16
+    }
+  },
+  "safety": [
+    {
+      "id": "isolated-contexts-visible-190-normal",
+      "pass": true
+    },
+    {
+      "id": "actual-background-document-state",
+      "pass": true
+    },
+    {
+      "id": "background-stops-publication-requests",
+      "pass": true
+    },
+    {
+      "id": "visibility-return-revalidates",
+      "pass": true
+    },
+    {
+      "id": "hide-no-exact-navigation",
+      "pass": true
+    },
+    {
+      "id": "delete-remains-closed",
+      "pass": true
+    },
+    {
+      "id": "explicit-authority-restores",
+      "pass": true
+    },
+    {
+      "id": "network-failure-closes-all-dynamic",
+      "pass": true
+    },
+    {
+      "id": "network-recovery-restores",
+      "pass": true
+    }
+  ]
+}
+START cohort 20 2026-10-13T10:19:12.485Z
+STEADY complete 20 2026-10-13T10:20:23.537Z
+{
+  "users": 20,
+  "summary": {
+    "bootstrap": {
+      "total": 173,
+      "perUserMean": 8.65,
+      "perUserCounts": [
+        9,
+        9,
+        8,
+        9,
+        8,
+        8,
+        9,
+        9,
+        8,
+        8,
+        9,
+        9,
+        9,
+        9,
+        8,
+        9,
+        9,
+        9,
+        8,
+        9
+      ],
+      "endpoints": {
+        "/reports/public-state": 73,
+        "/reports/approved": 40,
+        "/reports/pending": 20,
+        "/reports/recent-sites": 20,
+        "/field-updates": 20
+      }
+    },
+    "phases": {
+      "steady-foreground": {
+        "durationMsMean": 65002.05500000063,
+        "durationMsMin": 65001.89999999851,
+        "durationMsMax": 65002.20000000298,
+        "requests": 332,
+        "endpoints": {
+          "/reports/public-state": 312,
+          "/field-updates": 20
+        },
+        "perUser": 16.6,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 332,
+        "errors": 0,
+        "statuses": {
+          "200": 332
+        },
+        "measuredRttMsMean": 82.07680722885956,
+        "workerRequestsPerUserHour": 919.3555496053075,
+        "workerRequestsPerUserContinuousDay": 22064.53319052738
+      },
+      "background": {
+        "durationMsMean": 12012.379999999703,
+        "durationMsMin": 12012.29999999702,
+        "durationMsMax": 12012.5,
+        "requests": 0,
+        "endpoints": {},
+        "perUser": 0,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 0,
+        "errors": 0,
+        "statuses": {},
+        "measuredRttMsMean": 0,
+        "workerRequestsPerUserHour": 0,
+        "workerRequestsPerUserContinuousDay": 0
+      },
+      "visibility-return": {
+        "durationMsMean": 12076.600000000186,
+        "durationMsMin": 12007.5,
+        "durationMsMax": 12106,
+        "requests": 192,
+        "endpoints": {
+          "/reports/public-state": 112,
+          "/reports/approved": 20,
+          "/reports/pending": 20,
+          "/reports/recent-sites": 20,
+          "/field-updates": 20
+        },
+        "perUser": 9.6,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 192,
+        "errors": 0,
+        "statuses": {
+          "200": 192
+        },
+        "measuredRttMsMean": 101.20833333327512,
+        "workerRequestsPerUserHour": 2861.7326068595025,
+        "workerRequestsPerUserContinuousDay": 68681.58256462806
+      },
+      "interaction-contributors-history": {
+        "durationMsMean": 1507.3450000006706,
+        "durationMsMin": 1507.199999999255,
+        "durationMsMax": 1507.5,
+        "requests": 104,
+        "endpoints": {
+          "/reports/public-state": 64,
+          "/contributors/monthly": 20,
+          "/reports/site/1": 20
+        },
+        "perUser": 5.2,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 104,
+        "errors": 0,
+        "statuses": {
+          "200": 104
+        },
+        "measuredRttMsMean": 81.80480769201397,
+        "workerRequestsPerUserHour": 12419.187379127985,
+        "workerRequestsPerUserContinuousDay": 298060.4970990716
+      },
+      "latency-lease-expiry": {
+        "durationMsMean": 11016.394999999926,
+        "durationMsMin": 11016.300000000745,
+        "durationMsMax": 11016.5,
+        "requests": 88,
+        "endpoints": {
+          "/reports/public-state": 56,
+          "/reports/approved": 8,
+          "/reports/pending": 8,
+          "/reports/recent-sites": 8,
+          "/field-updates": 8
+        },
+        "perUser": 4.4,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 88,
+        "errors": 0,
+        "statuses": {
+          "200": 88
+        },
+        "measuredRttMsMean": 1508.2340909090656,
+        "workerRequestsPerUserHour": 1437.8569395886866,
+        "workerRequestsPerUserContinuousDay": 34508.566550128475
+      },
+      "authority-hide": {
+        "durationMsMean": 6506.684999999404,
+        "durationMsMin": 6506.599999997765,
+        "durationMsMax": 6506.89999999851,
+        "requests": 224,
+        "endpoints": {
+          "/reports/public-state": 112,
+          "/reports/approved": 28,
+          "/reports/pending": 28,
+          "/reports/recent-sites": 28,
+          "/field-updates": 28
+        },
+        "perUser": 11.2,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 224,
+        "errors": 0,
+        "statuses": {
+          "200": 208,
+          "409": 16
+        },
+        "measuredRttMsMean": 78.611160714462,
+        "workerRequestsPerUserHour": 6196.703851500986,
+        "workerRequestsPerUserContinuousDay": 148720.89243602366
+      },
+      "authority-delete": {
+        "durationMsMean": 6502.565000000596,
+        "durationMsMin": 6502.5,
+        "durationMsMax": 6502.70000000298,
+        "requests": 176,
+        "endpoints": {
+          "/reports/public-state": 92,
+          "/reports/approved": 20,
+          "/reports/pending": 20,
+          "/reports/recent-sites": 20,
+          "/field-updates": 24
+        },
+        "perUser": 8.8,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 176,
+        "errors": 0,
+        "statuses": {
+          "200": 176
+        },
+        "measuredRttMsMean": 78.37727272728543,
+        "workerRequestsPerUserHour": 4871.9236178334395,
+        "workerRequestsPerUserContinuousDay": 116926.16682800255
+      },
+      "normal-restore": {
+        "durationMsMean": 6511.570000000298,
+        "durationMsMin": 6511.400000002235,
+        "durationMsMax": 6511.699999999255,
+        "requests": 216,
+        "endpoints": {
+          "/reports/public-state": 120,
+          "/reports/approved": 20,
+          "/reports/pending": 20,
+          "/reports/recent-sites": 20,
+          "/field-updates": 36
+        },
+        "perUser": 10.8,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 216,
+        "errors": 0,
+        "statuses": {
+          "200": 216
+        },
+        "measuredRttMsMean": 78.44490740765576,
+        "workerRequestsPerUserHour": 5970.910241308658,
+        "workerRequestsPerUserContinuousDay": 143301.84579140783
+      },
+      "network-failure": {
+        "durationMsMean": 6516.875,
+        "durationMsMin": 6516.699999999255,
+        "durationMsMax": 6517,
+        "requests": 28,
+        "endpoints": {
+          "/reports/public-state": 28
+        },
+        "perUser": 1.4,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 28,
+        "errors": 28,
+        "statuses": {
+          "network-error": 28
+        },
+        "measuredRttMsMean": 79.52142857134875,
+        "workerRequestsPerUserHour": 773.3768102042774,
+        "workerRequestsPerUserContinuousDay": 18561.043444902654
+      },
+      "network-recovery": {
+        "durationMsMean": 6506.209999999963,
+        "durationMsMin": 6506.099999997765,
+        "durationMsMax": 6506.300000000745,
+        "requests": 168,
+        "endpoints": {
+          "/reports/public-state": 88,
+          "/reports/approved": 20,
+          "/reports/pending": 20,
+          "/reports/recent-sites": 20,
+          "/field-updates": 20
+        },
+        "perUser": 8.4,
+        "allRequestVisibility": true,
+        "hiddenRequestCount": 0,
+        "completed": 168,
+        "errors": 0,
+        "statuses": {
+          "200": 168
+        },
+        "measuredRttMsMean": 78.91845238084595,
+        "workerRequestsPerUserHour": 4647.86719149861,
+        "workerRequestsPerUserContinuousDay": 111548.81259596665
+      }
+    },
+    "invalidations": {
+      "visibility": 40,
+      "expired": 20,
+      "authority changed": 80,
+      "authority unknown": 28,
+      "data unverified": 4
+    }
+  },
+  "safety": [
+    {
+      "id": "isolated-contexts-visible-190-normal",
+      "pass": true
+    },
+    {
+      "id": "actual-background-document-state",
+      "pass": true
+    },
+    {
+      "id": "background-stops-publication-requests",
+      "pass": true
+    },
+    {
+      "id": "visibility-return-revalidates",
+      "pass": true
+    },
+    {
+      "id": "hide-no-exact-navigation",
+      "pass": true
+    },
+    {
+      "id": "delete-remains-closed",
+      "pass": true
+    },
+    {
+      "id": "explicit-authority-restores",
+      "pass": true
+    },
+    {
+      "id": "network-failure-closes-all-dynamic",
+      "pass": true
+    },
+    {
+      "id": "network-recovery-restores",
+      "pass": true
+    }
+  ]
+}
+{
+  "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "resultPath": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\docs\\p1-free-capacity\\visibility-expiry-fix-20261013\\after-cohorts\\LOAD_MANIFEST.json",
+  "summary": {
+    "pass": 18,
+    "fail": 0
+  },
+  "network": {
+    "allowedLocal": 302,
+    "allowedDependencyGet": 570,
+    "blockedOther": 375,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserExceptions": 0
+}

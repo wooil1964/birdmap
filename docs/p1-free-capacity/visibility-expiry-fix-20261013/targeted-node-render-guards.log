@@ -1,0 +1,490 @@
+TAP version 13
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO
+ok 1 - overlapping approved consumers preserve fixed history and shared DTO
+  ---
+  duration_ms: 12.2909
+  type: 'test'
+  ...
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO (frozen)
+ok 2 - overlapping approved consumers preserve fixed history and shared DTO (frozen)
+  ---
+  duration_ms: 0.9936
+  type: 'test'
+  ...
+# Subtest: unverified approved response cannot restore fixed history or popup names
+ok 3 - unverified approved response cannot restore fixed history or popup names
+  ---
+  duration_ms: 0.8006
+  type: 'test'
+  ...
+# Subtest: approved withdrawal clears previously linked fixed history
+ok 4 - approved withdrawal clears previously linked fixed history
+  ---
+  duration_ms: 0.8493
+  type: 'test'
+  ...
+# Subtest: 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순
+ok 5 - 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순
+  ---
+  duration_ms: 14.9688
+  type: 'test'
+  ...
+# Subtest: 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다
+ok 6 - 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다
+  ---
+  duration_ms: 3.6003
+  type: 'test'
+  ...
+# Subtest: 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션
+ok 7 - 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션
+  ---
+  duration_ms: 3.0715
+  type: 'test'
+  ...
+# Subtest: 위치 보호·비정상 좌표는 길안내 좌표가 없다
+ok 8 - 위치 보호·비정상 좌표는 길안내 좌표가 없다
+  ---
+  duration_ms: 2.6218
+  type: 'test'
+  ...
+# Subtest: 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다
+ok 9 - 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다
+  ---
+  duration_ms: 7.0777
+  type: 'test'
+  ...
+# Subtest: 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다
+ok 10 - 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다
+  ---
+  duration_ms: 2.3356
+  type: 'test'
+  ...
+# Subtest: 카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다
+ok 11 - 카카오맵·티맵은 같은 공개 좌표의 정확 URL을 유지하고 두 앱 링크를 함께 표시한다
+  ---
+  duration_ms: 2.613
+  type: 'test'
+  ...
+# Subtest: 위치정보를 저장·전송하는 코드가 새 길안내에 없다
+ok 12 - 위치정보를 저장·전송하는 코드가 새 길안내에 없다
+  ---
+  duration_ms: 0.4591
+  type: 'test'
+  ...
+# Subtest: 외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다
+ok 13 - 외부 길안내는 자동 창 대신 실제 두 앱 선택창을 만들고 보호·미확인 좌표는 만들지 않는다
+  ---
+  duration_ms: 1.9853
+  type: 'test'
+  ...
+# Subtest: 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다
+ok 14 - 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다
+  ---
+  duration_ms: 1.4023
+  type: 'test'
+  ...
+# Subtest: 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다
+ok 15 - 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다
+  ---
+  duration_ms: 6.1606
+  type: 'test'
+  ...
+# Subtest: 동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤 캡처한 원 좌표를 재사용하지 않는다
+ok 16 - 동적 field 팝업은 최신 store만 읽고 삭제·권한 미확인 뒤 캡처한 원 좌표를 재사용하지 않는다
+  ---
+  duration_ms: 2.2134
+  type: 'test'
+  ...
+# Subtest: publicationForgetLayer는 이전 팝업·source·binding을 제거하고 지도에서 레이어를 내린다
+ok 17 - publicationForgetLayer는 이전 팝업·source·binding을 제거하고 지도에서 레이어를 내린다
+  ---
+  duration_ms: 0.6019
+  type: 'test'
+  ...
+# Subtest: 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+ok 18 - 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건
+  ---
+  duration_ms: 18.1836
+  type: 'test'
+  ...
+# Subtest: 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+ok 19 - 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다
+  ---
+  duration_ms: 7.3106
+  type: 'test'
+  ...
+# Subtest: 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+ok 20 - 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건
+  ---
+  duration_ms: 7.0777
+  type: 'test'
+  ...
+# Subtest: 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+ok 21 - 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다
+  ---
+  duration_ms: 6.7367
+  type: 'test'
+  ...
+# Subtest: 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+ok 22 - 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다
+  ---
+  duration_ms: 6.7457
+  type: 'test'
+  ...
+# Subtest: 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+ok 23 - 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단
+  ---
+  duration_ms: 9.7349
+  type: 'test'
+  ...
+# Subtest: 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+ok 24 - 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다
+  ---
+  duration_ms: 7.4208
+  type: 'test'
+  ...
+# Subtest: 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+ok 25 - 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다
+  ---
+  duration_ms: 6.3018
+  type: 'test'
+  ...
+# Subtest: 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+ok 26 - 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함)
+  ---
+  duration_ms: 6.3458
+  type: 'test'
+  ...
+# Subtest: 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+ok 27 - 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다
+  ---
+  duration_ms: 12.5354
+  type: 'test'
+  ...
+# Subtest: GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+ok 28 - GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다
+  ---
+  duration_ms: 6.3409
+  type: 'test'
+  ...
+# Subtest: 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+ok 29 - 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다
+  ---
+  duration_ms: 6.3309
+  type: 'test'
+  ...
+# Subtest: 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+ok 30 - 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀)
+  ---
+  duration_ms: 12.3807
+  type: 'test'
+  ...
+# Subtest: 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+ok 31 - 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다
+  ---
+  duration_ms: 6.0837
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+ok 32 - 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다
+  ---
+  duration_ms: 2.1018
+  type: 'test'
+  ...
+# Subtest: 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)
+ok 33 - 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위)
+  ---
+  duration_ms: 13.1737
+  type: 'test'
+  ...
+# Subtest: 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)
+ok 34 - 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님)
+  ---
+  duration_ms: 6.0151
+  type: 'test'
+  ...
+# Subtest: 캐시 권한이 아직 유효해도 새 head 확인 실패면 직접 방향안내를 시작하지 않는다
+ok 35 - 캐시 권한이 아직 유효해도 새 head 확인 실패면 직접 방향안내를 시작하지 않는다
+  ---
+  duration_ms: 6.4684
+  type: 'test'
+  ...
+# Subtest: GPS 응답 뒤 head를 다시 확인하고 실패면 성공·오류·수동 콜백이 안내를 열지 않는다
+ok 36 - GPS 응답 뒤 head를 다시 확인하고 실패면 성공·오류·수동 콜백이 안내를 열지 않는다
+  ---
+  duration_ms: 18.0618
+  type: 'test'
+  ...
+# Subtest: 연속 GPS watch의 정상 위치·오류 반영은 각각 새 권한 head 뒤에만 실행한다
+ok 37 - 연속 GPS watch의 정상 위치·오류 반영은 각각 새 권한 head 뒤에만 실행한다
+  ---
+  duration_ms: 6.2959
+  type: 'test'
+  ...
+# Subtest: 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+ok 38 - 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함)
+  ---
+  duration_ms: 2.1142
+  type: 'test'
+  ...
+# Subtest: 정상 순서의 응답은 모두 반영된다(회귀)
+ok 39 - 정상 순서의 응답은 모두 반영된다(회귀)
+  ---
+  duration_ms: 1.5617
+  type: 'test'
+  ...
+# Subtest: 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+ok 40 - 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다
+  ---
+  duration_ms: 2.1247
+  type: 'test'
+  ...
+# Subtest: 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+ok 41 - 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다
+  ---
+  duration_ms: 1.318
+  type: 'test'
+  ...
+# Subtest: hidden permission detection destructively removes live coordinates and names
+ok 42 - hidden permission detection destructively removes live coordinates and names
+  ---
+  duration_ms: 3.1323
+  type: 'test'
+  ...
+# Subtest: exact5000ms expiry detection destructively removes live coordinates and names
+ok 43 - exact5000ms expiry detection destructively removes live coordinates and names
+  ---
+  duration_ms: 0.8665
+  type: 'test'
+  ...
+# Subtest: valid4999ms permission stays public and the lease cap is unchanged
+ok 44 - valid4999ms permission stays public and the lease cap is unchanged
+  ---
+  duration_ms: 0.7579
+  type: 'test'
+  ...
+# Subtest: hidden HEAD issues no network request
+ok 45 - hidden HEAD issues no network request
+  ---
+  duration_ms: 0.8811
+  type: 'test'
+  ...
+# Subtest: hidden payload/refresh/route issues no network and never executes callback
+ok 46 - hidden payload/refresh/route issues no network and never executes callback
+  ---
+  duration_ms: 1.2009
+  type: 'test'
+  ...
+# Subtest: HEAD started before visibility barrier is rejected after late arrival
+ok 47 - HEAD started before visibility barrier is rejected after late arrival
+  ---
+  duration_ms: 2.6391
+  type: 'test'
+  ...
+# Subtest: payload arriving after hide never issues postflight or restores data
+ok 48 - payload arriving after hide never issues postflight or restores data
+  ---
+  duration_ms: 6.4435
+  type: 'test'
+  ...
+# Subtest: late old HEAD failure cannot invalidate newer visible recovered state
+ok 49 - late old HEAD failure cannot invalidate newer visible recovered state
+  ---
+  duration_ms: 1.1919
+  type: 'test'
+  ...
+# Subtest: visibility barrier releases old in-flight references for normal recovery
+ok 50 - visibility barrier releases old in-flight references for normal recovery
+  ---
+  duration_ms: 1.501
+  type: 'test'
+  ...
+# Subtest: new primary authority is accepted through fresh payload and postflight
+ok 51 - new primary authority is accepted through fresh payload and postflight
+  ---
+  duration_ms: 1.3913
+  type: 'test'
+  ...
+# Subtest: renewal must match current epoch/revision and generation
+ok 52 - renewal must match current epoch/revision and generation
+  ---
+  duration_ms: 0.8389
+  type: 'test'
+  ...
+# Subtest: 이미 받아 둔 승인 자료로 검색 목록을 만든다
+ok 53 - 이미 받아 둔 승인 자료로 검색 목록을 만든다
+  ---
+  duration_ms: 13.3671
+  type: 'test'
+  ...
+# Subtest: 고정 붉은 점에 연결된 제보도 함께 들어간다
+ok 54 - 고정 붉은 점에 연결된 제보도 함께 들어간다
+  ---
+  duration_ms: 0.8652
+  type: 'test'
+  ...
+# Subtest: 종명으로 검색되고 과거 관찰도 걸린다
+ok 55 - 종명으로 검색되고 과거 관찰도 걸린다
+  ---
+  duration_ms: 0.9399
+  type: 'test'
+  ...
+# Subtest: 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+ok 56 - 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+  ---
+  duration_ms: 0.5656
+  type: 'test'
+  ...
+# Subtest: 검색어가 없으면 아무것도 돌려주지 않는다
+ok 57 - 검색어가 없으면 아무것도 돌려주지 않는다
+  ---
+  duration_ms: 0.6077
+  type: 'test'
+  ...
+# Subtest: 공개 API 가 준 공개 좌표만 목록에 들어간다
+ok 58 - 공개 API 가 준 공개 좌표만 목록에 들어간다
+  ---
+  duration_ms: 0.6979
+  type: 'test'
+  ...
+# Subtest: 승인되지 않은 제보는 애초에 목록에 없다
+ok 59 - 승인되지 않은 제보는 애초에 목록에 없다
+  ---
+  duration_ms: 0.6689
+  type: 'test'
+  ...
+# Subtest: 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+ok 60 - 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+  ---
+  duration_ms: 0.7301
+  type: 'test'
+  ...
+# Subtest: 좌표가 없는 제보는 목록에 넣지 않는다
+ok 61 - 좌표가 없는 제보는 목록에 넣지 않는다
+  ---
+  duration_ms: 0.6942
+  type: 'test'
+  ...
+# Subtest: 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+ok 62 - 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+  ---
+  duration_ms: 0.5299
+  type: 'test'
+  ...
+# Subtest: 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+ok 63 - 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+  ---
+  duration_ms: 0.4765
+  type: 'test'
+  ...
+# Subtest: 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+ok 64 - 같은 탐조지를 다시 열면 네트워크를 타지 않는다
+  ---
+  duration_ms: 5.4037
+  type: 'test'
+  ...
+# Subtest: 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+ok 65 - 기억해 둔 값은 날짜·종명·제보자·순서를 그대로 돌려준다
+  ---
+  duration_ms: 1.8911
+  type: 'test'
+  ...
+# Subtest: 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+ok 66 - 정해 둔 시간이 지나면 다시 받아 온다(새 승인 건 반영)
+  ---
+  duration_ms: 1.6208
+  type: 'test'
+  ...
+# Subtest: 승인 제보 갱신이 돌면 기억을 버린다
+ok 67 - 승인 제보 갱신이 돌면 기억을 버린다
+  ---
+  duration_ms: 1.4665
+  type: 'test'
+  ...
+# Subtest: 탐조지마다 따로 기억한다
+ok 68 - 탐조지마다 따로 기억한다
+  ---
+  duration_ms: 1.4489
+  type: 'test'
+  ...
+# Subtest: '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+ok 69 - '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다
+  ---
+  duration_ms: 1.4852
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+ok 70 - 승인 공개권한 정책: 이력 전송은 no-store이며 query 범위를 유지한다
+  ---
+  duration_ms: 1.5362
+  type: 'test'
+  ...
+# Subtest: 실패해도 null 을 돌려주고 기억에 남기지 않는다
+ok 71 - 실패해도 null 을 돌려주고 기억에 남기지 않는다
+  ---
+  duration_ms: 1.5643
+  type: 'test'
+  ...
+# Subtest: 응답 모양이 어긋나면 실패로 본다
+ok 72 - 응답 모양이 어긋나면 실패로 본다
+  ---
+  duration_ms: 1.5053
+  type: 'test'
+  ...
+# Subtest: 응답이 오지 않으면 시간을 끊는다
+ok 73 - 응답이 오지 않으면 시간을 끊는다
+  ---
+  duration_ms: 1.2772
+  type: 'test'
+  ...
+# Subtest: 이력 칸은 접이식이고 기본은 접힌 상태다
+ok 74 - 이력 칸은 접이식이고 기본은 접힌 상태다
+  ---
+  duration_ms: 0.4387
+  type: 'test'
+  ...
+# Subtest: 제목 옆에 승인된 이력 건수를 적는다
+ok 75 - 제목 옆에 승인된 이력 건수를 적는다
+  ---
+  duration_ms: 0.4437
+  type: 'test'
+  ...
+# Subtest: '더 보기'와 이력 조회 방식은 그대로 둔다
+ok 76 - '더 보기'와 이력 조회 방식은 그대로 둔다
+  ---
+  duration_ms: 0.3366
+  type: 'test'
+  ...
+# Subtest: 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+ok 77 - 팝업 본문 함수는 문자열이 아니라 요소를 돌려준다
+  ---
+  duration_ms: 0.4208
+  type: 'test'
+  ...
+# Subtest: 이력을 그릴 때 칸을 다시 찾는다
+ok 78 - 이력을 그릴 때 칸을 다시 찾는다
+  ---
+  duration_ms: 0.355
+  type: 'test'
+  ...
+# Subtest: 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+ok 79 - 승인 공개권한 정책: 기억된 이력도 현재 권한과 짧은 유효기간 안에서만 쓴다
+  ---
+  duration_ms: 1.7461
+  type: 'test'
+  ...
+# Subtest: 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+ok 80 - 이력 기억은 권한 미확인·만료·다른 revision에서 재사용하지 않는다
+  ---
+  duration_ms: 2.9603
+  type: 'test'
+  ...
+1..80
+# tests 80
+# suites 0
+# pass 80
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 279.0239

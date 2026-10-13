@@ -1,0 +1,240 @@
+{
+  "schema": "birdmap-visibility-expiry-chrome-review-v1",
+  "productSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "runs": [
+    {
+      "name": "original-241",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 237,
+        "fail": 4,
+        "skip": 0,
+        "notRun": 0
+      },
+      "exitCode": 1,
+      "network": {
+        "allowedLocal": 90,
+        "allowedDependencyGet": 197,
+        "blockedOther": 266,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "original-241/publication_chrome.json"
+    },
+    {
+      "name": "contract-16",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 91,
+        "blockedOther": 60,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "contract-16/FREE_CONTRACT_CHROME.json"
+    },
+    {
+      "name": "compound-1",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 8,
+        "allowedDependencyGet": 19,
+        "blockedOther": 9,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "compound-1/COMPOUND_RECHECK.json"
+    },
+    {
+      "name": "native-routes-8",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 15,
+        "allowedDependencyGet": 38,
+        "blockedOther": 32,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "native-routes-8/NATIVE_WINDOW_ROUTE_BROWSER.json"
+    },
+    {
+      "name": "two-tab-diagnostic",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 15,
+        "allowedDependencyGet": 37,
+        "blockedOther": 25,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "two-tab-diagnostic/TWO_TAB_CONTEXT_DIAGNOSTIC.json"
+    },
+    {
+      "name": "two-context-diagnostic",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 29,
+        "allowedDependencyGet": 75,
+        "blockedOther": 50,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "two-context-diagnostic/TWO_CONTEXT_AUTHORITY_DIAGNOSTIC.json"
+    }
+  ],
+  "countsIncludingSeparateDiagnostics": {
+    "pass": 270,
+    "fail": 4,
+    "skip": 0
+  },
+  "originalFailures": [
+    {
+      "width": 375,
+      "id": "independent-head-transit-counts-in-five-second-lease",
+      "pass": false,
+      "evidence": {
+        "elapsed": 6024.400000002235,
+        "remaining": 0,
+        "totalAgeBudget": 6024.400000002235
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "both-independent-clients-normal",
+      "pass": false,
+      "evidence": {
+        "pages": [
+          false,
+          true
+        ],
+        "components": [
+          {
+            "approved": [],
+            "pending": [],
+            "fields": [],
+            "fieldData": [],
+            "publicSpots": [],
+            "search": 0,
+            "anchors": [],
+            "choice": false,
+            "guide": false,
+            "state": {
+              "ready": false,
+              "generation": 2,
+              "until": 0
+            },
+            "allowed": false
+          },
+          {
+            "approved": [
+              "synthetic-approved"
+            ],
+            "pending": [
+              "synthetic-pending"
+            ],
+            "fields": [
+              "11111111-1111-4111-8111-000000000001"
+            ],
+            "fieldData": [
+              "11111111-1111-4111-8111-000000000001"
+            ],
+            "publicSpots": [
+              "synthetic-approved"
+            ],
+            "search": 1,
+            "anchors": [],
+            "choice": false,
+            "guide": false,
+            "state": {
+              "ready": true,
+              "generation": 2,
+              "until": 1791886772202.4
+            },
+            "allowed": true
+          }
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "new-explicit-authority-restores-both-devices",
+      "pass": false,
+      "evidence": {
+        "pages": [
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "width": "concurrency",
+      "id": "earlier-request-arrives-after-new-protected-snapshot",
+      "pass": false,
+      "evidence": {
+        "expectedDeferredRequests": 2,
+        "actual": 0
+      }
+    }
+  ],
+  "sourceHarnessHashes": [
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\docs\\p1-publication-final-audit\\browser\\publication_chrome_final_r4.mjs",
+      "sha256": "3E5694064B85721804D809E2B5273E68A7147C6068FE9D3BF2C27CB8624B11C6"
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\docs\\p1-publication-final-audit\\browser\\free_contract_chrome.mjs",
+      "sha256": "13C4FD9BDA7870270C10697F0CF36E68C75A39F30C1FE28731D38B075B3AC436"
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\docs\\p1-publication-final-audit\\browser\\free_contract_compound.mjs",
+      "sha256": "F8DA9ECE0E95BD1738248C7573A53A7A0355C3999D9CEA85A3F28CA75386D4B0"
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\docs\\p1-free-capacity\\resume-20261013\\load\\native_window_route_browser.mjs",
+      "sha256": "023F592251645B71A075D1FFB5C45FE1CA7C80E4D19BCB7CD3CED464401A9EB1"
+    }
+  ]
+}

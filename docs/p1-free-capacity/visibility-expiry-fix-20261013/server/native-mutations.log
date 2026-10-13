@@ -1,0 +1,16 @@
+notify: email skipped (not configured) 10000000-0000-4000-8000-000000005001
+PASS M1 same-row approve/reject concurrency 2
+notify: email skipped (not configured) 10000000-0000-4000-8000-000000005004
+PASS M1 same-row approve/reject concurrency 10
+notify: email skipped (not configured) 10000000-0000-4000-8000-000000005015
+PASS M1 same-row approve/reject concurrency 20
+notify: email skipped (not configured) 10000000-0000-4000-8000-000000005036
+PASS M2 old GET anchor fails after hide and exact coordinates disappear
+notify: email skipped (not configured) 10000000-0000-4000-8000-000000005039
+PASS M3 concurrent unpublish/hide/consent one atomic CAS winner then withdrawal excludes coordinate
+PASS M4 concurrent terminal deletion 2
+PASS M4 concurrent terminal deletion 10
+PASS M4 concurrent terminal deletion 20
+PASS M5 concurrent confirmation versus delete cannot survive terminal state
+PASS M6 native batch injected failed CAS fully rolls back source and authority
+{"pass":10,"fail":0,"skip":0}

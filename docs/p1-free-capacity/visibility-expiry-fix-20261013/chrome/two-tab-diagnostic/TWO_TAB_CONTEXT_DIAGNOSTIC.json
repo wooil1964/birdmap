@@ -1,0 +1,83 @@
+{
+  "schema": "birdmap-two-tab-context-diagnostic-v1",
+  "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "diagnostics": [
+    {
+      "id": "original-same-context-first-tab-hidden-explains-closed-normal-and-zero-deferred",
+      "pass": true,
+      "evidence": {
+        "observed": [
+          {
+            "hidden": true,
+            "visibility": "hidden",
+            "ready": false,
+            "allowed": false,
+            "normal": false,
+            "generation": 2
+          },
+          {
+            "hidden": false,
+            "visibility": "visible",
+            "ready": true,
+            "allowed": true,
+            "normal": true,
+            "generation": 2
+          }
+        ],
+        "hiddenRead": {
+          "hidden": true,
+          "deferred": 0,
+          "requests": 14,
+          "allowed": false,
+          "approved": 0
+        },
+        "firstHeadCalls": 14
+      }
+    },
+    {
+      "id": "visible-return-of-first-tab-recovers-with-fresh-data",
+      "pass": true,
+      "evidence": {
+        "hidden": false,
+        "allowed": true,
+        "normal": true
+      }
+    },
+    {
+      "id": "independently-visible-clients-both-recover",
+      "pass": true,
+      "evidence": [
+        {
+          "hidden": false,
+          "allowed": true,
+          "normal": true
+        },
+        {
+          "hidden": false,
+          "allowed": true,
+          "normal": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0
+  },
+  "network": {
+    "allowedLocal": 15,
+    "allowedDependencyGet": 37,
+    "blockedOther": 25,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "method": "Original two-tab same-context setup unchanged in diagnostic first phase; record real document.hidden. Activate first tab and perform fresh recovery, then focus-emulate two independently visible clients. Original241 assertions are not replaced.",
+  "limits": [
+    "Local synthetic API, not physical two-device testing.",
+    "Focus emulation explicitly changes test visibility, never source behavior.",
+    "No operating requests or external destination navigation."
+  ]
+}
