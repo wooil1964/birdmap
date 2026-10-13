@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: R5 today wind overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+ok 1 - R5 today wind overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+  ---
+  duration_ms: 68.2563
+  type: 'test'
+  ...
+# Subtest: R5 today rain overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+ok 2 - R5 today rain overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+  ---
+  duration_ms: 45.6151
+  type: 'test'
+  ...
+# Subtest: R5 today wave overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+ok 3 - R5 today wave overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+  ---
+  duration_ms: 46.0521
+  type: 'test'
+  ...
+# Subtest: R5 정상 0·92·92.5·100점과 내부rank108, 비필수파고null은 유지한다
+ok 4 - R5 정상 0·92·92.5·100점과 내부rank108, 비필수파고null은 유지한다
+  ---
+  duration_ms: 45.5646
+  type: 'test'
+  ...
+# Subtest: R5 비정상 today 만조는 차단하고 정상 주간 대체 만조는 유지한다
+ok 5 - R5 비정상 today 만조는 차단하고 정상 주간 대체 만조는 유지한다
+  ---
+  duration_ms: 25.8696
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 351.0553

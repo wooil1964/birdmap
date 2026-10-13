@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-13T16:22:36.851443+00:00",
+  "mode": "Real unmodified current provider generatedbatch; actual wallclock, no date freeze or JSON patch",
+  "ref": "origin/codex/p1-paid-weather-check-20261014",
+  "head": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+  "base": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "changedFiles": [
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "results": [
+    {
+      "path": "weather_today.json",
+      "sha256": "09c3b7b49e8f1d7d872a8c336393dbd7f75b42a8943a1a144e3b04d58ef5cc63",
+      "date": "2026-10-14",
+      "generatedAt": "2026-10-14 01:13 KST",
+      "startDate": null,
+      "siteCount": 190,
+      "scoreEligibleCount": 190,
+      "scoreEligibleSampleCount": null,
+      "pass": true
+    },
+    {
+      "path": "weather_week.json",
+      "sha256": "3d2eeda7cb492711e348e8eaa0c29f30e3c45e639dbbcf94975f25b22254271a",
+      "date": null,
+      "generatedAt": "2026-10-14 01:13 KST",
+      "startDate": "2026-10-14",
+      "siteCount": 190,
+      "scoreEligibleCount": null,
+      "scoreEligibleSampleCount": 10640,
+      "pass": true
+    }
+  ],
+  "mainModified": false
+}

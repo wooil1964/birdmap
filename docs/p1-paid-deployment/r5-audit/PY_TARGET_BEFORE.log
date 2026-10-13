@@ -1,0 +1,32 @@
+FFF.
+======================================================================
+FAIL: test_today_validator_rejects_overflow_wind_units (__main__.WeatherWeekTests.test_today_validator_rejects_overflow_wind_units)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-paid-deploy\birdmap\.github\scripts\test_weather.py", line 484, in test_today_validator_rejects_overflow_wind_units
+    with self.assertRaisesRegex(AssertionError, "valid wind"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_rejects_overflow_rain_units (__main__.WeatherWeekTests.test_today_validator_rejects_overflow_rain_units)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-paid-deploy\birdmap\.github\scripts\test_weather.py", line 488, in test_today_validator_rejects_overflow_rain_units
+    with self.assertRaisesRegex(AssertionError, "valid rain"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_validator_rejects_overflow_wave_units (__main__.WeatherWeekTests.test_today_validator_rejects_overflow_wave_units)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-paid-deploy\birdmap\.github\scripts\test_weather.py", line 492, in test_today_validator_rejects_overflow_wave_units
+    with self.assertRaisesRegex(AssertionError, "valid required wave"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.074s
+
+FAILED (failures=3)

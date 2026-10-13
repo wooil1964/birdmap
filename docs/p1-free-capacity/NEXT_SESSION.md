@@ -1,3 +1,8 @@
+# 2026-10-14 최신 배포 준비 인수인계
+
+현재 후속 작업은 별도 p1-paid-deploy 작업트리와 codex/p1-publication-paid-deploy 브랜치에서 진행했다. 제품 c75640613d3dad7f6a0e492cecb2ac3232e8a48e, PR17 exactCI 성공. 최신 상태는 docs/p1-paid-deployment/NEXT_SESSION.md와 FINDINGS.md를 먼저 읽는다. 아래 과거 Free 작업의 종료 권한 제한은 최신 사용자의 배포 승인으로 갱신됐지만, Paid 확인·민감 backup 범위 승인·최종 운영 관문은 아직 남아 있다. 운영 배포 완료를 주장하지 않는다. 기존 원본 worktree와 미추적 증거는 보존했다.
+
+---
 # 2026-10-13 P1-A/P1-B 숨김·만료 최소 수정 완료 — 여기서 종료
 
 브랜치: `codex/p1-publication-free-capacity`.

@@ -1,0 +1,43 @@
+{
+  "sourceSha": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "reviewedAt": "2026-10-13T16:20:22.070213+00:00",
+  "before": {
+    "pass": 15,
+    "fail": 20,
+    "skip": 0
+  },
+  "correctedRootRun": {
+    "pass": 35,
+    "fail": 0,
+    "skip": 0
+  },
+  "independentRerun": {
+    "pass": 35,
+    "fail": 0,
+    "skip": 0
+  },
+  "oldFailures": {
+    "count": 20,
+    "allNormalScoreCases": true,
+    "allOldCandidateCardScoreRankAlreadyCorrect": true,
+    "oldPopupUnknown": true
+  },
+  "correction": "Select current Popup instance.getElement() and assert map._popup===activePopup; same numeric score/rank/candidate expectations retained; adds ownershipassertion. No productsource change between both runs.",
+  "officialLeafletEvidence": "https://raw.githubusercontent.com/Leaflet/Leaflet/v1.9.4/src/layer/DivOverlay.js",
+  "mechanism": "Leaflet fadingclosed overlay setsopacity0 and delays DOM removal200ms; globalquerySelector may select closingprevious popup.",
+  "judgment": "Initialnormalpopup failures are harness DOM ownership/animation mismatch; no normalproductpopup scoring regression found on unchanged0107 with activePopup checks and independent35 rerun. Original15/20 remains preserved, not reclassified.",
+  "limits": [
+    "SyntheticAPI and weather only",
+    "PhysicalGPS/externalnativeapps notcertified",
+    "CurrentOct14 operatingbatch and Paidactivation separate"
+  ],
+  "network": {
+    "allowedLocal": 36,
+    "allowedDependencyGet": 95,
+    "blockedOther": 77,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "harnessSHA256": "f67f162246e1dbc5d51a15185b5f147ad369f1dfe7ad4b4ddff9e92e6c8b7000"
+}

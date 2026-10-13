@@ -1,0 +1,183 @@
+{
+  "auditAt": "2026-10-13T16:33:45.059876+00:00",
+  "sourceHead": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+  "ciMerge": "bb09ba800d33d6813c0665eb956eb710b9bc57a3",
+  "ciParents": [
+    "d736eed629210c14766c7708e206d391649befb1",
+    "c75640613d3dad7f6a0e492cecb2ac3232e8a48e"
+  ],
+  "runId": 38430161703,
+  "jobId": 115409935921,
+  "runUrl": "https://github.com/wooil1964/birdmap/actions/runs/38430161703",
+  "conclusion": "success",
+  "readOnlyRemoteSnapshot": {
+    "head": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+    "main": "d736eed629210c14766c7708e206d391649befb1",
+    "pr17State": "open",
+    "pr17Draft": true,
+    "pr17Merged": false,
+    "source": "GitHub connector freshly queried immediately before receipt"
+  },
+  "rawLog": {
+    "file": "job-115409935921.log",
+    "bytes": 322535,
+    "sha256": "eb96f29374a8579424215add54a5fcfd5d7bbb076fe82edd6878ddb3a3c6bfa6"
+  },
+  "automaticRegression": {
+    "pass": 771,
+    "fail": 0,
+    "skip": 1,
+    "suites": {
+      "frontend": {
+        "pass": 379,
+        "fail": 0,
+        "skip": 0
+      },
+      "publicAdminApiSqlite": {
+        "pass": 253,
+        "fail": 0,
+        "skip": 0
+      },
+      "weatherProxy": {
+        "pass": 36,
+        "fail": 0,
+        "skip": 0
+      },
+      "pythonWeather": {
+        "pass": 60,
+        "fail": 0,
+        "skip": 0
+      },
+      "pythonValidator": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "pythonTide": {
+        "pass": 21,
+        "fail": 0,
+        "skip": 1
+      },
+      "pythonShare": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    "nodePassCounts": [
+      379,
+      253,
+      36
+    ],
+    "pythonDiscoveredTestCounts": [
+      60,
+      11,
+      22,
+      11
+    ]
+  },
+  "chrome": {
+    "summary": {
+      "pass": 242,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    },
+    "oldChrome15": {
+      "total": 15,
+      "unsafe": 0
+    },
+    "network": {
+      "allowedLocal": 90,
+      "allowedDependencyGet": 199,
+      "blockedOther": 266,
+      "operatingRequests": 0,
+      "externalNonGet": 0
+    },
+    "browserErrors": [],
+    "resultPath": "/home/runner/work/birdmap/birdmap/.ci-results/chrome/publication_chrome.json"
+  },
+  "fixedRecommendationSignatures": {
+    "head": "bb09ba800d33d6813c0665eb956eb710b9bc57a3",
+    "baseline": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+    "clock": "2026-10-08T22:40:00+09:00",
+    "weekGeneratedAt": "2026-10-08 21:04 KST",
+    "conditions": {
+      "withSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      },
+      "withoutSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      }
+    }
+  },
+  "protectedPages": {
+    "artifactId": 11830209010,
+    "artifactName": "protected-pages-bb09ba800d33d6813c0665eb956eb710b9bc57a3",
+    "bytes": 4725282,
+    "sha256": "a4b4a07911dbc5d1f4607721d4b76946422774525b57c25b0058928306fb7526",
+    "expectedRemoteDigest": "a4b4a07911dbc5d1f4607721d4b76946422774525b57c25b0058928306fb7526",
+    "zipEntries": 389,
+    "runtimeAssetCount": 388,
+    "manifestHead": "bb09ba800d33d6813c0665eb956eb710b9bc57a3",
+    "manifestHashMismatches": [],
+    "gitByteComparison": {
+      "reference": "bb09ba800d33d6813c0665eb956eb710b9bc57a3",
+      "checked": 388,
+      "mismatches": [],
+      "evidence": "Independent zipfile/git show comparison executed once before receipt; exit code 0, badGitFiles=[]"
+    },
+    "indexSha256": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb",
+    "siteDataCount": 190,
+    "coordinatesSha256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89",
+    "todaySha256": "09c3b7b49e8f1d7d872a8c336393dbd7f75b42a8943a1a144e3b04d58ef5cc63",
+    "weekSha256": "3d2eeda7cb492711e348e8eaa0c29f30e3c45e639dbbcf94975f25b22254271a",
+    "role": "standby protective Pages artifact, not a deployment"
+  },
+  "currentWeatherArtifactMetadata": {
+    "today": {
+      "date": "2026-10-14",
+      "generatedAt": "2026-10-14 01:13 KST",
+      "siteCount": 190
+    },
+    "week": {
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-20",
+      "generatedAt": "2026-10-14 01:13 KST",
+      "siteCount": 190,
+      "sampleCount": 10640
+    }
+  },
+  "sourceDiffFrom0107": {
+    "changedFiles": [
+      "weather_today.json",
+      "weather_week.json"
+    ],
+    "productCodeUnchanged": true
+  },
+  "limitations": [
+    "CI integration commit is a pull-request merge ref; PR17 remains unmerged and Draft.",
+    "The current weather batch metadata and artifact bytes are verified here; current-time validator execution is separate parent evidence, not repeated by this receipt.",
+    "Standby Pages artifact exists; this receipt does not prove activation, CDN purge, operating migration, real GPS/native-app execution, or Workers Paid billing status.",
+    "Original historical failed harness outputs are preserved; no assertion or product source edited by this audit."
+  ],
+  "operatingChanges": 0,
+  "productOrHarnessEdits": 0,
+  "secretsOrSignedUrlsPersisted": false,
+  "orchestrationIssues": [
+    {
+      "command": "Anonymous PowerShell GitHub PR GET",
+      "result": "Local socket permission error; no product test failed; subsequently verified PR SHA/state successfully through GitHub connector."
+    }
+  ]
+}

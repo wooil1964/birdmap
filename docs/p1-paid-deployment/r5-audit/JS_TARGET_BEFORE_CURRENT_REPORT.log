@@ -1,0 +1,358 @@
+TAP version 13
+# Subtest: R5 today wind overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+not ok 1 - R5 today wind overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+  ---
+  duration_ms: 15.8531
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs:2684:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    {}
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-paid-deploy/birdmap/.github/scripts/test_weekly_recommendation.mjs:2691:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.start (node:internal/test_runner/test:1191:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+# Subtest: R5 today rain overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+not ok 2 - R5 today rain overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+  ---
+  duration_ms: 11.8588
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs:2684:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    {}
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-paid-deploy/birdmap/.github/scripts/test_weekly_recommendation.mjs:2691:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: R5 today wave overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+not ok 3 - R5 today wave overflow는 공지·16점·mandatory·정원으로 복구되지 않는다
+  ---
+  duration_ms: 10.7631
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs:2684:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    {}
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-paid-deploy/birdmap/.github/scripts/test_weekly_recommendation.mjs:2691:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: R5 정상 0·92·92.5·100점과 내부rank108, 비필수파고null은 유지한다
+ok 4 - R5 정상 0·92·92.5·100점과 내부rank108, 비필수파고null은 유지한다
+  ---
+  duration_ms: 60.5363
+  type: 'test'
+  ...
+# Subtest: R5 비정상 today 만조는 차단하고 정상 주간 대체 만조는 유지한다
+not ok 5 - R5 비정상 today 만조는 차단하고 정상 주간 대체 만조는 유지한다
+  ---
+  duration_ms: 14.2556
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs:2711:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   axes: {
+    +     field: false,
+    +     mudflat: true,
+    +     pelagic: false
+    +   },
+    +   basisText: '만조 시각 인접 오늘 저장 기상 기준',
+    +   cautionText: '',
+    +   extraText: '',
+    +   isMandatory: true,
+    +   priority: 1,
+    +   rankScore: 105,
+    +   reasons: [
+    +     '📢 지금 볼 만한 탐조 이슈',
+    +     '🌊 도요 이동기 물때 주목'
+    +   ],
+    +   recentReport: {
+    +     ageDays: 2,
+    +     bonus: 13,
+    +     latestDate: '2026-10-08',
+    +     speciesCount: 4
+    +   },
+    +   recommendationDate: '2026-10-10',
+    +   recommendationTime: '',
+    +   sample: null,
+    +   score: 92,
+    +   season: 'autumn',
+    +   site: {
+    +     aiSummary: '',
+    +     aiTip: '',
+    +     bestMonth: '봄;가을;겨울',
+    +     bestSeason: '겨울·이동기',
+    +     bestTime: '간조 전후 2시간',
+    +     birdingFeature: '도요물떼새;저어새;갈매기',
+    +     birds: '도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기',
+    +     carBirding: '가능',
+    +     country: '대한민국',
+    +     dataConfidence: '',
+    +     dataSource: '',
+    +     difficulty: '',
+    +     ebirdHotspotUrl: 'https://ebird.org/hotspot/L66563374',
+    +     env: '갯벌·간척호',
+    +     environmentBirdingLabel: '갯벌탐조',
+    +     habitatType: '갯벌·간척호',
+    +     id: '14',
+    +     island: false,
+    +     kakaoMapUrl: 'https://map.kakao.com/link/map/%EA%B1%B8%EB%A7%A4%EB%A6%AC,36.885972,126.883244',
+    +     ksaUrl: '',
+    +     lastReviewDate: '',
+    +     lat: 36.88597222222222,
+    +     lensRecommend: '400~800mm',
+    +     localBirdingTip: '5월 초순 만조 880cm 이상일 때 주변 물댄논으로 도요들이 피신합니다.',
+    +     localDeparturePoint: '',
+    +     localTipSiteKey: 'geolmaeri',
+    +     localTipUse: true,
+    +     lon: 126.88324444444444,
+    +     mainBirdGroup: '도요물떼새류·기러기류·오리류',
+    +     markerVar: 'marker_d1bc2a99fc39ef81fc8c5a0e0b276f8d',
+    +     mijo: false,
+    +     name: '걸매리',
+    +     naverMapUrl: 'https://map.naver.com/v5/search/%EA%B1%B8%EB%A7%A4%EB%A6%AC',
+    +     oneLineIntro: '간조 전후와 시야 확보가 핵심',
+    +     overseas: false,
+    +     parkingV23: '가능',
+    +     pelagic: false,
+    +     photoDistance: '원거리',
+    +     publicTransitHigh: false,
+    +     rare: false,
+    +     recommend5: false,
+    +     recommendedLensAuto: '400~800mm',
+    +     recommendedLensReason: '갯벌·하구는 도요·물떼새와 갈매기류 원거리 관찰이 많습니다.',
+    +     region: '충남 아산·당진',
+    +     restroomV23: '가능',
+    +     searchText: '14 걸매리 대한민국 충남 아산·당진 갯벌·간척호 도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기 도요물떼새;저어새;갈매기 봄·가을·겨울 mudflat_shorebird',
+    +     seasonTags: '봄·가을·겨울',
+    +     seasons: [
+    +       '봄',
+    +       '가을',
+    +       '겨울'
+    +     ],
+    +     showTide: true,
+    +     showWave: false,
+    +     sido: '충남',
+    +     sigungu: '아산·당진',
+    +     siteGrade: '★★★★',
+    +     tideSensitive: '예',
+    +     tideStationCode: '',
+    +     tideStationName: '평택',
+    +     tideUse: '예',
+    +     walkingLevel: '짧음~중간',
+    +     waveSensitive: '아니오',
+    +     weatherRuleKey: 'mudflat_shorebird',
+    +     windyPriority: 'tide;wind;rain',
+    +     windyUrl: 'https://www.windy.com/36.885972/126.883244?36.885972,126.883244,10'
+    +   },
+    +   sortLevel: 900,
+    +   springReason: '',
+    +   tideMatched: false,
+    +   tideText: '만조 12:00 · 900cm',
+    +   today: {
+    +     _weatherState: {
+    +       ageMinutes: 60,
+    +       dataCurrent: true,
+    +       date: '2026-10-10',
+    +       forecastTime: '2026-10-10 12:00 KST',
+    +       generatedAt: '2026-10-10 07:00 KST',
+    +       kind: 'today_saved',
+    +       scoreEligible: true,
+    +       stale: false
+    +     },
+    +     date: '2026-10-10',
+    +     forecastTime: '2026-10-10 12:00 KST',
+    +     generatedAt: '2026-10-10 07:00 KST',
+    +     grade: '★★★★★',
+    +     missingScoreFields: [],
+    +     rain: '강수 없음',
+    +     score: 92,
+    +     scoreEligible: true,
+    +     stale: false,
+    +     wave: '0.3m',
+    +     wind: '북풍 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999m/s'
+    +   },
+    +   weatherText: '북풍 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999m/s'
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    site:
+      id: '14'
+      name: '걸매리'
+      country: '대한민국'
+      region: '충남 아산·당진'
+      sido: '충남'
+      sigungu: '아산·당진'
+      env: '갯벌·간척호'
+      birds: '도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기'
+      searchText: '14 걸매리 대한민국 충남 아산·당진 갯벌·간척호 도요물떼새류·기러기류·오리류 호사비오리, 검은머리갈매기, 저어새, 노랑부리백로, 흰목물떼새, 알락꼬리마도요, 큰뒷부리도요, 붉은가슴도요, 검은목두루미, 벌매,쇠부엉이,긴꼬리때까치,뒷부리장다리물떼새,흰죽지제비갈매기 도요물떼새;저어새;갈매기 봄·가을·겨울 mudflat_shorebird'
+      seasons:
+        0: '봄'
+        1: '가을'
+        2: '겨울'
+      rare: false
+      mijo: false
+      island: false
+      pelagic: false
+      publicTransitHigh: false
+      recommend5: false
+      overseas: false
+      lat: 36.88597222222222
+      lon: 126.88324444444444
+      markerVar: 'marker_d1bc2a99fc39ef81fc8c5a0e0b276f8d'
+      habitatType: '갯벌·간척호'
+      birdingFeature: '도요물떼새;저어새;갈매기'
+      mainBirdGroup: '도요물떼새류·기러기류·오리류'
+      bestSeason: '겨울·이동기'
+      bestMonth: '봄;가을;겨울'
+      siteGrade: '★★★★'
+      oneLineIntro: '간조 전후와 시야 확보가 핵심'
+      weatherRuleKey: 'mudflat_shorebird'
+      windyPriority: 'tide;wind;rain'
+      tideSensitive: '예'
+      waveSensitive: '아니오'
+      bestTime: '간조 전후 2시간'
+      lensRecommend: '400~800mm'
+      photoDistance: '원거리'
+      carBirding: '가능'
+      walkingLevel: '짧음~중간'
+      parkingV23: '가능'
+      restroomV23: '가능'
+      difficulty: ''
+      dataConfidence: ''
+      lastReviewDate: ''
+      dataSource: ''
+      aiSummary: ''
+      aiTip: ''
+      recommendedLensAuto: '400~800mm'
+      recommendedLensReason: '갯벌·하구는 도요·물떼새와 갈매기류 원거리 관찰이 많습니다.'
+      environmentBirdingLabel: '갯벌탐조'
+      seasonTags: '봄·가을·겨울'
+      tideUse: '예'
+      tideStationName: '평택'
+      tideStationCode: ''
+      showTide: true
+      showWave: false
+      localTipUse: true
+      localTipSiteKey: 'geolmaeri'
+      localDeparturePoint: ''
+      localBirdingTip: '5월 초순 만조 880cm 이상일 때 주변 물댄논으로 도요들이 피신합니다.'
+      ebirdHotspotUrl: 'https://ebird.org/hotspot/L66563374'
+      naverMapUrl: 'https://map.naver.com/v5/search/%EA%B1%B8%EB%A7%A4%EB%A6%AC'
+      kakaoMapUrl: 'https://map.kakao.com/link/map/%EA%B1%B8%EB%A7%A4%EB%A6%AC,36.885972,126.883244'
+      windyUrl: 'https://www.windy.com/36.885972/126.883244?36.885972,126.883244,10'
+      ksaUrl: ''
+    today:
+      date: '2026-10-10'
+      forecastTime: '2026-10-10 12:00 KST'
+      generatedAt: '2026-10-10 07:00 KST'
+      stale: false
+      scoreEligible: true
+      missingScoreFields:
+      score: 92
+      grade: '★★★★★'
+      wind: '북풍 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999m/s'
+      rain: '강수 없음'
+      wave: '0.3m'
+      _weatherState:
+        kind: 'today_saved'
+        dataCurrent: true
+        scoreEligible: true
+        stale: false
+        date: '2026-10-10'
+        generatedAt: '2026-10-10 07:00 KST'
+        forecastTime: '2026-10-10 12:00 KST'
+        ageMinutes: 60
+    sample: ~
+    axes:
+      field: false
+      mudflat: true
+      pelagic: false
+    season: 'autumn'
+    score: 92
+    isMandatory: true
+    priority: 1
+    reasons:
+      0: '📢 지금 볼 만한 탐조 이슈'
+      1: '🌊 도요 이동기 물때 주목'
+    springReason: ''
+    recommendationDate: '2026-10-10'
+    recommendationTime: ''
+    tideText: '만조 12:00 · 900cm'
+    extraText: ''
+    weatherText: '북풍 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999m/s'
+    cautionText: ''
+    basisText: '만조 시각 인접 오늘 저장 기상 기준'
+    sortLevel: 900
+    tideMatched: false
+    recentReport:
+      ageDays: 2
+      latestDate: '2026-10-08'
+      speciesCount: 4
+      bonus: 13
+    rankScore: 105
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-paid-deploy/birdmap/.github/scripts/test_weekly_recommendation.mjs:2716:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 235.8751

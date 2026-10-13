@@ -1,0 +1,89 @@
+{
+  "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+  "scope": "Actual pinned Python validators, full190synthetic-ID document at fixed current2026-10-14 clock; no savedweather rewrite or operatingrequests",
+  "clock": "2026-10-14T11:00:00+09:00",
+  "generatedAt": "2026-10-14 10:50 KST",
+  "cases": [
+    {
+      "label": "normal",
+      "accepted": true
+    },
+    {
+      "label": "wind-1e309",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid wind: '북풍 1e309m/s'"
+    },
+    {
+      "label": "wind-400digits",
+      "accepted": true
+    },
+    {
+      "label": "rain-1e309",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid rain: '3시간 강수 1e309mm'"
+    },
+    {
+      "label": "rain-400digits",
+      "accepted": true
+    },
+    {
+      "label": "wave-1e309",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid required wave: '1e309m'"
+    },
+    {
+      "label": "wave-400digits",
+      "accepted": true
+    }
+  ],
+  "weekly": [
+    {
+      "field": "windSpeed",
+      "label": "1e309-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST windSpeed is not a finite number: '1e309'"
+    },
+    {
+      "field": "windSpeed",
+      "label": "400digits-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST windSpeed is not a finite number: '9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "field": "precipitation3h",
+      "label": "1e309-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST precipitation3h is not a finite number: '1e309'"
+    },
+    {
+      "field": "precipitation3h",
+      "label": "400digits-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST precipitation3h is not a finite number: '9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "field": "waveM",
+      "label": "1e309-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST waveM is not a finite number: '1e309'"
+    },
+    {
+      "field": "waveM",
+      "label": "400digits-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST waveM is not a finite number: '99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    }
+  ],
+  "weeklyNormalControl": {
+    "accepted": true
+  }
+}

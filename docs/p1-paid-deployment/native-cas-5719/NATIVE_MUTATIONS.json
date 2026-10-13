@@ -1,0 +1,1217 @@
+{
+  "at": "2026-10-13T15:11:51.604Z",
+  "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+  "scope": "Actual product handlers running in Node, against actual native local Miniflare/workerd D1; synthetic rows only. Access and Turnstile are stubs. No operational network.",
+  "checks": [
+    {
+      "id": "M1 same-row approve/reject concurrency 2",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          409
+        ],
+        "revision": 2,
+        "reviewCount": 1,
+        "auditCount": 1
+      }
+    },
+    {
+      "id": "M1 same-row approve/reject concurrency 10",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409
+        ],
+        "revision": 2,
+        "reviewCount": 1,
+        "auditCount": 1
+      }
+    },
+    {
+      "id": "M1 same-row approve/reject concurrency 20",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409,
+          409
+        ],
+        "revision": 2,
+        "reviewCount": 1,
+        "auditCount": 1
+      }
+    },
+    {
+      "id": "M2 old GET anchor fails after hide and exact coordinates disappear",
+      "status": "PASS",
+      "details": {
+        "oldStatus": 200,
+        "staleStatus": 409,
+        "newStatus": 200,
+        "protected": true
+      }
+    },
+    {
+      "id": "M3 concurrent unpublish/hide/consent one atomic CAS winner then withdrawal excludes coordinate",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          409,
+          409
+        ],
+        "withdrawn": true,
+        "reapprove": true
+      }
+    },
+    {
+      "id": "M4 concurrent terminal deletion 2",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          200
+        ],
+        "deleteEvents": 1,
+        "lateStatus": 404
+      }
+    },
+    {
+      "id": "M4 concurrent terminal deletion 10",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200
+        ],
+        "deleteEvents": 1,
+        "lateStatus": 404
+      }
+    },
+    {
+      "id": "M4 concurrent terminal deletion 20",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200
+        ],
+        "deleteEvents": 1,
+        "lateStatus": 404
+      }
+    },
+    {
+      "id": "M5 concurrent confirmation versus delete cannot survive terminal state",
+      "status": "PASS",
+      "details": {
+        "statuses": [
+          201,
+          409
+        ],
+        "retryStatus": 200,
+        "confirmations": 1,
+        "interpretation": "Confirmation may precede winning delete; terminal row cannot revive."
+      }
+    },
+    {
+      "id": "M6 native batch injected failed CAS fully rolls back source and authority",
+      "status": "PASS",
+      "details": {
+        "rollback": true
+      }
+    }
+  ],
+  "samples": [
+    {
+      "label": "create-report",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "create-report",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "create-report",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "reject",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "create-report",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/public-state",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "8",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000001"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/approved",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "8",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000002"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "hide",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/approved",
+      "status": 409,
+      "code": "PUBLICATION_CHANGED",
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/public-state",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "9",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000004"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/approved",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "9",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000005"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "create-report",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "unpublish",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "hide",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "consent",
+      "status": 409,
+      "code": "REVISION_CONFLICT",
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "unpublish",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/public-state",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "13",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000006"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/approved",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "13",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000007"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/pending",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "13",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000008"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "approve",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac6104d5-71af-4d28-88b9-404c4af4868b/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac6104d5-71af-4d28-88b9-404c4af4868b/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac6104d5-71af-4d28-88b9-404c4af4868b/status",
+      "status": 404,
+      "code": "FIELD_NOT_FOUND",
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/ac00b5e9-3cdf-47fb-b50b-bee3c7182dcf/status",
+      "status": 404,
+      "code": "FIELD_NOT_FOUND",
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/e0894baa-9380-47e5-8f3a-5ee7a3aa848d/status",
+      "status": 404,
+      "code": "FIELD_NOT_FOUND",
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/d463bfd6-46a9-4a3c-bcd2-52a02a65c733/delete",
+      "status": 409,
+      "code": "FIELD_REVISION_CONFLICT",
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/d463bfd6-46a9-4a3c-bcd2-52a02a65c733/confirm",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/reports/public-state",
+      "status": 200,
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "8a69b15f152f3893a4587d8e5c3100e7",
+        "revision": "22",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000032"
+      },
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates/d463bfd6-46a9-4a3c-bcd2-52a02a65c733/delete",
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    },
+    {
+      "label": "/field-updates",
+      "status": 201,
+      "headers": {
+        "access-control-allow-origin": "https://wooil1964.github.io",
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "vary": "Origin"
+      }
+    }
+  ],
+  "failures": [],
+  "fixture": {
+    "schema": "Current fresh schema plus canonical0001 and captcha0003; all publication guards installed by fresh schema. No repeat ALTER migration.",
+    "privateRowsCopied": 0
+  },
+  "sqlTotals": {
+    "queries": 823,
+    "rowsRead": 12167,
+    "rowsWritten": 476,
+    "note": "Measured local successful handler statements only. Fixture setup, explicit assertion probes and failed-query metadata absent from total. Not a production capacity estimate."
+  },
+  "summary": {
+    "pass": 10,
+    "fail": 0,
+    "skip": 0
+  }
+}
