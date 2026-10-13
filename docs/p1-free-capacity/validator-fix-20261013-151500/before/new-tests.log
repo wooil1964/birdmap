@@ -1,0 +1,115 @@
+F....FFFEEEEF.F
+======================================================================
+ERROR: test_today_rejects_invalid_calendar_and_non_string (__main__.ValidatorTimeContractTests.test_today_rejects_invalid_calendar_and_non_string) (value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 126, in test_today_rejects_invalid_calendar_and_non_string
+    self.run_validator(document)
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 44, in run_validator
+    return validator.validate(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\validate_weather.py", line 50, in validate
+    assert day["date"] == data["date"] == day["forecastTime"][:10]
+                                          ~~~~~~~~~~~~~~~~~~~^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_today_rejects_invalid_calendar_and_non_string (__main__.ValidatorTimeContractTests.test_today_rejects_invalid_calendar_and_non_string) (value={'toString': 'not-callable'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 126, in test_today_rejects_invalid_calendar_and_non_string
+    self.run_validator(document)
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 44, in run_validator
+    return validator.validate(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\validate_weather.py", line 50, in validate
+    assert day["date"] == data["date"] == day["forecastTime"][:10]
+                                          ~~~~~~~~~~~~~~~~~~~^^^^^
+KeyError: slice(None, 10, None)
+
+======================================================================
+ERROR: test_today_rejects_invalid_calendar_and_non_string (__main__.ValidatorTimeContractTests.test_today_rejects_invalid_calendar_and_non_string) (value=123)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 126, in test_today_rejects_invalid_calendar_and_non_string
+    self.run_validator(document)
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 44, in run_validator
+    return validator.validate(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\validate_weather.py", line 50, in validate
+    assert day["date"] == data["date"] == day["forecastTime"][:10]
+                                          ~~~~~~~~~~~~~~~~~~~^^^^^
+TypeError: 'int' object is not subscriptable
+
+======================================================================
+ERROR: test_today_rejects_invalid_calendar_and_non_string (__main__.ValidatorTimeContractTests.test_today_rejects_invalid_calendar_and_non_string) (value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 126, in test_today_rejects_invalid_calendar_and_non_string
+    self.run_validator(document)
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 44, in run_validator
+    return validator.validate(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\validate_weather.py", line 50, in validate
+    assert day["date"] == data["date"] == day["forecastTime"][:10]
+                                          ~~~~~~~~~~~~~~~~~~~^^^^^
+TypeError: 'bool' object is not subscriptable
+
+======================================================================
+FAIL: test_calendar_and_time_boundaries (__main__.ValidatorTimeContractTests.test_calendar_and_time_boundaries) (text='2026-10-12 16:6 KST')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 105, in test_calendar_and_time_boundaries
+    with self.subTest(text=text), self.assertRaises(AssertionError):
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_rejects_future_publication (__main__.ValidatorTimeContractTests.test_today_rejects_future_publication)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 74, in test_today_rejects_future_publication
+    with self.assertRaises(AssertionError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_rejects_hour_24 (__main__.ValidatorTimeContractTests.test_today_rejects_hour_24)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 60, in test_today_rejects_hour_24
+    with self.assertRaises(AssertionError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_rejects_invalid_calendar_and_non_string (__main__.ValidatorTimeContractTests.test_today_rejects_invalid_calendar_and_non_string) (value='2026-10-12 16:26 KST extra')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 125, in test_today_rejects_invalid_calendar_and_non_string
+    with self.subTest(value=value), self.assertRaises(AssertionError):
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_today_rejects_minute_60 (__main__.ValidatorTimeContractTests.test_today_rejects_minute_60)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 66, in test_today_rejects_minute_60
+    with self.assertRaises(AssertionError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_week_rejects_short_minute_publication (__main__.ValidatorTimeContractTests.test_week_rejects_short_minute_publication)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-free-capacity\birdmap\.github\scripts\test_validator_time_contract.py", line 80, in test_week_rejects_short_minute_publication
+    with self.assertRaises(AssertionError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: AssertionError not raised
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.623s
+
+FAILED (failures=6, errors=4)

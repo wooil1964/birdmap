@@ -1,0 +1,48 @@
+{
+  "rows": [
+    {
+      "mode": "current-stored-today",
+      "evaluationKst": "2026-10-13T18:11:14.430130+09:00",
+      "sourceSha256": "39b6ac5075d710fa2c5de8ce6076067bd1c8bdc99a73b1f97cafd637b20382c7",
+      "validationPassed": false,
+      "error": "AssertionError: Batch date mismatch",
+      "expectationMet": true
+    },
+    {
+      "mode": "current-stored-week",
+      "evaluationKst": "2026-10-13T18:11:14.430130+09:00",
+      "sourceSha256": "959f22af06fa1a34fffd91e3f3d6530d1c7dd58a49054d21423b78caeebd8c36",
+      "validationPassed": true,
+      "error": null,
+      "expectationMet": true
+    },
+    {
+      "mode": "historical-original-today",
+      "evaluationKst": "2026-10-12T16:26:00+09:00",
+      "sourceSha256": "39b6ac5075d710fa2c5de8ce6076067bd1c8bdc99a73b1f97cafd637b20382c7",
+      "validationPassed": true,
+      "error": null,
+      "expectationMet": true
+    },
+    {
+      "mode": "historical-original-week",
+      "evaluationKst": "2026-10-12T16:26:00+09:00",
+      "sourceSha256": "959f22af06fa1a34fffd91e3f3d6530d1c7dd58a49054d21423b78caeebd8c36",
+      "validationPassed": true,
+      "error": null,
+      "expectationMet": true
+    },
+    {
+      "mode": "current-actual-main-today",
+      "sourceGitCommit": "07680616b62771bc0102c8c886e149345c25347e",
+      "sourceDate": "2026-10-13",
+      "sourceGeneratedAt": "2026-10-13 07:34 KST",
+      "evaluationKst": "2026-10-13T18:11:14.430130+09:00",
+      "sourceSha256": "544a467f12106a34288de8675a86a8565353c4d5f3b335d30e89aa8f4a5402f2",
+      "validationPassed": true,
+      "error": null,
+      "expectationMet": true
+    }
+  ],
+  "note": "Archived today is still rejected on the current date. Historical validation and current structural batch validation do not prove recommendation freshness."
+}

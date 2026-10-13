@@ -1,3 +1,24 @@
+# 2026-10-13 Validator 최소 수정 완료 — 여기서 종료
+
+제품 커밋: `c060f505ab95e5a3854f0e1be77fd8214de6b126`. 기준 체크포인트: `799ba3c6ba4bd2f62df4666696e0f9e167d02937`. 현재 브랜치 `codex/p1-publication-free-capacity`. 이 파일 포함 문서 체크포인트 SHA는 `git log -1`로 확인한다. push하지 않았다.
+
+완료: today `24:00`·`16:60`·미래 발행 거부, weekly `16:6` 거부. 현재 날짜 검사는 유지하고 발행 시각과 미래 예보 대상 시각은 구분한다. 부적격 참고 기상 보존. 변경은 Validator2개·관련 Python 테스트2개와 새 증거/인수인계뿐이다.
+
+새 증거: `docs/p1-free-capacity/validator-fix-20261013-151500/FINDINGS.md`, `FINAL_MANIFEST.json`, `INVARIANTS.json`, `modes/MODES.json`. 폴더 이름은 증거 식별자이며 실제 평가시각은 MODES.json에 기록됐다.
+
+실행 결과: 동일 입력 Python/JS 일치4/8→8/8; 신규 Python11/11; 기존 Python56/56; 관련 JS182/182, 최종fail0/skip0. 첫 JS 실행181/182(CP949 stdout 환경 실패1)은 원형 로그로 보존했고 UTF-8 환경만 지정해 통과했다. 기존 Chrome 실패2건을 해결했다고 보고하지 않는다. 신규 시험 수정 전11개 중6개 method가 실패(failure6/error4 중첩)한 로그도 보존했다.
+
+현재 모드의 오래된10월12일 today는 여전히 FAIL(Batch date mismatch). 원발행10월12일16:26 고정 today/week PASS, 저장 main07680616의 별도 실제10월13일 배치 현재 구조 검증 PASS. 원본 JSON 날짜 변경0; 위 PASS는 현재 추천 신선도/배포 승인 근거가 아니다.
+
+190곳·전필드·좌표, Worker 권한/CAS/철회·공유 DTO·D1·생성기·원본 JSON 등430개 보호 파일 불변. 기존 표적32/32·Chrome10/10·권한8/8 원장 hash 동일이며 이번에 재실행하지 않았다. 기존 미추적 자료 보존. 새 큰 합성 입력/HTML·Python cache도 미추적 상태로 남겨 삭제하지 않았다.
+
+재현: PYTHONUTF8=1/PYTHONIOENCODING=utf-8/PYTHONDONTWRITEBYTECODE=1, `python .github/scripts/test_validator_time_contract.py`, `python .github/scripts/test_weather.py`, `node --test .github/scripts/test_weekly_recommendation.mjs .github/scripts/test_today_weather_midnight.mjs`. 모드·대조는 새 증거 FINDINGS의 새 output 명령을 따른다. 기존 출력에 덮어쓰기 금지.
+
+이번 단계는 완료. Load·CI·Workers Free 용량·전체 회귀·기존 Chrome2실패는 미완료 상태를 유지하고 자동으로 진행하지 않는다. 운영 BLOCKED. main 병합/push/Worker·Pages 배포/운영 D1·사용자 자료 변경 금지. 다음 사용자 지시에서 남은 단계를 선택한다. 이전 완료 결과를 처음부터 반복하지 않는다.
+
+---
+아래는 이전 체크포인트의 인수인계다.
+
 # 2026-10-13 공유 고정 이력 표적 수정 완료
 
 이번 사용자 범위는 공유 승인 응답의 고정 지점 이력 손실 수정·표적검증·로컬 체크포인트까지다. 이 단계는 완료했고 여기서 종료한다.

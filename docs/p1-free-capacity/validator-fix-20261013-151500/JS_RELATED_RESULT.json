@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "C:/Program Files/nodejs/node.exe",
+    "--test",
+    ".github/scripts/test_weekly_recommendation.mjs",
+    ".github/scripts/test_today_weather_midnight.mjs"
+  ],
+  "exitCode": 0,
+  "environment": {
+    "PYTHONUTF8": "1",
+    "PYTHONIOENCODING": "utf-8"
+  },
+  "summary": {
+    "tests": 182,
+    "pass": 182,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "initialWithoutExplicitPythonUtf8": {
+    "exitCode": 1,
+    "summary": {
+      "tests": 182,
+      "pass": 181,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "reason": "Python child stdout CP949 decoded by Node as UTF-8; assertions and product JS unchanged"
+  }
+}

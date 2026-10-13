@@ -1,0 +1,162 @@
+{
+  "evaluationKst": "2026-10-12T16:26:00+09:00",
+  "realFixtureBytesUnchanged": true,
+  "syntheticMutationsOnlyInNewOutputFolder": true,
+  "rows": [
+    {
+      "id": "today-control",
+      "mode": "today",
+      "mutation": "none",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "syntheticOnly": false,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": 1791789300000,
+      "jsWeatherState": {
+        "kind": "today_fallback",
+        "dataCurrent": true,
+        "scoreEligible": true,
+        "stale": false,
+        "date": "2026-10-12",
+        "generatedAt": "2026-10-12 16:26 KST",
+        "forecastTime": "2026-10-12 16:15 KST",
+        "ageMinutes": 0
+      },
+      "jsSourceAllowed": true,
+      "contractParity": true
+    },
+    {
+      "id": "today-forecast-24",
+      "mode": "today",
+      "mutation": "24",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "syntheticOnly": true,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": null,
+      "jsWeatherState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-12",
+        "generatedAt": "2026-10-12 16:26 KST",
+        "forecastTime": "2026-10-12 24:00 KST",
+        "ageMinutes": 0
+      },
+      "jsSourceAllowed": false,
+      "contractParity": false
+    },
+    {
+      "id": "today-forecast-minute60",
+      "mode": "today",
+      "mutation": "60",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "syntheticOnly": true,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": null,
+      "jsWeatherState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-12",
+        "generatedAt": "2026-10-12 16:26 KST",
+        "forecastTime": "2026-10-12 16:60 KST",
+        "ageMinutes": 0
+      },
+      "jsSourceAllowed": false,
+      "contractParity": false
+    },
+    {
+      "id": "today-future-generation",
+      "mode": "today",
+      "mutation": "future",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "syntheticOnly": true,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": 1791817140000,
+      "jsWeatherState": {
+        "kind": "today_reference",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-12",
+        "generatedAt": "2026-10-12 23:59 KST",
+        "forecastTime": "2026-10-12 16:15 KST",
+        "ageMinutes": 0
+      },
+      "jsSourceAllowed": false,
+      "contractParity": false
+    },
+    {
+      "id": "today-wrong-forecast-date",
+      "mode": "today",
+      "mutation": "wrongdate",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: ",
+      "syntheticOnly": true,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": 1791702000000,
+      "jsWeatherState": {
+        "kind": "previous_saved",
+        "dataCurrent": false,
+        "scoreEligible": false,
+        "stale": true,
+        "date": "2026-10-12",
+        "generatedAt": "2026-10-12 16:26 KST",
+        "forecastTime": "2026-10-11 16:00 KST",
+        "ageMinutes": 0
+      },
+      "jsSourceAllowed": false,
+      "contractParity": true
+    },
+    {
+      "id": "week-control",
+      "mode": "week",
+      "mutation": "none",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "syntheticOnly": false,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": 1791789960000,
+      "jsWeatherState": null,
+      "jsSourceAllowed": true,
+      "contractParity": true
+    },
+    {
+      "id": "week-short-minute-generation",
+      "mode": "week",
+      "mutation": "short",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "syntheticOnly": true,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": null,
+      "jsWeatherState": null,
+      "jsSourceAllowed": false,
+      "contractParity": false
+    },
+    {
+      "id": "week-future-generation",
+      "mode": "week",
+      "mutation": "future",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: generatedAt is in the future: '2026-10-12 23:59 KST'",
+      "syntheticOnly": true,
+      "inputShaProduct": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+      "jsTimestamp": 1791817140000,
+      "jsWeatherState": null,
+      "jsSourceAllowed": false,
+      "contractParity": true
+    }
+  ],
+  "summary": {
+    "cases": 8,
+    "contractMatch": 4,
+    "contractMismatch": 4
+  },
+  "note": "Week JS check is strict generated timestamp/non-future only, not a full weekly validator. Today uses actual storedWeatherState."
+}
