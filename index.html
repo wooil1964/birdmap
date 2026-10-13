@@ -2946,6 +2946,9 @@ function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
    Conservative local defaults; production cadence remains a separate operating approval. */
 var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='legacy-public-v1';
 var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
+// Renew before the request-start lease boundary; the 5s safety cap is unchanged.
+// Slow responses/timer delays still expire and destructively close all data.
+var PUBLICATION_RENEW_MARGIN_MS=250;
 var publicationState={generation:0,anchor:null,until:0,checkedMono:0,ready:false},publicationHeadPromise=null,publicationExpiryTimer=0,publicationRefreshPromise=null;
 var reportPublicSpots={};
 function publicationRevision(value){return typeof value==='string'&&/^(0|[1-9][0-9]{0,18})$/.test(value)&&BigInt(value)<=9223372036854775807n;}
@@ -3015,6 +3018,10 @@ function publicationHead(fresh){
   var a=publicationValidate(body,nonce),old=publicationState.anchor;
   if(old&&old.epoch===a.epoch&&BigInt(a.revision)<BigInt(old.revision))throw new Error('publication regressed');
   if(old&&!publicationSame(old,a))publicationInvalidate('authority changed');
+  // The revision covers writes, but KST query windows also change at midnight.
+  var day=new Date(Date.parse(body.serverTime)+9*3600000).toISOString().slice(0,10);
+  if(publicationState.day&&publicationState.day!==day)publicationInvalidate('calendar changed');
+  publicationState.day=day;
   publicationState.anchor=a;body._publicationStartedMono=started;return body;
  }).catch(function(error){publicationInvalidate('authority unknown');throw error;});
  publicationHeadPromise=pending;
@@ -3023,8 +3030,13 @@ function publicationHead(fresh){
 }
 function publicationDataAllowed(body){return publicationAllowed()&&body&&publicationSame(body.publication,publicationState.anchor);}
 function publicationFetch(path){
+ // Merge only overlapping reads of the same endpoint in the same local
+ // generation. Completed responses/permission decisions are never cached.
+ var requests=publicationState.pending||(publicationState.pending={});
+ var key=publicationState.generation+'|'+path;
+ if(requests[key])return requests[key];
  var generation;
- return publicationHead().then(function(head){
+ var pending=publicationHead().then(function(head){
   generation=publicationState.generation;var a=head.publication,nonce=publicationNonce();
   var url=path+(path.indexOf('?')<0?'?':'&')+'contract='+PUBLICATION_CONTRACT+'&nonce='+nonce+'&expectedEpoch='+a.epoch+'&expectedRevision='+a.revision;
   return publicationJson(url).then(function(body){
@@ -3035,6 +3047,9 @@ function publicationFetch(path){
    });
   });
  }).catch(function(error){if(generation===undefined||generation===publicationState.generation)publicationInvalidate('data unverified');throw error;});
+ requests[key]=pending;
+ function clear(){if(requests[key]===pending)delete requests[key];}
+ pending.then(clear,clear);return pending;
 }
 function publicationRefresh(){
  if(publicationRefreshPromise)return publicationRefreshPromise;
@@ -3050,9 +3065,13 @@ function publicationRecheck(){
 function publicationRouteCheck(fn){
  return publicationHead(true).then(function(head){if(!publicationState.ready){publicationRefresh();return false;}if(!publicationRenew(head)||!publicationAllowed())return false;return fn()!==false;}).catch(function(){return false;});
 }
-window.addEventListener('pageshow',function(){publicationInvalidate('page restored');publicationRefresh();});
+window.addEventListener('pageshow',function(event){
+ // Initial pageshow belongs to this page's already-running bootstrap.
+ // BFCache restores remain destructive barriers.
+ if(event.persisted)publicationInvalidate('page restored');publicationRefresh();
+});
 document.addEventListener('visibilitychange',function(){publicationInvalidate('visibility');if(!document.hidden)publicationRefresh();});
-window.addEventListener('load',function(){publicationRefresh();setInterval(publicationRecheck,PUBLICATION_POLL_MS);});
+window.addEventListener('load',function(){publicationRefresh();setInterval(publicationRecheck,Math.min(PUBLICATION_POLL_MS,PUBLICATION_MAX_AGE-PUBLICATION_RENEW_MARGIN_MS));});
 // Only dynamic report/field links use this gate; static site190 links retain their behavior.
 document.addEventListener('click',function(event){
  var link=event.target.closest&&event.target.closest('a[data-publication-report],#fieldNavChoice a');if(!link)return;
