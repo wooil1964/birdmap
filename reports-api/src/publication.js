@@ -60,7 +60,7 @@ export async function publicationAnchor(binding,request) {
  try{
   const db=primary(binding),slots=guardLookupHints.get(binding)||null;
   let row=await publicationStateStatement(db,slots).first();
-  if(slots&&Number(row?.guards)!==PUBLICATION_GUARDS.length){guardLookupHints.delete(binding);row=await publicationStateStatement(db).first();}
+  if(slots&&Number(row?.guards)!==PUBLICATION_GUARDS.length){guardLookupHints.delete(binding);row=await publicationStateStatement(primary(binding)).first();}
   const anchor=validateState(verifiedState(row,slots&&Object.hasOwn(row||{},'guards')?slots:null),request,true);
   rememberGuardLocators(binding,row);return anchor;
  }catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');}
@@ -99,7 +99,8 @@ export async function handlePublicationRead(request,env,url) {
  const now=new Date();
  if(head)return jsonResponse(request,env,{ok:true,publication:await publicationAnchor(binding,input),serverTime:now.toISOString()},200,{'Cache-Control':'no-store'});
  try {
-  const db=primary(binding),plan=readPlan(db,url,now),slots=guardLookupHints.get(binding)||null;
+  const db=primary(binding),slots=guardLookupHints.get(binding)||null;
+  let plan=readPlan(db,url,now);
   let sets=await db.batch([publicationStateStatement(db,slots),...plan.statements]);
   if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
   let row=sets[0].results?.[0],usedSlots=slots;
@@ -107,7 +108,8 @@ export async function handlePublicationRead(request,env,url) {
    // Never bless the first payload using a later schema-only check. Reread
    // state and every payload statement together from the primary instead.
    guardLookupHints.delete(binding);usedSlots=null;
-   sets=await db.batch([publicationStateStatement(db),...plan.statements]);
+   const recoveryDb=primary(binding);plan=readPlan(recoveryDb,url,now);
+   sets=await recoveryDb.batch([publicationStateStatement(recoveryDb),...plan.statements]);
    if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
    row=sets[0].results?.[0];
   }

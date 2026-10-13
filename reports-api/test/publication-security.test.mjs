@@ -467,3 +467,44 @@ test('Free SQL: different D1 bindings cannot share lookup hints', async () => {
   assert.equal((await head(bad.env)).status, 503);
   assert.equal((await head(good.env)).status, 200);
 });
+
+// A first-primary constraint applies only to the first query of each session.
+// Model that constraint explicitly, rather than treating a binding as primary forever.
+function freshPrimaryOnly(db) {
+  const sessions=[];
+  db.withSession=mode=>{
+    assert.equal(mode,'first-primary');
+    const entry={queries:0};sessions.push(entry);
+    return {
+      prepare(sql) {
+        const statement=db.prepare(sql);
+        const first=statement.first.bind(statement);
+        statement.first=async()=>{assert.equal(++entry.queries,1,'A recovery read needs its own first-primary session');return first();};
+        return statement;
+      },
+      async batch(statements) {
+        assert.equal(++entry.queries,1,'A recovery batch needs its own first-primary session');
+        return db.batch(statements);
+      }
+    };
+  };
+  return sessions;
+}
+function relocateGuard(sqlite) {
+  const ddl=sqlite.prepare("SELECT sql FROM sqlite_schema WHERE name='field_confirmation_live'").get().sql;
+  sqlite.exec("DROP TRIGGER field_confirmation_live; CREATE TRIGGER unrelated_lookup_shift AFTER INSERT ON transaction_assertions BEGIN SELECT 1; END;");
+  sqlite.exec(ddl);
+}
+test('Free SQL: HEAD locator repair starts a new primary session',async()=>{
+  const {env,db,sqlite}=fixture();const sessions=freshPrimaryOnly(db);
+  assert.equal((await head(env)).status,200);relocateGuard(sqlite);
+  assert.equal((await head(env)).status,200);
+  assert.deepEqual(sessions.map(s=>s.queries),[1,1,1]);
+});
+test('Free SQL: payload locator repair starts a new primary session and rebuilds its batch',async()=>{
+  const {env,db,sqlite}=fixture();insertReport(sqlite);const sessions=freshPrimaryOnly(db);
+  const anchor=(await head(env)).body.publication;relocateGuard(sqlite);
+  const result=await call(env,query('/reports/approved',anchor));
+  assert.equal(result.status,200);assert.equal(result.body.spots.length,1);
+  assert.deepEqual(sessions.map(s=>s.queries),[1,1,1]);
+});
