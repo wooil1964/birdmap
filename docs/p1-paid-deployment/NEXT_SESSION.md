@@ -1,3 +1,6 @@
+# 최신 운영 기록 — MAIN_MERGED.json 우선
+PR17 실제병합 cb3dd3b2b10752dd59cccec9e0a449eaca48cefb, 제품ddc와전체tree동일확인. 공개strict state200/nonce rev1/empty submit400 nonbreeding 입력검증으로 peer gate정상확인, 실사용자POST0. 보호normalpair활성/DBnormalgen4/PUBrev1frozen0. mainbranch Pages자동빌드진행, 아직actualPages/5폭live검증완료아님. 다음은Pagesbuilt/index SHA9c519ed2…확인→live_chrome_readonly.mjs(GETonly)→자동weather/tidecurrentbatch→최종원장/댓글readback. 아래미병합문구는과거상태. 사용자운영권한있음/반복승인불필요/구보호없는rollback금지.
+
 # 최신 운영 단계 — NORMAL_ACTIVATED.json / THAW_VERIFIED.json 우선
 2026-10-14 KST: 공개 normal f1f24698-8388-4f36-ae31-38f2dd8e9446, 관리자 normal a7723404-a3c2-4739-91ff-44049e1302cb 각각 100% 실제 활성화. system NORMAL/gen4, publication revision1/frozen0, epoch 미초기화, claims0/FK0. 사용자 데이터 DML0. 실제 additive migration 0004b/0005/0005c 및 metadata activation이 적용됨. 아래 옛 기록의 미배포·0운영쓰기·백업승인 대기는 역사적 상태이며 이 최신 단계가 우선한다.
 제품 ddc3bc3fb20eec33c47328ac2eb00154865eb377. 정확 CI38481187572/job115583898586 실제20단계 성공: 자동812/0/1,Chrome242/0/0,native13/0,CAS10/0.190/176fixed ON/OFF signature 동일. 검증된 protected Pages388assets artifact11856944380/ZIP707cf4e6… 확보. 아직 main 병합/Pages반영 완료 아님. 다음은 live API readiness/privacy → 최신 Git 보호규칙/PRhead 검증 → 정확통합소스 main 병합 → Pages 운영 반영/hash → 5폭 live Chrome/기상갱신 검증. 완료 테스트는 소스 변화가 없으면 반복하지 않는다.
