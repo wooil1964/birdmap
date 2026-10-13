@@ -1,0 +1,158 @@
+{
+  "sourceSha": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "scope": "Independent identical prior7today+6weeklybad+normalweekly actual validator validations; full190 synthetic IDs/fixedclock, no source savedweather modification or operatingrequests",
+  "clock": "2026-10-14T11:00:00+09:00",
+  "generatedAt": "2026-10-14 10:50 KST",
+  "cases": [
+    {
+      "label": "normal",
+      "accepted": true
+    },
+    {
+      "label": "wind-1e309",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid wind: '북풍 1e309m/s'"
+    },
+    {
+      "label": "wind-400digits",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid wind: '북풍 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "label": "rain-1e309",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid rain: '3시간 강수 1e309mm'"
+    },
+    {
+      "label": "rain-400digits",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid rain: '3시간 강수 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "label": "wave-1e309",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid required wave: '1e309m'"
+    },
+    {
+      "label": "wave-400digits",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 eligible without a valid required wave: '999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    }
+  ],
+  "weekly": [
+    {
+      "field": "windSpeed",
+      "label": "1e309-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST windSpeed is not a finite number: '1e309'"
+    },
+    {
+      "field": "windSpeed",
+      "label": "400digits-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST windSpeed is not a finite number: '9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "field": "precipitation3h",
+      "label": "1e309-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST precipitation3h is not a finite number: '1e309'"
+    },
+    {
+      "field": "precipitation3h",
+      "label": "400digits-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST precipitation3h is not a finite number: '9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "field": "waveM",
+      "label": "1e309-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST waveM is not a finite number: '1e309'"
+    },
+    {
+      "field": "waveM",
+      "label": "400digits-string",
+      "accepted": false,
+      "errorType": "AssertionError",
+      "reason": "1 2026-10-14 2026-10-14 12:00 KST waveM is not a finite number: '99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    }
+  ],
+  "weeklyNormalControl": {
+    "accepted": true
+  },
+  "checks": [
+    {
+      "id": "today normal",
+      "pass": true
+    },
+    {
+      "id": "today wind-1e309",
+      "pass": true
+    },
+    {
+      "id": "today wind-400digits",
+      "pass": true
+    },
+    {
+      "id": "today rain-1e309",
+      "pass": true
+    },
+    {
+      "id": "today rain-400digits",
+      "pass": true
+    },
+    {
+      "id": "today wave-1e309",
+      "pass": true
+    },
+    {
+      "id": "today wave-400digits",
+      "pass": true
+    },
+    {
+      "id": "weekly windSpeed 1e309-string",
+      "pass": true
+    },
+    {
+      "id": "weekly windSpeed 400digits-string",
+      "pass": true
+    },
+    {
+      "id": "weekly precipitation3h 1e309-string",
+      "pass": true
+    },
+    {
+      "id": "weekly precipitation3h 400digits-string",
+      "pass": true
+    },
+    {
+      "id": "weekly waveM 1e309-string",
+      "pass": true
+    },
+    {
+      "id": "weekly waveM 400digits-string",
+      "pass": true
+    },
+    {
+      "id": "weekly normalcontrol",
+      "pass": true
+    }
+  ],
+  "summary": {
+    "pass": 14,
+    "fail": 0,
+    "skip": 0
+  }
+}

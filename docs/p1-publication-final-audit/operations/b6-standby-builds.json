@@ -1,0 +1,85 @@
+{
+  "at": "2026-10-12T15:46:15.281Z",
+  "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "builds": [
+    {
+      "role": "public",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "-c",
+        "wrangler.public.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.tmp\\standby-b6-c025\\public",
+        "--var",
+        "REPORTS_WRITE_MODE:CANONICAL_DUAL_WRITE"
+      ],
+      "exit": 0,
+      "sha256": "5460a604afae9bc7ae08eaee7fa168443a892d52a0b3605206699e7c8ef77091",
+      "bytes": 88278
+    },
+    {
+      "role": "admin",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "-c",
+        "wrangler.admin.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.tmp\\standby-b6-c025\\admin",
+        "--var",
+        "REPORTS_WRITE_MODE:CANONICAL_DUAL_WRITE"
+      ],
+      "exit": 0,
+      "sha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "bytes": 125335
+    },
+    {
+      "role": "public-maintenance",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "-c",
+        "wrangler.public.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.tmp\\standby-b6-c025\\public-maintenance",
+        "--var",
+        "REPORTS_WRITE_MODE:READ_ONLY_MAINTENANCE"
+      ],
+      "exit": 0,
+      "sha256": "5460a604afae9bc7ae08eaee7fa168443a892d52a0b3605206699e7c8ef77091",
+      "bytes": 88278
+    },
+    {
+      "role": "admin-maintenance",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "-c",
+        "wrangler.admin.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-security-guards\\birdmap\\.tmp\\standby-b6-c025\\admin-maintenance",
+        "--var",
+        "REPORTS_WRITE_MODE:READ_ONLY_MAINTENANCE"
+      ],
+      "exit": 0,
+      "sha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "bytes": 125335
+    }
+  ],
+  "uploads": 0,
+  "trafficActivations": 0,
+  "d1Writes": 0
+}

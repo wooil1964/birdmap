@@ -1,0 +1,66 @@
+{
+  "sha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "scope": "Independent actual product publicationRefresh/Recheck functions with loader scheduling and permission-state stubs. Existing head20 separately covers actual fresh HEAD/5s contract.",
+  "pass": 14,
+  "fail": 0,
+  "results": [
+    {
+      "name": "all4true samegeneration allowed clears refresh debt",
+      "pass": true
+    },
+    {
+      "name": "core0 false leaves refresh debt",
+      "pass": true
+    },
+    {
+      "name": "core1 false leaves refresh debt",
+      "pass": true
+    },
+    {
+      "name": "core2 false leaves refresh debt",
+      "pass": true
+    },
+    {
+      "name": "core3 false leaves refresh debt",
+      "pass": true
+    },
+    {
+      "name": "nontrue/rejected value cannot complete fullrefresh null",
+      "pass": true
+    },
+    {
+      "name": "nontrue/rejected value cannot complete fullrefresh undefined",
+      "pass": true
+    },
+    {
+      "name": "nontrue/rejected value cannot complete fullrefresh 1",
+      "pass": true
+    },
+    {
+      "name": "nontrue/rejected value cannot complete fullrefresh Error: failed",
+      "pass": true
+    },
+    {
+      "name": "invalidation generation while waiting prevents debt clear",
+      "pass": true
+    },
+    {
+      "name": "expired permission prevents debt clear despite4true",
+      "pass": true
+    },
+    {
+      "name": "inflight fullrefresh coalesces; completed promises never cache",
+      "pass": true
+    },
+    {
+      "name": "ready partial endpoint does not skip missing3 recovery",
+      "pass": true
+    },
+    {
+      "name": "complete ready state renews without unnecessary4refetch",
+      "pass": true
+    }
+  ],
+  "productionCalls": 0,
+  "productEdits": 0
+}

@@ -1,0 +1,65 @@
+{
+  "summary": {
+    "cases": 8,
+    "contractMatch": 8,
+    "contractMismatch": 0
+  },
+  "rows": [
+    {
+      "id": "today-control",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "jsSourceAllowed": true,
+      "contractParity": true
+    },
+    {
+      "id": "today-forecast-24",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: 1 forecastTime is not a KST stamp: '2026-10-12 24:00 KST'",
+      "jsSourceAllowed": false,
+      "contractParity": true
+    },
+    {
+      "id": "today-forecast-minute60",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: 1 forecastTime is not a KST stamp: '2026-10-12 16:60 KST'",
+      "jsSourceAllowed": false,
+      "contractParity": true
+    },
+    {
+      "id": "today-future-generation",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: 1 generatedAt is in the future: '2026-10-12 23:59 KST'",
+      "jsSourceAllowed": false,
+      "contractParity": true
+    },
+    {
+      "id": "today-wrong-forecast-date",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: ",
+      "jsSourceAllowed": false,
+      "contractParity": true
+    },
+    {
+      "id": "week-control",
+      "pythonAccepted": true,
+      "pythonError": null,
+      "jsSourceAllowed": true,
+      "contractParity": true
+    },
+    {
+      "id": "week-short-minute-generation",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: generatedAt must be a strict KST stamp: '2026-10-12 16:6 KST'",
+      "jsSourceAllowed": false,
+      "contractParity": true
+    },
+    {
+      "id": "week-future-generation",
+      "pythonAccepted": false,
+      "pythonError": "AssertionError: generatedAt is in the future: '2026-10-12 23:59 KST'",
+      "jsSourceAllowed": false,
+      "contractParity": true
+    }
+  ]
+}

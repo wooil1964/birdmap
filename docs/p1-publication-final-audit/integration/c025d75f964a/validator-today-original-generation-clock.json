@@ -1,0 +1,20 @@
+{
+  "head": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "command": [
+    "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+    "-c",
+    "import sys,json\nfrom pathlib import Path\nfrom datetime import datetime\nsys.path.insert(0,str(Path('.github/scripts').resolve()))\nimport validate_weather as v\ndata=json.loads(Path('weather_today.json').read_text(encoding='utf8'))\nfixed=datetime.strptime(data['generatedAt'][:-4],'%Y-%m-%d %H:%M').replace(tzinfo=v.KST)\nclass FrozenDateTime(datetime):\n @classmethod\n def now(cls,tz=None): return fixed.astimezone(tz) if tz else fixed.replace(tzinfo=None)\nv.datetime=FrozenDateTime\nv.validate()\nprint('ORIGINAL_GENERATION_CLOCK='+data['generatedAt'])\n"
+  ],
+  "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\final-audit-ce5c2eea3807",
+  "started": "2026-10-12T15:46:02.614Z",
+  "ended": "2026-10-12T15:46:02.784Z",
+  "exit": 0,
+  "date": "2026-10-12",
+  "generatedAt": "2026-10-12 16:26 KST",
+  "weatherJsonBeforeSha256": "39b6ac5075d710fa2c5de8ce6076067bd1c8bdc99a73b1f97cafd637b20382c7",
+  "weatherJsonAfterSha256": "39b6ac5075d710fa2c5de8ce6076067bd1c8bdc99a73b1f97cafd637b20382c7",
+  "jsonUnchanged": true,
+  "productValidatorUnmodified": true,
+  "currentClockAttemptStillFailed": true,
+  "scope": "Original-generation-day contract only; does not assert current10/13 eligible today score"
+}

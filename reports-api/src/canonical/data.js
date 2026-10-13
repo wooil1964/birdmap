@@ -64,8 +64,8 @@ export function initialSighting(r,capturedAt,native=false) {
 export const canonicalProjection = `SELECT ${REPORT_COLUMNS.map(k=>(FIELD_MAP[k]||k)+(FIELD_MAP[k]?` AS ${k}`:'')).join(',')} FROM checklists WHERE record_mode IN ('legacy_report','quick_report') AND actual_lat IS NOT NULL AND actual_lon IS NOT NULL`;
 export function canonicalReadDb(db) {
   return {prepare(sql) {
-    if (!/^\s*SELECT\b/i.test(sql) || !/\bFROM reports\b/.test(sql)) throw Error('unsupported_read_query');
+    if (!/^\s*SELECT\b/i.test(sql) || (!/\bFROM reports\b/.test(sql)&&!/\bFROM public_publication_state\b/.test(sql))) throw Error('unsupported_read_query');
     return db.prepare(sql.replace(/\bFROM reports\b/g,`FROM (${canonicalProjection}) AS reports`));
-  }};
+  },batch(statements){return db.batch(statements);}};
 }
 export function projectChecklist(c) {return Object.fromEntries(REPORT_COLUMNS.map(k=>[k,c[FIELD_MAP[k]||k]]));}

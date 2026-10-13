@@ -1172,11 +1172,13 @@ function recentReportDateText(date){
 }
 
 function renderRecentReports(){
+  var allowed=publicationAllowed();   // Clear expired data before rendering names.
   var list=document.getElementById('recentReportsList');
   var count=document.getElementById('recentReportsCount');
   if(!list)return;
   list.innerHTML='';
   if(count)count.textContent='';
+  if(!allowed){list.innerHTML='<div class="recentReportEmpty">공개 제보의 최신 상태를 확인할 수 없습니다.</div>';return;}
   if(recentReportsFailed&&!reportSearchIndex.length){
     // 자료가 없는 것과 못 불러온 것을 구분한다. 원인은 콘솔에 남겨 둔다.
     list.innerHTML='<div class="recentReportEmpty">제보 목록을 불러오지 못했습니다.</div>';
@@ -1228,7 +1230,7 @@ function renderRecentReports(){
    성공한 응답만 메모리에 두며 새로고침하면 다시 부른다. 실패는 저장하지 않아 탭을 다시 열면 재시도한다. */
 var CONTRIBUTORS_LIMIT_MOBILE=3;
 var CONTRIBUTORS_LIMIT_DESKTOP=5;
-var contributorsData=null;
+var contributorsData=null,contributorsPublication=null,contributorsRequest=0;
 var contributorsLoading=false;
 var recentTab='reports';
 
@@ -1267,11 +1269,18 @@ function contributorRowElement(row){
   item.appendChild(count);
   return item;
 }
+function contributorsCurrent(){return !!contributorsData&&publicationDataAllowed({publication:contributorsPublication});}
+function clearContributors(){
+ contributorsRequest++;contributorsData=null;contributorsPublication=null;contributorsLoading=false;contributorsPromise=null;
+ closeContributorsModal();
+ ['contributorsContent','contributorsMeta'].forEach(function(id){var node=document.getElementById(id);if(node)node.textContent='';});
+ renderContributors();
+}
 function renderContributors(){
   var box=document.getElementById('recentContributors');
   if(!box)return;
   box.innerHTML='';
-  if(!contributorsData){
+  if(!contributorsCurrent()){
     var note=document.createElement('div');
     note.className='recentReportEmpty';
     note.textContent=contributorsLoading?'불러오는 중입니다.':'기여자 정보를 불러오지 못했습니다.';
@@ -1306,24 +1315,24 @@ function renderContributors(){
 var contributorsPromise=null;
 /* 완료되면 성공 자료(실패면 null)로 이행하는 Promise 를 돌려준다. 이미 받았거나 받는 중이면 그걸 그대로 쓴다. */
 function loadContributors(){
-  if(contributorsData)return Promise.resolve(contributorsData);
+  if(contributorsCurrent())return publicationHead(true).then(function(head){if(publicationState.ready&&publicationRenew(head)&&contributorsCurrent())return contributorsData;return loadContributors();}).catch(function(){return null;});
   if(contributorsLoading)return contributorsPromise;
-  contributorsLoading=true;
+  var request=++contributorsRequest;contributorsLoading=true;
   renderContributors();
-  contributorsPromise=fetch(REPORTS_API_URL+'/contributors/monthly',{cache:'no-cache'}).then(function(response){
-    if(!response.ok)throw new Error('contributors '+response.status);
-    return response.json();
-  }).then(function(body){
+  contributorsPromise=publicationFetch('/contributors/monthly').then(function(body){
+    if(request!==contributorsRequest||!publicationDataAllowed(body))return;
     var payload=contributorsPayload(body);
     if(!payload)throw new Error('contributors invalid');
-    contributorsData=payload;
+    contributorsData=payload;contributorsPublication=body.publication;
   }).catch(function(error){
-    contributorsData=null;
+    if(request!==contributorsRequest)return;
+    contributorsData=null;contributorsPublication=null;
     console.warn('이번 달 기여자를 불러오지 못했습니다.',error);
   }).then(function(){
+    if(request!==contributorsRequest)return null;
     contributorsLoading=false;
     renderContributors();
-    return contributorsData;
+    return contributorsCurrent()?contributorsData:null;
   });
   return contributorsPromise;
 }
@@ -1340,7 +1349,7 @@ function selectRecentTab(tab){
   document.getElementById('recentReportsList').hidden=onContributors;
   document.getElementById('recentContributors').hidden=!onContributors;
   if(onContributors){
-    if(contributorsData)renderContributors();else loadContributors();
+    loadContributors();
   }
 }
 /* ?view=contributors 로 들어오면 최근 출현 제보 박스를 이번 달 기여자 탭으로 연다(카페 링크용).
@@ -1354,8 +1363,9 @@ function openViewFromUrl(){
   if(params.get("full")==="1")loadContributors().then(function(data){if(data)openContributorsModal();});
 }
 var contributorsReturnFocus=null;
-function openContributorsModal(){
-  if(!contributorsData)return;
+function openContributorsModal(verified){
+  if(verified!==true){publicationRouteCheck(function(){openContributorsModal(true);});return;}
+  if(!contributorsCurrent())return;
   var modal=document.getElementById('contributorsModal');
   var parts=contributorsMonthParts(contributorsData.month);
   document.getElementById('contributorsTitle').textContent=parts.year+'년 '+parts.month+'월 기여자';
@@ -1389,7 +1399,9 @@ function closeContributorsModal(){
 }
 
 /* 새 마커를 만들지 않고 이미 지도에 있는 점을 그대로 연다. */
-function openReportEntry(entry){
+function openReportEntry(entry,verified){
+  if(!verified){publicationRouteCheck(function(){var latest=reportSearchIndex.find(function(item){return item.kind===entry.kind&&item.spotId===entry.spotId&&item.date===entry.date;});if(latest)openReportEntry(latest,true);});return;}
+  if(!publicationAllowed())return;
   var map=map_7010a44f6ac2025090f0fe07508ed485,layer=null;
   if(entry.kind==='spot'){
     layer=reportSpotLayers[entry.spotId];
@@ -1631,8 +1643,10 @@ function spotTmapRouteHtml(dest){
   return tmapNavigationLink(dest,'출현 지점','spotTmapRoute','🚙 티맵');
 }
 function spotRouteButtonsHtml(dest){
+  if(dest&&dest.publicationReportId&&!publicationAllowed())return '';
   var kakao=spotKakaoRouteHtml(dest),tmap=spotTmapRouteHtml(dest);
-  return kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
+  var html=kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
+  return dest&&dest.publicationReportId?html.replace(/href="[^"]*"/g,'href="#"').replace(/onclick="[^"]*"/g,'').replace(/class="spotKakaoRoute"/g,'class="spotKakaoRoute" data-publication-app="kakao"').replace(/class="spotTmapRoute"/g,'class="spotTmapRoute" data-publication-app="tmap"').replace(/<a /g,'<a data-publication-report="'+escapeHtml(dest.publicationReportId)+'" '):html;
 }
 function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDest){
   var names=(species||[]).map(escapeHtml).join(' · ');
@@ -2092,7 +2106,7 @@ function fieldInfoHtml(site){
     '</div></div></details>';
 }
 function weatherTimeMs(value){
-  var text=String(value||'').trim();
+  var text=typeof value==='string'?value.trim():'';
   if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2} KST$/.test(text))text=text.replace(' ','T').replace(' KST','+09:00');
   return text?Date.parse(text):NaN;
 }
@@ -2107,26 +2121,37 @@ function weatherLatestDue(now){
   });});
   return latest;
 }
-function storedWeatherState(day,root,now){
+function storedWeatherState(day,root,now,site){
   now=now||new Date();root=root||{};
   var today=new Date(now.getTime()+9*60*60*1000).toISOString().slice(0,10);
   if(!day)return {kind:'none',dataCurrent:false,scoreEligible:false,stale:true};
-  var date=day.date||String(day.forecastTime||'').slice(0,10);
-  var generated=day.generatedAt||(!day.stale&&(root.generatedAt||root.updated))||'';
-  var generatedMs=weatherTimeMs(generated), forecastMs=weatherTimeMs(day.forecastTime);
+  /* 시각 원본은 실제 문자열일 때만 해석한다(배열·객체의 암묵 문자열 변환은 TypeError 를 만들 수 있다). */
+  var itemGen=typeof day.generatedAt==='string'?day.generatedAt:'', rootGen=typeof root.generatedAt==='string'?root.generatedAt:'', rootUpdated=typeof root.updated==='string'?root.updated:'';
+  var forecastText=typeof day.forecastTime==='string'?day.forecastTime:'';
+  var date=(typeof day.date==='string'&&day.date)||forecastText.slice(0,10);
+  var generated=itemGen||(!day.stale&&(rootGen||rootUpdated))||'';
+  var generatedMs=weatherTimeMs(generated), forecastMs=weeklyForecastTimestamp(day.forecastTime);
   var hasData=!day.dataUnavailable&&['temperature','wind','rain','visibility','wave'].some(function(key){return day[key]!==null&&day[key]!==undefined&&day[key]!=='';});
-  var sameDay=date===today&&String(day.forecastTime||'').slice(0,10)===today;
+  var sameDay=date===today&&forecastText.slice(0,10)===today;
   var onSchedule=Number.isFinite(generatedMs)&&generatedMs<=now.getTime()&&generatedMs>=weatherLatestDue(now);
-  var current=hasData&&sameDay&&onSchedule&&!day.stale&&Number.isFinite(forecastMs);
-  var numeric=day.score!==null&&day.score!==undefined&&day.score!==''&&Number.isFinite(Number(day.score));
+  var current=hasData&&sameDay&&onSchedule&&!day.stale&&forecastMs!==null&&Number.isFinite(forecastMs);
+  /* 적격은 자기 필드의 scoreEligible===true·빈 missingScoreFields·유효 점수·필수 기상값(site 기준)을 모두 확인한 경우만이다. 미확인(누락/null)을 true 로 올리지 않는다. */
+  var eligible=weeklyTodayRecommendable(day,site);
+  /* 배치 출처 일관성: 적격 자료는 root 와 item 양쪽에 실제 문자열 generatedAt 이 명시돼야 하고(한쪽 시각으로 다른 쪽을 대체하지 않는다),
+     둘 다 엄격한 KST 형식·미래 아님이며 서로 같아야 한다. 새 root 에 실린 더 오래된 item 은 새 자료로 인정하지 않는다.
+     생성 시각(generatedAt)과 예보 대상 시각(forecastTime)은 별개다. 부적격은 참고 표시만 막을 뿐 기존 자료를 지우지 않는다. */
+  var rootMs=weeklyForecastTimestamp(root.generatedAt), itemMs=weeklyForecastTimestamp(day.generatedAt);
+  if(rootMs===null||itemMs===null||itemMs!==rootMs||rootMs>now.getTime()||(day.date!==undefined&&typeof day.date!=='string'))eligible=false;
   return {kind:!hasData?'none':!sameDay?'previous_saved':!current?'today_reference':day.fallbackSource?'today_fallback':'today_saved',
-    dataCurrent:current,scoreEligible:current&&day.scoreEligible!==false&&numeric,stale:!current,
-    date:date,generatedAt:generated,forecastTime:day.forecastTime||'',
+    dataCurrent:current,scoreEligible:current&&eligible,stale:!current,
+    date:date,generatedAt:generated,forecastTime:forecastText,
     ageMinutes:Number.isFinite(generatedMs)?Math.max(0,Math.floor((now.getTime()-generatedMs)/60000)):null};
 }
+/* 점수는 출처에서 검증된 적격(_weatherState.scoreEligible===true)과 유효한 점수가 모두 있을 때만 표시한다.
+   출처 정보가 없는 객체는 적격성을 확인할 수 없으므로 허용하지 않는다. */
 function weatherScoreAllowed(today){
-  return !!today&&today.score!==null&&today.score!==undefined&&today.score!==''&&Number.isFinite(Number(today.score))&&
-    (today._weatherState?today._weatherState.scoreEligible:storedWeatherState(today,weatherToday).scoreEligible);
+  return !!today&&typeof today.score==='number'&&Number.isFinite(today.score)&&today.score>=0&&today.score<=100&&
+    !!today._weatherState&&today._weatherState.scoreEligible===true;
 }
 function storedWeatherLabel(today){
   var state=today&&today._weatherState;
@@ -2142,14 +2167,13 @@ function storedWeatherLabel(today){
 function todayWeatherFromWeek(site){
   var date=weeklyTodayDateText();
   var sample=weeklyDailyBestSample(site,date);
-  if(!sample||sample.scoreEligible!==true)return null;
-  if(sample.score===null||sample.score===undefined||sample.score===''||!Number.isFinite(Number(sample.score)))return null;
+  if(!weeklySampleRecommendable(site,sample))return null;
   return weeklySampleAsWeather(site,sample,date);
 }
 function weatherTodayForSite(site){
   var sites=weatherToday&&weatherToday.sites;
   var day=sites?(sites[String(site.id)]||sites[site.name]||null):null;
-  var state=day?storedWeatherState(day,weatherToday):null;
+  var state=day?storedWeatherState(day,weatherToday,undefined,site):null;
   if(!state||state.kind==='previous_saved'||state.kind==='none'||state.kind==='today_reference'){
     var fromWeek=todayWeatherFromWeek(site);
     if(fromWeek)return fromWeek;
@@ -2532,7 +2556,7 @@ function applyLiveTomorrow(card,tomorrow){
   var tomorrowDate=new Date(Date.now()+9*60*60*1000+24*60*60*1000).toISOString().slice(0,10);
   ['morning','afternoon'].forEach(function(name){
     var period=tomorrow[name], text=liveTomorrowPeriodText(period);
-    if(!text||String(period.forecastTime||'').slice(0,10)!==tomorrowDate)return;
+    if(!text||(typeof period.forecastTime==='string'?period.forecastTime:'').slice(0,10)!==tomorrowDate)return;
     var row=container.querySelector('[data-live-weather-period="'+name+'"]');
     if(!row)return;
     var time=period.forecastTime&&period.forecastTime.match(/\b(\d{2}):(\d{2})\b/);
@@ -2908,45 +2932,219 @@ function siteHistoryEntryHtml(entry){
     +'<div class="siteHistoryBy">제보자: '+who+'</div></div>';
 }
 
-/* 같은 탐조지를 다시 열 때 첫 페이지를 다시 받아 오지 않도록 잠깐 기억해 둔다.
-   서버가 이미 Cache-Control: max-age=60 을 주므로 같은 60초를 쓴다.
-   새로 승인된 제보는 ① 60초가 지나면, ② 10분마다 도는 승인 제보 갱신이 돌면,
-   ③ 새로고침하면 반영된다(기억은 메모리에만 둔다).
-   '더 보기'로 받는 뒤쪽 페이지는 기억하지 않는다. 자주 여는 화면이 아니다. */
+/* 첫 페이지의 메모리 캐시는 현재 공개 권한과 같은 revision이고 lease 안일 때만 재사용한다.
+   60초는 최대 보관 기간일 뿐 공개 권한 확인을 대신하지 않는다. 권한 변경·미확인 때 즉시 비운다.
+   '더 보기'로 받은 뒤쪽 페이지는 기억하지 않는다. */
 var SITE_HISTORY_TTL=60*1000;
 var SITE_HISTORY_TIMEOUT=6000;
 var siteHistoryCache={};
+var siteHistoryGen=0;   // 승인 제보 갱신으로 기억을 비울 때마다 올린다. 비우기 전에 보낸 요청의 응답은 기억하지 않는다.
 
-function clearSiteHistoryCache(){siteHistoryCache={};}
+function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
+
+/* 오래된 응답 방어. 요청마다 번호를 받고, 이미 반영한 응답보다 먼저 보낸 요청의 응답은 버린다.
+   삭제·공개 취소·위치 가림이 반영된 뒤 늦게 도착한 옛 응답이 마커를 되살리지 못하게 한다. */
+/* Public location permission: source authority, not response/request timestamps.
+   Conservative local defaults; production cadence remains a separate operating approval. */
+var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='legacy-public-v1';
+var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
+// Renew before the request-start lease boundary; the 5s safety cap is unchanged.
+// Slow responses/timer delays still expire and destructively close all data.
+var PUBLICATION_RENEW_MARGIN_MS=250;
+var publicationState={generation:0,anchor:null,until:0,checkedMono:0,ready:false,needsRefresh:true},publicationHeadPromise=null,publicationExpiryTimer=0,publicationRefreshPromise=null;
+var reportPublicSpots={};
+function publicationRevision(value){return typeof value==='string'&&/^(0|[1-9][0-9]{0,18})$/.test(value)&&BigInt(value)<=9223372036854775807n;}
+function publicationNonce(){var bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
+function publicationSame(a,b){return !!a&&!!b&&a.contract===b.contract&&a.epoch===b.epoch&&a.revision===b.revision&&a.projection===b.projection;}
+function publicationAllowed(){
+ var allowed=publicationState.ready&&!document.hidden&&Date.now()<publicationState.until&&typeof publicationState.checkedMono==='number'&&performance.now()-publicationState.checkedMono<PUBLICATION_MAX_AGE;
+ // Detection closes live data synchronously, including when the expiry timer is delayed.
+ if(publicationState.ready&&!allowed)publicationInvalidate(document.hidden?'hidden':'expired');
+ return allowed;
+}
+function publicationNotice(show){
+ var box=document.getElementById('publicationNotice');
+ if(!box){box=document.createElement('div');box.id='publicationNotice';box.setAttribute('role','status');box.style.cssText='position:fixed;left:8px;bottom:8px;z-index:999;max-width:min(430px,calc(100vw - 16px));background:#fff8e1;padding:6px 9px;border-radius:6px;font:12px/1.5 Arial';document.body.appendChild(box);}
+ box.textContent='공개 위치의 최신 상태를 확인할 수 없어 위치와 길찾기를 잠시 표시하지 않습니다.';box.hidden=!show;
+}
+function publicationForgetLayer(layer,map){
+ if(!layer)return;
+ var popup=layer.getPopup&&layer.getPopup();
+ if(popup){popup.setContent('공개 위치의 최신 상태를 확인할 수 없습니다.');if(layer.closePopup)layer.closePopup();popup._source=null;}
+ if(layer.unbindPopup)layer.unbindPopup();
+ if(map)map.removeLayer(layer);
+}
+function publicationInvalidate(reason){
+ publicationState.generation++;publicationState.until=0;publicationState.ready=false;publicationState.needsRefresh=true;
+ publicationHeadPromise=null;publicationRefreshPromise=null;publicationState.pending={};
+ if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
+ if(typeof fieldGuideStop==='function'&&typeof fieldGuide!=='undefined'&&fieldGuide)fieldGuideStop();
+ if(typeof fieldNavChoiceClose==='function')fieldNavChoiceClose();
+ var map=typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'?map_7010a44f6ac2025090f0fe07508ed485:null;
+ var currentPopup=map&&map._popup,dynamicPopup=currentPopup&&currentPopup._source&&currentPopup._source.options&&currentPopup._source.options.publicationDynamic;
+ [typeof reportSpotLayers==='undefined'?{}:reportSpotLayers,typeof reportPendingLayers==='undefined'?{}:reportPendingLayers].forEach(function(layers){Object.keys(layers).forEach(function(id){publicationForgetLayer(layers[id],map);delete layers[id];});});
+ if(typeof fieldMarkers!=='undefined')Object.keys(fieldMarkers).forEach(function(id){publicationForgetLayer(fieldMarkers[id].marker,typeof fieldLayer!=='undefined'&&fieldLayer?fieldLayer:map);delete fieldMarkers[id];});
+ document.querySelectorAll('a[data-publication-report],.fieldPop').forEach(function(node){var popup=node.closest('.leaflet-popup');if(popup)popup.remove();else node.remove();});
+ reportPublicSpots={};reportSearchIndex=[];reportFixedHistory={};recentSiteSightings={};
+ document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
+ if(typeof fieldUpdates!=='undefined')fieldUpdates=[];
+ if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
+ if(typeof clearContributors==='function')clearContributors();
+ if(dynamicPopup&&map&&map.closePopup){map.closePopup(currentPopup);currentPopup._source=null;map._popup=null;}
+ if(typeof renderFieldNews==='function')renderFieldNews();
+ if(typeof fieldRender==='function'&&typeof fieldStepName!=='undefined'&&(fieldStepName==='pickThread'||fieldStepName==='status'))fieldRender();
+ if(typeof refreshFixedSpotPopups==='function')refreshFixedSpotPopups();
+ if(typeof renderRecentReports==='function')renderRecentReports();
+ if(typeof refreshTodayPanelIfOpen==='function')refreshTodayPanelIfOpen();
+ publicationNotice(true);
+}
+function publicationRenew(head){
+ if(document.hidden||!head||head._publicationGeneration!==publicationState.generation||!publicationSame(head.publication,publicationState.anchor)){
+  if(publicationState.ready)publicationInvalidate('permission context changed');return false;
+ }
+ if(!publicationState.ready)return false;
+ var started=head&&head._publicationStartedMono,now=performance.now(),remaining=PUBLICATION_MAX_AGE-(now-started);
+ if(typeof started!=='number'||!Number.isFinite(started)||started<0||started>now||remaining<=0){publicationInvalidate('permission response expired');return false;}
+ publicationState.until=Date.now()+remaining;publicationState.checkedMono=started;
+ if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
+ publicationExpiryTimer=setTimeout(function(){publicationAllowed();},remaining+1);
+ if(typeof fieldClockOffset!=='undefined')fieldClockOffset=Date.parse(head.serverTime)-Date.now();
+ publicationNotice(false);return true;
+}
+function publicationJson(path){
+ var controller=new AbortController(),timer;
+ return new Promise(function(resolve,reject){
+  timer=setTimeout(function(){controller.abort();reject(new Error('publication timeout'));},PUBLICATION_TIMEOUT);
+  fetch(REPORTS_API_URL+path,{cache:'no-store',signal:controller.signal}).then(function(r){if(!r.ok)throw new Error('publication '+r.status);return r.json();}).then(resolve,reject);
+ }).then(function(body){clearTimeout(timer);return body;},function(error){clearTimeout(timer);throw error;});
+}
+function publicationValidate(body,nonce){
+ var a=body&&body.publication;
+ if(!a||a.contract!==PUBLICATION_CONTRACT||a.projection!==PUBLICATION_PROJECTION||typeof a.epoch!=='string'||!/^[0-9a-f]{32}$/.test(a.epoch)||!publicationRevision(a.revision)||a.nonce!==nonce||typeof body.serverTime!=='string'||!Number.isFinite(Date.parse(body.serverTime)))throw new Error('publication invalid');
+ return a;
+}
+function publicationHead(fresh){
+ if(document.hidden){publicationAllowed();return Promise.reject(new Error('publication hidden'));}
+ var generation=publicationState.generation;
+ if(publicationHeadPromise){if(!fresh)return publicationHeadPromise;return publicationHeadPromise.catch(function(){return null;}).then(function(){
+  if(document.hidden||generation!==publicationState.generation)throw new Error('publication context changed');return publicationHead();
+ });}
+ var nonce=publicationNonce(),started=performance.now();
+ var pending=publicationJson('/reports/public-state?nonce='+nonce).then(function(body){
+  if(document.hidden||generation!==publicationState.generation)throw new Error('publication context changed');
+  var a=publicationValidate(body,nonce),old=publicationState.anchor;
+  if(old&&old.epoch===a.epoch&&BigInt(a.revision)<BigInt(old.revision))throw new Error('publication regressed');
+  if(old&&!publicationSame(old,a))publicationInvalidate('authority changed');
+  // The revision covers writes, but KST query windows also change at midnight.
+  var day=new Date(Date.parse(body.serverTime)+9*3600000).toISOString().slice(0,10);
+  if(publicationState.day&&publicationState.day!==day)publicationInvalidate('calendar changed');
+  publicationState.day=day;
+  publicationState.anchor=a;body._publicationStartedMono=started;body._publicationGeneration=publicationState.generation;return body;
+ }).catch(function(error){if(generation===publicationState.generation)publicationInvalidate('authority unknown');throw error;});
+ publicationHeadPromise=pending;
+ pending.then(function(){if(publicationHeadPromise===pending)publicationHeadPromise=null;},function(){if(publicationHeadPromise===pending)publicationHeadPromise=null;});
+ return pending;
+}
+function publicationDataAllowed(body){return publicationAllowed()&&body&&publicationSame(body.publication,publicationState.anchor);}
+function publicationFetch(path){
+ if(document.hidden){publicationAllowed();return Promise.reject(new Error('publication hidden'));}
+ // Merge only overlapping reads of the same endpoint in the same local
+ // generation. Completed responses/permission decisions are never cached.
+ var requests=publicationState.pending||(publicationState.pending={});
+ var key=publicationState.generation+'|'+path;
+ if(requests[key])return requests[key];
+ var generation=publicationState.generation;
+ var pending=publicationHead().then(function(head){
+  if(document.hidden||head._publicationGeneration!==publicationState.generation)throw new Error('publication context changed');
+  generation=head._publicationGeneration;var a=head.publication,nonce=publicationNonce();
+  var url=path+(path.indexOf('?')<0?'?':'&')+'contract='+PUBLICATION_CONTRACT+'&nonce='+nonce+'&expectedEpoch='+a.epoch+'&expectedRevision='+a.revision;
+  return publicationJson(url).then(function(body){
+   if(document.hidden||generation!==publicationState.generation||!publicationSame(a,publicationState.anchor))throw new Error('publication context changed');
+   var b=publicationValidate(body,nonce);if(!publicationSame(a,b))throw new Error('publication snapshot mismatch');
+   return publicationHead(true).then(function(after){
+    if(document.hidden||generation!==publicationState.generation||after._publicationGeneration!==publicationState.generation||!publicationSame(b,after.publication))throw new Error('publication changed during read');
+    publicationState.ready=true;if(!publicationRenew(after))throw new Error('publication expired');body.publicationCheckedAt=after.serverTime;return body;
+   });
+  });
+ }).catch(function(error){if(generation===publicationState.generation)publicationInvalidate('data unverified');throw error;});
+ requests[key]=pending;
+ function clear(){if(requests[key]===pending)delete requests[key];}
+ pending.then(clear,clear);return pending;
+}
+function publicationRefresh(){
+ if(document.hidden){publicationAllowed();return Promise.resolve(false);}
+ if(publicationRefreshPromise)return publicationRefreshPromise;
+ var generation=publicationState.generation;
+ var tasks=[loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()];
+ if(typeof recentTab!=='undefined'&&recentTab==='contributors')tasks.push(loadContributors());
+ var pending=Promise.allSettled(tasks).then(function(results){
+  // A single endpoint may renew permission but cannot complete all cleared lists.
+  if(generation===publicationState.generation&&publicationAllowed()&&results.slice(0,4).every(function(r){return r.status==='fulfilled'&&r.value===true;}))publicationState.needsRefresh=false;
+  return results;
+ });
+ publicationRefreshPromise=pending;pending.then(function(){if(publicationRefreshPromise===pending)publicationRefreshPromise=null;});return pending;
+}
+function publicationRecheck(){
+ if(!reportsConfigured()||document.hidden)return Promise.resolve(false);
+ return publicationHead().then(function(head){if(document.hidden||head._publicationGeneration!==publicationState.generation)return false;if(publicationState.ready){if(!publicationRenew(head))return false;if(typeof fieldLayer!=='undefined'&&fieldLayer)renderFieldMarkers();return publicationState.needsRefresh?publicationRefresh():true;}return publicationRefresh();}).catch(function(){return false;});
+}
+function publicationRouteCheck(fn){
+ if(document.hidden){publicationAllowed();return Promise.resolve(false);}
+ return publicationHead(true).then(function(head){if(document.hidden||head._publicationGeneration!==publicationState.generation)return false;if(!publicationState.ready){publicationRefresh();return false;}if(!publicationRenew(head)||!publicationAllowed())return false;return fn()!==false;}).catch(function(){return false;});
+}
+window.addEventListener('pageshow',function(event){
+ // Initial pageshow belongs to this page's already-running bootstrap.
+ // BFCache restores remain destructive barriers.
+ if(event.persisted)publicationInvalidate('page restored');publicationRefresh();
+});
+document.addEventListener('visibilitychange',function(){publicationInvalidate('visibility');if(!document.hidden)publicationRefresh();});
+window.addEventListener('load',function(){publicationRefresh();setInterval(publicationRecheck,Math.min(PUBLICATION_POLL_MS,PUBLICATION_MAX_AGE-PUBLICATION_RENEW_MARGIN_MS));});
+// Only dynamic report/field links use this gate; static site190 links retain their behavior.
+document.addEventListener('click',function(event){
+ var link=event.target.closest&&event.target.closest('a[data-publication-report],#fieldNavChoice a');if(!link)return;
+ var reportId=link.getAttribute('data-publication-report'),box=link.closest('#fieldNavChoice'),fieldId=box&&box.getAttribute('data-field-id'),isTmap=link.getAttribute('data-publication-app')==='tmap';
+ event.preventDefault();event.stopImmediatePropagation();
+ var opened=null;
+ publicationRouteCheck(function(){
+  var spot=reportPublicSpots[reportId],dest=fieldId?fieldPublicPoint(fieldGuideTarget(fieldId)):spot&&spot.locationHidden!==true?spot:null;
+  if(!dest||dest.locationHidden===true){if(opened)opened.close();return false;}
+  var url=isTmap?tmapNavigationUrl(dest,fieldId?(fieldFind(fieldId)||{}).species:'출현 지점'):spotKakaoRouteUrl(dest,fieldId?(fieldFind(fieldId)||{}).species:'출현 지점');
+  // Open after the fresh check; a new window must not invalidate its own preflight.
+  if(!isTmap){opened=window.open('about:blank','_blank');if(opened)try{opened.opener=null;}catch(ignore){}}
+  if(isTmap){if(openTmapNavigation())location.href=url;}else if(opened)opened.location.href=url;else fieldToast('팝업이 차단됐어요. 브라우저 설정을 확인한 뒤 다시 눌러 주세요.','error');
+  fieldNavChoiceClose();return true;
+ }).then(function(ok){if(!ok&&opened)opened.close();});
+},true);
+/* publication:end */
+
+var reportRequestSeq={approved:0,pending:0,recent:0}, reportAppliedSeq={approved:0,pending:0,recent:0};
+function reportRequestStart(kind){return ++reportRequestSeq[kind];}
+function reportResponseCurrent(kind,seq){
+  if(seq<reportAppliedSeq[kind])return false;
+  reportAppliedSeq[kind]=seq;
+  return true;
+}
 
 function cachedSiteHistory(key){
   var hit=siteHistoryCache[key];
-  if(!hit)return null;
+  if(!hit||!publicationDataAllowed(hit.data))return null;
   if(Date.now()-hit.at>SITE_HISTORY_TTL){delete siteHistoryCache[key];return null;}
   return hit.data;
 }
 
-function fetchSiteHistory(site,offset){
+function fetchSiteHistory(site,offset,retried){
   var key=String(site.id);
+  var gen=siteHistoryGen;
   if(!offset){
     var hit=cachedSiteHistory(key);
     // 기억해 둔 값이 있으면 네트워크를 타지 않고 그대로 그린다.
     if(hit)return Promise.resolve(hit);
   }
-  // 응답이 늦어도 '불러오는 중입니다.'가 남지 않도록 시간을 끊는다.
-  var controller=(typeof AbortController!=='undefined')?new AbortController():null;
-  var timer=controller?setTimeout(function(){controller.abort();},SITE_HISTORY_TIMEOUT):0;
-  return fetch(REPORTS_API_URL+'/reports/site/'+encodeURIComponent(site.id)
-      +'?limit='+SITE_HISTORY_PAGE+'&offset='+offset,controller?{signal:controller.signal}:{})
-    .then(function(response){
-      if(!response.ok)throw new Error('site history '+response.status);
-      return response.json();
-    }).then(function(data){
-      if(!data||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
-      if(!offset)siteHistoryCache[key]={at:Date.now(),data:data};
-      return data;
-    }).catch(function(){return null;})
-    .then(function(result){if(timer)clearTimeout(timer);return result;});
+  return publicationFetch('/reports/site/'+encodeURIComponent(site.id)+'?limit='+SITE_HISTORY_PAGE+'&offset='+offset).then(function(data){
+    if(!publicationDataAllowed(data)||data.ok!==true||!Array.isArray(data.history))throw new Error('site history invalid');
+    if(gen!==siteHistoryGen){if(retried)return null;return fetchSiteHistory(site,offset,true);}
+    if(!offset)siteHistoryCache[key]={at:Date.now(),data:data};return data;
+  }).catch(function(){return null;});
 }
 
 /* 제목 옆에 승인된 이력 건수를 적는다. 서버가 준 total 이라 '더 보기'로 아직
@@ -3135,6 +3333,7 @@ function renderReportResults(box,entries){
   box.appendChild(resultSectionTitle('출현종 제보 '+entries.length+'건'));
   entries.slice(0,80).forEach(function(entry){
     var button=document.createElement('button');
+    button.setAttribute('data-publication-entry','true');
     button.className='resultItem reportResult';
     button.onclick=function(){openReportEntry(entry);};
     var name=document.createElement('div');
@@ -3538,7 +3737,7 @@ function weeklyPelagicSafety(sample){
   // 추천 전용 기준. 기존 weather_rules와 점수 계산은 그대로 둔다.
   // 표시용 값은 생성 단계에서 소수점 한 자리로 반올림되므로, 판정은 sample.safetyRaw의 원자료를 우선 사용한다.
   // 기준값(풍속 6.0·파고 0.7·3시간 강수 0)은 변경하지 않는다.
-  if(!sample||sample.scoreEligible!==true||typeof sample.score!=='number'||!Number.isFinite(sample.score))return false;
+  if(!sample||sample.scoreEligible!==true||!weeklyScoreValid(sample.score))return false;
   var raw=(sample.safetyRaw&&typeof sample.safetyRaw==='object')?sample.safetyRaw:null;
   return [['windSpeed',6],['waveM',0.7],['precipitation3h',0]].every(function(check){
     var value=raw?raw[check[0]]:sample[check[0]];
@@ -3826,15 +4025,15 @@ function weeklyNowKstMinutes(){
   return Number(values.hour)*60+Number(values.minute);
 }
 function weeklySampleMinutes(sample){
-  var match=String(sample&&sample.forecastTime||'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}):(\d{2})/);
+  var match=(sample&&typeof sample.forecastTime==='string'?sample.forecastTime:'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}):(\d{2})/);
   return match?Number(match[1])*60+Number(match[2]):null;
 }
 function weeklySampleTimeText(sample){
-  var match=String(sample&&sample.forecastTime||'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}:\d{2})/);
+  var match=(sample&&typeof sample.forecastTime==='string'?sample.forecastTime:'').match(/^\d{4}-\d{2}-\d{2}\s+(\d{2}:\d{2})/);
   return match?match[1]:'';
 }
 function weeklySampleDateText(sample){
-  var match=String(sample&&sample.forecastTime||'').match(/^(\d{4}-\d{2}-\d{2})/);
+  var match=(sample&&typeof sample.forecastTime==='string'?sample.forecastTime:'').match(/^(\d{4}-\d{2}-\d{2})/);
   return match?match[1]:'';
 }
 /* 일출·일몰: NOAA sunrise equation. 좌표는 기존 site 좌표를 그대로 사용한다. */
@@ -3858,9 +4057,17 @@ function weeklySunTimes(lat,lon,dateText){
   }
   return {riseMin:kstMinutes(transit-hourAngle/360),setMin:kstMinutes(transit+hourAngle/360)};
 }
+/* 주간 자료(weather_week.json)는 발행 시각(generatedAt)이 엄격한 KST 형식이고 미래가 아닐 때만 출처로 인정한다.
+   검증되지 않은 발행 자료에서는 현재 적격 출처를 만들지 않는다(주간 최대 연령 같은 새 정책은 두지 않는다). */
+function weeklyDocVerified(){
+  var published=weeklyForecastTimestamp(weatherWeek&&weatherWeek.generatedAt);
+  return published!==null&&published<=Date.now();
+}
+/* 검증된 발행본의 장소 항목. dataUnavailable 장소와 미검증 발행본은 없는 것(null)으로 본다. */
 function weeklyWeekSite(site){
   var sites=weatherWeek&&weatherWeek.sites;
-  return sites?sites[String(site&&site.id)]||null:null;
+  var entry=sites?sites[String(site&&site.id)]||null:null;
+  return entry&&!entry.dataUnavailable&&weeklyDocVerified()?entry:null;
 }
 function weeklyDaySamples(site,dateText){
   var weekSite=weeklyWeekSite(site);
@@ -3873,14 +4080,21 @@ function weeklyDaylightCandidates(site,dateText){
   if(!samples.length)return [];
   var sun=weeklySunTimes(Number(site.lat),Number(site.lon),dateText);
   var isToday=String(dateText)===weeklyTodayDateText(), nowMinutes=isToday?weeklyNowKstMinutes():0;
+  /* 예보 날짜·시각은 점수 비교 전에 엄격 parser(weeklyForecastTimestamp)로 확인한다. 12:60·시간대 없음·꼬리 문자열은 후보가 아니다. */
+  function strict(sample){
+    var timestamp=weeklyForecastTimestamp(sample.forecastTime);
+    if(timestamp===null)return null;
+    var kst=new Date(timestamp+9*3600000).toISOString();
+    return {date:kst.slice(0,10),minutes:Number(kst.slice(11,13))*60+Number(kst.slice(14,16)),timestamp:timestamp};
+  }
   return samples.filter(function(sample){
-    if(!sample||sample.scoreEligible!==true||!Number.isFinite(Number(sample.score)))return false;
-    var minutes=weeklySampleMinutes(sample);
-    if(minutes===null||weeklySampleDateText(sample)!==String(dateText))return false;
-    if(sun&&(minutes<sun.riseMin||minutes>sun.setMin))return false;
-    if(isToday&&(sample.isPastAtGeneration===true||minutes<=nowMinutes))return false;
+    if(!weeklySampleRecommendable(site,sample))return false;
+    var when=strict(sample);
+    if(!when||when.date!==String(dateText))return false;
+    if(sun&&(when.minutes<sun.riseMin||when.minutes>sun.setMin))return false;
+    if(isToday&&(sample.isPastAtGeneration===true||when.minutes<=nowMinutes))return false;
     return true;
-  }).sort(function(a,b){return weeklySampleMinutes(a)-weeklySampleMinutes(b);});
+  }).sort(function(a,b){return strict(a).timestamp-strict(b).timestamp;});
 }
 /* 하루 대표: 최고 score → 동점이면 오전 우선 → 그 안에서 더 이른 시각 */
 function weeklyDailyBestSample(site,dateText,sampleFilter){
@@ -3912,7 +4126,7 @@ function weeklyBestWeatherDay(site,week,sampleFilter){
 }
 function weeklySampleAsWeather(site,sample,dateText){
   if(!sample)return null;
-  var rain=sample.precipitation3h, generatedAt=(weatherWeek&&weatherWeek.generatedAt)||'';
+  var rain=sample.precipitation3h, generatedAt=(weatherWeek&&typeof weatherWeek.generatedAt==='string'&&weatherWeek.generatedAt)||'';
   function number(value,digits){return (value===null||value===undefined||!Number.isFinite(Number(value)))?null:Number(value).toFixed(digits);}
   function floor1(value){return (value===null||value===undefined||!Number.isFinite(Number(value)))?value:Math.floor(Number(value)*10+1e-9)/10;}
   var speed=number(sample.windSpeed,1);
@@ -3924,7 +4138,7 @@ function weeklySampleAsWeather(site,sample,dateText){
     cloud:(sample.cloudPct===null||sample.cloudPct===undefined)?null:Math.round(Number(sample.cloudPct))+'%',
     wave:number(sample.waveM,1)===null?null:floor1(sample.waveM).toFixed(1)+'m',
     forecastTime:sample.forecastTime,generatedAt:generatedAt,
-    _weatherState:{kind:'week_forecast',dataCurrent:true,scoreEligible:sample.scoreEligible===true,stale:false,date:dateText,generatedAt:generatedAt,forecastTime:sample.forecastTime}};
+    _weatherState:{kind:'week_forecast',dataCurrent:true,scoreEligible:weeklySampleRecommendable(site,sample),stale:false,date:dateText,generatedAt:generatedAt,forecastTime:sample.forecastTime}};
 }
 function todayHighTideLevelsCm(tide){
   if(!tide||!tide.highTide||!tide.highTideLevel)return [];
@@ -3980,6 +4194,90 @@ function weeklyMudflatTideGateOpen(site,week){
 }
 /* 현장주의 조건(파고 2.0m 이상·강수 1mm 이상)을 sample 원자료로 판정한다. 표시용 반올림(예: 0.96→1.0)에
    흔들리지 않으며, 결측은 위험으로도 안전으로도 취급하지 않는다(false). */
+/* P1-S2: 추천에 쓰는 기상 원점수 계약. 자료형을 바꿔 맞추지 않는다(null→0, '85'→85 금지).
+   원점수는 number·유한·0~100 이어야 하며, 가점이 더해진 내부 순위점수(rankScore)에는 적용하지 않는다. */
+function weeklyScoreValid(score){return typeof score==='number'&&Number.isFinite(score)&&score>=0&&score<=100;}
+function weeklyNonNegativeNumber(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0;}
+/* 객체 자신의 필드만 인정한다(Object.create 등으로 상속된 scoreEligible 은 적격 근거가 아니다). */
+function weeklyOwn(object,key){return !!object&&typeof object==='object'&&Object.prototype.hasOwnProperty.call(object,key);}
+/* 주간 표본: 자기 필드의 scoreEligible===true, 유효 점수, 빈 missingScoreFields, 필수 기상값(풍속·풍향·강수, 파고가 필요한 곳은 파고).
+   파고가 필요 없는 곳의 waveM 은 null/없음만 허용하고 값이 있으면 유한한 0 이상 숫자여야 한다(Python weekly validator 와 같다).
+   선택 값(돌풍·시정·구름 등)의 null 은 허용한다. */
+function weeklySampleRecommendable(site,sample){
+  if(!weeklyOwn(sample,'scoreEligible')||sample.scoreEligible!==true||!weeklyOwn(sample,'score')||!weeklyScoreValid(sample.score))return false;
+  if(!weeklyOwn(sample,'missingScoreFields')||!Array.isArray(sample.missingScoreFields)||sample.missingScoreFields.length)return false;
+  if(!weeklyNonNegativeNumber(sample.windSpeed)||!weeklyNonNegativeNumber(sample.precipitation3h))return false;
+  if(!weeklyNonNegativeNumber(sample.windDirectionDeg)||sample.windDirectionDeg>=360)return false;
+  var required=!!(site&&(site.showWave||site.island||site.pelagic)), wave=sample.waveM;
+  return (!required&&(wave===null||wave===undefined))||weeklyNonNegativeNumber(wave);
+}
+/* 오늘 저장 기상(weather_today.json 항목). 풍속·풍향·강수·파고는 생성기가 만든 문자열이므로
+   "북동풍 3.6m/s", "강수 없음"/"3시간 강수 0.5mm", "0.7m" 형식을 그대로 검사한다(validate_weather.py 와 같은 형식).
+   파고는 showWave/island/pelagic 지역에서만 필수이고, 필수가 아니어도 값이 있으면 형식이 맞아야 한다.
+   site 를 모르면(null) 파고 필수 여부를 판단할 수 없으므로 null 파고를 허용하지 않는다(fail closed). */
+function weeklyTodayRequiredDataValid(raw,site){
+  if(!raw||typeof raw!=='object')return false;
+  /* 단위 문자열의 형식만으로 적격을 추정하지 않는다. 긴 숫자도 변환 후 유한한 양이어야 한다. */
+  var wind=typeof raw.wind==='string'&&/^(?:북|북동|동|남동|남|남서|서|북서)풍\s*(\d+(?:\.\d+)?)\s*m\/s$/.exec(raw.wind.trim());
+  if(!wind||!weeklyNonNegativeNumber(Number(wind[1])))return false;
+  var rain=typeof raw.rain==='string'&&/^(?:강수 없음|3시간 강수 (\d+(?:\.\d+)?)mm)$/.exec(raw.rain.trim());
+  if(!rain||!weeklyNonNegativeNumber(rain[1]===undefined?0:Number(rain[1])))return false;
+  var required=!site||!!(site.showWave||site.island||site.pelagic), wave=raw.wave;
+  if(!required&&(wave===null||wave===undefined))return true;
+  var height=typeof wave==='string'&&/^(\d+(?:\.\d+)?)m$/.exec(wave.trim());
+  return !!height&&weeklyNonNegativeNumber(Number(height[1]));
+}
+function weeklyTodayRecommendable(raw,site){
+  if(!raw||typeof raw!=='object'||raw.stale||raw.dataUnavailable)return false;
+  if(!weeklyOwn(raw,'scoreEligible')||raw.scoreEligible!==true||!weeklyOwn(raw,'score')||!weeklyScoreValid(raw.score))return false;
+  if(!weeklyOwn(raw,'missingScoreFields')||!Array.isArray(raw.missingScoreFields)||raw.missingScoreFields.length)return false;
+  return weeklyTodayRequiredDataValid(raw,site);
+}
+/* 한국 시간(Asia/Seoul, +09:00)의 날짜·시각을 절대 시각(ms)으로 바꾼다. 날짜까지 포함하므로 시·분만 같은 다른 날짜를 같은 시각으로 오인하지 않는다.
+   달력에 없는 날짜(2/30)·시각(24:30)이나 형식이 모호하면 null 이다. */
+function weeklyKstTimestamp(dateText,timeText){
+  var date=String(dateText||''), time=String(timeText||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^\d{2}:\d{2}$/.test(time))return null;
+  var timestamp=Date.parse(date+'T'+time+':00+09:00');
+  return Number.isFinite(timestamp)&&new Date(timestamp+9*3600000).toISOString().slice(0,16)===date+'T'+time?timestamp:null;
+}
+/* 예보 시각 문자열("2026-10-10 12:00 KST" 또는 ISO "2026-10-10T12:00:00+09:00")의 절대 시각. 시간대가 없거나 다른 표기는 모호하므로 null. */
+function weeklyForecastTimestamp(text){
+  if(typeof text!=='string')return null;
+  var value=text.trim();
+  var match=/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}) KST$/.exec(value)||/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})(?::00(?:\.0+)?)?\+09:00$/.exec(value);
+  return match?weeklyKstTimestamp(match[1],match[2]):null;
+}
+/* 만조(날짜 + 그날 0시 기준 분)의 절대 시각. */
+function weeklyTideTimestamp(tide){
+  if(!tide||!Number.isFinite(tide.minutes)||tide.minutes<0||tide.minutes>=1440)return null;
+  var midnight=weeklyKstTimestamp(tide.date,'00:00');
+  return midnight===null?null:midnight+Math.round(tide.minutes)*60000;
+}
+/* 예보와 만조의 절대 시각 차이(분). 어느 쪽이든 해석할 수 없으면 null 이며, 그때 만조 추천은 제외한다(추정·대체 금지). */
+function weeklyTideForecastGapMinutes(tide,forecastText){
+  var tideTs=weeklyTideTimestamp(tide), forecastTs=weeklyForecastTimestamp(forecastText);
+  return tideTs===null||forecastTs===null?null:Math.abs(forecastTs-tideTs)/60000;
+}
+/* 오늘 저장 기상의 출처 판정은 팝업과 같은 storedWeatherState 한 곳에서만 한다(날짜·예보 시각·생성 시각의 유효성·미래 생성·
+   예정 갱신 시각(weatherLatestDue)·stale·own 적격 metadata·필수 기상값).
+   C 정책(사용자 승인): 이 판정에서 현재 적격(scoreEligible===true)인 자료만 추천 후보의 근거가 된다. 참고 상태(갱신 지연·미래/비정상/없는
+   생성 시각·날짜 불일치·previous_saved 등)는 후보로 쓰지 않는다. 원본 raw 는 지우지 않으며 팝업은 기존처럼 참고 값을 보여 준다.
+   허용 지연 같은 예외나 대체 점수는 만들지 않는다. */
+function weeklyTodayWeather(site,raw){
+  if(!weeklyTodayRecommendable(raw,site))return null;
+  var state=storedWeatherState(raw,weatherToday,undefined,site);
+  return state.scoreEligible===true?Object.assign({},raw,{_weatherState:state}):null;
+}
+/* 최종 관문(후보 채택 뒤·최종 선발 전후): 검증된 현재 기상자료에 근거한 entry 만 통과한다.
+   주간 표본은 weeklySampleRecommendable 로, today 는 storedWeatherState 가 부여한 적격 출처로 확인한다.
+   점수·가점·공지·mandatory·정원 보충으로는 이 조건을 대신할 수 없다. */
+function weeklyRecommendationEligible(entry){
+  if(!entry||!weeklyScoreValid(entry.score))return false;
+  if(entry.sample&&!weeklySampleRecommendable(entry.site,entry.sample))return false;
+  var today=entry.today;
+  return !!today&&weeklyScoreValid(today.score)&&!!today._weatherState&&today._weatherState.scoreEligible===true;
+}
 function weeklySampleCaution(sample){
   if(!sample)return false;
   var wave=sample.waveM, rain=sample.precipitation3h;
@@ -3995,10 +4293,11 @@ function weeklyTideWeather(site,tide){
     return sample&&!weeklySampleCaution(sample)?{sample:sample,weather:weeklySampleAsWeather(site,sample,tide.date)}:null;
   }
   var sites=weatherToday&&weatherToday.sites, raw=sites&&(sites[String(site.id)]||sites[site.name]);
-  if(!raw||raw.stale||raw.dataUnavailable||raw.scoreEligible===false||raw.score===null||raw.score===undefined||raw.score===''||!Number.isFinite(Number(raw.score)))return null;
-  var minutes=weeklySampleMinutes(raw), date=raw.date||weeklySampleDateText(raw);
-  if(minutes===null||String(date)!==String(tide.date)||Math.abs(minutes-tide.minutes)>90)return null;
-  var today=Object.assign({},raw);
+  var today=weeklyTodayWeather(site,raw);
+  if(!today)return null;
+  /* 예보와 만조는 날짜·시간대를 포함한 절대 시각으로 90분 이내여야 한다. 해석할 수 없으면 제외한다. */
+  var gap=weeklyTideForecastGapMinutes(tide,raw.forecastTime);
+  if(gap===null||gap>90)return null;
   return todayWeatherCautionNote(today)?null:{sample:null,weather:today};
 }
 /* 기준 충족 만조 중 인접 예보가 유효하고 안전한 것만 남긴다. 규칙이 없는 탐조지는 null. */
@@ -4031,8 +4330,8 @@ function weeklyTideNearestSample(site,tide){
   if(!tide||!Number.isFinite(tide.minutes))return null;
   var interval=Number(weatherWeek&&weatherWeek.sampleIntervalHours), limit=Math.min(90,(interval>0?interval:3)*30), best=null, bestGap=Infinity;
   weeklyDaylightCandidates(site,tide.date).forEach(function(sample){
-    var gap=Math.abs(weeklySampleMinutes(sample)-tide.minutes);
-    if(gap<bestGap){best=sample;bestGap=gap;}
+    var gap=weeklyTideForecastGapMinutes(tide,sample.forecastTime);
+    if(gap!==null&&gap<bestGap){best=sample;bestGap=gap;}
   });
   return best&&bestGap<=limit?best:null;
 }
@@ -4049,7 +4348,7 @@ function todayWeatherCautionNote(today){
   return '';
 }
 function todaySoutheastEastWindReason(site,today){
-  var result=weeklyEastWindRecommendation(site,today?{date:today.date||String(today.forecastTime||'').slice(0,10),weather:today}:null,weeklyInfo());
+  var result=weeklyEastWindRecommendation(site,today?{date:(typeof today.date==='string'&&today.date)||(typeof today.forecastTime==='string'?today.forecastTime:'').slice(0,10),weather:today}:null,weeklyInfo());
   return result?result.reason+(result.cautionText?' · '+result.cautionText:''):'';
 }
 function weeklyEastWindRecommendation(site,weatherEntry,week){
@@ -4090,7 +4389,7 @@ function weeklyEastWindFromWeek(site,week){
 }
 function todayMandatoryReason(site,today){
   var tide=weeklyBestMudflatTide(site,weeklyInfo());
-  var wind=weeklyEastWindRecommendation(site,today?{date:today.date||String(today.forecastTime||'').slice(0,10),weather:today}:null,weeklyInfo());
+  var wind=weeklyEastWindRecommendation(site,today?{date:(typeof today.date==='string'&&today.date)||(typeof today.forecastTime==='string'?today.forecastTime:'').slice(0,10),weather:today}:null,weeklyInfo());
   return [tide&&tide.reason,wind&&wind.reason].filter(Boolean).join(' · ');
 }
 function todayIsAutumnRemoteIsland(site,month){
@@ -4120,11 +4419,10 @@ function weeklyWeatherEntryForSite(site,week,bestWeather){
   var sites=weatherToday&&weatherToday.sites;
   if(!sites)return null;
   var raw=sites[String(site.id)]||sites[site.name]||null;
-  var date=raw&&(raw.date||String(raw.forecastTime||'').slice(0,10));
-  var score=raw&&raw.score!==null&&raw.score!==undefined&&raw.score!==''?Number(raw.score):NaN;
-  if(!raw||raw.stale||raw.dataUnavailable||!weeklyDateInRange(date,week)||!Number.isFinite(score))return null;
-  var today=Object.assign({},raw,{_weatherState:{kind:raw.fallbackSource?'today_fallback':'today_saved',dataCurrent:true,scoreEligible:raw.scoreEligible!==false,stale:false,date:date,generatedAt:raw.generatedAt||weatherToday.generatedAt||weatherToday.updated||'',forecastTime:raw.forecastTime||''}});
-  return {date:date,weather:today,score:score};
+  var date=raw&&((typeof raw.date==='string'&&raw.date)||(typeof raw.forecastTime==='string'?raw.forecastTime:'').slice(0,10));
+  var today=weeklyTodayWeather(site,raw);
+  if(!today||!weeklyDateInRange(date,week))return null;
+  return {date:date,weather:today,score:raw.score};
 }
 /* 추천 정책은 화면을 연 날이 아니라 후보의 추천 날짜가 속한 계절을 따른다.
    기존 계절 범위(봄 3~5·여름 6~8·가을 9~10·겨울 11~2)와 각 계절 정책 내용은 그대로 재사용한다. */
@@ -4209,7 +4507,10 @@ function weeklyRecommendationForSite(site,week){
   var tideDay=!!tideRec&&date===tideRec.date;
   var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?tideRec.sample:(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;
   var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(tideDay?tideRec.weather:((!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather));
-  var dayScore=dayBest?Number(dayBest.score):(dayWeather&&weatherEntry?weatherEntry.score:null);
+  var dayScore=dayBest?dayBest.score:((tideDay&&dayWeather)?dayWeather.score:(dayWeather&&weatherEntry?weatherEntry.score:null));
+  /* 유효한 기상 점수가 없는 후보(공지·물때·동풍 사유만 있는 경우 포함)는 추천하지 않는다.
+     공지 내용과 조석·참고 기상 표시는 별도 경로라 그대로다. */
+  if(!weeklyScoreValid(dayScore))return null;
   var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);
   if(spring&&axes.island){
     reasons.push('봄 도서 이동기');
@@ -4217,13 +4518,15 @@ function weeklyRecommendationForSite(site,week){
   }
   if(geolmaeriPriority)reasons.push('5월 초 긴부리흑꼬리도요 이동 시기로 최우선 검토');
   if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);
-  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:Number.isFinite(dayScore)?dayScore:null,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,
+  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:dayScore,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,
     recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',
     tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 인접 오늘 저장 기상 기준':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};
   if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;
   // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.
   entry.recentReport=weeklyRecentReportBonus(site);
   entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;
+  // C 정책 후보 관문: 검증된 현재 기상자료가 아닌 근거(참고·시각 불명)는 점수·가점·공지·mandatory 와 무관하게 후보가 아니다.
+  if(!weeklyRecommendationEligible(entry))return null;
   return entry;
 }
 /* 최근 출현 추천 가점. /reports/recent-sites 가 관리자가 site_id 를 지정한 승인 제보만
@@ -4233,11 +4536,11 @@ function weeklyRecommendationForSite(site,week){
 var recentSiteSightings={};
 function loadRecentSiteSightings(){
   if(!reportsConfigured())return Promise.resolve(false);
-  return fetch(REPORTS_API_URL+'/reports/recent-sites?days=14',{cache:'no-cache'}).then(function(r){
-    if(!r.ok)throw new Error('recent-sites '+r.status);
-    return r.json();
-  }).then(function(data){
+  var seq=reportRequestStart('recent');
+  return publicationFetch('/reports/recent-sites?days=14').then(function(data){
+    if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.sites))throw new Error('recent-sites invalid');
+    if(!reportResponseCurrent('recent',seq))return false;
     var next={};
     data.sites.forEach(function(item){
       if(item&&item.siteId&&/^\d{4}-\d{2}-\d{2}$/.test(String(item.latestDate||''))&&Array.isArray(item.species))
@@ -4286,16 +4589,18 @@ function todayRecommendedSites(){
   var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
   siteData.forEach(function(site,stableOrder){
     var entry=weeklyRecommendationForSite(site,week);
-    if(!entry)return;
+    if(!entry||!weeklyRecommendationEligible(entry))return;
     // mandatory/공지 정보는 후보에 보존하고, 현장주의만 최종 선발에서 제외한다.
     if(weeklyRecommendationIsSafe(entry)===false)return;
     entry.stableOrder=stableOrder;
     (entry.isMandatory?mandatory:general).push(entry);
   });
-  if(weeklySummerRecommendationSeason())return summerBalancedRecommendations(mandatory.concat(general));
-  if(weeklySpringRecommendationSeason())return springBalancedRecommendations(mandatory.concat(general));
-  if(weeklyWinterRecommendationSeason())return winterBalancedRecommendations(mandatory.concat(general));
-  if(autumnRecommendationSeason())return autumnBalancedRecommendations(mandatory.concat(general));
+  // 두 번째 관문: 계절별 선발·정원 보충이 돌려준 최종 목록에도 검증된 현재 기상자료 조건을 다시 적용한다.
+  function finalPicks(list){return list.filter(weeklyRecommendationEligible);}
+  if(weeklySummerRecommendationSeason())return finalPicks(summerBalancedRecommendations(mandatory.concat(general)));
+  if(weeklySpringRecommendationSeason())return finalPicks(springBalancedRecommendations(mandatory.concat(general)));
+  if(weeklyWinterRecommendationSeason())return finalPicks(winterBalancedRecommendations(mandatory.concat(general)));
+  if(autumnRecommendationSeason())return finalPicks(autumnBalancedRecommendations(mandatory.concat(general)));
   function rank(a,b){
     var ap=a.priority||4, bp=b.priority||4;
     var as=weeklyRankScore(a), bs=weeklyRankScore(b);
@@ -4309,7 +4614,7 @@ function todayRecommendedSites(){
     selectedIds[id]=true;
     selected.push(entry);
   });
-  return selected;
+  return finalPicks(selected);
 }
 function todayTideLineText(site){
   var tide=tideTodayForSite(site);
@@ -4323,7 +4628,7 @@ function todayTideLineText(site){
 }
 function weeklyWeatherCoverageText(week){
   if(weatherWeek&&weatherWeek.startDate&&weatherWeek.endDate)return weatherWeek.startDate+' ~ '+weatherWeek.endDate+' 3시간 예보';
-  var date=String(weatherToday&&weatherToday.date||'');
+  var date=weatherToday&&typeof weatherToday.date==='string'?weatherToday.date:'';
   return date&&weeklyDateInRange(date,week)?weeklyDateLabel(date)+' 저장 예보(주간 자료 없음)':'확인 가능한 주간 일별 기상예보 없음';
 }
 
@@ -4412,12 +4717,12 @@ function renderTodayPanel(){
   body.appendChild(topTitle);
   var basisInfo=document.createElement('div');
   basisInfo.className='todayRankBasis';
-  basisInfo.textContent='추천 기간: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+(weatherWeek&&weatherWeek.generatedAt?'(예보 자료 생성 '+weatherWeek.generatedAt+')':'')+' · 조석: KHOA 예측자료';
+  basisInfo.textContent='추천 기간: '+week.start+' ~ '+week.end+' · 기상: '+weeklyWeatherCoverageText(week)+(weatherWeek&&typeof weatherWeek.generatedAt==='string'&&weatherWeek.generatedAt?'(예보 자료 생성 '+weatherWeek.generatedAt+')':'')+' · 조석: KHOA 예측자료';
   body.appendChild(basisInfo);
   if(!top.length){
     var none=document.createElement('div');
     none.className='smallText';
-    none.textContent='이번 주에 확인 가능한 추천 자료가 없습니다. 기상·조석 자료 갱신 후 다시 확인해 주세요.';
+    none.textContent='현재 검증된 기상자료가 없어 추천 탐조지를 표시할 수 없습니다. 자료 갱신 후 다시 확인해 주세요.';
     body.appendChild(none);
   }
   top.forEach(function(entry,index){
@@ -4503,7 +4808,7 @@ function renderTodayPanel(){
     }
     var basis=document.createElement('div');
     basis.className='todayRankBasis';
-    basis.textContent=entry.basisText+(entry.today?' · 저장 예보 '+(entry.today.forecastTime||'시각 미확인')+' · 생성 '+(entry.today.generatedAt||'시각 미확인'):'');
+    basis.textContent=entry.basisText+(entry.today?' · 저장 예보 '+(typeof entry.today.forecastTime==='string'&&entry.today.forecastTime||'시각 미확인')+' · 생성 '+(typeof entry.today.generatedAt==='string'&&entry.today.generatedAt||'시각 미확인'):'');
     item.appendChild(basis);
     var mapHint=document.createElement('div');
     mapHint.className='todayRankBasis';
@@ -4576,7 +4881,12 @@ function birdmapDataStamp(data){
 }
 
 /* 반영했으면 true, 같은 자료거나 실패했으면 false 로 끝난다(그리기는 호출한 쪽에서 한 번만). */
-function loadBirdmapData(key,url,currentStamp,apply,onMissing){
+/* 자료의 실제 발행 시각(절대 시각, ms). 엄격한 KST 형식이 아니면 null. */
+function birdmapDataTime(data){
+  var published=weeklyForecastTimestamp(data&&data.generatedAt);
+  return published!==null&&published<=Date.now()?published:null;  // 미래·무효 발행은 비교 기준(검증된 발행 버전)을 갱신하지 못한다
+}
+function loadBirdmapData(key,url,currentStamp,apply,onMissing,currentData,verify){
   var seq=birdmapDataSeq[key]=(birdmapDataSeq[key]||0)+1;
   return fetch(url,{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error(url+' '+r.status);
@@ -4584,7 +4894,16 @@ function loadBirdmapData(key,url,currentStamp,apply,onMissing){
   }).then(function(data){
     if(!data||!data.sites||typeof data.sites!=='object')throw new Error(url+' invalid');
     if(seq!==birdmapDataSeq[key])return false;
-    if(birdmapDataStamp(data)===currentStamp())return false;
+    /* 발행 표지가 같아도 현재 자료가 검증되지 않은 혼합 배치이고 내용이 다르면(같은 발행의 교정본) 건너뛰지 않는다. */
+    if(birdmapDataStamp(data)===currentStamp()&&!(verify&&currentData&&!verify(currentData())&&JSON.stringify(data)!==JSON.stringify(currentData())))return false;
+    /* 발행 시각 순서(currentData 가 있는 today/week): 나중 요청이라도 이미 적용한 검증 자료보다 오래됐거나 같은 시각·시각 불명이면 적용하지 않는다.
+       더 최신 발행본은 정상 적용된다. 아직 검증된 자료가 없으면 그대로 적용하고 추천 자격은 출처 검증이 판단한다. */
+    if(currentData){
+      /* verify(검증 가능한 배치인지)가 있으면 검증되지 않은 현재 자료는 기준이 아니고, 검증된 자료가 적용 중일 때 검증되지 않은 배치는 적용하지 않는다
+         (혼합 배치가 같은 발행 시각의 정상 교정본을 막지 못하게 하고, 이전 참고값도 지우지 않는다). */
+      var current=currentData(), have=(!verify||verify(current))?birdmapDataTime(current):null, next=birdmapDataTime(data);
+      if(have!==null&&(next===null||next<=have||(verify&&!verify(data))))return false;
+    }
     return apply(data);
   }).catch(function(){
     // 아직 한 번도 못 받은 상태에서만 대체 경로를 탄다. 그 외에는 직전 정상 자료를 유지한다.
@@ -4596,7 +4915,14 @@ function loadBirdmapData(key,url,currentStamp,apply,onMissing){
 function loadWeatherToday(){
   return loadBirdmapData('weatherToday','./weather_today.json',
     function(){return birdmapDataStamp(weatherToday);},
-    function(data){weatherToday=data;return true;});
+    function(data){weatherToday=data;return true;},undefined,function(){return weatherToday;},
+    function(data){
+      /* 적격(scoreEligible) 항목의 generatedAt 이 모두 root 발행과 같고 root 발행이 유효해야 검증된 배치다(Python validate_weather.py 와 같은 계약). */
+      var root=data&&weeklyForecastTimestamp(data.generatedAt);
+      if(root===null||root===undefined||root>Date.now())return false;
+      var sites=data.sites||{};
+      return Object.keys(sites).every(function(id){var item=sites[id];return !item||item.scoreEligible!==true||weeklyForecastTimestamp(item.generatedAt)===root;});
+    });
 }
 function loadRecommendationWeatherRules(){
   if(recommendationRulesRequest)return recommendationRulesRequest;
@@ -4613,7 +4939,7 @@ function loadWeatherWeek(){
   if(!recommendationWeatherRules)loadRecommendationWeatherRules();
   return loadBirdmapData('weatherWeek','./weather_week.json',
     function(){return birdmapDataStamp(weatherWeek);},
-    function(data){weatherWeek=data;return true;});
+    function(data){weatherWeek=data;return true;},undefined,function(){return weatherWeek;});
 }
 function loadTideToday(){
   return loadBirdmapData('tideToday','./tide_today.json',
@@ -4707,24 +5033,27 @@ function initReportFeature(){
   loadApprovedReports();
   loadPendingReports();
   loadRecentSiteSightings();
-  setInterval(function(){loadApprovedReports();loadPendingReports();loadRecentSiteSightings();},REPORTS_REFRESH_MS);
+  setInterval(function(){if(!document.hidden){loadApprovedReports();loadPendingReports();loadRecentSiteSightings();}},REPORTS_REFRESH_MS);
 }
 
-/* 승인된 제보만 내려온다. 실패하면 직전 상태를 그대로 두고 조용히 넘어간다. */
+/* 승인된 제보만 내려온다. 공개 권한을 확인하지 못하면 동적 위치를 폐쇄한다. */
 function loadApprovedReports(){
   if(!reportsConfigured())return Promise.resolve(false);
-  return fetch(REPORTS_API_URL+'/reports/approved',{cache:'no-cache'}).then(function(r){
-    if(!r.ok)throw new Error('reports '+r.status);
-    return r.json();
-  }).then(function(data){
+  var seq=reportRequestStart('approved');
+  return publicationFetch('/reports/approved').then(function(data){
+    if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('reports invalid');
+    if(!reportResponseCurrent('approved',seq))return false;   // 더 나중에 보낸 요청의 응답이 이미 반영됨: 옛 응답은 버린다
     // 승인 제보가 새로 내려왔으니 탐조지별 이력 기억도 버린다(새 승인 건이 바로 보이게).
     clearSiteHistoryCache();
-    reportFixedHistory=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
-    // fixedSpots 는 {키:{history:[…]}} 형태라 이력 배열만 꺼내 둔다.
-    Object.keys(reportFixedHistory).forEach(function(key){
-      reportFixedHistory[key]=(reportFixedHistory[key]&&reportFixedHistory[key].history)||[];
+    // 같은 응답을 여러 소비자가 공유하므로 수신 DTO를 제자리 변환하지 않는다.
+    var fixedSpots=(data.fixedSpots&&typeof data.fixedSpots==='object')?data.fixedSpots:{};
+    var nextFixedHistory={};
+    Object.keys(fixedSpots).forEach(function(key){
+      var history=fixedSpots[key]&&fixedSpots[key].history;
+      nextFixedHistory[key]=Array.isArray(history)?history.slice():[];
     });
+    reportFixedHistory=nextFixedHistory;
     // 검색 대상과 최근 제보 목록도 같은 자료로 다시 만든다. 따로 받아 오지 않는다.
     buildReportSearchIndex(data.spots);
     recentReportsFailed=false;
@@ -4733,7 +5062,7 @@ function loadApprovedReports(){
     refreshFixedSpotPopups();
     return true;
   }).catch(function(error){
-    // 지도 마커는 예전처럼 직전 상태를 그대로 둔다. 목록만 '못 불러옴'으로 구분해 알린다.
+    // transport/권한 실패의 위치 폐쇄는 publicationFetch가 수행한다. 목록에도 실패를 알린다.
     console.error('승인 제보를 불러오지 못했습니다.',error);
     recentReportsFailed=true;
     renderRecentReports();
@@ -4742,17 +5071,20 @@ function loadApprovedReports(){
 }
 
 function renderApprovedReports(spots){
+  if(!publicationAllowed())return;
+  reportPublicSpots={};
   var seen={};
   spots.forEach(function(spot){
     if(!spot||!isFinite(spot.lat)||!isFinite(spot.lon))return;
     var id=String(spot.id||'');
     if(!id)return;
-    seen[id]=true;
+    seen[id]=true;reportPublicSpots[id]=spot;
     var existing=reportSpotLayers[id];
     if(existing)map_7010a44f6ac2025090f0fe07508ed485.removeLayer(existing);
     // 종이나 좌표가 바뀌었을 수 있으므로 매번 현재 값으로 다시 만든다.
-    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false,spot.locationHidden===true,{lat:spot.lat,lon:spot.lon})
+    reportSpotLayers[id]=birdmapSpotMarker(spot.lat,spot.lon,'출현 지점',spot.species,spot.history,false,spot.locationHidden===true,{lat:spot.lat,lon:spot.lon,publicationReportId:id})
       .addTo(map_7010a44f6ac2025090f0fe07508ed485);
+    reportSpotLayers[id].options.publicationDynamic=true;
   });
   // 관리자가 공개를 취소한 점만 사라진다. 기존 탐조지와 그 출현 지점은 건드리지 않는다.
   Object.keys(reportSpotLayers).forEach(function(id){
@@ -4768,11 +5100,11 @@ function renderApprovedReports(spots){
    화면에서 색만 바꿔 승인된 것처럼 만들 수 없다. 실패하면 조용히 직전 상태를 둔다. */
 function loadPendingReports(){
   if(!reportsConfigured())return Promise.resolve(false);
-  return fetch(REPORTS_API_URL+'/reports/pending',{cache:'no-cache'}).then(function(r){
-    if(!r.ok)throw new Error('pending '+r.status);
-    return r.json();
-  }).then(function(data){
+  var seq=reportRequestStart('pending');
+  return publicationFetch('/reports/pending').then(function(data){
+    if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('pending invalid');
+    if(!reportResponseCurrent('pending',seq))return false;
     renderPendingReports(data.spots);
     return true;
   }).catch(function(){return false;});
@@ -4786,6 +5118,7 @@ function removePendingLayer(id){
 }
 
 function showPendingSpot(spot){
+  if(!publicationAllowed())return;
   if(!spot||!isFinite(spot.lat)||!isFinite(spot.lon))return;
   var id=String(spot.id||'');
   if(!id)return;
@@ -4793,6 +5126,7 @@ function showPendingSpot(spot){
   // 이미 승인되어 붉은 점이 있는 제보는 황색으로 다시 그리지 않는다.
   if(reportSpotLayers[id])return;
   reportPendingLayers[id]=birdmapPendingMarker(spot).addTo(map_7010a44f6ac2025090f0fe07508ed485);
+  reportPendingLayers[id].options.publicationDynamic=true;
 }
 
 function renderPendingReports(spots){
@@ -5127,7 +5461,7 @@ function submitReport(event){
     }
     // 서버가 공개를 허용한 건만 좌표를 함께 내려보낸다. 보류된 건은 마커를 만들지 않는다.
     if(result.body.spot){
-      showPendingSpot(result.body.spot);
+      loadPendingReports();
       setReportMessage(result.body.spot.locationHidden
         ?'제보가 접수되었습니다. 위치 가리기에 따라 대략적인 위치에 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.'
         :'제보가 접수되었습니다. 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.','ok');
@@ -5188,6 +5522,10 @@ var fieldTurnstileId=null;
 var fieldTurnstileToken='';
 var fieldMemoryDevice='';
 var fieldToastTimer=null;
+/* 오래된 응답·삭제·위치 보호 방어. 요청마다 번호를 받고, ① 이미 반영한 응답보다 먼저 보낸 요청 ② 삭제·보호 전환(barrier) 이전에 보낸 요청의
+   응답은 버린다. 삭제한 id 는 tombstone 으로, 위치 보호가 확인된 id 는 보호 기록으로 남겨 어떤 늦은 응답도 되살리지·정확 좌표로 되돌리지 못하게 한다. */
+var fieldRequestSeq=0, fieldAppliedSeq=0, fieldBarrierSeq=0;
+var fieldTombstones={}, fieldProtectedIds={};
 
 function fieldEl(id){return document.getElementById(id);}
 function fieldMap(){return map_7010a44f6ac2025090f0fe07508ed485;}
@@ -5250,15 +5588,18 @@ function fieldAgeText(minutes){
   return rest?hours+'시간 '+rest+'분 전':hours+'시간 전';
 }
 function fieldIsActive(update){
+  if(update&&typeof update.expiresAt==='string')return Number.isFinite(Date.parse(update.expiresAt))&&Date.parse(update.expiresAt)>=fieldNowMs();
   return fieldAgeMin(update)<=fieldTtlHours*60;
 }
 
 /* ── 서버 통신 ── */
 function fieldApi(path,method,payload){
+  if(method==='GET')return publicationFetch(path).then(function(body){return {ok:true,status:200,body:body};});
   var options={method:method,cache:'no-store'};
   if(payload){options.headers={'Content-Type':'application/json'};options.body=JSON.stringify(payload);}
   return fetch(REPORTS_API_URL+path,options).then(function(response){
     return response.json().catch(function(){return null;}).then(function(body){
+      if(response.ok&&body&&body.ok===true){publicationInvalidate('mutation');if(body.update){body={ok:true,id:body.update.id,status:body.update.status};}}
       return {ok:response.ok&&body&&body.ok===true,status:response.status,body:body};
     });
   });
@@ -5272,14 +5613,32 @@ function fieldValidUpdate(update){
     &&typeof update.lat==='number'&&typeof update.lon==='number'&&typeof update.updatedAt==='string'
     &&typeof update.firstSeenAt==='string'&&Array.isArray(update.history);
 }
+/* 서버 응답 한 건을 화면에 올려도 되는지 정한다. 반환값이 null 이면 올리지 않는다. */
+function fieldGuardIncoming(update){
+  if(fieldTombstones[update.id])return null;
+  if(update.locationHidden===true){fieldProtectedIds[update.id]=true;return update;}
+  if(!fieldProtectedIds[update.id])return update;
+  var known=fieldFind(update.id);   // 보호 확인된 소식이 보호 없는 좌표로 돌아오려 하면 보호 상태인 기존 것을 유지한다
+  return known&&known.locationHidden===true?known:null;
+}
+/* 삭제·보호 전환 시점: 그 전에 보낸 요청의 응답은 모두 버리고, 새 자료는 다시 받아 온다. */
+function fieldBarrier(refetch){
+  fieldBarrierSeq=fieldRequestSeq;
+  if(refetch)loadFieldUpdates();
+}
 function loadFieldUpdates(){
   if(!reportsConfigured())return Promise.resolve(false);
+  var seq=++fieldRequestSeq;
   return fieldApi('/field-updates','GET').then(function(result){
-    if(!result.ok||!Array.isArray(result.body.updates))throw new Error('field-updates '+result.status);
+    if(!result.ok||!publicationDataAllowed(result.body)||!Array.isArray(result.body.updates))throw new Error('field-updates '+result.status);
+    if(seq<fieldAppliedSeq||seq<=fieldBarrierSeq)return false;
+    fieldAppliedSeq=seq;
     var serverTime=Date.parse(result.body.serverTime);
     if(!isNaN(serverTime))fieldClockOffset=serverTime-Date.now();
     if(typeof result.body.ttlHours==='number'&&result.body.ttlHours>0)fieldTtlHours=result.body.ttlHours;
-    fieldUpdates=result.body.updates.filter(fieldValidUpdate);
+    fieldProtectedIds={};
+    var checkedAt=Date.parse(result.body.publicationCheckedAt);
+    fieldUpdates=result.body.updates.filter(fieldValidUpdate).filter(function(item){return typeof item.expiresAt==='string'&&Number.isFinite(Date.parse(item.expiresAt))&&Date.parse(item.expiresAt)>=checkedAt&&typeof item.rowRevision==='string'&&/^[1-9][0-9]{0,18}$/.test(item.rowRevision)&&BigInt(item.rowRevision)<=9223372036854775807n;}).map(fieldGuardIncoming).filter(Boolean);
     if(!fieldAvailable){fieldAvailable=true;fieldEl('fieldToggleBtn').hidden=false;}
     renderFieldMarkers();
     if(!fieldEl('fieldPanel').hidden&&(fieldStepName==='pickThread'))fieldRender();
@@ -5292,13 +5651,14 @@ function fieldMarkerClass(update){
   return 'fieldMarker '+update.status+(fieldAgeMin(update)>FIELD_OLD_MIN?' old':'');
 }
 function fieldMarkerSignature(update){
-  return [update.status,update.updatedAt,update.lastConfirmedAt,update.confirmCount,update.count,update.lat,update.lon,update.history.length,fieldMarkerClass(update)].join('|');
+  return [update.status,update.updatedAt,update.lastConfirmedAt,update.confirmCount,update.count,update.lat,update.lon,update.locationHidden===true,update.history.length,fieldMarkerClass(update)].join('|');
 }
 function fieldFind(id){
   for(var i=0;i<fieldUpdates.length;i++){if(fieldUpdates[i].id===id)return fieldUpdates[i];}
   return null;
 }
 function renderFieldMarkers(){
+  if(!publicationAllowed())return;
   var map=fieldMap();
   if(!fieldLayer)fieldLayer=L.layerGroup().addTo(map);
   var seen={};
@@ -5309,7 +5669,8 @@ function renderFieldMarkers(){
     var icon=L.divIcon({className:'fieldMarkerWrap',html:'<span class="'+fieldMarkerClass(update)+'"></span>',iconSize:[34,34],iconAnchor:[17,17]});
     if(!entry){
       var marker=L.marker([update.lat,update.lon],{icon:icon,keyboard:false,title:update.species+' · '+FIELD_STATUS_LABEL[update.status]});
-      marker.bindPopup(function(){return fieldPopupNode(fieldFind(update.id)||update);},{maxWidth:280,autoPanPadding:[20,80]});
+      marker.options.publicationDynamic=true;
+      marker.bindPopup(function(){var current=fieldFind(update.id);return current&&publicationAllowed()?fieldPopupNode(current):fieldLine('공개 위치의 최신 상태를 확인할 수 없습니다.');},{maxWidth:280,autoPanPadding:[20,80]});
       marker.addTo(fieldLayer);
       fieldMarkers[update.id]={marker:marker,signature:signature};
     }else if(entry.signature!==signature){
@@ -5325,6 +5686,7 @@ function renderFieldMarkers(){
     delete fieldMarkers[id];
   });
   if(fieldGuide)fieldGuideUpdate();
+  fieldNavChoiceGuard();
   renderFieldNews();
 }
 
@@ -5335,6 +5697,7 @@ function fieldLine(text,className){
   return line;
 }
 function fieldPopupNode(update){
+  if(!publicationAllowed())return fieldLine('공개 위치의 최신 상태를 확인할 수 없습니다.');
   var node=document.createElement('div');
   node.className='fieldPop';
   var title=document.createElement('h4');
@@ -5370,7 +5733,7 @@ function fieldPopupNode(update){
     return button;
   }
   if(update.status==='visible'||update.status==='reappeared'){
-    add('🧭 현장 방향 안내',function(){fieldGuideStart(update.id);}).className='fieldGuideBtn';
+    if(fieldPublicPoint(update))add('🧭 현장 방향 안내',function(){fieldGuideStart(update.id);}).className='fieldGuideBtn';
     add('확인',function(){fieldConfirm(update.id);});
     add('안 보여요',function(){fieldStatusStart(update.id,'not_visible');});
   }else if(update.status==='searching'){
@@ -5421,11 +5784,21 @@ function fieldGuideBox(){
   document.body.appendChild(box);
   return box;
 }
+/* 안내·길안내 대상 확인. 지금 이 순간의 최신 상태에서 유효하고 위치 보호가 아닐 때만 소식을 돌려준다. */
+function fieldGuideTarget(id){
+  var update=fieldFind(id);
+  return update&&fieldIsActive(update)&&fieldPublicPoint(update)?update:null;
+}
 function fieldGuideUpdate(){
   var g=fieldGuide;
   if(!g)return;
-  var update=fieldFind(g.id);
-  if(!update||!fieldIsActive(update)){fieldGuideStop();fieldToast('안내하던 현장소식이 종료되어 안내를 마쳤어요.');return;}
+  var update=fieldGuideTarget(g.id);
+  if(!update){
+    var now=fieldFind(g.id);
+    fieldGuideStop();
+    fieldToast(now&&now.locationHidden===true?'위치 보호로 방향 안내를 종료했어요.':'안내하던 현장소식이 종료되어 안내를 마쳤어요.');
+    return;
+  }
   var dest=L.latLng(update.lat,update.lon);
   g.dest=dest;
   g.ring.setLatLng(dest);
@@ -5452,9 +5825,11 @@ function fieldGuideFit(){
   if(map.getBoundsZoom(bounds,false,L.point(40+right,250))<FIELD_GUIDE_MIN_ZOOM){map.setView(g.dest,FIELD_GUIDE_MIN_ZOOM);return;}
   map.fitBounds(bounds,{paddingTopLeft:[40,80],paddingBottomRight:[right,170],maxZoom:17});
 }
-function fieldGuideOnPosition(position){
+function fieldGuideOnPosition(position,owner,verified){
   var g=fieldGuide;
-  if(!g)return;
+  if(!g||(owner&&owner!==g))return;   // 이미 끝났거나 다른 안내의 늦은 GPS 콜백
+  if(!fieldGuideTarget(g.id)){fieldGuideUpdate();return;}   // 지금 보호·종료 상태면 선·내 위치를 그리기 전에 멈춘다
+  if(!verified){publicationRouteCheck(function(){fieldGuideOnPosition(position,g,true);});return;}
   g.me=L.latLng(position.coords.latitude,position.coords.longitude);
   g.error='';
   if(!fieldMap().hasLayer(g.meMarker))g.meMarker.addTo(fieldMap());
@@ -5466,9 +5841,11 @@ function fieldGuideWatchStop(g){
   if(g.watchId!==null&&navigator.geolocation)navigator.geolocation.clearWatch(g.watchId);
   g.watchId=null;
 }
-function fieldGuideOnError(error){
+function fieldGuideOnError(error,owner,verified){
   var g=fieldGuide;
-  if(!g)return;
+  if(!g||(owner&&owner!==g))return;
+  if(!fieldGuideTarget(g.id)){fieldGuideUpdate();return;}
+  if(!verified){publicationRouteCheck(function(){fieldGuideOnError(error,g,true);});return;}
   // 위치를 한 번도 못 받았거나 권한이 꺼졌으면 추적을 멈추고 반쯤 그려진 선·내 위치를 치운다. 안내 박스(와 종료 버튼)는 남긴다.
   if(g.me&&!(error&&error.code===1))return;   // 이동 중 일시적 지연(timeout 등)은 마지막 위치로 계속 안내한다
   fieldGuideWatchStop(g);
@@ -5480,11 +5857,13 @@ function fieldGuideOnError(error){
 function fieldGuideWatch(){
   var g=fieldGuide;
   g.error='';
-  g.watchId=navigator.geolocation.watchPosition(fieldGuideOnPosition,fieldGuideOnError,{enableHighAccuracy:true,timeout:20000,maximumAge:10000});
+  g.watchId=navigator.geolocation.watchPosition(function(position){fieldGuideOnPosition(position,g);},function(error){fieldGuideOnError(error,g);},{enableHighAccuracy:true,timeout:20000,maximumAge:10000});
 }
-function fieldGuideStart(id){
+function fieldGuideStart(id,verified){
+  if(!verified){publicationRouteCheck(function(){fieldGuideStart(id,true);});return;}
   var map=fieldMap(),update=fieldFind(id);
   if(!update||matchMedia('(pointer:fine)').matches)return;   // 터치 기기 전용(PC 는 버튼도 숨긴다)
+  if(!fieldGuideTarget(id)){fieldToast(update.locationHidden===true?'위치 보호 중인 소식이라 방향 안내를 제공하지 않아요.':'종료된 현장소식이에요.','error');return;}
   map.closePopup();
   if(fieldGuide){
     // 다른 소식으로 바꾸는 경우: 위치 추적은 이어 가고 점선·강조만 새 목적지로 교체한다.
@@ -5532,6 +5911,7 @@ function fieldNewsList(){
 }
 /* 길안내에 쓸 수 있는 공개 좌표. 위치 보호 소식·비정상 좌표는 null. */
 function fieldPublicPoint(update){
+  if(!publicationAllowed())return null;
   if(!update||update.locationHidden===true)return null;
   var lat=update.lat,lon=update.lon;
   if(typeof lat!=='number'||typeof lon!=='number'||!isFinite(lat)||!isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return null;
@@ -5562,7 +5942,7 @@ function fieldNewsButton(label,handler,disabled,title){
 function renderFieldNews(){
   var box=fieldEl('fieldNewsBox');
   if(!box)return;
-  var list=fieldAvailable?fieldNewsList():[];
+  var list=publicationAllowed()&&fieldAvailable?fieldNewsList():[];
   box.textContent='';
   if(!list.length){box.hidden=true;return;}
   box.hidden=false;
@@ -5607,6 +5987,7 @@ function renderFieldNews(){
 }
 /* 마커 보기: 기존 마커와 팝업을 그대로 열고 잠깐 강조한다. */
 function fieldNewsShow(id){
+  if(!publicationAllowed())return;
   var update=fieldFind(id),entry=fieldMarkers[id],map=fieldMap();
   if(!update||!entry){fieldToast('이 현장소식은 지도에서 찾을 수 없어요.','error');return;}
   map.setView([update.lat,update.lon],Math.max(map.getZoom(),FIELD_NEWS_FOCUS_ZOOM));
@@ -5621,13 +6002,20 @@ function fieldNavChoiceClose(){
   var box=fieldEl('fieldNavChoice');
   if(box&&box.parentNode)box.parentNode.removeChild(box);
 }
+/* 열려 있는 길안내 선택창의 소식이 보호·삭제·종료되면 정확 좌표 링크가 남지 않게 닫는다. */
+function fieldNavChoiceGuard(){
+  var box=fieldEl('fieldNavChoice');
+  if(box&&!fieldGuideTarget(box.getAttribute('data-field-id')))fieldNavChoiceClose();
+}
 /* GPS 를 쓸 수 없을 때: 자동 전환을 하지 않고 사용자가 고르게 한다. 방향 유도는 현재 위치가 필요하다. */
 function fieldNavChooser(update,message){
+  if(!publicationAllowed())return;
   fieldNavChoiceClose();
   var toast=fieldEl('fieldToast');   // 같은 안내가 선택창에 있으므로 겹치지 않게 토스트는 거둔다
   if(toast)toast.style.display='none';
   var box=document.createElement('div');
   box.id='fieldNavChoice';box.setAttribute('role','dialog');
+  box.setAttribute('data-field-id',update.id);
   box.appendChild(fieldLine(message));
   box.appendChild(fieldLine('원하는 안내 방식을 골라 주세요.','fieldNewsMeta'));
   var row=document.createElement('div');
@@ -5637,15 +6025,15 @@ function fieldNavChooser(update,message){
   var kakaoUrl=spotKakaoRouteUrl(point,update.species);
   if(kakaoUrl){
     var kakaoLink=document.createElement('a');
-    kakaoLink.href=kakaoUrl;kakaoLink.target='_blank';kakaoLink.rel='noopener';kakaoLink.textContent='카카오맵';
+    kakaoLink.href='#';kakaoLink.setAttribute('data-publication-app','kakao');kakaoLink.target='_blank';kakaoLink.rel='noopener';kakaoLink.textContent='카카오맵';
     kakaoLink.onclick=fieldNavChoiceClose;
     row.appendChild(kakaoLink);
   }
   var tmapUrl=tmapNavigationUrl(point,update.species);
   if(tmapUrl){
     var tmapLink=document.createElement('a');
-    tmapLink.href=tmapUrl;tmapLink.textContent='티맵';
-    tmapLink.onclick=function(){if(!openTmapNavigation())return false;fieldNavChoiceClose();};
+    tmapLink.href='#';tmapLink.setAttribute('data-publication-app','tmap');tmapLink.textContent='티맵';
+    tmapLink.onclick=fieldNavChoiceClose;
     row.appendChild(tmapLink);
   }
   row.appendChild(fieldNewsButton('닫기',fieldNavChoiceClose));
@@ -5666,30 +6054,45 @@ function fieldNavExternal(update,km,accuracy){
   // GPS 콜백 뒤 새 창 자동 실행 대신 사용자가 앱을 선택하도록 해 팝업 차단을 피한다.
   fieldNavChooser(update,fieldNavDistanceText(km,accuracy)+' · 내비게이션 앱을 선택해 주세요.');
 }
-function fieldNavManualGuide(id){
+function fieldNavManualGuide(id,verified){
+  if(!verified){publicationRouteCheck(function(){fieldNavManualGuide(id,true);});return;}
   var update=fieldFind(id);
   if(!update||!fieldPublicPoint(update))return;
   if(matchMedia('(pointer:fine)').matches){fieldToast('방향 유도는 스마트폰 등 터치 기기에서 쓸 수 있어요.','error');return;}
   var needed='방향 유도는 현재 위치 확인이 필요해요. 위치 권한을 허용한 뒤 다시 눌러 주세요.';
   if(!navigator.geolocation){fieldToast(needed,'error');return;}
   navigator.geolocation.getCurrentPosition(function(){
+    publicationRouteCheck(function(){
     fieldNavChoiceClose();
-    fieldGuideStart(id);
-  },function(){fieldToast(needed,'error');},{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+    if(!fieldGuideTarget(id)){fieldToast('위치 보호 또는 종료된 소식이라 방향 안내를 시작하지 않았어요.','error');return;}   // 콜백이 늦게 와도 지금 상태를 다시 본다
+    fieldGuideStart(id,true);
+    });
+  },function(){publicationRouteCheck(function(){fieldToast(needed,'error');});},{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
 /* 길안내: 현재 위치를 한 번만 읽어 직선거리로 방향 유도/외부 길찾기를 고른다. 읽은 위치는 저장·전송하지 않는다. */
-function fieldNewsNavigate(id){
+function fieldNewsNavigate(id,verified){
+  if(!verified){publicationRouteCheck(function(){fieldNewsNavigate(id,true);});return;}
   var update=fieldFind(id),point=fieldPublicPoint(update);
   if(!update||!fieldIsActive(update)){fieldToast('종료된 현장소식이에요.','error');return;}
   if(!point){fieldToast('위치 보호 중인 소식이라 길안내를 제공하지 않아요.','error');return;}
   if(!navigator.geolocation){fieldNavChooser(update,'이 기기에서는 현재 위치를 쓸 수 없어요.');return;}
   fieldToast('현재 위치를 확인하는 중이에요...');
   navigator.geolocation.getCurrentPosition(function(position){
-    var km=haversineKm({lat:position.coords.latitude,lon:position.coords.longitude},point);
-    if(fieldNavMode(km)==='guide')fieldNavGuide(update,km,position.coords.accuracy);
-    else fieldNavExternal(update,km,position.coords.accuracy);
+    publicationRouteCheck(function(){
+    // 위치 확인을 기다리는 사이 삭제·보호·종료됐을 수 있다. 처음 읽어 둔 소식이 아니라 지금의 최신 소식을 다시 찾아 쓴다.
+    var current=fieldGuideTarget(id);
+    if(!current){fieldToast('위치 보호 또는 종료된 소식이라 길안내를 시작하지 않았어요.','error');return;}
+    var latest=fieldPublicPoint(current);
+    var km=haversineKm({lat:position.coords.latitude,lon:position.coords.longitude},latest);
+    if(fieldNavMode(km)==='guide')fieldNavGuide(current,km,position.coords.accuracy);
+    else fieldNavExternal(current,km,position.coords.accuracy);
+    });
   },function(error){
-    fieldNavChooser(update,error&&error.code===1?'위치 권한이 꺼져 있어 거리를 알 수 없어요.':'현재 위치를 확인하지 못했어요.');
+    publicationRouteCheck(function(){
+    var current=fieldGuideTarget(id);
+    if(!current){fieldToast('위치 보호 또는 종료된 소식이라 길안내를 시작하지 않았어요.','error');return;}
+    fieldNavChooser(current,error&&error.code===1?'위치 권한이 꺼져 있어 거리를 알 수 없어요.':'현재 위치를 확인하지 못했어요.');
+    });
   },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
 }
 window.addEventListener('resize',function(){if(fieldAvailable)renderFieldNews();});
@@ -5710,8 +6113,11 @@ function fieldToast(text,kind){
   fieldToastTimer=setTimeout(function(){toast.style.display='none';},3500);
 }
 
-function fieldReplace(update){
+function fieldReplace(incoming){
+  var update=fieldGuardIncoming(incoming);
+  if(!update)return;   // 삭제됐거나 보호 상태를 되돌리려는 응답
   var replaced=false;
+  fieldBarrier(false);   // 이 변경보다 먼저 보낸 목록 요청의 옛 응답이 덮어쓰지 못하게 한다
   fieldUpdates=fieldUpdates.map(function(item){if(item.id===update.id){replaced=true;return update;}return item;});
   if(!replaced)fieldUpdates.unshift(update);
   renderFieldMarkers();
@@ -5722,8 +6128,8 @@ function fieldConfirm(id){
   if(fieldBusy)return;
   fieldBusy=true;
   fieldApi('/field-updates/'+id+'/confirm','POST',{deviceId:fieldDeviceId()}).then(function(result){
-    if(result.ok&&fieldValidUpdate(result.body.update)){
-      fieldReplace(result.body.update);
+    if(result.ok){
+      loadFieldUpdates();
       fieldToast('확인했어요. 고마워요!');
     }else{
       fieldToast(fieldErrorText(result,'확인하지 못했어요. 잠시 후 다시 시도해 주세요.'),'error');
@@ -5738,6 +6144,7 @@ function fieldDelete(id){
   if(fieldBusy||!fieldFind(id))return;
   if(!window.confirm('이 현장소식을 삭제할까요?\n삭제하면 지도와 목록에서 바로 사라지고 되돌릴 수 없어요.'))return;
   fieldBusy=true;
+  publicationInvalidate('delete pending');
   fieldApi('/field-updates/'+id+'/delete','POST',{deviceId:fieldDeviceId()}).then(function(result){
     if(result.ok){
       fieldMineRemove(id);
@@ -5753,6 +6160,8 @@ function fieldDelete(id){
   }).then(function(){fieldBusy=false;});
 }
 function fieldRemoveLocal(id){
+  fieldTombstones[id]=true;
+  fieldBarrier(true);
   fieldMap().closePopup();
   fieldUpdates=fieldUpdates.filter(function(item){return item.id!==id;});
   renderFieldMarkers();
@@ -5777,8 +6186,8 @@ function fieldSubmitStatus(){
   fieldApi('/field-updates/'+update.id+'/status','POST',{
     status:fieldDraft.status,nickname:nickname,deviceId:fieldDeviceId(),turnstileToken:fieldTurnstileToken
   }).then(function(result){
-    if(result.ok&&fieldValidUpdate(result.body.update)){
-      fieldReplace(result.body.update);
+    if(result.ok){
+      loadFieldUpdates();
       fieldToast('‘'+FIELD_STATUS_LABEL[fieldDraft.status]+'’ 상태로 등록했어요.');
       closeFieldPanel();
     }else{
@@ -5903,7 +6312,7 @@ function fieldStartThreads(status){
 }
 function fieldRenderThreads(body){
   var wanted=fieldDraft.status==='reappeared'?['not_visible']:['visible','reappeared','searching'];
-  var items=fieldUpdates.filter(function(update){return fieldIsActive(update)&&wanted.indexOf(update.status)>=0;});
+  var items=publicationAllowed()?fieldUpdates.filter(function(update){return fieldIsActive(update)&&wanted.indexOf(update.status)>=0;}):[];
   var intro=document.createElement('div');
   intro.className='fieldHelp';
   intro.textContent=items.length?'어떤 소식인가요?':(fieldDraft.status==='reappeared'
@@ -5925,7 +6334,7 @@ function fieldRenderThreads(body){
   body.appendChild(list);
 }
 function fieldRenderStatus(body){
-  var update=fieldFind(fieldDraft.id);
+  var update=publicationAllowed()?fieldFind(fieldDraft.id):null;
   if(!update){body.appendChild(fieldLine('사라졌거나 찾을 수 없는 소식이에요.','fieldHelp'));return;}
   var question=document.createElement('div');
   question.textContent=update.species+' 소식을 ‘'+FIELD_STATUS_LABEL[fieldDraft.status]+'’ 상태로 올릴까요?';
@@ -6227,9 +6636,9 @@ function fieldSubmitCreate(){
   };
   if(draft.source==='gps')payload.gpsAccuracy=draft.accuracy;
   fieldApi('/field-updates','POST',payload).then(function(result){
-    if(result.ok&&fieldValidUpdate(result.body.update)){
-      fieldMineAdd(result.body.update.id);
-      fieldReplace(result.body.update);
+    if(result.ok){
+      fieldMineAdd(result.body.id);
+      loadFieldUpdates();
       fieldToast('현장소식을 등록했어요.');
       closeFieldPanel();
     }else{

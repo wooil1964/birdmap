@@ -580,10 +580,10 @@ test("이력 응답에 내부 집계 열이 새지 않는다", async () => {
   }
 });
 
-test("이력 응답은 60초 캐시를 그대로 알린다", async () => {
+test("철회 가능한 이력 응답은 저장을 허용하지 않는다", async () => {
   const db = fakeDb(siteRows());
   const response = await handleRequest(siteRequest("19"), publicEnv(db));
-  assert.equal(response.headers.get("Cache-Control"), "public, max-age=60");
+  assert.equal(response.headers.get("Cache-Control"), "no-store");
 });
 
 test("탐조지별 이력에는 좌표와 비공개 항목이 들어가지 않는다", async () => {

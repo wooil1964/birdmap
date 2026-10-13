@@ -1,0 +1,59 @@
+✔ publication: additive migration preserves canonical schemaReady and fresh schema contract (13.2086ms)
+✔ publication: head echoes only valid fresh nonce and strict version strings (21.7678ms)
+✔ publication: invalid nonce fails closed "" (3.2086ms)
+✔ publication: invalid nonce fails closed "abc" (3.1181ms)
+✔ publication: invalid nonce fails closed "gggggggggggggggggggggggggggggggg" (3.2188ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.1805ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.0975ms)
+✔ publication: invalid nonce fails closed "[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]" (2.9902ms)
+✔ publication: invalid nonce fails closed "{\"toString\":\"not-callable\"}" (3.0078ms)
+✔ publication: revision parser rejects coercion, noncanonical decimal, underflow/overflow (0.2487ms)
+✔ publication: incomplete trigger installation cannot issue a valid authority anchor (3.2611ms)
+✖ publication: malformed epoch or counter is unavailable and source writes abort (3.8584ms)
+✔ publication: strict legacy /reports/approved cannot expose a raw coordinate response (9.4523ms)
+✔ publication: atomic state/data and matching authority for /reports/approved (4.9665ms)
+✔ publication: strict legacy /reports/pending cannot expose a raw coordinate response (3.8225ms)
+✔ publication: atomic state/data and matching authority for /reports/pending (4.255ms)
+✔ publication: strict legacy /reports/recent-sites cannot expose a raw coordinate response (3.7389ms)
+✔ publication: atomic state/data and matching authority for /reports/recent-sites (4.2428ms)
+✔ publication: strict legacy /reports/site/1 cannot expose a raw coordinate response (3.7414ms)
+✔ publication: atomic state/data and matching authority for /reports/site/1 (4.4529ms)
+✔ publication: strict legacy /field-updates cannot expose a raw coordinate response (3.792ms)
+✔ publication: atomic state/data and matching authority for /field-updates (4.4979ms)
+✔ publication: old expected revision is 409 without payload, after withdrawal and hiding (3.7373ms)
+✔ publication: missing schema or singleton is 503 and mutation does not succeed (4.9061ms)
+✔ publication: revision larger than 2^53 remains decimal text and exact (3.4809ms)
+✔ publication: overflow aborts source mutation and counter in the same transaction (2.9879ms)
+✔ publication: insert/update/delete coverage and failed batch rollback include counter (3.0981ms)
+✔ field CAS: deleted is terminal against old unconditional status/activity/coordinate writes (7.0229ms)
+✔ field CAS: old normal writer advances row revision and old CAS cannot perform ABA write (3.8303ms)
+✔ field CAS: row revision over 2^53 is serialized and compared as exact text (5.7331ms)
+✔ field CAS: status read before delete cannot restore deleted or append a status event (5.4803ms)
+✔ field CAS: confirm read before delete rolls back confirmation/activity and publication (4.7374ms)
+✔ field CAS: concurrent owner deletion is idempotent and appends exactly one event (4.6094ms)
+✔ field CAS: status expiry during asynchronous validation cannot revive expired item (4.8092ms)
+✔ field CAS: normal expire/reappear/reapprove are not permanent tombstones (7.1307ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 34
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 252.7648
+
+✖ failing tests:
+
+test at reports-api\test\publication-security.test.mjs:146:1
+✖ publication: malformed epoch or counter is unavailable and source writes abort (3.8584ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: epoch='gggggggggggggggggggggggggggggggg'
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/reports-api/test/publication-security.test.mjs:150:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

@@ -1,0 +1,518 @@
+{
+  "at": "2026-10-12T15:20:13.767Z",
+  "source": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+  "versions": [
+    {
+      "worker": "birdmap-reports",
+      "id": "1f00aa4e-cdff-4f79-aab1-3d76e62669b0",
+      "role": "public",
+      "mode": "CANONICAL_DUAL_WRITE",
+      "localBundleSha256": "60919a6801c5e23f37d5765a1bc22d1261e6d924d8364a1a3143c6631c50be71",
+      "metadata": {
+        "created_on": "2026-10-12T10:37:03.447449Z",
+        "source": "wrangler",
+        "author_id": "dd83825af201ae8f01d51c6e50091adf",
+        "author_email": "wooil2000@gmail.com",
+        "has_preview": true
+      },
+      "script": {
+        "etag": "5478c38e26bab250ba25734e36444c2ac5b792cb590ddb039fb0f8f15bd6b7e3",
+        "handlers": [
+          "fetch"
+        ],
+        "named_handlers": [
+          {
+            "name": "handleLegacyRequest",
+            "handlers": [
+              "class"
+            ]
+          },
+          {
+            "name": "handleRequest",
+            "handlers": [
+              "class"
+            ]
+          }
+        ],
+        "last_deployed_from": "wrangler"
+      },
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ADMIN_PAGE_URL",
+          "type": "plain_text"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text"
+        },
+        {
+          "name": "NOTIFY_EMAIL_FROM",
+          "type": "plain_text"
+        },
+        {
+          "name": "NOTIFY_EMAIL_TO",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORT_IP_SALT",
+          "type": "secret_text"
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text"
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "service": "birdmap-reports-admin"
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "text": "admin-phase2e-1"
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "text": "true"
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "text": "public-phase2e-1"
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "text": "CANONICAL_DUAL_WRITE"
+        },
+        {
+          "name": "RESEND_API_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "TURNSTILE_SECRET_KEY",
+          "type": "secret_text"
+        }
+      ],
+      "secretsRetained": true
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "id": "cf2b8b90-b00d-4356-ad85-78ae1e8bb4c0",
+      "role": "admin",
+      "mode": "CANONICAL_DUAL_WRITE",
+      "localBundleSha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "metadata": {
+        "created_on": "2026-10-12T10:37:32.945852Z",
+        "source": "wrangler",
+        "author_id": "dd83825af201ae8f01d51c6e50091adf",
+        "author_email": "wooil2000@gmail.com",
+        "has_preview": true
+      },
+      "script": {
+        "etag": "e59903d896d1bc04cabd506121ecf54ddca150d6cd81285cb51b7f316f9203ef",
+        "handlers": [
+          "fetch"
+        ],
+        "named_handlers": [
+          {
+            "name": "handleRequest",
+            "handlers": [
+              "class"
+            ]
+          }
+        ],
+        "last_deployed_from": "wrangler"
+      },
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ACCESS_AUD",
+          "type": "plain_text"
+        },
+        {
+          "name": "ACCESS_TEAM_DOMAIN",
+          "type": "plain_text"
+        },
+        {
+          "name": "ADMIN_EMAILS",
+          "type": "plain_text"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text"
+        },
+        {
+          "name": "EVENTS_DB",
+          "type": "d1",
+          "databaseId": "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text"
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "service": "birdmap-reports"
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "text": "public-phase2e-1"
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "text": "true"
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "text": "admin-phase2e-1"
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "text": "CANONICAL_DUAL_WRITE"
+        }
+      ],
+      "secretsRetained": true
+    },
+    {
+      "worker": "birdmap-reports",
+      "id": "d403e20b-f2f7-4024-b702-b756d17a924a",
+      "role": "public-maintenance",
+      "mode": "READ_ONLY_MAINTENANCE",
+      "localBundleSha256": "60919a6801c5e23f37d5765a1bc22d1261e6d924d8364a1a3143c6631c50be71",
+      "metadata": {
+        "created_on": "2026-10-12T10:37:35.976118Z",
+        "source": "wrangler",
+        "author_id": "dd83825af201ae8f01d51c6e50091adf",
+        "author_email": "wooil2000@gmail.com",
+        "has_preview": true
+      },
+      "script": {
+        "etag": "5478c38e26bab250ba25734e36444c2ac5b792cb590ddb039fb0f8f15bd6b7e3",
+        "handlers": [
+          "fetch"
+        ],
+        "named_handlers": [
+          {
+            "name": "handleLegacyRequest",
+            "handlers": [
+              "class"
+            ]
+          },
+          {
+            "name": "handleRequest",
+            "handlers": [
+              "class"
+            ]
+          }
+        ],
+        "last_deployed_from": "wrangler"
+      },
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ADMIN_PAGE_URL",
+          "type": "plain_text"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text"
+        },
+        {
+          "name": "NOTIFY_EMAIL_FROM",
+          "type": "plain_text"
+        },
+        {
+          "name": "NOTIFY_EMAIL_TO",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORT_IP_SALT",
+          "type": "secret_text"
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text"
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "service": "birdmap-reports-admin"
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "text": "admin-phase2e-1"
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "text": "true"
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "text": "public-phase2e-1"
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "text": "READ_ONLY_MAINTENANCE"
+        },
+        {
+          "name": "RESEND_API_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "TURNSTILE_SECRET_KEY",
+          "type": "secret_text"
+        }
+      ],
+      "secretsRetained": true
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "id": "9ba936ff-b3a7-4e9f-9c72-440a8a03c50e",
+      "role": "admin-maintenance",
+      "mode": "READ_ONLY_MAINTENANCE",
+      "localBundleSha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "metadata": {
+        "created_on": "2026-10-12T10:37:40.697728Z",
+        "source": "wrangler",
+        "author_id": "dd83825af201ae8f01d51c6e50091adf",
+        "author_email": "wooil2000@gmail.com",
+        "has_preview": true
+      },
+      "script": {
+        "etag": "e59903d896d1bc04cabd506121ecf54ddca150d6cd81285cb51b7f316f9203ef",
+        "handlers": [
+          "fetch"
+        ],
+        "named_handlers": [
+          {
+            "name": "handleRequest",
+            "handlers": [
+              "class"
+            ]
+          }
+        ],
+        "last_deployed_from": "wrangler"
+      },
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ACCESS_AUD",
+          "type": "plain_text"
+        },
+        {
+          "name": "ACCESS_TEAM_DOMAIN",
+          "type": "plain_text"
+        },
+        {
+          "name": "ADMIN_EMAILS",
+          "type": "plain_text"
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text"
+        },
+        {
+          "name": "EVENTS_DB",
+          "type": "d1",
+          "databaseId": "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text"
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "service": "birdmap-reports"
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "text": "public-phase2e-1"
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "text": "true"
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "text": "admin-phase2e-1"
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text"
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "text": "READ_ONLY_MAINTENANCE"
+        }
+      ],
+      "secretsRetained": true
+    }
+  ],
+  "active": {
+    "birdmap-reports": {
+      "deploymentId": "cfe309b7-3dad-4844-bbd7-4943b0f78238",
+      "versions": [
+        {
+          "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+          "percentage": 100
+        }
+      ],
+      "previewEnabled": false,
+      "unchanged": true
+    },
+    "birdmap-reports-admin": {
+      "deploymentId": "965135f2-b286-4487-9b32-1c1af08f9734",
+      "versions": [
+        {
+          "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+          "percentage": 100
+        }
+      ],
+      "previewEnabled": false,
+      "unchanged": true
+    }
+  },
+  "trafficActivations": 0,
+  "d1Writes": 0
+}

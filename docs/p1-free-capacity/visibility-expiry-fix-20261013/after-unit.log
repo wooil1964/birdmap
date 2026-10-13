@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: hidden permission detection destructively removes live coordinates and names
+ok 1 - hidden permission detection destructively removes live coordinates and names
+  ---
+  duration_ms: 2.4367
+  type: 'test'
+  ...
+# Subtest: exact5000ms expiry detection destructively removes live coordinates and names
+ok 2 - exact5000ms expiry detection destructively removes live coordinates and names
+  ---
+  duration_ms: 0.6333
+  type: 'test'
+  ...
+# Subtest: valid4999ms permission stays public and the lease cap is unchanged
+ok 3 - valid4999ms permission stays public and the lease cap is unchanged
+  ---
+  duration_ms: 0.59
+  type: 'test'
+  ...
+# Subtest: hidden HEAD issues no network request
+ok 4 - hidden HEAD issues no network request
+  ---
+  duration_ms: 0.7829
+  type: 'test'
+  ...
+# Subtest: hidden payload/refresh/route issues no network and never executes callback
+ok 5 - hidden payload/refresh/route issues no network and never executes callback
+  ---
+  duration_ms: 0.8136
+  type: 'test'
+  ...
+# Subtest: HEAD started before visibility barrier is rejected after late arrival
+ok 6 - HEAD started before visibility barrier is rejected after late arrival
+  ---
+  duration_ms: 1.7438
+  type: 'test'
+  ...
+# Subtest: payload arriving after hide never issues postflight or restores data
+ok 7 - payload arriving after hide never issues postflight or restores data
+  ---
+  duration_ms: 4.0269
+  type: 'test'
+  ...
+# Subtest: late old HEAD failure cannot invalidate newer visible recovered state
+ok 8 - late old HEAD failure cannot invalidate newer visible recovered state
+  ---
+  duration_ms: 0.7668
+  type: 'test'
+  ...
+# Subtest: visibility barrier releases old in-flight references for normal recovery
+ok 9 - visibility barrier releases old in-flight references for normal recovery
+  ---
+  duration_ms: 0.9077
+  type: 'test'
+  ...
+# Subtest: new primary authority is accepted through fresh payload and postflight
+ok 10 - new primary authority is accepted through fresh payload and postflight
+  ---
+  duration_ms: 1.1077
+  type: 'test'
+  ...
+# Subtest: renewal must match current epoch/revision and generation
+ok 11 - renewal must match current epoch/revision and generation
+  ---
+  duration_ms: 0.6011
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 80.5672

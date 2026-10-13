@@ -1,0 +1,86 @@
+✔ 박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순 (7.8894ms)
+✔ 등록자가 달라도 공개 소식은 같은 목록·같은 길안내 대상이다 (1.6392ms)
+✔ 거리 기준: 29.9km·30.0km는 방향 유도, 30.1km는 내비게이션 (1.4966ms)
+✔ 위치 보호·비정상 좌표는 길안내 좌표가 없다 (1.6771ms)
+✔ 현장 길찾기: 권한이 미확인 또는 만료면 정상 좌표도 내보내지 않는다 (2.9603ms)
+✔ 거리 문구는 직선 약 km이고 위치 오차가 크면 오차를 함께 밝힌다 (1.6805ms)
+✖ 카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다 (2.2986ms)
+✔ 위치정보를 저장·전송하는 코드가 새 길안내에 없다 (0.4652ms)
+✖ 외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다 (3.0249ms)
+✔ 내 현장소식 삭제: 확인창 승인 뒤에만 서버로 요청하고, 버튼은 이 브라우저가 등록한 소식에만 보이며 소유권은 서버가 판단한다 (1.3475ms)
+✔ 가림 상태만 바뀌어도 열린 현장소식 팝업을 최신 보호 상태로 갱신한다 (3.1525ms)
+✔ 삭제 → 오래된 GET 응답 도착 → 마커·목록 복구 0건 (14.3865ms)
+✔ 여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 것만 반영된다 (7.3524ms)
+✔ 위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건 (5.8865ms)
+✔ 상태 변경(POST) 응답으로 가림이 확인되면 그 전에 보낸 목록 GET 의 정확 좌표가 덮지 못한다 (5.7409ms)
+✔ 삭제된 id 는 늦은 POST 응답(fieldReplace)으로도 되살아나지 않는다 (5.6076ms)
+✔ 길안내 중 보호 전환 → 안내·GPS 추적 즉시 중단 (6.1201ms)
+✔ 이미 실행 중인 GPS 콜백이 보호 직후 도착해도 안내가 재개되지 않는다 (5.5719ms)
+✔ 보호 상태가 막 반영됐지만 안내 객체가 아직 남은 순간의 콜백도 최신 상태를 확인하고 멈춘다 (5.5106ms)
+✔ 보호 소식은 방향 안내를 시작할 수 없다(직접 호출 포함) (5.5519ms)
+✔ 지연 GPS(길안내 버튼) → 그 사이 보호·삭제되면 방향 안내·외부 길찾기 모두 시작하지 않는다 (11.1538ms)
+✔ GPS 오류 콜백도 보호된 소식의 선택창(정확 좌표 링크)을 만들지 않는다 (5.4957ms)
+✔ 수동 방향 유도(GPS 확인 후 시작)도 늦은 콜백에서 보호를 다시 확인한다 (5.5355ms)
+✔ 정상(공개) 소식은 그대로 길안내·방향 안내가 된다(회귀) (11.0318ms)
+✔ 열려 있던 길안내 선택창은 소식이 보호되면 닫힌다 (5.5099ms)
+✔ 승인 제보: 공개 취소(철회) 뒤 도착한 옛 응답이 마커를 되살리지 못한다 (2.0643ms)
+✔ 권한 만료·미확인은 현장 좌표·GPS 시작을 차단한다(전송 검증 경계 단위) (10.791ms)
+✔ 가림 해제는 더 새로운 명시 공개 권한에서 복구된다(영구 sticky 아님) (5.5007ms)
+✔ 승인 제보: 위치 가림 뒤 도착한 옛 응답이 정확 좌표를 다시 그리지 못한다 (대기·최근 제보 포함) (2.0376ms)
+✔ 정상 순서의 응답은 모두 반영된다(회귀) (1.5538ms)
+✔ 탐조지 이력 기억: 승인 제보 갱신 전에 보낸 요청의 응답은 기억에 넣지 않고 다시 받는다 (5.3111ms)
+✔ 소스 점검: 응답 세대·tombstone·최신 상태 확인이 연결되어 있다 (1.1802ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 30
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 209.9
+
+✖ failing tests:
+
+test at .github\scripts\test_field_news.mjs:81:1
+✖ 카카오맵 길찾기 URL 은 기존 출현 지점 링크와 같은 형식이고 좌표가 이상하면 만들지 않는다 (2.2986ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4">🚗 카카오맵</a>'
+  - '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4">🚗 카카오맵 찾아가기</a>'
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_field_news.mjs:84:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4">🚗 카카오맵</a>',
+    expected: '<a class="spotKakaoRoute" target="_blank" rel="noopener" href="https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,36.6,126.4">🚗 카카오맵 찾아가기</a>',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at .github\scripts\test_field_news.mjs:96:1
+✖ 외부 길안내 창 열기: noopener 기능 문자열을 쓰지 않고(성공해도 null 반환) 차단 시 직접 누르는 링크를 보여 준다 (3.0249ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(block.includes('opened.opener=null'))
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/.github/scripts/test_field_news.mjs:99:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

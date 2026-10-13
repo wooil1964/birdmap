@@ -1,0 +1,848 @@
+{
+  "inputSha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "functions": "Actual existing publication functions evaluated unchanged; cadence and network are virtual deterministic harness inputs",
+  "sourceModified": false,
+  "productionRequests": 0,
+  "scenarios": 6,
+  "passed": 6,
+  "failed": 0,
+  "notes": [
+    "Steady permission already loaded at time0; startup requests excluded",
+    "Field periodic refresh at60000ms retained",
+    "No DTO cache or UI restoration changes",
+    "All successful renewals expire exactly at actual primary-request-start+5000ms",
+    "This is scheduler/contract unit evidence, not Chrome load measurement"
+  ],
+  "theoreticalHeadRate": {
+    "perUserHourAt5000": 720,
+    "perUserHourAt4750": 757.8947368421053,
+    "twentyUsersEightHoursAt5000": 115200,
+    "twentyUsersEightHoursAt4750": 121263.15789473684
+  },
+  "results": [
+    {
+      "period": 5000,
+      "rtt": 75,
+      "pollJitter": 0,
+      "hidden": false,
+      "counts": {
+        "head": 32,
+        "approved": 6,
+        "pending": 6,
+        "recent": 6,
+        "field": 7
+      },
+      "total": 57,
+      "invalidations": [
+        {
+          "reason": "expired",
+          "at": 5001
+        },
+        {
+          "reason": "expired",
+          "at": 15001
+        },
+        {
+          "reason": "expired",
+          "at": 25001
+        },
+        {
+          "reason": "expired",
+          "at": 35001
+        },
+        {
+          "reason": "expired",
+          "at": 45001
+        },
+        {
+          "reason": "expired",
+          "at": 55001
+        }
+      ],
+      "renewals": [
+        {
+          "at": 0,
+          "started": 0,
+          "expires": 5000
+        },
+        {
+          "at": 5300,
+          "started": 5225,
+          "expires": 10225
+        },
+        {
+          "at": 5375,
+          "started": 5300,
+          "expires": 10300
+        },
+        {
+          "at": 5375,
+          "started": 5300,
+          "expires": 10300
+        },
+        {
+          "at": 5375,
+          "started": 5300,
+          "expires": 10300
+        },
+        {
+          "at": 10075,
+          "started": 10000,
+          "expires": 15000
+        },
+        {
+          "at": 15300,
+          "started": 15225,
+          "expires": 20225
+        },
+        {
+          "at": 15375,
+          "started": 15300,
+          "expires": 20300
+        },
+        {
+          "at": 15375,
+          "started": 15300,
+          "expires": 20300
+        },
+        {
+          "at": 15375,
+          "started": 15300,
+          "expires": 20300
+        },
+        {
+          "at": 20075,
+          "started": 20000,
+          "expires": 25000
+        },
+        {
+          "at": 25300,
+          "started": 25225,
+          "expires": 30225
+        },
+        {
+          "at": 25375,
+          "started": 25300,
+          "expires": 30300
+        },
+        {
+          "at": 25375,
+          "started": 25300,
+          "expires": 30300
+        },
+        {
+          "at": 25375,
+          "started": 25300,
+          "expires": 30300
+        },
+        {
+          "at": 30075,
+          "started": 30000,
+          "expires": 35000
+        },
+        {
+          "at": 35300,
+          "started": 35225,
+          "expires": 40225
+        },
+        {
+          "at": 35375,
+          "started": 35300,
+          "expires": 40300
+        },
+        {
+          "at": 35375,
+          "started": 35300,
+          "expires": 40300
+        },
+        {
+          "at": 35375,
+          "started": 35300,
+          "expires": 40300
+        },
+        {
+          "at": 40075,
+          "started": 40000,
+          "expires": 45000
+        },
+        {
+          "at": 45300,
+          "started": 45225,
+          "expires": 50225
+        },
+        {
+          "at": 45375,
+          "started": 45300,
+          "expires": 50300
+        },
+        {
+          "at": 45375,
+          "started": 45300,
+          "expires": 50300
+        },
+        {
+          "at": 45375,
+          "started": 45300,
+          "expires": 50300
+        },
+        {
+          "at": 50075,
+          "started": 50000,
+          "expires": 55000
+        },
+        {
+          "at": 55300,
+          "started": 55225,
+          "expires": 60225
+        },
+        {
+          "at": 55375,
+          "started": 55300,
+          "expires": 60300
+        },
+        {
+          "at": 55375,
+          "started": 55300,
+          "expires": 60300
+        },
+        {
+          "at": 55375,
+          "started": 55300,
+          "expires": 60300
+        },
+        {
+          "at": 60075,
+          "started": 60000,
+          "expires": 65000
+        },
+        {
+          "at": 60225,
+          "started": 60150,
+          "expires": 65150
+        }
+      ],
+      "finalAllowed": true,
+      "hiddenHeadCalls": null
+    },
+    {
+      "period": 4750,
+      "rtt": 75,
+      "pollJitter": 0,
+      "hidden": false,
+      "counts": {
+        "head": 15,
+        "approved": 0,
+        "pending": 0,
+        "recent": 0,
+        "field": 1
+      },
+      "total": 16,
+      "invalidations": [],
+      "renewals": [
+        {
+          "at": 0,
+          "started": 0,
+          "expires": 5000
+        },
+        {
+          "at": 4825,
+          "started": 4750,
+          "expires": 9750
+        },
+        {
+          "at": 9575,
+          "started": 9500,
+          "expires": 14500
+        },
+        {
+          "at": 14325,
+          "started": 14250,
+          "expires": 19250
+        },
+        {
+          "at": 19075,
+          "started": 19000,
+          "expires": 24000
+        },
+        {
+          "at": 23825,
+          "started": 23750,
+          "expires": 28750
+        },
+        {
+          "at": 28575,
+          "started": 28500,
+          "expires": 33500
+        },
+        {
+          "at": 33325,
+          "started": 33250,
+          "expires": 38250
+        },
+        {
+          "at": 38075,
+          "started": 38000,
+          "expires": 43000
+        },
+        {
+          "at": 42825,
+          "started": 42750,
+          "expires": 47750
+        },
+        {
+          "at": 47575,
+          "started": 47500,
+          "expires": 52500
+        },
+        {
+          "at": 52325,
+          "started": 52250,
+          "expires": 57250
+        },
+        {
+          "at": 57075,
+          "started": 57000,
+          "expires": 62000
+        },
+        {
+          "at": 60225,
+          "started": 60150,
+          "expires": 65150
+        },
+        {
+          "at": 61825,
+          "started": 61750,
+          "expires": 66750
+        }
+      ],
+      "finalAllowed": true,
+      "hiddenHeadCalls": null
+    },
+    {
+      "period": 4750,
+      "rtt": 249,
+      "pollJitter": 0,
+      "hidden": false,
+      "counts": {
+        "head": 15,
+        "approved": 0,
+        "pending": 0,
+        "recent": 0,
+        "field": 1
+      },
+      "total": 16,
+      "invalidations": [],
+      "renewals": [
+        {
+          "at": 0,
+          "started": 0,
+          "expires": 5000
+        },
+        {
+          "at": 4999,
+          "started": 4750,
+          "expires": 9750
+        },
+        {
+          "at": 9749,
+          "started": 9500,
+          "expires": 14500
+        },
+        {
+          "at": 14499,
+          "started": 14250,
+          "expires": 19250
+        },
+        {
+          "at": 19249,
+          "started": 19000,
+          "expires": 24000
+        },
+        {
+          "at": 23999,
+          "started": 23750,
+          "expires": 28750
+        },
+        {
+          "at": 28749,
+          "started": 28500,
+          "expires": 33500
+        },
+        {
+          "at": 33499,
+          "started": 33250,
+          "expires": 38250
+        },
+        {
+          "at": 38249,
+          "started": 38000,
+          "expires": 43000
+        },
+        {
+          "at": 42999,
+          "started": 42750,
+          "expires": 47750
+        },
+        {
+          "at": 47749,
+          "started": 47500,
+          "expires": 52500
+        },
+        {
+          "at": 52499,
+          "started": 52250,
+          "expires": 57250
+        },
+        {
+          "at": 57249,
+          "started": 57000,
+          "expires": 62000
+        },
+        {
+          "at": 60747,
+          "started": 60498,
+          "expires": 65498
+        },
+        {
+          "at": 61999,
+          "started": 61750,
+          "expires": 66750
+        }
+      ],
+      "finalAllowed": true,
+      "hiddenHeadCalls": null
+    },
+    {
+      "period": 4750,
+      "rtt": 300,
+      "pollJitter": 0,
+      "hidden": false,
+      "counts": {
+        "head": 33,
+        "approved": 6,
+        "pending": 6,
+        "recent": 6,
+        "field": 7
+      },
+      "total": 58,
+      "invalidations": [
+        {
+          "reason": "expired",
+          "at": 5001
+        },
+        {
+          "reason": "expired",
+          "at": 14501
+        },
+        {
+          "reason": "expired",
+          "at": 24001
+        },
+        {
+          "reason": "expired",
+          "at": 33501
+        },
+        {
+          "reason": "expired",
+          "at": 43001
+        },
+        {
+          "reason": "expired",
+          "at": 52501
+        }
+      ],
+      "renewals": [
+        {
+          "at": 0,
+          "started": 0,
+          "expires": 5000
+        },
+        {
+          "at": 5950,
+          "started": 5650,
+          "expires": 10650
+        },
+        {
+          "at": 6250,
+          "started": 5950,
+          "expires": 10950
+        },
+        {
+          "at": 6250,
+          "started": 5950,
+          "expires": 10950
+        },
+        {
+          "at": 6250,
+          "started": 5950,
+          "expires": 10950
+        },
+        {
+          "at": 9800,
+          "started": 9500,
+          "expires": 14500
+        },
+        {
+          "at": 15450,
+          "started": 15150,
+          "expires": 20150
+        },
+        {
+          "at": 15750,
+          "started": 15450,
+          "expires": 20450
+        },
+        {
+          "at": 15750,
+          "started": 15450,
+          "expires": 20450
+        },
+        {
+          "at": 15750,
+          "started": 15450,
+          "expires": 20450
+        },
+        {
+          "at": 19300,
+          "started": 19000,
+          "expires": 24000
+        },
+        {
+          "at": 24950,
+          "started": 24650,
+          "expires": 29650
+        },
+        {
+          "at": 25250,
+          "started": 24950,
+          "expires": 29950
+        },
+        {
+          "at": 25250,
+          "started": 24950,
+          "expires": 29950
+        },
+        {
+          "at": 25250,
+          "started": 24950,
+          "expires": 29950
+        },
+        {
+          "at": 28800,
+          "started": 28500,
+          "expires": 33500
+        },
+        {
+          "at": 34450,
+          "started": 34150,
+          "expires": 39150
+        },
+        {
+          "at": 34750,
+          "started": 34450,
+          "expires": 39450
+        },
+        {
+          "at": 34750,
+          "started": 34450,
+          "expires": 39450
+        },
+        {
+          "at": 34750,
+          "started": 34450,
+          "expires": 39450
+        },
+        {
+          "at": 38300,
+          "started": 38000,
+          "expires": 43000
+        },
+        {
+          "at": 43950,
+          "started": 43650,
+          "expires": 48650
+        },
+        {
+          "at": 44250,
+          "started": 43950,
+          "expires": 48950
+        },
+        {
+          "at": 44250,
+          "started": 43950,
+          "expires": 48950
+        },
+        {
+          "at": 44250,
+          "started": 43950,
+          "expires": 48950
+        },
+        {
+          "at": 47800,
+          "started": 47500,
+          "expires": 52500
+        },
+        {
+          "at": 53450,
+          "started": 53150,
+          "expires": 58150
+        },
+        {
+          "at": 53750,
+          "started": 53450,
+          "expires": 58450
+        },
+        {
+          "at": 53750,
+          "started": 53450,
+          "expires": 58450
+        },
+        {
+          "at": 53750,
+          "started": 53450,
+          "expires": 58450
+        },
+        {
+          "at": 57300,
+          "started": 57000,
+          "expires": 62000
+        },
+        {
+          "at": 60900,
+          "started": 60600,
+          "expires": 65600
+        },
+        {
+          "at": 62050,
+          "started": 61750,
+          "expires": 66750
+        }
+      ],
+      "finalAllowed": true,
+      "hiddenHeadCalls": null
+    },
+    {
+      "period": 4750,
+      "rtt": 75,
+      "pollJitter": 200,
+      "hidden": false,
+      "counts": {
+        "head": 18,
+        "approved": 1,
+        "pending": 1,
+        "recent": 1,
+        "field": 2
+      },
+      "total": 23,
+      "invalidations": [
+        {
+          "reason": "expired",
+          "at": 5001
+        }
+      ],
+      "renewals": [
+        {
+          "at": 0,
+          "started": 0,
+          "expires": 5000
+        },
+        {
+          "at": 5250,
+          "started": 5175,
+          "expires": 10175
+        },
+        {
+          "at": 5325,
+          "started": 5250,
+          "expires": 10250
+        },
+        {
+          "at": 5325,
+          "started": 5250,
+          "expires": 10250
+        },
+        {
+          "at": 5325,
+          "started": 5250,
+          "expires": 10250
+        },
+        {
+          "at": 9775,
+          "started": 9700,
+          "expires": 14700
+        },
+        {
+          "at": 14525,
+          "started": 14450,
+          "expires": 19450
+        },
+        {
+          "at": 19275,
+          "started": 19200,
+          "expires": 24200
+        },
+        {
+          "at": 24025,
+          "started": 23950,
+          "expires": 28950
+        },
+        {
+          "at": 28775,
+          "started": 28700,
+          "expires": 33700
+        },
+        {
+          "at": 33525,
+          "started": 33450,
+          "expires": 38450
+        },
+        {
+          "at": 38275,
+          "started": 38200,
+          "expires": 43200
+        },
+        {
+          "at": 43025,
+          "started": 42950,
+          "expires": 47950
+        },
+        {
+          "at": 47775,
+          "started": 47700,
+          "expires": 52700
+        },
+        {
+          "at": 52525,
+          "started": 52450,
+          "expires": 57450
+        },
+        {
+          "at": 57275,
+          "started": 57200,
+          "expires": 62200
+        },
+        {
+          "at": 60225,
+          "started": 60150,
+          "expires": 65150
+        },
+        {
+          "at": 62025,
+          "started": 61950,
+          "expires": 66950
+        }
+      ],
+      "finalAllowed": true,
+      "hiddenHeadCalls": null
+    },
+    {
+      "period": 4750,
+      "rtt": 75,
+      "pollJitter": 0,
+      "hidden": true,
+      "counts": {
+        "head": 15,
+        "approved": 1,
+        "pending": 1,
+        "recent": 1,
+        "field": 2
+      },
+      "total": 20,
+      "invalidations": [
+        {
+          "reason": "visibility",
+          "at": 32500
+        }
+      ],
+      "renewals": [
+        {
+          "at": 0,
+          "started": 0,
+          "expires": 5000
+        },
+        {
+          "at": 4825,
+          "started": 4750,
+          "expires": 9750
+        },
+        {
+          "at": 9575,
+          "started": 9500,
+          "expires": 14500
+        },
+        {
+          "at": 14325,
+          "started": 14250,
+          "expires": 19250
+        },
+        {
+          "at": 19075,
+          "started": 19000,
+          "expires": 24000
+        },
+        {
+          "at": 23825,
+          "started": 23750,
+          "expires": 28750
+        },
+        {
+          "at": 28575,
+          "started": 28500,
+          "expires": 33500
+        },
+        {
+          "at": 42725,
+          "started": 42650,
+          "expires": 47650
+        },
+        {
+          "at": 42800,
+          "started": 42725,
+          "expires": 47725
+        },
+        {
+          "at": 42800,
+          "started": 42725,
+          "expires": 47725
+        },
+        {
+          "at": 42800,
+          "started": 42725,
+          "expires": 47725
+        },
+        {
+          "at": 42800,
+          "started": 42725,
+          "expires": 47725
+        },
+        {
+          "at": 47575,
+          "started": 47500,
+          "expires": 52500
+        },
+        {
+          "at": 52325,
+          "started": 52250,
+          "expires": 57250
+        },
+        {
+          "at": 57075,
+          "started": 57000,
+          "expires": 62000
+        },
+        {
+          "at": 60225,
+          "started": 60150,
+          "expires": 65150
+        },
+        {
+          "at": 61825,
+          "started": 61750,
+          "expires": 66750
+        }
+      ],
+      "finalAllowed": true,
+      "hiddenHeadCalls": 0
+    }
+  ]
+}

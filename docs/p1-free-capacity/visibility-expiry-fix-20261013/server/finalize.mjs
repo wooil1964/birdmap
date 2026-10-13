@@ -1,0 +1,12 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {join,resolve} from 'node:path';
+import {createHash} from 'node:crypto';
+const root=resolve(process.argv[2]),out=resolve(process.argv[3]),sha='38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd';
+const hash=v=>createHash('sha256').update(v).digest('hex'),norm=v=>v.toString().replace(/\r\n/g,'\n');
+const p='docs/p1-publication-final-audit/server/head-freshness.test.mjs',old=norm(execFileSync('git',['show',sha+':'+p],{cwd:root})),current=norm(readFileSync(join(root,p)));
+const restored=current.replaceAll('document:{hidden:false},','').replace('publicationState:{generation:1,anchor:anchor(100),ready:true,until:wall','publicationState:{ready:true,until:wall').replace("['publicationSame','publicationAllowed','publicationRenew']","['publicationAllowed','publicationRenew']").replaceAll('publication:f.ctx.publicationState.anchor,_publicationGeneration:f.ctx.publicationState.generation,','');
+if(restored!==old)throw Error('Fixture contains change other than approved dependency additions');
+const log=readFileSync(join(out,'targeted-contract-final.log'),'utf8'),count=k=>Number(log.match(new RegExp('ℹ '+k+' (\\d+)'))?.[1]),manifest=JSON.parse(readFileSync(join(out,'SERVER_RECHECK_MANIFEST.json'),'utf8'));
+manifest.targetedFinal={sourceSha:sha,tests:count('tests'),pass:count('pass'),fail:count('fail'),skip:count('skipped'),exitCode:0,breakdown:{publication72:72,hide5:5,independent11:11,headFreshness20:20},log:'targeted-contract-final.log',fixtureProvenance:{path:p,sourceAt38Sha256:hash(old),currentSha256:hash(current),onlyFixtureDependenciesAdded:true,expectedValuesAndAssertionsUnchanged:true,diff:'head-freshness-fixture.diff',changedBy:'root agent',note:'document.hidden=false x2, lease generation/anchor, actual publicationSame function, tested heads generation/anchor. Source function imports and all original assertions remain; no expected value relaxed.'}};
+writeFileSync(join(out,'SERVER_RECHECK_MANIFEST.json'),JSON.stringify(manifest,null,2)+'\n');console.log(JSON.stringify({sourceSha:sha,final:manifest.targetedFinal,workerUnchanged:manifest.sourceProtection.unchanged,native:manifest.nativeMutation.summary}));

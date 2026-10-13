@@ -1,0 +1,34 @@
+{
+  "inputSha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "indexSha256": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+  "input": "Lease expires at prior HEAD request start +5000ms; next HEAD proves exactly the same authority tuple",
+  "baselineExpected": "Destructive expiry closes UI and requires four new projections despite same revision",
+  "before": {
+    "generation": 2,
+    "allowed": true
+  },
+  "after": {
+    "generation": 3,
+    "allowed": false,
+    "headRequests": 1,
+    "projectionLoads": 4,
+    "activeCoordinates": 0
+  },
+  "calls": [
+    "/reports/public-state?nonce=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "approved",
+    "pending",
+    "recent",
+    "field"
+  ],
+  "effects": [
+    "GPS stopped",
+    "route choices closed",
+    "history cleared",
+    "names cleared"
+  ],
+  "assertions": 10,
+  "exitCode": 0,
+  "operationalRequests": 0,
+  "productModified": false
+}

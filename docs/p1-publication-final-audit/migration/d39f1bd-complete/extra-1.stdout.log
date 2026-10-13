@@ -1,0 +1,145 @@
+[
+  {
+    "results": [
+      {
+        "type": "index",
+        "name": "audit_target_time",
+        "sql": "CREATE INDEX audit_target_time ON audit_log(target_type,target_id,created_at DESC)"
+      },
+      {
+        "type": "index",
+        "name": "checklists_approved_recent",
+        "sql": "CREATE INDEX checklists_approved_recent ON checklists(status,observation_date DESC,received_at DESC)"
+      },
+      {
+        "type": "index",
+        "name": "checklists_ip_recent",
+        "sql": "CREATE INDEX checklists_ip_recent ON checklists(compat_ip_hash,received_at)"
+      },
+      {
+        "type": "index",
+        "name": "checklists_pending_public",
+        "sql": "CREATE INDEX checklists_pending_public ON checklists(pending_public,status)"
+      },
+      {
+        "type": "index",
+        "name": "checklists_site_history",
+        "sql": "CREATE INDEX checklists_site_history ON checklists(site_id,status,observation_date DESC,received_at DESC,checklist_id DESC)"
+      },
+      {
+        "type": "index",
+        "name": "checklists_spot_key",
+        "sql": "CREATE INDEX checklists_spot_key ON checklists(spot_key)"
+      },
+      {
+        "type": "index",
+        "name": "reviews_sighting",
+        "sql": "CREATE INDEX reviews_sighting ON reviews(sighting_id)"
+      },
+      {
+        "type": "index",
+        "name": "reviews_taxon",
+        "sql": "CREATE INDEX reviews_taxon ON reviews(validated_taxon_id)"
+      },
+      {
+        "type": "index",
+        "name": "sightings_taxon",
+        "sql": "CREATE INDEX sightings_taxon ON sightings(taxon_id,checklist_id)"
+      },
+      {
+        "type": "index",
+        "name": "taxa_name_lookup",
+        "sql": "CREATE INDEX taxa_name_lookup ON taxa(taxonomy_source,taxonomy_version,korean_name)"
+      },
+      {
+        "type": "table",
+        "name": "audit_log",
+        "sql": "CREATE TABLE audit_log (\n  audit_id TEXT NOT NULL PRIMARY KEY,\n  actor_id TEXT NOT NULL,\n  action TEXT NOT NULL,\n  target_type TEXT NOT NULL,\n  target_id TEXT NOT NULL,\n  request_id TEXT NOT NULL,\n  request_fingerprint TEXT CHECK(request_fingerprint IS NULL OR (length(request_fingerprint)=64 AND request_fingerprint NOT GLOB '*[^0-9a-f]*')),\n  event_count INTEGER NOT NULL CHECK(typeof(event_count)='integer' AND event_count >= 0),\n  created_at TEXT NOT NULL,\n  UNIQUE(request_id,action,target_type,target_id),\n  CHECK ((action='forbidden_content_purged' AND request_fingerprint IS NULL AND event_count=0)\n    OR (action<>'forbidden_content_purged' AND request_fingerprint IS NOT NULL))\n)"
+      },
+      {
+        "type": "table",
+        "name": "backfill_runs",
+        "sql": "CREATE TABLE backfill_runs (\n  run_id TEXT NOT NULL PRIMARY KEY,\n  manifest_checksum TEXT NOT NULL UNIQUE CHECK(length(manifest_checksum)=64 AND manifest_checksum NOT GLOB '*[^0-9a-f]*'),\n  transform_version TEXT NOT NULL,\n  source_count INTEGER NOT NULL CHECK(typeof(source_count)='integer' AND source_count >= 0),\n  completed_at TEXT NOT NULL,\n  source_revision TEXT NOT NULL\n)"
+      },
+      {
+        "type": "table",
+        "name": "checklists",
+        "sql": "CREATE TABLE checklists (\n  checklist_id TEXT NOT NULL PRIMARY KEY,\n  site_id TEXT REFERENCES sites(site_id) ON DELETE RESTRICT,\n  raw_id TEXT NOT NULL UNIQUE REFERENCES raw_submissions(raw_id) ON DELETE RESTRICT,\n  source_type TEXT NOT NULL CHECK (source_type IN ('legacy_reports','native')),\n  source_id TEXT NOT NULL,\n  record_mode TEXT NOT NULL CHECK (record_mode IN ('legacy_report','quick_report','complete_checklist')),\n  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),\n  observation_date TEXT NOT NULL,\n  start_time TEXT,\n  timezone TEXT,\n  duration_minutes REAL CHECK (duration_minutes IS NULL OR duration_minutes >= 0) CHECK (duration_minutes IS NULL OR typeof(duration_minutes) IN ('integer','real')),\n  distance_m REAL CHECK (distance_m IS NULL OR distance_m >= 0) CHECK (distance_m IS NULL OR typeof(distance_m) IN ('integer','real')),\n  observer_count INTEGER CHECK (observer_count IS NULL OR (typeof(observer_count)='integer' AND observer_count > 0)),\n  protocol TEXT CHECK (protocol IS NULL OR protocol IN ('incidental','stationary','traveling','area','other')),\n  complete_list INTEGER CHECK (complete_list IS NULL OR complete_list IN (0,1)),\n  actual_lat REAL CHECK (actual_lat BETWEEN -90 AND 90) CHECK (actual_lat IS NULL OR typeof(actual_lat) IN ('integer','real')),\n  actual_lon REAL CHECK (actual_lon BETWEEN -180 AND 180) CHECK (actual_lon IS NULL OR typeof(actual_lon) IN ('integer','real')),\n  coordinate_uncertainty_m REAL CHECK (coordinate_uncertainty_m IS NULL OR coordinate_uncertainty_m >= 0) CHECK (coordinate_uncertainty_m IS NULL OR typeof(coordinate_uncertainty_m) IN ('integer','real')),\n  approx_lat REAL CHECK (approx_lat IS NULL OR approx_lat BETWEEN -90 AND 90) CHECK (approx_lat IS NULL OR typeof(approx_lat) IN ('integer','real')),\n  approx_lon REAL CHECK (approx_lon IS NULL OR approx_lon BETWEEN -180 AND 180) CHECK (approx_lon IS NULL OR typeof(approx_lon) IN ('integer','real')),\n  public_lat REAL CHECK (public_lat IS NULL OR public_lat BETWEEN -90 AND 90) CHECK (public_lat IS NULL OR typeof(public_lat) IN ('integer','real')),\n  public_lon REAL CHECK (public_lon IS NULL OR public_lon BETWEEN -180 AND 180) CHECK (public_lon IS NULL OR typeof(public_lon) IN ('integer','real')),\n  coordinate_policy TEXT NOT NULL DEFAULT 'actual'\n    CHECK (coordinate_policy IN ('legacy_fallback','actual','explicit','withheld')),\n  pending_public INTEGER NOT NULL DEFAULT 0 CHECK (pending_public IN (0,1)),\n  name_public INTEGER NOT NULL DEFAULT 0 CHECK (name_public IN (0,1)),\n  spot_key TEXT,\n  species_text TEXT NOT NULL,\n  shared_bird_count INTEGER CHECK (shared_bird_count IS NULL OR (typeof(shared_bird_count)='integer' AND shared_bird_count >= 0)),\n  reporter TEXT,\n  note TEXT,\n  admin_note TEXT,\n  received_at TEXT NOT NULL,\n  decided_at TEXT,\n  compat_ip_hash TEXT,\n  compat_dedupe_hash TEXT UNIQUE,\n  created_at TEXT NOT NULL,\n  revision INTEGER NOT NULL DEFAULT 1 CHECK (typeof(revision)='integer' AND revision > 0),\n  updated_at TEXT NOT NULL,\n  UNIQUE (source_type,source_id),\n  CHECK ((actual_lat IS NULL)=(actual_lon IS NULL)),\n  CHECK (actual_lat IS NOT NULL OR site_id IS NOT NULL),\n  CHECK (source_type <> 'legacy_reports' OR\n    (record_mode='legacy_report' AND checklist_id=source_id)),\n  CHECK (record_mode <> 'legacy_report' OR source_type='legacy_reports'),\n  CHECK (source_type='legacy_reports' OR\n    ((approx_lat IS NULL)=(approx_lon IS NULL) AND (public_lat IS NULL)=(public_lon IS NULL))),\n  CHECK (coordinate_policy <> 'explicit' OR (public_lat IS NOT NULL AND public_lon IS NOT NULL))\n)"
+      },
+      {
+        "type": "table",
+        "name": "raw_submissions",
+        "sql": "CREATE TABLE raw_submissions (\n  raw_id TEXT NOT NULL PRIMARY KEY,\n  source_type TEXT NOT NULL CHECK (source_type IN ('legacy_reports_snapshot','native_submission')),\n  source_id TEXT NOT NULL,\n  request_id TEXT UNIQUE,\n  payload_json TEXT NOT NULL CHECK (json_valid(payload_json)),\n  submitted_at TEXT,\n  submitted_by TEXT,\n  schema_version TEXT NOT NULL,\n  captured_at TEXT NOT NULL,\n  source_fingerprint TEXT NOT NULL CHECK (length(source_fingerprint)=64 AND source_fingerprint NOT GLOB '*[^0-9a-f]*'),\n  non_breeding_confirmed INTEGER CHECK (non_breeding_confirmed IS NULL OR non_breeding_confirmed = 1),\n  policy_version TEXT,\n  UNIQUE (source_type,source_id),\n  CHECK (\n    (source_type='legacy_reports_snapshot' AND non_breeding_confirmed IS NULL AND policy_version IS NULL)\n    OR (source_type='native_submission' AND non_breeding_confirmed=1\n        AND non_breeding_confirmed IS NOT NULL AND policy_version IS NOT NULL\n        AND request_id IS NOT NULL AND submitted_at IS NOT NULL)\n  )\n)"
+      },
+      {
+        "type": "table",
+        "name": "reviews",
+        "sql": "CREATE TABLE reviews (\n  review_id TEXT NOT NULL PRIMARY KEY,\n  checklist_id TEXT NOT NULL REFERENCES checklists(checklist_id) ON DELETE RESTRICT,\n  sequence INTEGER NOT NULL CHECK (typeof(sequence)='integer' AND sequence > 0),\n  decision TEXT NOT NULL CHECK (decision IN ('submitted','approved','corrected','rejected','unpublished','reapproved')),\n  sighting_id TEXT,\n  validated_taxon_id TEXT REFERENCES taxa(taxon_id) ON DELETE RESTRICT,\n  validated_count INTEGER CHECK (validated_count IS NULL OR (typeof(validated_count)='integer' AND validated_count >= 0)),\n  validated_count_accuracy TEXT CHECK (validated_count_accuracy IS NULL OR validated_count_accuracy IN ('exact','estimated','minimum','unknown')),\n  from_status TEXT CHECK (from_status IS NULL OR from_status IN ('pending','approved','rejected')),\n  to_status TEXT NOT NULL CHECK (to_status IN ('pending','approved','rejected')),\n  actor_id TEXT NOT NULL,\n  request_id TEXT NOT NULL,\n  event_index INTEGER NOT NULL CHECK (typeof(event_index)='integer' AND event_index >= 0),\n  reason_code TEXT,\n  note TEXT,\n  created_at TEXT NOT NULL,\n  UNIQUE (checklist_id,sequence),\n  UNIQUE (request_id,event_index),\n  FOREIGN KEY (checklist_id,sighting_id) REFERENCES sightings(checklist_id,sighting_id) ON DELETE RESTRICT,\n  CHECK (sighting_id IS NOT NULL OR (validated_taxon_id IS NULL AND validated_count IS NULL AND validated_count_accuracy IS NULL)),\n  CHECK (validated_count IS NOT NULL OR validated_count_accuracy IS NULL OR validated_count_accuracy='unknown')\n)"
+      },
+      {
+        "type": "table",
+        "name": "sightings",
+        "sql": "CREATE TABLE sightings (\n  sighting_id TEXT NOT NULL PRIMARY KEY,\n  checklist_id TEXT NOT NULL REFERENCES checklists(checklist_id) ON DELETE RESTRICT,\n  source_ordinal INTEGER NOT NULL CHECK (typeof(source_ordinal)='integer' AND source_ordinal > 0),\n  species_original TEXT NOT NULL,\n  species_identified TEXT,\n  interpretation TEXT NOT NULL DEFAULT 'unknown'\n    CHECK (interpretation IN ('single','unparsed_multiple','unknown')),\n  taxon_id TEXT REFERENCES taxa(taxon_id) ON DELETE RESTRICT,\n  count_value INTEGER CHECK (count_value IS NULL OR (typeof(count_value)='integer' AND count_value >= 0)),\n  count_accuracy TEXT NOT NULL DEFAULT 'unknown'\n    CHECK (count_accuracy IN ('exact','estimated','minimum','unknown')),\n  count_source TEXT NOT NULL CHECK (count_source IN ('legacy_single','reported','reviewed','not_recorded','ambiguous_group')),\n  interpretation_note TEXT,\n  created_at TEXT NOT NULL,\n  updated_at TEXT NOT NULL,\n  UNIQUE (checklist_id,source_ordinal),\n  UNIQUE (checklist_id,sighting_id),\n  CHECK (count_value IS NOT NULL OR count_accuracy='unknown'),\n  CHECK (interpretation='single' OR (taxon_id IS NULL AND count_value IS NULL)),\n  CHECK (count_source <> 'ambiguous_group' OR count_value IS NULL)\n)"
+      },
+      {
+        "type": "table",
+        "name": "sites",
+        "sql": "CREATE TABLE sites (\n  site_id TEXT NOT NULL PRIMARY KEY,\n  site_name TEXT NOT NULL,\n  lat REAL CHECK(lat IS NULL OR (typeof(lat) IN ('integer','real') AND lat BETWEEN -90 AND 90)),\n  lon REAL CHECK(lon IS NULL OR (typeof(lon) IN ('integer','real') AND lon BETWEEN -180 AND 180)),\n  registry_source TEXT NOT NULL,\n  registry_revision TEXT NOT NULL,\n  source_record_json TEXT NOT NULL CHECK(json_valid(source_record_json)),\n  created_at TEXT NOT NULL,\n  retired_at TEXT,\n  CHECK ((lat IS NULL)=(lon IS NULL))\n)"
+      },
+      {
+        "type": "table",
+        "name": "taxa",
+        "sql": "CREATE TABLE taxa (\n  taxon_id TEXT NOT NULL PRIMARY KEY,\n  source_taxon_key TEXT NOT NULL,\n  korean_name TEXT,\n  scientific_name TEXT,\n  taxon_rank TEXT NOT NULL,\n  taxonomy_source TEXT NOT NULL,\n  taxonomy_version TEXT NOT NULL,\n  taxon_status TEXT NOT NULL CHECK(taxon_status IN ('accepted','unresolved','deprecated')),\n  created_at TEXT NOT NULL,\n  UNIQUE(taxonomy_source,taxonomy_version,source_taxon_key)\n)"
+      },
+      {
+        "type": "table",
+        "name": "transaction_assertions",
+        "sql": "CREATE TABLE transaction_assertions (\n  assertion_id TEXT NOT NULL PRIMARY KEY,\n  ok INTEGER NOT NULL CHECK(ok=1)\n)"
+      },
+      {
+        "type": "trigger",
+        "name": "audit_log_no_update",
+        "sql": "CREATE TRIGGER audit_log_no_update BEFORE UPDATE ON audit_log\nBEGIN SELECT RAISE(ABORT,'append_only_audit'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "checklists_raw_source",
+        "sql": "CREATE TRIGGER checklists_raw_source BEFORE INSERT ON checklists\nWHEN NOT EXISTS (\n  SELECT 1 FROM raw_submissions r WHERE r.raw_id=NEW.raw_id AND r.source_id=NEW.source_id\n    AND ((NEW.source_type='legacy_reports' AND r.source_type='legacy_reports_snapshot')\n      OR (NEW.source_type='native' AND r.source_type='native_submission'))\n)\nBEGIN SELECT RAISE(ABORT,'raw_source_mismatch'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "checklists_source_immutable",
+        "sql": "CREATE TRIGGER checklists_source_immutable BEFORE UPDATE OF checklist_id,source_type,source_id,raw_id ON checklists\nWHEN OLD.checklist_id IS NOT NEW.checklist_id OR OLD.source_type IS NOT NEW.source_type\n OR OLD.source_id IS NOT NEW.source_id OR OLD.raw_id IS NOT NEW.raw_id\nBEGIN SELECT RAISE(ABORT,'permanent_checklist_source'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "raw_submissions_no_update",
+        "sql": "CREATE TRIGGER raw_submissions_no_update BEFORE UPDATE ON raw_submissions\nBEGIN SELECT RAISE(ABORT,'immutable_raw'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "reviews_no_update",
+        "sql": "CREATE TRIGGER reviews_no_update BEFORE UPDATE ON reviews\nBEGIN SELECT RAISE(ABORT,'append_only_review'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "sightings_source_immutable",
+        "sql": "CREATE TRIGGER sightings_source_immutable BEFORE UPDATE OF sighting_id,checklist_id,source_ordinal,species_original ON sightings\nWHEN OLD.sighting_id IS NOT NEW.sighting_id OR OLD.checklist_id IS NOT NEW.checklist_id\n OR OLD.source_ordinal IS NOT NEW.source_ordinal OR OLD.species_original IS NOT NEW.species_original\nBEGIN SELECT RAISE(ABORT,'permanent_sighting_source'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "sites_id_immutable",
+        "sql": "CREATE TRIGGER sites_id_immutable BEFORE UPDATE OF site_id ON sites\nWHEN OLD.site_id IS NOT NEW.site_id\nBEGIN SELECT RAISE(ABORT,'permanent_site_id'); END"
+      },
+      {
+        "type": "trigger",
+        "name": "taxa_no_update",
+        "sql": "CREATE TRIGGER taxa_no_update BEFORE UPDATE ON taxa\nBEGIN SELECT RAISE(ABORT,'versioned_taxon_immutable'); END"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "duration": 0
+    }
+  }
+]

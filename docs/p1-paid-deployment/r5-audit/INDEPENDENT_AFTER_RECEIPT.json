@@ -1,0 +1,483 @@
+{
+  "at": "2026-10-13T16:05:35.303Z",
+  "beforeSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+  "afterSha": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "scope": "Read-only evidence reconciliation and exact Gitblob/source invariants, no retesting earlier native/B6/CAS/migration suites",
+  "independentJS": {
+    "pass": 68,
+    "fail": 0,
+    "skip": 0
+  },
+  "independentPython": {
+    "pass": 14,
+    "fail": 0,
+    "skip": 0
+  },
+  "firstAdditionalPopupAssertionFailure": {
+    "pass": 48,
+    "fail": 20,
+    "skip": 0
+  },
+  "firstFailureReason": "Wind direction/speed are separate actual popup spans; requiring full raw wind string contiguous was a new harness assertion mistake. Original fail ledger retained. Corrected checks preserve every reference component and raw object.",
+  "actualCardChecks": [
+    {
+      "id": "general normal",
+      "pass": true
+    },
+    {
+      "id": "general wind-1e309",
+      "pass": true
+    },
+    {
+      "id": "general wind-400digits",
+      "pass": true
+    },
+    {
+      "id": "general rain-1e309",
+      "pass": true
+    },
+    {
+      "id": "general rain-400digits",
+      "pass": true
+    },
+    {
+      "id": "general wave-1e309",
+      "pass": true
+    },
+    {
+      "id": "general wave-400digits",
+      "pass": true
+    },
+    {
+      "id": "island normal",
+      "pass": true
+    },
+    {
+      "id": "island wind-1e309",
+      "pass": true
+    },
+    {
+      "id": "island wind-400digits",
+      "pass": true
+    },
+    {
+      "id": "island rain-1e309",
+      "pass": true
+    },
+    {
+      "id": "island rain-400digits",
+      "pass": true
+    },
+    {
+      "id": "island wave-1e309",
+      "pass": true
+    },
+    {
+      "id": "island wave-400digits",
+      "pass": true
+    },
+    {
+      "id": "mudflat normal",
+      "pass": true
+    },
+    {
+      "id": "mudflat wind-1e309",
+      "pass": true
+    },
+    {
+      "id": "mudflat wind-400digits",
+      "pass": true
+    },
+    {
+      "id": "mudflat rain-1e309",
+      "pass": true
+    },
+    {
+      "id": "mudflat rain-400digits",
+      "pass": true
+    },
+    {
+      "id": "mudflat wave-1e309",
+      "pass": true
+    },
+    {
+      "id": "mudflat wave-400digits",
+      "pass": true
+    },
+    {
+      "id": "pelagic normal",
+      "pass": true
+    },
+    {
+      "id": "pelagic wind-1e309",
+      "pass": true
+    },
+    {
+      "id": "pelagic wind-400digits",
+      "pass": true
+    },
+    {
+      "id": "pelagic rain-1e309",
+      "pass": true
+    },
+    {
+      "id": "pelagic rain-400digits",
+      "pass": true
+    },
+    {
+      "id": "pelagic wave-1e309",
+      "pass": true
+    },
+    {
+      "id": "pelagic wave-400digits",
+      "pass": true
+    }
+  ],
+  "protectedFiles": [
+    {
+      "path": "reports-api/.gitignore",
+      "beforeBlob": "8cf4404e85208964e5b81f205b5e5c40879e2e02",
+      "afterBlob": "8cf4404e85208964e5b81f205b5e5c40879e2e02"
+    },
+    {
+      "path": "reports-api/README.md",
+      "beforeBlob": "f73fc6f002238a9730bf7385f78530cb592e9d12",
+      "afterBlob": "f73fc6f002238a9730bf7385f78530cb592e9d12"
+    },
+    {
+      "path": "reports-api/local-test/baseline-regression.mjs",
+      "beforeBlob": "70fe8d5088362550cd3345a2978fc570c987ba42",
+      "afterBlob": "70fe8d5088362550cd3345a2978fc570c987ba42"
+    },
+    {
+      "path": "reports-api/local-test/helpers.mjs",
+      "beforeBlob": "f227d33abc1c4c21cc953ffc8ee7fddbe73267f4",
+      "afterBlob": "f227d33abc1c4c21cc953ffc8ee7fddbe73267f4"
+    },
+    {
+      "path": "reports-api/local-test/hide-location-d1.mjs",
+      "beforeBlob": "9b76d8f73030aced9c405440948f4ebcace5eb4e",
+      "afterBlob": "9b76d8f73030aced9c405440948f4ebcace5eb4e"
+    },
+    {
+      "path": "reports-api/local-test/protocol-check.mjs",
+      "beforeBlob": "aa64ea5ff7521e0d4cd3810abf2af6860f64af01",
+      "afterBlob": "aa64ea5ff7521e0d4cd3810abf2af6860f64af01"
+    },
+    {
+      "path": "reports-api/local-test/repeat-phase2a.mjs",
+      "beforeBlob": "6b7133f324d978de0d3b28432de8927fad4872f4",
+      "afterBlob": "6b7133f324d978de0d3b28432de8927fad4872f4"
+    },
+    {
+      "path": "reports-api/local-test/run.mjs",
+      "beforeBlob": "e0f2e49e321bfb2010fbbda3594d4566f8b93026",
+      "afterBlob": "e0f2e49e321bfb2010fbbda3594d4566f8b93026"
+    },
+    {
+      "path": "reports-api/migrations/0002_pending_public.sql",
+      "beforeBlob": "99783d635cf45c832a2557d4fd76f5d731907141",
+      "afterBlob": "99783d635cf45c832a2557d4fd76f5d731907141"
+    },
+    {
+      "path": "reports-api/migrations/0003_site_history_index.sql",
+      "beforeBlob": "053b808b2517898a11ae5e0b683ca389fe84c7ca",
+      "afterBlob": "053b808b2517898a11ae5e0b683ca389fe84c7ca"
+    },
+    {
+      "path": "reports-api/migrations/0004_field_updates.sql",
+      "beforeBlob": "c25d58fdba7d029b5a16c33d32e8600bd37652ce",
+      "afterBlob": "c25d58fdba7d029b5a16c33d32e8600bd37652ce"
+    },
+    {
+      "path": "reports-api/migrations/0005_publication_security.sql",
+      "beforeBlob": "edc2bcdc4dd7cd5677e7a0fc315ee0ece3c6604e",
+      "afterBlob": "edc2bcdc4dd7cd5677e7a0fc315ee0ece3c6604e"
+    },
+    {
+      "path": "reports-api/package.json",
+      "beforeBlob": "8ee2a62489b61f53c2b21ed2b5274e9880a476c2",
+      "afterBlob": "8ee2a62489b61f53c2b21ed2b5274e9880a476c2"
+    },
+    {
+      "path": "reports-api/schema.sql",
+      "beforeBlob": "03d2cade162445f2295acfed6dd357bfb83969b3",
+      "afterBlob": "03d2cade162445f2295acfed6dd357bfb83969b3"
+    },
+    {
+      "path": "reports-api/src/admin-actions.js",
+      "beforeBlob": "3db5f82edd3adebccd47a543a256d818874ba98e",
+      "afterBlob": "3db5f82edd3adebccd47a543a256d818874ba98e"
+    },
+    {
+      "path": "reports-api/src/admin-page.js",
+      "beforeBlob": "a1f0b089b7f9594835202b45372ccadd99de5027",
+      "afterBlob": "a1f0b089b7f9594835202b45372ccadd99de5027"
+    },
+    {
+      "path": "reports-api/src/admin-stats.js",
+      "beforeBlob": "278234d832420116d8d7f0f296d55098e02e955b",
+      "afterBlob": "278234d832420116d8d7f0f296d55098e02e955b"
+    },
+    {
+      "path": "reports-api/src/admin-usage.js",
+      "beforeBlob": "d37460f3544a2626d7f53f1ca1b2fa54ff0574a8",
+      "afterBlob": "d37460f3544a2626d7f53f1ca1b2fa54ff0574a8"
+    },
+    {
+      "path": "reports-api/src/admin.js",
+      "beforeBlob": "e6b40f4c6ff12dd01bbb9f3e288f8f1ca07b9c09",
+      "afterBlob": "e6b40f4c6ff12dd01bbb9f3e288f8f1ca07b9c09"
+    },
+    {
+      "path": "reports-api/src/canonical/control.js",
+      "beforeBlob": "23077260845f76bfe6cb5a3505f23a9a0f40d056",
+      "afterBlob": "23077260845f76bfe6cb5a3505f23a9a0f40d056"
+    },
+    {
+      "path": "reports-api/src/canonical/data.js",
+      "beforeBlob": "b9b8f5fcf7c9aade6b8309e776854b55cca1cd42",
+      "afterBlob": "b9b8f5fcf7c9aade6b8309e776854b55cca1cd42"
+    },
+    {
+      "path": "reports-api/src/canonical/ops.js",
+      "beforeBlob": "7018a5f96b5932480944b4f91a771e21bd74646f",
+      "afterBlob": "7018a5f96b5932480944b4f91a771e21bd74646f"
+    },
+    {
+      "path": "reports-api/src/canonical/persistence.js",
+      "beforeBlob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0",
+      "afterBlob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0"
+    },
+    {
+      "path": "reports-api/src/canonical/purge.js",
+      "beforeBlob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b",
+      "afterBlob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b"
+    },
+    {
+      "path": "reports-api/src/canonical/shadow.js",
+      "beforeBlob": "17d03426beac5ff95cbe70203d2ecf7903dae747",
+      "afterBlob": "17d03426beac5ff95cbe70203d2ecf7903dae747"
+    },
+    {
+      "path": "reports-api/src/field-updates.js",
+      "beforeBlob": "3da582a40529cc54129e8ac9f2fa60a8bcc3b732",
+      "afterBlob": "3da582a40529cc54129e8ac9f2fa60a8bcc3b732"
+    },
+    {
+      "path": "reports-api/src/notify.js",
+      "beforeBlob": "9a9d6b8284ae002b4982e72b940e76ba8ec8055d",
+      "afterBlob": "9a9d6b8284ae002b4982e72b940e76ba8ec8055d"
+    },
+    {
+      "path": "reports-api/src/public.js",
+      "beforeBlob": "b5bda2135fc02cb1f56e5bf5f518c317e54214a2",
+      "afterBlob": "b5bda2135fc02cb1f56e5bf5f518c317e54214a2"
+    },
+    {
+      "path": "reports-api/src/publication.js",
+      "beforeBlob": "6f457e6d1887706555edbdfbb887db286b94a276",
+      "afterBlob": "6f457e6d1887706555edbdfbb887db286b94a276"
+    },
+    {
+      "path": "reports-api/src/shared.js",
+      "beforeBlob": "a3a00f90b6d3ad31f556bf58ec415886bba732f8",
+      "afterBlob": "a3a00f90b6d3ad31f556bf58ec415886bba732f8"
+    },
+    {
+      "path": "reports-api/src/site-picker.js",
+      "beforeBlob": "6da93897c1e747e3fc8c93f72fcfcbc5b4420456",
+      "afterBlob": "6da93897c1e747e3fc8c93f72fcfcbc5b4420456"
+    },
+    {
+      "path": "reports-api/test/admin-stats.test.mjs",
+      "beforeBlob": "9a2767bf6ebc9a23a755cfb0c1575611291b803e",
+      "afterBlob": "9a2767bf6ebc9a23a755cfb0c1575611291b803e"
+    },
+    {
+      "path": "reports-api/test/admin-usage.test.mjs",
+      "beforeBlob": "73d60c5aa51832f563c842f793ea83b06d601af0",
+      "afterBlob": "73d60c5aa51832f563c842f793ea83b06d601af0"
+    },
+    {
+      "path": "reports-api/test/admin-worker.test.mjs",
+      "beforeBlob": "1b971e3c9e17acbaa74624187665ad7e1370119b",
+      "afterBlob": "1b971e3c9e17acbaa74624187665ad7e1370119b"
+    },
+    {
+      "path": "reports-api/test/field-updates.test.mjs",
+      "beforeBlob": "6ca3d731c94f1a9b44059b5b42fbb91d0da922fc",
+      "afterBlob": "6ca3d731c94f1a9b44059b5b42fbb91d0da922fc"
+    },
+    {
+      "path": "reports-api/test/helpers.mjs",
+      "beforeBlob": "729a07bb634c0e61b543659a65a8d5e0cd363177",
+      "afterBlob": "729a07bb634c0e61b543659a65a8d5e0cd363177"
+    },
+    {
+      "path": "reports-api/test/hide-location.test.mjs",
+      "beforeBlob": "51b812852c587027c45d779ef6689b1edf9ef61a",
+      "afterBlob": "51b812852c587027c45d779ef6689b1edf9ef61a"
+    },
+    {
+      "path": "reports-api/test/monthly-contributors.test.mjs",
+      "beforeBlob": "7105fd799f856adcc1819462f3832ba5818f6c16",
+      "afterBlob": "7105fd799f856adcc1819462f3832ba5818f6c16"
+    },
+    {
+      "path": "reports-api/test/notify.test.mjs",
+      "beforeBlob": "b4a3ea17c3f57323ea7df1d2f7fadc78bae8655e",
+      "afterBlob": "b4a3ea17c3f57323ea7df1d2f7fadc78bae8655e"
+    },
+    {
+      "path": "reports-api/test/protection.test.mjs",
+      "beforeBlob": "227a0f3448848db4d856a953e33b6ae627178a96",
+      "afterBlob": "227a0f3448848db4d856a953e33b6ae627178a96"
+    },
+    {
+      "path": "reports-api/test/public-worker.test.mjs",
+      "beforeBlob": "68b20636abc41d498e847582b7855ad41a8ab854",
+      "afterBlob": "68b20636abc41d498e847582b7855ad41a8ab854"
+    },
+    {
+      "path": "reports-api/test/publication-path.test.mjs",
+      "beforeBlob": "e9773a28ef2751e550b2610dbce78a5e6b57c9a2",
+      "afterBlob": "e9773a28ef2751e550b2610dbce78a5e6b57c9a2"
+    },
+    {
+      "path": "reports-api/test/publication-security.test.mjs",
+      "beforeBlob": "bd8e16b4375e5521aac84533c459dc36ec1486c1",
+      "afterBlob": "bd8e16b4375e5521aac84533c459dc36ec1486c1"
+    },
+    {
+      "path": "reports-api/test/recent-sites.test.mjs",
+      "beforeBlob": "68ddb1e933d8a99bff08fb860b37451e9ea578bc",
+      "afterBlob": "68ddb1e933d8a99bff08fb860b37451e9ea578bc"
+    },
+    {
+      "path": "reports-api/test/site-picker.test.mjs",
+      "beforeBlob": "603ed095f3289643865fe5ddf545fefd56afdd79",
+      "afterBlob": "603ed095f3289643865fe5ddf545fefd56afdd79"
+    },
+    {
+      "path": "reports-api/test/validation.test.mjs",
+      "beforeBlob": "7d1c1aa1ac3b27a8dd65cd1e815666dc68b87ddd",
+      "afterBlob": "7d1c1aa1ac3b27a8dd65cd1e815666dc68b87ddd"
+    },
+    {
+      "path": "reports-api/tools/backfill-lib.mjs",
+      "beforeBlob": "a4833ba9ebf631c409feaeadc493018527524dfd",
+      "afterBlob": "a4833ba9ebf631c409feaeadc493018527524dfd"
+    },
+    {
+      "path": "reports-api/tools/backfill-runner.mjs",
+      "beforeBlob": "58d3cadc3dae9b6f63044e648df1be753039aaab",
+      "afterBlob": "58d3cadc3dae9b6f63044e648df1be753039aaab"
+    },
+    {
+      "path": "reports-api/tools/d1-rest.mjs",
+      "beforeBlob": "3bfc02d989e3752b46422647e9762a29a2af12c0",
+      "afterBlob": "3bfc02d989e3752b46422647e9762a29a2af12c0"
+    },
+    {
+      "path": "reports-api/tools/freeze.mjs",
+      "beforeBlob": "de62e18433b1432a8c3442abaa15c66210756889",
+      "afterBlob": "de62e18433b1432a8c3442abaa15c66210756889"
+    },
+    {
+      "path": "reports-api/tools/prepare-backfill.mjs",
+      "beforeBlob": "47703a17142a35f9d1564a3791cdeddfddebe90f",
+      "afterBlob": "47703a17142a35f9d1564a3791cdeddfddebe90f"
+    },
+    {
+      "path": "reports-api/tools/prepare-sites.mjs",
+      "beforeBlob": "51888f811fae7c6fc468a05420ac83c87da8dbe6",
+      "afterBlob": "51888f811fae7c6fc468a05420ac83c87da8dbe6"
+    },
+    {
+      "path": "reports-api/tools/purge-runner.mjs",
+      "beforeBlob": "8be124f381bddc445263c95432e94c1ec79b861a",
+      "afterBlob": "8be124f381bddc445263c95432e94c1ec79b861a"
+    },
+    {
+      "path": "reports-api/tools/sites-seed.mjs",
+      "beforeBlob": "5fd81166d976066dea7fdd2ebe3ed98bd2e4627a",
+      "afterBlob": "5fd81166d976066dea7fdd2ebe3ed98bd2e4627a"
+    },
+    {
+      "path": "reports-api/wrangler.admin.toml",
+      "beforeBlob": "b40dfce739c2b600da1e42f7c4a732f436f16c0a",
+      "afterBlob": "b40dfce739c2b600da1e42f7c4a732f436f16c0a"
+    },
+    {
+      "path": "reports-api/wrangler.public.toml",
+      "beforeBlob": "4573d334f45cacb3956df80f6198e0fdce2100f4",
+      "afterBlob": "4573d334f45cacb3956df80f6198e0fdce2100f4"
+    }
+  ],
+  "publicationClientSha256Before": "77452a5acb90640f6cd163b8d36a13a5c60ead56631449922f9a87c4d7967f2d",
+  "publicationClientSha256After": "77452a5acb90640f6cd163b8d36a13a5c60ead56631449922f9a87c4d7967f2d",
+  "siteDataCount": 190,
+  "siteDataHashBefore": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+  "siteDataHashAfter": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+  "checks": [
+    {
+      "id": "actualcardrender28",
+      "pass": true
+    },
+    {
+      "id": "reports-api-all-blobs-unchanged",
+      "pass": true
+    },
+    {
+      "id": "publicationclientblock-unchanged",
+      "pass": true
+    },
+    {
+      "id": "siteData190allfieldscoordinates-order-unchanged",
+      "pass": true
+    }
+  ],
+  "reuse": {
+    "nativeCAS": {
+      "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+      "pass": 10,
+      "fail": 0,
+      "skip": 0,
+      "rerun": false
+    },
+    "B6Repro": {
+      "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+      "pass": 13,
+      "fail": 0,
+      "skip": 0,
+      "rerun": false
+    },
+    "B6Expanded": {
+      "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+      "pass": 25,
+      "fail": 0,
+      "skip": 0,
+      "rerun": false
+    },
+    "migration": {
+      "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+      "pass": 30,
+      "fail": 0,
+      "skip": 0,
+      "rerun": false
+    },
+    "migrationIntegrity": {
+      "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+      "pass": 3,
+      "fail": 0,
+      "skip": 0,
+      "rerun": false
+    }
+  },
+  "summary": {
+    "pass": 4,
+    "fail": 0,
+    "skip": 0
+  }
+}

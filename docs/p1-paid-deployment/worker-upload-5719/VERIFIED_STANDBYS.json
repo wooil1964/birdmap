@@ -1,0 +1,554 @@
+{
+  "at": "2026-10-13T15:31:13.609402+00:00",
+  "source": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+  "scope": "Version uploads only, noactivation; remote version metadata plus CLI upload/outdir module bytes association",
+  "roles": [
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "normal",
+      "id": "2e8d2d3d-171e-42cf-8467-4d6ed9e7d223",
+      "localUploadedModuleSha256": "4759ee7cbf4a97ded7b8a5da910870c475f6240f3fd9ea2d80c80ea180ee61a7",
+      "bytes": 91085,
+      "annotation": {
+        "workers/message": "Protective standby public normal source5719bc444b165a5df96ab40e9cb8f926c286cf94; no activation",
+        "workers/tag": "p1-5719-normal",
+        "workers/triggered_by": "version_upload"
+      },
+      "metadataCreatedOn": "2026-10-13T15:24:23.433818Z",
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ADMIN_PAGE_URL",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text",
+          "value": "production",
+          "databaseId": null
+        },
+        {
+          "name": "NOTIFY_EMAIL_FROM",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "NOTIFY_EMAIL_TO",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORT_IP_SALT",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "value": null,
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "value": "true",
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "value": "CANONICAL_DUAL_WRITE",
+          "databaseId": null
+        },
+        {
+          "name": "RESEND_API_KEY",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "TURNSTILE_SECRET_KEY",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        }
+      ],
+      "previewsEnabled": false
+    },
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "maintenance",
+      "id": "e2e826c9-5e37-4d33-b05e-9b40ce428fec",
+      "localUploadedModuleSha256": "4759ee7cbf4a97ded7b8a5da910870c475f6240f3fd9ea2d80c80ea180ee61a7",
+      "bytes": 91085,
+      "annotation": {
+        "workers/message": "Protective standby public maintenance source5719bc444b165a5df96ab40e9cb8f926c286cf94; no activation",
+        "workers/tag": "p1-5719-maintenance",
+        "workers/triggered_by": "version_upload"
+      },
+      "metadataCreatedOn": "2026-10-13T15:24:26.997548Z",
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ADMIN_PAGE_URL",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text",
+          "value": "production",
+          "databaseId": null
+        },
+        {
+          "name": "NOTIFY_EMAIL_FROM",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "NOTIFY_EMAIL_TO",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORT_IP_SALT",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "value": null,
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "value": "true",
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "value": "READ_ONLY_MAINTENANCE",
+          "databaseId": null
+        },
+        {
+          "name": "RESEND_API_KEY",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "TURNSTILE_SECRET_KEY",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        }
+      ],
+      "previewsEnabled": false
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "normal",
+      "id": "249ef904-5b5c-4733-b913-7df21f8dd5e7",
+      "localUploadedModuleSha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "bytes": 125335,
+      "annotation": {
+        "workers/message": "Protective standby admin normal source5719bc444b165a5df96ab40e9cb8f926c286cf94; no activation",
+        "workers/tag": "p1-5719-normal",
+        "workers/triggered_by": "version_upload"
+      },
+      "metadataCreatedOn": "2026-10-13T15:24:30.494512Z",
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ACCESS_AUD",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ACCESS_TEAM_DOMAIN",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ADMIN_EMAILS",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text",
+          "value": "production",
+          "databaseId": null
+        },
+        {
+          "name": "EVENTS_DB",
+          "type": "d1",
+          "value": null,
+          "databaseId": "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "value": null,
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "value": "true",
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "value": "CANONICAL_DUAL_WRITE",
+          "databaseId": null
+        }
+      ],
+      "previewsEnabled": false
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "maintenance",
+      "id": "cc6face1-897e-4a0d-b2e8-f8155a8d0a20",
+      "localUploadedModuleSha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "bytes": 125335,
+      "annotation": {
+        "workers/message": "Protective standby admin maintenance source5719bc444b165a5df96ab40e9cb8f926c286cf94; no activation",
+        "workers/tag": "p1-5719-maintenance",
+        "workers/triggered_by": "version_upload"
+      },
+      "metadataCreatedOn": "2026-10-13T15:24:33.267973Z",
+      "runtime": {
+        "compatibility_date": "2026-07-03",
+        "usage_model": "standard"
+      },
+      "bindings": [
+        {
+          "name": "ACCESS_AUD",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ACCESS_TEAM_DOMAIN",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ADMIN_EMAILS",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "ENVIRONMENT",
+          "type": "plain_text",
+          "value": "production",
+          "databaseId": null
+        },
+        {
+          "name": "EVENTS_DB",
+          "type": "d1",
+          "value": null,
+          "databaseId": "0d308139-8fdd-4d8a-ab62-fac6f616f6d1"
+        },
+        {
+          "name": "REPORTS_ACTIVATION_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_CONFIRMATION_REQUIRED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_DB",
+          "type": "d1",
+          "value": null,
+          "databaseId": "b48201cc-0abd-4a64-bb61-9dd2a7813d21"
+        },
+        {
+          "name": "REPORTS_DUAL_WRITE_ENABLED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_GATE_TOKEN",
+          "type": "secret_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER",
+          "type": "service",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PEER_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PENDING_PUBLIC",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_PUBLICATION_REQUIRED",
+          "type": "plain_text",
+          "value": "true",
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_RELEASE_ID",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_REMOTE_VERIFIED",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_SCHEMA_VERSION",
+          "type": "plain_text",
+          "value": null,
+          "databaseId": null
+        },
+        {
+          "name": "REPORTS_WRITE_MODE",
+          "type": "plain_text",
+          "value": "READ_ONLY_MAINTENANCE",
+          "databaseId": null
+        }
+      ],
+      "previewsEnabled": false
+    }
+  ],
+  "activeUnchanged": true,
+  "summary": {
+    "pass": 4,
+    "fail": 0,
+    "operatingActivation": 0,
+    "remoteD1Writes": 0
+  }
+}

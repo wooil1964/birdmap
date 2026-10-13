@@ -1,0 +1,46 @@
+✖ Free SQL: HEAD locator repair starts a new primary session (28.4515ms)
+✖ Free SQL: payload locator repair starts a new primary session and rebuilds its batch (5.9035ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 127.4689
+
+✖ failing tests:
+
+test at reports-api\test\publication-security.test.mjs:498:1
+✖ Free SQL: HEAD locator repair starts a new primary session (28.4515ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 200
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/reports-api/test/publication-security.test.mjs:501:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at reports-api\test\publication-security.test.mjs:504:1
+✖ Free SQL: payload locator repair starts a new primary session and rebuilds its batch (5.9035ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 200
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/reports-api/test/publication-security.test.mjs:508:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

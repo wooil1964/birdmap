@@ -1,0 +1,114 @@
+TAP version 13
+# Subtest: B6 saved protected quantities: strict current snapshot omits unverified coordinates and does not write
+not ok 1 - B6 saved protected quantities: strict current snapshot omits unverified coordinates and does not write
+  ---
+  duration_ms: 41.1427
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\b6-independent-7f493b1c60bc\\reports-api\\test\\publication-security.test.mjs:355:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/b6-independent-7f493b1c60bc/reports-api/test/publication-security.test.mjs:367:14)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: B6 legacy GET uses the same saved-protection projection as strict GET
+not ok 2 - B6 legacy GET uses the same saved-protection projection as strict GET
+  ---
+  duration_ms: 6.4539
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\b6-independent-7f493b1c60bc\\reports-api\\test\\publication-security.test.mjs:378:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    noCoordinates (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/b6-independent-7f493b1c60bc/reports-api/test/publication-security.test.mjs:118:41)
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/b6-independent-7f493b1c60bc/reports-api/test/publication-security.test.mjs:382:39)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: B6 normal stored species retain exact public coordinates without false positives
+ok 3 - B6 normal stored species retain exact public coordinates without false positives
+  ---
+  duration_ms: 10.1371
+  type: 'test'
+  ...
+# Subtest: B6 verified saved masked coordinates remain stable across strict and legacy reads
+ok 4 - B6 verified saved masked coordinates remain stable across strict and legacy reads
+  ---
+  duration_ms: 6.9299
+  type: 'test'
+  ...
+# Subtest: B6 hidden flag alone cannot authorize exact stored coordinates
+not ok 5 - B6 hidden flag alone cannot authorize exact stored coordinates
+  ---
+  duration_ms: 5.2308
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\b6-independent-7f493b1c60bc\\reports-api\\test\\publication-security.test.mjs:413:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    noCoordinates (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/b6-independent-7f493b1c60bc/reports-api/test/publication-security.test.mjs:118:41)
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/b6-independent-7f493b1c60bc/reports-api/test/publication-security.test.mjs:416:64)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: B6 unknown historical masking does not break owner deletion or normal reappearance receipts
+not ok 6 - B6 unknown historical masking does not break owner deletion or normal reappearance receipts
+  ---
+  duration_ms: 8.4573
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\b6-independent-7f493b1c60bc\\reports-api\\test\\publication-security.test.mjs:420:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/.tmp/b6-independent-7f493b1c60bc/reports-api/test/publication-security.test.mjs:427:48)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 2
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 273.2811

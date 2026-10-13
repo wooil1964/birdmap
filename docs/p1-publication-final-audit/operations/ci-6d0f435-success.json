@@ -1,0 +1,87 @@
+{
+  "head": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+  "ciMergeSha": "7b136fc73f81366de14ba88d90020104ce3b8c65",
+  "job": {
+    "id": 114768675699,
+    "head_sha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+    "name": "regression",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "runId": 38236592619,
+  "workflow": "Publication security regression",
+  "url": "https://github.com/wooil1964/birdmap/actions/runs/38236592619",
+  "logTruncated": true,
+  "summaryLines": [
+    "2026-10-12T10:30:47.4732672Z # tests 359",
+    "2026-10-12T10:30:47.4732852Z # pass 359",
+    "2026-10-12T10:30:47.4732935Z # fail 0",
+    "2026-10-12T10:30:47.4733104Z # skipped 0",
+    "2026-10-12T10:30:49.5573364Z # tests 221",
+    "2026-10-12T10:30:49.5573945Z # pass 221",
+    "2026-10-12T10:30:49.5574370Z # fail 0",
+    "2026-10-12T10:30:49.5575090Z # skipped 0",
+    "2026-10-12T10:30:49.7584248Z # tests 36",
+    "2026-10-12T10:30:49.7585412Z # pass 36",
+    "2026-10-12T10:30:49.7585922Z # fail 0",
+    "2026-10-12T10:30:49.7590227Z # skipped 0",
+    "2026-10-12T10:30:50.3902418Z Ran 56 tests in 0.331s",
+    "2026-10-12T10:30:50.3902811Z OK",
+    "2026-10-12T10:30:50.8679038Z Ran 22 tests in 0.194s",
+    "2026-10-12T10:30:50.8679318Z OK (skipped=1)",
+    "2026-10-12T10:30:51.3479509Z Ran 11 tests in 0.372s",
+    "2026-10-12T10:30:51.3479872Z OK",
+    "2026-10-12T10:30:55.3659383Z       \"allSignatureEqual\": true,",
+    "2026-10-12T10:30:55.3662983Z       \"allSignatureEqual\": true,",
+    "2026-10-12T10:31:48.9863834Z     \"pass\": 241,",
+    "2026-10-12T10:31:51.2425332Z SHA256 digest of uploaded artifact zip is f6e161e7e07757491de859991572f68ea1ebf4092b97f8203e419e7fef626167",
+    "2026-10-12T10:31:51.5184476Z Artifact protected-pages-7b136fc73f81366de14ba88d90020104ce3b8c65 has been successfully uploaded! Final size is 4729993 bytes. Artifact ID is 11741316486",
+    "2026-10-12T10:31:52.8212291Z SHA256 digest of uploaded artifact zip is bd7edd4b5dc8aa74f9f1485db226637c0243fce9752c211c758f62e209b2f550",
+    "2026-10-12T10:31:53.0935542Z Artifact publication-security-diagnostics-7b136fc73f81366de14ba88d90020104ce3b8c65 has been successfully uploaded! Final size is 663044 bytes. Artifact ID is 11741002096"
+  ],
+  "artifacts": {
+    "total_count": 2,
+    "artifacts": [
+      {
+        "id": 11741316486,
+        "node_id": "MDg6QXJ0aWZhY3QxMTc0MTMxNjQ4Ng==",
+        "name": "protected-pages-7b136fc73f81366de14ba88d90020104ce3b8c65",
+        "size_in_bytes": 4729993,
+        "url": "https://api.github.com/repos/wooil1964/birdmap/actions/artifacts/11741316486",
+        "archive_download_url": "https://api.github.com/repos/wooil1964/birdmap/actions/artifacts/11741316486/zip",
+        "expired": false,
+        "digest": "sha256:f6e161e7e07757491de859991572f68ea1ebf4092b97f8203e419e7fef626167",
+        "created_at": "2026-10-12T10:31:51Z",
+        "updated_at": "2026-10-12T10:31:51Z",
+        "expires_at": "2026-11-11T10:31:49Z",
+        "workflow_run": {
+          "id": 38236592619,
+          "repository_id": 1262034182,
+          "head_repository_id": 1262034182,
+          "head_branch": "codex/p1-publication-security-guards",
+          "head_sha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47"
+        }
+      },
+      {
+        "id": 11741002096,
+        "node_id": "MDg6QXJ0aWZhY3QxMTc0MTAwMjA5Ng==",
+        "name": "publication-security-diagnostics-7b136fc73f81366de14ba88d90020104ce3b8c65",
+        "size_in_bytes": 663044,
+        "url": "https://api.github.com/repos/wooil1964/birdmap/actions/artifacts/11741002096",
+        "archive_download_url": "https://api.github.com/repos/wooil1964/birdmap/actions/artifacts/11741002096/zip",
+        "expired": false,
+        "digest": "sha256:bd7edd4b5dc8aa74f9f1485db226637c0243fce9752c211c758f62e209b2f550",
+        "created_at": "2026-10-12T10:31:53Z",
+        "updated_at": "2026-10-12T10:31:53Z",
+        "expires_at": "2026-10-26T10:31:51Z",
+        "workflow_run": {
+          "id": 38236592619,
+          "repository_id": 1262034182,
+          "head_repository_id": 1262034182,
+          "head_branch": "codex/p1-publication-security-guards",
+          "head_sha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47"
+        }
+      }
+    ]
+  }
+}

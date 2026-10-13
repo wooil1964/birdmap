@@ -1,0 +1,21 @@
+{
+  "scope": "aggregation/fixture only, not product pass",
+  "failures": [
+    {
+      "id": "integration-aggregation-first",
+      "exit": 1,
+      "reason": "Git archive on Windows smudges LF into CRLF; raw archive-byte equality to Git blob failed. Individual suites passed and their raw outputs are retained. Final check compares main-vs-merge Git blobs exactly and archive-vs-blob with line endings normalized."
+    },
+    {
+      "id": "score-matrix-initial",
+      "exit": 1,
+      "reason": "Output directory not created: ENOENT pr13_r123_actual_matrix.json. Assertions reached output write but this attempt is not counted as success."
+    },
+    {
+      "id": "source-proofs-aggregation-first",
+      "exit": 1,
+      "reason": "Same LF/CRLF byte-check error; exact source-proof receipts exit0 retained, final aggregation rerun."
+    }
+  ],
+  "changed_product_for_harness_failures": false
+}

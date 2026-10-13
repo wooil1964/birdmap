@@ -1,0 +1,170 @@
+[
+  {
+    "users": 10,
+    "initial": {
+      "total": 90,
+      "perUser": 9,
+      "endpoints": {
+        "/reports/public-state": 40,
+        "/reports/approved": 20,
+        "/reports/pending": 10,
+        "/reports/recent-sites": 10,
+        "/field-updates": 10
+      }
+    },
+    "steady": {
+      "total": 168,
+      "perUser": 16.8,
+      "endpoints": {
+        "/reports/public-state": 158,
+        "/field-updates": 10
+      },
+      "durationSumMs": 645869.4000000134,
+      "meanDurationMs": 64586.94000000134,
+      "minDurationMs": 63497.60000000149,
+      "maxDurationMs": 65012.70000000298,
+      "perUserHour": 936.4122220374389,
+      "perUserContinuous24h": 22473.893328898535,
+      "cohortHour": 9364.12222037439,
+      "cohortContinuous24h": 224738.93328898534,
+      "endpointPerUserHour": {
+        "/reports/public-state": 880.6733992971151,
+        "/field-updates": 55.73882274032374
+      },
+      "rttMs": {
+        "configured": 75,
+        "mean": 80.67023809533566,
+        "min": 76.10000000149012,
+        "p50": 80,
+        "p95": 87.19999999552965,
+        "max": 88.40000000596046
+      },
+      "allRequestForeground": true,
+      "error": 0,
+      "status200": 168
+    },
+    "old": {
+      "sourceSha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+      "oldInitialPerUser": 13,
+      "newInitialPerUser": 9,
+      "oldSteadyPerUser": 57,
+      "newSteadyPerUser": 16.8,
+      "oldPerUserHour": 3184.603651865078,
+      "newPerUserHour": 936.4122220374389,
+      "workerRequestRateReductionFraction": 0.7059564315047416,
+      "oldEndpoints": {
+        "/reports/public-state": 320,
+        "/reports/approved": 60,
+        "/reports/pending": 60,
+        "/reports/recent-sites": 60,
+        "/field-updates": 70
+      },
+      "newEndpoints": {
+        "/reports/public-state": 158,
+        "/field-updates": 10
+      }
+    },
+    "sampledUnauthorizedDynamic": 0,
+    "expiry": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "users": 20,
+    "initial": {
+      "total": 180,
+      "perUser": 9,
+      "endpoints": {
+        "/reports/public-state": 80,
+        "/reports/approved": 40,
+        "/reports/pending": 20,
+        "/reports/recent-sites": 20,
+        "/field-updates": 20
+      }
+    },
+    "steady": {
+      "total": 332,
+      "perUser": 16.6,
+      "endpoints": {
+        "/reports/public-state": 312,
+        "/field-updates": 20
+      },
+      "durationSumMs": 1292195.1999999955,
+      "meanDurationMs": 64609.75999999978,
+      "minDurationMs": 63457.20000000298,
+      "maxDurationMs": 65015.5,
+      "perUserHour": 924.93765647791,
+      "perUserContinuous24h": 22198.50375546984,
+      "cohortHour": 18498.7531295582,
+      "cohortContinuous24h": 443970.0751093968,
+      "endpointPerUserHour": {
+        "/reports/public-state": 869.2185205455057,
+        "/field-updates": 55.719135932404214
+      },
+      "rttMs": {
+        "configured": 75,
+        "mean": 83.26807228929128,
+        "min": 76.5,
+        "p50": 82.89999999850988,
+        "p95": 88.39999999850988,
+        "max": 100.29999999701977
+      },
+      "allRequestForeground": true,
+      "error": 0,
+      "status200": 332
+    },
+    "old": {
+      "sourceSha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+      "oldInitialPerUser": 13,
+      "newInitialPerUser": 9,
+      "oldSteadyPerUser": 57,
+      "newSteadyPerUser": 16.6,
+      "oldPerUserHour": 3175.4810768718708,
+      "newPerUserHour": 924.93765647791,
+      "workerRequestRateReductionFraction": 0.7087251871174571,
+      "oldEndpoints": {
+        "/reports/public-state": 640,
+        "/reports/approved": 120,
+        "/reports/pending": 120,
+        "/reports/recent-sites": 120,
+        "/field-updates": 140
+      },
+      "newEndpoints": {
+        "/reports/public-state": 312,
+        "/field-updates": 20
+      }
+    },
+    "sampledUnauthorizedDynamic": 0,
+    "expiry": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+]

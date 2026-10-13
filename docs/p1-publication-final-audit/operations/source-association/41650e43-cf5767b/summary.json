@@ -1,0 +1,156 @@
+{
+  "mode": "Local git archive and Wrangler dry-run only; no upload/deploy/REST writes",
+  "candidate": "41650e43f80fadb2bfd9f80b18d958862f673551",
+  "newHead": "cf5767b090275221a516e16112d0e569eedb86e7",
+  "toolchain": "Wrangler4.149.0 / Nodev24.18.0",
+  "receipts": [
+    {
+      "ref": "41650e43f80fadb2bfd9f80b18d958862f673551",
+      "role": "public",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "--config",
+        "wrangler.public.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\41650e43f80f\\dry-public"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\41650e43f80f\\reports-api",
+      "start": "2026-10-12T10:34:48.961Z",
+      "end": "2026-10-12T10:34:49.900Z",
+      "exit": 0
+    },
+    {
+      "ref": "41650e43f80fadb2bfd9f80b18d958862f673551",
+      "role": "admin",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "--config",
+        "wrangler.admin.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\41650e43f80f\\dry-admin"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\41650e43f80f\\reports-api",
+      "start": "2026-10-12T10:34:49.900Z",
+      "end": "2026-10-12T10:34:50.837Z",
+      "exit": 0
+    },
+    {
+      "ref": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "role": "public",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "--config",
+        "wrangler.public.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\cf5767b09027\\dry-public"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\cf5767b09027\\reports-api",
+      "start": "2026-10-12T10:34:51.012Z",
+      "end": "2026-10-12T10:34:51.975Z",
+      "exit": 0
+    },
+    {
+      "ref": "cf5767b090275221a516e16112d0e569eedb86e7",
+      "role": "admin",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "deploy",
+        "--dry-run",
+        "--config",
+        "wrangler.admin.toml",
+        "--outdir",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\cf5767b09027\\dry-admin"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\.tmp\\source-association-41650e43-cf5767b\\cf5767b09027\\reports-api",
+      "start": "2026-10-12T10:34:51.975Z",
+      "end": "2026-10-12T10:34:52.951Z",
+      "exit": 0
+    }
+  ],
+  "workers": {
+    "birdmap-reports": {
+      "activeVersion": [
+        {
+          "version_id": "494b97d1-69ab-40f7-bbbf-e8c6e3c5effc",
+          "percentage": 100
+        }
+      ],
+      "operationalModuleSha256": "045b544db305deb73a5e745550a613ee10078c918e001045a16549e522e936c4",
+      "candidateBundleSha256": "045b544db305deb73a5e745550a613ee10078c918e001045a16549e522e936c4",
+      "newBundleSha256": "60919a6801c5e23f37d5765a1bc22d1261e6d924d8364a1a3143c6631c50be71",
+      "candidateExactBytes": true,
+      "candidateEqualNormalizedLF": true,
+      "candidateBytes": 71439,
+      "operationalBytes": 71439,
+      "operationalCapabilities": {
+        "s1RQuantitySuffixParser": false,
+        "publicationEpoch": false,
+        "publicationStrict": false,
+        "fieldCAS": false,
+        "atomicGuard": true,
+        "freshPrimary": false,
+        "publicCache60": true,
+        "publicNoStore": true,
+        "cacheAPI": false
+      },
+      "newCapabilities": {
+        "s1RQuantitySuffixParser": true,
+        "publicationEpoch": true,
+        "publicationStrict": true,
+        "fieldCAS": true,
+        "atomicGuard": true,
+        "freshPrimary": true,
+        "publicCache60": false,
+        "publicNoStore": true,
+        "cacheAPI": false
+      }
+    },
+    "birdmap-reports-admin": {
+      "activeVersion": [
+        {
+          "version_id": "0134cd9a-afce-4176-acfa-7910fbe4790c",
+          "percentage": 100
+        }
+      ],
+      "operationalModuleSha256": "0f580392471a7e5d286e45f92ee5c4b86c42533704a648a4de3f7717609cb10b",
+      "candidateBundleSha256": "0f580392471a7e5d286e45f92ee5c4b86c42533704a648a4de3f7717609cb10b",
+      "newBundleSha256": "62d45b94a767d6e1a8a837b5fe6eacc36a749a7ec189ca482b39b3d99ab941b1",
+      "candidateExactBytes": true,
+      "candidateEqualNormalizedLF": true,
+      "candidateBytes": 125295,
+      "operationalBytes": 125295,
+      "operationalCapabilities": {
+        "s1RQuantitySuffixParser": false,
+        "publicationEpoch": false,
+        "publicationStrict": false,
+        "fieldCAS": false,
+        "atomicGuard": true,
+        "freshPrimary": false,
+        "publicCache60": false,
+        "publicNoStore": true,
+        "cacheAPI": false
+      },
+      "newCapabilities": {
+        "s1RQuantitySuffixParser": false,
+        "publicationEpoch": false,
+        "publicationStrict": false,
+        "fieldCAS": false,
+        "atomicGuard": true,
+        "freshPrimary": false,
+        "publicCache60": false,
+        "publicNoStore": true,
+        "cacheAPI": false
+      }
+    }
+  }
+}

@@ -1,0 +1,149 @@
+TAP version 13
+# Subtest: hidden permission detection destructively removes live coordinates and names
+not ok 1 - hidden permission detection destructively removes live coordinates and names
+  ---
+  duration_ms: 2.783
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:30:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:30:138)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.start (node:internal/test_runner/test:1191:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+# Subtest: exact5000ms expiry detection destructively removes live coordinates and names
+not ok 2 - exact5000ms expiry detection destructively removes live coordinates and names
+  ---
+  duration_ms: 3.6506
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:31:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(closed(e))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:31:182)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: valid4999ms permission stays public and the lease cap is unchanged
+ok 3 - valid4999ms permission stays public and the lease cap is unchanged
+  ---
+  duration_ms: 0.6648
+  type: 'test'
+  ...
+# Subtest: hidden HEAD issues no network request
+not ok 4 - hidden HEAD issues no network request
+  ---
+  duration_ms: 2.1267
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:33:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:33:88)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: hidden payload/refresh/route issues no network and never executes callback
+not ok 5 - hidden payload/refresh/route issues no network and never executes callback
+  ---
+  duration_ms: 1.3943
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:34:139)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: HEAD started before visibility barrier is rejected after late arrival
+not ok 6 - HEAD started before visibility barrier is rejected after late arrival
+  ---
+  duration_ms: 0.8867
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:35:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:35:226)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: payload arriving after hide never issues postflight or restores data
+not ok 7 - payload arriving after hide never issues postflight or restores data
+  ---
+  duration_ms: 5.9235
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:36:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:36:371)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: late old HEAD failure cannot invalidate newer visible recovered state
+not ok 8 - late old HEAD failure cannot invalidate newer visible recovered state
+  ---
+  duration_ms: 1.1234
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-free-capacity/birdmap/.github/scripts/test_publication_visibility_expiry.mjs:37:349)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...

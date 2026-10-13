@@ -1,0 +1,77 @@
+{
+  "sourceSha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "indexSha256": "7ba40076b61c938cd251602da38741b27042c11bf56bb7b7ee2e0d94d2c62005",
+  "sourceTree": "2e00d28379a19ef2d0e2385752e5b3f08a5b3dc1",
+  "checkedAt": "2026-10-13T00:32:58.711Z",
+  "actualChrome": {
+    "finalCohorts": {
+      "pass": 18,
+      "fail": 0
+    },
+    "original241": {
+      "pass": 239,
+      "fail": 2,
+      "skip": 0,
+      "notRun": 0
+    },
+    "originalFailures": [
+      {
+        "width": 375,
+        "id": "independent-head-transit-counts-in-five-second-lease",
+        "pass": false,
+        "evidence": {
+          "elapsed": 8035.5,
+          "remaining": 0,
+          "totalAgeBudget": 8035.5
+        }
+      },
+      {
+        "width": "concurrency",
+        "id": "earlier-request-arrives-after-new-protected-snapshot",
+        "pass": false,
+        "evidence": {
+          "expectedDeferredRequests": 2,
+          "actual": 1
+        }
+      }
+    ],
+    "newContracts": {
+      "pass": 16,
+      "fail": 0,
+      "skip": 0
+    },
+    "compoundRequestStart": {
+      "pass": 1,
+      "fail": 0,
+      "skip": 0
+    },
+    "requiredViewRestoration": {
+      "pass": 5,
+      "fail": 0,
+      "skip": 0
+    },
+    "B6CurrentFixture": {
+      "pass": 170,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    }
+  },
+  "apiFixture": {
+    "sourceSha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+    "generatedAt": "2026-10-13T00:30:57.640Z",
+    "sha256": "f4fba1b4fb66fffdaf9dbf95bd84d2913a8f76b37cdf0bae53d1f5137006c6c1",
+    "caseCount": 13,
+    "synthetic": true,
+    "engine": "actual Node SQLite executing pinned3d API source and migration; no operational D1"
+  },
+  "originalExpiredB6Fixture": {
+    "pass": 70,
+    "fail": 100,
+    "exitCode": 1,
+    "retained": true
+  },
+  "productionRequests": 0,
+  "productModifiedByReviewer": false,
+  "scope": "Do not sum overlapping cases as a single suite. Original two legacy assertions still fail; separate contract proofs explain coalescing/compound-duration mismatch. Cost metrics are Chrome HTTP counts plus independent native D1 cost, not directly browser-connected D1."
+}

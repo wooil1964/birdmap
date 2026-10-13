@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\김진호\.codex\worktrees\p1-publication-final-audit\birdmap\.tmp\latest-main-b41b03cc717a-8bacc69b6bec\.github\scripts\validate_weather.py", line 74, in <module>
+    validate()
+  File "C:\Users\김진호\.codex\worktrees\p1-publication-final-audit\birdmap\.tmp\latest-main-b41b03cc717a-8bacc69b6bec\.github\scripts\validate_weather.py", line 34, in validate
+    assert data["date"] == datetime.now(KST).date().isoformat(), "Batch date mismatch"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Batch date mismatch

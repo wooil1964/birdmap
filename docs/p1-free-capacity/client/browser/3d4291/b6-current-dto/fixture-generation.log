@@ -1,0 +1,38 @@
+{
+  "sourceSha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-free-capacity\\client\\browser\\3d4291\\b6-current-dto\\current_api_fixture.json",
+  "cases": 13,
+  "normal": 5,
+  "withheld": 7,
+  "createdOwnerSteps": [
+    {
+      "action": "status",
+      "status": 201,
+      "body": {
+        "ok": true,
+        "id": "34106f81-4cb5-4d32-a4ec-8c6f656c74d0",
+        "status": "not_visible",
+        "rowRevision": "2"
+      }
+    },
+    {
+      "action": "status",
+      "status": 201,
+      "body": {
+        "ok": true,
+        "id": "34106f81-4cb5-4d32-a4ec-8c6f656c74d0",
+        "status": "reappeared",
+        "rowRevision": "3"
+      }
+    },
+    {
+      "action": "delete",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "id": "34106f81-4cb5-4d32-a4ec-8c6f656c74d0",
+        "deletedAt": "2026-10-13T00:30:57.633Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "cohorts": [
+    {
+      "users": 10,
+      "rates": {
+        "workerRequestsPerUserHour": 916.7718946060508,
+        "D1ReadsPerUserHour": 23154.08041133087,
+        "initialReads": 6080,
+        "oldWorkerRequestsPerUserHour": 3184.6036518650785,
+        "oldD1ReadsPerUserHour": 423943.37737460027,
+        "workerReductionFraction": 0.7121237068012722,
+        "D1ReductionFraction": 0.9453840261529273
+      },
+      "hotConservative": [
+        {
+          "activeHoursEach": 1,
+          "extraTimerHeadsPerUserHour": 36,
+          "coldPublicationQueryFraction": 0,
+          "workerRequests": 11040,
+          "D1RowsRead": 326732,
+          "D1RowsWritten": 665,
+          "workerExceeded": false,
+          "D1ReadExceeded": false,
+          "oldSameTimerWorkerRequests": 33759,
+          "oldSameTimerD1RowsRead": 4390735
+        },
+        {
+          "activeHoursEach": 8,
+          "extraTimerHeadsPerUserHour": 36,
+          "coldPublicationQueryFraction": 0,
+          "workerRequests": 78994,
+          "D1RowsRead": 2136518,
+          "D1RowsWritten": 665,
+          "workerExceeded": false,
+          "D1ReadExceeded": false,
+          "oldSameTimerWorkerRequests": 260461,
+          "oldSameTimerD1RowsRead": 34558172
+        }
+      ]
+    },
+    {
+      "users": 20,
+      "rates": {
+        "workerRequestsPerUserHour": 936.1072009907275,
+        "D1ReadsPerUserHour": 23592.13029163536,
+        "initialReads": 12160,
+        "oldWorkerRequestsPerUserHour": 3175.4810768718708,
+        "oldD1ReadsPerUserHour": 422728.9545842764,
+        "workerReductionFraction": 0.7052077533043037,
+        "D1ReductionFraction": 0.9441908815665666
+      },
+      "hotConservative": [
+        {
+          "activeHoursEach": 1,
+          "extraTimerHeadsPerUserHour": 36,
+          "coldPublicationQueryFraction": 0,
+          "workerRequests": 21225,
+          "D1RowsRead": 600114,
+          "D1RowsWritten": 665,
+          "workerExceeded": false,
+          "D1ReadExceeded": false,
+          "oldSameTimerWorkerRequests": 66092,
+          "oldSameTimerD1RowsRead": 8695071
+        },
+        {
+          "activeHoursEach": 8,
+          "extraTimerHeadsPerUserHour": 36,
+          "coldPublicationQueryFraction": 0,
+          "workerRequests": 159840,
+          "D1RowsRead": 4281012,
+          "D1RowsWritten": 665,
+          "workerExceeded": true,
+          "D1ReadExceeded": false,
+          "oldSameTimerWorkerRequests": 518219,
+          "oldSameTimerD1RowsRead": 68859924
+        }
+      ]
+    }
+  ],
+  "checks": 4904,
+  "verdict": "BLOCKED — 20 users ×8 hours within one UTC quota day exceeds the Free Worker request limit independently of SQL optimization; no operational approval."
+}

@@ -1,0 +1,138 @@
+{
+  "at": "2026-10-12T15:50:38.868Z",
+  "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "originalChromeMeasurementSource": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+  "actualIndexByteEquality": true,
+  "indexSha256": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+  "endpointRowsRead": {
+    "/reports/public-state": 103,
+    "/reports/approved": 224,
+    "/reports/pending": 104,
+    "/reports/recent-sites": 224,
+    "/field-updates": 140,
+    "/reports/site/92": 285,
+    "/contributors/monthly": 227
+  },
+  "allCostsEqualPrior": true,
+  "newLocalWorkerdChecks": {
+    "pass": 12,
+    "fail": 0,
+    "skip": 0
+  },
+  "readsWritten": 0,
+  "concurrency": [
+    {
+      "requests": 200,
+      "errorCount": 0,
+      "rowsReadTotal": 20600,
+      "rowsReadMin": 103,
+      "rowsReadMax": 103,
+      "rowsReadMean": 103,
+      "rowsWrittenTotal": 0,
+      "elapsedMs": {
+        "p50": 7.645999999999958,
+        "p95": 11.216899999999896,
+        "p99": 13.332099999999855,
+        "min": 7.035100000000057,
+        "max": 15.220600000000104
+      },
+      "concurrency": 1,
+      "wallElapsedMs": 1615.0806,
+      "requestsPerSecond": 123.83282914796946
+    },
+    {
+      "requests": 200,
+      "errorCount": 0,
+      "rowsReadTotal": 20600,
+      "rowsReadMin": 103,
+      "rowsReadMax": 103,
+      "rowsReadMean": 103,
+      "rowsWrittenTotal": 0,
+      "elapsedMs": {
+        "p50": 70.7456000000002,
+        "p95": 81.84889999999996,
+        "p99": 84.7158000000004,
+        "min": 11.4354000000003,
+        "max": 85.21639999999934
+      },
+      "concurrency": 10,
+      "wallElapsedMs": 1431.3471,
+      "requestsPerSecond": 139.72851169363463
+    },
+    {
+      "requests": 200,
+      "errorCount": 0,
+      "rowsReadTotal": 20600,
+      "rowsReadMin": 103,
+      "rowsReadMax": 103,
+      "rowsReadMean": 103,
+      "rowsWrittenTotal": 0,
+      "elapsedMs": {
+        "p50": 144.70790000000034,
+        "p95": 175.23269999999957,
+        "p99": 184.63450000000012,
+        "min": 15.67109999999957,
+        "max": 186.92919999999958
+      },
+      "concurrency": 20,
+      "wallElapsedMs": 1459.9268000000002,
+      "requestsPerSecond": 136.99316979454036
+    }
+  ],
+  "pricingDecision": [
+    {
+      "users": 10,
+      "dailyDemand": [
+        {
+          "activeHoursEach": 1,
+          "workerRequests": 33219,
+          "d1RowsRead": 4320535,
+          "workerFreeLimitExceeded": false,
+          "d1FreeLimitExceeded": false
+        },
+        {
+          "activeHoursEach": 8,
+          "workerRequests": 256141,
+          "d1RowsRead": 33996572,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        },
+        {
+          "activeHoursEach": 24,
+          "workerRequests": 765677,
+          "d1RowsRead": 101827512,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        }
+      ]
+    },
+    {
+      "users": 20,
+      "dailyDemand": [
+        {
+          "activeHoursEach": 1,
+          "workerRequests": 65012,
+          "d1RowsRead": 8554671,
+          "workerFreeLimitExceeded": false,
+          "d1FreeLimitExceeded": true
+        },
+        {
+          "activeHoursEach": 8,
+          "workerRequests": 509579,
+          "d1RowsRead": 67736724,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        },
+        {
+          "activeHoursEach": 24,
+          "workerRequests": 1525733,
+          "d1RowsRead": 203009990,
+          "workerFreeLimitExceeded": true,
+          "d1FreeLimitExceeded": true
+        }
+      ]
+    }
+  ],
+  "scope": "Chrome10/20 timer trace measured on original unchanged frontend; actual patched server endpoint costs separately rerun. No claim of new complete65-second browser load run.",
+  "harnessCorrection": "First byte-compare invocation failed with spawnSync git ENOBUFS before assertions/output. maxBuffer raised for the existing1.1MB index; assertions unchanged."
+}

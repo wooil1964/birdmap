@@ -1,0 +1,111 @@
+{
+  "head": "cf5767b090275221a516e16112d0e569eedb86e7",
+  "main": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "sourceHash": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+  "pass": 21,
+  "fail": 0,
+  "skip": 0,
+  "checks": [
+    {
+      "id": "latest-main-static-point-1",
+      "passed": true,
+      "accessDestinationChecked": true
+    },
+    {
+      "id": "latest-main-static-point-2",
+      "passed": true,
+      "accessDestinationChecked": false
+    },
+    {
+      "id": "latest-main-static-point-3",
+      "passed": true,
+      "accessDestinationChecked": true
+    },
+    {
+      "id": "latest-main-static-point-4",
+      "passed": true,
+      "accessDestinationChecked": false
+    },
+    {
+      "id": "latest-main-static-point-5",
+      "passed": true,
+      "accessDestinationChecked": false
+    },
+    {
+      "id": "invalid-static-point-null",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-empty",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-name-missing",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-name-empty",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-lat-string",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-lon-string",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-lat-nan",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-lon-infinity",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-lat-range",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-lon-range",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-zero",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-access-empty",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-access-lat-string",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-access-nan",
+      "passed": true
+    },
+    {
+      "id": "invalid-static-point-access-range",
+      "passed": true
+    },
+    {
+      "id": "name-text-only",
+      "passed": true
+    }
+  ],
+  "sourceFunctionsIdenticalToMain": 7,
+  "existingMainStaticNoticePointsUnchanged": true,
+  "accessPointsChecked": 2,
+  "guidanceRenderChecked": true,
+  "publicCoordinatesLogged": false,
+  "oldHarness": {
+    "exit": 1,
+    "error": "Missing new main noticeValidCoordinate dependency",
+    "log": "static-notice-old-harness.log"
+  },
+  "nativeTmapExecution": "Not performed; actual desktop handler rejects as designed",
+  "note": "Latest main static curated points remain distinct from dynamic report authority. This test does not resolve S1-P."
+}

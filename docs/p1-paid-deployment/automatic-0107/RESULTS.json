@@ -1,0 +1,705 @@
+{
+  "recordedAt": "2026-10-13T16:08:30.530Z",
+  "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "originMainSnapshot": {
+    "recordedAt": "2026-10-13T16:01:53.306Z",
+    "ref": "d736eed629210c14766c7708e206d391649befb1",
+    "rows": [
+      {
+        "file": "weather_today.json",
+        "sourceCommit": "d736eed629210c14766c7708e206d391649befb1",
+        "sha256": "ba5db1f4d0f5de83f9e629caa170d8bf7366e312f3fbfdd4044715524a2203a7",
+        "date": "2026-10-13",
+        "generatedAt": "2026-10-13 21:45 KST",
+        "startDate": null,
+        "endDate": null,
+        "siteCount": 190
+      },
+      {
+        "file": "weather_week.json",
+        "sourceCommit": "d736eed629210c14766c7708e206d391649befb1",
+        "sha256": "17c08e860b092e4a88f45ea5b134f476cc0a2b27665ab00bd5db0ffc5cb670b5",
+        "date": null,
+        "generatedAt": "2026-10-13 21:45 KST",
+        "startDate": "2026-10-13",
+        "endDate": "2026-10-19",
+        "siteCount": 190
+      }
+    ],
+    "note": "Immutable git snapshot, original dates not changed; not assumed to be current valid batch"
+  },
+  "finishedHead": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "environment": {
+    "PYTHONUTF8": "1",
+    "PYTHONIOENCODING": "utf-8",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CHROME_PATH": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "pythonPath": "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+    "nodePath": "C:/Program Files/nodejs/node.exe"
+  },
+  "tools": {
+    "node": "v24.18.0",
+    "python": "Python 3.12.14",
+    "chrome": "155.0.8059.40"
+  },
+  "automaticSixSuites": [
+    {
+      "id": "front",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "--test-reporter=tap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_approved_shared_history.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_briefing_kst_month.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_data_autorefresh.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_field_news.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_location_popup_guard.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_location_protection.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_month_tide_button.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_notice_close_hit.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_notice_kst_date.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_recent_contributors.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_recommendation_card_display.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_report_search.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_site_history_cache.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_tide_fallback.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_today_weather_midnight.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:02:58.3823272+09:00",
+      "finishedKst": "2026-10-14T01:03:50.5221962+09:00",
+      "exitCode": 0,
+      "counts": {
+        "total": 379,
+        "pass": 379,
+        "fail": 0,
+        "skip": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "log": "front.log",
+      "logSha256": "41916C29F57496754E02C15650864A26DE33ECCD3558D9E50EAA5C5EA62FF18A",
+      "executions": 1
+    },
+    {
+      "id": "reports",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "--test-reporter=tap"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\reports-api",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:02.4561569+09:00",
+      "finishedKst": "2026-10-14T01:03:05.4357103+09:00",
+      "exitCode": 0,
+      "counts": {
+        "total": 253,
+        "pass": 253,
+        "fail": 0,
+        "skip": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "log": "reports.log",
+      "logSha256": "F6DC745C527A416D56D863D932F78D78FFAC79F7868673318BA4E5FEB4FC61C1",
+      "executions": 1
+    },
+    {
+      "id": "weatherproxy",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "--test-reporter=tap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather-proxy\\test\\freshness.test.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather-proxy\\test\\partial.test.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather-proxy\\test\\worker.test.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:05.4834225+09:00",
+      "finishedKst": "2026-10-14T01:03:05.8129347+09:00",
+      "exitCode": 0,
+      "counts": {
+        "total": 36,
+        "pass": 36,
+        "fail": 0,
+        "skip": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "log": "weatherproxy.log",
+      "logSha256": "EF404F0DE9B522878C322D69E4458DDACE4A0BA9A217670CC134CACDF21E8F63",
+      "executions": 1
+    },
+    {
+      "id": "weather",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/test_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:05.8266398+09:00",
+      "finishedKst": "2026-10-14T01:03:07.3567940+09:00",
+      "exitCode": 0,
+      "counts": {
+        "total": 60,
+        "pass": 60,
+        "fail": 0,
+        "skip": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "log": "weather.log",
+      "logSha256": "5F865FB22878216F0BAE46B1C15BA6B78390F0BE702662EAAA4989D394A86C68",
+      "executions": 1
+    },
+    {
+      "id": "tide",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/test_tide.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:07.3665376+09:00",
+      "finishedKst": "2026-10-14T01:03:07.9933249+09:00",
+      "exitCode": 0,
+      "counts": {
+        "total": 22,
+        "pass": 21,
+        "fail": 0,
+        "skip": 1,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "log": "tide.log",
+      "logSha256": "14B1551A441738D753D98EB16F4F7C8A7FCE2C1788EF3242BCCADBD8C20A8AF8",
+      "executions": 1
+    },
+    {
+      "id": "sharepages",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/test_share_pages.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:08.0072360+09:00",
+      "finishedKst": "2026-10-14T01:03:08.4533927+09:00",
+      "exitCode": 0,
+      "counts": {
+        "total": 11,
+        "pass": 11,
+        "fail": 0,
+        "skip": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "log": "sharepages.log",
+      "logSha256": "F428D9880F00E9CCEBEE980A6A8F8A47CC3E2702D0D0EBFA6826FE8AB66AE0B2",
+      "executions": 1
+    }
+  ],
+  "automaticSixTotal": {
+    "pass": 760,
+    "fail": 0,
+    "skip": 1
+  },
+  "timeContract11": {
+    "id": "validator-time11",
+    "command": [
+      "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+      ".github/scripts/test_validator_time_contract.py"
+    ],
+    "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+    "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+    "startedKst": "2026-10-14T01:03:08.4622269+09:00",
+    "finishedKst": "2026-10-14T01:03:10.6189184+09:00",
+    "exitCode": 0,
+    "counts": {
+      "total": 11,
+      "pass": 11,
+      "fail": 0,
+      "skip": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "log": "validator-time11.log",
+    "logSha256": "17B7856616D80316AFB7485BF97EE53945659A50DB554E5F247F0BF909E49439",
+    "executions": 1
+  },
+  "automaticPlusTime11Total": {
+    "pass": 771,
+    "fail": 0,
+    "skip": 1
+  },
+  "originalIssuedParity8": {
+    "receipt": {
+      "id": "validator8",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "docs/p1-free-capacity/validator-fix-20261013-151500/probe_time_contract.py",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\automatic-0107\\validator8"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:10.6286482+09:00",
+      "finishedKst": "2026-10-14T01:03:12.2173242+09:00",
+      "exitCode": 0,
+      "log": "validator8.log",
+      "executions": 1
+    },
+    "pass": 8,
+    "fail": 0,
+    "skip": 0,
+    "evaluationKst": "2026-10-13T21:45:00+09:00",
+    "jsHarnessByteIdentical": true,
+    "result": "validator8/TIME_CONTRACT_PARITY.json",
+    "scope": "Explicit historical source clock and8Python/JS equality checks; not current validity"
+  },
+  "currentAndHistoricalModes": {
+    "receipt": {
+      "id": "validator-modes",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "docs/p1-free-capacity/validator-fix-20261013-151500/run_modes.py",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\automatic-0107\\modes",
+        "d736eed629210c14766c7708e206d391649befb1"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:12.2229736+09:00",
+      "finishedKst": "2026-10-14T01:03:13.1005578+09:00",
+      "exitCode": 1,
+      "log": "validator-modes.log",
+      "executions": 1
+    },
+    "rows": [
+      {
+        "mode": "current-stored-today",
+        "evaluationKst": "2026-10-14T01:03:12.486768+09:00",
+        "sourceSha256": "03ba8609b37e564dacb647e0b48243a65a0264d06106f69ea142b3f72bcca133",
+        "validationPassed": false,
+        "error": "AssertionError: Batch date mismatch",
+        "expectationMet": true
+      },
+      {
+        "mode": "current-stored-week",
+        "evaluationKst": "2026-10-14T01:03:12.486768+09:00",
+        "sourceSha256": "cc2529fb86c9e2aa294ffe3a03a6785fd3ef5c6f1db1db53290ae88594d95f48",
+        "validationPassed": true,
+        "error": null,
+        "expectationMet": true
+      },
+      {
+        "mode": "historical-original-today",
+        "evaluationKst": "2026-10-13T21:45:00+09:00",
+        "sourceSha256": "03ba8609b37e564dacb647e0b48243a65a0264d06106f69ea142b3f72bcca133",
+        "validationPassed": true,
+        "error": null,
+        "expectationMet": true
+      },
+      {
+        "mode": "historical-original-week",
+        "evaluationKst": "2026-10-13T21:45:00+09:00",
+        "sourceSha256": "cc2529fb86c9e2aa294ffe3a03a6785fd3ef5c6f1db1db53290ae88594d95f48",
+        "validationPassed": true,
+        "error": null,
+        "expectationMet": true
+      },
+      {
+        "mode": "current-actual-main-today",
+        "sourceGitCommit": "d736eed629210c14766c7708e206d391649befb1",
+        "sourceDate": "2026-10-13",
+        "sourceGeneratedAt": "2026-10-13 21:45 KST",
+        "evaluationKst": "2026-10-14T01:03:12.486768+09:00",
+        "sourceSha256": "ba5db1f4d0f5de83f9e629caa170d8bf7366e312f3fbfdd4044715524a2203a7",
+        "validationPassed": false,
+        "error": "AssertionError: Batch date mismatch",
+        "expectationMet": false
+      }
+    ],
+    "expectationsMet": 4,
+    "expectationsFailed": 1,
+    "scope": "Actual current KST clock and explicit historical clock preserved separately",
+    "failureClassification": "Actual origin/main d736 is still2026-10-13; current2026-10-14 validation correctly rejects its today batch. This is current input freshness failure, not R5 unit regression."
+  },
+  "originWeekCurrent": {
+    "receipt": {
+      "id": "origin-week-current",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "-c",
+        "import sys; from pathlib import Path; sys.path.insert(0, str(Path.cwd()/\".github/scripts\")); from validate_weather_week import validate; validate(Path(sys.argv[1]))",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\automatic-0107\\origin-main-snapshot\\weather_week.json"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "startedKst": "2026-10-14T01:03:13.1170589+09:00",
+      "finishedKst": "2026-10-14T01:03:13.5038771+09:00",
+      "exitCode": 0,
+      "log": "origin-week-current.log",
+      "executions": 1
+    },
+    "scope": "Actual clock, immutable separate origin/main weekly bytes",
+    "exit": 0
+  },
+  "sourceHashes": [
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\index.html",
+      "sha256": "9C519ED2F9A1C6E036C4772315DA3F5E97C13D481D7CD5191894E2C3A7975BEB",
+      "afterSha256": "9C519ED2F9A1C6E036C4772315DA3F5E97C13D481D7CD5191894E2C3A7975BEB",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather_today.json",
+      "sha256": "03BA8609B37E564DACB647E0B48243A65A0264D06106F69EA142B3F72BCCA133",
+      "afterSha256": "03BA8609B37E564DACB647E0B48243A65A0264D06106F69EA142B3F72BCCA133",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather_week.json",
+      "sha256": "CC2529FB86C9E2AA294FFE3A03A6785FD3EF5C6F1DB1DB53290AE88594D95F48",
+      "afterSha256": "CC2529FB86C9E2AA294FFE3A03A6785FD3EF5C6F1DB1DB53290AE88594D95F48",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\validate_weather.py",
+      "sha256": "68A162C66DF9141144A3BA4FF2AEDF0D71FA2EDEAF58E20785135508E2846A4D",
+      "afterSha256": "68A162C66DF9141144A3BA4FF2AEDF0D71FA2EDEAF58E20785135508E2846A4D",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\validate_weather_week.py",
+      "sha256": "AAE3A6C6B09536646C8D41DE5EA9C4AD67CD3DEE75765B28ABA08FFC03E88D43",
+      "afterSha256": "AAE3A6C6B09536646C8D41DE5EA9C4AD67CD3DEE75765B28ABA08FFC03E88D43",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\workflows\\publication-security-ci.yml",
+      "sha256": "AFEDE9119BDB82486DA1BAE52B69E9FDBA9267BF50BF05CC6D01B25A33B97870",
+      "afterSha256": "AFEDE9119BDB82486DA1BAE52B69E9FDBA9267BF50BF05CC6D01B25A33B97870",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_approved_shared_history.mjs",
+      "sha256": "920B64A22064641066EFEF0E03FE1DD459B26E51AE3F298CD549D4665125E3D8",
+      "afterSha256": "920B64A22064641066EFEF0E03FE1DD459B26E51AE3F298CD549D4665125E3D8",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_briefing_kst_month.mjs",
+      "sha256": "EF41541B7BBDD49700E56C1F9F136F8CDE2E929BACD1901EEB3E85A6072D386B",
+      "afterSha256": "EF41541B7BBDD49700E56C1F9F136F8CDE2E929BACD1901EEB3E85A6072D386B",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_data_autorefresh.mjs",
+      "sha256": "7CE41DC10E1079708C5AF7D27E6786FBA66B4C078A3F8D1C37C21EE311FD2DDE",
+      "afterSha256": "7CE41DC10E1079708C5AF7D27E6786FBA66B4C078A3F8D1C37C21EE311FD2DDE",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_field_news.mjs",
+      "sha256": "9C96F612AC20A6A80ECB4DF840D91ECBF6E99AFFE801207FFC5480A9746233BE",
+      "afterSha256": "9C96F612AC20A6A80ECB4DF840D91ECBF6E99AFFE801207FFC5480A9746233BE",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_location_popup_guard.mjs",
+      "sha256": "60D4B3496811BFA86C9309191B5A2324ADB9E8AB34C7BB294DC4E998A3F1FD27",
+      "afterSha256": "60D4B3496811BFA86C9309191B5A2324ADB9E8AB34C7BB294DC4E998A3F1FD27",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_location_protection.mjs",
+      "sha256": "E9BE682FEB35EE79EB9380894365A6224B4391611D2B3BA1D0E32EBFFA553723",
+      "afterSha256": "E9BE682FEB35EE79EB9380894365A6224B4391611D2B3BA1D0E32EBFFA553723",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_month_tide_button.mjs",
+      "sha256": "E86E616C88E5044F8BABF64DB1DE6BC16EAD24BA038ABE7E2AD66B421A03E1DA",
+      "afterSha256": "E86E616C88E5044F8BABF64DB1DE6BC16EAD24BA038ABE7E2AD66B421A03E1DA",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_notice_close_hit.mjs",
+      "sha256": "F35C7F0FCEE5E8E1FC1B5235C7CB979291C7A1CC077DA91A2B33EE068765A4A3",
+      "afterSha256": "F35C7F0FCEE5E8E1FC1B5235C7CB979291C7A1CC077DA91A2B33EE068765A4A3",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_notice_kst_date.mjs",
+      "sha256": "59C3280DBFE697606E3AFE0AABAD7F21B0773A4A9B23E6F90F4B3225F3D21F56",
+      "afterSha256": "59C3280DBFE697606E3AFE0AABAD7F21B0773A4A9B23E6F90F4B3225F3D21F56",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_publication_visibility_expiry.mjs",
+      "sha256": "4DEA07F4681A00C73BDFC36EABC3E75B97A702B25FD56045E5F44FE886FFB560",
+      "afterSha256": "4DEA07F4681A00C73BDFC36EABC3E75B97A702B25FD56045E5F44FE886FFB560",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_recent_contributors.mjs",
+      "sha256": "2B026F2B88BA437DDC63F190165A26DB0F3D098C527FC8004AA422E6EE5AEA5E",
+      "afterSha256": "2B026F2B88BA437DDC63F190165A26DB0F3D098C527FC8004AA422E6EE5AEA5E",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_recommendation_card_display.mjs",
+      "sha256": "1D5873AEE938D02C6C2946FB5CD8C55F848552E0EB06052368D226FD55B984F7",
+      "afterSha256": "1D5873AEE938D02C6C2946FB5CD8C55F848552E0EB06052368D226FD55B984F7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_report_search.mjs",
+      "sha256": "2EAEC932E536B97F642157B6093E1634FCA6682D1E5137FDED78838926D28D02",
+      "afterSha256": "2EAEC932E536B97F642157B6093E1634FCA6682D1E5137FDED78838926D28D02",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_site_history_cache.mjs",
+      "sha256": "C0CA6029D8E7BDD787645E00F68586B0FE51A4486C00178A38182F987D54ED9F",
+      "afterSha256": "C0CA6029D8E7BDD787645E00F68586B0FE51A4486C00178A38182F987D54ED9F",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_tide_fallback.mjs",
+      "sha256": "0F2AF7E237B92C028C254D329BDD0A06A78E7C98C9748790132603A2B8C3F585",
+      "afterSha256": "0F2AF7E237B92C028C254D329BDD0A06A78E7C98C9748790132603A2B8C3F585",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_today_weather_midnight.mjs",
+      "sha256": "CE9DB15FD5538DEB82BF94857F9963EDF194B06D9F5E23BD40BC43965A09163A",
+      "afterSha256": "CE9DB15FD5538DEB82BF94857F9963EDF194B06D9F5E23BD40BC43965A09163A",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weekly_recommendation.mjs",
+      "sha256": "13C765F662CFDDA140B2D1D156FC2A0C96A226CD3D1C07BFAB89E34BFB5E068E",
+      "afterSha256": "13C765F662CFDDA140B2D1D156FC2A0C96A226CD3D1C07BFAB89E34BFB5E068E",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_share_pages.py",
+      "sha256": "1A26C217AD49C0E82DD0416020072C9119D07F7CBF8F56CB9C981EE8F8A8B2F2",
+      "afterSha256": "1A26C217AD49C0E82DD0416020072C9119D07F7CBF8F56CB9C981EE8F8A8B2F2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_tide.py",
+      "sha256": "C88F9F71DD822FA4838CB47565C9F97F8AB9EDB2D4723E406760F3B0172599ED",
+      "afterSha256": "C88F9F71DD822FA4838CB47565C9F97F8AB9EDB2D4723E406760F3B0172599ED",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_validator_time_contract.py",
+      "sha256": "C0F78C9831FB4760DDD400FF82A7B551504E6E49D7C093C2E4B1E15F380A4D34",
+      "afterSha256": "C0F78C9831FB4760DDD400FF82A7B551504E6E49D7C093C2E4B1E15F380A4D34",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\test_weather.py",
+      "sha256": "A54D2FA21E00249381E54E28F7DC8C937803DE347E1CB3F7EA6723C4DE409919",
+      "afterSha256": "A54D2FA21E00249381E54E28F7DC8C937803DE347E1CB3F7EA6723C4DE409919",
+      "unchanged": true
+    }
+  ],
+  "sourceBlobMatches": [
+    {
+      "path": "index.html",
+      "inputBlob": "c6881b40559750e2a56b8500cfa6e11c411edf9b",
+      "workingBlob": "c6881b40559750e2a56b8500cfa6e11c411edf9b",
+      "match": true
+    },
+    {
+      "path": "weather_today.json",
+      "inputBlob": "0d85b8462237592c891a513126c210b9e8cd866b",
+      "workingBlob": "0d85b8462237592c891a513126c210b9e8cd866b",
+      "match": true
+    },
+    {
+      "path": "weather_week.json",
+      "inputBlob": "5425cee61832ef2e87ed08dd07a6c9f5bbb0e4ba",
+      "workingBlob": "5425cee61832ef2e87ed08dd07a6c9f5bbb0e4ba",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/validate_weather.py",
+      "inputBlob": "143f1a310ad3432ff1d5c30ddf9ea106adb0f688",
+      "workingBlob": "143f1a310ad3432ff1d5c30ddf9ea106adb0f688",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/validate_weather_week.py",
+      "inputBlob": "597cd7d2cda27bfd945dd79aee2c420ba9a239ec",
+      "workingBlob": "597cd7d2cda27bfd945dd79aee2c420ba9a239ec",
+      "match": true
+    },
+    {
+      "path": ".github/workflows/publication-security-ci.yml",
+      "inputBlob": "544659425ba7878e2b8c2a449e2f4056fc10f570",
+      "workingBlob": "544659425ba7878e2b8c2a449e2f4056fc10f570",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_approved_shared_history.mjs",
+      "inputBlob": "0acab84e4d19c58a13a205984a13013d4df2e8dd",
+      "workingBlob": "0acab84e4d19c58a13a205984a13013d4df2e8dd",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_briefing_kst_month.mjs",
+      "inputBlob": "f28c47c9071d2c311fb151d4f33a946086f9161a",
+      "workingBlob": "f28c47c9071d2c311fb151d4f33a946086f9161a",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_data_autorefresh.mjs",
+      "inputBlob": "61838ff0cfccb2135bec50d89ac1ce6328d9e9c0",
+      "workingBlob": "61838ff0cfccb2135bec50d89ac1ce6328d9e9c0",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_field_news.mjs",
+      "inputBlob": "ab2e9ebc6e4a054a573e7da38f29e9f1a2c88b42",
+      "workingBlob": "ab2e9ebc6e4a054a573e7da38f29e9f1a2c88b42",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_location_popup_guard.mjs",
+      "inputBlob": "535ef97ddcfc962d087a4c2cd24516b7184e6d10",
+      "workingBlob": "535ef97ddcfc962d087a4c2cd24516b7184e6d10",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_location_protection.mjs",
+      "inputBlob": "f9ffc7983d83dd3c1004a6373bafab0726136fb8",
+      "workingBlob": "f9ffc7983d83dd3c1004a6373bafab0726136fb8",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_month_tide_button.mjs",
+      "inputBlob": "1dc473279d4069d89a73979a38353872ebadef31",
+      "workingBlob": "1dc473279d4069d89a73979a38353872ebadef31",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_notice_close_hit.mjs",
+      "inputBlob": "4ea1fdfdd507d050d832fb6bbbc8994be0d828af",
+      "workingBlob": "4ea1fdfdd507d050d832fb6bbbc8994be0d828af",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_notice_kst_date.mjs",
+      "inputBlob": "1dad78711fb4dcd23eec1dd32c001b472678196c",
+      "workingBlob": "1dad78711fb4dcd23eec1dd32c001b472678196c",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_publication_visibility_expiry.mjs",
+      "inputBlob": "c4e82f94d261132368f9a532a1c53530fc2ac123",
+      "workingBlob": "c4e82f94d261132368f9a532a1c53530fc2ac123",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_recent_contributors.mjs",
+      "inputBlob": "95019a4ef1784703765eb107dac274e0bb29774c",
+      "workingBlob": "95019a4ef1784703765eb107dac274e0bb29774c",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_recommendation_card_display.mjs",
+      "inputBlob": "4490593aea23c7e9d5d1ea3663f956926f0e6d77",
+      "workingBlob": "4490593aea23c7e9d5d1ea3663f956926f0e6d77",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_report_search.mjs",
+      "inputBlob": "04cfe4066aa459da47c224b6bf9c5b87230c55cf",
+      "workingBlob": "04cfe4066aa459da47c224b6bf9c5b87230c55cf",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_site_history_cache.mjs",
+      "inputBlob": "20ba9c65ac620a6fc5511fa959d80a16dea2ef17",
+      "workingBlob": "20ba9c65ac620a6fc5511fa959d80a16dea2ef17",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_tide_fallback.mjs",
+      "inputBlob": "c99f5e112468b5009f43cb5c3ddf5a4392892f60",
+      "workingBlob": "c99f5e112468b5009f43cb5c3ddf5a4392892f60",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_today_weather_midnight.mjs",
+      "inputBlob": "412a80dfada71ac5190f64689c489b997a5ba436",
+      "workingBlob": "412a80dfada71ac5190f64689c489b997a5ba436",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_weekly_recommendation.mjs",
+      "inputBlob": "ad859abf02998769f0be806ef93b20fec2488b29",
+      "workingBlob": "ad859abf02998769f0be806ef93b20fec2488b29",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_share_pages.py",
+      "inputBlob": "0d0f02d0f236020944bad32ea26a48b26f64f7c4",
+      "workingBlob": "0d0f02d0f236020944bad32ea26a48b26f64f7c4",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_tide.py",
+      "inputBlob": "47dd30bab9803bee78f77578fcc26d737df82f59",
+      "workingBlob": "47dd30bab9803bee78f77578fcc26d737df82f59",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_validator_time_contract.py",
+      "inputBlob": "1d288cf6a03ee8ce11c562a320c879be23f3ab7d",
+      "workingBlob": "1d288cf6a03ee8ce11c562a320c879be23f3ab7d",
+      "match": true
+    },
+    {
+      "path": ".github/scripts/test_weather.py",
+      "inputBlob": "869cb7da1bc7ad641aad7806ab7b0a386905caaf",
+      "workingBlob": "869cb7da1bc7ad641aad7806ab7b0a386905caaf",
+      "match": true
+    }
+  ],
+  "sourceStable": true,
+  "skipDetails": [
+    {
+      "suite": "tide",
+      "id": "test_official_sample_values_match_saved_unchanged_station_forecasts",
+      "reason": "Official sample dates are outside the rolling monthly window",
+      "source": ".github/scripts/test_tide.py:331-352"
+    }
+  ],
+  "scopeExclusions": {
+    "ChromeOriginal241": "NOT_RERUN_BY_THIS_AGENT",
+    "correctedLoad18": "NOT_RERUN_BY_THIS_AGENT",
+    "nativeD1CAS": "NOT_RERUN_BY_THIS_AGENT",
+    "CI": "NOT_RUN_BY_THIS_AGENT",
+    "actualFresh20261014Batch": "NOT_AVAILABLE_AT_PINNED_ORIGIN_SNAPSHOT",
+    "deployment": "NOT_RUN_BY_THIS_AGENT"
+  },
+  "productEdits": 0,
+  "harnessEdits": 0,
+  "commits": 0,
+  "pushes": 0,
+  "operatingChanges": 0,
+  "verdict": "771PASS/0FAIL/1SKIP automatic+time contract and8/8historical equality pass; actual currenttoday FAIL retained, operational weather freshness unresolved"
+}

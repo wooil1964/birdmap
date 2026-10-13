@@ -1,0 +1,320 @@
+{
+  "schema": "birdmap-hidden-expiry-fix-final-v1",
+  "recordedAt": "2026-10-13T10:34:02.185351+00:00",
+  "branch": "codex/p1-publication-free-capacity",
+  "baselineProductSha": "c060f505ab95e5a3854f0e1be77fd8214de6b126",
+  "baselineCheckpointSha": "26ad356418bbef61f8a583821ad63353cb85843a",
+  "productSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "verdict": "P1-A/P1-B targeted fixes complete; operating deployment BLOCKED",
+  "runs": [
+    {
+      "id": "targeted-js",
+      "summary": {
+        "total": 80,
+        "pass": 80,
+        "fail": 0,
+        "skip": 0,
+        "cancel": 0
+      },
+      "exitCode": 0,
+      "evidence": "targeted-node-render-guards.log",
+      "note": "DTO32 + new visibility/expiry11 + related field/location37. DTO32 is a subset, do not add twice."
+    },
+    {
+      "id": "recommendation-and-midnight-js",
+      "summary": {
+        "total": 182,
+        "pass": 182,
+        "fail": 0,
+        "skip": 0,
+        "cancel": 0
+      },
+      "exitCode": 0,
+      "evidence": "js-recommendation.log"
+    },
+    {
+      "id": "validator-parity",
+      "summary": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0,
+        "total": 8
+      },
+      "exitCode": 0,
+      "evidence": "validator-parity/TIME_CONTRACT_PARITY.json",
+      "note": "Frozen original issuance mode; current-date old fixture remains invalid. Week JS compares generated stamp source contract, not a full weekly validator."
+    },
+    {
+      "id": "hidden-before",
+      "sourceSha": "c060f505ab95e5a3854f0e1be77fd8214de6b126",
+      "summary": {
+        "pass": 10,
+        "fail": 20,
+        "skip": 0
+      },
+      "exitCode": 1,
+      "evidence": "before-hidden/HIDDEN_TARGETED_BROWSER.json",
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 95,
+        "blockedOther": 62,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": []
+    },
+    {
+      "id": "hidden-after",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "summary": {
+        "pass": 30,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "evidence": "after-hidden/HIDDEN_TARGETED_BROWSER.json",
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 95,
+        "blockedOther": 62,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": []
+    },
+    {
+      "id": "latency",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "summary": {
+        "pass": 7,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "evidence": "after-latency/LATENCY_BROWSER_MANIFEST.json",
+      "network": {
+        "allowedLocal": 8,
+        "allowedDependencyGet": 19,
+        "blockedOther": 9,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": []
+    },
+    {
+      "id": "load-cohorts",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "summary": {
+        "pass": 18,
+        "fail": 0
+      },
+      "exitCode": 0,
+      "evidence": "after-cohorts/LOAD_MANIFEST.json",
+      "network": {
+        "allowedLocal": 302,
+        "allowedDependencyGet": 570,
+        "blockedOther": 375,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": []
+    },
+    {
+      "id": "visible-expiry-before",
+      "sourceSha": "c060f505ab95e5a3854f0e1be77fd8214de6b126",
+      "summary": {
+        "pass": 4,
+        "fail": 4,
+        "skip": 0,
+        "total": 8
+      },
+      "supplementarySummary": {
+        "pass": 0,
+        "fail": 4,
+        "skip": 0,
+        "total": 4
+      },
+      "exitCode": 1,
+      "evidence": "expiry-review/before-c060-20261013-3/VISIBLE_EXPIRY_MANIFEST.json"
+    },
+    {
+      "id": "visible-expiry-after",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "summary": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0,
+        "total": 8
+      },
+      "supplementarySummary": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0,
+        "total": 4
+      },
+      "exitCode": 0,
+      "evidence": "expiry-review/after-38a-20261013-1/VISIBLE_EXPIRY_MANIFEST.json"
+    }
+  ],
+  "serverEvidence": "server/SERVER_RECHECK_MANIFEST.json",
+  "serverSummary": {
+    "pass": 108,
+    "fail": 0,
+    "skip": 0,
+    "nativeD1Cas": {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "chromeEvidence": "chrome/MANIFEST.json",
+  "originalChromeSummary": {
+    "pass": 237,
+    "fail": 4,
+    "skip": 0,
+    "notRun": 0
+  },
+  "otherChromeRuns": [
+    {
+      "name": "contract-16",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 16,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 91,
+        "blockedOther": 60,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "contract-16/FREE_CONTRACT_CHROME.json"
+    },
+    {
+      "name": "compound-1",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 8,
+        "allowedDependencyGet": 19,
+        "blockedOther": 9,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "compound-1/COMPOUND_RECHECK.json"
+    },
+    {
+      "name": "native-routes-8",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 15,
+        "allowedDependencyGet": 38,
+        "blockedOther": 32,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "native-routes-8/NATIVE_WINDOW_ROUTE_BROWSER.json"
+    },
+    {
+      "name": "two-tab-diagnostic",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 3,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 15,
+        "allowedDependencyGet": 37,
+        "blockedOther": 25,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "two-tab-diagnostic/TWO_TAB_CONTEXT_DIAGNOSTIC.json"
+    },
+    {
+      "name": "two-context-diagnostic",
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 5,
+        "fail": 0,
+        "skip": 0
+      },
+      "exitCode": 0,
+      "network": {
+        "allowedLocal": 29,
+        "allowedDependencyGet": 75,
+        "blockedOther": 50,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "result": "two-context-diagnostic/TWO_CONTEXT_AUTHORITY_DIAGNOSTIC.json"
+    }
+  ],
+  "baselineNewUnit": {
+    "total": 11,
+    "pass": 2,
+    "fail": 9,
+    "skip": 0,
+    "cancel": 0
+  },
+  "nonInterference": {
+    "evidence": "INVARIANTS.json",
+    "sites": {
+      "count": 190,
+      "uniqueIds": 190,
+      "allFieldsAndOrderEqual": true,
+      "coordinatesEqual": true
+    },
+    "protectedFiles": 473,
+    "recommendationCoreUnchanged": true,
+    "workerFilesUnchanged": 64,
+    "timingConstantsUnchanged": true
+  },
+  "operatingChanges": {
+    "push": 0,
+    "merge": 0,
+    "deploy": 0,
+    "D1Change": 0,
+    "userDataChange": 0,
+    "planChange": 0
+  },
+  "remaining": [
+    "Workers Free 20 users x8h:5s HEAD minimum115200 exceeds100000/UTC day; not changed in this task",
+    "Original Chrome4 failures retained; diagnostic contract differences documented, not rewritten as pass",
+    "Physical GPS/mobile native apps/iOS popup policy, real devices and edge CPU/replica/load not verified",
+    "Old fixture still invalid in current-date validator mode; this task does not refresh production weather or build CI",
+    "No full suite/CI/deployment/rollback verification in this limited stage"
+  ],
+  "limits": [
+    "First detection scrubs synchronously; no guaranteed JS execution exactly at5000ms while browser event loop suspended",
+    "Previously externally copied/captured bytes cannot be erased by client cleanup",
+    "Historical hidden-dependent8 was preserved; an independent visible8 is the before/after comparison"
+  ]
+}

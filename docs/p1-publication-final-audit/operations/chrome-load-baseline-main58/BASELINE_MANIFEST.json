@@ -1,0 +1,789 @@
+{
+  "schema": "birdmap-publication-baseline-chrome-load-v1",
+  "sourceSha": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "assetsTree": "ac401bd25ab134cf9683f7897044fa7c358ef4a0",
+  "indexSha256": "3e6ced7eb8ceda43481f65a777cc495c45cab2a9bd1d1f3ff2f2ddf892238825",
+  "checkedAt": "2026-10-12T10:55:42.181Z",
+  "users": 10,
+  "contexts": 10,
+  "initial": [
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    },
+    {
+      "siteCount": 190,
+      "hidden": false,
+      "visibility": "visible",
+      "focus": true,
+      "approved": 1,
+      "fields": 1
+    }
+  ],
+  "durationMs": [
+    65017.799999999814,
+    65017.89999999991,
+    65017.89999999991,
+    65017.80000000028,
+    65017.700000000186,
+    65017.700000000186,
+    65017.700000000186,
+    65017.700000000186,
+    65017.60000000009,
+    65017.700000000186
+  ],
+  "bootstrap": {
+    "requests": 40,
+    "perUser": 4,
+    "endpoints": {
+      "/reports/approved": 10,
+      "/reports/pending": 10,
+      "/reports/recent-sites": 10,
+      "/field-updates": 10
+    }
+  },
+  "steady": {
+    "requests": 10,
+    "perUser": 1,
+    "endpoints": {
+      "/field-updates": 10
+    },
+    "allForeground": true,
+    "workerRequestsPerUserHour": 55.369495253219235,
+    "workerRequestsPerUserContinuousDay": 1328.8678860772616
+  },
+  "records": [
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 678.3999999999069,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 758,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 678.6999999997206,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 758.0999999996275,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 678.6999999997206,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 758.1999999997206,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 678.7999999998137,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 758.2999999998137,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60690.89999999991,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60776.39999999991,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 710.2000000001863,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 799,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 710.6000000000931,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 799.1000000000931,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 710.6000000000931,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 799.1000000000931,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 710.7000000001863,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 799.2000000001863,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60716.30000000028,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60802.90000000037,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 705.2000000001863,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 792.5,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 705.5,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 792.8000000002794,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 705.6000000000931,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 792.8999999999069,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 705.8000000002794,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 792.8999999999069,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60712.80000000028,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60799.39999999991,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 692.6999999997206,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 782.3999999999069,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 693.0999999996275,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 782.5,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 693.0999999996275,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 782.5,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 693.1999999997206,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 782.5,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60701.5,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60788.09999999963,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 603.3000000002794,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 693.3000000002794,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 603.6000000000931,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 693.7000000001863,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 603.7000000001863,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 693.8000000002794,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 603.8000000002794,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 693.8000000002794,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60608.90000000037,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60698.80000000028,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 619.8999999999069,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 715.7000000001863,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 620.2000000001863,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 715.7999999998137,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 620.2999999998137,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 715.8999999999069,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 620.3999999999069,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 716.1000000000931,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60634.700000000186,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60709.89999999991,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 616.2000000001863,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 721.5,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 616.4000000003725,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 721.7000000001863,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 616.4000000003725,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 721.7000000001863,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 616.6000000000931,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 721.9000000003725,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60630.80000000028,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60706,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 633.8999999999069,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 727,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 634.2999999998137,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 727.1000000000931,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 634.3999999999069,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 727.2999999998137,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 634.5,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 727.2999999998137,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60636.299999999814,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60717.799999999814,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 540.1999999997206,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 632.8999999999069,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 540.5999999996275,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 633,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 540.5999999996275,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 633,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 540.7999999998137,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 633.0999999996275,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60544.799999999814,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60629.19999999972,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    },
+    {
+      "requests": [
+        {
+          "ordinal": 1,
+          "at": 533.5,
+          "phase": "bootstrap",
+          "path": "/reports/approved",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 633.3999999999069,
+          "status": 200
+        },
+        {
+          "ordinal": 2,
+          "at": 533.7999999998137,
+          "phase": "bootstrap",
+          "path": "/reports/pending",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 633.5,
+          "status": 200
+        },
+        {
+          "ordinal": 3,
+          "at": 533.8999999999069,
+          "phase": "bootstrap",
+          "path": "/reports/recent-sites",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-cache",
+          "completedAt": 633.5,
+          "status": 200
+        },
+        {
+          "ordinal": 4,
+          "at": 534,
+          "phase": "bootstrap",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 633.6000000000931,
+          "status": 200
+        },
+        {
+          "ordinal": 5,
+          "at": 60538,
+          "phase": "steady-foreground",
+          "path": "/field-updates",
+          "method": "GET",
+          "visibility": "visible",
+          "hidden": false,
+          "cache": "no-store",
+          "completedAt": 60628.299999999814,
+          "status": 200
+        }
+      ],
+      "visibilityChanges": []
+    }
+  ],
+  "network": {
+    "allowedLocal": 61,
+    "allowedDependencyGet": 190,
+    "blockedOther": 125,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "limits": [
+    "Legacy baseline does not implement publication-v1 and is not claimed secure.",
+    "Only 65 seconds measured; the legacy ten-minute three-list interval is not fully represented and must be estimated separately.",
+    "No operating API or native app requests.",
+    "Foreground is actual Chrome/CDP virtual focus, not physical devices."
+  ]
+}

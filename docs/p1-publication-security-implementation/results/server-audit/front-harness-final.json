@@ -1,0 +1,37 @@
+{
+  "checked_at_utc": "2026-10-11T23:25:58.8254452Z",
+  "scope": "all existing front unit suites with fresh-head GPS callbacks; separate full Chrome required",
+  "command": "node --test --test-reporter=tap <all .github/scripts/test_*.mjs>",
+  "files": [
+    "test_briefing_kst_month.mjs",
+    "test_data_autorefresh.mjs",
+    "test_field_news.mjs",
+    "test_location_popup_guard.mjs",
+    "test_location_protection.mjs",
+    "test_month_tide_button.mjs",
+    "test_notice_close_hit.mjs",
+    "test_notice_kst_date.mjs",
+    "test_recent_contributors.mjs",
+    "test_report_search.mjs",
+    "test_site_history_cache.mjs",
+    "test_tide_fallback.mjs",
+    "test_today_weather_midnight.mjs",
+    "test_weekly_recommendation.mjs"
+  ],
+  "actual_tap_counts": {
+    "pass": 281,
+    "tests": 281,
+    "skipped": 0,
+    "fail": 0
+  },
+  "exit_code": 0,
+  "evidence": "front-fresh-gps-full-final.tap",
+  "product_edits_by_this_agent": 0,
+  "harness_source_hashes": {
+    ".github/scripts/test_location_protection.mjs": "ec2951c7b5231fee7d9c1f196e31966f39662510f0d5116340b11533a6751b32",
+    ".github/scripts/test_field_news.mjs": "092ebf3513f256fb3bca0a54f81de7bac65919913f0d8331ea514b0a06abd573",
+    ".github/scripts/test_weekly_recommendation.mjs": "c5b94ebc6f748e918aa3416550e03a9ba24b2209400ee9d86bb600172388dd1d",
+    ".github/scripts/test_location_popup_guard.mjs": "33232eca1f6cb11e1376381b6087ae4bed191697c7876d53fb3cfe6eb2432459",
+    ".github/scripts/test_site_history_cache.mjs": "54f53ded212d1b3f3a9b91d47874f7d3f4347d214d215b50b6902f2404e1a83c"
+  }
+}

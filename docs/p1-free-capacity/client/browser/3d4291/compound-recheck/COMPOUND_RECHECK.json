@@ -1,0 +1,65 @@
+{
+  "schema": "birdmap-free-compound-recheck-dom-v1",
+  "sourceInput": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "indexSha256": "7ba40076b61c938cd251602da38741b27042c11bf56bb7b7ee2e0d94d2c62005",
+  "assetsInput": "2e00d28379a19ef2d0e2385752e5b3f08a5b3dc1",
+  "widths": [
+    375
+  ],
+  "rows": [
+    {
+      "width": 375,
+      "id": "compound-long-recheck-remains-closed-or-request-start-valid",
+      "pass": true,
+      "evidence": {
+        "prepared": {
+          "needsRefresh": true,
+          "allowed": true,
+          "ready": true
+        },
+        "observed": {
+          "wholeOperationElapsed": 8039,
+          "requestStart": 754.5,
+          "requestAge": 8039,
+          "remaining": 0,
+          "actualLeaseBudget": 8039,
+          "allowed": false,
+          "ready": false,
+          "needsRefresh": true
+        },
+        "closed": true,
+        "after": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 3,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "pass": 1,
+    "fail": 0,
+    "skip": 0
+  },
+  "network": {
+    "allowedLocal": 8,
+    "allowedDependencyGet": 19,
+    "blockedOther": 9,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "method": "Reproduces original direct4-list helper plus needsRefresh compound operation with2s synthetic HEAD latency; asserts actual request-start5s lease when allowed, otherwise all dynamic DOM/stores closed."
+}

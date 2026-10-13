@@ -1,0 +1,4623 @@
+{
+  "schema": "birdmap-free-authority-completeness-chrome-v1",
+  "sourceInput": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "indexSha256": "7ba40076b61c938cd251602da38741b27042c11bf56bb7b7ee2e0d94d2c62005",
+  "assetsInput": "2e00d28379a19ef2d0e2385752e5b3f08a5b3dc1",
+  "widths": [
+    344,
+    375,
+    768,
+    1024,
+    1440
+  ],
+  "rows": [
+    {
+      "width": 344,
+      "id": "authority-change-discovered-by-field-restores-all-required-views",
+      "pass": true,
+      "evidence": {
+        "empty": {
+          "allowed": true,
+          "ready": true,
+          "generation": 2,
+          "needsRefresh": false,
+          "approved": 0,
+          "fields": 0,
+          "fieldRows": 0,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c9c893179e89f8951521b6575bae8e26",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "9b5da93e306798fe14dbaed8bf567e41",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "7efda58c4dfb6f1ef2fcd946b4ba425e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "4c28442e4f7550603eb9feff7bb505f2",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "78e74e5ea5c3c8cb375e3f94353c1eab",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "4402ad60bc6b84470a366d738517f76b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "173a4816e49cc5b6869f9e419e46696c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "65ab0035a6aec3d450f8013e90d36328",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "bb413fc324c142153f0e8c175a0961e4",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "2ff1800b4d57bd529b762b9074b089be",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "c4c74ebd8ac46eef49c57734ff3363cb",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "bf398be2a4e4e22318ebce10da076989",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "d3d07a7e2bac73604ab8f7bbebf43010",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "37a60ca44ab20b9ddd164795d5c10daa",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f19c4d527c836c3f372cd08f6e48fd4c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "8fd9722769a610735293d6886cb35c30",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "1c734dca407e3388ead975ba4c651c1d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "60a0b6269f7a200b7ffcd08bd4bcdcbf",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "ba5c47b000501506baa6635ab8f8149d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "498673fedc12214e16b806c4f35dd852",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "98c9b4c15db95391e00f70bd93aea4c1",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2bb0fda10acc39b5dbabd7e38baf0b6f",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e31222991fe9951f98571df3d0472571",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "89d5c84ce4f04827ea05e6cff459ed90",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "9b3b984204ed99ac96243aba87e926f4",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b5655129da019cccd0cc9e0e7c9ed83c",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "512bb9aeea9df9cbe9e742ddeafae8fa",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "87c3b138eeb8b051d1cde894d4085de5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1935b8cea00e10da1e8fc49c2f17f050",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "fieldFirst": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": true,
+          "approved": 0,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c9c893179e89f8951521b6575bae8e26",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "9b5da93e306798fe14dbaed8bf567e41",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "7efda58c4dfb6f1ef2fcd946b4ba425e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "4c28442e4f7550603eb9feff7bb505f2",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "78e74e5ea5c3c8cb375e3f94353c1eab",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "4402ad60bc6b84470a366d738517f76b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "173a4816e49cc5b6869f9e419e46696c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "65ab0035a6aec3d450f8013e90d36328",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "bb413fc324c142153f0e8c175a0961e4",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "2ff1800b4d57bd529b762b9074b089be",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "c4c74ebd8ac46eef49c57734ff3363cb",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "bf398be2a4e4e22318ebce10da076989",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "d3d07a7e2bac73604ab8f7bbebf43010",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "37a60ca44ab20b9ddd164795d5c10daa",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f19c4d527c836c3f372cd08f6e48fd4c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "8fd9722769a610735293d6886cb35c30",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "1c734dca407e3388ead975ba4c651c1d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "60a0b6269f7a200b7ffcd08bd4bcdcbf",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "ba5c47b000501506baa6635ab8f8149d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "498673fedc12214e16b806c4f35dd852",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "98c9b4c15db95391e00f70bd93aea4c1",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2bb0fda10acc39b5dbabd7e38baf0b6f",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e31222991fe9951f98571df3d0472571",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "89d5c84ce4f04827ea05e6cff459ed90",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "9b3b984204ed99ac96243aba87e926f4",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b5655129da019cccd0cc9e0e7c9ed83c",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "512bb9aeea9df9cbe9e742ddeafae8fa",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "87c3b138eeb8b051d1cde894d4085de5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1935b8cea00e10da1e8fc49c2f17f050",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a56ab42a07d76d0a025b45ae30a21b20",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "9b7dc2d982b2aed7dcb320cb687de09a",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "beb427bd3d9f860adc590e464c7fee4a",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "final": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": false,
+          "approved": 1,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c9c893179e89f8951521b6575bae8e26",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "9b5da93e306798fe14dbaed8bf567e41",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "7efda58c4dfb6f1ef2fcd946b4ba425e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "4c28442e4f7550603eb9feff7bb505f2",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "78e74e5ea5c3c8cb375e3f94353c1eab",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "4402ad60bc6b84470a366d738517f76b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "173a4816e49cc5b6869f9e419e46696c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "65ab0035a6aec3d450f8013e90d36328",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "bb413fc324c142153f0e8c175a0961e4",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "2ff1800b4d57bd529b762b9074b089be",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "c4c74ebd8ac46eef49c57734ff3363cb",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "bf398be2a4e4e22318ebce10da076989",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "d3d07a7e2bac73604ab8f7bbebf43010",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "37a60ca44ab20b9ddd164795d5c10daa",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f19c4d527c836c3f372cd08f6e48fd4c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "8fd9722769a610735293d6886cb35c30",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "1c734dca407e3388ead975ba4c651c1d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "60a0b6269f7a200b7ffcd08bd4bcdcbf",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "ba5c47b000501506baa6635ab8f8149d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "498673fedc12214e16b806c4f35dd852",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "98c9b4c15db95391e00f70bd93aea4c1",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2bb0fda10acc39b5dbabd7e38baf0b6f",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e31222991fe9951f98571df3d0472571",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "89d5c84ce4f04827ea05e6cff459ed90",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "9b3b984204ed99ac96243aba87e926f4",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b5655129da019cccd0cc9e0e7c9ed83c",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "512bb9aeea9df9cbe9e742ddeafae8fa",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "87c3b138eeb8b051d1cde894d4085de5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1935b8cea00e10da1e8fc49c2f17f050",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a56ab42a07d76d0a025b45ae30a21b20",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "9b7dc2d982b2aed7dcb320cb687de09a",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "beb427bd3d9f860adc590e464c7fee4a",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "600d4917bc1e8447450f9274877a6bb2",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "7a1ef01c26fcf5c282fafe031f1679dd",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a1df844ddcf79575e999894850d5f5f8",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "17600a2d15778ec320611070edaf5e8e",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5998aa99642b1f30a0dcf9a24b4ce71b",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "db45176743b6acd005a2aba09d537f0d",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2f10949bcbc83ded75d52f8ff4a219b4",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e99bb6c1b2b537bc29c673856288c9e7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "recoveryCalls": [
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "600d4917bc1e8447450f9274877a6bb2",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "7a1ef01c26fcf5c282fafe031f1679dd",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/approved",
+            "method": "GET",
+            "nonce": "a1df844ddcf79575e999894850d5f5f8",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/pending",
+            "method": "GET",
+            "nonce": "17600a2d15778ec320611070edaf5e8e",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/recent-sites",
+            "method": "GET",
+            "nonce": "5998aa99642b1f30a0dcf9a24b4ce71b",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/field-updates",
+            "method": "GET",
+            "nonce": "db45176743b6acd005a2aba09d537f0d",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "2f10949bcbc83ded75d52f8ff4a219b4",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "e99bb6c1b2b537bc29c673856288c9e7",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          }
+        ],
+        "approvedLoads": 1
+      }
+    },
+    {
+      "width": 375,
+      "id": "authority-change-discovered-by-field-restores-all-required-views",
+      "pass": true,
+      "evidence": {
+        "empty": {
+          "allowed": true,
+          "ready": true,
+          "generation": 2,
+          "needsRefresh": false,
+          "approved": 0,
+          "fields": 0,
+          "fieldRows": 0,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a15b728c43036d659606de32533c81de",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "447bcd16945f16e5166e1311f56ffc1e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "6dc811aaea2a0c9cef53c5fbcb6dac74",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "9a4a6fe6e9866ef78236a19bc3ff24b5",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "88a4431f1a5ff4d4da56eedb506c478f",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "59c432002216aed5b020db7d849c9ed5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "da419a72d860ac8e23f1e63aabb6dc86",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "44841b93ce4626a508ab99d5bdc615d8",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "2ddb685bd99160c4f5c3b014212ce1cb",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "00af11afae181f7b82781675701af3cc",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b91db8ae9fc1a86e5c1d68d9220b2b23",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "fb6990c8d26c03dedc076a458db088db",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "216a4f4d624e8e5bd97e71f15e987897",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "175e4adfc512c82751f13116df4b550c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "63a76dc13b25bf387896ff1397aa45a9",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "3fce38836c76009253055f257cbd8810",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "29b999530ef76e6ba844bdab4a3634c5",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "524aba66f1ee0bb58918790711b91ed8",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "90e0c1ecc95f5640da968c3bb28a9197",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "595d3f742753097c3667c3effd354a8b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6ecf6fe6b06c72990bf356498828406b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "eca0a9dbff39c6e03c4c9d77c00bfa18",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "44e821ac203f56abc5b9b8cf95b62bfc",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a955e843af04e55b2ee1d122d2de7a3e",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "c4506a32da7c82da537d74c597184186",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "a9e20421168fb07d0411324eaff9561b",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5d960c639834d915f10ff4ec88776577",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "05da4a2c83aa6f31da988d5b447b3ba9",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1484b9f861bdce804e44a6899a25b5f0",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "fieldFirst": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": true,
+          "approved": 0,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a15b728c43036d659606de32533c81de",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "447bcd16945f16e5166e1311f56ffc1e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "6dc811aaea2a0c9cef53c5fbcb6dac74",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "9a4a6fe6e9866ef78236a19bc3ff24b5",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "88a4431f1a5ff4d4da56eedb506c478f",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "59c432002216aed5b020db7d849c9ed5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "da419a72d860ac8e23f1e63aabb6dc86",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "44841b93ce4626a508ab99d5bdc615d8",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "2ddb685bd99160c4f5c3b014212ce1cb",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "00af11afae181f7b82781675701af3cc",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b91db8ae9fc1a86e5c1d68d9220b2b23",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "fb6990c8d26c03dedc076a458db088db",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "216a4f4d624e8e5bd97e71f15e987897",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "175e4adfc512c82751f13116df4b550c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "63a76dc13b25bf387896ff1397aa45a9",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "3fce38836c76009253055f257cbd8810",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "29b999530ef76e6ba844bdab4a3634c5",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "524aba66f1ee0bb58918790711b91ed8",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "90e0c1ecc95f5640da968c3bb28a9197",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "595d3f742753097c3667c3effd354a8b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6ecf6fe6b06c72990bf356498828406b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "eca0a9dbff39c6e03c4c9d77c00bfa18",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "44e821ac203f56abc5b9b8cf95b62bfc",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a955e843af04e55b2ee1d122d2de7a3e",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "c4506a32da7c82da537d74c597184186",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "a9e20421168fb07d0411324eaff9561b",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5d960c639834d915f10ff4ec88776577",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "05da4a2c83aa6f31da988d5b447b3ba9",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1484b9f861bdce804e44a6899a25b5f0",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "3c56af1bbc05cd7b37b9d0a7dba05248",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "8cc19d1326c85ed43c740551212f79ee",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "aadd9cba5c3fc85e0f356cf83d3f0bc5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "final": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": false,
+          "approved": 1,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a15b728c43036d659606de32533c81de",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "447bcd16945f16e5166e1311f56ffc1e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "6dc811aaea2a0c9cef53c5fbcb6dac74",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "9a4a6fe6e9866ef78236a19bc3ff24b5",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "88a4431f1a5ff4d4da56eedb506c478f",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "59c432002216aed5b020db7d849c9ed5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "da419a72d860ac8e23f1e63aabb6dc86",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "44841b93ce4626a508ab99d5bdc615d8",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "2ddb685bd99160c4f5c3b014212ce1cb",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "00af11afae181f7b82781675701af3cc",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b91db8ae9fc1a86e5c1d68d9220b2b23",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "fb6990c8d26c03dedc076a458db088db",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "216a4f4d624e8e5bd97e71f15e987897",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "175e4adfc512c82751f13116df4b550c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "63a76dc13b25bf387896ff1397aa45a9",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "3fce38836c76009253055f257cbd8810",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "29b999530ef76e6ba844bdab4a3634c5",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "524aba66f1ee0bb58918790711b91ed8",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "90e0c1ecc95f5640da968c3bb28a9197",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "595d3f742753097c3667c3effd354a8b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6ecf6fe6b06c72990bf356498828406b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "eca0a9dbff39c6e03c4c9d77c00bfa18",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "44e821ac203f56abc5b9b8cf95b62bfc",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a955e843af04e55b2ee1d122d2de7a3e",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "c4506a32da7c82da537d74c597184186",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "a9e20421168fb07d0411324eaff9561b",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5d960c639834d915f10ff4ec88776577",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "05da4a2c83aa6f31da988d5b447b3ba9",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1484b9f861bdce804e44a6899a25b5f0",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "3c56af1bbc05cd7b37b9d0a7dba05248",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "8cc19d1326c85ed43c740551212f79ee",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "aadd9cba5c3fc85e0f356cf83d3f0bc5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6f9b67f71cd3a4e08df0bfc2651dd82f",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "9e5029a1dffe3dd975f6e77ef0dcd69b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "037c886e3df95e32bcf9cb8953281c6f",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "0f09af22f84720976a07c88ae206cb91",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "94fdbe240c7abec1183cc1e43c20e000",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "e2009278acfbe4f2d5853ec348451cca",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c322b791ee6d7915b1d6da9d9e917331",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b81380d4e1b658347301d4afa2abb1a4",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "recoveryCalls": [
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "6f9b67f71cd3a4e08df0bfc2651dd82f",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "9e5029a1dffe3dd975f6e77ef0dcd69b",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/approved",
+            "method": "GET",
+            "nonce": "037c886e3df95e32bcf9cb8953281c6f",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/pending",
+            "method": "GET",
+            "nonce": "0f09af22f84720976a07c88ae206cb91",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/recent-sites",
+            "method": "GET",
+            "nonce": "94fdbe240c7abec1183cc1e43c20e000",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/field-updates",
+            "method": "GET",
+            "nonce": "e2009278acfbe4f2d5853ec348451cca",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "c322b791ee6d7915b1d6da9d9e917331",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "b81380d4e1b658347301d4afa2abb1a4",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          }
+        ],
+        "approvedLoads": 1
+      }
+    },
+    {
+      "width": 768,
+      "id": "authority-change-discovered-by-field-restores-all-required-views",
+      "pass": true,
+      "evidence": {
+        "empty": {
+          "allowed": true,
+          "ready": true,
+          "generation": 2,
+          "needsRefresh": false,
+          "approved": 0,
+          "fields": 0,
+          "fieldRows": 0,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "295c4841982929ebdbe01e4decbe017d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "9f57f5de30c8ea923bdb82f0c132e9a9",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "d7f809013ed0040da2c43850ea9fec12",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "43714f22edce86cc9a7c87fb39d850e8",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "07cdf317d3431455e9f5c91088543728",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1705b6e8e75f62cf832699ed90798931",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6ae3b4a97cd4620ff4b406e0121e26e1",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "13946e92558ae2fe8d62a27c53500d28",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a34ecbe18e46306d3c384ca710121035",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "4b91cfe7a07b084c9545282ef0f5c70d",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5fef94d34c30da990ade722d1b940861",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5211951d6978c9a13ed217577a16cd99",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "dca5471486c285373553466020cd17e4",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "0ced7056e8170f59d55759a212d3cabf",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "92cfedfd1573e643843d6ce2486d97a5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "d7e7aea291c3e011483e10d2c7299a96",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "2e7984c958661a67384a64d60499bdda",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "42b96518aac762fb4106c0e11a6111fd",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "62d8331b17a28e30c34cf80704218354",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2c7925ff8975789adbdfedaaedb5d614",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "389b210f1f7a36a5c77582477a7a40a7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "aee408d6da83c3a7d290ef4176b32da7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e12994c56542b8d571305bcbe23d6883",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "597f4eadc59227c04c454efef16cc23a",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "49d16b2762a64c2f885b499979a4a27d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "150a171048a542b4ebc0f203a3cc9711",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "2c89865d3cbb65ffd6d6b43d17951e33",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "fd93cc9dffda23fbca37181fe9250855",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "7bdfdea9be154c5c5173e11a3cf7f613",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "fieldFirst": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": true,
+          "approved": 0,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "295c4841982929ebdbe01e4decbe017d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "9f57f5de30c8ea923bdb82f0c132e9a9",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "d7f809013ed0040da2c43850ea9fec12",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "43714f22edce86cc9a7c87fb39d850e8",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "07cdf317d3431455e9f5c91088543728",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1705b6e8e75f62cf832699ed90798931",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6ae3b4a97cd4620ff4b406e0121e26e1",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "13946e92558ae2fe8d62a27c53500d28",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a34ecbe18e46306d3c384ca710121035",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "4b91cfe7a07b084c9545282ef0f5c70d",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5fef94d34c30da990ade722d1b940861",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5211951d6978c9a13ed217577a16cd99",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "dca5471486c285373553466020cd17e4",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "0ced7056e8170f59d55759a212d3cabf",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "92cfedfd1573e643843d6ce2486d97a5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "d7e7aea291c3e011483e10d2c7299a96",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "2e7984c958661a67384a64d60499bdda",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "42b96518aac762fb4106c0e11a6111fd",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "62d8331b17a28e30c34cf80704218354",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2c7925ff8975789adbdfedaaedb5d614",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "389b210f1f7a36a5c77582477a7a40a7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "aee408d6da83c3a7d290ef4176b32da7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e12994c56542b8d571305bcbe23d6883",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "597f4eadc59227c04c454efef16cc23a",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "49d16b2762a64c2f885b499979a4a27d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "150a171048a542b4ebc0f203a3cc9711",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "2c89865d3cbb65ffd6d6b43d17951e33",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "fd93cc9dffda23fbca37181fe9250855",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "7bdfdea9be154c5c5173e11a3cf7f613",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e11eaa3c2ff8fde58b2eda7423bb1878",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "d9c3f90eb937f61c1c8a6592f432c823",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "031fb90fcffe61c37d8a057f084ddf8d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "final": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": false,
+          "approved": 1,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "295c4841982929ebdbe01e4decbe017d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "9f57f5de30c8ea923bdb82f0c132e9a9",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "d7f809013ed0040da2c43850ea9fec12",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "43714f22edce86cc9a7c87fb39d850e8",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "07cdf317d3431455e9f5c91088543728",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1705b6e8e75f62cf832699ed90798931",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6ae3b4a97cd4620ff4b406e0121e26e1",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "13946e92558ae2fe8d62a27c53500d28",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "a34ecbe18e46306d3c384ca710121035",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "4b91cfe7a07b084c9545282ef0f5c70d",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5fef94d34c30da990ade722d1b940861",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5211951d6978c9a13ed217577a16cd99",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "dca5471486c285373553466020cd17e4",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "0ced7056e8170f59d55759a212d3cabf",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "92cfedfd1573e643843d6ce2486d97a5",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "d7e7aea291c3e011483e10d2c7299a96",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "2e7984c958661a67384a64d60499bdda",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "42b96518aac762fb4106c0e11a6111fd",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "62d8331b17a28e30c34cf80704218354",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2c7925ff8975789adbdfedaaedb5d614",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "389b210f1f7a36a5c77582477a7a40a7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "aee408d6da83c3a7d290ef4176b32da7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e12994c56542b8d571305bcbe23d6883",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "597f4eadc59227c04c454efef16cc23a",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "49d16b2762a64c2f885b499979a4a27d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "150a171048a542b4ebc0f203a3cc9711",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "2c89865d3cbb65ffd6d6b43d17951e33",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "fd93cc9dffda23fbca37181fe9250855",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "7bdfdea9be154c5c5173e11a3cf7f613",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e11eaa3c2ff8fde58b2eda7423bb1878",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "d9c3f90eb937f61c1c8a6592f432c823",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "031fb90fcffe61c37d8a057f084ddf8d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "64b0934854bc6b50ab6c036f6281cb55",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f3f34f6faa54a4cc8a4427dfbdbb7cfe",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "6f65503539a3766a1cf54bd1033da658",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "28822fa30e612d69dcbc131ef5a84771",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "153dbeefc0ae48ce303e194a23c7bbbf",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "050e15af83648c110052e1b0b56abe6e",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6b0967cf8599703a7de712abc5643a4e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e55904141eccfddbd749da744ff7dea4",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "recoveryCalls": [
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "64b0934854bc6b50ab6c036f6281cb55",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "f3f34f6faa54a4cc8a4427dfbdbb7cfe",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/approved",
+            "method": "GET",
+            "nonce": "6f65503539a3766a1cf54bd1033da658",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/pending",
+            "method": "GET",
+            "nonce": "28822fa30e612d69dcbc131ef5a84771",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/recent-sites",
+            "method": "GET",
+            "nonce": "153dbeefc0ae48ce303e194a23c7bbbf",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/field-updates",
+            "method": "GET",
+            "nonce": "050e15af83648c110052e1b0b56abe6e",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "6b0967cf8599703a7de712abc5643a4e",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "e55904141eccfddbd749da744ff7dea4",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          }
+        ],
+        "approvedLoads": 1
+      }
+    },
+    {
+      "width": 1024,
+      "id": "authority-change-discovered-by-field-restores-all-required-views",
+      "pass": true,
+      "evidence": {
+        "empty": {
+          "allowed": true,
+          "ready": true,
+          "generation": 2,
+          "needsRefresh": false,
+          "approved": 0,
+          "fields": 0,
+          "fieldRows": 0,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "df29cb5a02bfa52f6fc83b725d4ab39e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "7ddadcfda5abd6e8448b74e9971600de",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "e418429fca620c582d143d259c0fcdf2",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "926c498fe88cc72625da2ffdbe1732e3",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "25c0185da43a2f111ed94f91575abb5e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "31b7e136437f4c8628379802351e9efc",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "95836d4536668f3f6a54f7f10b62441e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f3f0bae5ae76c2fb2cdd79876306f616",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "204c0d150bf556c3cfce708f68f98734",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "680da92d8d57e23e794b0edaa6e28fe6",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "d76394e9129aa57f0d6ba25120d5c61c",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "01fc16f9e18ca29b730f7ec47b092b67",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a032d4703e0e0d1f4008391e478d1f03",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "dcd70fbb26dbe8b4b1f1444d1b4b0d16",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a93616166688e5c8b0172c9762a75b67",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "6aa9583e8ecb3f126188d42996969461",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "de67affef01efef3a673ecd1ebe3e9c7",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "31e7881471b66c7370229f2a655f1cc0",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6e93d4939ce1d7e29823e57e12835d0e",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "217793938da6938acad9b53875e78f74",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6c0c4686bc1aef4b9f6df3466eac211b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "18805310be6dedccd720e9db9308cfb8",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "bd854656ea62ff19fd10b971117cf319",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "1ea8e4f65c415ba941ef17542d358de3",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "dda553fbe846ff9ad41431f609ecd781",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5298b2beacc741d53f43bc7547b3157b",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "71c8332a237a1382bc050b5ee7c52afe",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b91d291c065e74d29c2eb49beb9032fb",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "ab5dd8e135a8f9b5391eb6ab455c9e06",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "fieldFirst": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": true,
+          "approved": 0,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "df29cb5a02bfa52f6fc83b725d4ab39e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "7ddadcfda5abd6e8448b74e9971600de",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "e418429fca620c582d143d259c0fcdf2",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "926c498fe88cc72625da2ffdbe1732e3",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "25c0185da43a2f111ed94f91575abb5e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "31b7e136437f4c8628379802351e9efc",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "95836d4536668f3f6a54f7f10b62441e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f3f0bae5ae76c2fb2cdd79876306f616",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "204c0d150bf556c3cfce708f68f98734",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "680da92d8d57e23e794b0edaa6e28fe6",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "d76394e9129aa57f0d6ba25120d5c61c",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "01fc16f9e18ca29b730f7ec47b092b67",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a032d4703e0e0d1f4008391e478d1f03",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "dcd70fbb26dbe8b4b1f1444d1b4b0d16",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a93616166688e5c8b0172c9762a75b67",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "6aa9583e8ecb3f126188d42996969461",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "de67affef01efef3a673ecd1ebe3e9c7",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "31e7881471b66c7370229f2a655f1cc0",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6e93d4939ce1d7e29823e57e12835d0e",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "217793938da6938acad9b53875e78f74",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6c0c4686bc1aef4b9f6df3466eac211b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "18805310be6dedccd720e9db9308cfb8",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "bd854656ea62ff19fd10b971117cf319",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "1ea8e4f65c415ba941ef17542d358de3",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "dda553fbe846ff9ad41431f609ecd781",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5298b2beacc741d53f43bc7547b3157b",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "71c8332a237a1382bc050b5ee7c52afe",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b91d291c065e74d29c2eb49beb9032fb",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "ab5dd8e135a8f9b5391eb6ab455c9e06",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "183ed49fdb340e9151c8a4bf8e59953c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "87b801b35a5d5a47a2c8b1cd6ea052e4",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c07a4bdcda65ebc1ba8792e62fe38233",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "final": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": false,
+          "approved": 1,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "df29cb5a02bfa52f6fc83b725d4ab39e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "7ddadcfda5abd6e8448b74e9971600de",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "e418429fca620c582d143d259c0fcdf2",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "926c498fe88cc72625da2ffdbe1732e3",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "25c0185da43a2f111ed94f91575abb5e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "31b7e136437f4c8628379802351e9efc",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "95836d4536668f3f6a54f7f10b62441e",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f3f0bae5ae76c2fb2cdd79876306f616",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "204c0d150bf556c3cfce708f68f98734",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "680da92d8d57e23e794b0edaa6e28fe6",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "d76394e9129aa57f0d6ba25120d5c61c",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "01fc16f9e18ca29b730f7ec47b092b67",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a032d4703e0e0d1f4008391e478d1f03",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "dcd70fbb26dbe8b4b1f1444d1b4b0d16",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a93616166688e5c8b0172c9762a75b67",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "6aa9583e8ecb3f126188d42996969461",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "de67affef01efef3a673ecd1ebe3e9c7",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "31e7881471b66c7370229f2a655f1cc0",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6e93d4939ce1d7e29823e57e12835d0e",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "217793938da6938acad9b53875e78f74",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "6c0c4686bc1aef4b9f6df3466eac211b",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "18805310be6dedccd720e9db9308cfb8",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "bd854656ea62ff19fd10b971117cf319",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "1ea8e4f65c415ba941ef17542d358de3",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "dda553fbe846ff9ad41431f609ecd781",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "5298b2beacc741d53f43bc7547b3157b",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "71c8332a237a1382bc050b5ee7c52afe",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b91d291c065e74d29c2eb49beb9032fb",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "ab5dd8e135a8f9b5391eb6ab455c9e06",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "183ed49fdb340e9151c8a4bf8e59953c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "87b801b35a5d5a47a2c8b1cd6ea052e4",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c07a4bdcda65ebc1ba8792e62fe38233",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "acf66ad45cf242e7fed9b86883860a25",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "49a39e3ef061c88d52338cfb41200dc2",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "5c8d61a06ad35d776887af65e58c3218",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "0635eab7f0f7e36365b068efef43b1b4",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "96a8fd393044be66f6a91a867f00487c",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "7031389d3ec29e9abe7e92e429042896",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1dd3d95cb801d787dcb700e0dfe33430",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "98687c6f482b35230039c6dfbafe2749",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "recoveryCalls": [
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "acf66ad45cf242e7fed9b86883860a25",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "49a39e3ef061c88d52338cfb41200dc2",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/approved",
+            "method": "GET",
+            "nonce": "5c8d61a06ad35d776887af65e58c3218",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/pending",
+            "method": "GET",
+            "nonce": "0635eab7f0f7e36365b068efef43b1b4",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/recent-sites",
+            "method": "GET",
+            "nonce": "96a8fd393044be66f6a91a867f00487c",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/field-updates",
+            "method": "GET",
+            "nonce": "7031389d3ec29e9abe7e92e429042896",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "1dd3d95cb801d787dcb700e0dfe33430",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "98687c6f482b35230039c6dfbafe2749",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          }
+        ],
+        "approvedLoads": 1
+      }
+    },
+    {
+      "width": 1440,
+      "id": "authority-change-discovered-by-field-restores-all-required-views",
+      "pass": true,
+      "evidence": {
+        "empty": {
+          "allowed": true,
+          "ready": true,
+          "generation": 2,
+          "needsRefresh": false,
+          "approved": 0,
+          "fields": 0,
+          "fieldRows": 0,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "ef7d0f2d40fae2025e25d6f2cd6ba2e7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "77a01091443b41ce0d49b65fb2fc5117",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "53849cfbc37657b885b3bbd82b7baeb6",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "07a87ad2bf4fcdc32e636155ee3e845e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "9209a56f2f6c33bb8d3874f03f77cfb7",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "453b96c9e0cec0d3885a0b4550516cf7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "704741fcb70aa1ec57c62419d3d947c0",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b68ef10431b95759e440a9a98cb715fe",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "f08bd67b9cc5464b7495724ee4eeb340",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "9e2f15bd357efa7359f59be3fbed2767",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "6eba95ab38eb81428129277b6631094c",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "ea499ae29dc99e343b2c0184e726ef04",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "48f8dbe7a2ccb41f49b26df56efb1fac",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f373f3d1cbce880decf2783a43fbd847",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a42a24f7195a308055bcac60d2c08e94",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "dcceccbb55aa3984b5c08411b9a15880",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "bacf5156300a8f4eb2b017db0d3777fe",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b352c650202cb389f8737e7b841ebf18",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6896377ef80becd3f8784fb9f263c955",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "609c7f1b3094350659128f64aa8a0352",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e9dcf04c4037e49f9353a890d1ad566c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b4c2ba240c379b7a56ce03d0b277709a",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1ac01cd56f7453968e917557a24cdf30",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "181150406a2fcbc9471fc1b18d111916",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "48d95372665ff5745257ee5360ad88b8",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "d7e6f449d38193b43aa072400923d23d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6757ef7ceedda4d71a1cc04af98533f3",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "3d482df54df7c1ed4853922f8cdbd48d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "acba8723958f5047f719d55a7dc5df96",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "fieldFirst": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": true,
+          "approved": 0,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "ef7d0f2d40fae2025e25d6f2cd6ba2e7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "77a01091443b41ce0d49b65fb2fc5117",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "53849cfbc37657b885b3bbd82b7baeb6",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "07a87ad2bf4fcdc32e636155ee3e845e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "9209a56f2f6c33bb8d3874f03f77cfb7",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "453b96c9e0cec0d3885a0b4550516cf7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "704741fcb70aa1ec57c62419d3d947c0",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b68ef10431b95759e440a9a98cb715fe",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "f08bd67b9cc5464b7495724ee4eeb340",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "9e2f15bd357efa7359f59be3fbed2767",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "6eba95ab38eb81428129277b6631094c",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "ea499ae29dc99e343b2c0184e726ef04",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "48f8dbe7a2ccb41f49b26df56efb1fac",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f373f3d1cbce880decf2783a43fbd847",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a42a24f7195a308055bcac60d2c08e94",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "dcceccbb55aa3984b5c08411b9a15880",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "bacf5156300a8f4eb2b017db0d3777fe",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b352c650202cb389f8737e7b841ebf18",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6896377ef80becd3f8784fb9f263c955",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "609c7f1b3094350659128f64aa8a0352",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e9dcf04c4037e49f9353a890d1ad566c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b4c2ba240c379b7a56ce03d0b277709a",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1ac01cd56f7453968e917557a24cdf30",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "181150406a2fcbc9471fc1b18d111916",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "48d95372665ff5745257ee5360ad88b8",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "d7e6f449d38193b43aa072400923d23d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6757ef7ceedda4d71a1cc04af98533f3",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "3d482df54df7c1ed4853922f8cdbd48d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "acba8723958f5047f719d55a7dc5df96",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "8911d9ded8a0c163ea53db793960e770",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "8e6fd2793172add760dacb852bac596b",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "fb4d19f73d8cfc0f402bc116917bc759",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "final": {
+          "allowed": true,
+          "ready": true,
+          "generation": 3,
+          "needsRefresh": false,
+          "approved": 1,
+          "fields": 1,
+          "fieldRows": 1,
+          "pendingKeys": [],
+          "calls": [
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "ef7d0f2d40fae2025e25d6f2cd6ba2e7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "77a01091443b41ce0d49b65fb2fc5117",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "53849cfbc37657b885b3bbd82b7baeb6",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "07a87ad2bf4fcdc32e636155ee3e845e",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "9209a56f2f6c33bb8d3874f03f77cfb7",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "453b96c9e0cec0d3885a0b4550516cf7",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "704741fcb70aa1ec57c62419d3d947c0",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b68ef10431b95759e440a9a98cb715fe",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "f08bd67b9cc5464b7495724ee4eeb340",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "9e2f15bd357efa7359f59be3fbed2767",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "6eba95ab38eb81428129277b6631094c",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "ea499ae29dc99e343b2c0184e726ef04",
+              "expectedRevision": "1",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "48f8dbe7a2ccb41f49b26df56efb1fac",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "f373f3d1cbce880decf2783a43fbd847",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "a42a24f7195a308055bcac60d2c08e94",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "dcceccbb55aa3984b5c08411b9a15880",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "bacf5156300a8f4eb2b017db0d3777fe",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "b352c650202cb389f8737e7b841ebf18",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6896377ef80becd3f8784fb9f263c955",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "609c7f1b3094350659128f64aa8a0352",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "e9dcf04c4037e49f9353a890d1ad566c",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "b4c2ba240c379b7a56ce03d0b277709a",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "1ac01cd56f7453968e917557a24cdf30",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "181150406a2fcbc9471fc1b18d111916",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "48d95372665ff5745257ee5360ad88b8",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "d7e6f449d38193b43aa072400923d23d",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "6757ef7ceedda4d71a1cc04af98533f3",
+              "expectedRevision": "10",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "3d482df54df7c1ed4853922f8cdbd48d",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "acba8723958f5047f719d55a7dc5df96",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "8911d9ded8a0c163ea53db793960e770",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "8e6fd2793172add760dacb852bac596b",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "fb4d19f73d8cfc0f402bc116917bc759",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "bd1fc747322ed090fbe51319885a48e2",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "c7c447dd944afee7add1b765d7ffee84",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/approved",
+              "method": "GET",
+              "nonce": "63a3ca2d5f4a7bf131be949d29b4122d",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/pending",
+              "method": "GET",
+              "nonce": "7ab982db349fd3a2fce84af9781679b5",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/recent-sites",
+              "method": "GET",
+              "nonce": "aebde1a2aa7784ba4f4e70d15605265f",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/field-updates",
+              "method": "GET",
+              "nonce": "5bce992b600d3196a2fa45bc3977bca3",
+              "expectedRevision": "11",
+              "contract": "publication-v1",
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "cea70e7f96df68d79f77c233b08dea29",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            },
+            {
+              "path": "/reports/public-state",
+              "method": "GET",
+              "nonce": "2944e2af7eb20df05696a7bc7c49bd49",
+              "expectedRevision": null,
+              "contract": null,
+              "cache": "no-store"
+            }
+          ]
+        },
+        "recoveryCalls": [
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "bd1fc747322ed090fbe51319885a48e2",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "c7c447dd944afee7add1b765d7ffee84",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/approved",
+            "method": "GET",
+            "nonce": "63a3ca2d5f4a7bf131be949d29b4122d",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/pending",
+            "method": "GET",
+            "nonce": "7ab982db349fd3a2fce84af9781679b5",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/recent-sites",
+            "method": "GET",
+            "nonce": "aebde1a2aa7784ba4f4e70d15605265f",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/field-updates",
+            "method": "GET",
+            "nonce": "5bce992b600d3196a2fa45bc3977bca3",
+            "expectedRevision": "11",
+            "contract": "publication-v1",
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "cea70e7f96df68d79f77c233b08dea29",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          },
+          {
+            "path": "/reports/public-state",
+            "method": "GET",
+            "nonce": "2944e2af7eb20df05696a7bc7c49bd49",
+            "expectedRevision": null,
+            "contract": null,
+            "cache": "no-store"
+          }
+        ],
+        "approvedLoads": 1
+      }
+    }
+  ],
+  "summary": {
+    "pass": 5,
+    "fail": 0,
+    "skip": 0
+  },
+  "network": {
+    "allowedLocal": 36,
+    "allowedDependencyGet": 91,
+    "blockedOther": 60,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "method": "Actual product loader, candidate state and Chrome/Leaflet at five widths. A standalone field read first learns the new authority; subsequent publicationRecheck must restore all required projections. API data and coordinates synthetic.",
+  "limits": [
+    "No production calls, physical GPS or native app launch.",
+    "This is a focused completeness regression, not a 10/20 load measurement."
+  ]
+}

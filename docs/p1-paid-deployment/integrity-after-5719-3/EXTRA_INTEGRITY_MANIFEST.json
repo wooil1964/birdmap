@@ -1,0 +1,140 @@
+{
+  "sourceSha": "5719bc444b165a5df96ab40e9cb8f926c286cf94",
+  "scope": "Additional read-only checks on the already migrated synthetic local D1",
+  "at": "2026-10-13T15:18:25.426Z",
+  "checks": [
+    {
+      "id": "M23-actual canonical schemaReady calls exact SQL against CLI-migrated operational-schema synthetic D1",
+      "status": "pass"
+    },
+    {
+      "id": "M24-underlying migrated synthetic SQLite integrity and foreign keys checked read-only because D1 authorizer rejects integrity_check",
+      "status": "pass"
+    },
+    {
+      "id": "M25-actual publication state SQL accepts all installed guards and current revision",
+      "status": "pass"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT type,name,sql FROM sqlite_schema WHERE sql IS NOT NULL AND tbl_name IN ('sites','taxa','raw_submissions','checklists','sightings','reviews','audit_log','backfill_runs','transaction_assertions') ORDER BY type,name",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\local-persist\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "d8dd100fe4dea8b2e1c7b22740ad01d43b984b6af3c907dcf39ad6671ee779e0"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,\n (SELECT json_group_array(json_object('name',name,'rowid',CAST(rowid AS TEXT))) FROM sqlite_schema WHERE type='trigger' AND name IN ('publication_state_permanent','publication_state_transition','publication_reports_insert','publication_reports_update','publication_reports_delete','publication_field_updates_insert','publication_field_updates_update','publication_field_updates_delete','field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_freeze_field_updates_insert','field_freeze_field_updates_update','field_freeze_field_updates_delete','field_freeze_field_update_events_insert','field_freeze_field_update_events_update','field_freeze_field_update_events_delete','field_freeze_field_update_confirmations_insert','field_freeze_field_update_confirmations_update','field_freeze_field_update_confirmations_delete')) AS guardLocators\n FROM public_publication_state WHERE id=1",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\local-persist\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "ff020f7613fd5a639738e9be77c1a7adcb3653eaf38577bf5660dbb477fda38b"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,((SELECT COUNT(*) FROM sqlite_schema WHERE rowid='81' AND type='trigger' AND name='publication_state_permanent')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='82' AND type='trigger' AND name='publication_state_transition')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='83' AND type='trigger' AND name='publication_reports_insert')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='84' AND type='trigger' AND name='publication_reports_update')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='85' AND type='trigger' AND name='publication_reports_delete')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='86' AND type='trigger' AND name='publication_field_updates_insert')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='87' AND type='trigger' AND name='publication_field_updates_update')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='88' AND type='trigger' AND name='publication_field_updates_delete')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='89' AND type='trigger' AND name='field_deleted_terminal')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='90' AND type='trigger' AND name='field_revision_valid')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='91' AND type='trigger' AND name='field_revision_advance')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='92' AND type='trigger' AND name='field_event_live')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='93' AND type='trigger' AND name='field_confirmation_live')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='94' AND type='trigger' AND name='field_freeze_field_updates_insert')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='95' AND type='trigger' AND name='field_freeze_field_updates_update')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='96' AND type='trigger' AND name='field_freeze_field_updates_delete')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='97' AND type='trigger' AND name='field_freeze_field_update_events_insert')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='98' AND type='trigger' AND name='field_freeze_field_update_events_update')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='99' AND type='trigger' AND name='field_freeze_field_update_events_delete')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='100' AND type='trigger' AND name='field_freeze_field_update_confirmations_insert')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='101' AND type='trigger' AND name='field_freeze_field_update_confirmations_update')+(SELECT COUNT(*) FROM sqlite_schema WHERE rowid='102' AND type='trigger' AND name='field_freeze_field_update_confirmations_delete')) AS guards FROM public_publication_state WHERE id=1",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\local-persist\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "34b3f94b27fec344b2b687381fd7832997cb1aa1a9eea50715f72b2242b2b676"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT epoch,CAST(revision AS TEXT) AS revision,typeof(revision) AS revision_type,\n (SELECT json_group_array(json_object('name',name,'rowid',CAST(rowid AS TEXT))) FROM sqlite_schema WHERE type='trigger' AND name IN ('publication_state_permanent','publication_state_transition','publication_reports_insert','publication_reports_update','publication_reports_delete','publication_field_updates_insert','publication_field_updates_update','publication_field_updates_delete','field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_freeze_field_updates_insert','field_freeze_field_updates_update','field_freeze_field_updates_delete','field_freeze_field_update_events_insert','field_freeze_field_update_events_update','field_freeze_field_update_events_delete','field_freeze_field_update_confirmations_insert','field_freeze_field_update_confirmations_update','field_freeze_field_update_confirmations_delete')) AS guardLocators\n FROM public_publication_state WHERE id=1",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\local-persist\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "f1674b73af1b0f4933e7b4eeb7eda2b8bafe269fc5d324c0194ef69999321233"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\김진호\\AppData\\Local\\npm-cache\\_npx\\32026684e21afda6\\node_modules\\wrangler\\bin\\wrangler.js",
+        "d1",
+        "execute",
+        "REPORTS_DB",
+        "--command",
+        "SELECT write_frozen FROM public_publication_state WHERE id=1;",
+        "--json",
+        "--local",
+        "--config",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\success\\wrangler.json",
+        "--persist-to",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\migration-5719\\scratch-5719bc44\\local-persist\\success"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "5ab920e08c77317b350d5355e6f3df3a0114c3921cb39cc063265c5f372be710"
+    }
+  ],
+  "publicationState": {
+    "epoch": "014ba39fa025d323da776556555ba9be",
+    "revision": "3",
+    "revision_type": "integer",
+    "guardLocators": "[{\"name\":\"publication_state_permanent\",\"rowid\":\"81\"},{\"name\":\"publication_state_transition\",\"rowid\":\"82\"},{\"name\":\"publication_reports_insert\",\"rowid\":\"83\"},{\"name\":\"publication_reports_update\",\"rowid\":\"84\"},{\"name\":\"publication_reports_delete\",\"rowid\":\"85\"},{\"name\":\"publication_field_updates_insert\",\"rowid\":\"86\"},{\"name\":\"publication_field_updates_update\",\"rowid\":\"87\"},{\"name\":\"publication_field_updates_delete\",\"rowid\":\"88\"},{\"name\":\"field_deleted_terminal\",\"rowid\":\"89\"},{\"name\":\"field_revision_valid\",\"rowid\":\"90\"},{\"name\":\"field_revision_advance\",\"rowid\":\"91\"},{\"name\":\"field_event_live\",\"rowid\":\"92\"},{\"name\":\"field_confirmation_live\",\"rowid\":\"93\"},{\"name\":\"field_freeze_field_updates_insert\",\"rowid\":\"94\"},{\"name\":\"field_freeze_field_updates_update\",\"rowid\":\"95\"},{\"name\":\"field_freeze_field_updates_delete\",\"rowid\":\"96\"},{\"name\":\"field_freeze_field_update_events_insert\",\"rowid\":\"97\"},{\"name\":\"field_freeze_field_update_events_update\",\"rowid\":\"98\"},{\"name\":\"field_freeze_field_update_events_delete\",\"rowid\":\"99\"},{\"name\":\"field_freeze_field_update_confirmations_insert\",\"rowid\":\"100\"},{\"name\":\"field_freeze_field_update_confirmations_update\",\"rowid\":\"101\"},{\"name\":\"field_freeze_field_update_confirmations_delete\",\"rowid\":\"102\"}]"
+  },
+  "verifiedAnchor": {
+    "contract": "publication-v1",
+    "epoch": "014ba39fa025d323da776556555ba9be",
+    "revision": "3",
+    "projection": "legacy-public-v1",
+    "nonce": "11111111111111111111111111111111"
+  },
+  "warmState": {
+    "epoch": "014ba39fa025d323da776556555ba9be",
+    "revision": "3",
+    "revision_type": "integer",
+    "guards": 22
+  },
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0
+  }
+}

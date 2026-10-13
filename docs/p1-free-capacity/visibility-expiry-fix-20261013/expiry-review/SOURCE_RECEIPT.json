@@ -1,0 +1,67 @@
+{
+  "createdAt": "2026-10-13T19:17:26.146053+09:00",
+  "harness": "visible_expiry_review.mjs",
+  "harnessSha256": "8358cf604b63845ca230150761243aaa7c4b467ce912631c7b832386051e2dbf",
+  "sameAssertionsAndFixtures": true,
+  "sources": [
+    {
+      "sourceSha": "c060f505ab95e5a3854f0e1be77fd8214de6b126",
+      "indexSha256": "f7839dbd318b808d4155ce135a56c5f172c5f0ea973c4095b42d6da8a5c07b84",
+      "summary": {
+        "pass": 4,
+        "fail": 4,
+        "skip": 0,
+        "total": 8
+      },
+      "supplementarySummary": {
+        "pass": 0,
+        "fail": 4,
+        "skip": 0,
+        "total": 4
+      },
+      "network": {
+        "allowedLocal": 15,
+        "allowedDependencyGet": 38,
+        "blockedOther": 32,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": []
+    },
+    {
+      "sourceSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+      "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+      "summary": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0,
+        "total": 8
+      },
+      "supplementarySummary": {
+        "pass": 4,
+        "fail": 0,
+        "skip": 0,
+        "total": 4
+      },
+      "network": {
+        "allowedLocal": 15,
+        "allowedDependencyGet": 38,
+        "blockedOther": 32,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": []
+    }
+  ],
+  "beforeExitCode": 1,
+  "afterExitCode": 0,
+  "operatingRequests": 0,
+  "old8Status": "Historical hidden-dependent old8 preserved. This new suite independently executes all8 assertions from visible normal data; do not claim original old8 after PASS.",
+  "command": "PUBLICATION_TEST_INDEX_REF=<exact40SHA>; PUBLICATION_TEST_WIDTHS=375,1440; PUBLICATION_TEST_OUTPUT=<new path>; node docs/p1-free-capacity/visibility-expiry-fix-20261013/expiry-review/visible_expiry_review.mjs",
+  "limits": [
+    "Controlled event-loop busy task delays cleanup; detection-time result is not an idle cleanup bound.",
+    "Independent 8-condition suite, not historical old8 whose expiry branch depended on hidden timer recovery.",
+    "Synthetic reporter/location; no production API requests or disclosure incident claimed.",
+    "Desktop has no GPS watch; mobile verifies captured late GPS callback."
+  ]
+}

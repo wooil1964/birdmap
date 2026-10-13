@@ -33,7 +33,7 @@ function functionSource(name) {
 }
 
 const NAMES = [
-  'birdmapDataStamp', 'loadBirdmapData', 'loadWeatherToday', 'loadWeatherWeek',
+  'weeklyKstTimestamp', 'weeklyForecastTimestamp', 'birdmapDataTime', 'birdmapDataStamp', 'loadBirdmapData', 'loadWeatherToday', 'loadWeatherWeek',
   'loadTideToday', 'refreshBirdmapData', 'scheduleBirdmapRefresh',
   'kstDateText', 'tideTodayDateText', 'tideTodayIsCurrent',
 ];
@@ -275,3 +275,107 @@ test('실제 저장 파일도 stamp 로 구분된다', () => {
   assert.equal(api.birdmapDataStamp(null), '');
   assert.equal(api.birdmapDataStamp({ updated: '', source: '', sites: {} }), '', '빈 초기값은 "자료 없음"이어야 한다');
 });
+
+/* ===== PR #13 C3: 나중 요청이라도 이미 적용한 검증 자료보다 오래된 발행본은 적용하지 않는다 ===== */
+for (const [name, loader, prop] of [['today', 'loadWeatherToday', 'weatherToday'], ['week', 'loadWeatherWeek', 'weatherWeek']]) {
+  const sequence = async (stamps, extra = {}) => {
+    let i = 0;
+    const docs = stamps.map((stamp) => (typeof stamp === 'string' || stamp === undefined ? doc(stamp) : stamp));
+    const api = loadApi({ ctx: { [prop]: extra.initial || EMPTY_TODAY }, respond: () => ok(docs[i++]) });
+    const results = [];
+    for (let n = 0; n < docs.length; n++) results.push(await api[loader]());
+    return { api, results };
+  };
+
+  test(`C3 ${name}: 10:40 발행 뒤 나중 요청의 10:30 발행본은 적용하지 않고, 10:50 발행본은 적용한다`, async () => {
+    const { api, results } = await sequence(['2026-10-10 10:40 KST', '2026-10-10 10:30 KST', '2026-10-10 10:50 KST']);
+    assert.deepEqual(results, [true, false, true]);
+    assert.equal(api[prop].generatedAt, '2026-10-10 10:50 KST');
+  });
+
+  test(`C3 ${name}: 같은 발행 시각의 다른 자료·발행 시각 누락/무효/미지원 표기는 이미 적용한 검증 자료를 바꾸지 못한다`, async () => {
+    const base = '2026-10-10 10:40 KST';
+    const conflict = doc(base, { updated: '2026-10-10 10:41 KST' });
+    const cases = [conflict, doc(undefined), doc(''), doc('not-a-time'), doc('2026-10-10T10:50:00Z'), doc('2026-10-10 10:60 KST')];
+    const { api, results } = await sequence([base, ...cases]);
+    assert.deepEqual(results, [true, ...cases.map(() => false)]);
+    assert.equal(api[prop].generatedAt, base);
+  });
+
+  test(`C3 ${name}: 자정이 바뀌면 새 날짜 발행본은 적용하고 전날 발행본으로는 되돌아가지 않는다`, async () => {
+    const { api, results } = await sequence(['2026-09-30 23:50 KST', '2026-10-01 00:10 KST', '2026-09-30 23:58 KST']);
+    assert.deepEqual(results, [true, true, false]);
+    assert.equal(api[prop].generatedAt, '2026-10-01 00:10 KST');
+  });
+
+  test(`C3 ${name}: 아직 검증된 자료가 없으면 첫 자료는 적용한다(추천 자격은 출처 검증이 판단)`, async () => {
+    const { api, results } = await sequence([doc(undefined, { updated: 'first' })]);
+    assert.deepEqual(results, [true]);
+    assert.ok(api[prop]);
+  });
+}
+
+/* ===== PR #13 F1: 미래 발행은 발행 버전 비교 기준을 갱신하지 못한다 ===== */
+for (const [name, loader, prop] of [['today', 'loadWeatherToday', 'weatherToday'], ['week', 'loadWeatherWeek', 'weatherWeek']]) {
+  const FUTURE = '2099-01-01 00:00 KST';
+  const run = async (stamps) => {
+    let i = 0;
+    const api = loadApi({ ctx: { [prop]: EMPTY_TODAY }, respond: () => ok(doc(stamps[i++])) });
+    const results = [];
+    for (let n = 0; n < stamps.length; n++) results.push(await api[loader]());
+    return { api, results };
+  };
+  test(`F1 ${name}: 미래 발행을 먼저 받아도 정상 10:50 발행이 적용된다`, async () => {
+    const { api, results } = await run([FUTURE, '2026-10-10 10:50 KST']);
+    assert.deepEqual(results, [true, true]);
+    assert.equal(api[prop].generatedAt, '2026-10-10 10:50 KST');
+  });
+  test(`F1 ${name}: 정상 10:40 → 미래 → 정상 10:50: 미래는 정상 자료를 지우지 못하고 10:50 은 적용된다, 옛 10:30 은 여전히 거부`, async () => {
+    const { api, results } = await run(['2026-10-10 10:40 KST', FUTURE, '2026-10-10 10:30 KST', '2026-10-10 10:50 KST']);
+    assert.deepEqual(results, [true, false, false, true]);
+    assert.equal(api[prop].generatedAt, '2026-10-10 10:50 KST');
+  });
+  test(`F3 ${name}: 발행 시각이 배열·객체·숫자·boolean 이면 비교 기준이 되지 못한다(TypeError 없음)`, async () => {
+    const bad = [['2026-10-10 10:50 KST'], { toString: 'not-callable' }, 1791601200000, true];
+    for (const value of bad) {
+      let i = 0;
+      const docs = [doc('2026-10-10 10:40 KST'), doc(value, { updated: 'x' })];
+      const api = loadApi({ ctx: { [prop]: EMPTY_TODAY }, respond: () => ok(docs[i++]) });
+      assert.equal(await api[loader](), true);
+      assert.equal(await api[loader](), false, JSON.stringify(value));
+      assert.equal(api[prop].generatedAt, '2026-10-10 10:40 KST');
+    }
+  });
+}
+
+/* ===== PR #13 F2-b: 검증되지 않은 혼합 배치는 정상 적용 버전의 기준을 선점하지 못한다 ===== */
+{
+  const D = '2026-10-10';
+  const T = (hm) => D + ' ' + hm + ' KST';
+  const todayDoc = (root, item, rain = '강수 없음') => ({ date: D, generatedAt: root, updated: root, sites: { 14: { scoreEligible: true, rain, generatedAt: item } } });
+  const run = async (docs, initial = EMPTY_TODAY) => {
+    let i = 0;
+    const api = loadApi({ ctx: { weatherToday: initial }, respond: () => ok(docs[i++]) });
+    const results = [];
+    for (let n = 0; n < docs.length; n++) results.push(await api.loadWeatherToday());
+    return { api, results };
+  };
+  test('F2-b root10:40/item10:40 강수1 → root10:50/item10:30 혼합 → root10:50/item10:50 교정: 혼합은 거부되고 교정본이 적용된다', async () => {
+    const { api, results } = await run([todayDoc(T('10:40'), T('10:40'), '3시간 강수 1.0mm'), todayDoc(T('10:50'), T('10:30')), todayDoc(T('10:50'), T('10:50'))]);
+    assert.deepEqual(results, [true, false, true]);
+    assert.equal(api.weatherToday.sites[14].rain, '강수 없음');
+    assert.equal(api.weatherToday.sites[14].generatedAt, T('10:50'));
+  });
+  test('F2-b 혼합(미래 item·누락 item) 뒤에도 정상 10:55 신규 배치가 적용되고, 검증된 같은 발행의 다른 내용·옛 발행·순번 역전은 계속 막는다', async () => {
+    const missing = todayDoc(T('10:50'), T('10:50')); delete missing.sites[14].generatedAt;
+    const { api, results } = await run([todayDoc(T('10:40'), T('10:40')), todayDoc(T('10:50'), T('10:55')), missing, todayDoc(T('10:55'), T('10:55')),
+      todayDoc(T('10:55'), T('10:55'), '3시간 강수 2.0mm'), todayDoc(T('10:45'), T('10:45'))]);
+    assert.deepEqual(results, [true, false, false, true, false, false]);
+    assert.equal(api.weatherToday.sites[14].rain, '강수 없음');
+  });
+  test('F2-b 아직 검증된 자료가 없으면 혼합 배치도 참고용으로 적용되지만 기준이 되지 않아 이후 교정본이 적용된다', async () => {
+    const { api, results } = await run([todayDoc(T('10:50'), T('10:30')), todayDoc(T('10:50'), T('10:50'))]);
+    assert.deepEqual(results, [true, true]);
+    assert.equal(api.weatherToday.sites[14].generatedAt, T('10:50'));
+  });
+}

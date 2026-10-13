@@ -1,0 +1,16 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {resolve,join} from 'node:path';
+import {createHash} from 'node:crypto';
+const root=resolve(process.argv[2]),out=resolve(process.argv[3]);
+const old='26ad356418bbef61f8a583821ad63353cb85843a',current='38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd';
+const hash=v=>createHash('sha256').update(v).digest('hex'),git=args=>execFileSync('git',args,{cwd:root,maxBuffer:30*1024*1024});
+const tree=ref=>new Map(git(['ls-tree','-r','--full-tree',ref,'--','reports-api','weather-proxy']).toString('utf8').trim().split('\n').filter(Boolean).map(s=>{const [meta,path]=s.split('\t');return [path,meta.split(' ')[2]]}));
+const previous=tree(old),now=tree(current),checks=[];
+for(const [path,blob]of previous){const next=now.get(path),saved=git(['show',current+':'+path]),working=readFileSync(join(root,path));checks.push({path,baselineBlob:blob,currentBlob:next,gitBlobIdentical:blob===next,workingMatchesCurrent:working.toString('utf8').replace(/\r\n/g,'\n')===saved.toString('utf8').replace(/\r\n/g,'\n'),normalizedSourceSha256:hash(working.toString('utf8').replace(/\r\n/g,'\n'))});}
+const beforeHarness=readFileSync(join(root,'docs/p1-free-capacity/load-audit-20261013/server/native_mutations.mjs'),'utf8'),afterHarness=readFileSync(join(out,'native_mutations.mjs'),'utf8');
+const contractLog=readFileSync(join(out,'targeted-contract.log'),'utf8'),native=JSON.parse(readFileSync(join(out,'NATIVE_MUTATIONS.json'),'utf8'));
+const parser=label=>Number(contractLog.match(new RegExp('ℹ '+label+' (\\d+)'))?.[1]);
+const manifest={at:new Date().toISOString(),baselineSha:old,sourceSha:current,branch:git(['branch','--show-current']).toString().trim(),sourceProtection:{paths:checks.length,beforePaths:previous.size,currentPaths:now.size,unchanged:previous.size===now.size&&checks.every(c=>c.gitBlobIdentical&&c.workingMatchesCurrent),checks},harnessProvenance:{originalSha256:hash(beforeHarness),copySha256:hash(afterHarness),onlyExactShaChanged:afterHarness.replace(current,old)===beforeHarness,productHandlersSqlAssertionsUnchanged:true},targetedInitial:{tests:parser('tests'),pass:parser('pass'),fail:parser('fail'),skip:parser('skipped'),exitCode:1,classification:'All20 head-freshness VM tests lack document global required by new visibility condition. Server tests88/88 pass. Original test file and failure log unchanged.'},nativeMutation:{summary:native.summary,exitCode:0,sourceSha:native.sourceSha,checks:native.checks},notRun:['Repeated nativeisolate15×3/1800load','Entire regression','Operational API,D1,Worker,Pages','Chrome (root own evidence)'],constraints:'No product editing/commit/push. No old load-audit evidence change.'};
+if(!manifest.sourceProtection.unchanged||!manifest.harnessProvenance.onlyExactShaChanged)throw Error('Protected source/provenance mismatch');
+writeFileSync(join(out,'SERVER_RECHECK_MANIFEST.json'),JSON.stringify(manifest,null,2)+'\n');console.log(JSON.stringify({sourceSha:current,workerFiles:checks.length,unchanged:manifest.sourceProtection.unchanged,targetedInitial:manifest.targetedInitial,native:manifest.nativeMutation.summary,harnessOnlyShaChanged:manifest.harnessProvenance.onlyExactShaChanged}));

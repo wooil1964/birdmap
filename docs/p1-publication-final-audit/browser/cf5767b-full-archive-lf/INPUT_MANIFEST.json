@@ -1,0 +1,74 @@
+{
+  "sourceSha": "cf5767b090275221a516e16112d0e569eedb86e7",
+  "sourceTree": "3147c1e53a0aa2b6ef37767fb63347dcbf615736",
+  "baselineMain": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "reviewCheckoutSha": "71177330fd1d45c64f3bef632cf1f43286c304cd",
+  "inputProcess": "git -c core.autocrlf=false archive of exact source SHA; canonical byte-identical runtime assets; local synthetic APIs only",
+  "chromeVersion": "154.0.8037.98",
+  "checkedAt": "2026-10-12T10:32:11.521Z",
+  "assets": [
+    {
+      "file": "index.html",
+      "bytes": 1379328,
+      "sha256": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+      "matchesCommittedBytes": true
+    },
+    {
+      "file": "weather_today.json",
+      "bytes": 212291,
+      "sha256": "a06a1a955b51f9ac03e89356d122cee4370568010078d0c87b830c855fd23875",
+      "matchesCommittedBytes": true
+    },
+    {
+      "file": "weather_week.json",
+      "bytes": 3601318,
+      "sha256": "f7aa50bcb2a5d896c78613f9423c2a8bb9d618718112173068642cd2ad9f9470",
+      "matchesCommittedBytes": true
+    },
+    {
+      "file": "tide_today.json",
+      "bytes": 133323,
+      "sha256": "e7d626446307c36f8d31b963842dd0d7bdab09853ce3f01caf9784414b7fb1b3",
+      "matchesCommittedBytes": true
+    },
+    {
+      "file": "tide_month.json",
+      "bytes": 382041,
+      "sha256": "713133c8d968755304d7ea39212c3acfe62ba0dcdb42f7d5b671329d62c53760",
+      "matchesCommittedBytes": true
+    },
+    {
+      "file": "notices.json",
+      "bytes": 6929,
+      "sha256": "c3d5ea3bedee5870ca799644e4c702cbc2a391f63a58a8fa491282d57999e19f",
+      "matchesCommittedBytes": true
+    }
+  ],
+  "summary": {
+    "pass": 241,
+    "fail": 0,
+    "skip": 0,
+    "notRun": 0
+  },
+  "network": {
+    "allowedLocal": 78,
+    "allowedDependencyGet": 197,
+    "blockedOther": 266,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserExceptions": 0,
+  "oldChrome15": 15,
+  "oldChromeUnsafe": 0,
+  "previousRun": "../cf5767b-full-archive retained: 241 pass with equivalent Windows CRLF asset serialization; not canonical-byte evidence",
+  "files": "publication_chrome.json plus 10 screenshots",
+  "limits": [
+    "Synthetic in-page API emulates the publication protocol; actual D1 atomicity is tested separately.",
+    "All dynamic coordinates and reports are synthetic. Static190 public sites are loaded from the product.",
+    "Two independent Chrome pages are coordinated with the same mock authority revisions; distributed production POP consistency is not certified.",
+    "No external Kakao/TMAP application or physical GPS device was opened.",
+    "Foreground permission lease and polling operational values require separate operating approval.",
+    "Synthetic authority changes are observed at fetch/postflight boundaries; zero-ms revocation is not guaranteed."
+  ],
+  "harnessSha256": "8306421aac1bbe51b72f027c4a42d4a373537d372c774efd31bb6c8b2536f8bd"
+}

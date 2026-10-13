@@ -1,0 +1,4235 @@
+{
+  "schema": "birdmap-publication-browser-security-v1",
+  "checkedAt": "2026-10-13T10:19:29.497Z",
+  "checkoutSha": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "assetsRoot": "C:\\Users\\김진호\\.codex\\worktrees\\p1-free-capacity\\birdmap",
+  "assetsInput": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "sourceInput": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "widths": [
+    344,
+    375,
+    768,
+    1024,
+    1440
+  ],
+  "rows": [
+    {
+      "width": 344,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 13,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 21,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 344,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 344,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 170,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-one-shot-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 53,
+            "until": 1791886719786.6
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-one-shot-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 56,
+            "until": 1791886719965.4
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-manual-gps-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000017"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000017"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 59,
+            "until": 1791886720158.3
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-manual-gps-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000018"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000018"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 62,
+            "until": 1791886720347.3
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-watch-gps-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000019"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000019"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 65,
+            "until": 1791886720523.7
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-watch-gps-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000020"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000020"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 68,
+            "until": 1791886720712.4
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "fresh-authority-guide-start-with-old-local-store",
+      "pass": true,
+      "evidence": {
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000021"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000021"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 71,
+            "until": 1791886720810.6
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-approved-kakao-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-approved-tmap-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-field-kakao-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-field-tmap-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-normal-approved-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-normal-approved-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-normal-field-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-normal-field-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-protected-approved-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-protected-approved-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-protected-field-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-protected-field-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-route-rechecks-after-preexisting-head",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ],
+        "components": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000036"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000036"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 106,
+            "until": 1791886722470.4
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-contributor-consent-cache-revision-change",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 344,
+      "id": "independent-contributor-consent-cache-network-unknown",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 13,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 21,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 375,
+      "id": "head-timeout-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 53,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "permission-lease-expires-while-offline",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 56,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "monotonic-lease-survives-os-clock-rollback",
+      "pass": true,
+      "evidence": {
+        "clockRollbackMs": 86400000,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 59,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "strict-head-epoch-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-epoch-array",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-number",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-array",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-leading-zero",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-negative",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-revision-overflow",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-projection-boolean",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-contract-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-nonce-null",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "strict-head-nonce-array",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 375,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 290,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-one-shot-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000030"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000030"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 98,
+            "until": 1791886741311.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-one-shot-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000031"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000031"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 101,
+            "until": 1791886741480.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-manual-gps-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000032"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000032"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 104,
+            "until": 1791886741650
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-manual-gps-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000033"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000033"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 107,
+            "until": 1791886741832.6
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-watch-gps-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000034"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000034"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 110,
+            "until": 1791886742020.4
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-watch-gps-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000035"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000035"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 113,
+            "until": 1791886742199.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "fresh-authority-guide-start-with-old-local-store",
+      "pass": true,
+      "evidence": {
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000036"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000036"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 116,
+            "until": 1791886742285.6
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-approved-kakao-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-approved-tmap-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-field-kakao-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-field-tmap-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-head-transit-counts-in-five-second-lease",
+      "pass": false,
+      "evidence": {
+        "elapsed": 6024.400000002235,
+        "remaining": 0,
+        "totalAgeBudget": 6024.400000002235
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-normal-approved-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-normal-approved-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-normal-field-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-normal-field-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-protected-approved-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-protected-approved-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-protected-field-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-protected-field-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-route-rechecks-after-preexisting-head",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ],
+        "components": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000052"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000052"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 154,
+            "until": 1791886749985.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-contributor-consent-cache-revision-change",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 375,
+      "id": "independent-contributor-consent-cache-network-unknown",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 13,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 21,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 768,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 768,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 170,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-one-shot-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 53,
+            "until": 1791886753960.3
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-one-shot-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 56,
+            "until": 1791886754134.2
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-manual-gps-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000017"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000017"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 59,
+            "until": 1791886754321.3
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-manual-gps-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000018"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000018"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 62,
+            "until": 1791886754498.4
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-watch-gps-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000019"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000019"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 65,
+            "until": 1791886754676.6
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-watch-gps-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000020"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000020"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 68,
+            "until": 1791886754867.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "fresh-authority-guide-start-with-old-local-store",
+      "pass": true,
+      "evidence": {
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000021"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000021"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 71,
+            "until": 1791886754953.7
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-approved-kakao-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-approved-tmap-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-field-kakao-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-field-tmap-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-normal-approved-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-normal-approved-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-normal-field-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-normal-field-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-protected-approved-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-protected-approved-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-protected-field-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-protected-field-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-route-rechecks-after-preexisting-head",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ],
+        "components": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000036"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000036"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 106,
+            "until": 1791886756601.4
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-contributor-consent-cache-revision-change",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 768,
+      "id": "independent-contributor-consent-cache-network-unknown",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 13,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 21,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1024,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 1024,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 170,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 1024,
+      "id": "fresh-authority-one-shot-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 53,
+            "until": 1791886760889.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "fresh-authority-one-shot-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 56,
+            "until": 1791886761069.3
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-approved-kakao-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-approved-tmap-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-field-kakao-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-field-tmap-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-normal-approved-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-normal-approved-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-normal-field-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-normal-field-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-protected-approved-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-protected-approved-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-protected-field-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-protected-field-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-route-rechecks-after-preexisting-head",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ],
+        "components": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000031"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000031"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 91,
+            "until": 1791886762803.1
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-contributor-consent-cache-revision-change",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 1024,
+      "id": "independent-contributor-consent-cache-network-unknown",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-190-sites-leaflet",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "normal-approved-kakao-tmap-dom",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-static-site-kakao-tmap",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-field-two-app-chooser",
+      "pass": true,
+      "evidence": {
+        "kakao": true,
+        "tmap": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-pending-list",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V05-remote-field-delete-then-later-old-cache",
+      "pass": true,
+      "evidence": {
+        "tombstone": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "restore-authorized-reapproval-and-unhide",
+      "pass": true,
+      "evidence": {
+        "exists": true,
+        "hidden": false,
+        "kakao": true,
+        "tmap": true,
+        "point": [
+          37,
+          127
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "restore-field-protection-to-authorized-public",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "unknown-network-removes-all-dynamic-location",
+      "pass": true,
+      "evidence": {
+        "noDynamic": true,
+        "staticSitesRetained": true,
+        "components": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 13,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "recovery-after-network-error",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "preflight-data-postflight-authority-change",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "bad-nonce-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 21,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "old-epoch-payload-fails-closed",
+      "pass": true,
+      "evidence": {
+        "approved": [],
+        "pending": [],
+        "fields": [],
+        "fieldData": [],
+        "publicSpots": [],
+        "search": 0,
+        "anchors": [],
+        "choice": false,
+        "guide": false,
+        "state": {
+          "ready": false,
+          "generation": 24,
+          "until": 0
+        },
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "bigint-revision-rounding-not-used",
+      "pass": true,
+      "evidence": {
+        "validLargeRevision": true,
+        "rejectAdjacentOld": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "late-gps-after-authority-protection",
+      "pass": true,
+      "evidence": {
+        "capturedGps": 1
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-expiry-does-not-permanently-delete-reappearance",
+      "pass": true,
+      "evidence": {
+        "expiredRemoved": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "same-revision-different-head-contract-rejected",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "visibility-return-revalidates",
+      "pass": true,
+      "evidence": {}
+    },
+    {
+      "width": 1440,
+      "id": "owner-delete-dom-old-inflight-response",
+      "pass": true,
+      "evidence": {
+        "deletePost": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "normal-status-and-reappeared-dom",
+      "pass": true,
+      "evidence": {
+        "notVisiblePost": true
+      }
+    },
+    {
+      "width": 1440,
+      "id": "public-api-get-request-no-store",
+      "pass": true,
+      "evidence": {
+        "requests": 170,
+        "nonNoStore": 0
+      }
+    },
+    {
+      "width": 1440,
+      "id": "fresh-authority-one-shot-ok",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000015"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 53,
+            "until": 1791886766739.5
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "fresh-authority-one-shot-error",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "localStillOld": true,
+        "after": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000016"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 56,
+            "until": 1791886766909.6
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-approved-kakao-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-approved-tmap-auxclick-no-authority-bypass",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false,
+        "headCalls": 0
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-field-kakao-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-field-tmap-contextmenu-no-coordinate-url",
+      "pass": true,
+      "evidence": {
+        "url": "#",
+        "prevented": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-normal-approved-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-normal-approved-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%B6%9C%ED%98%84%20%EC%A7%80%EC%A0%90&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-normal-field-kakao-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "window",
+            "initial": "about:blank",
+            "assigned": [
+              "https://map.kakao.com/link/to/%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC,37,127"
+            ],
+            "closed": false
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-normal-field-tmap-verified-launch-url",
+      "pass": true,
+      "evidence": {
+        "placeholder": "#",
+        "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37",
+        "headCalls": 1,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": "tmap://route?goalname=%EC%A7%81%EB%B0%95%EA%B5%AC%EB%A6%AC&goalx=127&goaly=37"
+          },
+          {
+            "kind": "tmap-attempt"
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-protected-approved-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-protected-approved-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-protected-field-kakao-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-protected-field-tmap-launch-blocked",
+      "pass": true,
+      "evidence": {
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-route-rechecks-after-preexisting-head",
+      "pass": true,
+      "evidence": {
+        "captured": true,
+        "log": [
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          },
+          {
+            "kind": "tmap-url",
+            "url": ""
+          }
+        ],
+        "components": {
+          "approved": [
+            "synthetic-approved"
+          ],
+          "pending": [
+            "synthetic-pending"
+          ],
+          "fields": [
+            "11111111-1111-4111-8111-000000000031"
+          ],
+          "fieldData": [
+            "11111111-1111-4111-8111-000000000031"
+          ],
+          "publicSpots": [
+            "synthetic-approved"
+          ],
+          "search": 1,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": true,
+            "generation": 91,
+            "until": 1791886768550.7
+          },
+          "allowed": true
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-contributor-consent-cache-revision-change",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "id": "independent-contributor-consent-cache-network-unknown",
+      "pass": true,
+      "evidence": {
+        "initial": true,
+        "after": {
+          "cache": null,
+          "visibleName": false,
+          "modalName": false
+        }
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "both-independent-clients-normal",
+      "pass": false,
+      "evidence": {
+        "pages": [
+          false,
+          true
+        ],
+        "components": [
+          {
+            "approved": [],
+            "pending": [],
+            "fields": [],
+            "fieldData": [],
+            "publicSpots": [],
+            "search": 0,
+            "anchors": [],
+            "choice": false,
+            "guide": false,
+            "state": {
+              "ready": false,
+              "generation": 2,
+              "until": 0
+            },
+            "allowed": false
+          },
+          {
+            "approved": [
+              "synthetic-approved"
+            ],
+            "pending": [
+              "synthetic-pending"
+            ],
+            "fields": [
+              "11111111-1111-4111-8111-000000000001"
+            ],
+            "fieldData": [
+              "11111111-1111-4111-8111-000000000001"
+            ],
+            "publicSpots": [
+              "synthetic-approved"
+            ],
+            "search": 1,
+            "anchors": [],
+            "choice": false,
+            "guide": false,
+            "state": {
+              "ready": true,
+              "generation": 2,
+              "until": 1791886772202.4
+            },
+            "allowed": true
+          }
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "second-device-route-rechecks-current-authority",
+      "pass": true,
+      "evidence": {
+        "routeClosed": true,
+        "pagesProtected": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "remote-removal-both-current-snapshots",
+      "pass": true,
+      "evidence": {
+        "pages": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "width": "multi-device",
+      "id": "new-explicit-authority-restores-both-devices",
+      "pass": false,
+      "evidence": {
+        "pages": [
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "width": "concurrency",
+      "id": "earlier-request-arrives-after-new-protected-snapshot",
+      "pass": false,
+      "evidence": {
+        "expectedDeferredRequests": 2,
+        "actual": 0
+      }
+    }
+  ],
+  "summary": {
+    "pass": 237,
+    "fail": 4,
+    "skip": 0,
+    "notRun": 0
+  },
+  "previousChrome15": [
+    {
+      "width": 344,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 344,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 375,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 768,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1024,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V03-protected-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exists": false,
+        "rawSearch": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V04-withdrawal-then-later-old-approved-cache",
+      "pass": true,
+      "evidence": {
+        "exactCoordinatesRestored": false
+      }
+    },
+    {
+      "width": 1440,
+      "id": "V06-refresh-stale-first-field-list",
+      "pass": true,
+      "evidence": {
+        "updates": 0,
+        "markers": 0,
+        "guide": true,
+        "allowed": false
+      }
+    }
+  ],
+  "network": {
+    "allowedLocal": 90,
+    "allowedDependencyGet": 197,
+    "blockedOther": 266,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "limits": [
+    "Synthetic in-page API emulates the publication protocol; actual D1 atomicity is tested separately.",
+    "All dynamic coordinates and reports are synthetic. Static190 public sites are loaded from the product.",
+    "Two independent Chrome pages are coordinated with the same mock authority revisions; distributed production POP consistency is not certified.",
+    "No external Kakao/TMAP application or physical GPS device was opened.",
+    "Foreground permission lease and polling operational values require separate operating approval.",
+    "Synthetic authority changes are observed at fetch/postflight boundaries; zero-ms revocation is not guaranteed."
+  ]
+}

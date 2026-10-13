@@ -1,7 +1,8 @@
+import { writerFenceReady } from '../writer-fence.js';
 import { WorkerError, jsonResponse } from '../shared.js';
 import { rows, fingerprint, SCHEMA_VERSION } from './data.js';
 
-export const BUILD_CAPABILITY='phase2c-dual-v3';
+export const BUILD_CAPABILITY='phase2c-dual-v4-writer-fence';
 const MODES=new Set(['NORMAL','READ_ONLY_MAINTENANCE','CANONICAL_DUAL_WRITE']);
 export function writeMode(env) {return env.REPORTS_WRITE_MODE===undefined?'NORMAL':env.REPORTS_WRITE_MODE;}
 function closed(code='WRITE_MAINTENANCE') {const e=new WorkerError(code,'제보 쓰기를 잠시 중지했습니다. 잠시 후 다시 시도해 주세요.',503);e.retryAfter=60;throw e;}
@@ -23,7 +24,7 @@ export async function capability(env,role) {
     typeof env.REPORTS_PEER?.fetch==='function'&&typeof env.REPORTS_GATE_TOKEN==='string'&&env.REPORTS_GATE_TOKEN.length>0&&
     (env.ENVIRONMENT!=='production'||env.REPORTS_REMOTE_VERIFIED==='true');
   return {role,build:BUILD_CAPABILITY,mode,activation:env.REPORTS_ACTIVATION_ID||null,release:env.REPORTS_RELEASE_ID||null,peerRelease:env.REPORTS_PEER_RELEASE_ID||null,
-    schema:SCHEMA_VERSION,ready:configured&&await schemaReady(env.REPORTS_DB)};
+    schema:SCHEMA_VERSION,ready:configured&&await schemaReady(env.REPORTS_DB)&&(env.REPORTS_PUBLICATION_REQUIRED!=='true'||mode==='READ_ONLY_MAINTENANCE'||await writerFenceReady(env.REPORTS_DB))};
 }
 export async function internalCapability(request,env,role) {
   if(!env.REPORTS_GATE_TOKEN||request.headers.get('X-Reports-Gate')!==env.REPORTS_GATE_TOKEN)return new Response('Not found',{status:404});

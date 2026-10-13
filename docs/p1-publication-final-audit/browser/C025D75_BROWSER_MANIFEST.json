@@ -1,0 +1,168 @@
+{
+  "schema": "birdmap-c025d75-browser-independent-recheck-v1",
+  "sourceSha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "sourceTree": "ce5c2eea3807084a690299d316e9a20b56ee1ae5",
+  "checkedAt": "2026-10-12T15:59:51.475Z",
+  "chromeVersion": "154.0.8037.98",
+  "widths": [
+    344,
+    375,
+    768,
+    1024,
+    1440
+  ],
+  "assets": [
+    {
+      "file": "index.html",
+      "sha256": "d3488318be9dc3696946753fc0c18fa26392c3b519c1467552603883641616d3",
+      "bytes": 1379328,
+      "matches": true
+    },
+    {
+      "file": "weather_today.json",
+      "sha256": "a06a1a955b51f9ac03e89356d122cee4370568010078d0c87b830c855fd23875",
+      "bytes": 212291,
+      "matches": true
+    },
+    {
+      "file": "weather_week.json",
+      "sha256": "f7aa50bcb2a5d896c78613f9423c2a8bb9d618718112173068642cd2ad9f9470",
+      "bytes": 3601318,
+      "matches": true
+    },
+    {
+      "file": "tide_today.json",
+      "sha256": "e7d626446307c36f8d31b963842dd0d7bdab09853ce3f01caf9784414b7fb1b3",
+      "bytes": 133323,
+      "matches": true
+    },
+    {
+      "file": "tide_month.json",
+      "sha256": "713133c8d968755304d7ea39212c3acfe62ba0dcdb42f7d5b671329d62c53760",
+      "bytes": 382041,
+      "matches": true
+    },
+    {
+      "file": "notices.json",
+      "sha256": "c3d5ea3bedee5870ca799644e4c702cbc2a391f63a58a8fa491282d57999e19f",
+      "bytes": 6929,
+      "matches": true
+    }
+  ],
+  "suites": [
+    {
+      "kind": "existing-independent-Chrome",
+      "file": "c025d75-baseline-lf/publication_chrome.json",
+      "log": "c025d75-baseline-lf-run.log",
+      "exitCode": 0,
+      "sha256": "d4d633ab2bcc7dab229d424748fc80c6103df752395a0bb4fdd48e8306e95387",
+      "schema": "birdmap-publication-browser-security-v1",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "summary": {
+        "pass": 241,
+        "fail": 0,
+        "skip": 0,
+        "notRun": 0
+      },
+      "network": {
+        "allowedLocal": 90,
+        "allowedDependencyGet": 197,
+        "blockedOther": 266,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrorCount": 0
+    },
+    {
+      "kind": "actual-SQLite-product-API-DTO",
+      "file": "c025d75-saved-protected/SAVED_FIELD_CHROME.json",
+      "log": "c025d75-saved-protected-corrected-run.log",
+      "exitCode": 0,
+      "sha256": "4742dc7354fa6e9ccafec80b382b6d164589c85d3a994b40cb6dcf9c3846c9e9",
+      "schema": "birdmap-saved-field-api-chrome-v1",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "summary": {
+        "pass": 170,
+        "fail": 0,
+        "skip": 0,
+        "notRun": 0
+      },
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 91,
+        "blockedOther": 201,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrorCount": 0
+    },
+    {
+      "kind": "actual-workerd-product-API-DTO",
+      "file": "c025d75-workerd-dto/SAVED_FIELD_CHROME.json",
+      "log": "c025d75-workerd-dto-run.log",
+      "exitCode": 0,
+      "sha256": "965b09d3ca957783e569cf3fad273f977503648e655091d7b313689f7a35959d",
+      "schema": "birdmap-saved-field-api-chrome-v1",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "summary": {
+        "pass": 140,
+        "fail": 0,
+        "skip": 0,
+        "notRun": 0
+      },
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 91,
+        "blockedOther": 138,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrorCount": 0
+    },
+    {
+      "kind": "first-DTO-harness-failure-preserved",
+      "file": "c025d75-saved-protected-harness-failure/SAVED_FIELD_CHROME.json",
+      "log": "c025d75-saved-protected-harness-failure/run.log",
+      "exitCode": 1,
+      "sha256": "d4d942f616854e33b05384aa6a28bae3735364ee1166bad7fb587a6f8976846e",
+      "schema": "birdmap-saved-field-api-chrome-v1",
+      "source": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+      "summary": {
+        "pass": 140,
+        "fail": 30,
+        "skip": 0,
+        "notRun": 0
+      },
+      "network": {
+        "allowedLocal": 36,
+        "allowedDependencyGet": 91,
+        "blockedOther": 196,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrorCount": 0
+    }
+  ],
+  "fixtureHashes": [
+    {
+      "file": "c025d75-saved-protected/actual_api_fixture.json",
+      "sha256": "24bdd88f54866614dea2436a69115a3388eb39d17ccbf70d53d1eb676e1d270b"
+    },
+    {
+      "file": "c025d75-workerd-dto/api_workerd_replay_fixture.json",
+      "sha256": "07602f90a2a79e5c1fbfa83e0a7d649feaced69917c9b15be7a717b63793a91b"
+    },
+    {
+      "file": "docs/p1-publication-final-audit/server/field-saved-protection-read/c025d75-expanded/API_DTO_FIXTURE.json",
+      "sha256": "d807b52baa04719b851104db74ef72b5c8f205bea08e68a99cdb3e6939f9ed39"
+    }
+  ],
+  "policy": "Exact/unverified saved protected coordinate fields withheld. Correct existing masked points retain coarse marker and no routing. No new S1-P policy.",
+  "limitations": [
+    "Legacy protected-null DTO remains API reference/owner-known-ID metadata; unchanged fieldValidUpdate filters entire row and therefore its map owner controls are not selectable.",
+    "Newly created or correctly masked hidden1 protected rows remain UI-selectable and support status/delete controls.",
+    "The241/170/140 suites overlap and are reported separately, not as unique combined coverage.",
+    "First140/30 result is preserved.30 failures were instrumenter signature/Leaflet content-lookup defects, not accepted or silently removed.",
+    "Physical GPS/native apps/operating API/D1/deployment not performed."
+  ]
+}

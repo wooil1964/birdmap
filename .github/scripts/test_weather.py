@@ -385,7 +385,7 @@ class WeatherWeekTests(unittest.TestCase):
         import validate_weather_week as validator
 
         document = {
-            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "generatedAt": "2026-09-07 05:00 KST", "forecastDayCount": 7,
             "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
             "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
             "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant", "days": {"2026-09-07": {"samples": [
@@ -409,7 +409,7 @@ class WeatherWeekTests(unittest.TestCase):
         import validate_weather_week as validator
 
         document = {
-            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "generatedAt": "2026-09-07 05:00 KST", "forecastDayCount": 7,
             "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
             "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
             "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant", "days": {"2026-09-08": {"samples": [
@@ -432,9 +432,11 @@ class WeatherWeekTests(unittest.TestCase):
 
     def today_document(self, **site_fields):
         """today 검증기 입력용 최소 문서. 실제 저장 형태처럼 기상값은 포맷 문자열이다."""
-        today = datetime.now(weather.KST).date().isoformat()
-        entry = {"name": "어청도", "date": today, "generatedAt": today + " 06:00 KST",
-                 "refreshedAt": today + " 06:00 KST", "sourceType": "saved_forecast",
+        now = datetime.now(weather.KST)
+        today = now.date().isoformat()
+        generated = now.strftime("%Y-%m-%d %H:%M KST")
+        entry = {"name": "어청도", "date": today, "generatedAt": generated,
+                 "refreshedAt": generated, "sourceType": "saved_forecast",
                  "stale": False, "scoreEligible": True, "missingScoreFields": [],
                  "score": 92, "grade": "★★★★★", "summary": "좋음",
                  "wind": "북동풍 3.6m/s", "rain": "강수 없음", "targetGroup": "솔새류",
@@ -442,7 +444,7 @@ class WeatherWeekTests(unittest.TestCase):
                  "visibility": "20.0km", "cloud": "10%", "wave": "0.7m", "ruleKey": "island_migrant",
                  "waveLat": 36.12, "waveLon": 125.98}
         entry.update(site_fields)
-        return {"date": today, "updated": today + " 06:00 KST", "source": "test", "status": "ok",
+        return {"date": today, "updated": generated, "generatedAt": entry.get("generatedAt"), "source": "test", "status": "ok",
                 "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
                 "unavailableSiteCount": 0,
                 "scoreEligibleCount": 1 if entry.get("scoreEligible") else 0,
@@ -477,6 +479,34 @@ class WeatherWeekTests(unittest.TestCase):
             with self.subTest(fields=fields):
                 with self.assertRaisesRegex(AssertionError, message):
                     self.run_today_validator(self.today_document(**fields))
+
+    def test_today_validator_rejects_overflow_wind_units(self):
+        with self.assertRaisesRegex(AssertionError, "valid wind"):
+            self.run_today_validator(self.today_document(wind="북풍 " + "9" * 400 + "m/s"))
+
+    def test_today_validator_rejects_overflow_rain_units(self):
+        with self.assertRaisesRegex(AssertionError, "valid rain"):
+            self.run_today_validator(self.today_document(rain="3시간 강수 " + "9" * 400 + "mm"))
+
+    def test_today_validator_rejects_overflow_wave_units(self):
+        document = self.today_document(wave="9" * 400 + "m")
+        with self.assertRaisesRegex(AssertionError, "invalid optional wave"):
+            self.run_today_validator(document)
+        original = self.site
+        try:
+            for flag in ("showWave", "island", "pelagic"):
+                self.site = dict(original, **{flag: True})
+                with self.subTest(flag=flag), self.assertRaisesRegex(AssertionError, "valid required wave"):
+                    self.run_today_validator(document)
+        finally:
+            self.site = original
+
+    def test_today_validator_keeps_normal_finite_units(self):
+        for score in (0, 92, 92.5, 100):
+            with self.subTest(score=score):
+                result = self.run_today_validator(self.today_document(score=score, wind="북풍 0m/s",
+                    rain="3시간 강수 0mm", wave="0m"))
+                self.assertEqual(result["sites"]["1"]["score"], score)
 
     def test_today_validator_rejects_json_special_numbers(self):
         """1e999 는 inf 로 파싱되고 NaN·Infinity 리터럴은 parse_constant 가 막는다."""
@@ -517,6 +547,119 @@ class WeatherWeekTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "Weather contains NaN"):
             self.run_today_validator(nan_document, raw_replace=("987654321", "NaN"))
 
+    def test_today_validator_requires_typed_eligibility(self):
+        """P1-S2: scoreEligible 는 bool, 적격일 때 missingScoreFields 는 빈 list 여야 한다."""
+        for eligible in (1, "true", 0.5, None):
+            with self.subTest(scoreEligible=eligible):
+                with self.assertRaisesRegex(AssertionError, "scoreEligible is not a boolean"):
+                    self.run_today_validator(self.today_document(scoreEligible=eligible))
+        for missing in (None, "wave"):
+            with self.subTest(missingScoreFields=missing):
+                with self.assertRaisesRegex(AssertionError, "missingScoreFields is not a list"):
+                    self.run_today_validator(self.today_document(missingScoreFields=missing))
+        with self.assertRaises(AssertionError):
+            self.run_today_validator(self.today_document(missingScoreFields=["wave"]))
+
+    def test_today_validator_requires_actual_weather_for_eligible_sites(self):
+        """PR #13 R1: 적격(true)인 항목은 metadata 만 맞추지 말고 실제 풍속·풍향·강수(+필수 파고)를 가져야 한다."""
+        for fields, message in [
+            ({"wind": None}, "eligible without a valid wind"),
+            ({"wind": ""}, "eligible without a valid wind"),
+            ({"wind": "3.6m/s"}, "eligible without a valid wind"),
+            ({"wind": "북동풍 m/s"}, "eligible without a valid wind"),
+            ({"wind": "이상풍 3.6m/s"}, "eligible without a valid wind"),
+            ({"wind": 3.6}, "eligible without a valid wind"),
+            ({"rain": None}, "eligible without a valid rain"),
+            ({"rain": ""}, "eligible without a valid rain"),
+            ({"rain": "알 수 없음"}, "eligible without a valid rain"),
+            ({"wave": ""}, "invalid optional wave"),
+            ({"wave": "0.5"}, "invalid optional wave"),
+            ({"wave": "-1.0m"}, "invalid optional wave"),
+            ({"wave": 0.5}, "invalid optional wave"),
+        ]:
+            with self.subTest(fields=fields):
+                with self.assertRaisesRegex(AssertionError, message):
+                    self.run_today_validator(self.today_document(**fields))
+
+    def test_today_validator_requires_batch_consistent_item_generation(self):
+        """PR #13 F2: 적격 항목의 generatedAt 은 문자열이며 배치(root) 발행과 같아야 한다(프런트와 같은 계약)."""
+        today = datetime.now(weather.KST).date().isoformat()
+        for value in (today + " 05:30 KST", None, ["x"], {"a": 1}, 7, "", "not-a-timestamp"):
+            with self.subTest(item=value):
+                document = self.today_document(generatedAt=value)
+                document["generatedAt"] = today + " 06:00 KST"
+                with self.assertRaises(AssertionError):
+                    self.run_today_validator(document)
+        garbage = self.today_document(generatedAt="not-a-timestamp")
+        garbage["generatedAt"] = "not-a-timestamp"
+        with self.assertRaises(AssertionError):
+            self.run_today_validator(garbage)
+        self.assertEqual(self.run_today_validator(self.today_document())["siteCount"], 1)
+
+    def test_today_validator_requires_wave_where_the_site_needs_it(self):
+        """파고 필수 지역(showWave/island/pelagic)의 wave 결측은 거부하고, 비필수 지역의 null 은 허용한다."""
+        import validate_weather as validator
+
+        for flag in ("showWave", "island", "pelagic"):
+            document = self.today_document(wave=None)
+            text = json.dumps(document, ensure_ascii=False)
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "weather_today.json"
+                path.write_text(text, encoding="utf-8")
+                with patch.object(validator, "load_runtime_sites", return_value=[dict(self.site, **{flag: True})]):
+                    with self.subTest(flag=flag):
+                        with self.assertRaisesRegex(AssertionError, "required wave"):
+                            validator.validate(path)
+                        document["sites"]["1"]["wave"] = "0.7m"
+                        path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            self.assertEqual(validator.validate(path)["siteCount"], 1)
+        self.assertEqual(self.run_today_validator(self.today_document(wave=None))["siteCount"], 1)
+
+    def test_today_validator_keeps_reference_weather_of_ineligible_sites(self):
+        """이전 저장·부적격 항목의 참고 기상(결측·옛 형식 포함)은 거부하지 않는다."""
+        document = self.today_document(scoreEligible=False, score=None, grade="", stale=True,
+                                       missingScoreFields=["precipitation"], rain=None, wind=None, wave=None)
+        document["staleCount"] = 1
+        self.assertEqual(self.run_today_validator(document)["scoreEligibleCount"], 0)
+        previous = self.today_document(scoreEligible=False, stale=True, fallbackSource="previous_saved",
+                                       missingScoreFields=[], wind="옛 형식 3m/s")
+        previous["staleCount"] = 1
+        self.assertEqual(self.run_today_validator(previous)["scoreEligibleCount"], 0)
+
+    def test_sparse6h_fixture_matches_the_real_builder_and_validator(self):
+        """PR #13 R6: 프런트 출처 시험이 쓰는 sparse 6시간 fixture 는 실제 build_site_result 출력이어야 하고 validator 도 수락한다.
+        (생성기는 평가 시각과 6시간 간격의 예보가 가까우면 적격으로 만들지만, 화면은 예정 갱신 시각 이후 생성분만 현재 자료로 쓴다.)"""
+        import validate_weather as validator
+
+        site = next(s for s in load_runtime_sites() if str(s["id"]) == "14")
+        target = datetime(2026, 10, 10, 6, 10, tzinfo=weather.KST)
+        stamps = [datetime(2026, 10, 10, hour, tzinfo=weather.KST).timestamp() * 1000 for hour in (12, 18)]
+        atmosphere = {"ts": stamps, "wind_u-surface": [0, 0], "wind_v-surface": [-3, -3], "past3hprecip-surface": [0, 0],
+                      "temp-surface": [293.15, 293.15], "visibility-surface": [15000, 15000], "lclouds-surface": [20, 20],
+                      "cloudUnit": "percent", "visibilityUnit": "m"}
+        result = weather.build_site_result(site, weather.load_rules(), atmosphere, None, None, target)
+        fixture = json.loads((Path(__file__).parent / "fixtures" / "sparse6h_today_site14.json").read_text(encoding="utf-8"))
+        self.assertEqual(result, fixture)
+        self.assertTrue(result["scoreEligible"])
+        self.assertFalse(result["stale"])
+        self.assertEqual((result["generatedAt"], result["forecastTime"]), ("2026-10-10 06:10 KST", "2026-10-10 12:00 KST"))
+        document = {"date": "2026-10-10", "generatedAt": "2026-10-10 06:10 KST", "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
+                    "unavailableSiteCount": 0, "scoreEligibleCount": 1, "status": "ok", "sites": {"14": result}}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "weather_today.json"
+            path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+
+            class FixedNow(datetime):
+                @classmethod
+                def now(cls, tz=None):
+                    moment = datetime(2026, 10, 10, 11, 0, tzinfo=weather.KST)
+                    return moment.astimezone(tz) if tz else moment.replace(tzinfo=None)
+
+            with patch.object(validator, "load_runtime_sites", return_value=[site]), patch.object(validator, "datetime", FixedNow):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(validator.validate(path)["siteCount"], 1)
+
     # ---- L03: weekly validator 의 수치 타입·음수·비유한값 검증 ----
 
     OVERFLOW_MARKER = 123456.789
@@ -528,7 +671,7 @@ class WeatherWeekTests(unittest.TestCase):
                   "scoreEligible": True, "missingScoreFields": []}
         sample.update(sample_fields)
         return {
-            "startDate": "2026-09-07", "endDate": "2026-09-13", "forecastDayCount": 7,
+            "startDate": "2026-09-07", "endDate": "2026-09-13", "generatedAt": "2026-09-07 05:00 KST", "forecastDayCount": 7,
             "siteCount": 1, "siteWithSamplesCount": 1, "unavailableSiteCount": 0,
             "sampleCount": 1, "scoreEligibleSampleCount": 1, "status": "ok",
             "sites": {"1": {"name": "어청도", "ruleKey": "island_migrant",
@@ -577,6 +720,35 @@ class WeatherWeekTests(unittest.TestCase):
             with self.subTest(field=field, value=value):
                 with self.assertRaisesRegex(AssertionError, message):
                     self.run_week_validator(self.week_document(**{field: value}), site_fields)
+
+    def test_validator_requires_typed_weekly_eligibility(self):
+        """P1-S2: scoreEligible 는 bool, missingScoreFields 는 list 여야 하고 truthiness 로 적격을 추정하지 않는다."""
+        for eligible in (1, "true", 0.5):
+            with self.subTest(scoreEligible=eligible):
+                with self.assertRaisesRegex(AssertionError, "scoreEligible is not a boolean"):
+                    self.run_week_validator(self.week_document(scoreEligible=eligible), {"showWave": True})
+        for missing in (None, "wave"):
+            with self.subTest(missingScoreFields=missing):
+                with self.assertRaisesRegex(AssertionError, "missingScoreFields is not a list"):
+                    self.run_week_validator(self.week_document(missingScoreFields=missing), {"showWave": True})
+        # 정상 0점·100점·소수점은 그대로 통과한다.
+        for score in (0, 100, 92.5):
+            with self.subTest(score=score):
+                self.assertEqual(self.run_week_validator(self.week_document(score=score), {"showWave": True})["sampleCount"], 1)
+
+    def test_week_validator_requires_a_valid_non_future_generation_time(self):
+        """PR #13 C1: 프런트 weeklyDocVerified 와 같은 계약 — 발행 시각 누락·무효·미래는 거부한다."""
+        for value, message in [(None, "generatedAt"), ("", "generatedAt"), ("not-a-time", "generatedAt"), ("2026-09-07 10:60 KST", "generatedAt"),
+                               ("2099-01-01 00:00 KST", "future")]:
+            with self.subTest(generatedAt=value):
+                document = self.week_document()
+                document["generatedAt"] = value
+                with self.assertRaisesRegex(AssertionError, message):
+                    self.run_week_validator(document, {"showWave": True})
+        document = self.week_document()
+        del document["generatedAt"]
+        with self.assertRaises((AssertionError, KeyError)):
+            self.run_week_validator(document, {"showWave": True})
 
     def test_validator_rejects_json_number_overflow(self):
         """JSON 숫자 1e999 는 parse_constant 가 아니라 inf 로 파싱되므로 유한성 검사로 막는다."""

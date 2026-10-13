@@ -1,0 +1,48 @@
+✔ publication: additive migration preserves canonical schemaReady and fresh schema contract (14.1542ms)
+✔ publication: head echoes only valid fresh nonce and strict version strings (21.9543ms)
+✔ publication: invalid nonce fails closed "" (3.6336ms)
+✔ publication: invalid nonce fails closed "abc" (3.331ms)
+✔ publication: invalid nonce fails closed "gggggggggggggggggggggggggggggggg" (3.5016ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.4091ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.4219ms)
+✔ publication: invalid nonce fails closed "[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]" (3.3614ms)
+✔ publication: invalid nonce fails closed "{\"toString\":\"not-callable\"}" (3.3705ms)
+✔ publication: revision parser rejects coercion, noncanonical decimal, underflow/overflow (0.2758ms)
+✔ publication: incomplete trigger installation cannot issue a valid authority anchor (3.5119ms)
+✔ publication: malformed epoch or counter is unavailable and source writes abort (11.0544ms)
+✔ publication: strict legacy /reports/approved cannot expose a raw coordinate response (8.6264ms)
+✔ publication: atomic state/data and matching authority for /reports/approved (5.901ms)
+✔ publication: strict legacy /reports/pending cannot expose a raw coordinate response (4.1808ms)
+✔ publication: atomic state/data and matching authority for /reports/pending (4.471ms)
+✔ publication: strict legacy /reports/recent-sites cannot expose a raw coordinate response (4.1633ms)
+✔ publication: atomic state/data and matching authority for /reports/recent-sites (4.5811ms)
+✔ publication: strict legacy /reports/site/1 cannot expose a raw coordinate response (4.1375ms)
+✔ publication: atomic state/data and matching authority for /reports/site/1 (4.6531ms)
+✔ publication: strict legacy /field-updates cannot expose a raw coordinate response (4.5907ms)
+✔ publication: atomic state/data and matching authority for /field-updates (4.9631ms)
+✔ publication: old expected revision is 409 without payload, after withdrawal and hiding (4.0345ms)
+✔ publication: missing schema or singleton is 503 and mutation does not succeed (5.2352ms)
+✔ publication: revision larger than 2^53 remains decimal text and exact (3.8793ms)
+✔ publication: overflow aborts source mutation and counter in the same transaction (3.2455ms)
+✔ publication: insert/update/delete coverage and failed batch rollback include counter (3.5145ms)
+✔ canonical dual write: success and injected failure keep publication/report/raw/checklist/redemption atomic (7.6218ms)
+✔ canonical shadow: same authority snapshots compare and changed authority is explicitly inconclusive (6.5964ms)
+✔ field CAS: deleted is terminal against old unconditional status/activity/coordinate writes (4.8609ms)
+✔ field CAS: late child event or confirmation cannot append after deletion (4.6859ms)
+✔ field CAS: row revision advancement terminates even with recursive SQLite triggers (3.8205ms)
+✔ field CAS: old normal writer advances row revision and old CAS cannot perform ABA write (4.0764ms)
+✔ field CAS: row revision over 2^53 is serialized and compared as exact text (6.2245ms)
+✔ field CAS: status read before delete cannot restore deleted or append a status event (5.8951ms)
+✔ field CAS: confirm read before delete rolls back confirmation/activity and publication (5.2476ms)
+✔ field CAS: concurrent owner deletion is idempotent and appends exactly one event (6.3241ms)
+✔ field CAS: concurrent confirmations have one CAS winner and normal loser retry succeeds (5.9649ms)
+✔ field CAS: status expiry during asynchronous validation cannot revive expired item (5.119ms)
+✔ field CAS: normal expire/reappear/reapprove are not permanent tombstones (7.4222ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 298.4715

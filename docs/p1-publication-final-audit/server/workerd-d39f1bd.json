@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-10-12T05:27:16.286Z",
+  "scope": "ephemeral local workerd D1; synthetic only; production writes and deploys zero",
+  "runtime": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha"
+  },
+  "checks": [
+    {
+      "id": "D1-01 canonical schemaReady before migration",
+      "status": "pass"
+    },
+    {
+      "id": "D1-02 additive migration preserves canonical schemaReady",
+      "status": "pass"
+    },
+    {
+      "id": "D1-19 migration initially freezes fields and explicit activation is monotonic",
+      "status": "pass"
+    },
+    {
+      "id": "D1-22 measured local workerd primary anchor read metadata",
+      "status": "pass"
+    },
+    {
+      "id": "D1-03 live public anchor type, nonce, projection, no-store",
+      "status": "pass"
+    },
+    {
+      "id": "D1-04 actual field create and authority+parent+events/count snapshot",
+      "status": "pass"
+    },
+    {
+      "id": "D1-05 UPDATE→changes assertion with publication triggers",
+      "status": "pass"
+    },
+    {
+      "id": "D1-06 zero CAS rolls back event and permission counter",
+      "status": "pass"
+    },
+    {
+      "id": "D1-07 hide/withdraw expected revision rejects old snapshot",
+      "status": "pass"
+    },
+    {
+      "id": "D1-08 handler late status loses CAS to owner delete, no phantom event",
+      "status": "pass"
+    },
+    {
+      "id": "D1-09 old unconditional writer cannot revive deleted field",
+      "status": "pass"
+    },
+    {
+      "id": "D1-10 child confirmation/event cannot append to deleted parent",
+      "status": "pass"
+    },
+    {
+      "id": "D1-11 owner deletion replay event remains exactly one",
+      "status": "pass"
+    },
+    {
+      "id": "D1-12 strict old GET does not leak coordinate payload",
+      "status": "pass"
+    },
+    {
+      "id": "D1-13 publication epoch/direct counter mutation is guarded",
+      "status": "pass"
+    },
+    {
+      "id": "D1-14 partial guard installation fails closed until restored",
+      "status": "pass"
+    },
+    {
+      "id": "D1-17 canonical dual batch success includes publication counter",
+      "status": "pass"
+    },
+    {
+      "id": "D1-18 canonical dual injected failure rolls back counter and all stored material",
+      "status": "pass"
+    },
+    {
+      "id": "D1-20 all nine DB field writer barriers and thaw restoration",
+      "status": "pass"
+    },
+    {
+      "id": "D1-21 DB freeze metadata rollback shares actual batch atomicity",
+      "status": "pass"
+    },
+    {
+      "id": "D1-15 over-2^53 revision round-trips and exact prior version rejects",
+      "status": "pass"
+    },
+    {
+      "id": "D1-16 integer overflow aborts source write with no new field/event",
+      "status": "pass"
+    }
+  ],
+  "metrics": {
+    "headRead": {
+      "rows_read": 96,
+      "rows_written": 0,
+      "duration": 0,
+      "changed_db": false
+    },
+    "catalogObjects": 95
+  },
+  "summary": {
+    "pass": 22,
+    "fail": 0,
+    "skip": 0
+  }
+}

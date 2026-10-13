@@ -1,0 +1,648 @@
+{
+  "at": "2026-10-12T10:57:03.741Z",
+  "sourceSha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+  "scope": "Actual local Miniflare workerd D1; synthetic data; zero production/dashboards/deployments",
+  "syntheticFixture73": {
+    "reports": 73,
+    "approved": 60,
+    "rejected": 13,
+    "fieldUpdates": 3,
+    "fieldEvents": 3,
+    "fieldConfirmations": 3
+  },
+  "userProvided": {
+    "source": "Earlier user-provided dashboard values, exact window not supplied here; retain as comparison rather than actual same-window validation.",
+    "accountPlan": "Workers Free (user provided)",
+    "d1Queries": 1230,
+    "rowsRead": 58000,
+    "rowsWritten": 496,
+    "databaseSizeMB": 1.44,
+    "workerRequests": "not supplied; D1 queries do not substitute for Worker request count"
+  },
+  "actualBaseline": {
+    "source": "Parent audit independently retrieved authenticated official GraphQL data; child reads the resulting evidence file only.",
+    "window": {
+      "start": "2026-10-11T10:45:13.009Z",
+      "end": "2026-10-12T10:45:13.009Z",
+      "requestedHours": 24,
+      "d1Granularity": "datetimeHour; partial endpoint buckets may differ from dashboard rolling24h"
+    },
+    "d1Account": {
+      "readQueries": 1071,
+      "writeQueries": 271,
+      "rowsRead": 62111,
+      "rowsWritten": 665,
+      "groupCount": 2,
+      "allGroupsReceived": true,
+      "databaseCount": 2
+    },
+    "d1Reports": {
+      "readQueries": 1064,
+      "writeQueries": 173,
+      "rowsRead": 56381,
+      "rowsWritten": 538
+    },
+    "d1Others": {
+      "readQueries": 7,
+      "writeQueries": 98,
+      "rowsRead": 5730,
+      "rowsWritten": 127
+    },
+    "workerAccount": {
+      "requests": 1242,
+      "publicRequests": 985,
+      "adminRequests": 129,
+      "otherRequests": 128,
+      "errors": 0
+    },
+    "evidence": "../../usage-readonly/20261012T104513-analytics.json",
+    "aggregateCaveat": "Adaptive analytics, D1 datetimeHour buckets, not a transactional point-in-time or current UTC-day balance. Runtime errors0 is not proof of application HTTP4xx/5xx0."
+  },
+  "endpointCostMap": {
+    "/reports/public-state": {
+      "httpMethod": "GET",
+      "requests": 1,
+      "sqlStatements": 1,
+      "rowsRead": 103,
+      "rowsWritten": 0
+    },
+    "/reports/approved": {
+      "requests": 1,
+      "sqlStatements": 2,
+      "rowsRead": 224,
+      "rowsWritten": 0,
+      "dataRowsReadExcludingAnchor": 121,
+      "queryRowsRead": [
+        103,
+        121
+      ],
+      "normalPublicationFetchUnsharedBudget": {
+        "headRequests": 2,
+        "totalHttpRequests": 3,
+        "totalRowsRead": 430
+      },
+      "fixtureShape": {
+        "keys": [
+          "ok",
+          "generatedAt",
+          "spots",
+          "fixedSpots",
+          "publication",
+          "serverTime"
+        ],
+        "publication": {
+          "contract": "publication-v1",
+          "epoch": "205278d7fb291ec55dcd299e4c754a20",
+          "revision": "1",
+          "projection": "legacy-public-v1",
+          "nonce": "000000000000000000000000000001a5"
+        },
+        "spots": 60
+      }
+    },
+    "/reports/pending": {
+      "requests": 1,
+      "sqlStatements": 2,
+      "rowsRead": 104,
+      "rowsWritten": 0,
+      "dataRowsReadExcludingAnchor": 1,
+      "queryRowsRead": [
+        103,
+        1
+      ],
+      "normalPublicationFetchUnsharedBudget": {
+        "headRequests": 2,
+        "totalHttpRequests": 3,
+        "totalRowsRead": 310
+      },
+      "fixtureShape": {
+        "keys": [
+          "ok",
+          "generatedAt",
+          "spots",
+          "publication",
+          "serverTime"
+        ],
+        "publication": {
+          "contract": "publication-v1",
+          "epoch": "205278d7fb291ec55dcd299e4c754a20",
+          "revision": "1",
+          "projection": "legacy-public-v1",
+          "nonce": "000000000000000000000000000001a6"
+        },
+        "spots": 0
+      }
+    },
+    "/reports/recent-sites": {
+      "requests": 1,
+      "sqlStatements": 2,
+      "rowsRead": 224,
+      "rowsWritten": 0,
+      "dataRowsReadExcludingAnchor": 121,
+      "queryRowsRead": [
+        103,
+        121
+      ],
+      "normalPublicationFetchUnsharedBudget": {
+        "headRequests": 2,
+        "totalHttpRequests": 3,
+        "totalRowsRead": 430
+      },
+      "fixtureShape": {
+        "keys": [
+          "ok",
+          "days",
+          "since",
+          "today",
+          "sites",
+          "publication",
+          "serverTime"
+        ],
+        "publication": {
+          "contract": "publication-v1",
+          "epoch": "205278d7fb291ec55dcd299e4c754a20",
+          "revision": "1",
+          "projection": "legacy-public-v1",
+          "nonce": "000000000000000000000000000001a7"
+        },
+        "sites": 1
+      }
+    },
+    "/field-updates": {
+      "requests": 1,
+      "sqlStatements": 4,
+      "rowsRead": 140,
+      "rowsWritten": 0,
+      "dataRowsReadExcludingAnchor": 37,
+      "queryRowsRead": [
+        103,
+        12,
+        14,
+        11
+      ],
+      "normalPublicationFetchUnsharedBudget": {
+        "headRequests": 2,
+        "totalHttpRequests": 3,
+        "totalRowsRead": 346
+      },
+      "fixtureShape": {
+        "keys": [
+          "ok",
+          "serverTime",
+          "ttlHours",
+          "updates",
+          "publication"
+        ],
+        "publication": {
+          "contract": "publication-v1",
+          "epoch": "205278d7fb291ec55dcd299e4c754a20",
+          "revision": "1",
+          "projection": "legacy-public-v1",
+          "nonce": "000000000000000000000000000001a8"
+        },
+        "updates": 3
+      }
+    },
+    "/reports/site/92": {
+      "requests": 1,
+      "sqlStatements": 3,
+      "rowsRead": 285,
+      "rowsWritten": 0,
+      "dataRowsReadExcludingAnchor": 182,
+      "queryRowsRead": [
+        103,
+        121,
+        61
+      ],
+      "normalPublicationFetchUnsharedBudget": {
+        "headRequests": 2,
+        "totalHttpRequests": 3,
+        "totalRowsRead": 491
+      },
+      "fixtureShape": {
+        "keys": [
+          "ok",
+          "siteId",
+          "total",
+          "limit",
+          "offset",
+          "history",
+          "publication",
+          "serverTime"
+        ],
+        "publication": {
+          "contract": "publication-v1",
+          "epoch": "205278d7fb291ec55dcd299e4c754a20",
+          "revision": "1",
+          "projection": "legacy-public-v1",
+          "nonce": "000000000000000000000000000001a9"
+        },
+        "history": 5
+      }
+    },
+    "/contributors/monthly": {
+      "requests": 1,
+      "sqlStatements": 3,
+      "rowsRead": 227,
+      "rowsWritten": 0,
+      "dataRowsReadExcludingAnchor": 124,
+      "queryRowsRead": [
+        103,
+        61,
+        63
+      ],
+      "normalPublicationFetchUnsharedBudget": {
+        "headRequests": 2,
+        "totalHttpRequests": 3,
+        "totalRowsRead": 433
+      },
+      "fixtureShape": {
+        "keys": [
+          "month",
+          "approvedReports",
+          "publicContributors",
+          "contributors",
+          "publication",
+          "serverTime"
+        ],
+        "publication": {
+          "contract": "publication-v1",
+          "epoch": "205278d7fb291ec55dcd299e4c754a20",
+          "revision": "1",
+          "projection": "legacy-public-v1",
+          "nonce": "000000000000000000000000000001aa"
+        }
+      }
+    }
+  },
+  "fixture68Versus73": [
+    {
+      "endpoint": "/reports/approved",
+      "fixture68Reads": 214,
+      "fixture73Reads": 224,
+      "added5ApprovedRowsReadDelta": 10
+    },
+    {
+      "endpoint": "/reports/pending",
+      "fixture68Reads": 104,
+      "fixture73Reads": 104,
+      "added5ApprovedRowsReadDelta": 0
+    },
+    {
+      "endpoint": "/reports/recent-sites",
+      "fixture68Reads": 214,
+      "fixture73Reads": 224,
+      "added5ApprovedRowsReadDelta": 10
+    },
+    {
+      "endpoint": "/field-updates",
+      "fixture68Reads": 140,
+      "fixture73Reads": 140,
+      "added5ApprovedRowsReadDelta": 0
+    },
+    {
+      "endpoint": "/reports/site/92",
+      "fixture68Reads": 270,
+      "fixture73Reads": 285,
+      "added5ApprovedRowsReadDelta": 15
+    },
+    {
+      "endpoint": "/contributors/monthly",
+      "fixture68Reads": 217,
+      "fixture73Reads": 227,
+      "added5ApprovedRowsReadDelta": 10
+    }
+  ],
+  "localMeasurement": {
+    "headRowsRead": 103,
+    "headRowsWritten": 0,
+    "catalogObjects": 102,
+    "rootCurrentProductionCatalogReadOnlyMetadata": {
+      "objectsBeforeMigration": 79,
+      "defined": 51,
+      "implicit": 28,
+      "rootRetrievedAt": "2026-10-12T10:44:00Z",
+      "note": "Supplied by parent; no private rows read; migration adds1table+22triggers so expected102objects. HEAD scans catalog102 + state1."
+    },
+    "head200Concurrency1": {
+      "requests": 200,
+      "errorCount": 0,
+      "rowsReadTotal": 20600,
+      "rowsReadMin": 103,
+      "rowsReadMax": 103,
+      "rowsReadMean": 103,
+      "rowsWrittenTotal": 0,
+      "elapsedMs": {
+        "p50": 7.513599999999769,
+        "p95": 10.79569999999967,
+        "p99": 12.60850000000005,
+        "min": 6.8672999999998865,
+        "max": 15.623800000000074
+      },
+      "concurrency": 1,
+      "wallElapsedMs": 1583.2256,
+      "requestsPerSecond": 126.32438485077553
+    },
+    "head200Concurrency10": {
+      "requests": 200,
+      "errorCount": 0,
+      "rowsReadTotal": 20600,
+      "rowsReadMin": 103,
+      "rowsReadMax": 103,
+      "rowsReadMean": 103,
+      "rowsWrittenTotal": 0,
+      "elapsedMs": {
+        "p50": 68.77289999999994,
+        "p95": 77.94979999999987,
+        "p99": 81.26039999999966,
+        "min": 11.013699999999517,
+        "max": 81.79229999999961
+      },
+      "concurrency": 10,
+      "wallElapsedMs": 1410.0205,
+      "requestsPerSecond": 141.84190939067906
+    },
+    "head200Concurrency20": {
+      "requests": 200,
+      "errorCount": 0,
+      "rowsReadTotal": 20600,
+      "rowsReadMin": 103,
+      "rowsReadMax": 103,
+      "rowsReadMean": 103,
+      "rowsWrittenTotal": 0,
+      "elapsedMs": {
+        "p50": 139.94770000000062,
+        "p95": 150.89590000000044,
+        "p99": 152.4349000000002,
+        "min": 15.112299999999777,
+        "max": 152.71650000000045
+      },
+      "concurrency": 20,
+      "wallElapsedMs": 1410.4376999999995,
+      "requestsPerSecond": 141.79995330527544
+    },
+    "finalLocalChecks": {
+      "pass": 12,
+      "fail": 0,
+      "skip": 0
+    },
+    "finalBenchmarkHeadRequests": 600,
+    "warmupExcludedRequests": 20,
+    "finalPayloadRequests": 6,
+    "finalEvidence": "6d0f435b-73-c20/LOAD_MANIFEST.json"
+  },
+  "sourcePollingConditions": [
+    "load installs setInterval(publicationRecheck,5000)",
+    "publicationRecheck skips when reportsConfigured false or document.hidden",
+    "load/pageshow/visibility return/data/history/contributors/navigation/GPS may cause additional requests",
+    "5-second lease starts at HEAD request start, not response receipt; expiry is fail-closed and not extended by slow response",
+    "An expired lease can trigger four-list refresh; the 5-second poll equals the lease, so poll-only is a floor rather than a safe complete budget"
+  ],
+  "models": {
+    "pollsPerForegroundTabHour": 720,
+    "pollsPerForegroundTabDay": 17280,
+    "headRowsPerForegroundTabHour": 74160,
+    "ordinaryProtectedDataFetchUnshared": "2 pre/post HEAD plus1guarded payload, with already included anchor in payload meta",
+    "refreshFourLists": {
+      "payloads": 4,
+      "payloadRowsRead": 692,
+      "extraHeadsUnshared": 8,
+      "totalHttpRequestsUnshared": 12,
+      "totalReadsUnshared": 1516
+    },
+    "headOnlyMaximumTabHoursWithActualBaseline": 66.58426375404531,
+    "workerPollOnlyMaximumTabHoursWithActualBaseline": 137.1638888888889,
+    "fullRefreshEveryPollUnsharedMaximumTabHoursWithActualBaseline": 4.236058781140621,
+    "aggregationCaveat": "Reserve measured existing account use and add new traffic conservatively. Some previous endpoint calls may be replaced, not additive. Real visitor count, foreground durations, and future traffic unknown.",
+    "quotaWindowCaveat": "Official daily quotas reset at00UTC (09KST). Rolling24h baseline is used as a repeated daily existing-load reservation, not as exact remaining quota today."
+  },
+  "activeTimeScenarios": [
+    {
+      "users": 10,
+      "foregroundTabsPerUser": 1,
+      "activeHoursEach": 1,
+      "additionalPollHeadRequests": 7200,
+      "additionalPollD1RowsRead": 741600,
+      "actualBaselinePlusPollReads": 803711,
+      "actualBaselineD1FreeFraction": 0.1607422,
+      "userProvidedBaselinePlusPollReads": 799600,
+      "userProvidedD1FreeFraction": 0.15992,
+      "actualWorkerBaselinePlusPollRequests": 8442,
+      "actualWorkerFreeFraction": 0.08442,
+      "oneInitialRefreshUnsharedExtra": {
+        "headRequests": 80,
+        "payloadRequests": 40,
+        "httpRequests": 120,
+        "rowsRead": 15160
+      },
+      "everyPollRefreshUnsharedBudget": {
+        "extraReads": 11656800,
+        "extraHttpRequests": 93600,
+        "totalReadsWithActualBaseline": 11718911,
+        "totalWorkerRequestsWithActualBaseline": 94842,
+        "d1FreeFraction": 2.3437822,
+        "workerFreeFraction": 0.94842
+      }
+    },
+    {
+      "users": 10,
+      "foregroundTabsPerUser": 1,
+      "activeHoursEach": 8,
+      "additionalPollHeadRequests": 57600,
+      "additionalPollD1RowsRead": 5932800,
+      "actualBaselinePlusPollReads": 5994911,
+      "actualBaselineD1FreeFraction": 1.1989822,
+      "userProvidedBaselinePlusPollReads": 5990800,
+      "userProvidedD1FreeFraction": 1.19816,
+      "actualWorkerBaselinePlusPollRequests": 58842,
+      "actualWorkerFreeFraction": 0.58842,
+      "oneInitialRefreshUnsharedExtra": {
+        "headRequests": 80,
+        "payloadRequests": 40,
+        "httpRequests": 120,
+        "rowsRead": 15160
+      },
+      "everyPollRefreshUnsharedBudget": {
+        "extraReads": 93254400,
+        "extraHttpRequests": 748800,
+        "totalReadsWithActualBaseline": 93316511,
+        "totalWorkerRequestsWithActualBaseline": 750042,
+        "d1FreeFraction": 18.6633022,
+        "workerFreeFraction": 7.50042
+      }
+    },
+    {
+      "users": 10,
+      "foregroundTabsPerUser": 1,
+      "activeHoursEach": 24,
+      "additionalPollHeadRequests": 172800,
+      "additionalPollD1RowsRead": 17798400,
+      "actualBaselinePlusPollReads": 17860511,
+      "actualBaselineD1FreeFraction": 3.5721022,
+      "userProvidedBaselinePlusPollReads": 17856400,
+      "userProvidedD1FreeFraction": 3.57128,
+      "actualWorkerBaselinePlusPollRequests": 174042,
+      "actualWorkerFreeFraction": 1.74042,
+      "oneInitialRefreshUnsharedExtra": {
+        "headRequests": 80,
+        "payloadRequests": 40,
+        "httpRequests": 120,
+        "rowsRead": 15160
+      },
+      "everyPollRefreshUnsharedBudget": {
+        "extraReads": 279763200,
+        "extraHttpRequests": 2246400,
+        "totalReadsWithActualBaseline": 279825311,
+        "totalWorkerRequestsWithActualBaseline": 2247642,
+        "d1FreeFraction": 55.9650622,
+        "workerFreeFraction": 22.47642
+      }
+    },
+    {
+      "users": 20,
+      "foregroundTabsPerUser": 1,
+      "activeHoursEach": 1,
+      "additionalPollHeadRequests": 14400,
+      "additionalPollD1RowsRead": 1483200,
+      "actualBaselinePlusPollReads": 1545311,
+      "actualBaselineD1FreeFraction": 0.3090622,
+      "userProvidedBaselinePlusPollReads": 1541200,
+      "userProvidedD1FreeFraction": 0.30824,
+      "actualWorkerBaselinePlusPollRequests": 15642,
+      "actualWorkerFreeFraction": 0.15642,
+      "oneInitialRefreshUnsharedExtra": {
+        "headRequests": 160,
+        "payloadRequests": 80,
+        "httpRequests": 240,
+        "rowsRead": 30320
+      },
+      "everyPollRefreshUnsharedBudget": {
+        "extraReads": 23313600,
+        "extraHttpRequests": 187200,
+        "totalReadsWithActualBaseline": 23375711,
+        "totalWorkerRequestsWithActualBaseline": 188442,
+        "d1FreeFraction": 4.6751422,
+        "workerFreeFraction": 1.88442
+      }
+    },
+    {
+      "users": 20,
+      "foregroundTabsPerUser": 1,
+      "activeHoursEach": 8,
+      "additionalPollHeadRequests": 115200,
+      "additionalPollD1RowsRead": 11865600,
+      "actualBaselinePlusPollReads": 11927711,
+      "actualBaselineD1FreeFraction": 2.3855422,
+      "userProvidedBaselinePlusPollReads": 11923600,
+      "userProvidedD1FreeFraction": 2.38472,
+      "actualWorkerBaselinePlusPollRequests": 116442,
+      "actualWorkerFreeFraction": 1.16442,
+      "oneInitialRefreshUnsharedExtra": {
+        "headRequests": 160,
+        "payloadRequests": 80,
+        "httpRequests": 240,
+        "rowsRead": 30320
+      },
+      "everyPollRefreshUnsharedBudget": {
+        "extraReads": 186508800,
+        "extraHttpRequests": 1497600,
+        "totalReadsWithActualBaseline": 186570911,
+        "totalWorkerRequestsWithActualBaseline": 1498842,
+        "d1FreeFraction": 37.3141822,
+        "workerFreeFraction": 14.98842
+      }
+    },
+    {
+      "users": 20,
+      "foregroundTabsPerUser": 1,
+      "activeHoursEach": 24,
+      "additionalPollHeadRequests": 345600,
+      "additionalPollD1RowsRead": 35596800,
+      "actualBaselinePlusPollReads": 35658911,
+      "actualBaselineD1FreeFraction": 7.1317822,
+      "userProvidedBaselinePlusPollReads": 35654800,
+      "userProvidedD1FreeFraction": 7.13096,
+      "actualWorkerBaselinePlusPollRequests": 346842,
+      "actualWorkerFreeFraction": 3.46842,
+      "oneInitialRefreshUnsharedExtra": {
+        "headRequests": 160,
+        "payloadRequests": 80,
+        "httpRequests": 240,
+        "rowsRead": 30320
+      },
+      "everyPollRefreshUnsharedBudget": {
+        "extraReads": 559526400,
+        "extraHttpRequests": 4492800,
+        "totalReadsWithActualBaseline": 559588511,
+        "totalWorkerRequestsWithActualBaseline": 4494042,
+        "d1FreeFraction": 111.9177022,
+        "workerFreeFraction": 44.94042
+      }
+    }
+  ],
+  "paidThirtyDayExamples": [
+    {
+      "continuousForegroundTabs": 1,
+      "periodDays": 30,
+      "pollOnly": {
+        "workerRequests": 518400,
+        "d1RowsRead": 53395200,
+        "d1ReadUsdIfNoOtherUsage": 0,
+        "workerRequestUsdIfNoOtherUsage": 0,
+        "d1ReadUsdMarginalIfAllowanceAlreadyUsed": 0.053395200000000004
+      },
+      "fullRefreshEveryPollUnshared": {
+        "workerRequests": 6739200,
+        "d1RowsRead": 839289600,
+        "d1ReadUsdIfNoOtherUsage": 0,
+        "workerRequestUsdIfNoOtherUsage": 0,
+        "d1ReadUsdMarginalIfAllowanceAlreadyUsed": 0.8392896
+      },
+      "excluded": "Worker $5/account/month subscription, CPU charges, other workloads, writes/storage, tax/exchange rate; local elapsed is not billed Worker CPU."
+    },
+    {
+      "continuousForegroundTabs": 10,
+      "periodDays": 30,
+      "pollOnly": {
+        "workerRequests": 5184000,
+        "d1RowsRead": 533952000,
+        "d1ReadUsdIfNoOtherUsage": 0,
+        "workerRequestUsdIfNoOtherUsage": 0,
+        "d1ReadUsdMarginalIfAllowanceAlreadyUsed": 0.533952
+      },
+      "fullRefreshEveryPollUnshared": {
+        "workerRequests": 67392000,
+        "d1RowsRead": 8392896000,
+        "d1ReadUsdIfNoOtherUsage": 0,
+        "workerRequestUsdIfNoOtherUsage": 17.2176,
+        "d1ReadUsdMarginalIfAllowanceAlreadyUsed": 8.392896
+      },
+      "excluded": "Worker $5/account/month subscription, CPU charges, other workloads, writes/storage, tax/exchange rate; local elapsed is not billed Worker CPU."
+    },
+    {
+      "continuousForegroundTabs": 100,
+      "periodDays": 30,
+      "pollOnly": {
+        "workerRequests": 51840000,
+        "d1RowsRead": 5339520000,
+        "d1ReadUsdIfNoOtherUsage": 0,
+        "workerRequestUsdIfNoOtherUsage": 12.552000000000001,
+        "d1ReadUsdMarginalIfAllowanceAlreadyUsed": 5.33952
+      },
+      "fullRefreshEveryPollUnshared": {
+        "workerRequests": 673920000,
+        "d1RowsRead": 83928960000,
+        "d1ReadUsdIfNoOtherUsage": 58.928960000000004,
+        "workerRequestUsdIfNoOtherUsage": 199.176,
+        "d1ReadUsdMarginalIfAllowanceAlreadyUsed": 83.92896
+      },
+      "excluded": "Worker $5/account/month subscription, CPU charges, other workloads, writes/storage, tax/exchange rate; local elapsed is not billed Worker CPU."
+    }
+  ],
+  "pricingSources": {
+    "checkedAt": "2026-10-12",
+    "d1": "https://developers.cloudflare.com/d1/platform/pricing/",
+    "workers": "https://developers.cloudflare.com/workers/platform/pricing/"
+  },
+  "judgment": "Do not authorize a Free deployment from low prior usage alone. HEAD-only10users×8h crosses D1Free;20users×8h crosses bothD1/WorkerFree; full lifecycle may be materially higher. Local errors0 is verified, operational future error rate is not. Security5slease/poll not relaxed and product unchanged."
+}

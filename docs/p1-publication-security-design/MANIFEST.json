@@ -1,0 +1,158 @@
+{
+  "clientDate": "2026-10-12 Asia/Seoul",
+  "recordedAtUtc": "2026-10-11T22:42:09.560181+00:00",
+  "scope": "design only, no product implementation",
+  "targetPR16": "245298981e27f88ac26bad8b46d819a7df899c86",
+  "PR13": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "startMain": "43bff43301d5915a344bf2c20987698597cf8870",
+  "endMain": "66ff787d848ad9483e8671811cf1b8edb5ab696b",
+  "mainChangeFiles": [
+    "tide_health.json",
+    "tide_month.json",
+    "tide_today.json",
+    "weather_today.json",
+    "weather_week.json"
+  ],
+  "branch": "codex/p1-publication-security-design",
+  "PR13And16Readback": "head/body/updatedAt unchanged at end",
+  "productDiffFiles": [],
+  "sourceBlobProof": [
+    {
+      "file": "reports-api/src/public.js",
+      "targetBlob": "e20694e6f83251672c44699af8032ce56b0b8c7c",
+      "pr13Blob": "e20694e6f83251672c44699af8032ce56b0b8c7c",
+      "latestMainBlob": "e20694e6f83251672c44699af8032ce56b0b8c7c"
+    },
+    {
+      "file": "reports-api/src/shared.js",
+      "targetBlob": "4e7194cfa089f9070ef597fd94674c3dfc4dcb92",
+      "pr13Blob": "cd078609d3396c63c4e609d999bfd8d1c4aea009",
+      "latestMainBlob": "4e7194cfa089f9070ef597fd94674c3dfc4dcb92"
+    },
+    {
+      "file": "reports-api/src/field-updates.js",
+      "targetBlob": "bd0fb673d15a1ac76282a9fef7e8489dc23f130b",
+      "pr13Blob": "bd0fb673d15a1ac76282a9fef7e8489dc23f130b",
+      "latestMainBlob": "bd0fb673d15a1ac76282a9fef7e8489dc23f130b"
+    },
+    {
+      "file": "reports-api/src/canonical/control.js",
+      "targetBlob": "23077260845f76bfe6cb5a3505f23a9a0f40d056",
+      "pr13Blob": "23077260845f76bfe6cb5a3505f23a9a0f40d056",
+      "latestMainBlob": "23077260845f76bfe6cb5a3505f23a9a0f40d056"
+    },
+    {
+      "file": "reports-api/src/canonical/data.js",
+      "targetBlob": "d7d17814de9762a004d95c828df51f78401994c2",
+      "pr13Blob": "d7d17814de9762a004d95c828df51f78401994c2",
+      "latestMainBlob": "d7d17814de9762a004d95c828df51f78401994c2"
+    },
+    {
+      "file": "reports-api/src/canonical/persistence.js",
+      "targetBlob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0",
+      "pr13Blob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0",
+      "latestMainBlob": "d0139c31f73e3fdd334618ebf1b2dc84a39badf0"
+    },
+    {
+      "file": "reports-api/src/canonical/shadow.js",
+      "targetBlob": "e7819d2f4f4e5778ad950dc366e2a8413c212c43",
+      "pr13Blob": "e7819d2f4f4e5778ad950dc366e2a8413c212c43",
+      "latestMainBlob": "e7819d2f4f4e5778ad950dc366e2a8413c212c43"
+    },
+    {
+      "file": "reports-api/src/canonical/purge.js",
+      "targetBlob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b",
+      "pr13Blob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b",
+      "latestMainBlob": "3938b76e49679f13f2fa65f32b8ee8964cd8311b"
+    },
+    {
+      "file": "reports-api/schema.sql",
+      "targetBlob": "2bb27be3b1c2906fea016513e8504b57fba608b0",
+      "pr13Blob": "2bb27be3b1c2906fea016513e8504b57fba608b0",
+      "latestMainBlob": "2bb27be3b1c2906fea016513e8504b57fba608b0"
+    }
+  ],
+  "operations": {
+    "productionGET": 6,
+    "responseBodiesSaved": false,
+    "D1Reads": 0,
+    "D1Writes": 0,
+    "actualUserWrites": 0,
+    "WorkerUploadDeployRollback": 0,
+    "PagesDeploy": 0,
+    "mainMerge": 0,
+    "PR13Mutation": 0,
+    "PR16Mutation": 0,
+    "remotePush": 0
+  },
+  "executed": [
+    "Static source review",
+    "Live GET headers only",
+    "Python scripts/reproduce_field_delete_sql.py SQL_ORDERING_MODEL.json (analysis-only memory SQLite model)"
+  ],
+  "notExecuted": [
+    "Implementation contract tests",
+    "Automatic product regression rerun",
+    "New Chrome E2E",
+    "Remote D1 preflight",
+    "CI dispatch/deploy/purge"
+  ],
+  "sourceReferences": [
+    "https://developers.cloudflare.com/d1/worker-api/d1-database/",
+    "https://developers.cloudflare.com/workers/runtime-apis/cache/",
+    "https://developers.cloudflare.com/cache/concepts/cache-control/",
+    "https://developers.cloudflare.com/cache/guides/invalidate-cache/"
+  ],
+  "files": [
+    {
+      "file": "DESIGN.md",
+      "bytes": 17568,
+      "lfSha256": "04951160bebf937d4902aeca934961f9b4aacc15a06c382080211bec4182afb3"
+    },
+    {
+      "file": "NEXT_SESSION.md",
+      "bytes": 1692,
+      "lfSha256": "f08506ee5a38a892d95d18a9fefacfaa58caed3a607aa96821db61d5a0c864ee"
+    },
+    {
+      "file": "PROGRESS.md",
+      "bytes": 1997,
+      "lfSha256": "da5af3b05b6464c15613eeacfd87c09ceeda0765de5be182a0d5953d86d99b4f"
+    },
+    {
+      "file": "READ_ONLY_HTTP_HEADERS.json",
+      "bytes": 1976,
+      "lfSha256": "dde163fc6f33729a79c5a104f476e7842ebaf5473c9a4b9ec436f9451779c331"
+    },
+    {
+      "file": "README.md",
+      "bytes": 2112,
+      "lfSha256": "7109b5f1a5fedc3bfd6e299cdb9de7461bdb3b765bb40f0a9ccfc38c23134332"
+    },
+    {
+      "file": "ROLLOUT_ROLLBACK.md",
+      "bytes": 9335,
+      "lfSha256": "a43c34d973e877eae7d654304ab509338a0ce833ac61211c39ca2aa6a2e57552"
+    },
+    {
+      "file": "scripts/reproduce_field_delete_sql.py",
+      "bytes": 3399,
+      "lfSha256": "0961055cf5733011a5d9871ee1fc1fb911793789148877f67973c8e03283fc03"
+    },
+    {
+      "file": "SERVER_PATHS.md",
+      "bytes": 6267,
+      "lfSha256": "3f760c71993062ed51e9192f65ef88f80a21018cf19eabc35b4d820b9868355f"
+    },
+    {
+      "file": "SQL_ORDERING_MODEL.json",
+      "bytes": 1141,
+      "lfSha256": "15e5984b54a19c9e2218b28fa0840ec206877c9e3695f5be2ee322c813269ea1"
+    },
+    {
+      "file": "TEST_PLAN.md",
+      "bytes": 7928,
+      "lfSha256": "150d0ca42278fa2b043e75b34b7ffd5c2bf89c6fca23b7cfe73538dad0ad1aa2"
+    }
+  ]
+}

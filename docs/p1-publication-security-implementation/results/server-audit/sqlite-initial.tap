@@ -1,0 +1,38 @@
+✔ publication: additive migration preserves canonical schemaReady and fresh schema contract (14.4297ms)
+✔ publication: head echoes only valid fresh nonce and strict version strings (21.5881ms)
+✔ publication: invalid nonce fails closed "" (4.1148ms)
+✔ publication: invalid nonce fails closed "abc" (3.1657ms)
+✔ publication: invalid nonce fails closed "gggggggggggggggggggggggggggggggg" (3.0734ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.0287ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.0059ms)
+✔ publication: invalid nonce fails closed "[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]" (2.9668ms)
+✔ publication: invalid nonce fails closed "{\"toString\":\"not-callable\"}" (3.1341ms)
+✔ publication: strict legacy /reports/approved cannot expose a raw coordinate response (10.3428ms)
+✔ publication: atomic state/data and matching authority for /reports/approved (5.0697ms)
+✔ publication: strict legacy /reports/pending cannot expose a raw coordinate response (4.0315ms)
+✔ publication: atomic state/data and matching authority for /reports/pending (4.168ms)
+✔ publication: strict legacy /reports/recent-sites cannot expose a raw coordinate response (3.7033ms)
+✔ publication: atomic state/data and matching authority for /reports/recent-sites (4.3874ms)
+✔ publication: strict legacy /reports/site/1 cannot expose a raw coordinate response (3.9271ms)
+✔ publication: atomic state/data and matching authority for /reports/site/1 (4.3226ms)
+✔ publication: strict legacy /field-updates cannot expose a raw coordinate response (3.9698ms)
+✔ publication: atomic state/data and matching authority for /field-updates (4.79ms)
+✔ publication: old expected revision is 409 without payload, after withdrawal and hiding (3.9539ms)
+✔ publication: missing schema or singleton is 503 and mutation does not succeed (5.0123ms)
+✔ publication: revision larger than 2^53 remains decimal text and exact (3.5718ms)
+✔ publication: overflow aborts source mutation and counter in the same transaction (2.9249ms)
+✔ publication: insert/update/delete coverage and failed batch rollback include counter (3.202ms)
+✔ field CAS: deleted is terminal against old unconditional status/activity/coordinate writes (7.0715ms)
+✔ field CAS: status read before delete cannot restore deleted or append a status event (5.9577ms)
+✔ field CAS: confirm read before delete rolls back confirmation/activity and publication (5.2018ms)
+✔ field CAS: concurrent owner deletion is idempotent and appends exactly one event (4.5314ms)
+✔ field CAS: status expiry during asynchronous validation cannot revive expired item (4.7414ms)
+✔ field CAS: normal expire/reappear/reapprove are not permanent tombstones (6.6636ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 302.0384

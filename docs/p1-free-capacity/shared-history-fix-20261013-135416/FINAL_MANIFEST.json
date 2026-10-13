@@ -1,0 +1,53 @@
+{
+  "baselineCheckpoint": "8583890a264d1bc453406d2eb90e1d7b5b38c15f",
+  "baselineProduct": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "changedProductFunction": "loadApprovedReports",
+  "otherIndexSourceIdentical": true,
+  "publicationNonceFreshPostflightAndFiveSecondSourceUnchanged": true,
+  "serverCasRevocationTerminalAndMigrationUnchanged": true,
+  "beforeTests": {
+    "pass": 2,
+    "fail": 2,
+    "exit": 1
+  },
+  "afterTargetedTests": {
+    "pass": 32,
+    "fail": 0,
+    "skip": 0,
+    "exit": 0
+  },
+  "scope": "targeted only; no full regression/CI/deployment",
+  "beforeIndexSha256": "7ba40076b61c938cd251602da38741b27042c11bf56bb7b7ee2e0d94d2c62005",
+  "afterIndexSha256": "f7839dbd318b808d4155ce135a56c5f172c5f0ea973c4095b42d6da8a5c07b84",
+  "testFile": ".github/scripts/test_approved_shared_history.mjs",
+  "finalProductSha": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+  "actualPublicationProbe": {
+    "exit": 0,
+    "payloadCalls": 1,
+    "historyCounts": [
+      1,
+      1
+    ]
+  },
+  "chromeTargeted": {
+    "pass": 10,
+    "fail": 0,
+    "skip": 0,
+    "exit": 0,
+    "inputNormalizationCorrectionSeparateFromProduct": true,
+    "originalAfterPass": 5,
+    "originalAfterFail": 5,
+    "normalizedBeforePass": 5,
+    "normalizedBeforeFail": 5
+  },
+  "contractTargeted": {
+    "pass": 8,
+    "fail": 0
+  },
+  "dataIntegrityFile": "DATA_INTEGRITY.json",
+  "scopeComplete": true,
+  "deploymentVerdict": "BLOCKED_EXISTING_CONDITIONS",
+  "fullRegressionExecuted": false,
+  "pushExecuted": false,
+  "subAgentsExecuted": false
+}

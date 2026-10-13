@@ -1,0 +1,138 @@
+TAP version 13
+# Subtest: writer drain READ_ONLY_MAINTENANCE closes field create before commit
+not ok 1 - writer drain READ_ONLY_MAINTENANCE closes field create before commit
+  ---
+  duration_ms: 32.5558
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\independent-contract.test.mjs:25:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"status":201,"headers":{"access-control-allow-origin":"https://wooil1964.github.io","cache-control":"no-store","content-type":"application/json; charset=utf-8","vary":"Origin"},"body":{"ok":true,"id":"81f69156-ebbc-4ef4-8b20-4ab46e997259","status":"visible","rowRevision":"1"}}
+    
+    201 !== 503
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 503
+  actual: 201
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/independent-contract.test.mjs:25:277)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: writer drain invalid-mode closes field create before commit
+not ok 2 - writer drain invalid-mode closes field create before commit
+  ---
+  duration_ms: 6.6138
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\independent-contract.test.mjs:25:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"status":201,"headers":{"access-control-allow-origin":"https://wooil1964.github.io","cache-control":"no-store","content-type":"application/json; charset=utf-8","vary":"Origin"},"body":{"ok":true,"id":"d0f2f892-f512-4e66-9a9e-6b62a8de8220","status":"visible","rowRevision":"1"}}
+    
+    201 !== 503
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 503
+  actual: 201
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/independent-contract.test.mjs:25:277)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: writer drain maintenance closes field status without mutation
+not ok 3 - writer drain maintenance closes field status without mutation
+  ---
+  duration_ms: 10.3223
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\independent-contract.test.mjs:28:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"status":201,"headers":{"access-control-allow-origin":"https://wooil1964.github.io","cache-control":"no-store","content-type":"application/json; charset=utf-8","vary":"Origin"},"body":{"ok":true,"id":"a1d39d7c-df9c-42b5-b9f5-6eec829a3109","status":"not_visible","rowRevision":"2"}}
+    
+    201 !== 503
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 503
+  actual: 201
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/independent-contract.test.mjs:28:451)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: writer drain maintenance closes field confirm without mutation
+not ok 4 - writer drain maintenance closes field confirm without mutation
+  ---
+  duration_ms: 7.8744
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\independent-contract.test.mjs:28:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"status":201,"headers":{"access-control-allow-origin":"https://wooil1964.github.io","cache-control":"no-store","content-type":"application/json; charset=utf-8","vary":"Origin"},"body":{"ok":true,"id":"84faa0c7-a14a-45cc-80c5-39caefb5e62e","status":"visible","rowRevision":"2"}}
+    
+    201 !== 503
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 503
+  actual: 201
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/independent-contract.test.mjs:28:451)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: writer drain maintenance closes field delete without mutation
+not ok 5 - writer drain maintenance closes field delete without mutation
+  ---
+  duration_ms: 6.9049
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\p1-publication-final-audit\\birdmap\\docs\\p1-publication-final-audit\\server\\independent-contract.test.mjs:28:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"status":200,"headers":{"access-control-allow-origin":"https://wooil1964.github.io","cache-control":"no-store","content-type":"application/json; charset=utf-8","vary":"Origin"},"body":{"ok":true,"id":"877d5cd6-09fa-4ccf-8dae-0dd2546df271","deletedAt":"2026-10-12T05:05:10.378Z"}}
+    
+    200 !== 503
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 503
+  actual: 200
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-publication-final-audit/server/independent-contract.test.mjs:28:451)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: fresh primary independently invoked for head and whole payload batch
+ok 6 - fresh primary independently invoked for head and whole payload batch
+  ---
+  duration_ms: 9.3679
+  type: 'test'
+  ...
+# Subtest: hide and withdraw exact coordinates absent from public payload, errors, history, aggregates
+ok 7 - hide and withdraw exact coordinates absent from public payload, errors, history, aggregates
+  ---
+  duration_ms: 8.9357
+  type: 'test'
+  ...
+# Subtest: each of 13 missing guard definitions causes public fail closed
+ok 8 - each of 13 missing guard definitions causes public fail closed
+  ---
+  duration_ms: 53.2863
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 3
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 210.8067

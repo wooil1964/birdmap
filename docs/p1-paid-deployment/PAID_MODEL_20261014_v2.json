@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-10-13T16:00:36.684Z",
+  "scope": "Forecast model, not billedusage or Paid activation. No billing/plan change.",
+  "sources": [
+    "https://developers.cloudflare.com/workers/platform/pricing/",
+    "https://developers.cloudflare.com/d1/platform/pricing/",
+    "https://developers.cloudflare.com/durable-objects/platform/pricing/"
+  ],
+  "prices": {
+    "accountMinimumUSD": 5,
+    "WorkerIncludedRequests": 10000000,
+    "WorkerIncludedCPUms": 30000000,
+    "WorkerExtraMillionRequestsUSD": 0.3,
+    "WorkerExtraMillionCPUmsUSD": 0.02,
+    "D1IncludedMonthlyReads": 25000000000,
+    "D1IncludedMonthlyWrites": 50000000,
+    "D1StorageIncludedGB": 5,
+    "DOIncludedMonthlyCompute": 1000000,
+    "DOIncludedMonthlyGBs": 400000,
+    "DOIncomingWSRatio": 20
+  },
+  "assumptions": {
+    "users": 20,
+    "hoursPerDay": 8,
+    "days": 30,
+    "otherWorkerRequestsPerDay": 10000,
+    "ancillaryPerDay": 3200,
+    "D1OthersPerDay": 518800,
+    "changesPerDay": 32,
+    "otherDOComputePerDay": 2000,
+    "otherDOGBsPerDay": 3000,
+    "CPUmsSensitivity": [
+      5,
+      10,
+      20
+    ],
+    "paidActuallyVerified": false,
+    "otherAccountUsageActuallyKnown": false,
+    "DOCPU": "Not counted again as WorkersCPU; DOcompute+durationseparate"
+  },
+  "B": [
+    {
+      "reconnectsDay": 0,
+      "WorkerRequestsMonth": 396600,
+      "D1RowsMonth": 127796280,
+      "DOComputeMonth": 298470,
+      "DOFullAwakeAndReservedGBsMonth": 200592,
+      "WorkerFee5msUSD": 5,
+      "WorkerFee10msUSD": 5
+    },
+    {
+      "reconnectsDay": 800,
+      "WorkerRequestsMonth": 420600,
+      "D1RowsMonth": 129884280,
+      "DOComputeMonth": 326070,
+      "DOFullAwakeAndReservedGBsMonth": 200592,
+      "WorkerFee5msUSD": 5,
+      "WorkerFee10msUSD": 5
+    },
+    {
+      "reconnectsDay": 3200,
+      "WorkerRequestsMonth": 492600,
+      "D1RowsMonth": 136148280,
+      "DOComputeMonth": 408870,
+      "DOFullAwakeAndReservedGBsMonth": 200592,
+      "WorkerFee5msUSD": 5,
+      "WorkerFee10msUSD": 5
+    }
+  ],
+  "HTTP": [
+    {
+      "reconnectsDay": 0,
+      "WorkerRequestsMonth": 5283000,
+      "D1RowsMonth": 151331400,
+      "DOUsage": 0,
+      "fee5msUSD": 5,
+      "fee10msUSD": 5.4566,
+      "fee20msUSD": 6.5132
+    },
+    {
+      "reconnectsDay": 800,
+      "WorkerRequestsMonth": 5499000,
+      "D1RowsMonth": 163019400,
+      "DOUsage": 0,
+      "fee5msUSD": 5,
+      "fee10msUSD": 5.4998000000000005,
+      "fee20msUSD": 6.5996
+    },
+    {
+      "reconnectsDay": 3200,
+      "WorkerRequestsMonth": 6147000,
+      "D1RowsMonth": 198083400,
+      "DOUsage": 0,
+      "fee5msUSD": 5.0147,
+      "fee10msUSD": 5.6294,
+      "fee20msUSD": 6.8588000000000005
+    }
+  ],
+  "HTTPModel": "Conservativeexisting4listHTTP4750msrenew/5000mscap +60sfield/600sreport +initialbootstrap +32changes/20clients; noBactivation.",
+  "latency300": {
+    "B_DOComputeMonth": 472719.11308633623,
+    "HTTPSource": "38a616/after-latency 45.0011sChrome1client30HTTP; sensitivity notnewexactPaidcandidate8h proof",
+    "HTTPRequestsMonthBeforeMissingTimers": 11915718.406883389,
+    "HTTPFee5msBeforeTimersUSD": 6.166287362753355,
+    "HTTPFee10msBeforeTimersUSD": 7.357859203441694,
+    "HTTPRequestsMonthWithConservativeTimers": 13164918.40688339,
+    "HTTPFee5msWithTimersUSD": 6.6659673627533556,
+    "HTTPFee10msWithTimersUSD": 7.982459203441694,
+    "B_D1RowsMonth": 217797521.2659313
+  },
+  "HTTPFloors": {
+    "strict5sHEADAndReservedMonth": 3852000,
+    "actual4750HEADAndReservedMonth": 4033800
+  },
+  "exclusions": [
+    "ActualaccountmonthlyCPU/requests/D1/DO usage",
+    "Storageaboveincludedlimits,writes,logs,tax,actualbillingcycle",
+    "Actual billedCPU/edgeP99/DOduration"
+  ],
+  "recommendation": "Paid +retain verifiedexistingHTTP, Bproductiondisabled reducesdeploymentsurface. Paidactualactivation, exactcandidateCI,freshOct14batch,pairedWorker/Pagesrollback stillmustverify.",
+  "verdict": "Nooperatingapprovalfrommodel",
+  "evidenceRevision": "v2 corrects D1 field label only; numbers unchanged, originalv1preserved"
+}

@@ -222,6 +222,21 @@ test("17. 보호종은 실제 좌표를 내보내지 않고 대략 좌표만 쓴
   assert.equal((await create(env, { species: "검은어깨매", lat: 36.5, lon: 126.5 })).body.update.lat, 36.5);
 });
 
+test("17-R. 수량이 붙은 보호종도 대략 좌표만 쓰고, 일반종은 그대로다 (S1-R)", async () => {
+  const { env } = setup();
+  for (const species of ["저어새1", "저어새 2마리", "흰꼬리수리1", "매1"]) {
+    const made = await create(env, { species, lat: 36.5, lon: 126.5 });
+    assert.equal(made.response.status, 201, species);
+    assert.equal(made.body.update.locationHidden, true, species);
+    assert.notEqual(made.body.update.lat, 36.5, species);
+  }
+  for (const species of ["갈매기", "알락오리", "동박새"]) {
+    const made = await create(env, { species, lat: 36.5, lon: 126.5 });
+    assert.equal(made.body.update.lat, 36.5, species);
+    assert.equal(made.body.update.locationHidden, undefined, species);
+  }
+});
+
 test("18. 번식 관련 낱말이 있으면 저장하지 않는다", async () => {
   const { env } = setup();
   for (const extra of [{ note: "둥지 발견" }, { note: "새끼 육추 중" }, { species: "번식중인 참새" }]) {

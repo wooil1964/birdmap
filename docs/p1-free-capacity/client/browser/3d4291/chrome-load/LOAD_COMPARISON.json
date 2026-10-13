@@ -1,0 +1,263 @@
+{
+  "schema": "birdmap-publication-worker-load-comparison-v1",
+  "sourceSha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "baselineSha": "58e1a222845680d5217677242ac1df5ff9bf665b",
+  "indexSha256": "7ba40076b61c938cd251602da38741b27042c11bf56bb7b7ee2e0d94d2c62005",
+  "sourceAssets": "2e00d28379a19ef2d0e2385752e5b3f08a5b3dc1",
+  "cohortSafety": {
+    "pass": 18,
+    "fail": 0
+  },
+  "measurementStatus": "all-cohort-assertions-passed",
+  "normalizedAccounting": {
+    "initial": "For each client firstAPIAt <= request.at < firstAPIAt+2000ms. Exactly the same prior cutoff.",
+    "steady": "For each client max(original65sStart,firstAPIAt+2000) <= request.at <= original65sEnd; phase steady-foreground.",
+    "outside": "Mature waiting-other-clients requests and startup HEADs outside normalized initial/steady are retained as explicit outside records. Initial+steady+outside equals raw bootstrap+waiting+steady.",
+    "rate": "Per-endpoint counts divided by sum of actual client exposure milliseconds, not assumed65s. All individual exposures exceed60s.",
+    "rawUnchanged": true
+  },
+  "baseline": {
+    "sourceSha": "58e1a222845680d5217677242ac1df5ff9bf665b",
+    "users": 10,
+    "initial2s": {
+      "total": 40,
+      "perUser": 4,
+      "endpoints": {
+        "/reports/approved": 10,
+        "/reports/pending": 10,
+        "/reports/recent-sites": 10,
+        "/field-updates": 10
+      }
+    },
+    "steady": {
+      "requests": 10,
+      "perUser": 1,
+      "endpoints": {
+        "/field-updates": 10
+      },
+      "allForeground": true,
+      "workerRequestsPerUserHour": 55.369495253219235,
+      "workerRequestsPerUserContinuousDay": 1328.8678860772616
+    },
+    "durationMs": [
+      65017.799999999814,
+      65017.89999999991,
+      65017.89999999991,
+      65017.80000000028,
+      65017.700000000186,
+      65017.700000000186,
+      65017.700000000186,
+      65017.700000000186,
+      65017.60000000009,
+      65017.700000000186
+    ],
+    "originalMeasured65sWindow": true
+  },
+  "comparisons": [
+    {
+      "users": 10,
+      "initial2s": {
+        "total": 90,
+        "perUser": 9,
+        "endpoints": {
+          "/reports/public-state": 40,
+          "/reports/approved": 20,
+          "/reports/pending": 10,
+          "/reports/recent-sites": 10,
+          "/field-updates": 10
+        }
+      },
+      "steady": {
+        "total": 164,
+        "perUser": 16.4,
+        "endpoints": {
+          "/reports/public-state": 154,
+          "/field-updates": 10
+        },
+        "durationSumMs": 643998.7999999747,
+        "meanDurationMs": 64399.879999997465,
+        "minDurationMs": 63449.5,
+        "maxDurationMs": 65003.09999999404,
+        "perUserHour": 916.7718946060509,
+        "perUserContinuous24h": 22002.52547054522,
+        "cohortHour": 9167.718946060508,
+        "cohortContinuous24h": 220025.2547054522,
+        "endpointPerUserHour": {
+          "/reports/public-state": 860.871169325194,
+          "/field-updates": 55.90072528085676
+        },
+        "rttMs": {
+          "configured": 75,
+          "mean": 82.87378048755956,
+          "min": 75.30000000447035,
+          "p50": 83.10000000149012,
+          "p95": 88.19999999552965,
+          "max": 99.69999999552965
+        },
+        "allRequestForeground": true,
+        "error": 0,
+        "status200": 164
+      },
+      "steadyLeaseExpiryInvalidations": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sampledUnauthorizedDynamic": 0,
+      "steadySamples": 2600,
+      "steadyAllowedSamples": 2600,
+      "rawOriginal65s": {
+        "requests": 164,
+        "endpoints": {
+          "/reports/public-state": 154,
+          "/field-updates": 10
+        },
+        "meanDurationMs": 65002.99999999851
+      },
+      "comparisonWithPrevious": {
+        "sourceSha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+        "oldInitialPerUser": 13,
+        "newInitialPerUser": 9,
+        "oldSteadyPerUser": 57,
+        "newSteadyPerUser": 16.4,
+        "oldPerUserHour": 3184.603651865078,
+        "newPerUserHour": 916.7718946060509,
+        "workerRequestRateReductionFraction": 0.712123706801272,
+        "oldEndpoints": {
+          "/reports/public-state": 320,
+          "/reports/approved": 60,
+          "/reports/pending": 60,
+          "/reports/recent-sites": 60,
+          "/field-updates": 70
+        },
+        "newEndpoints": {
+          "/reports/public-state": 154,
+          "/field-updates": 10
+        }
+      },
+      "zeroDefaultEndpoints": [
+        "/reports/capabilities",
+        "/contributors/monthly",
+        "/reports/site/*"
+      ]
+    },
+    {
+      "users": 20,
+      "initial2s": {
+        "total": 180,
+        "perUser": 9,
+        "endpoints": {
+          "/reports/public-state": 80,
+          "/reports/approved": 40,
+          "/reports/pending": 20,
+          "/reports/recent-sites": 20,
+          "/field-updates": 20
+        }
+      },
+      "steady": {
+        "total": 336,
+        "perUser": 16.8,
+        "endpoints": {
+          "/reports/public-state": 316,
+          "/field-updates": 20
+        },
+        "durationSumMs": 1292159.6999999806,
+        "meanDurationMs": 64607.98499999903,
+        "minDurationMs": 63460.20000000298,
+        "maxDurationMs": 65015.09999999404,
+        "perUserHour": 936.1072009907275,
+        "perUserContinuous24h": 22466.57282377746,
+        "cohortHour": 18722.14401981455,
+        "cohortContinuous24h": 449331.4564755492,
+        "endpointPerUserHour": {
+          "/reports/public-state": 880.3865342650889,
+          "/field-updates": 55.720666725638544
+        },
+        "rttMs": {
+          "configured": 75,
+          "mean": 82.75446428582515,
+          "min": 75.30000000447035,
+          "p50": 82.69999999552965,
+          "p95": 87.60000000149012,
+          "max": 90.59999999403954
+        },
+        "allRequestForeground": true,
+        "error": 0,
+        "status200": 336
+      },
+      "steadyLeaseExpiryInvalidations": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sampledUnauthorizedDynamic": 0,
+      "steadySamples": 5200,
+      "steadyAllowedSamples": 5200,
+      "rawOriginal65s": {
+        "requests": 336,
+        "endpoints": {
+          "/reports/public-state": 316,
+          "/field-updates": 20
+        },
+        "meanDurationMs": 65014.90999999829
+      },
+      "comparisonWithPrevious": {
+        "sourceSha": "6d0f435b89f11a28ec0bef3c258fa141e4161e47",
+        "oldInitialPerUser": 13,
+        "newInitialPerUser": 9,
+        "oldSteadyPerUser": 57,
+        "newSteadyPerUser": 16.8,
+        "oldPerUserHour": 3175.4810768718708,
+        "newPerUserHour": 936.1072009907275,
+        "workerRequestRateReductionFraction": 0.7052077533043037,
+        "oldEndpoints": {
+          "/reports/public-state": 640,
+          "/reports/approved": 120,
+          "/reports/pending": 120,
+          "/reports/recent-sites": 120,
+          "/field-updates": 140
+        },
+        "newEndpoints": {
+          "/reports/public-state": 316,
+          "/field-updates": 20
+        }
+      },
+      "zeroDefaultEndpoints": [
+        "/reports/capabilities",
+        "/contributors/monthly",
+        "/reports/site/*"
+      ]
+    }
+  ],
+  "sourceLongerWindowNotes": {
+    "tenMinuteBoundary": "Unobserved in65s; report3-list timer1/10min remains and interactions need separately modelled safety/cost.",
+    "background": "Actual hidden12s observation; no longer-window no-request guarantee.",
+    "headOnly": "5s theoretical floor720/user-hour; selected4750ms cadence757.895/user-hour.20x8h at least115200, selected nominal121264 before other API."
+  },
+  "d1SqlCost": "Combine newly measured per-endpoint local D1 reads; no SQL rows-read inference from Chrome.",
+  "deploymentRecommendation": "No operational approval. Limits and high-latency expiry cost must be evaluated."
+}

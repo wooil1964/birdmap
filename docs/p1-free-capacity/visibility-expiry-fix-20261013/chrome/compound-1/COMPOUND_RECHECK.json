@@ -1,0 +1,65 @@
+{
+  "schema": "birdmap-free-compound-recheck-dom-v1",
+  "sourceInput": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "indexSha256": "7b9eec9b0203ec3c5ca89bc16cbdcae62adacb03fcb9f00c62079f85fb6e1f47",
+  "assetsInput": "38a616c10f9edd93f1ab389c62b7bcc9b3ca96fd",
+  "widths": [
+    375
+  ],
+  "rows": [
+    {
+      "width": 375,
+      "id": "compound-long-recheck-remains-closed-or-request-start-valid",
+      "pass": true,
+      "evidence": {
+        "prepared": {
+          "needsRefresh": true,
+          "allowed": true,
+          "ready": true
+        },
+        "observed": {
+          "wholeOperationElapsed": 6034.39999999851,
+          "requestStart": 1004.2000000029802,
+          "requestAge": 6034.29999999702,
+          "remaining": 0,
+          "actualLeaseBudget": 6034.29999999702,
+          "allowed": false,
+          "ready": false,
+          "needsRefresh": true
+        },
+        "closed": true,
+        "after": {
+          "approved": [],
+          "pending": [],
+          "fields": [],
+          "fieldData": [],
+          "publicSpots": [],
+          "search": 0,
+          "anchors": [],
+          "choice": false,
+          "guide": false,
+          "state": {
+            "ready": false,
+            "generation": 3,
+            "until": 0
+          },
+          "allowed": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "pass": 1,
+    "fail": 0,
+    "skip": 0
+  },
+  "network": {
+    "allowedLocal": 8,
+    "allowedDependencyGet": 19,
+    "blockedOther": 9,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "method": "Reproduces original direct4-list helper plus needsRefresh compound operation with2s synthetic HEAD latency; asserts actual request-start5s lease when allowed, otherwise all dynamic DOM/stores closed."
+}

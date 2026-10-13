@@ -1,0 +1,121 @@
+{
+  "basis": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "scope": "synthetic local workerd D1; product and production untouched",
+  "checks": [
+    {
+      "id": "S01 same state and guard count primary single-query snapshot",
+      "status": "pass"
+    },
+    {
+      "id": "S02 indexed rowid IN lookup measured 45 reads and zero writes",
+      "status": "pass"
+    },
+    {
+      "id": "S02b scalar rowid/name exactly23 reads writes0",
+      "status": "pass"
+    },
+    {
+      "id": "S03 query plan uses INTEGER PRIMARY KEY for catalog",
+      "status": "pass"
+    },
+    {
+      "id": "S04 drop publication_state_permanent immediate count fail-closed",
+      "status": "pass"
+    },
+    {
+      "id": "S05 refresh only after full validated scan publication_state_permanent",
+      "status": "pass"
+    }
+  ],
+  "samples": [
+    {
+      "id": "baseline",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 0,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 103,
+        "rows_written": 0
+      },
+      "guardCount": 22
+    },
+    {
+      "id": "rowid lookup hints only",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 1,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 45,
+        "rows_written": 0
+      },
+      "guardCount": 22
+    },
+    {
+      "id": "cold locator scan",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 0,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 102,
+        "rows_written": 0
+      }
+    },
+    {
+      "id": "scalar rowid/name",
+      "meta": {
+        "served_by": "miniflare.db",
+        "duration": 1,
+        "changes": 0,
+        "last_row_id": 2,
+        "changed_db": false,
+        "size_after": 319488,
+        "rows_read": 23,
+        "rows_written": 0
+      },
+      "guardCount": 22
+    },
+    {
+      "id": "restored publication_state_permanent",
+      "staleHintGuards": 21,
+      "fullScanGuards": 22
+    }
+  ],
+  "queryPlan": [
+    {
+      "id": 2,
+      "parent": 0,
+      "notused": 33,
+      "detail": "SEARCH public_publication_state USING INTEGER PRIMARY KEY (rowid=?)"
+    },
+    {
+      "id": 12,
+      "parent": 0,
+      "notused": 0,
+      "detail": "SCALAR SUBQUERY 1"
+    },
+    {
+      "id": 17,
+      "parent": 12,
+      "notused": 90,
+      "detail": "SEARCH sqlite_schema USING INTEGER PRIMARY KEY (rowid=?)"
+    }
+  ],
+  "error": {
+    "message": "Expected values to be strictly equal:\n\n0 !== 21\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 21\n\n    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-final-audit/birdmap/docs/p1-free-capacity/server/schema_rowid_probe.mjs:38:32\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+  },
+  "total": {
+    "pass": 6,
+    "fail": 1,
+    "skip": 0
+  }
+}

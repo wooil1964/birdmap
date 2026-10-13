@@ -1,0 +1,228 @@
+{
+  "recordedAt": "2026-10-13T16:30:08.333Z",
+  "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+  "baseline": "0107e1419af7bea1d758f35a427db81e06681e28",
+  "finishedHead": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+  "checks": [
+    {
+      "id": "validator-today-current",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+      "startedKst": "2026-10-14T01:28:15.5511958+09:00",
+      "finishedKst": "2026-10-14T01:28:15.7292174+09:00",
+      "exitCode": 0
+    },
+    {
+      "id": "validator-week-current",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather_week.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+      "startedKst": "2026-10-14T01:28:15.7460845+09:00",
+      "finishedKst": "2026-10-14T01:28:16.0569335+09:00",
+      "exitCode": 0
+    },
+    {
+      "id": "validator8",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        "docs/p1-free-capacity/validator-fix-20261013-151500/probe_time_contract.py",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\current-c756\\validator8"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+      "startedKst": "2026-10-14T01:28:16.0655612+09:00",
+      "finishedKst": "2026-10-14T01:28:17.4390422+09:00",
+      "exitCode": 0
+    },
+    {
+      "id": "fixed-signature",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        ".github/scripts/publication_ci_signatures.mjs",
+        ".",
+        "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+        "b12e20c1b6d856a021898a0c1c9221b30393a221"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+      "startedKst": "2026-10-14T01:28:17.4483619+09:00",
+      "finishedKst": "2026-10-14T01:28:21.3555596+09:00",
+      "exitCode": 0
+    }
+  ],
+  "actualCurrentValidators": [
+    {
+      "id": "validator-today-current",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+      "startedKst": "2026-10-14T01:28:15.5511958+09:00",
+      "finishedKst": "2026-10-14T01:28:15.7292174+09:00",
+      "exitCode": 0
+    },
+    {
+      "id": "validator-week-current",
+      "command": [
+        "C:/Users/김진호/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather_week.py"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap",
+      "sourceInput": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+      "startedKst": "2026-10-14T01:28:15.7460845+09:00",
+      "finishedKst": "2026-10-14T01:28:16.0569335+09:00",
+      "exitCode": 0
+    }
+  ],
+  "historicalEquality8": {
+    "pass": 8,
+    "fail": 0,
+    "skip": 0,
+    "evaluationKst": "2026-10-14T01:13:00+09:00",
+    "scope": "Explicit issuance clock; separate from actual current clock"
+  },
+  "fixedRecommendations": {
+    "head": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
+    "baseline": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+    "clock": "2026-10-08T22:40:00+09:00",
+    "weekGeneratedAt": "2026-10-08 21:04 KST",
+    "conditions": {
+      "withSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      },
+      "withoutSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      }
+    },
+    "scope": "Fixed2026-10-08 input simulation; does not imply actual current operating pool always176"
+  },
+  "intentionalGeneratedChanges": [
+    {
+      "file": "weather_today.json",
+      "beforeBlob": "0d85b8462237592c891a513126c210b9e8cd866b",
+      "afterBlob": "8b3cc017127b71a255e24b5a3d2a76f1bf33fb3a",
+      "beforeSha256": "ba5db1f4d0f5de83f9e629caa170d8bf7366e312f3fbfdd4044715524a2203a7",
+      "afterSha256": "09c3b7b49e8f1d7d872a8c336393dbd7f75b42a8943a1a144e3b04d58ef5cc63",
+      "beforeDate": "2026-10-13",
+      "afterDate": "2026-10-14",
+      "beforeGeneratedAt": "2026-10-13 21:45 KST",
+      "afterGeneratedAt": "2026-10-14 01:13 KST",
+      "refreshedAt": "2026-10-14 01:17 KST",
+      "beforeCount": 190,
+      "afterCount": 190,
+      "source": "Windy Point Forecast API with Open-Meteo fallback",
+      "status": "ok",
+      "providerFallbackCount": 190,
+      "intent": "New real upstream current batch from standard builder; no fixture-date restamping"
+    },
+    {
+      "file": "weather_week.json",
+      "beforeBlob": "5425cee61832ef2e87ed08dd07a6c9f5bbb0e4ba",
+      "afterBlob": "113227d88193c2328240c74d2d7154e3f387b0d8",
+      "beforeSha256": "17c08e860b092e4a88f45ea5b134f476cc0a2b27665ab00bd5db0ffc5cb670b5",
+      "afterSha256": "3d2eeda7cb492711e348e8eaa0c29f30e3c45e639dbbcf94975f25b22254271a",
+      "beforeDate": null,
+      "afterDate": null,
+      "beforeGeneratedAt": "2026-10-13 21:45 KST",
+      "afterGeneratedAt": "2026-10-14 01:13 KST",
+      "refreshedAt": "2026-10-14 01:17 KST",
+      "beforeCount": 190,
+      "afterCount": 190,
+      "source": "Windy Point Forecast API with Open-Meteo fallback",
+      "status": "ok",
+      "providerFallbackCount": null,
+      "intent": "New real upstream current batch from standard builder; no fixture-date restamping"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\index.html",
+      "before": "9C519ED2F9A1C6E036C4772315DA3F5E97C13D481D7CD5191894E2C3A7975BEB",
+      "after": "9C519ED2F9A1C6E036C4772315DA3F5E97C13D481D7CD5191894E2C3A7975BEB",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather_today.json",
+      "before": "49148392EAF12D39806311BCCA5D60AD5D8B5D54FCFB05865D5A5A03E281983F",
+      "after": "49148392EAF12D39806311BCCA5D60AD5D8B5D54FCFB05865D5A5A03E281983F",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\weather_week.json",
+      "before": "F370D804B868A58CDCEF367FB7F5240FFCFB93D3363D6DA6FA43E4E025E6E273",
+      "after": "F370D804B868A58CDCEF367FB7F5240FFCFB93D3363D6DA6FA43E4E025E6E273",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\validate_weather.py",
+      "before": "68A162C66DF9141144A3BA4FF2AEDF0D71FA2EDEAF58E20785135508E2846A4D",
+      "after": "68A162C66DF9141144A3BA4FF2AEDF0D71FA2EDEAF58E20785135508E2846A4D",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\validate_weather_week.py",
+      "before": "AAE3A6C6B09536646C8D41DE5EA9C4AD67CD3DEE75765B28ABA08FFC03E88D43",
+      "after": "AAE3A6C6B09536646C8D41DE5EA9C4AD67CD3DEE75765B28ABA08FFC03E88D43",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\김진호\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\.github\\scripts\\publication_ci_signatures.mjs",
+      "before": "17658881C2E96304F3877188C133A035567E4C4F7729B2344C6381B71823E4D1",
+      "after": "17658881C2E96304F3877188C133A035567E4C4F7729B2344C6381B71823E4D1",
+      "unchanged": true
+    }
+  ],
+  "allSourceHashesStable": true,
+  "productAndWorkerInvariant": {
+    "onlyChangedPaths": [
+      "weather_today.json",
+      "weather_week.json"
+    ],
+    "allOtherTrackedGitEntriesUnchanged": 1837,
+    "unchangedTreeAggregateSha256": "82a9b20d61e69099a27e9ef1b605d87167aaf0115118947b1b72171be0dce96f",
+    "indexBeforeBlob": "c6881b40559750e2a56b8500cfa6e11c411edf9b",
+    "indexAfterBlob": "c6881b40559750e2a56b8500cfa6e11c411edf9b",
+    "workerFileCount": 64,
+    "allWorkerEntriesEqual": true,
+    "workerTreeAggregateSha256": "4038637e3eac0134fecae918e7c686b244554c3827902b6d0cfced2af78e159a",
+    "allSiteFieldsAndOrderEqual": true,
+    "siteCount": 190,
+    "uniqueIds": 190,
+    "siteDataSha256": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+    "coordinatesSha256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89"
+  },
+  "scopeExcluded": {
+    "fullAutomaticSix": "NOT_RERUN; delegated exactCI elsewhere",
+    "Chrome": "NOT_RERUN",
+    "nativeD1": "NOT_RERUN",
+    "CI": "NOT_RUN_BY_THIS_AGENT",
+    "deployment": "NOT_RUN_BY_THIS_AGENT"
+  },
+  "productEdits": 0,
+  "harnessEdits": 0,
+  "originalJsonEdits": 0,
+  "commits": 0,
+  "pushes": 0,
+  "operatingChanges": 0,
+  "verdict": "Current date today/week validators PASS, original issuance equality8/8, fixed ON/OFF190/176 and allcandidate/top10 signature preserved; no overall deployment verdict from this limited check"
+}

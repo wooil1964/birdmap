@@ -1,0 +1,89 @@
+{
+  "schema": "p1-free-resume-contracts-v1",
+  "checkedAt": "2026-10-13T04:58:42.987Z",
+  "sourceSha": "9b129940ae484f9f9f777eaecc1ce4473e840f05",
+  "indexSha256": "f7839dbd318b808d4155ce135a56c5f172c5f0ea973c4095b42d6da8a5c07b84",
+  "scope": "Actual publication functions extracted from pinned Git source; local fake clock and synthetic API only. Not Chrome, not live D1; existing 736/170 ledger not rerun or recounted.",
+  "sourceRange": {
+    "startLine": 2947,
+    "endLine": 3080
+  },
+  "results": [
+    {
+      "id": "same-generation-overlap-only-and-fresh-postflight",
+      "pass": true,
+      "evidence": {
+        "firstPayloadCount": 1,
+        "totalRequestsAfterSeparateRead": 6,
+        "noCompletedCache": true
+      }
+    },
+    {
+      "id": "shared-payload-withdrawal-postflight-destroys-state",
+      "pass": true,
+      "evidence": {
+        "payloads": 1,
+        "freshPostflight": "/reports/public-state",
+        "allowed": false,
+        "generation": 1
+      }
+    },
+    {
+      "id": "new-generation-response-survives-reversed-old-failure",
+      "pass": true,
+      "evidence": {
+        "oldGeneration": 0,
+        "newGeneration": 1,
+        "deferredPayloads": 2,
+        "allowed": true
+      }
+    },
+    {
+      "id": "same-revision-month-crossing-discards-midnight-read",
+      "pass": true,
+      "evidence": {
+        "oldReadRejected": true,
+        "month": "2026-11",
+        "separateCurrentDataRestored": true
+      }
+    },
+    {
+      "id": "partial-valid-endpoint-cannot-complete-four-required-views",
+      "pass": true,
+      "evidence": {
+        "partialReadyIsNotComplete": true,
+        "falseAndRejectedRequireRetry": true,
+        "allFourTrueRequired": true
+      }
+    },
+    {
+      "id": "generation-transition-cannot-clear-new-refresh-requirement",
+      "pass": true,
+      "evidence": {
+        "oldFourSuccessCannotBlessNewGeneration": true
+      }
+    },
+    {
+      "id": "bad-head-nonce-closes-once-and-shared-request-settles",
+      "pass": true,
+      "evidence": {
+        "unknownFailClosed": true,
+        "inFlightCleaned": true
+      }
+    },
+    {
+      "id": "request-start-five-second-expiry-not-total-task-time",
+      "pass": true,
+      "evidence": {
+        "exact5000Rejected": true,
+        "checkedMono": 100,
+        "noExtendedLease": true
+      }
+    }
+  ],
+  "summary": {
+    "pass": 8,
+    "fail": 0
+  },
+  "operatingRequests": 0
+}

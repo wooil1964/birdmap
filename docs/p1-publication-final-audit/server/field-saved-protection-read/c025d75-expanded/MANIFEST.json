@@ -1,0 +1,5248 @@
+{
+  "at": "2026-10-12T15:51:34.223Z",
+  "sourceSha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "scope": "One synthetic local workerd D1 fixture; actual new product code only; no operations or user rows accessed; no product edits",
+  "runtime": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha"
+  },
+  "checks": [
+    {
+      "id": "P01-DB freeze blocks legacy-shaped field INSERT before explicit thaw",
+      "status": "pass"
+    },
+    {
+      "id": "P02-legacy-shaped INSERT is accepted after thaw and advances current publication revision",
+      "status": "pass"
+    },
+    {
+      "id": "P03-strict preflight/GET/postflight current nonce epoch revision all validate",
+      "status": "pass"
+    },
+    {
+      "id": "P04-stale authority still rejects with409",
+      "status": "pass"
+    },
+    {
+      "id": "S1R-SAVED-저어새1 must not expose exact point or reopen directions",
+      "status": "pass"
+    },
+    {
+      "id": "S1R-SAVED-흰꼬리수리1 must not expose exact point or reopen directions",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-갈매기 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-알락오리 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-알락할미새 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-동박새 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "NORMAL-한국동박새 current exact route remains eligible",
+      "status": "pass"
+    },
+    {
+      "id": "HIDDEN-known-protected-40000000-0000-4000-8000-000000000008 disables directions and blocks exact",
+      "status": "pass"
+    },
+    {
+      "id": "S1R-SAVED-매1 must not expose exact point or reopen directions",
+      "status": "pass"
+    },
+    {
+      "id": "HIDDEN-known-protected-40000000-0000-4000-8000-000000000010 disables directions and blocks exact",
+      "status": "pass"
+    },
+    {
+      "id": "P05-current strict GETs do not write field rows or authority state",
+      "status": "pass"
+    },
+    {
+      "id": "P06-SQL snapshot derives masked proof without selecting private coordinates",
+      "status": "pass"
+    },
+    {
+      "id": "P07-hidden=true exact point emits null and is not a valid client marker",
+      "status": "pass"
+    },
+    {
+      "id": "MATRIX-171-legacy0-exact",
+      "status": "pass"
+    },
+    {
+      "id": "MATRIX-171-hidden1-exact",
+      "status": "pass"
+    },
+    {
+      "id": "MATRIX-171-hidden1-masked",
+      "status": "pass"
+    },
+    {
+      "id": "MATRIX-17-ordinary point remains exact without false positives",
+      "status": "pass"
+    },
+    {
+      "id": "OWNER-not_visible strict receipt snapshot preserve protection",
+      "status": "pass"
+    },
+    {
+      "id": "OWNER-reappeared strict receipt snapshot preserve protection",
+      "status": "pass"
+    },
+    {
+      "id": "OWNER-deleted strict receipt snapshot preserve protection",
+      "status": "pass"
+    },
+    {
+      "id": "OWNER-delete terminal row retained revision advanced",
+      "status": "pass"
+    }
+  ],
+  "cases": [
+    {
+      "id": "40000000-0000-4000-8000-000000000001",
+      "species": "저어새1",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientValidUpdate": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000002",
+      "species": "흰꼬리수리1",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientValidUpdate": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000003",
+      "species": "갈매기",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientValidUpdate": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EA%B0%88%EB%A7%A4%EA%B8%B0,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EA%B0%88%EB%A7%A4%EA%B8%B0&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000004",
+      "species": "알락오리",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientValidUpdate": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EC%95%8C%EB%9D%BD%EC%98%A4%EB%A6%AC,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EC%95%8C%EB%9D%BD%EC%98%A4%EB%A6%AC&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000005",
+      "species": "알락할미새",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientValidUpdate": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EC%95%8C%EB%9D%BD%ED%95%A0%EB%AF%B8%EC%83%88,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EC%95%8C%EB%9D%BD%ED%95%A0%EB%AF%B8%EC%83%88&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000006",
+      "species": "동박새",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientValidUpdate": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%EB%8F%99%EB%B0%95%EC%83%88,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%EB%8F%99%EB%B0%95%EC%83%88&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000007",
+      "species": "한국동박새",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": false,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.123456,
+      "returnedLon": 127.654321,
+      "returnedLocationHidden": false,
+      "exactCoordinateInApi": true,
+      "publicEntryExact": true,
+      "snapshotPayloadExact": true,
+      "clientValidUpdate": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": true,
+      "clientPoint": {
+        "lat": 37.123456,
+        "lon": 127.654321
+      },
+      "kakaoUrl": "https://map.kakao.com/link/to/%ED%95%9C%EA%B5%AD%EB%8F%99%EB%B0%95%EC%83%88,37.123456,127.654321",
+      "tmapUrl": "tmap://route?goalname=%ED%95%9C%EA%B5%AD%EB%8F%99%EB%B0%95%EC%83%88&goalx=127.654321&goaly=37.123456"
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000008",
+      "species": "저어새1",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 1,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": 37.12,
+      "returnedLon": 127.65,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientValidUpdate": true,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000009",
+      "species": "매1",
+      "phase": "legacy-shaped-write-after-thaw",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 0,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientValidUpdate": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    },
+    {
+      "id": "40000000-0000-4000-8000-000000000010",
+      "species": "저어새 2마리",
+      "phase": "stored-before-migration",
+      "newClassifierSensitive": true,
+      "storedLocationHidden": 1,
+      "expectedPrivateLat": 37.123456,
+      "expectedPrivateLon": 127.654321,
+      "returnedLat": null,
+      "returnedLon": null,
+      "returnedLocationHidden": true,
+      "exactCoordinateInApi": false,
+      "publicEntryExact": false,
+      "snapshotPayloadExact": false,
+      "clientValidUpdate": false,
+      "clientGuardRetains": true,
+      "clientGuideTargetPresent": false,
+      "clientPoint": null,
+      "kakaoUrl": "",
+      "tmapUrl": ""
+    }
+  ],
+  "http": [
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "2",
+        "projection": "legacy-public-v1",
+        "nonce": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "2",
+        "projection": "legacy-public-v1",
+        "nonce": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "2",
+        "projection": "legacy-public-v1",
+        "nonce": "cccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 409,
+      "cacheControl": "no-store",
+      "error": {
+        "code": "PUBLICATION_CHANGED",
+        "message": "공개 위치 상태가 변경됐습니다. 다시 확인해 주세요."
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "3",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000001"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "3",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000002"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "3",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000003"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "4",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000004"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "4",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000005"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "4",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000006"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "5",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000007"
+      }
+    },
+    {
+      "path": "/field-updates",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "5",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000008"
+      }
+    },
+    {
+      "path": "/reports/public-state",
+      "status": 200,
+      "cacheControl": "no-store",
+      "publication": {
+        "contract": "publication-v1",
+        "epoch": "496aee149d29e5c976bcb3d423a3d29b",
+        "revision": "5",
+        "projection": "legacy-public-v1",
+        "nonce": "00000000000000000000000000000009"
+      }
+    }
+  ],
+  "readInvariant": {
+    "beforeHash": "8a1e4f26f524d598d1e3824220f40f880d80a7bdb4e700c8469080b9d74f9ba5",
+    "afterHash": "8a1e4f26f524d598d1e3824220f40f880d80a7bdb4e700c8469080b9d74f9ba5",
+    "beforeRevision": "2",
+    "afterRevision": "2"
+  },
+  "expressionMatrix": [
+    {
+      "expression": "저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 노랑부리저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/노랑부리저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n노랑부리저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n노랑부리저어새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 노랑부리백로",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/노랑부리백로",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n노랑부리백로",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n노랑부리백로",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 먹황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/먹황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n먹황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n먹황새",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 따오기",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/따오기",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n따오기",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n따오기",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 재두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/재두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n재두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n재두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 흑두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/흑두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n흑두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n흑두루미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 검독수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/검독수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n검독수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n검독수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 참수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/참수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n참수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n참수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 흰꼬리수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/흰꼬리수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n흰꼬리수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n흰꼬리수리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 참매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/참매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n참매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n참매",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 수리부엉이",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/수리부엉이",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n수리부엉이",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n수리부엉이",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 올빼미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/올빼미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n올빼미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n올빼미",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 팔색조",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/팔색조",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n팔색조",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n팔색조",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 뿔쇠오리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/뿔쇠오리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n뿔쇠오리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n뿔쇠오리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 1",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 2마리",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 2개체",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 넓적부리도요",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/넓적부리도요",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n넓적부리도요",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n넓적부리도요",
+      "sourceVariant": "legacy0-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 노랑부리저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/노랑부리저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n노랑부리저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n노랑부리저어새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 노랑부리백로",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/노랑부리백로",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n노랑부리백로",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n노랑부리백로",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 먹황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/먹황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n먹황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n먹황새",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 따오기",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/따오기",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n따오기",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n따오기",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 재두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/재두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n재두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n재두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 흑두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/흑두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n흑두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n흑두루미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 검독수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/검독수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n검독수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n검독수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 참수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/참수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n참수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n참수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 흰꼬리수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/흰꼬리수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n흰꼬리수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n흰꼬리수리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 참매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/참매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n참매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n참매",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 수리부엉이",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/수리부엉이",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n수리부엉이",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n수리부엉이",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 올빼미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/올빼미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n올빼미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n올빼미",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 팔색조",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/팔색조",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n팔색조",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n팔색조",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 뿔쇠오리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/뿔쇠오리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n뿔쇠오리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n뿔쇠오리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 1",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 2마리",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 2개체",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 넓적부리도요",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/넓적부리도요",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n넓적부리도요",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n넓적부리도요",
+      "sourceVariant": "hidden1-exact",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": true,
+      "coarsePreserved": false,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "저어새 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리저어새 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 노랑부리저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/노랑부리저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n노랑부리저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n노랑부리저어새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "노랑부리백로 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 노랑부리백로",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/노랑부리백로",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n노랑부리백로",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n노랑부리백로",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "황새 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "먹황새 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 먹황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/먹황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n먹황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n먹황새",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "따오기 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 따오기",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/따오기",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n따오기",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n따오기",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "두루미 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "재두루미 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 재두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/재두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n재두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n재두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흑두루미 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 흑두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/흑두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n흑두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n흑두루미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "검독수리 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 검독수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/검독수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n검독수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n검독수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참수리 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 참수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/참수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n참수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n참수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "흰꼬리수리 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 흰꼬리수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/흰꼬리수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n흰꼬리수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n흰꼬리수리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "매1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "매 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참매 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 참매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/참매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n참매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n참매",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "수리부엉이 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 수리부엉이",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/수리부엉이",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n수리부엉이",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n수리부엉이",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "올빼미 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 올빼미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/올빼미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n올빼미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n올빼미",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "팔색조 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 팔색조",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/팔색조",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n팔색조",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n팔색조",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "뿔쇠오리 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 뿔쇠오리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/뿔쇠오리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n뿔쇠오리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n뿔쇠오리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 1",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 2마리",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "넓적부리도요 2개체",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새, 넓적부리도요",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새/넓적부리도요",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\n넓적부리도요",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    },
+    {
+      "expression": "참새\r\n넓적부리도요",
+      "sourceVariant": "hidden1-masked",
+      "classifierSensitive": true,
+      "dtoHidden": true,
+      "coordinatesNull": false,
+      "coarsePreserved": true,
+      "guideClosed": true
+    }
+  ],
+  "normalExpressions": [
+    {
+      "species": "갈매기",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "알락오리",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "알락할미새",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "동박새",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "한국동박새",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "참새",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "참새1",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "갈매기1",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "알락오리1",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "알락할미새1",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "동박새1",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "한국동박새1",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "박새",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "직박구리",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "멧새",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "청둥오리",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    },
+    {
+      "species": "꿩",
+      "sensitive": false,
+      "lat": 37.123456,
+      "lon": 127.654321,
+      "hidden": false
+    }
+  ],
+  "dtoFixture": "API_DTO_FIXTURE.json",
+  "protectedFailed": 0,
+  "classifierKnownProtected": true,
+  "summary": {
+    "pass": 25,
+    "fail": 0,
+    "skip": 0
+  },
+  "verdict": "See individual assertions"
+}

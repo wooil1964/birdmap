@@ -1,0 +1,66 @@
+✔ publication: additive migration preserves canonical schemaReady and fresh schema contract (13.3691ms)
+✔ publication: head echoes only valid fresh nonce and strict version strings (21.8425ms)
+✔ publication: invalid nonce fails closed "" (3.2156ms)
+✔ publication: invalid nonce fails closed "abc" (3.127ms)
+✔ publication: invalid nonce fails closed "gggggggggggggggggggggggggggggggg" (3.3066ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (3.0607ms)
+✔ publication: invalid nonce fails closed "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" (2.9917ms)
+✔ publication: invalid nonce fails closed "[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]" (2.9591ms)
+✔ publication: invalid nonce fails closed "{\"toString\":\"not-callable\"}" (3.0986ms)
+✔ publication: revision parser rejects coercion, noncanonical decimal, underflow/overflow (0.2406ms)
+✔ publication: incomplete trigger installation cannot issue a valid authority anchor (3.1426ms)
+✖ publication: malformed epoch or counter is unavailable and source writes abort (4.3283ms)
+✔ publication: strict legacy /reports/approved cannot expose a raw coordinate response (9.5303ms)
+✔ publication: atomic state/data and matching authority for /reports/approved (5.1377ms)
+✔ publication: strict legacy /reports/pending cannot expose a raw coordinate response (3.8801ms)
+✔ publication: atomic state/data and matching authority for /reports/pending (4.2354ms)
+✔ publication: strict legacy /reports/recent-sites cannot expose a raw coordinate response (3.8542ms)
+✔ publication: atomic state/data and matching authority for /reports/recent-sites (4.3179ms)
+✔ publication: strict legacy /reports/site/1 cannot expose a raw coordinate response (3.888ms)
+✔ publication: atomic state/data and matching authority for /reports/site/1 (4.4066ms)
+✔ publication: strict legacy /field-updates cannot expose a raw coordinate response (3.9511ms)
+✔ publication: atomic state/data and matching authority for /field-updates (4.7808ms)
+✔ publication: old expected revision is 409 without payload, after withdrawal and hiding (3.7592ms)
+✔ publication: missing schema or singleton is 503 and mutation does not succeed (4.8638ms)
+✔ publication: revision larger than 2^53 remains decimal text and exact (3.5475ms)
+✔ publication: overflow aborts source mutation and counter in the same transaction (2.8807ms)
+✔ publication: insert/update/delete coverage and failed batch rollback include counter (3.155ms)
+✔ field CAS: deleted is terminal against old unconditional status/activity/coordinate writes (6.8143ms)
+✔ field CAS: old normal writer advances row revision and old CAS cannot perform ABA write (3.6533ms)
+✖ field CAS: row revision over 2^53 is serialized and compared as exact text (5.1178ms)
+✔ field CAS: status read before delete cannot restore deleted or append a status event (5.7001ms)
+✔ field CAS: confirm read before delete rolls back confirmation/activity and publication (4.7596ms)
+✔ field CAS: concurrent owner deletion is idempotent and appends exactly one event (4.5189ms)
+✔ field CAS: status expiry during asynchronous validation cannot revive expired item (4.7972ms)
+✔ field CAS: normal expire/reappear/reapprove are not permanent tombstones (6.9166ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 33
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 253.4649
+
+✖ failing tests:
+
+test at reports-api\test\publication-security.test.mjs:146:1
+✖ publication: malformed epoch or counter is unavailable and source writes abort (4.3283ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: epoch='gggggggggggggggggggggggggggggggg'
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/reports-api/test/publication-security.test.mjs:150:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at reports-api\test\publication-security.test.mjs:236:1
+✖ field CAS: row revision over 2^53 is serialized and compared as exact text (5.1178ms)
+  TypeError: Cannot read properties of undefined (reading 'rowRevision')
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/p1-publication-security-guards/birdmap/reports-api/test/publication-security.test.mjs:241:208)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
