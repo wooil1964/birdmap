@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from site_data import load_runtime_sites
 from update_weather import KST
+from validate_weather_week import parse_forecast_time
 
 # today 문서가 실제로 숫자로 저장하는 값은 score 와 파고 좌표뿐이다. 풍속·강수·파고는
 # "북동풍 3.6m/s", "강수 없음", "0.5m" 처럼 포맷된 문자열이라 weekly 의 windSpeed·waveM 같은
@@ -31,7 +32,8 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_today.json"):
     sites = data["sites"]
     runtime = {str(s["id"]): s for s in load_runtime_sites()}
     assert set(sites) == set(runtime), "Weather IDs mismatch"
-    assert data["date"] == datetime.now(KST).date().isoformat(), "Batch date mismatch"
+    now = datetime.now(KST)
+    assert data["date"] == now.date().isoformat(), "Batch date mismatch"
     assert data["siteCount"] == len(sites)
     assert data["successCount"] + data["failedCount"] == len(sites)
     assert data["staleCount"] == sum(bool(s.get("stale")) for s in sites.values())
@@ -47,14 +49,16 @@ def validate(path=Path(__file__).resolve().parents[2] / "weather_today.json"):
         if day["scoreEligible"]:
             assert isinstance(day.get("missingScoreFields"), list),                 f"{site_id} missingScoreFields is not a list: {day.get('missingScoreFields')!r}"
             assert not day.get("stale") and not day.get("dataUnavailable")
-            assert day["date"] == data["date"] == day["forecastTime"][:10]
+            forecast = parse_forecast_time(day.get("forecastTime"), f"{site_id} forecastTime")
+            assert day["date"] == data["date"] == forecast.date().isoformat()
             assert finite_number(day["score"]) and 0 <= day["score"] <= 100,                 f"{site_id} score is not a finite number in 0-100: {day['score']!r}"
             assert not day.get("missingScoreFields")
             # 프런트(storedWeatherState)와 같은 배치 일관성: 적격 항목의 발행 시각은 실제 문자열이어야 하고 배치(root) 발행 시각과 같아야 한다.
             assert isinstance(day.get("generatedAt"), str) and day["generatedAt"] and day["generatedAt"] == data.get("generatedAt"), \
                 f"{site_id} eligible item generatedAt differs from the batch: {day.get('generatedAt')!r} vs {data.get('generatedAt')!r}"
-            assert re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2} KST", day["generatedAt"]) and datetime.strptime(day["generatedAt"][:-4], "%Y-%m-%d %H:%M"), \
-                f"{site_id} eligible generatedAt is not a strict KST timestamp: {day['generatedAt']!r}"
+            generated = parse_forecast_time(day["generatedAt"], f"{site_id} generatedAt")
+            # 발행 시각만 미래를 거부한다. 같은 날의 정상 미래 예보는 유지한다.
+            assert generated <= now, f"{site_id} generatedAt is in the future: {day['generatedAt']!r}"
             # 적격(true)인 항목은 추천·팝업 점수에 쓰이므로 실제 필수 기상 표시값도 있어야 한다(index.html 의 today 검사와 같은 형식).
             assert isinstance(day.get("wind"), str) and WIND_PATTERN.match(day["wind"]),                 f"{site_id} eligible without a valid wind: {day.get('wind')!r}"
             assert isinstance(day.get("rain"), str) and RAIN_PATTERN.match(day["rain"]),                 f"{site_id} eligible without a valid rain: {day.get('rain')!r}"

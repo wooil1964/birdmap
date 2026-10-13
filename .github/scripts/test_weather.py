@@ -432,9 +432,11 @@ class WeatherWeekTests(unittest.TestCase):
 
     def today_document(self, **site_fields):
         """today 검증기 입력용 최소 문서. 실제 저장 형태처럼 기상값은 포맷 문자열이다."""
-        today = datetime.now(weather.KST).date().isoformat()
-        entry = {"name": "어청도", "date": today, "generatedAt": today + " 06:00 KST",
-                 "refreshedAt": today + " 06:00 KST", "sourceType": "saved_forecast",
+        now = datetime.now(weather.KST)
+        today = now.date().isoformat()
+        generated = now.strftime("%Y-%m-%d %H:%M KST")
+        entry = {"name": "어청도", "date": today, "generatedAt": generated,
+                 "refreshedAt": generated, "sourceType": "saved_forecast",
                  "stale": False, "scoreEligible": True, "missingScoreFields": [],
                  "score": 92, "grade": "★★★★★", "summary": "좋음",
                  "wind": "북동풍 3.6m/s", "rain": "강수 없음", "targetGroup": "솔새류",
@@ -442,7 +444,7 @@ class WeatherWeekTests(unittest.TestCase):
                  "visibility": "20.0km", "cloud": "10%", "wave": "0.7m", "ruleKey": "island_migrant",
                  "waveLat": 36.12, "waveLon": 125.98}
         entry.update(site_fields)
-        return {"date": today, "updated": today + " 06:00 KST", "generatedAt": entry.get("generatedAt"), "source": "test", "status": "ok",
+        return {"date": today, "updated": generated, "generatedAt": entry.get("generatedAt"), "source": "test", "status": "ok",
                 "siteCount": 1, "successCount": 1, "failedCount": 0, "staleCount": 0,
                 "unavailableSiteCount": 0,
                 "scoreEligibleCount": 1 if entry.get("scoreEligible") else 0,

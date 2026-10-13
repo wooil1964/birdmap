@@ -1,6 +1,7 @@
 """Validate the rolling seven-day, three-hour weather dataset."""
 import json
 import math
+import re
 from datetime import date, datetime
 from pathlib import Path
 from site_data import load_runtime_sites
@@ -29,7 +30,8 @@ def parse_date(text, label):
 
 
 def parse_forecast_time(text, label):
-    assert isinstance(text, str) and text.endswith(" KST"), f"{label} must be a KST stamp: {text!r}"
+    assert isinstance(text, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2} KST", text), \
+        f"{label} must be a strict KST stamp: {text!r}"
     try:
         return datetime.strptime(text[: -len(" KST")], "%Y-%m-%d %H:%M").replace(tzinfo=KST)
     except ValueError:
