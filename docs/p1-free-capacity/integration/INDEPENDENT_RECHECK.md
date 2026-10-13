@@ -59,3 +59,24 @@ poll 4,750ms는 공칭 request-start lease 경계 이전 250ms에 갱신을 시�
 - `node latest_main_capacity.mjs` →임시 결합/6JSON/현재 새배치 validator/48경계 시험, exit0.
 
 모든 정확한 argv·cwd·시각·종료코드는 per-suite JSON과 log에 저장되어 있다. root 통합 보고에는 본 결과를 새 Chrome10/20 부하·actual workerd D1·계정 한도 모형과 결합해야 한다. 이 독립 회귀는 운영 승인을 요청하지 않으며 main/Worker/Pages/D1/요금제 변경을 금지한 사용자 지시를 유지한다.
+## 최종 제품 5c03d3b 재검증 추가
+
+최종 제품 `5c03d3b125260c883e9133102ac64129f11ca9da`에서는 stale schema locator 복구를 **새 first-primary session**에서 수행하고, data endpoint는 새 session에서 readPlan도 다시 만들어 모든 authority+payload batch를 재실행한다. 같은 session의 첫 쿼리 이후 읽기를 primary라고 오인하지 않는 최소 보완이다. 앞서9b 시험과 실패 원장은 그대로 보존했다.
+
+정확한 Git diff는 publication.js와 API 시험의 추가2건, before/after 로그 두 파일뿐이다. 최종 Git archive에서 API253/253을 독립 재실행해 exit0. 영향 없는 비API483개는 앞서9b 독립 통과 원장과 source blob 동일성으로 유지된다. 따라서 최종 기준은 **736 pass / 0 fail / 1 skip**이며, 736 전부를 새로 재실행했다고 주장하지 않는다. 추천/P0/S2 75함수·정적길찾기4함수는 최종SHA에서도 byte 동일이다. index가9b와 동일하므로9b의 fixed190/176 결과·fresh HEAD20·calendar 소스 검토를 유지한다.
+
+최종 SHA와 latest main076 임시 결합도 exit0·충돌0이며 자동6JSON main byte 보존, 서버/index와190곳 자료 유지, 현재10/13 새 today/week validator exit0, 자정·자동갱신48/48을 재확인했다. 최종 merge-tree와 정확한 receipt는 `latest-main-07680616-5c03d3b/summary.json`에 있다. 이 새 배치 성공은 별도 old10/12 archive의 현재날짜 validator 실패를 해결하거나 삭제한 결과가 아니다.
+
+최종 first-primary locator 복구 변경은 permission cache를 추가하지 않고 물리 hint 실패 시 전체 authority/projection을 새 primary에서 다시 검증한다. migration·CAS·삭제terminal·field B6 source는 c025와 계속 동일이다. 운영·요금제 변경은 0이다. 운영 승인 전 Free 용량과 나머지 운영 관문을 별도 판정해야 한다.
+
+## 최종 프런트 부분 복구 보완 3d42910c
+
+실제 Chrome20명 cohort에서 revision 변경을 field 정기 GET이 먼저 확인하면 전체 목록은 폐기되지만 field 한 종류만 다시 표시되고 approved가 복구되지 않는 결함이 발견됐다. 이 실패의 실제 Chrome 원장은 별도 browser/client 원장에 보존한다. 단일 endpoint의 적격 복구를 모든4목록의 복구로 오인한 가용성 결함이며, 미검증 정확좌표를 되살리는 결함으로 단정하지 않는다.
+
+새 제품 SHA `3d42910cb0cea8a5e79c2d57d068c91b86b18332`는 index의 needsRefresh 불변 조건만 추가한다. 초기 및 모든 destructive invalidation에서 flag=true, 모든4 core loader가 true로 완료하고 generation이 같고 허가가 아직 유효할 때에만 false가 된다. 개별 field 응답이 ready를 켜더라도 다음 recheck가 남은 전체 복구를 요청한다. 동의·cache·좌표·원점수·추천 함수·API·migration 변경은 없다.
+
+최종 Git archive 프런트359/359 exit0, 기존 fresh HEAD20/20 exit0, 고정190/176 ON/OFF 전수 signature/top10 불변이다. 이전5c의 API253 및9b의 unchanged proxy/Python/tide/share 결과와 결합한 영향 검증은 **736 pass/0 fail/1 skip**이다. 736 전부를 새로 실행했다는 의미가 아니다.
+
+독립 actual-function flag 시험 **14/14**는 각 core false, null, undefined, 숫자true 흉내, rejection, generation 변경, lease 만료, 진행중 fullrefresh 공유 및 완료 이후 새요청을 검사했다. 오직 모든4true/same-generation/allowed일 때 flag가 clear된다. ready partial 복구에는4목록 재조회가 발생하고 complete ready에는 불필요 재조회가 없다. 실제 Chrome before/after는 별도 browser 원장과 구분하며 본14조건의 loader/permission scheduling은 VM stub이다. 실제 fresh nonce/postflight/5초 상한은 기존20개 제품 함수 회귀로 추가 확인했다.
+
+최신 main076과 최종3d 임시 merge-tree 결합도 충돌0·자동6JSON 원본 보존·현재 새 배치 validator0/0·자정/갱신48/48이다. 정확 tree와 receipt는 `latest-main-07680616-3d42910c/summary.json`. 추천/P0/S2 75함수와 정적 길찾기4함수도 최종3d source에서 불변이다. 기존10/12 archive의 현재 날짜 validator 실패는 미해결 원장에 그대로 남는다. 운영 변경0.

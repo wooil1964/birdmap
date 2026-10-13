@@ -1,0 +1,75 @@
+{
+  "baselineProductSha": "c025d75f964ab36f6f2eae541a99461f6de59b70",
+  "finalProductSha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "verdict": "BLOCKED_BEFORE_OPERATIONAL_APPROVAL",
+  "localImplementationComplete": true,
+  "usageStop": {
+    "primaryUsedPercent": 96,
+    "secondaryUsedPercent": 93,
+    "minimumRemainingPercent": 4,
+    "userThresholdPercent": 5
+  },
+  "primary": {
+    "focusedPass": 72,
+    "nativePass": 15,
+    "coldRowsRead": 103,
+    "warmRowsRead": 23
+  },
+  "automaticImpactCoverage": {
+    "pass": 736,
+    "fail": 0,
+    "skip": 1,
+    "notAFullFreshFinalShaRun": true,
+    "finalFrontRun359": true,
+    "unchangedApi253RunAt5c": true,
+    "unchangedOthers124PriorRun": true
+  },
+  "chrome": {
+    "cohort": {
+      "pass": 18,
+      "fail": 0
+    },
+    "focusedRestore": {
+      "pass": 5,
+      "fail": 0
+    },
+    "newContract": {
+      "pass": 16,
+      "fail": 0
+    },
+    "compoundFiveSecondClosure": {
+      "pass": 1,
+      "fail": 0
+    },
+    "currentApiB6": {
+      "pass": 170,
+      "fail": 0
+    },
+    "legacy241": {
+      "pass": 239,
+      "fail": 2,
+      "preservedNotReclassifiedAsPass": true
+    },
+    "expiredOldB6Fixture": {
+      "pass": 70,
+      "fail": 100,
+      "preserved": true
+    }
+  },
+  "fixedRecommendation": {
+    "sites": 190,
+    "candidates": 176,
+    "onOffFullSignaturesUnchanged": true
+  },
+  "latestMain": "07680616b62771bc0102c8c886e149345c25347e",
+  "mergeTree": "d899f0bfa6e0861f64a710df5fd2ed9abbd65b4a",
+  "automaticJsonPreserved": true,
+  "weatherOldCurrentDateValidator": "FAIL_PRESERVED",
+  "weatherLatestMainSeparateBatch": "PASS_SEPARATE_INPUT",
+  "free20x8HeadOnlyMinimum": 115200,
+  "free20x8WarmTimerAccountRequests": 159840,
+  "operatingChanges": 0,
+  "operationalApprovalRequested": false,
+  "newCIClaimed": false,
+  "newPrCreated": false
+}

@@ -358,5 +358,59 @@
   "currentActivationRechecked": false,
   "activeRiskEvidence": "Existing saved source-association/41650e43-cf5767b, not a new production lookup",
   "noIncidentProof": true,
-  "verdict": "Independent regression pass; old archived-date validator remains unresolved and Free capacity/deployment authorization gates separate"
+  "verdict": "Independent regression pass; old archived-date validator remains unresolved and Free capacity/deployment authorization gates separate",
+  "finalProductSha": "3d42910cb0cea8a5e79c2d57d068c91b86b18332",
+  "finalApiRerun": {
+    "fail": 0,
+    "exit": 0,
+    "pass": 253,
+    "skip": 0
+  },
+  "finalAutomaticImpactVerified": {
+    "pass": 736,
+    "fail": 0,
+    "skip": 1
+  },
+  "finalAutomaticScope": "Front359+freshHEAD20+fixed190176 reexecuted at final3d pinned archive; unchanged API253 retains preceding5c receipts and unchanged proxy/Python/share/tide retain9b receipts. Not all736 newly rerun.",
+  "finalLatestMainMergeTree": "d899f0bfa6e0861f64a710df5fd2ed9abbd65b4a",
+  "finalLatestMainValidators": {
+    "todayCurrent": {
+      "exit": 0,
+      "result": "Fresh 07680616 latest-main batch dated2026-10-13 validates on actual current KST date. This is separate from preserved c025/9b old10/12 input rejection and does not relabel that failure as PASS"
+    },
+    "todayOriginalGeneratedClock": {
+      "exit": 0,
+      "validatedDate": "2026-10-13",
+      "result": "Actual unchanged validator with isolated clock frozen to original generatedAt; JSON unchanged"
+    },
+    "weeklyCurrent": {
+      "exit": 0
+    }
+  },
+  "finalLatestMainBoundaryTests": {
+    "exit": 0,
+    "counts": {
+      "tests": 48,
+      "pass": 48,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "finalFrontRerun": {
+    "fail": 0,
+    "skip": 0,
+    "pass": 359,
+    "exit": 0
+  },
+  "finalHeadFreshnessRerun": {
+    "fail": 0,
+    "skip": 0,
+    "pass": 20,
+    "exit": 0
+  },
+  "independentRefreshFlag": {
+    "fail": 0,
+    "pass": 14,
+    "exit": 0
+  }
 }

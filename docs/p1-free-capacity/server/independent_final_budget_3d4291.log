@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\����ȣ\.codex\worktrees\p1-publication-final-audit\birdmap\docs\p1-free-capacity\server\independent_final_budget.py", line 30, in <module>
+    require(hashlib.sha256(source_sql).hexdigest()==sql_new["productPublicationSha256"],"final server SQL equals native measured server bytes")
+  File "C:\Users\����ȣ\.codex\worktrees\p1-publication-final-audit\birdmap\docs\p1-free-capacity\server\independent_final_budget.py", line 8, in require
+    if not condition: raise AssertionError(name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: final server SQL equals native measured server bytes

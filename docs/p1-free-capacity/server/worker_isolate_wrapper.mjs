@@ -1,12 +1,12 @@
 import product from './source/reports-api/src/public.js';
 import {AsyncLocalStorage} from 'node:async_hooks';
-const traceStorage=new AsyncLocalStorage(),bindings=new WeakMap();let nativeNext=0;
+const traceStorage=new AsyncLocalStorage(),bindings=new WeakMap(),nativeSessions=new WeakMap();let nativeNext=0,sessionNext=0;
 function kind(sql){return sql.includes('guardLocators')?'cold-state':sql.includes('WHERE rowid=?')&&sql.includes('AS guards')?'warm-state':sql.includes('revision_type')&&sql.includes('sqlite_schema')?'cold-state':'payload';}
 function instrument(native){
  const existing=bindings.get(native);if(existing)return existing;
  const nativeId=++nativeNext;
- function wrapDb(db){
-  const obj={prepare(sql){const trace=traceStorage.getStore();function stmt(real){return {real,sql,bind(...values){return stmt(real.bind(...values));},async all(){const r=await real.all();trace?.queries.push({kind:kind(sql),rowsRead:r.meta?.rows_read,rowsWritten:r.meta?.rows_written,changedDb:r.meta?.changed_db,duration:r.meta?.duration});return r;},async first(column){const r=await this.all();const row=r.results?.[0]??null;return column===undefined?row:row?.[column]??null;}};}return stmt(db.prepare(sql));},async batch(statements){const trace=traceStorage.getStore(),r=await db.batch(statements.map(s=>s.real));for(let n=0;n<r.length;n++)trace?.queries.push({kind:kind(statements[n].sql),rowsRead:r[n].meta?.rows_read,rowsWritten:r[n].meta?.rows_written,changedDb:r[n].meta?.changed_db,duration:r[n].meta?.duration});return r;}};
+ function wrapDb(db){ let sessionId=nativeSessions.get(db);if(!sessionId){sessionId=++sessionNext;nativeSessions.set(db,sessionId);}
+  const obj={prepare(sql){const trace=traceStorage.getStore();function stmt(real){return {real,sql,sessionId,bind(...values){return stmt(real.bind(...values));},async all(){const r=await real.all();trace?.queries.push({kind:kind(sql),sessionId,statementSessionId:sessionId,rowsRead:r.meta?.rows_read,rowsWritten:r.meta?.rows_written,changedDb:r.meta?.changed_db,duration:r.meta?.duration});return r;},async first(column){const r=await this.all();const row=r.results?.[0]??null;return column===undefined?row:row?.[column]??null;}};}return stmt(db.prepare(sql));},async batch(statements){const trace=traceStorage.getStore(),r=await db.batch(statements.map(s=>s.real));for(let n=0;n<r.length;n++)trace?.queries.push({kind:kind(statements[n].sql),sessionId,statementSessionId:statements[n].sessionId,rowsRead:r[n].meta?.rows_read,rowsWritten:r[n].meta?.rows_written,changedDb:r[n].meta?.changed_db,duration:r[n].meta?.duration});return r;}};
   if(typeof db.withSession==='function')obj.withSession=constraint=>{traceStorage.getStore()?.primarySessions.push(constraint);return wrapDb(db.withSession(constraint));};
   return obj;
  }
