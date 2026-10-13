@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-13T18:05:00.343Z",
+  "sourceSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "scope": "Supplemental independent review of saved raw synthetic remote read response only. Zero new network/tests/product/harness edits.",
+  "target": {
+    "database": "90e6a8a0-0e1e-425a-b00b-afe78f476156",
+    "matchesEarlierSyntheticTarget": true,
+    "isOperatingDatabase": false
+  },
+  "input": {
+    "path": "remote-migration-synthetic/POST_APPLY_METADATA.json",
+    "sha256": "58ab955e1b512b664096d87839342c760586c2a532b90f1498a658997e440616",
+    "responseAt": "2026-10-13T18:01:48.624645+00:00"
+  },
+  "verified": {
+    "frozen": 1,
+    "writerClaims": 0,
+    "guards": 34,
+    "expected34UniqueTriggerNamesPresentInSavedSuccessCatalog": true,
+    "epochValid32hex": true,
+    "revision": "0",
+    "foreignKeyViolations": 0,
+    "bothResponsesSuccess": true,
+    "bothServedByPrimary": true,
+    "bothRowsWritten": 0,
+    "bothChangedDatabase": false,
+    "bothChanges": 0
+  },
+  "serverMetadata": {
+    "state": {
+      "servedBy": "v3-prod",
+      "region": "APAC",
+      "colo": "ICN",
+      "primary": true,
+      "rowsRead": 117,
+      "totalAttempts": 1
+    },
+    "foreignKeyCheck": {
+      "servedBy": "v3-prod",
+      "region": "APAC",
+      "colo": "ICN",
+      "primary": true,
+      "rowsRead": 3,
+      "totalAttempts": 1
+    }
+  },
+  "supplements": "INDEPENDENT_REPAIRED_RECEIPT_5718.json; closes its raw state/claim/FK evidence limitation without modifying prior receipt.",
+  "result": "PASS — saved primary metadata confirms frozen1/claim0/34guards/FK0/read-only at exact5718 on syntheticDB. This is not operating deployment verification.",
+  "reviewerOperatingCalls": 0,
+  "reviewerNetworkCalls": 0,
+  "reviewerTestExecutions": 0
+}

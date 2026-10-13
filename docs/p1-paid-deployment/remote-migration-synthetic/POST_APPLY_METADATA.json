@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-13T18:01:48.624645+00:00",
+  "productSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "scope": "Read-only current synthetic remote D1 after normal migration; no operating DB",
+  "database": "90e6a8a0-0e1e-425a-b00b-afe78f476156",
+  "state": [
+    {
+      "results": [
+        {
+          "epoch": "63e1ca774ee2aede1883e5bb0f36578e",
+          "revision": "0",
+          "write_frozen": 1,
+          "writerClaims": 0,
+          "guards": 34
+        }
+      ],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "APAC",
+        "served_by_colo": "ICN",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 0.2985
+        },
+        "duration": 0.2985,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 339968,
+        "rows_read": 117,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    }
+  ],
+  "foreignKeyCheck": [
+    {
+      "results": [],
+      "success": true,
+      "meta": {
+        "served_by": "v3-prod",
+        "served_by_region": "APAC",
+        "served_by_colo": "ICN",
+        "served_by_primary": true,
+        "timings": {
+          "sql_duration_ms": 0.1662
+        },
+        "duration": 0.1662,
+        "changes": 0,
+        "last_row_id": 0,
+        "changed_db": false,
+        "size_after": 339968,
+        "rows_read": 3,
+        "rows_written": 0,
+        "total_attempts": 1
+      }
+    }
+  ],
+  "operatingDBWrites": 0
+}

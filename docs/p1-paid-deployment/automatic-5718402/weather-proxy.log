@@ -1,0 +1,226 @@
+TAP version 13
+# Subtest: all inline scripts compile
+ok 1 - all inline scripts compile
+  ---
+  duration_ms: 34.6512
+  type: 'test'
+  ...
+# Subtest: today, component fallback, yesterday, old and no data remain distinct
+ok 2 - today, component fallback, yesterday, old and no data remain distinct
+  ---
+  duration_ms: 2.8817
+  type: 'test'
+  ...
+# Subtest: schedule deadline expires prior batch without using arbitrary age
+ok 3 - schedule deadline expires prior batch without using arbitrary age
+  ---
+  duration_ms: 0.3064
+  type: 'test'
+  ...
+# Subtest: 05:35 KST batch becomes required at 06:05 without colliding with tide refresh
+ok 4 - 05:35 KST batch becomes required at 06:05 without colliding with tide refresh
+  ---
+  duration_ms: 0.607
+  type: 'test'
+  ...
+# Subtest: fresh root or live current state cannot renew an old stored score
+ok 5 - fresh root or live current state cannot renew an old stored score
+  ---
+  duration_ms: 0.3287
+  type: 'test'
+  ...
+# Subtest: live cache keeps original timestamp and rejects outdated components
+ok 6 - live cache keeps original timestamp and rejects outdated components
+  ---
+  duration_ms: 0.2792
+  type: 'test'
+  ...
+# Subtest: retains usable current data when getUltraSrtFcst fails
+ok 7 - retains usable current data when getUltraSrtFcst fails
+  ---
+  duration_ms: 51.9619
+  type: 'test'
+  ...
+# Subtest: retains usable current data when getUltraSrtNcst fails
+ok 8 - retains usable current data when getUltraSrtNcst fails
+  ---
+  duration_ms: 1.7971
+  type: 'test'
+  ...
+# Subtest: retains usable current data when getVilageFcst fails
+ok 9 - retains usable current data when getVilageFcst fails
+  ---
+  duration_ms: 1.2634
+  type: 'test'
+  ...
+# Subtest: does not claim current success when both current requests fail
+ok 10 - does not claim current success when both current requests fail
+  ---
+  duration_ms: 2.3031
+  type: 'test'
+  ...
+# Subtest: rejects wrong response grid/date and empty payload
+ok 11 - rejects wrong response grid/date and empty payload
+  ---
+  duration_ms: 0.8932
+  type: 'test'
+  ...
+# Subtest: ultra-short forecast accepts the HH00 label only for the latest HH30 issuance
+ok 12 - ultra-short forecast accepts the HH00 label only for the latest HH30 issuance
+  ---
+  duration_ms: 0.4891
+  type: 'test'
+  ...
+# Subtest: observation and village forecast keep exact base time matching
+ok 13 - observation and village forecast keep exact base time matching
+  ---
+  duration_ms: 0.3689
+  type: 'test'
+  ...
+# Subtest: 188 lookup succeeds; Dokdo remains marine primary; complete tomorrow requires usable values
+ok 14 - 188 lookup succeeds; Dokdo remains marine primary; complete tomorrow requires usable values
+  ---
+  duration_ms: 3.095
+  type: 'test'
+  ...
+# Subtest: Worker cache preserves generation time and cannot renew expired entries
+ok 15 - Worker cache preserves generation time and cannot renew expired entries
+  ---
+  duration_ms: 3.0063
+  type: 'test'
+  ...
+# Subtest: converts the official Seoul reference coordinate
+ok 16 - converts the official Seoul reference coordinate
+  ---
+  duration_ms: 1.995
+  type: 'test'
+  ...
+# Subtest: creates a stable cache key
+ok 17 - creates a stable cache key
+  ---
+  duration_ms: 0.2523
+  type: 'test'
+  ...
+# Subtest: selects separate observation and forecast base times
+ok 18 - selects separate observation and forecast base times
+  ---
+  duration_ms: 0.4731
+  type: 'test'
+  ...
+# Subtest: selects the latest available village forecast base across midnight
+ok 19 - selects the latest available village forecast base across midnight
+  ---
+  duration_ms: 0.2133
+  type: 'test'
+  ...
+# Subtest: handles CORS preflight for the production origin
+ok 20 - handles CORS preflight for the production origin
+  ---
+  duration_ms: 40.9667
+  type: 'test'
+  ...
+# Subtest: rejects an unapproved browser origin
+ok 21 - rejects an unapproved browser origin
+  ---
+  duration_ms: 2.4317
+  type: 'test'
+  ...
+# Subtest: rejects unsupported methods
+ok 22 - rejects unsupported methods
+  ---
+  duration_ms: 0.5484
+  type: 'test'
+  ...
+# Subtest: rejects missing and invalid site IDs
+ok 23 - rejects missing and invalid site IDs
+  ---
+  duration_ms: 1.0863
+  type: 'test'
+  ...
+# Subtest: keeps pelagic sites on marine-first weather
+ok 24 - keeps pelagic sites on marine-first weather
+  ---
+  duration_ms: 1.7258
+  type: 'test'
+  ...
+# Subtest: reports a missing secret without exposing a key
+ok 25 - reports a missing secret without exposing a key
+  ---
+  duration_ms: 1.5841
+  type: 'test'
+  ...
+# Subtest: converts an aborted upstream request to a timeout error
+ok 26 - converts an aborted upstream request to a timeout error
+  ---
+  duration_ms: 7.2298
+  type: 'test'
+  ...
+# Subtest: keeps observation and forecast timestamps separate
+ok 27 - keeps observation and forecast timestamps separate
+  ---
+  duration_ms: 0.8001
+  type: 'test'
+  ...
+# Subtest: prioritizes observed precipitation over cloudy sky
+ok 28 - prioritizes observed precipitation over cloudy sky
+  ---
+  duration_ms: 0.3129
+  type: 'test'
+  ...
+# Subtest: prioritizes tomorrow precipitation and uses a 60 percent POP threshold
+ok 29 - prioritizes tomorrow precipitation and uses a 60 percent POP threshold
+  ---
+  duration_ms: 0.5463
+  type: 'test'
+  ...
+# Subtest: rejects missing, non-finite, sentinel, and out-of-range weather values
+ok 30 - rejects missing, non-finite, sentinel, and out-of-range weather values
+  ---
+  duration_ms: 0.3604
+  type: 'test'
+  ...
+# Subtest: normalizes invalid observation sentinels without changing real zero values
+ok 31 - normalizes invalid observation sentinels without changing real zero values
+  ---
+  duration_ms: 0.1944
+  type: 'test'
+  ...
+# Subtest: applies range validation to current and tomorrow forecasts
+ok 32 - applies range validation to current and tomorrow forecasts
+  ---
+  duration_ms: 0.2552
+  type: 'test'
+  ...
+# Subtest: selects tomorrow 09:00 and 15:00 KST forecasts
+ok 33 - selects tomorrow 09:00 and 15:00 KST forecasts
+  ---
+  duration_ms: 0.2409
+  type: 'test'
+  ...
+# Subtest: keeps missing tomorrow periods and fields nullable
+ok 34 - keeps missing tomorrow periods and fields nullable
+  ---
+  duration_ms: 0.1344
+  type: 'test'
+  ...
+# Subtest: only caches responses with both tomorrow periods
+ok 35 - only caches responses with both tomorrow periods
+  ---
+  duration_ms: 0.1511
+  type: 'test'
+  ...
+# Subtest: keeps the configured cache and timeout bounds
+ok 36 - keeps the configured cache and timeout bounds
+  ---
+  duration_ms: 0.1184
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 427.6235

@@ -1,3 +1,41 @@
+# 최종 보완 검증 —2026-10-14 현행 판정
+제품57184029864139fcf8603f34b39b0089c33ba9c5, 통합main6feac41ae485bf16080324e40104de6d7b1ee8e5. PR17 Draft·미병합.
+판정 BLOCKED: 수정·전체 회귀·원격 합성 전환 통과. 민감자료 backup의 정확 범위 승인 및 실제 복구 검증 대기. 아래 이전c756 기록은 역사이며 현재 관문/롤백은 이 절과 FINAL_MANIFEST가 우선한다.
+
+## 직접 수정
+- 구 Worker의 지연된 무조건 UPDATE: 별도 atomic prebarrier0004b(12 SQL guards), 현재 writer의 한 raw D1.batch claim/body/delete, 공개 guard34/claim0/primary snapshot, capability v4로 전환 후 old writer·구 peer를 차단했다.
+- 새 장벽에서 기존 관리자 CTE 읽기 회귀를 복구하고 native 결과 객체/meta.changes를 보존했다. fake changes()1과 native trigger포함changes2를 구분했다. 비파괴 canonical-only seed/backfill의 자체 freeze/atomic guards는 유지했다.
+- 순차 REST purge가 자식삭제 후 reports fence에서 막히는 부분삭제 위험: CLI가 ledger intent/첫 삭제 전 중단한다. actual CLI+mock REST6/6, write0. readonly check와 legacy prepublication 시험은 유지했다. 파괴적 운영 purge는 자동 허용 범위가 아니며 fenced DB에서는 미지원; old privileged 사본/직접D1권한은 별도 통제한다.
+- 실제 remote /query에서 중첩CASE trigger가7500 incomplete input으로 거부됐다. 최소remote probe에서 CASE거부/동등WHERE허용을 확인하고6trigger를 SELECT RAISE(...) WHERE NOT EXISTS(...)로 바꿨다. 내부 backend 원인은 추정이며 관찰된 오류와 해결은 사실이다. SQL동등성96/96; actual remote lateCHECK·전체catalog/data/ledger rollback·이전prebarrier유지·정상frozen설치·원본보존·재적용무변경4체크PASS. 최초실패/원형로그보존, 운영DB는고장시험대상아님.
+
+## 정확 SHA 실행
+로컬7스위트812PASS/0FAIL/1SKIP(front379/API294/proxy36/weather60/time11/tide21+skip1/share11). skip은 과거공식조석표본이rolling window밖인기존조건이며 assertion삭제0.
+실제Chrome242/242,5폭344/375/768/1024/1440, 브라우저오류0/운영요청0/외부변경요청0. 합성API·실제Leaflet; 외부타일/물리GPS/외부앱운영시험대체아님.
+독립native fence13/CAS10 모두PASS/0FAIL, 소스해시불변. 실제COMMIT후응답손실·중간/마무리rollback·동시current20/old20·orphan/freeze·삭제terminal과originalCAS원인확인.
+exactCI38442910120/job115453799991/merge6b131c37e47eb53d5cff209769d7b04006f1398c. 제품과tree동일, 실제로그·모든step성공 확인:812/0/1+Chrome242+native13+CAS10.
+고정Oct8 22:40KST의190/176·ON47c90497…/OFFecd3d28… fullsignature/상위10/점수/가점/시각/좌표불변을CI에서재호출했다. 현재main14일자동JSON 원본/validatorPASS와구분했다.
+P0·S1-R·S2-A·F2/F3 회귀포함. 기존 R5JS68/Python14/Chrome35, S2 182/21/12는 동일source비간섭 기록과 새실행을구분한다.
+
+## 실제 보호 롤백
+publicnormal f1f24698-8388-4f36-ae31-38f2dd8e9446 /maintenance7e398695-aad7-4e58-962c-034513776960.
+adminnormal a7723404-a3c2-4739-91ff-44049e1302cb /maintenance11e97856-990e-4a17-9c28-f18cf92ca46d.
+실제uploaded4버전, active변경0/previewoff. upload9f8과제품571의runtime39·source-map/bundle 동일매핑. 적용migration은571SQL. 이전5719/494/16dae/c025Pages로보호후퇴금지.
+exactPagesartifact11837076250,388asset전수Gitbyte/해시일치,190좌표hash21c25db5…; ZIP보존/배포0. D1삭제·철회·epoch/revision을backup으로되돌리지않고 보호maintenance/같은보안source로roll-forward.
+
+## Paid·외부 관문
+실제인증Cloudflare계정Workersplans: Paid $5/month+usage /Currentplan disabled /FreeDowngrade 확인. 구독API403과구분. 요금제·결제변경0.
+warm35/cold109reads·HEADwrite0. 20×8h×30d+다른Worker10k/day 가정:월528만~615만requests·보수2.11억~2.68억D1reads. avgCPU10ms+guard1ms감도약$5.56~$5.75. 실제전체계정CPU/logs/세금등unknown; SQLwaiting≠CPU. 공식Workers/D1pricing 및계산은 PAID_MODEL_5718402_NATIVE_20261014.json.
+합성DPAPI CurrentUser 암호화/복구/오염거부4/4. 실제fullD1 export는 자동승인검토가 private정확좌표·제보자정보·관리자메모의반출범위와특정local저장위치명시승인을확인못해거부. 실행0/평문파일0/우회0. 구체범위질문pending.
+운영main/Worker활성화/Pages/D1/실사용자변경0. remote합성DB90e6a8a0…만fake0,0으로검증/frozen보존. 실제운영사고를주장하지않는다. 이미전달된old정보/외부앱메모리의원격회수불가는지원client/새response보호와구분한다.
+
+## 다음 운영 전환
+구체backup승인→현재remote/main/PR/기상/active재고정→standby/assets해시→사전bookmark/초기암호화export·메모리복구→pairedmaintenance100%/legacy0/previewoff·operator쓰기통제→0004b만dedicateddir에서pinnedWrangler4.149 d1 migrations apply --remote→readback/freeze-boundbackup→0005만별도apply→ledger/원본/epoch/revision/guard34/claim0/FK0→보호normalpair/peer/nonce→안전thaw→검증source만main/Pages→실제운영auth/API/철회/삭제/캐시/추천/자동갱신검증.
+수동BEGIN/COMMIT·임의RESTDDL루프·0004_field재실행·epoch초기화·oldweakrollback금지. 승인된수정/배포권한은유지되고해결가능한결함은직접수정·전체관련재검증한다. backup/외부인증관문은완료로허위표시하지않는다.
+
+
+---
+# 이전c756 기록(역사)
+
 # P1 최종 배포 준비 — 수정·검증 완료 범위와 외부 관문
 
 작성일 2026-10-14 KST. 사용자 최신 승인은 보안 수정·통합·병합·배포까지 포함한다. 별도 운영 재승인을 반복 요청하지 않는다. 실제 요금제·백업 반출 범위·필요한 외부 인증을 확인할 수 없으면 강행하지 않는다.

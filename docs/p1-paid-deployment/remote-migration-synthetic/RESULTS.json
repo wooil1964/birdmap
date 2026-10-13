@@ -1,0 +1,70 @@
+{
+  "at": "2026-10-13T17:51:14.290447+00:00",
+  "productSha": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+  "target": {
+    "binding": "SYNTHETIC_DB",
+    "database_name": "birdmap-p1-migration-rehearsal-20261014",
+    "database_id": "90e6a8a0-0e1e-425a-b00b-afe78f476156",
+    "migrations_dir": "C:/Users/\uae40\uc9c4\ud638/.codex/worktrees/p1-paid-deploy/birdmap/docs/p1-paid-deployment/remote-migration-synthetic/dedicated-migrations",
+    "migrations_table": "d1_migrations"
+  },
+  "scope": "NEW remote synthetic database only; no operating DB or user data; no Worker activation",
+  "commands": [
+    {
+      "id": "01-prebarrier",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/\uae40\uc9c4\ud638/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "SYNTHETIC_DB",
+        "--remote",
+        "--config",
+        "C:\\Users\\\uae40\uc9c4\ud638\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\remote-migration-synthetic\\wrangler.synthetic.toml"
+      ],
+      "exitCode": 0,
+      "expected": "success",
+      "logSha256": "e6c14d1f0696aa54291d8afea4eac1e94847c8e7c5b4272d175908e8444654ad"
+    },
+    {
+      "id": "02-failed-publication",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/\uae40\uc9c4\ud638/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "SYNTHETIC_DB",
+        "--remote",
+        "--config",
+        "C:\\Users\\\uae40\uc9c4\ud638\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\remote-migration-synthetic\\wrangler.synthetic.toml"
+      ],
+      "exitCode": 1,
+      "expected": "required-check-failure",
+      "logSha256": "5fc6b00e4b9743571e0519035a5df02d9f11cf82defd6a5bae4a40cf54ad00e2"
+    }
+  ],
+  "checks": [
+    {
+      "id": "R01",
+      "status": "PASS",
+      "details": "Separate prebarrier committed, 12guards/claim0/original rows unchanged"
+    }
+  ],
+  "failures": [
+    {
+      "type": "AssertionError",
+      "message": ""
+    }
+  ],
+  "summary": {
+    "pass": 1,
+    "fail": 1,
+    "skip": 0,
+    "operatingDBWrites": 0,
+    "syntheticRemoteDBCreated": 1,
+    "privateUserDataUsed": 0,
+    "workerActivated": 0
+  }
+}

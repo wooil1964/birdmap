@@ -1,0 +1,120 @@
+{
+  "at": "2026-10-13T18:01:01.760Z",
+  "head": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "dirty": [
+    ""
+  ],
+  "scope": "Actual local native D1; no operating or user requests/data",
+  "checks": [
+    {
+      "id": "N01 ready current writer and primary read",
+      "status": "PASS",
+      "details": {
+        "guards": 12,
+        "publicGuards": 34
+      }
+    },
+    {
+      "id": "N02 same native batch body result order and changes",
+      "status": "PASS",
+      "details": {
+        "changes": 2,
+        "bodyLength": 2
+      }
+    },
+    {
+      "id": "N03 middle CHECK failure rolls back body/version/claim",
+      "status": "PASS",
+      "details": {
+        "rollback": true
+      }
+    },
+    {
+      "id": "N04 suffix failure rolls back body/version/claim",
+      "status": "PASS",
+      "details": {
+        "rollback": true
+      }
+    },
+    {
+      "id": "N05 20 concurrent current batches have no orphan",
+      "status": "PASS",
+      "details": {
+        "successful": 20
+      }
+    },
+    {
+      "id": "N06 concurrent old unclaimed requests cannot borrow a current claim",
+      "status": "PASS",
+      "details": {
+        "current20": "PASS",
+        "old20": "rejected"
+      }
+    },
+    {
+      "id": "N07 first(column), DML RETURNING and native session brand",
+      "status": "PASS",
+      "details": {
+        "brand": true,
+        "columns": true
+      }
+    },
+    {
+      "id": "N08 request response lost after commit cannot leave claim or replay a write automatically",
+      "status": "PASS",
+      "details": {
+        "commitCompleted": true,
+        "automaticRetry": false
+      }
+    },
+    {
+      "id": "N09 frozen current writer closes and thaw still blocks old source",
+      "status": "PASS",
+      "details": {
+        "frozenCurrent": "503",
+        "thawedLegacy": "blocked"
+      }
+    },
+    {
+      "id": "N10 native warm primary authority rows_read and writes",
+      "status": "PASS",
+      "details": {
+        "coldRowsRead": 109,
+        "warmRowsRead": 35,
+        "rowsWritten": 0,
+        "claims": 0
+      }
+    },
+    {
+      "id": "N11 prebarrier survives actual D1 publication migration rollback",
+      "status": "PASS",
+      "details": {
+        "prebarrierRetained": 12,
+        "legacyStillBlocked": true
+      }
+    },
+    {
+      "id": "N13 successful additive migration retains originals and starts frozen",
+      "status": "PASS",
+      "details": {
+        "originalsUnchanged": true,
+        "frozenInstall": 1,
+        "normalAfterExplicitThaw": true
+      }
+    },
+    {
+      "id": "N12 committed orphan fails reads and current writes without repair",
+      "status": "PASS",
+      "details": {
+        "failsClosed": true,
+        "noAutomaticRepair": true
+      }
+    }
+  ],
+  "failures": [],
+  "summary": {
+    "pass": 13,
+    "fail": 0,
+    "skip": 0
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "at": "2026-10-13T17:56:37.681951+00:00",
+  "scope": "New remote synthetic DB only; exact repaired SQL and late CHECK fault; operating writes0",
+  "commands": [
+    {
+      "name": "05-repaired-late-check-failure",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/\uae40\uc9c4\ud638/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "SYNTHETIC_DB",
+        "--remote",
+        "--config",
+        "C:\\Users\\\uae40\uc9c4\ud638\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\remote-migration-synthetic\\wrangler.synthetic.toml"
+      ],
+      "exitCode": 1,
+      "expectedFailure": true,
+      "logSha256": "bad28144f1c2803f5c6ec30f47f48d93b1bdb56d64af11cd5c4c9c6421dcc4d8"
+    },
+    {
+      "name": "06-repaired-normal-migration",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/\uae40\uc9c4\ud638/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "SYNTHETIC_DB",
+        "--remote",
+        "--config",
+        "C:\\Users\\\uae40\uc9c4\ud638\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\remote-migration-synthetic\\wrangler.synthetic.toml"
+      ],
+      "exitCode": 0,
+      "expectedFailure": false,
+      "logSha256": "60305c541a588a48a7dbfb76fd4d1aa12382fc0c515c7c882e3a16217bc92b5c"
+    },
+    {
+      "name": "07-repaired-idempotent-ledger",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "C:/Users/\uae40\uc9c4\ud638/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+        "d1",
+        "migrations",
+        "apply",
+        "SYNTHETIC_DB",
+        "--remote",
+        "--config",
+        "C:\\Users\\\uae40\uc9c4\ud638\\.codex\\worktrees\\p1-paid-deploy\\birdmap\\docs\\p1-paid-deployment\\remote-migration-synthetic\\wrangler.synthetic.toml"
+      ],
+      "exitCode": 0,
+      "expectedFailure": false,
+      "logSha256": "f7159bcaa9cf872009a5a0e115410a7c8479cb1a67655fff17862e6a9241f372"
+    }
+  ],
+  "checks": [
+    {
+      "id": "R02-repaired",
+      "status": "PASS",
+      "lateCHECKReached": true,
+      "exactRollback": true,
+      "prebarrierGuardsRetained": 12,
+      "ledgerUnchanged": true
+    },
+    {
+      "id": "R03-repaired",
+      "status": "PASS",
+      "originalReportsAndFieldValuesUnchanged": true,
+      "frozen": 1,
+      "claim": 0,
+      "FKviolations": 0
+    },
+    {
+      "id": "R04-repaired",
+      "status": "PASS",
+      "reapplyNoOp": true
+    }
+  ],
+  "repairedSQLSha256": "3675e45e8ee7c5a6f8dcbe08c116443cbdf48aded771b2a4315e0d554a0b9e39",
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0,
+    "prebarrierEarlierPass": 1,
+    "operatingDBWrites": 0,
+    "syntheticDB": "90e6a8a0-0e1e-425a-b00b-afe78f476156",
+    "workerActivation": 0
+  }
+}

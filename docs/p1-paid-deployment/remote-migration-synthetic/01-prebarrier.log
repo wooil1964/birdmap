@@ -1,0 +1,22 @@
+
+ ⛅️ wrangler 4.149.0 (update available 4.150.0)
+───────────────────────────────────────────────
+Resource location: remote 
+
+Migrations to be applied:
+┌────────────────────────────────────┐
+│ name                               │
+├────────────────────────────────────┤
+│ 0004b_publication_writer_fence.sql │
+└────────────────────────────────────┘
+? About to apply 1 migration(s)
+Your database may not be available to serve requests during the migration, continue?
+🤖 Using fallback value in non-interactive context: yes
+🌀 Executing on remote database SYNTHETIC_DB (90e6a8a0-0e1e-425a-b00b-afe78f476156):
+🌀 To execute on your local development database, remove the --remote flag from your wrangler command.
+🚣 Executed 14 commands in 1.79ms
+┌────────────────────────────────────┬────────┐
+│ name                               │ status │
+├────────────────────────────────────┼────────┤
+│ 0004b_publication_writer_fence.sql │ ✅     │
+└────────────────────────────────────┴────────┘

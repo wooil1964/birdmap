@@ -1,0 +1,25 @@
+
+ ⛅️ wrangler 4.149.0 (update available 4.150.0)
+───────────────────────────────────────────────
+Resource location: remote 
+
+Migrations to be applied:
+┌───────────────────────────────┐
+│ name                          │
+├───────────────────────────────┤
+│ 0005_publication_security.sql │
+└───────────────────────────────┘
+? About to apply 1 migration(s)
+Your database may not be available to serve requests during the migration, continue?
+🤖 Using fallback value in non-interactive context: yes
+🌀 Executing on remote database SYNTHETIC_DB (90e6a8a0-0e1e-425a-b00b-afe78f476156):
+🌀 To execute on your local development database, remove the --remote flag from your wrangler command.
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mA request to the Cloudflare API (/accounts/1d697c22a32447b386b9fac6a3538597/d1/database/90e6a8a0-0e1e-425a-b00b-afe78f476156/query) failed.[0m
+
+  CHECK constraint failed: publication_writer_ready: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_CHECK) [code: 7500]
+  
+  If you think this is a bug, please open an issue at: [4mhttps://github.com/cloudflare/workers-sdk/issues/new/choose[0m
+
+
+🪵  Logs were written to "C:\Users\김진호\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2026-10-13_17-56-39_268.log"

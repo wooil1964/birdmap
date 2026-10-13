@@ -1,0 +1,144 @@
+{
+  "started_at": "2026-10-13T17:25:43.123Z",
+  "scope": "local D1 only; synthetic observations; production calls 0",
+  "tests": [
+    {
+      "name": "schema contract matches exact Phase 2A tables/indexes/triggers",
+      "result": "PASS"
+    },
+    {
+      "name": "sites seed preserves 190 IDs and exact registry coordinates",
+      "result": "PASS"
+    },
+    {
+      "name": "backfill dry-run/preparation preserves known 21-row semantics, no fabricated history",
+      "result": "PASS"
+    },
+    {
+      "name": "backfill changed manifest and partial state are explicit errors",
+      "result": "PASS"
+    },
+    {
+      "name": "backfill rejects invalid dates and mismatched/incomplete registry without correction",
+      "result": "PASS"
+    },
+    {
+      "name": "confirmation missing/false/wrong type and missing coordinates cause zero writes",
+      "result": "PASS"
+    },
+    {
+      "name": "quick POST creates reports/raw/checklist/sighting atomically; NULL/0/1 distinct",
+      "result": "PASS"
+    },
+    {
+      "name": "quick same request replays original accepted response; changed payload conflicts",
+      "result": "PASS"
+    },
+    {
+      "name": "concurrent successful submit is replayed after single-use CAPTCHA failure",
+      "result": "PASS"
+    },
+    {
+      "name": "quick batch middle/late failures roll back every table",
+      "result": "PASS"
+    },
+    {
+      "name": "multiple species shared count is preserved without allocation",
+      "result": "PASS"
+    },
+    {
+      "name": "admin approve preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin reject preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin unpublish preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin visibility preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin site preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin consent preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin link preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "admin unlink preserves legacy meaning and canonical projection",
+      "result": "PASS"
+    },
+    {
+      "name": "quick replay respects reject, unpublish and pending visibility withdrawal",
+      "result": "PASS"
+    },
+    {
+      "name": "admin listing reads editable values and revisions in one snapshot without parameter expansion",
+      "result": "PASS"
+    },
+    {
+      "name": "CAS stale revision and injected admin failure roll back all state",
+      "result": "PASS"
+    },
+    {
+      "name": "admin request conflict covers changed payload, action and target",
+      "result": "PASS"
+    },
+    {
+      "name": "one admin request reviews multiple sightings, sequence and event identity",
+      "result": "PASS"
+    },
+    {
+      "name": "append-only SQL updates and ordinary application deletes rejected",
+      "result": "PASS"
+    },
+    {
+      "name": "invalid site FK fails without changing either projection",
+      "result": "PASS"
+    },
+    {
+      "name": "canonical GET DTO equals legacy for approved/pending/site/status/pagination",
+      "result": "PASS"
+    },
+    {
+      "name": "shadow comparison reports categories only; legacy response remains authoritative",
+      "result": "PASS"
+    },
+    {
+      "name": "maintenance blocks both mutations with Retry-After and keeps GET/admin list",
+      "result": "PASS"
+    },
+    {
+      "name": "mixed-version/mode/unready peer fail closed without legacy fallback",
+      "result": "PASS"
+    },
+    {
+      "name": "purge privilege, dependencies, atomic failure and data-free tombstone",
+      "result": "PASS"
+    },
+    {
+      "name": "legacy 21 source rows unchanged and final FK/assertion checks clean",
+      "result": "PASS"
+    }
+  ],
+  "synthetic21": {
+    "total": 21,
+    "approved": 17,
+    "rejected": 4,
+    "site_null": 5,
+    "count_one": 13,
+    "count_null": 8
+  },
+  "status": "PASS",
+  "finished_at": "2026-10-13T17:25:59.765Z"
+}

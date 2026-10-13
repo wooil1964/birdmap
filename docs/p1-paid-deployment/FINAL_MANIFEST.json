@@ -1,10 +1,9 @@
 {
-  "at": "2026-10-13T16:37:24.031018+00:00",
-  "productSha": "c75640613d3dad7f6a0e492cecb2ac3232e8a48e",
-  "r5CodeSha": "0107e1419af7bea1d758f35a427db81e06681e28",
-  "mainSha": "d736eed629210c14766c7708e206d391649befb1",
-  "deployment": "NOT_DEPLOYED — new legacy-writer transition block and external gates",
+  "at": "2026-10-13T18:20:48.892913+00:00",
+  "productSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "mainSha": "6feac41ae485bf16080324e40104de6d7b1ee8e5",
   "pr": 17,
+  "deployment": "BLOCKED — pending specific private encrypted D1 export permission and verified restore",
   "mainMerged": false,
   "workerVersionsUploaded": 4,
   "workerActivated": false,
@@ -12,97 +11,171 @@
   "operatingD1Writes": 0,
   "realUserMutations": 0,
   "privateSnapshotExported": false,
+  "paidActivationVerified": true,
+  "billingChanged": false,
   "automated": {
-    "pass": 771,
+    "pass": 812,
     "fail": 0,
     "skip": 1
   },
+  "skipReason": "Official sample dates outside rolling monthly tide window",
   "chrome": {
     "pass": 242,
     "fail": 0,
+    "skip": 0,
+    "widths": [
+      344,
+      375,
+      768,
+      1024,
+      1440
+    ]
+  },
+  "nativeFence": {
+    "pass": 13,
+    "fail": 0,
     "skip": 0
   },
-  "r5Chrome": {
-    "pass": 35,
+  "nativeCAS": {
+    "pass": 10,
     "fail": 0,
-    "skip": 0,
-    "independentRepeatPass": 35
+    "skip": 0
+  },
+  "remoteSyntheticMigration": {
+    "pass": 4,
+    "fail": 0,
+    "initialParserFailurePreserved": true
+  },
+  "sqlSemantics": {
+    "pass": 96,
+    "fail": 0
+  },
+  "purgeActualCLI": {
+    "pass": 6,
+    "fail": 0,
+    "writes": 0
   },
   "fixed190_176SignaturesUnchanged": true,
-  "receipts": [
+  "ci": {
+    "run": 38442910120,
+    "job": 115453799991,
+    "merge": "6b131c37e47eb53d5cff209769d7b04006f1398c",
+    "treeIdentical": true,
+    "conclusion": "success"
+  },
+  "pagesArtifact": {
+    "id": 11837076250,
+    "name": "protected-pages-6b131c37e47eb53d5cff209769d7b04006f1398c",
+    "size_in_bytes": 4725269,
+    "expired": false,
+    "expires_at": "2026-11-12T18:00:38Z",
+    "digest": "sha256:f5fbb6291d12967ac1381702a16e48ffb1f2f2e0156d8e888c879aa04002cb7c"
+  },
+  "standbyRuntimeSource": "9f8f8954314ef16ee60433d77fca58099f6a4108; runtime bytes identical to5718402",
+  "standbys": [
     {
-      "path": "automatic-0107/RESULTS.json",
-      "sha256": "b8687587b1503af3350bc0b2d0d33b9516ad0ff0ce2aca32677c6983c0b9bdd8"
+      "worker": "public",
+      "mode": "normal",
+      "id": "f1f24698-8388-4f36-ae31-38f2dd8e9446"
     },
     {
-      "path": "ci-c756/INDEPENDENT_CI_RECEIPT_20261014.json",
-      "sha256": "3884cb75a006534250b875ae01ae26def9b5ea24a5834322c3e409188cfa9fcf"
+      "worker": "public",
+      "mode": "maintenance",
+      "id": "7e398695-aad7-4e58-962c-034513776960"
     },
     {
-      "path": "current-c756/RESULTS.json",
-      "sha256": "ddb505f33df55a51eed7e5a205e7abcbeb2da5bc76ae3a29e95b948fc97ef1c9"
+      "worker": "admin",
+      "mode": "normal",
+      "id": "a7723404-a3c2-4739-91ff-44049e1302cb"
     },
     {
-      "path": "r5-audit/INDEPENDENT_AFTER_RECEIPT.json",
-      "sha256": "6f7dd2cc2bd03b933b88d0442c409df21ae608a3d3af7907cb6d248d6d708ec1"
-    },
-    {
-      "path": "r5-audit/INDEPENDENT_CHROME_REVIEW_0107.json",
-      "sha256": "a94ea13d84dffa5b659e9d8e779cf5bda320352f7f3ba2039c64cf066b3410a8"
-    },
-    {
-      "path": "r5-chrome-0107-active-popup/R5_CHROME.json",
-      "sha256": "3972af167e6dee4c798494ea9671defde44f6e2cacd8ed366dedab6998db3b91"
-    },
-    {
-      "path": "r5-chrome-0107-independent/R5_CHROME.json",
-      "sha256": "93e5ccca8a53fae83db5d282d5a26f4b57237a86f236e08ee1bef015b114ca1c"
-    },
-    {
-      "path": "recommendation-0107/VALIDATION.json",
-      "sha256": "81699a323cceb841cab22c0914aa3e25bdfffc9ef2d2e06128c51b3fc72cd069"
-    },
-    {
-      "path": "load-5719/LOAD_MANIFEST.json",
-      "sha256": "df2ca8ee04fc35d45890d4f2bec061922056d9adaa0b9db3b777a144a706101b"
-    },
-    {
-      "path": "native-cas-5719/NATIVE_MUTATIONS.json",
-      "sha256": "9fd1d36965395cc9eb9184b05e7cf98e98ca7a5a169c077ecfc2cb4a3bb181a6"
-    },
-    {
-      "path": "migration-5719/MANIFEST.json",
-      "sha256": "346e090a426303f305448c5cd4a5fa37c1cd95d0d15f48b8800f16f9e94883f5"
-    },
-    {
-      "path": "integrity-after-5719-3/EXTRA_INTEGRITY_MANIFEST.json",
-      "sha256": "967a37d2e51065ae3115a714b9d54d9699bfc96eb69b8240db7d20bd9231ae49"
-    },
-    {
-      "path": "worker-upload-5719/VERIFIED_STANDBYS.json",
-      "sha256": "e1a9f6b67c7eb1c67f549bca2b8db8ec605ac4a1a7bc5bb4ff77d3632b75e115"
-    },
-    {
-      "path": "CORE_SCHEMA_READONLY.json",
-      "sha256": "2738dbf4a73d35383f00a2b5ee48461a4ed3f4a834158b8bd4dab0c4e4b657a7"
-    },
-    {
-      "path": "TIME_TRAVEL_PREFLIGHT.json",
-      "sha256": "6c6626dbfb73df3ce3dde2c453f7f72bba581a2d9857f87cd3a369c36b63bcfc"
-    },
-    {
-      "path": "PAID_MODEL_20261014_v2.json",
-      "sha256": "a5d8bd00b63650c4f0e2c16150814eb138d1c109681ba0b2581f006c4d5f2d88"
-    },
-    {
-      "path": "weather-current-20261014/CURRENT_RECEIPT.json",
-      "sha256": "d7ec1ccfbb6b1c8337eee76bb12a71ea1da349818a422ee78b10518d7d2143c7"
+      "worker": "admin",
+      "mode": "maintenance",
+      "id": "11e97856-990e-4a17-9c28-f18cf92ca46d"
     }
   ],
-  "pending": [
-    "Paid actual activation proof",
-    "Explicit sensitive-D1 DPAPI export scope approval and freeze-bound recovery proof",
-    "Fix legacy in-flight writer after-thaw security block; before/after evidence + all regression + independent review",
-    "All operating deployment and verification steps"
+  "syntheticRemoteD1Created": {
+    "name": "birdmap-p1-migration-rehearsal-20261014",
+    "id": "90e6a8a0-0e1e-425a-b00b-afe78f476156",
+    "scope": "Fake0,0 observations only; frozen; no Worker/publicAPI binding; retained evidence"
+  },
+  "remaining": [
+    "Exact private payload/destination permission for CurrentUser DPAPI full D1 backup and memory restore",
+    "Actual pre-cutover/frozen backup, authenticated operating cutover/verification not run",
+    "Already delivered legacy/browser data cannot be remotely erased; legacy destructive tools prohibited against fenced DB"
+  ],
+  "receipts": [
+    {
+      "path": "automatic-5718402/RESULTS.json",
+      "sha256": "06551342e5e05bff618846092b43a47d310edcdb521ac22480044b51776ea590"
+    },
+    {
+      "path": "ci-5718402/INDEPENDENT_CI_RECEIPT.json",
+      "sha256": "f25a7655ecd740470060bb29b187e8ce72a7d3743ea10ec670735726b215842d"
+    },
+    {
+      "path": "ci-5718402/PROTECTED_BASELINE.json",
+      "sha256": "a6323df11f3d9739cdaf7b2db3979ed4da9a5f79945862e95a8a3786736d5ef3"
+    },
+    {
+      "path": "chrome-5718402/RUN.json",
+      "sha256": "62da9c09680132b0332abe78fb0812cdcba36e7f98f17c5943968cc89c7c7a19"
+    },
+    {
+      "path": "chrome-5718402/publication_chrome.json",
+      "sha256": "9d6de01bd40889cee5a6a78984cd8dd88a6f6e656a4ecfadc4a7d53e05067c3c"
+    },
+    {
+      "path": "writer-fence-review/native-final-5718402/INDEPENDENT_RUN_RECEIPT.json",
+      "sha256": "f54f13e15ed301d6cc56e193562ee86f2a8d60e33ebec547a282d94540f48e73"
+    },
+    {
+      "path": "writer-fence-review/cas-final-5718402/INDEPENDENT_RUN_RECEIPT.json",
+      "sha256": "fee74c0c06f6d8c2fc4b9f7b5ffc1a737ffbd3e901054065e16b6b92e814bf7e"
+    },
+    {
+      "path": "writer-fence-review/STANDBY_SOURCE_MAPPING_5718402.json",
+      "sha256": "5ad224636423ca7136afb683275a4de34842763e8f1630e11f3c18b2b9e0ade1"
+    },
+    {
+      "path": "writer-fence-review/PAID_MODEL_5718402_NATIVE_20261014.json",
+      "sha256": "d6698f90b3d91f612c8e0ef40061c2e1483dacc7d923e766eca972ba31dc4e36"
+    },
+    {
+      "path": "worker-upload-9f8/VERIFIED_STANDBYS.json",
+      "sha256": "d2cda6a441773c313d0d9c23ecd9c93ecf69a91aba29ba8cd323d12cb82f6797"
+    },
+    {
+      "path": "remote-migration-synthetic/REPAIRED_RESULTS.json",
+      "sha256": "22ba7e74b3f59f6c24f855b6ea8e82d1ed1931d263ba4c608d1e7e78a480f5f3"
+    },
+    {
+      "path": "remote-migration-synthetic/POST_APPLY_METADATA.json",
+      "sha256": "58ab955e1b512b664096d87839342c760586c2a532b90f1498a658997e440616"
+    },
+    {
+      "path": "drain-review/remote-atomic/INDEPENDENT_REPAIRED_RECEIPT_5718.json",
+      "sha256": "e927ed04def3a79c57108fc6b2f00d4c37ab0a896da3d717c1c6643358df4718"
+    },
+    {
+      "path": "drain-review/remote-atomic/INDEPENDENT_POST_APPLY_METADATA_5718.json",
+      "sha256": "854a4ee679cdcebdb203ec2bf4ec47a80ac391ccba55011feb84fcccb7a8cb34"
+    },
+    {
+      "path": "drain-review/remote-atomic/CASE_EQUIVALENCE.json",
+      "sha256": "3656210127d5d0e9a8e6b6e17dcbe290a654eac9c7b92619bbdbe3267ce269fa"
+    },
+    {
+      "path": "PAID_VERIFIED_BROWSER_20261014.json",
+      "sha256": "51e1f29273d09d88e8ba06502329cd76f2ce1b91d2aa437b13a1294309aea2e1"
+    },
+    {
+      "path": "backup-synthetic/SELFTEST.json",
+      "sha256": "c0fb0e9aa815572518b7d91b6c4219149f11ad4741432da82e5fba4d2217bd1a"
+    },
+    {
+      "path": "current-9f8/RESULTS.json",
+      "sha256": "580c9d696aed7d4a9a056af42d90d7321d634403ee30a1207446339ed4d04f8a"
+    }
   ]
 }

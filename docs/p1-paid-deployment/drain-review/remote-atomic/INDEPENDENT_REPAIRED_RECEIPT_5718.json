@@ -1,0 +1,138 @@
+{
+  "at": "2026-10-13T18:03:20.061Z",
+  "sourceSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "priorSource": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+  "scope": "Independent saved remote receipts/logs/source review only; no test/network reexecution, zero operating/staging writes by reviewer",
+  "migrationSQLHash": "3675e45e8ee7c5a6f8dcbe08c116443cbdf48aded771b2a4315e0d554a0b9e39",
+  "exactEarlier96ComparisonCandidate": true,
+  "freshSchemaExactSameTransformation": true,
+  "sourceInvariants": [
+    {
+      "path": "index.html",
+      "unchanged": true,
+      "sha256": "9c519ed2f9a1c6e036c4772315da3f5e97c13d481d7cd5191894e2c3a7975beb"
+    },
+    {
+      "path": "reports-api/src/writer-fence.js",
+      "unchanged": true,
+      "sha256": "aed59e364415430ef16da9b0514da2abcfe0da8ea3117829a940d9a50c636cd5"
+    },
+    {
+      "path": "reports-api/src/publication.js",
+      "unchanged": true,
+      "sha256": "291137121365f9b1e68615e5a2c86e90e730e4b49cd9ba47ec69203808a1afd3"
+    },
+    {
+      "path": "reports-api/src/public.js",
+      "unchanged": true,
+      "sha256": "5afcfe3f8cf9ab7ead6f737dd8c9a75a9e31b849a3423c99874434c58ef7c318"
+    },
+    {
+      "path": "reports-api/src/admin.js",
+      "unchanged": true,
+      "sha256": "48f813fe0156bb39f9a74ed56f912942353162a18eab8700baad2cd0b4f1ac30"
+    },
+    {
+      "path": "reports-api/src/field-updates.js",
+      "unchanged": true,
+      "sha256": "45afe2b2a543d67f1816bbc0d7348ebd2fd5cedc7ebb7dbccb49081937c8fb61"
+    },
+    {
+      "path": "reports-api/src/shared.js",
+      "unchanged": true,
+      "sha256": "ef29c94e6ff3dc691c6ef10ec64e0c4c09148a0be1e88bcfbec73d34050b243f"
+    },
+    {
+      "path": "reports-api/src/canonical/persistence.js",
+      "unchanged": true,
+      "sha256": "8e40615b7cce05f3f0863a9bde2f64be5afcc7422b005c293ed34488e870dcd6"
+    },
+    {
+      "path": "reports-api/migrations/0004b_publication_writer_fence.sql",
+      "unchanged": true,
+      "sha256": "be4839c474f43a249ebf36f065b0fa6892ee7ad5df13883e0f8d2809757d4b42"
+    },
+    {
+      "path": "reports-api/tools/purge-runner.mjs",
+      "unchanged": true,
+      "sha256": "ae92a23128c63fc6ca8d77e32b45cc2a1e1f7e671f0dc8f6f8526d7aefda092d"
+    },
+    {
+      "path": "weather_today.json",
+      "unchanged": true,
+      "sha256": "8385b6849759bbee6b4830e936e942aac2ac52445b67f409a866e7c579fb116c"
+    },
+    {
+      "path": "weather_week.json",
+      "unchanged": true,
+      "sha256": "2e4d6d317ac62dbfb3592f2f1b28cf76c8e791b7e6adb6b746bedfc221073592"
+    }
+  ],
+  "remoteSavedResults": {
+    "prebarrierEarlierPass": 1,
+    "repairedPass": 3,
+    "fail": 0,
+    "skip": 0,
+    "totalIncludingPrebarrier": 4,
+    "notNewReviewerExecution": true,
+    "logs": [
+      {
+        "name": "05-repaired-late-check-failure",
+        "exit": 1,
+        "sha256": "bad28144f1c2803f5c6ec30f47f48d93b1bdb56d64af11cd5c4c9c6421dcc4d8",
+        "independentlyVerified": true
+      },
+      {
+        "name": "06-repaired-normal-migration",
+        "exit": 0,
+        "sha256": "60305c541a588a48a7dbfb76fd4d1aa12382fc0c515c7c882e3a16217bc92b5c",
+        "independentlyVerified": true
+      },
+      {
+        "name": "07-repaired-idempotent-ledger",
+        "exit": 0,
+        "sha256": "f7159bcaa9cf872009a5a0e115410a7c8479cb1a67655fff17862e6a9241f372",
+        "independentlyVerified": true
+      }
+    ]
+  },
+  "faultRollback": {
+    "wholeSnapshotExact": true,
+    "beforeHash": "def3958d7d1f8dd151004b1a0a27847c76367ed4a91464f8c6d5eeebb749f43f",
+    "afterHash": "def3958d7d1f8dd151004b1a0a27847c76367ed4a91464f8c6d5eeebb749f43f",
+    "prebarrier12Retained": true,
+    "noPublicationTable": true,
+    "noPartialRowRevision": true,
+    "dataAndLedgerExact": true
+  },
+  "normalSuccess": {
+    "wholeOriginalReportsUnchanged": true,
+    "wholeOriginalFieldExceptRowRevisionUnchanged": true,
+    "rowRevisionAll1": true,
+    "ledgerAddedExactly1": true,
+    "earlierPrebarrierStillRecorded": true,
+    "newPublicationFileRecorded": true,
+    "catalogObjectsBefore": 63,
+    "catalogObjectsAfter": 86
+  },
+  "parserProbe": {
+    "oldCASERejected7500": true,
+    "proposedWHEREAccepted": true,
+    "rootSavedResponseHash": "ba9b0a6d62da590efefc902b982c7964239de033711d5c659501b6f1eeaea918",
+    "backendImplementationCause": "inference only, not inspected or proven"
+  },
+  "rootAssertionsSeparate": {
+    "frozen": 1,
+    "claims": 0,
+    "FKviolations": 0,
+    "limitation": "Current saved success snapshot has schema/reports/field/ledger only. frozen/claims/FK are preserved root assertions, not raw results independently inspected here."
+  },
+  "historicalFailurePreserved": "OriginalRESULTS1PASS/1FAIL and02incompleteinput remain failed pre-fix evidence; repaired namedCHECK now validates late rollback.",
+  "finalContract": "Repaired exact5718migration is compatible with the tested remote Wrangler migrations executor and preserves its publication safety predicate, CAS/terminal/fence semantics. This clears source/parser/remote atomicity blocker in synthetic staging; not operating deploymentPASS.",
+  "remainingBoundaries": [
+    "Operatingmigration must use samepinnedCLI, sameexactSQLhash, separateprebarriercommit andverifiedreadback/backup; noRESTloop/manualBEGIN/COMMIT",
+    "FinalcurrentSQLnative/CAS/CI/source evidence and updatedprotectedrollbacks remainrootgates",
+    "Privilegeddestructivepurge remainsunavailable; directD1/oldtool credentials andalreadydeliveredoldGET limitations unchanged",
+    "Paid/privatebackup/export authorization andactualoperatingversions remainseparate"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "at": "2026-10-13T17:49:29.114Z",
+  "sourceSha": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+  "scope": "Read-only cached Wrangler source and public official docs; zero operating API calls, zero remote synthetic/staging creation, zero D1 writes, no product/harness edits",
+  "wrangler": {
+    "version": "4.149.0",
+    "cliSha256": "31866b9a3686777254819158e60ebe4920d1d91141cde68846c62b52f75d7a66",
+    "file": "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules/wrangler/wrangler-dist/cli.js",
+    "anchors": {
+      "trimSqlQuery": 237135,
+      "splitSqlQuery": 237168,
+      "executeSql": 237450,
+      "executeLocally": 237521,
+      "executeRemotely": 237590,
+      "uploadAndBeginIngestion": 237706,
+      "pollUntilComplete": 237749,
+      "buildMigrationQuery": 238843
+    }
+  },
+  "mechanisms": [
+    {
+      "name": "local d1 execute/migrations apply",
+      "observedClientImplementation": "splitSqlQuery -> Miniflare getD1Database -> db.batch(preparedStatements)",
+      "proof": "Prior local CLI/workerd30/30 and current native fence13/CAS10 are local only, not remote execution receipts."
+    },
+    {
+      "name": "remote d1 execute --file",
+      "observedClientImplementation": "import init(etag) -> optional R2 PUT -> import ingest -> import poll untilcomplete; not the local batch path and not raw REST {batch}",
+      "rollbackBasis": "Wrangler client explicitly tells failures restore originalDBstate. Official import docs require removing manual BEGIN TRANSACTION/COMMIT. No remote fault test performed here.",
+      "ledger": "No migration ledger append unless separately included in exactSQLfile; choose migrations apply instead for rollout."
+    },
+    {
+      "name": "remote d1 execute --command",
+      "observedClientImplementation": "normalizeSqlLineEndings then one /query POST {sql}; no local splitSqlQuery/trimSqlQuery",
+      "warning": "Do not add manual BEGIN/COMMIT based on localstrip behavior; remote sends them through."
+    },
+    {
+      "name": "remote d1 migrations apply",
+      "observedClientImplementation": "For each migration, buildMigrationQuery returns completefile plus migrationsTable INSERT; executeSql uses command/query branch and sends one /query {sql}; stops afterfailedmigration.",
+      "rollbackBasis": "Official Wrangler command docs explicitly guarantee failedmigration rollback and previoussuccessfulmigration retention. This is sufficient documented executor contract; not claimed actual remote testPASS."
+    },
+    {
+      "name": "repository tools/d1-rest writeBatch or repeated write calls",
+      "observedClientImplementation": "REST {batch:[sql,params]} or individual /query calls; customtool warns generalRESTbatchrollback notdocumented",
+      "rollbackBasis": "Do not assume bindingAPI batch() guarantee proves customREST adapter atomicity; do not use sequential REST writes for securityDDL."
+    }
+  ],
+  "officialSources": [
+    {
+      "url": "https://developers.cloudflare.com/workers/wrangler/commands/d1/",
+      "supports": "migrations apply error rollsback thisfile andretains previoussuccess; local/remote flags documented"
+    },
+    {
+      "url": "https://developers.cloudflare.com/d1/worker-api/d1-database/",
+      "supports": "Binding API batch sequence rollsback onstatementfailure; describes bindingAPI, notallcustomREST calls"
+    },
+    {
+      "url": "https://developers.cloudflare.com/d1/best-practices/import-export-data/",
+      "supports": "ManualBEGINTRANSACTION/COMMIT removal; nestedtransactionerrors"
+    },
+    {
+      "url": "https://developers.cloudflare.com/api/resources/d1/subresources/database/methods/query/",
+      "supports": "singleSQLstring supports semicolonseparatedstatements asbatch; noindependentgeneralrollback assertion found"
+    }
+  ],
+  "recommendedExecution": {
+    "method": "Pinned Wrangler4.149 d1 migrations apply --remote with isolated onefile migrations_dir for each stage",
+    "stages": [
+      "Stage1 dir contains exact9f8f 0004b only; verify expected originalcatalog/ledger/emptyclaim, applyonce, readback12exactDDL+claimtable/schema/ledger/claim0; independently committed prebarrier must be retained.",
+      "Take/verify authorized frozenbackup afterallwritercontrol; pause beforestage2.",
+      "Stage2 dir contains exact9f8f 0005 only, sameD1uuid/name/ledger; applywholefile+ledger using samedocumentedmethod; do not reapply0004 alreadyinstalledwithoutledger.",
+      "Failure:stop, keep earlierprebarrier/maintenance. Query primaryschema/data/ledger to resolveunknowncompletion; do not blindretryALTER/restorelegacybackup.",
+      "Success:originaldata/CASterminal/FK/34guards/claim0/epoch-revision/write_frozen1 verify beforecurrentnormalpair andexplicitthaw."
+    ],
+    "manualTransactions": false,
+    "ddlStatementLoop": false,
+    "productChangesRequired": false
+  },
+  "decision": {
+    "documentedAtomicExecutor": "AVAILABLE — selected Wrangler migrations path",
+    "actualRemoteExecution": "NOT RUN; do not promote local successes to remotePASS",
+    "remoteStaging": "Not required to establish documentedguarantee. If root requires independent remotefailure demonstration, a separatelyauthorized synthetic remoteD1 can use exactsamepinnedCLI with injectedmiddleCHECK, comparecatalog/data/ledgerhash and retainedprebarrier; productionmustneverbe thefaulttest target. Customexecutorneeds suchproof or use documentedmethod.",
+    "remainingGate": "Final operating executor/config/filehash and two-stage ledger/readback plan must match documentedpath. External Paid/backup/standby/operating gates remain."
+  }
+}

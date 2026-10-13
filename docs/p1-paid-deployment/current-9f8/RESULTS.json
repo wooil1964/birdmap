@@ -1,0 +1,56 @@
+{
+  "source": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+  "main": "6feac41ae485bf16080324e40104de6d7b1ee8e5",
+  "results": [
+    {
+      "name": "today",
+      "source": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+      "command": [
+        "C:/Users/\uae40\uc9c4\ud638/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather.py"
+      ],
+      "at": "2026-10-13T17:34:40.881279+00:00",
+      "exitCode": 0,
+      "logSha256": "d8a765213fcbadab088df47ad95ce1210f7b863877c6550e23179f63ecb6f7aa"
+    },
+    {
+      "name": "week",
+      "source": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+      "command": [
+        "C:/Users/\uae40\uc9c4\ud638/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+        ".github/scripts/validate_weather_week.py"
+      ],
+      "at": "2026-10-13T17:34:41.041791+00:00",
+      "exitCode": 0,
+      "logSha256": "1e1e2db3b4535b8531f8ba543966f016ee165153049c8d531ba0e261a9f7a480"
+    },
+    {
+      "name": "fixed",
+      "source": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        ".github/scripts/publication_ci_signatures.mjs",
+        ".",
+        "9f8f8954314ef16ee60433d77fca58099f6a4108",
+        "b12e20c1b6d856a021898a0c1c9221b30393a221"
+      ],
+      "at": "2026-10-13T17:34:41.351400+00:00",
+      "exitCode": 0,
+      "logSha256": "e163f4002bc8046afde49cc0f873ee5052534005457ee41e94a2536bc1b4bae5"
+    }
+  ],
+  "automaticJSON": {
+    "weather_today.json": {
+      "sourceBlobUnchangedFromMain": true,
+      "gitSha256": "8385b6849759bbee6b4830e936e942aac2ac52445b67f409a866e7c579fb116c",
+      "generatedAt": "2026-10-14 01:55 KST"
+    },
+    "weather_week.json": {
+      "sourceBlobUnchangedFromMain": true,
+      "gitSha256": "2e4d6d317ac62dbfb3592f2f1b28cf76c8e791b7e6adb6b746bedfc221073592",
+      "generatedAt": "2026-10-14 01:55 KST"
+    }
+  },
+  "fixedInput": "2026-10-08 22:40 KST (separate from actual current batch)",
+  "operatingChanges": 0
+}

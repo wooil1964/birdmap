@@ -1,0 +1,153 @@
+{
+  "at": "2026-10-13T18:07:34.483287+00:00",
+  "productSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "ciMergeSha": "6b131c37e47eb53d5cff209769d7b04006f1398c",
+  "ciTreeIdentical": true,
+  "run": 38442910120,
+  "job": 115453799991,
+  "conclusion": "success",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-node@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-python@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install shared card test dependencies",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Require installed Chrome",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Front regression with actual Chrome",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Public and admin API and SQLite security",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Weather proxy",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Python weather, tide and shared pages",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Exact normal recommendation signatures",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Chrome publication and consent security with local mock only",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Native local D1 atomic fence and CAS (synthetic only)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Prepare protective Pages rollback artifact",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Upload protective standby artifact (no deployment)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Upload synthetic browser diagnostics",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-python@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-node@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@v6",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "automated": {
+    "pass": 812,
+    "fail": 0,
+    "skip": 1
+  },
+  "chrome": {
+    "pass": 242,
+    "fail": 0,
+    "skip": 0
+  },
+  "nativeFence": {
+    "pass": 13,
+    "fail": 0,
+    "skip": 0
+  },
+  "nativeCAS": {
+    "pass": 10,
+    "fail": 0,
+    "skip": 0
+  },
+  "artifact": {
+    "id": 11837076250,
+    "name": "protected-pages-6b131c37e47eb53d5cff209769d7b04006f1398c",
+    "size_in_bytes": 4725269,
+    "expired": false,
+    "expires_at": "2026-11-12T18:00:38Z",
+    "digest": "sha256:f5fbb6291d12967ac1381702a16e48ffb1f2f2e0156d8e888c879aa04002cb7c"
+  },
+  "downloads": {
+    "job-115453799991.log": {
+      "bytes": 344149,
+      "sha256": "faa75f0c293baf1380f0008702d5fb6eddaec6885d8477c79b9abbfa0eaf55d2"
+    },
+    "protected-pages.zip": {
+      "bytes": 4725269,
+      "sha256": "f5fbb6291d12967ac1381702a16e48ffb1f2f2e0156d8e888c879aa04002cb7c"
+    }
+  },
+  "verifiedRuntimeAssets": 388,
+  "siteCount": 190,
+  "coordinateHash": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89",
+  "operatingChanges": 0
+}

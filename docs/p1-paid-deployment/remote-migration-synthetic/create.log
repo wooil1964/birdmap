@@ -1,0 +1,16 @@
+
+ ⛅️ wrangler 4.149.0 (update available 4.150.0)
+───────────────────────────────────────────────
+✅ Successfully created DB 'birdmap-p1-migration-rehearsal-20261014' in region APAC
+Created your new D1 database.
+
+To access your new D1 Database in your Worker, add the following snippet to your configuration file:
+{
+  "d1_databases": [
+    {
+      "binding": "birdmap_p1_migration_rehearsal_20261014",
+      "database_name": "birdmap-p1-migration-rehearsal-20261014",
+      "database_id": "90e6a8a0-0e1e-425a-b00b-afe78f476156"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+
+ ⛅️ wrangler 4.149.0 (update available 4.150.0)
+───────────────────────────────────────────────
+Resource location: remote 
+
+▲ [WARNING] ⚠️ This process may take some time, during which your D1 database will be unavailable to serve queries.
+
+
+🌀 Executing on remote database SYNTHETIC_DB (90e6a8a0-0e1e-425a-b00b-afe78f476156):
+🌀 To execute on your local development database, remove the --remote flag from your wrangler command.
+Note: if the execution fails to complete, your DB will return to its original state and you can safely retry.
+├ Checking if file needs uploading
+│
+├ 🌀 Uploading 90e6a8a0-0e1e-425a-b00b-afe78f476156.1b4021edc28e26f5.sql
+│ 🌀 Uploading complete.
+│
+🌀 Starting import...
+🌀 Processed 52 queries.
+🚣 Executed 52 queries in 7.91ms (62 rows read, 103 rows written)
+   Database is currently at bookmark 00000001-0000000d-00005103-c9eecd68622565ad3696e398002a9cb0.
+[
+  {
+    "results": [
+      {
+        "Total queries executed": 52,
+        "Rows read": 62,
+        "Rows written": 103,
+        "Database size (MB)": "0.30"
+      }
+    ],
+    "success": true,
+    "finalBookmark": "00000001-0000000d-00005103-c9eecd68622565ad3696e398002a9cb0",
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "APAC",
+      "served_by_colo": "ICN",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 7.9076
+      },
+      "duration": 7.9076,
+      "changes": 4,
+      "last_row_id": 1,
+      "changed_db": true,
+      "size_after": 303104,
+      "rows_read": 62,
+      "rows_written": 103,
+      "num_tables": 15,
+      "total_attempts": 1
+    }
+  }
+]

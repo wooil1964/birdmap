@@ -1,0 +1,897 @@
+{
+  "at": "2026-10-13T17:57:27.472Z",
+  "sourceSha": "9f8f8954314ef16ee60433d77fca58099f6a4108",
+  "scope": "Actual6pinned publicationtrigger extraction and in-memory synthetic SQLite only; no source/harness or remote/operating edits/calls",
+  "sourceSha256": "8cb8fd88170f63362d0e577e4564368fd924e59888064412d129b6bd66246225",
+  "transformedCandidateSha256": "3675e45e8ee7c5a6f8dcbe08c116443cbdf48aded771b2a4315e0d554a0b9e39",
+  "guards": 6,
+  "casesPerGuard": 16,
+  "pairedComparisons": 96,
+  "checks": [
+    {
+      "guard": "reports_insert",
+      "case": "valid0",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "1"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "valid42",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "43"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "validMaximumMinus1",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "missingState",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_insert",
+      "case": "wrongId",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_insert",
+      "case": "epochNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "epochNumber",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "epochUppercase",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "epochShort",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "epochNonHex",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "revisionNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_insert",
+      "case": "revisionText",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "revisionNegative",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "-1"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "revisionFraction",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0.5"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "revisionMaximum",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "reports_insert",
+      "case": "revisionInfinity",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "Inf"
+    },
+    {
+      "guard": "reports_update",
+      "case": "valid0",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "1"
+    },
+    {
+      "guard": "reports_update",
+      "case": "valid42",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "43"
+    },
+    {
+      "guard": "reports_update",
+      "case": "validMaximumMinus1",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "reports_update",
+      "case": "missingState",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_update",
+      "case": "wrongId",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_update",
+      "case": "epochNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_update",
+      "case": "epochNumber",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_update",
+      "case": "epochUppercase",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_update",
+      "case": "epochShort",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_update",
+      "case": "epochNonHex",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_update",
+      "case": "revisionNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_update",
+      "case": "revisionText",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_update",
+      "case": "revisionNegative",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "-1"
+    },
+    {
+      "guard": "reports_update",
+      "case": "revisionFraction",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0.5"
+    },
+    {
+      "guard": "reports_update",
+      "case": "revisionMaximum",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "reports_update",
+      "case": "revisionInfinity",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "Inf"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "valid0",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "1"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "valid42",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "43"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "validMaximumMinus1",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "missingState",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_delete",
+      "case": "wrongId",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_delete",
+      "case": "epochNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "epochNumber",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "epochUppercase",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "epochShort",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "epochNonHex",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "revisionNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "reports_delete",
+      "case": "revisionText",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "revisionNegative",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "-1"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "revisionFraction",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0.5"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "revisionMaximum",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "reports_delete",
+      "case": "revisionInfinity",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "Inf"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "valid0",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "1"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "valid42",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "43"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "validMaximumMinus1",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "missingState",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "wrongId",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "epochNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "epochNumber",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "epochUppercase",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "epochShort",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "epochNonHex",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "revisionNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "revisionText",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "revisionNegative",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "-1"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "revisionFraction",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0.5"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "revisionMaximum",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "field_updates_insert",
+      "case": "revisionInfinity",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "Inf"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "valid0",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "1"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "valid42",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "43"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "validMaximumMinus1",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "missingState",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "wrongId",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "epochNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "epochNumber",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "epochUppercase",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "epochShort",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "epochNonHex",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "revisionNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "revisionText",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "revisionNegative",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "-1"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "revisionFraction",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0.5"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "revisionMaximum",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "field_updates_update",
+      "case": "revisionInfinity",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "Inf"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "valid0",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "1"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "valid42",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "43"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "validMaximumMinus1",
+      "expectedEligible": true,
+      "equivalent": true,
+      "operationApplied": true,
+      "invalidStatementUnchanged": null,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "missingState",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "wrongId",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "epochNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "epochNumber",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "epochUppercase",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "epochShort",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "epochNonHex",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "revisionNull",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": null
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "revisionText",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "revisionNegative",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "-1"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "revisionFraction",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "0.5"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "revisionMaximum",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "9223372036854775807"
+    },
+    {
+      "guard": "field_updates_delete",
+      "case": "revisionInfinity",
+      "expectedEligible": false,
+      "equivalent": true,
+      "operationApplied": false,
+      "invalidStatementUnchanged": true,
+      "revision": "Inf"
+    }
+  ],
+  "summary": {
+    "equivalencePass": 96,
+    "fail": 0,
+    "skip": 0
+  },
+  "initialHarnessFailure": {
+    "productFailure": false,
+    "reason": "First control used JSnumber0 in intentionallyuntyped corruptedstate fixture; Node bindsit asREAL, so bothoriginal andcandidatecorrectlyrejectedtypeofrevision!=integer. Integercontrols now useBigInt toretain SQLiteinteger; originalproductINTEGERaffinity wouldstore0 asinteger. Assertionspreserved."
+  },
+  "reasoning": "NOT EXISTS is boolean nonnull. ValidoriginalselectsNULL versus candidate0rows; bothdiscarded. InvalidraisesidenticalABORT beforeunchangedrevisionUPDATE. Exactpredicatehashchecked, includingepoch/type/range/MAXbound.",
+  "remoteEvidence": {
+    "initial": "Rootremote prebarrierR01PASS;0005faultattempt7500incompleteinput beforelateCHECK. LateCHECKrollback remainsunverified.",
+    "cause": "Wranglerremotecommand normalizeslineendings only andsendswholeSQL. BackendCASEsplitter remainshypothesis untilrootminimalremoteprobe; semanticmatrixdoesnotprovecause orremoteparserfix."
+  },
+  "requiredRevalidation": [
+    "schema.sql and0005 useidentical transformedguard",
+    "RemoteoldCASE versuscandidateWHERE minimaltriggerprobe on syntheticDB",
+    "Exactfullmigration intentionallateCHECK now reachesnamedCHECK and rollsbacknewDDL/data/ledger whileprebarrier12remains",
+    "Exactunfaultedmigration successfulfrozeninstall/claim0/originalrows/ledger andnativeCAS/guard/fullCI",
+    "No operatingDDL untilnewSHA/remoteproof verified"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "at": "2026-10-13T17:54:10.160865+00:00",
+  "scope": "Remote synthetic-only grammar probe; no operating DB or userdata",
+  "checks": [
+    {
+      "id": "state-after-original-failure",
+      "result": {
+        "success": true,
+        "errors": [],
+        "result": [
+          {
+            "success": true,
+            "results": [
+              {
+                "pub": 0,
+                "guards": 12,
+                "claims": 0
+              }
+            ],
+            "meta": {
+              "rows_written": 0,
+              "rows_read": 186
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "create-probe",
+      "sql": "CREATE TABLE writer_probe(n INTEGER)",
+      "result": {
+        "success": true,
+        "errors": [],
+        "result": [
+          {
+            "success": true,
+            "results": [],
+            "meta": {
+              "rows_written": 2,
+              "rows_read": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "case-trigger",
+      "sql": "CREATE TRIGGER writer_probe_case AFTER INSERT ON writer_probe BEGIN SELECT CASE WHEN NEW.n=1 THEN RAISE(ABORT,'probe_rejected') END; SELECT 1; END;",
+      "result": {
+        "success": false,
+        "errors": [
+          {
+            "code": 7500,
+            "message": "incomplete input: SQLITE_ERROR"
+          }
+        ],
+        "result": []
+      }
+    },
+    {
+      "id": "where-trigger",
+      "sql": "CREATE TRIGGER writer_probe_where AFTER INSERT ON writer_probe BEGIN SELECT RAISE(ABORT,'probe_rejected') WHERE NEW.n=1; SELECT 1; END;",
+      "result": {
+        "success": true,
+        "errors": [],
+        "result": [
+          {
+            "success": true,
+            "results": [],
+            "meta": {
+              "rows_written": 1,
+              "rows_read": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cleanup-own-disposable-probe",
+      "result": {
+        "success": true,
+        "errors": [],
+        "result": [
+          {
+            "success": true,
+            "results": [],
+            "meta": {
+              "rows_written": 0,
+              "rows_read": 190
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "operatingDBWrites": 0
+}

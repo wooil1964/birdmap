@@ -1,0 +1,492 @@
+{
+  "schema": [
+    {
+      "type": "index",
+      "name": "audit_target_time",
+      "sql": "CREATE INDEX audit_target_time ON audit_log(target_type,target_id,created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "captcha_redemptions_redeemed_at",
+      "sql": "CREATE INDEX captcha_redemptions_redeemed_at ON captcha_redemptions(redeemed_at)"
+    },
+    {
+      "type": "index",
+      "name": "checklists_approved_recent",
+      "sql": "CREATE INDEX checklists_approved_recent ON checklists(status,observation_date DESC,received_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "checklists_ip_recent",
+      "sql": "CREATE INDEX checklists_ip_recent ON checklists(compat_ip_hash,received_at)"
+    },
+    {
+      "type": "index",
+      "name": "checklists_pending_public",
+      "sql": "CREATE INDEX checklists_pending_public ON checklists(pending_public,status)"
+    },
+    {
+      "type": "index",
+      "name": "checklists_site_history",
+      "sql": "CREATE INDEX checklists_site_history ON checklists(site_id,status,observation_date DESC,received_at DESC,checklist_id DESC)"
+    },
+    {
+      "type": "index",
+      "name": "checklists_spot_key",
+      "sql": "CREATE INDEX checklists_spot_key ON checklists(spot_key)"
+    },
+    {
+      "type": "index",
+      "name": "field_update_confirmations_ip",
+      "sql": "CREATE INDEX field_update_confirmations_ip ON field_update_confirmations (ip_hash, created_at)"
+    },
+    {
+      "type": "index",
+      "name": "field_update_confirmations_parent",
+      "sql": "CREATE INDEX field_update_confirmations_parent ON field_update_confirmations (field_update_id)"
+    },
+    {
+      "type": "index",
+      "name": "field_update_events_ip",
+      "sql": "CREATE INDEX field_update_events_ip ON field_update_events (ip_hash, created_at)"
+    },
+    {
+      "type": "index",
+      "name": "field_update_events_parent",
+      "sql": "CREATE INDEX field_update_events_parent ON field_update_events (field_update_id, created_at)"
+    },
+    {
+      "type": "index",
+      "name": "field_updates_activity",
+      "sql": "CREATE INDEX field_updates_activity ON field_updates (last_activity_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "reports_dedupe",
+      "sql": "CREATE UNIQUE INDEX reports_dedupe ON reports (dedupe_hash)"
+    },
+    {
+      "type": "index",
+      "name": "reports_ip_recent",
+      "sql": "CREATE INDEX reports_ip_recent ON reports (ip_hash, received_at)"
+    },
+    {
+      "type": "index",
+      "name": "reports_pending_public",
+      "sql": "CREATE INDEX reports_pending_public ON reports (pending_public, status)"
+    },
+    {
+      "type": "index",
+      "name": "reports_site_history",
+      "sql": "CREATE INDEX reports_site_history\r\n  ON reports (site_id, status, observed_on DESC, received_at DESC, id DESC)"
+    },
+    {
+      "type": "index",
+      "name": "reports_spot_key",
+      "sql": "CREATE INDEX reports_spot_key ON reports (spot_key)"
+    },
+    {
+      "type": "index",
+      "name": "reports_status",
+      "sql": "CREATE INDEX reports_status ON reports (status)"
+    },
+    {
+      "type": "index",
+      "name": "reviews_sighting",
+      "sql": "CREATE INDEX reviews_sighting ON reviews(sighting_id)"
+    },
+    {
+      "type": "index",
+      "name": "reviews_taxon",
+      "sql": "CREATE INDEX reviews_taxon ON reviews(validated_taxon_id)"
+    },
+    {
+      "type": "index",
+      "name": "sightings_taxon",
+      "sql": "CREATE INDEX sightings_taxon ON sightings(taxon_id,checklist_id)"
+    },
+    {
+      "type": "index",
+      "name": "taxa_name_lookup",
+      "sql": "CREATE INDEX taxa_name_lookup ON taxa(taxonomy_source,taxonomy_version,korean_name)"
+    },
+    {
+      "type": "table",
+      "name": "audit_log",
+      "sql": "CREATE TABLE audit_log (\r\n  audit_id TEXT NOT NULL PRIMARY KEY,\r\n  actor_id TEXT NOT NULL,\r\n  action TEXT NOT NULL,\r\n  target_type TEXT NOT NULL,\r\n  target_id TEXT NOT NULL,\r\n  request_id TEXT NOT NULL,\r\n  request_fingerprint TEXT CHECK(request_fingerprint IS NULL OR (length(request_fingerprint)=64 AND request_fingerprint NOT GLOB '*[^0-9a-f]*')),\r\n  event_count INTEGER NOT NULL CHECK(typeof(event_count)='integer' AND event_count >= 0),\r\n  created_at TEXT NOT NULL,\r\n  UNIQUE(request_id,action,target_type,target_id),\r\n  CHECK ((action='forbidden_content_purged' AND request_fingerprint IS NULL AND event_count=0)\r\n    OR (action<>'forbidden_content_purged' AND request_fingerprint IS NOT NULL))\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "backfill_runs",
+      "sql": "CREATE TABLE backfill_runs (\r\n  run_id TEXT NOT NULL PRIMARY KEY,\r\n  manifest_checksum TEXT NOT NULL UNIQUE CHECK(length(manifest_checksum)=64 AND manifest_checksum NOT GLOB '*[^0-9a-f]*'),\r\n  transform_version TEXT NOT NULL,\r\n  source_count INTEGER NOT NULL CHECK(typeof(source_count)='integer' AND source_count >= 0),\r\n  completed_at TEXT NOT NULL,\r\n  source_revision TEXT NOT NULL\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "captcha_redemptions",
+      "sql": "CREATE TABLE captcha_redemptions (\r\n  token_hash TEXT NOT NULL PRIMARY KEY CHECK (length(token_hash) = 64 AND token_hash NOT GLOB '*[^0-9a-f]*'),\r\n  request_id TEXT NOT NULL,\r\n  redeemed_at TEXT NOT NULL\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "checklists",
+      "sql": "CREATE TABLE checklists (\r\n  checklist_id TEXT NOT NULL PRIMARY KEY,\r\n  site_id TEXT REFERENCES sites(site_id) ON DELETE RESTRICT,\r\n  raw_id TEXT NOT NULL UNIQUE REFERENCES raw_submissions(raw_id) ON DELETE RESTRICT,\r\n  source_type TEXT NOT NULL CHECK (source_type IN ('legacy_reports','native')),\r\n  source_id TEXT NOT NULL,\r\n  record_mode TEXT NOT NULL CHECK (record_mode IN ('legacy_report','quick_report','complete_checklist')),\r\n  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),\r\n  observation_date TEXT NOT NULL,\r\n  start_time TEXT,\r\n  timezone TEXT,\r\n  duration_minutes REAL CHECK (duration_minutes IS NULL OR duration_minutes >= 0) CHECK (duration_minutes IS NULL OR typeof(duration_minutes) IN ('integer','real')),\r\n  distance_m REAL CHECK (distance_m IS NULL OR distance_m >= 0) CHECK (distance_m IS NULL OR typeof(distance_m) IN ('integer','real')),\r\n  observer_count INTEGER CHECK (observer_count IS NULL OR (typeof(observer_count)='integer' AND observer_count > 0)),\r\n  protocol TEXT CHECK (protocol IS NULL OR protocol IN ('incidental','stationary','traveling','area','other')),\r\n  complete_list INTEGER CHECK (complete_list IS NULL OR complete_list IN (0,1)),\r\n  actual_lat REAL CHECK (actual_lat BETWEEN -90 AND 90) CHECK (actual_lat IS NULL OR typeof(actual_lat) IN ('integer','real')),\r\n  actual_lon REAL CHECK (actual_lon BETWEEN -180 AND 180) CHECK (actual_lon IS NULL OR typeof(actual_lon) IN ('integer','real')),\r\n  coordinate_uncertainty_m REAL CHECK (coordinate_uncertainty_m IS NULL OR coordinate_uncertainty_m >= 0) CHECK (coordinate_uncertainty_m IS NULL OR typeof(coordinate_uncertainty_m) IN ('integer','real')),\r\n  approx_lat REAL CHECK (approx_lat IS NULL OR approx_lat BETWEEN -90 AND 90) CHECK (approx_lat IS NULL OR typeof(approx_lat) IN ('integer','real')),\r\n  approx_lon REAL CHECK (approx_lon IS NULL OR approx_lon BETWEEN -180 AND 180) CHECK (approx_lon IS NULL OR typeof(approx_lon) IN ('integer','real')),\r\n  public_lat REAL CHECK (public_lat IS NULL OR public_lat BETWEEN -90 AND 90) CHECK (public_lat IS NULL OR typeof(public_lat) IN ('integer','real')),\r\n  public_lon REAL CHECK (public_lon IS NULL OR public_lon BETWEEN -180 AND 180) CHECK (public_lon IS NULL OR typeof(public_lon) IN ('integer','real')),\r\n  coordinate_policy TEXT NOT NULL DEFAULT 'actual'\r\n    CHECK (coordinate_policy IN ('legacy_fallback','actual','explicit','withheld')),\r\n  pending_public INTEGER NOT NULL DEFAULT 0 CHECK (pending_public IN (0,1)),\r\n  name_public INTEGER NOT NULL DEFAULT 0 CHECK (name_public IN (0,1)),\r\n  spot_key TEXT,\r\n  species_text TEXT NOT NULL,\r\n  shared_bird_count INTEGER CHECK (shared_bird_count IS NULL OR (typeof(shared_bird_count)='integer' AND shared_bird_count >= 0)),\r\n  reporter TEXT,\r\n  note TEXT,\r\n  admin_note TEXT,\r\n  received_at TEXT NOT NULL,\r\n  decided_at TEXT,\r\n  compat_ip_hash TEXT,\r\n  compat_dedupe_hash TEXT UNIQUE,\r\n  created_at TEXT NOT NULL,\r\n  revision INTEGER NOT NULL DEFAULT 1 CHECK (typeof(revision)='integer' AND revision > 0),\r\n  updated_at TEXT NOT NULL,\r\n  UNIQUE (source_type,source_id),\r\n  CHECK ((actual_lat IS NULL)=(actual_lon IS NULL)),\r\n  CHECK (actual_lat IS NOT NULL OR site_id IS NOT NULL),\r\n  CHECK (source_type <> 'legacy_reports' OR\r\n    (record_mode='legacy_report' AND checklist_id=source_id)),\r\n  CHECK (record_mode <> 'legacy_report' OR source_type='legacy_reports'),\r\n  CHECK (source_type='legacy_reports' OR\r\n    ((approx_lat IS NULL)=(approx_lon IS NULL) AND (public_lat IS NULL)=(public_lon IS NULL))),\r\n  CHECK (coordinate_policy <> 'explicit' OR (public_lat IS NOT NULL AND public_lon IS NOT NULL))\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "d1_migrations",
+      "sql": "CREATE TABLE \"d1_migrations\"(\n\t\tid         INTEGER PRIMARY KEY AUTOINCREMENT,\n\t\tname       TEXT UNIQUE,\n\t\tapplied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "field_update_confirmations",
+      "sql": "CREATE TABLE field_update_confirmations (\r\n  id               TEXT PRIMARY KEY,\r\n  field_update_id  TEXT NOT NULL,\r\n  user_hash        TEXT NOT NULL,\r\n  ip_hash          TEXT NOT NULL,\r\n  created_at       TEXT NOT NULL,\r\n  UNIQUE (field_update_id, user_hash)\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "field_update_events",
+      "sql": "CREATE TABLE field_update_events (\r\n  id               TEXT PRIMARY KEY,\r\n  field_update_id  TEXT NOT NULL,\r\n  status           TEXT NOT NULL,\r\n  nickname         TEXT NOT NULL,\r\n  created_at       TEXT NOT NULL,\r\n  user_hash        TEXT NOT NULL,\r\n  ip_hash          TEXT NOT NULL\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "field_updates",
+      "sql": "CREATE TABLE field_updates (\r\n  id               TEXT PRIMARY KEY,           -- UUID\r\n  species          TEXT NOT NULL,              -- \uc885\uba85 \ud558\ub098\r\n  bird_count       INTEGER,                    -- \ubaa8\ub974\uba74 NULL\r\n  status           TEXT NOT NULL,              -- \ud604\uc7ac \uc0c1\ud0dc: visible | searching | not_visible | reappeared\r\n  lat              REAL NOT NULL,              -- \uc0ac\uc6a9\uc790\uac00 \ud655\uc778\ud55c \uc2e4\uc81c \uc88c\ud45c. \uacf5\uac1c API \ub294 \uc774 \uac12\uc744 \ub0b4\ubcf4\ub0b4\uc9c0 \uc54a\ub294\ub2e4.\r\n  lon              REAL NOT NULL,\r\n  public_lat       REAL NOT NULL,              -- \uacf5\uac1c \uc88c\ud45c. \uc77c\ubc18 \uc885\uc740 \uc2e4\uc81c \uc88c\ud45c\uc640 \uac19\uace0, \ubbfc\uac10\uc885\uc740 \ub300\ub7b5 \uc88c\ud45c(\ub4f1\ub85d \ub54c \ud55c \ubc88 \ub9cc\ub4e4\uc5b4 \uace0\uc815)\r\n  public_lon       REAL NOT NULL,\r\n  location_hidden  INTEGER NOT NULL DEFAULT 0, -- 1 \uc774\uba74 \uacf5\uac1c \uc88c\ud45c\uac00 \uc2e4\uc81c\uc640 \ub2e4\ub978 \ub300\ub7b5 \uc88c\ud45c\r\n  nickname         TEXT NOT NULL,              -- \ud45c\uc2dc\uba85(\uc785\ub825 \ub2c9\ub124\uc784, \uc5c6\uc73c\uba74 '\uc775\uba85')\r\n  note             TEXT,                       -- \uc9e7\uc740 \uba54\ubaa8(\ucd5c\ub300 100\uc790)\r\n  location_source  TEXT,                       -- gps | map\r\n  gps_accuracy     INTEGER,                    -- GPS \ub85c \uc7a1\uc558\uc744 \ub54c \uc624\ucc28(m). \uc704\uce58 \ucd94\uc801\uc6a9\uc774 \uc544\ub2c8\ub77c \ub4f1\ub85d \uc2dc\uc810 \uc9c4\ub2e8\uc6a9\r\n  created_at       TEXT NOT NULL,              -- \ucd5c\ucd08 \ub4f1\ub85d(\uad00\ucc30) \uc2dc\uac01. \uc808\ub300 \ub36e\uc5b4\uc4f0\uc9c0 \uc54a\ub294\ub2e4.\r\n  updated_at       TEXT NOT NULL,              -- \ub9c8\uc9c0\ub9c9 \uc0c1\ud0dc \ubcc0\uacbd \uc2dc\uac01\r\n  last_confirmed_at TEXT,                      -- \ub9c8\uc9c0\ub9c9 '\ud655\uc778' \uc2dc\uac01(\uc5c6\uc73c\uba74 NULL)\r\n  last_activity_at TEXT NOT NULL,              -- max(updated_at, last_confirmed_at). \ub9cc\ub8cc(TTL) \ud310\ub2e8 \uae30\uc900\r\n  user_hash        TEXT NOT NULL,              -- SHA-256(\uc194\ud2b8 + \ube0c\ub77c\uc6b0\uc800 \uc2dd\ubcc4\uac12). \uc6d0\ubcf8 \uc2dd\ubcc4\uac12\uc740 \uc800\uc7a5\ud558\uc9c0 \uc54a\ub294\ub2e4.\r\n  ip_hash          TEXT NOT NULL               -- \uc81c\ucd9c \ud69f\uc218 \uc81c\ud55c\uc6a9. \uc6d0\ubcf8 IP \ub294 \uc800\uc7a5\ud558\uc9c0 \uc54a\ub294\ub2e4.\r\n, row_revision INTEGER NOT NULL DEFAULT 1 CHECK(typeof(row_revision)='integer' AND row_revision>=1))"
+    },
+    {
+      "type": "table",
+      "name": "public_publication_state",
+      "sql": "CREATE TABLE public_publication_state (\n id INTEGER PRIMARY KEY CHECK(id=1),\n epoch TEXT NOT NULL CHECK(typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*'),\n revision INTEGER NOT NULL CHECK(typeof(revision)='integer' AND revision>=0 AND revision<=9223372036854775807),\n write_frozen INTEGER NOT NULL DEFAULT 0 CHECK(typeof(write_frozen)='integer' AND write_frozen IN(0,1))\n)"
+    },
+    {
+      "type": "table",
+      "name": "publication_writer_claim",
+      "sql": "CREATE TABLE publication_writer_claim (\n id INTEGER PRIMARY KEY CHECK(id=1),\n ok INTEGER NOT NULL CONSTRAINT publication_writer_ready CHECK(typeof(ok)='integer' AND ok=1)\n)"
+    },
+    {
+      "type": "table",
+      "name": "raw_submissions",
+      "sql": "CREATE TABLE raw_submissions (\r\n  raw_id TEXT NOT NULL PRIMARY KEY,\r\n  source_type TEXT NOT NULL CHECK (source_type IN ('legacy_reports_snapshot','native_submission')),\r\n  source_id TEXT NOT NULL,\r\n  request_id TEXT UNIQUE,\r\n  payload_json TEXT NOT NULL CHECK (json_valid(payload_json)),\r\n  submitted_at TEXT,\r\n  submitted_by TEXT,\r\n  schema_version TEXT NOT NULL,\r\n  captured_at TEXT NOT NULL,\r\n  source_fingerprint TEXT NOT NULL CHECK (length(source_fingerprint)=64 AND source_fingerprint NOT GLOB '*[^0-9a-f]*'),\r\n  non_breeding_confirmed INTEGER CHECK (non_breeding_confirmed IS NULL OR non_breeding_confirmed = 1),\r\n  policy_version TEXT,\r\n  UNIQUE (source_type,source_id),\r\n  CHECK (\r\n    (source_type='legacy_reports_snapshot' AND non_breeding_confirmed IS NULL AND policy_version IS NULL)\r\n    OR (source_type='native_submission' AND non_breeding_confirmed=1\r\n        AND non_breeding_confirmed IS NOT NULL AND policy_version IS NOT NULL\r\n        AND request_id IS NOT NULL AND submitted_at IS NOT NULL)\r\n  )\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "reports",
+      "sql": "CREATE TABLE reports (\r\n  id             TEXT PRIMARY KEY,           -- \uace0\uc720 ID (crypto.randomUUID)\r\n  status         TEXT NOT NULL DEFAULT 'pending'\r\n                 CHECK (status IN ('pending', 'approved', 'rejected')),\r\n  species        TEXT NOT NULL,              -- \uc885\uba85\uc744 ' \u00b7 ' \ub85c \uc774\uc5b4 \ubd99\uc778 \ubb38\uc790\uc5f4\r\n  lat            REAL NOT NULL,              -- \uc81c\ubcf4\uc790\uac00 \uc9c0\ub3c4\uc5d0\uc11c \ucc0d\uc740 \uc2e4\uc81c \uc88c\ud45c\r\n  lon            REAL NOT NULL,\r\n  public_lat     REAL,                       -- \ubbfc\uac10\uc9c0 \ubcf4\ud638\uc6a9 \uacf5\uac1c \uc88c\ud45c(\ube44\uba74 lat/lon \uc744 \uadf8\ub300\ub85c \uacf5\uac1c)\r\n  public_lon     REAL,\r\n  approx_lat     REAL,                       -- \uc2b9\uc778 \uc804 \ud669\uc0c9 \ub9c8\ucee4\uc6a9 \ub300\ub7b5 \uc88c\ud45c. \uc811\uc218 \ub54c \ud55c \ubc88 \ub9cc\ub4e4\uc5b4 \uace0\uc815\ud55c\ub2e4.\r\n  approx_lon     REAL,                       -- \uc2e4\uc81c \uc88c\ud45c\ub294 \uad00\ub9ac\uc790\ub9cc \ubcf8\ub2e4.\r\n  pending_public INTEGER NOT NULL DEFAULT 0, -- 1 \uc774\uba74 \uc2b9\uc778 \uc804\uc5d0\ub3c4 \ud669\uc0c9 \ub9c8\ucee4\ub85c \uacf5\uac1c\ud55c\ub2e4.\r\n                                             -- \uae30\ubcf8\uac12 0 \uc774\ub77c \uc774 \uae30\ub2a5 \uc774\uc804\uc5d0 \uc313\uc778 \ub300\uae30 \uc81c\ubcf4\ub294 \uacc4\uc18d \ube44\uacf5\uac1c\ub2e4.\r\n  observed_on    TEXT NOT NULL,              -- \uad00\ucc30\uc77c YYYY-MM-DD (KST)\r\n  received_at    TEXT NOT NULL,              -- \uc811\uc218 \uc2dc\uac01 ISO8601 UTC\r\n  decided_at     TEXT,                       -- \uc2b9\uc778/\ubc18\ub824/\uacf5\uac1c\ucde8\uc18c \uc2dc\uac01\r\n  bird_count     INTEGER,                    -- \uc120\ud0dd\r\n  reporter       TEXT,                       -- \uc120\ud0dd\r\n  note           TEXT,                       -- \uc120\ud0dd\r\n  admin_note     TEXT,                       -- \uad00\ub9ac\uc790 \uc804\uc6a9. \uacf5\uac1c API \ub294 \uc808\ub300 \ub0b4\ubcf4\ub0b4\uc9c0 \uc54a\ub294\ub2e4.\r\n  site_id        TEXT,                       -- \uc120\ud0dd: \uad00\ub9ac\uc790\uac00 \uc5f0\uacb0\ud55c \uae30\uc874 \ud0d0\uc870\uc9c0 ID (\ud45c\uc2dc \uaddc\uce59\uc740 \ubc14\uafb8\uc9c0 \uc54a\uc74c)\r\n  name_public    INTEGER NOT NULL DEFAULT 0, -- \uc81c\ubcf4\uc790 \uc774\ub984 \uacf5\uac1c \ub3d9\uc758. \uae30\ubcf8\uc740 \ube44\uacf5\uac1c\uc774\uba70, \uac12\uc774 \uc5c6\ub294 \uc790\ub8cc\ub3c4 \ube44\uacf5\uac1c\ub85c \ubcf8\ub2e4.\r\n  spot_key       TEXT,                       -- \uc774 \uc81c\ubcf4\uc758 \uc774\ub825\uc774 \ubd99\uc744 \uc9c0\uc810. NULL=\uc790\uae30 \uc810,\r\n                                             -- \"fixed:<siteId>:<n>\"=index.html \uc758 \uc218\ub3d9 \ubd89\uc740 \uc810, \uadf8 \uc678=\ub2e4\ub978 \uc81c\ubcf4\uc758 id\r\n  ip_hash        TEXT NOT NULL,              -- SHA-256(IP + REPORT_IP_SALT). \uc6d0\ubcf8 IP \ub294 \uc800\uc7a5\ud558\uc9c0 \uc54a\ub294\ub2e4.\r\n  dedupe_hash    TEXT NOT NULL               -- \uac19\uc740 \uc885\u00b7\uc88c\ud45c\u00b7\uad00\ucc30\uc77c \uc911\ubcf5 \uc81c\ucd9c \ucc28\ub2e8\uc6a9\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "reviews",
+      "sql": "CREATE TABLE reviews (\r\n  review_id TEXT NOT NULL PRIMARY KEY,\r\n  checklist_id TEXT NOT NULL REFERENCES checklists(checklist_id) ON DELETE RESTRICT,\r\n  sequence INTEGER NOT NULL CHECK (typeof(sequence)='integer' AND sequence > 0),\r\n  decision TEXT NOT NULL CHECK (decision IN ('submitted','approved','corrected','rejected','unpublished','reapproved')),\r\n  sighting_id TEXT,\r\n  validated_taxon_id TEXT REFERENCES taxa(taxon_id) ON DELETE RESTRICT,\r\n  validated_count INTEGER CHECK (validated_count IS NULL OR (typeof(validated_count)='integer' AND validated_count >= 0)),\r\n  validated_count_accuracy TEXT CHECK (validated_count_accuracy IS NULL OR validated_count_accuracy IN ('exact','estimated','minimum','unknown')),\r\n  from_status TEXT CHECK (from_status IS NULL OR from_status IN ('pending','approved','rejected')),\r\n  to_status TEXT NOT NULL CHECK (to_status IN ('pending','approved','rejected')),\r\n  actor_id TEXT NOT NULL,\r\n  request_id TEXT NOT NULL,\r\n  event_index INTEGER NOT NULL CHECK (typeof(event_index)='integer' AND event_index >= 0),\r\n  reason_code TEXT,\r\n  note TEXT,\r\n  created_at TEXT NOT NULL,\r\n  UNIQUE (checklist_id,sequence),\r\n  UNIQUE (request_id,event_index),\r\n  FOREIGN KEY (checklist_id,sighting_id) REFERENCES sightings(checklist_id,sighting_id) ON DELETE RESTRICT,\r\n  CHECK (sighting_id IS NOT NULL OR (validated_taxon_id IS NULL AND validated_count IS NULL AND validated_count_accuracy IS NULL)),\r\n  CHECK (validated_count IS NOT NULL OR validated_count_accuracy IS NULL OR validated_count_accuracy='unknown')\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "sightings",
+      "sql": "CREATE TABLE sightings (\r\n  sighting_id TEXT NOT NULL PRIMARY KEY,\r\n  checklist_id TEXT NOT NULL REFERENCES checklists(checklist_id) ON DELETE RESTRICT,\r\n  source_ordinal INTEGER NOT NULL CHECK (typeof(source_ordinal)='integer' AND source_ordinal > 0),\r\n  species_original TEXT NOT NULL,\r\n  species_identified TEXT,\r\n  interpretation TEXT NOT NULL DEFAULT 'unknown'\r\n    CHECK (interpretation IN ('single','unparsed_multiple','unknown')),\r\n  taxon_id TEXT REFERENCES taxa(taxon_id) ON DELETE RESTRICT,\r\n  count_value INTEGER CHECK (count_value IS NULL OR (typeof(count_value)='integer' AND count_value >= 0)),\r\n  count_accuracy TEXT NOT NULL DEFAULT 'unknown'\r\n    CHECK (count_accuracy IN ('exact','estimated','minimum','unknown')),\r\n  count_source TEXT NOT NULL CHECK (count_source IN ('legacy_single','reported','reviewed','not_recorded','ambiguous_group')),\r\n  interpretation_note TEXT,\r\n  created_at TEXT NOT NULL,\r\n  updated_at TEXT NOT NULL,\r\n  UNIQUE (checklist_id,source_ordinal),\r\n  UNIQUE (checklist_id,sighting_id),\r\n  CHECK (count_value IS NOT NULL OR count_accuracy='unknown'),\r\n  CHECK (interpretation='single' OR (taxon_id IS NULL AND count_value IS NULL)),\r\n  CHECK (count_source <> 'ambiguous_group' OR count_value IS NULL)\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "sites",
+      "sql": "CREATE TABLE sites (\r\n  site_id TEXT NOT NULL PRIMARY KEY,\r\n  site_name TEXT NOT NULL,\r\n  lat REAL CHECK(lat IS NULL OR (typeof(lat) IN ('integer','real') AND lat BETWEEN -90 AND 90)),\r\n  lon REAL CHECK(lon IS NULL OR (typeof(lon) IN ('integer','real') AND lon BETWEEN -180 AND 180)),\r\n  registry_source TEXT NOT NULL,\r\n  registry_revision TEXT NOT NULL,\r\n  source_record_json TEXT NOT NULL CHECK(json_valid(source_record_json)),\r\n  created_at TEXT NOT NULL,\r\n  retired_at TEXT,\r\n  CHECK ((lat IS NULL)=(lon IS NULL))\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "system_state",
+      "sql": "CREATE TABLE system_state (\r\n  id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),\r\n  mode TEXT NOT NULL CHECK (mode IN ('NORMAL','READ_ONLY_MAINTENANCE')),\r\n  generation INTEGER NOT NULL CHECK (typeof(generation)='integer' AND generation >= 0),\r\n  reason TEXT,\r\n  updated_at TEXT NOT NULL\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "taxa",
+      "sql": "CREATE TABLE taxa (\r\n  taxon_id TEXT NOT NULL PRIMARY KEY,\r\n  source_taxon_key TEXT NOT NULL,\r\n  korean_name TEXT,\r\n  scientific_name TEXT,\r\n  taxon_rank TEXT NOT NULL,\r\n  taxonomy_source TEXT NOT NULL,\r\n  taxonomy_version TEXT NOT NULL,\r\n  taxon_status TEXT NOT NULL CHECK(taxon_status IN ('accepted','unresolved','deprecated')),\r\n  created_at TEXT NOT NULL,\r\n  UNIQUE(taxonomy_source,taxonomy_version,source_taxon_key)\r\n)"
+    },
+    {
+      "type": "table",
+      "name": "transaction_assertions",
+      "sql": "CREATE TABLE transaction_assertions (\r\n  assertion_id TEXT NOT NULL PRIMARY KEY,\r\n  ok INTEGER NOT NULL CHECK(ok=1)\r\n)"
+    },
+    {
+      "type": "trigger",
+      "name": "audit_log_no_update",
+      "sql": "CREATE TRIGGER audit_log_no_update BEFORE UPDATE ON audit_log\r\nBEGIN SELECT RAISE(ABORT,'append_only_audit'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "checklists_raw_source",
+      "sql": "CREATE TRIGGER checklists_raw_source BEFORE INSERT ON checklists\r\nWHEN NOT EXISTS (\r\n  SELECT 1 FROM raw_submissions r WHERE r.raw_id=NEW.raw_id AND r.source_id=NEW.source_id\r\n    AND ((NEW.source_type='legacy_reports' AND r.source_type='legacy_reports_snapshot')\r\n      OR (NEW.source_type='native' AND r.source_type='native_submission'))\r\n)\r\nBEGIN SELECT RAISE(ABORT,'raw_source_mismatch'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "checklists_source_immutable",
+      "sql": "CREATE TRIGGER checklists_source_immutable BEFORE UPDATE OF checklist_id,source_type,source_id,raw_id ON checklists\r\nWHEN OLD.checklist_id IS NOT NEW.checklist_id OR OLD.source_type IS NOT NEW.source_type\r\n OR OLD.source_id IS NOT NEW.source_id OR OLD.raw_id IS NOT NEW.raw_id\r\nBEGIN SELECT RAISE(ABORT,'permanent_checklist_source'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_confirmation_live",
+      "sql": "CREATE TRIGGER field_confirmation_live BEFORE INSERT ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM field_updates WHERE id=NEW.field_update_id AND status<>'deleted')\nBEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_deleted_terminal",
+      "sql": "CREATE TRIGGER field_deleted_terminal BEFORE UPDATE ON field_updates\nWHEN OLD.status='deleted' AND NOT(NEW.row_revision=OLD.row_revision+1 AND NEW.id IS OLD.id AND NEW.species IS OLD.species AND NEW.bird_count IS OLD.bird_count AND NEW.status IS OLD.status AND NEW.lat IS OLD.lat AND NEW.lon IS OLD.lon AND NEW.public_lat IS OLD.public_lat AND NEW.public_lon IS OLD.public_lon AND NEW.location_hidden IS OLD.location_hidden AND NEW.nickname IS OLD.nickname AND NEW.note IS OLD.note AND NEW.location_source IS OLD.location_source AND NEW.gps_accuracy IS OLD.gps_accuracy AND NEW.created_at IS OLD.created_at AND NEW.updated_at IS OLD.updated_at AND NEW.last_confirmed_at IS OLD.last_confirmed_at AND NEW.last_activity_at IS OLD.last_activity_at AND NEW.user_hash IS OLD.user_hash AND NEW.ip_hash IS OLD.ip_hash)\nBEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_event_live",
+      "sql": "CREATE TRIGGER field_event_live BEFORE INSERT ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM field_updates WHERE id=NEW.field_update_id AND (status<>'deleted' OR NEW.status='deleted'))\nBEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_update_confirmations_delete",
+      "sql": "CREATE TRIGGER field_freeze_field_update_confirmations_delete BEFORE DELETE ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_update_confirmations_insert",
+      "sql": "CREATE TRIGGER field_freeze_field_update_confirmations_insert BEFORE INSERT ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_update_confirmations_update",
+      "sql": "CREATE TRIGGER field_freeze_field_update_confirmations_update BEFORE UPDATE ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_update_events_delete",
+      "sql": "CREATE TRIGGER field_freeze_field_update_events_delete BEFORE DELETE ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_update_events_insert",
+      "sql": "CREATE TRIGGER field_freeze_field_update_events_insert BEFORE INSERT ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_update_events_update",
+      "sql": "CREATE TRIGGER field_freeze_field_update_events_update BEFORE UPDATE ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_updates_delete",
+      "sql": "CREATE TRIGGER field_freeze_field_updates_delete BEFORE DELETE ON field_updates\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_updates_insert",
+      "sql": "CREATE TRIGGER field_freeze_field_updates_insert BEFORE INSERT ON field_updates\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_freeze_field_updates_update",
+      "sql": "CREATE TRIGGER field_freeze_field_updates_update BEFORE UPDATE ON field_updates\nWHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_revision_advance",
+      "sql": "CREATE TRIGGER field_revision_advance AFTER UPDATE ON field_updates\nWHEN NEW.row_revision=OLD.row_revision\nBEGIN UPDATE field_updates SET row_revision=OLD.row_revision+1 WHERE id=NEW.id AND row_revision=OLD.row_revision; END"
+    },
+    {
+      "type": "trigger",
+      "name": "field_revision_valid",
+      "sql": "CREATE TRIGGER field_revision_valid BEFORE UPDATE ON field_updates\nWHEN typeof(NEW.row_revision)<>'integer' OR OLD.row_revision>=9223372036854775807 OR NEW.row_revision NOT IN(OLD.row_revision,OLD.row_revision+1)\nBEGIN SELECT RAISE(ABORT,'field_revision_invalid'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_field_updates_delete",
+      "sql": "CREATE TRIGGER publication_field_updates_delete AFTER DELETE ON field_updates\nBEGIN\n SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);\n UPDATE public_publication_state SET revision=revision+1 WHERE id=1;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_field_updates_insert",
+      "sql": "CREATE TRIGGER publication_field_updates_insert AFTER INSERT ON field_updates\nBEGIN\n SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);\n UPDATE public_publication_state SET revision=revision+1 WHERE id=1;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_field_updates_update",
+      "sql": "CREATE TRIGGER publication_field_updates_update AFTER UPDATE ON field_updates\nBEGIN\n SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);\n UPDATE public_publication_state SET revision=revision+1 WHERE id=1;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_reports_delete",
+      "sql": "CREATE TRIGGER publication_reports_delete AFTER DELETE ON reports\nBEGIN\n SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);\n UPDATE public_publication_state SET revision=revision+1 WHERE id=1;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_reports_insert",
+      "sql": "CREATE TRIGGER publication_reports_insert AFTER INSERT ON reports\nBEGIN\n SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);\n UPDATE public_publication_state SET revision=revision+1 WHERE id=1;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_reports_update",
+      "sql": "CREATE TRIGGER publication_reports_update AFTER UPDATE ON reports\nBEGIN\n SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);\n UPDATE public_publication_state SET revision=revision+1 WHERE id=1;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_state_permanent",
+      "sql": "CREATE TRIGGER publication_state_permanent BEFORE DELETE ON public_publication_state\nBEGIN SELECT RAISE(ABORT,'publication_state_permanent'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "publication_state_transition",
+      "sql": "CREATE TRIGGER publication_state_transition BEFORE UPDATE ON public_publication_state\nWHEN NEW.id IS NOT OLD.id OR NEW.epoch IS NOT OLD.epoch OR typeof(NEW.revision)<>'integer' OR NEW.revision<>OLD.revision+1\nBEGIN SELECT RAISE(ABORT,'publication_state_transition'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "raw_submissions_no_update",
+      "sql": "CREATE TRIGGER raw_submissions_no_update BEFORE UPDATE ON raw_submissions\r\nBEGIN SELECT RAISE(ABORT,'immutable_raw'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "reports_freeze_insert",
+      "sql": "CREATE TRIGGER reports_freeze_insert BEFORE INSERT ON reports\r\nWHEN NOT EXISTS (SELECT 1 FROM system_state WHERE id = 1 AND mode = 'NORMAL')\r\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "reports_freeze_update",
+      "sql": "CREATE TRIGGER reports_freeze_update BEFORE UPDATE ON reports\r\nWHEN NOT EXISTS (SELECT 1 FROM system_state WHERE id = 1 AND mode = 'NORMAL')\r\nBEGIN SELECT RAISE(ABORT,'reports_write_frozen'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "reviews_no_update",
+      "sql": "CREATE TRIGGER reviews_no_update BEFORE UPDATE ON reviews\r\nBEGIN SELECT RAISE(ABORT,'append_only_review'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "sightings_source_immutable",
+      "sql": "CREATE TRIGGER sightings_source_immutable BEFORE UPDATE OF sighting_id,checklist_id,source_ordinal,species_original ON sightings\r\nWHEN OLD.sighting_id IS NOT NEW.sighting_id OR OLD.checklist_id IS NOT NEW.checklist_id\r\n OR OLD.source_ordinal IS NOT NEW.source_ordinal OR OLD.species_original IS NOT NEW.species_original\r\nBEGIN SELECT RAISE(ABORT,'permanent_sighting_source'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "sites_id_immutable",
+      "sql": "CREATE TRIGGER sites_id_immutable BEFORE UPDATE OF site_id ON sites\r\nWHEN OLD.site_id IS NOT NEW.site_id\r\nBEGIN SELECT RAISE(ABORT,'permanent_site_id'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "system_state_permanent",
+      "sql": "CREATE TRIGGER system_state_permanent BEFORE DELETE ON system_state\r\nBEGIN SELECT RAISE(ABORT,'system_state_permanent'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "system_state_transition",
+      "sql": "CREATE TRIGGER system_state_transition BEFORE UPDATE ON system_state\r\nWHEN NEW.id IS NOT OLD.id OR NEW.mode IS OLD.mode OR NEW.generation IS NOT OLD.generation + 1\r\nBEGIN SELECT RAISE(ABORT,'system_state_transition_invalid'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "taxa_no_update",
+      "sql": "CREATE TRIGGER taxa_no_update BEFORE UPDATE ON taxa\r\nBEGIN SELECT RAISE(ABORT,'versioned_taxon_immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_update_confirmations_delete",
+      "sql": "CREATE TRIGGER writer_fence_field_update_confirmations_delete BEFORE DELETE ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_update_confirmations_insert",
+      "sql": "CREATE TRIGGER writer_fence_field_update_confirmations_insert BEFORE INSERT ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_update_confirmations_update",
+      "sql": "CREATE TRIGGER writer_fence_field_update_confirmations_update BEFORE UPDATE ON field_update_confirmations\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_update_events_delete",
+      "sql": "CREATE TRIGGER writer_fence_field_update_events_delete BEFORE DELETE ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_update_events_insert",
+      "sql": "CREATE TRIGGER writer_fence_field_update_events_insert BEFORE INSERT ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_update_events_update",
+      "sql": "CREATE TRIGGER writer_fence_field_update_events_update BEFORE UPDATE ON field_update_events\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_updates_delete",
+      "sql": "CREATE TRIGGER writer_fence_field_updates_delete BEFORE DELETE ON field_updates\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_updates_insert",
+      "sql": "CREATE TRIGGER writer_fence_field_updates_insert BEFORE INSERT ON field_updates\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_field_updates_update",
+      "sql": "CREATE TRIGGER writer_fence_field_updates_update BEFORE UPDATE ON field_updates\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_reports_delete",
+      "sql": "CREATE TRIGGER writer_fence_reports_delete BEFORE DELETE ON reports\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_reports_insert",
+      "sql": "CREATE TRIGGER writer_fence_reports_insert BEFORE INSERT ON reports\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "writer_fence_reports_update",
+      "sql": "CREATE TRIGGER writer_fence_reports_update BEFORE UPDATE ON reports\nWHEN NOT EXISTS(SELECT 1 FROM publication_writer_claim WHERE id=1 AND ok=1)\nBEGIN SELECT RAISE(ABORT,'publication_writer_required'); END"
+    }
+  ],
+  "reports": [
+    {
+      "id": "synthetic-not-a-user",
+      "status": "approved",
+      "species": "synthetic",
+      "lat": 0,
+      "lon": 0,
+      "public_lat": null,
+      "public_lon": null,
+      "approx_lat": null,
+      "approx_lon": null,
+      "pending_public": 0,
+      "observed_on": "2026-10-14",
+      "received_at": "synthetic",
+      "decided_at": null,
+      "bird_count": null,
+      "reporter": "synthetic",
+      "note": null,
+      "admin_note": null,
+      "site_id": null,
+      "name_public": 0,
+      "spot_key": null,
+      "ip_hash": "synthetic",
+      "dedupe_hash": "synthetic"
+    }
+  ],
+  "field": [
+    {
+      "id": "synthetic-field-not-a-user",
+      "species": "synthetic",
+      "bird_count": null,
+      "status": "not_visible",
+      "lat": 0,
+      "lon": 0,
+      "public_lat": 0,
+      "public_lon": 0,
+      "location_hidden": 0,
+      "nickname": "synthetic",
+      "note": null,
+      "location_source": null,
+      "gps_accuracy": null,
+      "created_at": "synthetic",
+      "updated_at": "synthetic",
+      "last_confirmed_at": null,
+      "last_activity_at": "synthetic",
+      "user_hash": "synthetic",
+      "ip_hash": "synthetic",
+      "row_revision": 1
+    }
+  ],
+  "ledger": [
+    {
+      "name": "0004b_publication_writer_fence.sql"
+    },
+    {
+      "name": "0005_publication_security.sql"
+    }
+  ]
+}

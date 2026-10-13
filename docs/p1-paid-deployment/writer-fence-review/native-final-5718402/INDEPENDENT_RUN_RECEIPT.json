@@ -1,0 +1,39 @@
+{
+  "sourceSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "folder": "native-final-5718402",
+  "exitCode": 0,
+  "summary": {
+    "pass": 13,
+    "fail": 0,
+    "skip": 0
+  },
+  "resultSha256": "fc5cd75604a5f7dcc0db93189530b22309943783ee65067dabf9cd64bed3db6f",
+  "runLogSha256": "e70844239ef42a34c0fde66f211dff866d0cded3411cf60240d05cf018b51824",
+  "matchedBeforeAfterFiles": 28,
+  "changedProductOrHarnessFiles": [],
+  "productEdits": 0,
+  "operatingChanges": 0,
+  "nativeReadMeasure": {
+    "coldRowsRead": 109,
+    "warmRowsRead": 35,
+    "rowsWritten": 0,
+    "claims": 0
+  },
+  "responseLoss": {
+    "id": "N08 request response lost after commit cannot leave claim or replay a write automatically",
+    "status": "PASS",
+    "details": {
+      "commitCompleted": true,
+      "automaticRetry": false
+    }
+  },
+  "successfulMigration": {
+    "id": "N13 successful additive migration retains originals and starts frozen",
+    "status": "PASS",
+    "details": {
+      "originalsUnchanged": true,
+      "frozenInstall": 1,
+      "normalAfterExplicitThaw": true
+    }
+  }
+}

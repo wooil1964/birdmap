@@ -1,0 +1,147 @@
+{
+  "at": "2026-10-13T18:04:08.522904+00:00",
+  "productSha": "57184029864139fcf8603f34b39b0089c33ba9c5",
+  "scope": "Workers Paid sensitivity based on independently rerun exact native local D1 reads. No plan/billing/deployment action or claim of actual account invoice.",
+  "sources": [
+    "https://developers.cloudflare.com/workers/platform/pricing/",
+    "https://developers.cloudflare.com/d1/platform/pricing/"
+  ],
+  "priorModel": "docs/p1-paid-deployment/PAID_MODEL_20261014_v2.json",
+  "nativeEvidence": "writer-fence-review/native-final-5718402/INDEPENDENT_RUN_RECEIPT.json",
+  "exactObservedLocalRows": {
+    "guards": 34,
+    "claims": 0,
+    "warmRowsRead": 35,
+    "coldRowsRead": 109,
+    "rowsWritten": 0,
+    "previousWarmBaseline": 23,
+    "warmDelta": 12,
+    "coldAdditionalOverWarm": 74
+  },
+  "assumptions": {
+    "users": 20,
+    "hoursPerDay": 8,
+    "days": 30,
+    "renewMs": 4750,
+    "requestStartLeaseMs": 5000,
+    "otherWorkersRequestsPerDay": 10000,
+    "ancillaryRequestsPerDay": 3200,
+    "otherD1ReadReservePerDay": 518800,
+    "changesPerDay": 32,
+    "reconnectCountsPerDay": [
+      0,
+      800,
+      3200
+    ],
+    "productTransport": "Existing HTTP. B WebSocket/DO remains production-disabled.",
+    "PaidActuallyVerified": true,
+    "actualAccountMonthlyUsageKnown": false,
+    "PaidVerificationBasis": "Root authenticated visible Current Plan Paid browser receipt; reviewer read-only evidence verification, no billing UI or payment action."
+  },
+  "formulas": {
+    "warmHEADsPerDay": "20*floor(8*3600/4.75)=121260; initial bootstrap remains separately in prior model.",
+    "additionalWarmMonthlyReads": "12*30*guardedAuthoritySnapshotsPerDay",
+    "coldSensitivityAdditional": "74*number of cold snapshots in observed native schema; not a production upper bound.",
+    "guardCallSensitivity": "Lower applies measured delta only to known recurring warm HEADs. Conservative sensitivity applies one guarded snapshot to every prior-model product HTTP invocation except10000/day other-worker reserve. Retries/recovery/multiple snapshots per invocation are excluded and can exceed this sensitivity.",
+    "fee": "5+max(monthlyRequests-10000000,0)*0.30/1000000+max(monthlyCPUms-30000000,0)*0.02/1000000; D1 extra reads0 while total<=25b/month; writes/storage separately."
+  },
+  "scenarios": [
+    {
+      "r": 0,
+      "requestMonth": 5283000,
+      "oldRowsMonth": 151331400,
+      "guardedWarmHeadsPerDay": 121260,
+      "guardedProductCallsPerDaySensitivity": 166100,
+      "additionalWarmHeadOnlyRowsMonth": 43653600,
+      "newWarmHeadOnlyRowsMonth": 194985000,
+      "newEveryProductCallGuardedRowsMonth": 211127400,
+      "coldOverWarmPerObservedFixture": 74,
+      "coldIfEveryProductCallMonthlyExtra": 368742000,
+      "allColdSensitivityRowsMonth": 579869400,
+      "D1IncludedFractionWarmEveryProductCall": 0.008445096,
+      "baselineFeeAvg5msUSD": 5,
+      "baselineFeeAvg10msUSD": 5.4566,
+      "extraJS1msEveryGuardSensitivityFeeAvg5msUSD": 5.02796,
+      "extraJS1msEveryGuardSensitivityFeeAvg10msUSD": 5.55626
+    },
+    {
+      "r": 800,
+      "requestMonth": 5499000,
+      "oldRowsMonth": 163019400,
+      "guardedWarmHeadsPerDay": 121260,
+      "guardedProductCallsPerDaySensitivity": 173300,
+      "additionalWarmHeadOnlyRowsMonth": 43653600,
+      "newWarmHeadOnlyRowsMonth": 206673000,
+      "newEveryProductCallGuardedRowsMonth": 225407400,
+      "coldOverWarmPerObservedFixture": 74,
+      "coldIfEveryProductCallMonthlyExtra": 384726000,
+      "allColdSensitivityRowsMonth": 610133400,
+      "D1IncludedFractionWarmEveryProductCall": 0.009016296,
+      "baselineFeeAvg5msUSD": 5,
+      "baselineFeeAvg10msUSD": 5.4998000000000005,
+      "extraJS1msEveryGuardSensitivityFeeAvg5msUSD": 5.05388,
+      "extraJS1msEveryGuardSensitivityFeeAvg10msUSD": 5.60378
+    },
+    {
+      "r": 3200,
+      "requestMonth": 6147000,
+      "oldRowsMonth": 198083400,
+      "guardedWarmHeadsPerDay": 121260,
+      "guardedProductCallsPerDaySensitivity": 194900,
+      "additionalWarmHeadOnlyRowsMonth": 43653600,
+      "newWarmHeadOnlyRowsMonth": 241737000,
+      "newEveryProductCallGuardedRowsMonth": 268247400,
+      "coldOverWarmPerObservedFixture": 74,
+      "coldIfEveryProductCallMonthlyExtra": 432678000,
+      "allColdSensitivityRowsMonth": 700925400,
+      "D1IncludedFractionWarmEveryProductCall": 0.010729896,
+      "baselineFeeAvg5msUSD": 5.0147,
+      "baselineFeeAvg10msUSD": 5.6294,
+      "extraJS1msEveryGuardSensitivityFeeAvg5msUSD": 5.13164,
+      "extraJS1msEveryGuardSensitivityFeeAvg10msUSD": 5.74634
+    }
+  ],
+  "operatingLimits": {
+    "PaidIncludedWorkerRequestsMonth": 10000000,
+    "PaidIncludedWorkerCPUmsMonth": 30000000,
+    "PaidIncludedD1ReadRowsMonth": 25000000000,
+    "PaidIncludedD1WriteRowsMonth": 50000000,
+    "DOUsage": 0,
+    "free20users8hStrict5sMinimumWorkerRequests": 115200,
+    "FreeEligibility": "Existing strictHTTP5s exceedsFree100000/day and read budget. Paid current plan is now evidenced by authenticated browser; actual monthly usage/CPU remains unmeasured."
+  },
+  "unmeasured": [
+    "Actual Workers billed CPU and account totals; SQL duration/network latency cannot substitute.",
+    "Operating D1 cold schema, schema churn, retries/recovery, new successful/failed writers meta.rows_written.",
+    "Native claim insertion/deletion indexed write cost: at least2rows/writer transaction plus applicable indexes.",
+    "Operating D1 queue/CPU/edgeP99 and real customer concurrency.",
+    "Actual billing-cycle usage,storage,writes,logs,tax and other Worker/D1 totals; Paid plan state only is now verified."
+  ],
+  "changes": "Same35warm/109cold native read results as9f8 after5718402 SQL compatibility change. Previous numerical request/D1/CPU sensitivity unchanged. Root authenticated CurrentPlanPaid evidence now recorded; no plan/payment change by this task.",
+  "localVerification": {
+    "native": {
+      "pass": 13,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    },
+    "CAS": {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0,
+      "exitCode": 0
+    },
+    "beforeAfterTrackedFiles": 28,
+    "changedProductOrHarnessFiles": 0,
+    "operatingChanges": 0
+  },
+  "verdict": "Exact local native target verification PASS and existing Paid plan receipt available; actual account totals/billedCPU/operating migration/deployment remain separate conditions.",
+  "paidVerification": {
+    "receipt": "docs/p1-paid-deployment/PAID_VERIFIED_BROWSER_20261014.json",
+    "sha256": "51e1f29273d09d88e8ba06502329cd76f2ce1b91d2aa437b13a1294309aea2e1",
+    "verified": true,
+    "method": "Authenticated browser visible UI via computer-use; no plan or billing changes",
+    "paymentAction": 0,
+    "billingChanges": 0
+  }
+}
