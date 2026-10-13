@@ -2949,7 +2949,7 @@ var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
 // Renew before the request-start lease boundary; the 5s safety cap is unchanged.
 // Slow responses/timer delays still expire and destructively close all data.
 var PUBLICATION_RENEW_MARGIN_MS=250;
-var publicationState={generation:0,anchor:null,until:0,checkedMono:0,ready:false},publicationHeadPromise=null,publicationExpiryTimer=0,publicationRefreshPromise=null;
+var publicationState={generation:0,anchor:null,until:0,checkedMono:0,ready:false,needsRefresh:true},publicationHeadPromise=null,publicationExpiryTimer=0,publicationRefreshPromise=null;
 var reportPublicSpots={};
 function publicationRevision(value){return typeof value==='string'&&/^(0|[1-9][0-9]{0,18})$/.test(value)&&BigInt(value)<=9223372036854775807n;}
 function publicationNonce(){var bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,function(b){return b.toString(16).padStart(2,'0');}).join('');}
@@ -2968,7 +2968,7 @@ function publicationForgetLayer(layer,map){
  if(map)map.removeLayer(layer);
 }
 function publicationInvalidate(reason){
- publicationState.generation++;publicationState.until=0;publicationState.ready=false;
+ publicationState.generation++;publicationState.until=0;publicationState.ready=false;publicationState.needsRefresh=true;
  if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
  if(typeof fieldGuideStop==='function'&&typeof fieldGuide!=='undefined'&&fieldGuide)fieldGuideStop();
  if(typeof fieldNavChoiceClose==='function')fieldNavChoiceClose();
@@ -3053,14 +3053,19 @@ function publicationFetch(path){
 }
 function publicationRefresh(){
  if(publicationRefreshPromise)return publicationRefreshPromise;
+ var generation=publicationState.generation;
  var tasks=[loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()];
  if(typeof recentTab!=='undefined'&&recentTab==='contributors')tasks.push(loadContributors());
- var pending=Promise.allSettled(tasks);
+ var pending=Promise.allSettled(tasks).then(function(results){
+  // A single endpoint may renew permission but cannot complete all cleared lists.
+  if(generation===publicationState.generation&&publicationAllowed()&&results.slice(0,4).every(function(r){return r.status==='fulfilled'&&r.value===true;}))publicationState.needsRefresh=false;
+  return results;
+ });
  publicationRefreshPromise=pending;pending.then(function(){if(publicationRefreshPromise===pending)publicationRefreshPromise=null;});return pending;
 }
 function publicationRecheck(){
  if(!reportsConfigured()||document.hidden)return Promise.resolve(false);
- return publicationHead().then(function(head){if(publicationState.ready){if(!publicationRenew(head))return false;if(typeof fieldLayer!=='undefined'&&fieldLayer)renderFieldMarkers();return true;}return publicationRefresh();}).catch(function(){return false;});
+ return publicationHead().then(function(head){if(publicationState.ready){if(!publicationRenew(head))return false;if(typeof fieldLayer!=='undefined'&&fieldLayer)renderFieldMarkers();return publicationState.needsRefresh?publicationRefresh():true;}return publicationRefresh();}).catch(function(){return false;});
 }
 function publicationRouteCheck(fn){
  return publicationHead(true).then(function(head){if(!publicationState.ready){publicationRefresh();return false;}if(!publicationRenew(head)||!publicationAllowed())return false;return fn()!==false;}).catch(function(){return false;});
