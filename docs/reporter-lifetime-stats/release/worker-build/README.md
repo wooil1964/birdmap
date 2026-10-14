@@ -1,0 +1,1 @@
+This folder contains the built output assets for the worker "birdmap-reports" generated at 2026-10-14T01:17:13.893Z.

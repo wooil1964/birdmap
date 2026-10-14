@@ -1,0 +1,92 @@
+{
+  "at": "2026-10-14T01:14:50.174531+00:00",
+  "source": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "verdict": "READONLY_PREFLIGHT_PASS",
+  "normalPublic": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+  "normalAdmin": "a7723404-a3c2-4739-91ff-44049e1302cb",
+  "publicMaintenance": "7e398695-aad7-4e58-962c-034513776960",
+  "adminMaintenance": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+  "preflight": {
+    "pass": 3,
+    "fail": 0,
+    "notRun": 0
+  },
+  "liveReadOnly": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0
+  },
+  "protection": {
+    "main": "1bac2450d408d949249ad5170dceee594ab19a0a",
+    "protected": false,
+    "classicProtectionHttp": 404,
+    "rulesetsHttp": 200,
+    "applicableRulesHttp": 200,
+    "activeRulesetCount": 0,
+    "applicableRuleTypes": [],
+    "requiredReviewCount": 0,
+    "requiredContexts": [],
+    "pages": {
+      "status": "built",
+      "build_type": "legacy",
+      "source": {
+        "branch": "main",
+        "path": "/"
+      },
+      "https_enforced": true,
+      "html_url": "https://wooil1964.github.io/birdmap/"
+    },
+    "featurePRs": [
+      {
+        "number": 22,
+        "draft": true,
+        "state": "open",
+        "head": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+        "base": "1bac2450d408d949249ad5170dceee594ab19a0a"
+      }
+    ]
+  },
+  "d1": {
+    "database": "b48201cc-0abd-4a64-bb61-9dd2a7813d21",
+    "system": {
+      "id": 1,
+      "mode": "NORMAL",
+      "generation": 4
+    },
+    "publication": {
+      "epoch": "d062b1684fedee0da8ca30fa8364e635",
+      "revision": "1",
+      "revisionType": "integer",
+      "write_frozen": 0,
+      "claims": 0
+    },
+    "guardCount": 34,
+    "guardsExact": true,
+    "countsOnly": {
+      "reports": 74,
+      "fieldUpdates": 3,
+      "fieldEvents": 9,
+      "fieldConfirmations": 0
+    },
+    "reportsRequiredColumnsPresent": true,
+    "canonicalSchemaFingerprint": "76b07a469650dd96be326daf3bbb711922d30fd343624efe3422b67caab0ceb0",
+    "privateRecordReads": 0
+  },
+  "rowsWritten": 0,
+  "privateDataRowsRead": 0,
+  "gateSecretValueReadOrLogged": false,
+  "rollback": "Public-only feature rollback to currently active protective v4 normal version is compatible with unchanged admin and P1 D1 state. New endpoint404 verified; source catches unavailable state without cached counts. Existing protected Pages source cb3dd3b2 preserves P1 guard; current automatic JSON must be kept. Never reset epoch/revision or use legacy pre-P1 code.",
+  "harnessFailurePreserved": "PREFLIGHT.json/first.log first failure was Python JSON key order versus actual JS stable() object sorting. Exact expected fingerprint unchanged; repaired comparison PASS.",
+  "files": {
+    "first-exit.txt": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "first.log": "9f9bdb59c9cb19c2460d875eb5e17157ebfa924f5f7cdb1967f6b95a7c97bc60",
+    "FIRST_FAILURE_CLASSIFICATION.json": "5d3e8078c927fe03e50355658b5118c149fcf987ffe51f5ce2ed4ede758d60bd",
+    "LIVE_GATE_READONLY.json": "28dc21a97758fd07bdc3d36c1c1875a43610073b30c82b7b50650834b60af2e4",
+    "PREFLIGHT.json": "5d137135309eb1ee765338cbe5862966a02968bfb0bf9947d6479e951341f56a",
+    "preflight_readonly.py": "b2f7737096219011218825535c0d23699835885fb783d4d6bec95d5c5fde6cab",
+    "preflight_readonly_v2.py": "9de8f10c0596249057a31749ec0c82ded6ef6336a4d92e7ead56a8847d776878",
+    "PREFLIGHT_REPAIRED.json": "30dcfbb0cc0453007faddd693a49760a31e6f0a0f5c132d0977560be057b41b7",
+    "repaired-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "repaired.log": "f1b019e01ec077033b6c320f434973c916456b0aafd831722f4d9f85e941ab29"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-10-14T01:18:28.756401+00:00",
+  "rows": [
+    {
+      "id": "public-source-1",
+      "pass": true,
+      "onlyTwoCounts": true,
+      "primarySQLCountsMatch": true,
+      "noStore": true,
+      "nonceAndPostflight": true,
+      "cors": true
+    },
+    {
+      "id": "public-source-2",
+      "pass": true,
+      "onlyTwoCounts": true,
+      "primarySQLCountsMatch": true,
+      "noStore": true,
+      "nonceAndPostflight": true,
+      "cors": true
+    },
+    {
+      "id": "public-source-3",
+      "pass": true,
+      "onlyTwoCounts": true,
+      "primarySQLCountsMatch": true,
+      "noStore": true,
+      "nonceAndPostflight": true,
+      "cors": true
+    },
+    {
+      "id": "public-source-4",
+      "pass": true,
+      "onlyTwoCounts": true,
+      "primarySQLCountsMatch": true,
+      "noStore": true,
+      "nonceAndPostflight": true,
+      "cors": true
+    },
+    {
+      "id": "public-source-5",
+      "pass": true,
+      "onlyTwoCounts": true,
+      "primarySQLCountsMatch": true,
+      "noStore": true,
+      "nonceAndPostflight": true,
+      "cors": true
+    },
+    {
+      "id": "legacy-without-contract",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "id": "unknown-source-generic",
+      "pass": true,
+      "status": 404
+    },
+    {
+      "id": "wrong-revision-denied",
+      "pass": true,
+      "status": 409
+    },
+    {
+      "id": "existing-approved-compatible",
+      "pass": true
+    },
+    {
+      "id": "existing-field-compatible",
+      "pass": true
+    }
+  ],
+  "pass": 10,
+  "fail": 0,
+  "realUserMutations": 0,
+  "D1RowsWritten": 0,
+  "privatePayloadPersisted": false,
+  "limit": "Actual revocation/deletion user actions are not performed; atomicity/CAS validated on synthetic native D1."
+}

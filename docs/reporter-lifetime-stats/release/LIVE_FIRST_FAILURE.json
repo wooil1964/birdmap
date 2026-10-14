@@ -1,0 +1,9 @@
+{
+  "stage": "head immediately after activation",
+  "exit": 1,
+  "result": "NOT_PASS",
+  "error": "HTTP non-JSON response followed by JSONDecodeError before any stats query",
+  "classification": "Transient transport/provider response; exact HTTP code not captured in first harness. Subsequent explicit readonly audit UA HEAD returned200 valid publication/no-store. Hardened HTTP error parsing and retry new receipt.",
+  "D1Writes": 0,
+  "privatePayloadPersisted": false
+}

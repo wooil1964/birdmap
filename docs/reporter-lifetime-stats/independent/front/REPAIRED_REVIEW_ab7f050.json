@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "indexSha256": "925ad597b136dc82ce11415e0aecc475fdfdd57554eb5f57fe8ec57b4b1d42c1",
+  "role": "Independent frontend source/security reviewer",
+  "productWrites": 0,
+  "productionRequests": 0,
+  "probe": {
+    "exit": 0,
+    "skip": 0,
+    "command": "node docs/reporter-lifetime-stats/independent/front/site_history_repaired_readonly_probe.mjs",
+    "fail": 0,
+    "pass": 11
+  },
+  "findings": [
+    {
+      "evidence": "Recent/search div rows now own sibling native map and nickname buttons; no active product reporterStatsElement inline=true calls.",
+      "id": "FRONT-1",
+      "status": "Source fix accepted"
+    },
+    {
+      "evidence": "P1-only live and closed marker popup history DOM cleared; loaded array aliases emptied; initial/More application generation guards and connected/current-authority render checks.",
+      "id": "FRONT-2",
+      "status": "Actual-function synthetic probe passed"
+    }
+  ],
+  "contracts": [
+    "Raw HTTP/endpoint cache not used",
+    "Primary nonce fresh pre/postflight contract reused",
+    "Counts-only strict numeric DTO",
+    "Consent source witness remains server authority",
+    "Public nickname escapes and textContent retained",
+    "Owner removal and late reply do not reopen modal",
+    "Escape priority, own Tab trap, parent modal body class preserved",
+    "Static profile and site coordinates not modified by purge"
+  ],
+  "limits": [
+    "This independent agent did not rerun the full frontend suite or Chrome; root handles exact-SHA five-width Chrome and full regression.",
+    "Historical pre-alias browser/final index hash differs from repaired committed source and must not be attributed to exact ab7f050.",
+    "No production API, account or real data was accessed."
+  ],
+  "verdict": "Frontend source changes and independent targeted actual-function probes accepted; release remains subject to exact-SHA Chrome/full integration gates."
+}

@@ -1,0 +1,171 @@
+{
+  "at": "2026-10-14T01:12:14.796753+00:00",
+  "source": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "scope": {
+    "readOnly": true,
+    "operatingD1Writes": 0,
+    "versionUploads": 0,
+    "workerDeployments": 0,
+    "mainMerges": 0,
+    "privatePayloadSaved": false,
+    "credentialsLogged": false
+  },
+  "checks": [
+    {
+      "id": "actual-v4-public-admin-and-standbys",
+      "status": "PASS",
+      "publicOnlyReleaseCompatible": true
+    }
+  ],
+  "errors": [
+    {
+      "type": "AssertionError",
+      "httpCode": null,
+      "detailsRedacted": true
+    }
+  ],
+  "standbys": [
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "normal",
+      "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "maintenance",
+      "versionId": "7e398695-aad7-4e58-962c-034513776960",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "normal",
+      "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "maintenance",
+      "versionId": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    }
+  ],
+  "active": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "798600be-ca51-48e0-9fe7-ed6df0aa1383",
+      "versions": [
+        {
+          "version_id": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "9470f6a3-db3d-4a95-bf8c-562a59d4e064",
+      "versions": [
+        {
+          "version_id": "a7723404-a3c2-4739-91ff-44049e1302cb",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "rolloutBindings": [
+    {
+      "role": "public",
+      "REPORTS_SCHEMA_VERSION": "phase2a-0001",
+      "REPORTS_ACTIVATION_ID": "phase2e-cutover-1",
+      "REPORTS_PUBLICATION_REQUIRED": "true",
+      "REPORTS_WRITE_MODE": "CANONICAL_DUAL_WRITE",
+      "REPORTS_DUAL_WRITE_ENABLED": "true",
+      "REPORTS_CONFIRMATION_REQUIRED": "true",
+      "REPORTS_REMOTE_VERIFIED": "true",
+      "ENVIRONMENT": "production",
+      "REPORTS_RELEASE_ID": "public-phase2e-1",
+      "REPORTS_PEER_RELEASE_ID": "admin-phase2e-1",
+      "gateSecretPresent": true,
+      "opsDisabled": true
+    },
+    {
+      "role": "admin",
+      "REPORTS_SCHEMA_VERSION": "phase2a-0001",
+      "REPORTS_ACTIVATION_ID": "phase2e-cutover-1",
+      "REPORTS_PUBLICATION_REQUIRED": "true",
+      "REPORTS_WRITE_MODE": "CANONICAL_DUAL_WRITE",
+      "REPORTS_DUAL_WRITE_ENABLED": "true",
+      "REPORTS_CONFIRMATION_REQUIRED": "true",
+      "REPORTS_REMOTE_VERIFIED": "true",
+      "ENVIRONMENT": "production",
+      "REPORTS_RELEASE_ID": "admin-phase2e-1",
+      "REPORTS_PEER_RELEASE_ID": "public-phase2e-1",
+      "gateSecretPresent": true,
+      "opsDisabled": true
+    }
+  ],
+  "d1ReadMetadata": [
+    {
+      "rows_read": 149,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 1,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 1,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 86,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 0,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 142,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    }
+  ],
+  "status": "FAIL",
+  "summary": {
+    "pass": 1,
+    "fail": 1,
+    "notRun": 0
+  }
+}

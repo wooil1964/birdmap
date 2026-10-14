@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-14T01:14:13.383Z",
+  "status": "PASS",
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "skip": 0
+  },
+  "rows": [
+    {
+      "id": "public-v4-capability",
+      "status": "PASS",
+      "http": 200,
+      "maintenance": false,
+      "nonBreeding": true
+    },
+    {
+      "id": "actual-nonce-primary-publication",
+      "status": "PASS",
+      "http": 200,
+      "revision": "1",
+      "nonceEcho": true,
+      "cacheControl": "no-store"
+    },
+    {
+      "id": "prior-normal-roll-back-missing-new-endpoint",
+      "status": "PASS",
+      "http": 404,
+      "errorCode": "NOT_FOUND",
+      "statsDisclosed": false,
+      "requestUsedOnlySyntheticName": true,
+      "frontendMeaning": "New openReporterStats catch displays unavailable with reporterStatsData null. Prior rollback retains P1 guards; no identity or report lookup succeeded."
+    }
+  ],
+  "errorType": null,
+  "scope": {
+    "method": "GET only",
+    "productionWrites": 0,
+    "privateReportReads": 0,
+    "userNicknamesOrCoordinatesLogged": false,
+    "changesToWorkersOrD1": false
+  }
+}

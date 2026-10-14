@@ -1,0 +1,111 @@
+{
+  "result": "PASS_FINAL_SOURCE_ACCEPTANCE",
+  "reviewedCandidate": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "serverSourcePreviouslyExecuted": "e2603e0f4236fa74755ba8b7c11b211ef1603dbc",
+  "sourceBefore": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "sourceAfter": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "publicationSha256": "013734a44b428d8c20253351829464848bb5ae58fac15d0a6d7547c55c0a149e",
+  "serverSourceTestsSchemaDiff": 0,
+  "independentPreviouslyExecuted": {
+    "ciDiscoveryPass": 322,
+    "extraNativePass": 10,
+    "helperFileChecks": 2,
+    "behavioralCases": 320,
+    "skip": 0,
+    "fail": 0
+  },
+  "rootFinalManifestSHA": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "rootFinalLogHashes": [
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {
+        "tests": 395,
+        "pass": 395,
+        "fail": 0,
+        "skipped": 0
+      },
+      "name": "front"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {
+        "tests": 322,
+        "pass": 322,
+        "fail": 0,
+        "skipped": 0
+      },
+      "name": "api"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {
+        "tests": 36,
+        "pass": 36,
+        "fail": 0,
+        "skipped": 0
+      },
+      "name": "proxy"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "weather"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "time"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "tide"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "share"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "chrome"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "reporter-chrome"
+    },
+    {
+      "hashMatches": true,
+      "exit": 0,
+      "nodeCounts": {},
+      "name": "signatures"
+    }
+  ],
+  "cors": "Unchanged common Origin gate precedes publication dispatch; exact production-origin response, Vary Origin, no wildcard",
+  "cache": "Success/errors use shared no-store; new primary-batch response and client no-store/preflight/fresh-postflight unchanged",
+  "legacyCompatibility": {
+    "rollbackOrder": "Protected Pages baseline first, then protected previous public Worker if needed; do not use pre-P1 Worker",
+    "oldPagesNewWorker": "Existing endpoints and projections unchanged; old frontend ignores new route; no DB/admin change",
+    "newPagesOldProtectedWorker": "New path returns generic404; publicationFetch fails closed and clears modal without exposing numbers; existing refresh can restore verified core data"
+  },
+  "security": "No private-name oracle or unprotected bulk/name search found. Source witness is membership, not a secret credential. No operating requests performed by this audit.",
+  "newFrontendDelta": "Root repaired stale site-history DOM/loaded alias, permission/generation final render checks and nested interactive buttons; server blob unchanged; five-width browser execution is root evidence, independently hash-verified logs only here.",
+  "remainingReleaseGates": [
+    "Exact final CI",
+    "Actual protective rollback versions",
+    "Worker-first deployment then Pages",
+    "Actual postdeployment read-only verification"
+  ],
+  "executedAt": "2026-10-14T10:13:18.3230206+09:00"
+}

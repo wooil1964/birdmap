@@ -1,0 +1,236 @@
+{
+  "at": "2026-10-14T01:13:14.174109+00:00",
+  "source": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "scope": {
+    "readOnly": true,
+    "operatingD1Writes": 0,
+    "versionUploads": 0,
+    "workerDeployments": 0,
+    "mainMerges": 0,
+    "privatePayloadSaved": false,
+    "credentialsLogged": false
+  },
+  "checks": [
+    {
+      "id": "actual-v4-public-admin-and-standbys",
+      "status": "PASS",
+      "publicOnlyReleaseCompatible": true
+    },
+    {
+      "id": "schema-epoch-revision-terminal-CAS-fence-unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "github-release-protection-and-pages-metadata-read",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "standbys": [
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "normal",
+      "versionId": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports",
+      "role": "public",
+      "mode": "maintenance",
+      "versionId": "7e398695-aad7-4e58-962c-034513776960",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "normal",
+      "versionId": "a7723404-a3c2-4739-91ff-44049e1302cb",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "role": "admin",
+      "mode": "maintenance",
+      "versionId": "11e97856-990e-4a17-9c28-f18cf92ca46d",
+      "previewOff": true,
+      "publicationRequired": true,
+      "operatingD1BindingVerified": true,
+      "peerVerified": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    }
+  ],
+  "active": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "798600be-ca51-48e0-9fe7-ed6df0aa1383",
+      "versions": [
+        {
+          "version_id": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "9470f6a3-db3d-4a95-bf8c-562a59d4e064",
+      "versions": [
+        {
+          "version_id": "a7723404-a3c2-4739-91ff-44049e1302cb",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "rolloutBindings": [
+    {
+      "role": "public",
+      "REPORTS_SCHEMA_VERSION": "phase2a-0001",
+      "REPORTS_ACTIVATION_ID": "phase2e-cutover-1",
+      "REPORTS_PUBLICATION_REQUIRED": "true",
+      "REPORTS_WRITE_MODE": "CANONICAL_DUAL_WRITE",
+      "REPORTS_DUAL_WRITE_ENABLED": "true",
+      "REPORTS_CONFIRMATION_REQUIRED": "true",
+      "REPORTS_REMOTE_VERIFIED": "true",
+      "ENVIRONMENT": "production",
+      "REPORTS_RELEASE_ID": "public-phase2e-1",
+      "REPORTS_PEER_RELEASE_ID": "admin-phase2e-1",
+      "gateSecretPresent": true,
+      "opsDisabled": true
+    },
+    {
+      "role": "admin",
+      "REPORTS_SCHEMA_VERSION": "phase2a-0001",
+      "REPORTS_ACTIVATION_ID": "phase2e-cutover-1",
+      "REPORTS_PUBLICATION_REQUIRED": "true",
+      "REPORTS_WRITE_MODE": "CANONICAL_DUAL_WRITE",
+      "REPORTS_DUAL_WRITE_ENABLED": "true",
+      "REPORTS_CONFIRMATION_REQUIRED": "true",
+      "REPORTS_REMOTE_VERIFIED": "true",
+      "ENVIRONMENT": "production",
+      "REPORTS_RELEASE_ID": "admin-phase2e-1",
+      "REPORTS_PEER_RELEASE_ID": "public-phase2e-1",
+      "gateSecretPresent": true,
+      "opsDisabled": true
+    }
+  ],
+  "d1ReadMetadata": [
+    {
+      "rows_read": 149,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 1,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 1,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 86,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 0,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 142,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    }
+  ],
+  "d1": {
+    "database": "b48201cc-0abd-4a64-bb61-9dd2a7813d21",
+    "system": {
+      "id": 1,
+      "mode": "NORMAL",
+      "generation": 4
+    },
+    "publication": {
+      "epoch": "d062b1684fedee0da8ca30fa8364e635",
+      "revision": "1",
+      "revisionType": "integer",
+      "write_frozen": 0,
+      "claims": 0
+    },
+    "guardCount": 34,
+    "guardsExact": true,
+    "countsOnly": {
+      "reports": 74,
+      "fieldUpdates": 3,
+      "fieldEvents": 9,
+      "fieldConfirmations": 0
+    },
+    "reportsRequiredColumnsPresent": true,
+    "canonicalSchemaFingerprint": "76b07a469650dd96be326daf3bbb711922d30fd343624efe3422b67caab0ceb0",
+    "privateRecordReads": 0
+  },
+  "github": {
+    "main": "1bac2450d408d949249ad5170dceee594ab19a0a",
+    "protected": false,
+    "classicProtectionHttp": 404,
+    "rulesetsHttp": 200,
+    "applicableRulesHttp": 200,
+    "activeRulesetCount": 0,
+    "applicableRuleTypes": [],
+    "requiredReviewCount": 0,
+    "requiredContexts": [],
+    "pages": {
+      "status": "built",
+      "build_type": "legacy",
+      "source": {
+        "branch": "main",
+        "path": "/"
+      },
+      "https_enforced": true,
+      "html_url": "https://wooil1964.github.io/birdmap/"
+    },
+    "featurePRs": [
+      {
+        "number": 22,
+        "draft": true,
+        "state": "open",
+        "head": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+        "base": "1bac2450d408d949249ad5170dceee594ab19a0a"
+      }
+    ]
+  },
+  "rollback": {
+    "publicNormalVersion": "f1f24698-8388-4f36-ae31-38f2dd8e9446",
+    "publicMaintenanceVersion": "7e398695-aad7-4e58-962c-034513776960",
+    "unchangedAdminVersion": "a7723404-a3c2-4739-91ff-44049e1302cb",
+    "newEndpoint404IsFailClosed": true,
+    "meaning": "Prior verified P1 v4 source retains privacy/CAS/nonce/freshness guards. Missing lifetime endpoint removes feature only; frontend must display unverified/error without cached stats. Existing protected Pages rollback source cb3dd3b2 plus current auto JSON. No epoch/revision/user data restore."
+  },
+  "status": "PASS",
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "notRun": 0
+  }
+}

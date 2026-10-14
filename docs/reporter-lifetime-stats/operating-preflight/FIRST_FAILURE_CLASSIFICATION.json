@@ -1,0 +1,8 @@
+{
+  "status": "HARNESS_CONTRACT_MISMATCH",
+  "productFailure": false,
+  "firstReceipt": "PREFLIGHT.json",
+  "cause": "Python schema fingerprint omitted sorted object keys required by actual product stable(value). No schema mutation.",
+  "actualProductFunction": "reports-api/src/canonical/data.js stable/fingerprint",
+  "repair": "Use sorted JSON object keys; preserve whitespace normalization and the exact published expected fingerprint. No test assertion removed."
+}
