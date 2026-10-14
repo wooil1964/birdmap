@@ -1,0 +1,41 @@
+{
+  "checkedCommit": "e2603e0f4236fa74755ba8b7c11b211ef1603dbc",
+  "indexSha256": "aa7be0f7dc1db7ff5b7f0a86e50a5b7cb96188d4e60f00516feb859d394f4c1c",
+  "method": "Read-only source diff and actual publicationInvalidate extraction executed with synthetic DOM in Node vm",
+  "productionRequests": 0,
+  "productWrites": 0,
+  "fullTestsRerun": 0,
+  "soundContracts": [
+    "publicationFetch fresh authority and nonce pre/postflight reused",
+    "Explicit request and generation checks",
+    "Connected owner plus MutationObserver and Leaflet popupclose",
+    "P1 barrier closes stats modal and clears counts/owner references",
+    "Only numeric counts accepted; unexpected API private fields rejected",
+    "HTML species/nickname escaping and textContent",
+    "Counts modal own Tab trap and Escape priority; parent monthTideOpen retained"
+  ],
+  "findings": [
+    {
+      "id": "FRONT-1",
+      "severity": "quality",
+      "scope": "new",
+      "description": "Recent/search outer native buttons contain span role=button tabindex=0; nested interactive/tabindex button descendants violate accessible HTML",
+      "required": "Use sibling accessible nickname button and existing map button in noninteractive row wrapper; retain keyboard nickname behavior",
+      "runtimeChrome": "Pending root new harness"
+    },
+    {
+      "id": "FRONT-2",
+      "severity": "privacy",
+      "scope": "pre-existing directly affected by new source buttons",
+      "description": "publicationInvalidate does not clear visible static siteHistoryBox names, new data-reporter attributes or _birdmapLoaded",
+      "syntheticActualFunction": {
+        "siteHistoryLoadedReferencesSurvive": true,
+        "siteHistoryNameDOMSurvives": true,
+        "publicationClosed": true
+      },
+      "required": "Destructively clear dynamic site-history DOM and loaded references while keeping static profile/coordinates. Guard late history writes against invalid publication/context",
+      "runtimeChrome": "Pending root new harness"
+    }
+  ],
+  "completed": "Source review completed; fixes and actual Chrome confirmation required"
+}

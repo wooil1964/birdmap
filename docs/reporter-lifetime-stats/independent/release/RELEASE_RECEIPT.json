@@ -1,0 +1,116 @@
+{
+  "at": "2026-10-14T01:02:25.905Z",
+  "status": "PASS",
+  "sourceBefore": "e2603e0f4236fa74755ba8b7c11b211ef1603dbc",
+  "sourceAfter": "e2603e0f4236fa74755ba8b7c11b211ef1603dbc",
+  "reviewer": "reporter_release_review",
+  "commands": [
+    {
+      "id": "native-fence",
+      "command": "node docs/p1-paid-deployment/writer-fence-review/native_fence.mjs . docs/reporter-lifetime-stats/independent/release/native-fence C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules",
+      "exitCode": 0,
+      "pass": 13,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "id": "native-cas",
+      "command": "node docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs . docs/reporter-lifetime-stats/independent/release/native-cas C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules",
+      "exitCode": 0,
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "id": "fixed-signature",
+      "command": "node .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "exitCode": 0,
+      "conditions": {
+        "withSightings": {
+          "siteCount": 190,
+          "candidates": 176,
+          "signature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+          "allSignatureEqual": true,
+          "top10Exact": true,
+          "unsafeCount": 0
+        },
+        "withoutSightings": {
+          "siteCount": 190,
+          "candidates": 176,
+          "signature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+          "allSignatureEqual": true,
+          "top10Exact": true,
+          "unsafeCount": 0
+        }
+      }
+    }
+  ],
+  "nativeSummary": {
+    "pass": 23,
+    "fail": 0,
+    "skip": 0
+  },
+  "signatures": {
+    "head": "e2603e0f4236fa74755ba8b7c11b211ef1603dbc",
+    "baseline": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+    "clock": "2026-10-08T22:40:00+09:00",
+    "weekGeneratedAt": "2026-10-08 21:04 KST",
+    "conditions": {
+      "withSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      },
+      "withoutSightings": {
+        "siteCount": 190,
+        "candidates": 176,
+        "signature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+        "allSignatureEqual": true,
+        "top10Exact": true,
+        "unsafeCount": 0
+      }
+    }
+  },
+  "integrity": {
+    "unchangedGitFiles": 21,
+    "staticAllFieldsExact": true,
+    "siteCount": 190,
+    "fixedSpots": 3,
+    "coordinatesSHA256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89"
+  },
+  "preservedHarnessFailure": {
+    "file": "INTEGRITY_FIRST_FAILURE.json",
+    "cause": "LF Git blob versus CRLF checkout; independently verified identical text and exact baseline/product Git blobs; no product regression."
+  },
+  "scope": {
+    "productionAPIRequests": 0,
+    "operatingD1Writes": 0,
+    "productEdits": 0,
+    "fullCIRepeated": 0,
+    "pushes": 0,
+    "merge": 0
+  },
+  "runtime": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha",
+    "workers": "local ephemeral synthetic D1 only"
+  },
+  "files": {
+    "source-before.txt": "0bd4e51840f6dc25c9f08af31af258e61c979fd47bd960a807786c469402d9ec",
+    "status-before.txt": "c7f8b043d45e3acc584bbf324b7a4ba915e79659b20d4bc4330ec8dd3e580ea8",
+    "native-fence.log": "e70844239ef42a34c0fde66f211dff866d0cded3411cf60240d05cf018b51824",
+    "native-fence-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "native-fence/NATIVE_FENCE.json": "70de81c74c0935892f0cec605ad15ae87c1b6ddd5fe30779ac8d910833a0d59b",
+    "native-cas.log": "b96e51f5859cf5767eb47bfee503f1923c36556883fc75626803010a104ee3a0",
+    "native-cas-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "native-cas/NATIVE_MUTATIONS.json": "eceb9b6defeccc7e8f04490e788aba2d96743cd389ed504b5ae0b9093c01223e",
+    "SIGNATURES.json": "01116ed90fd0887b879a25fdfc4eabc925c40b32694aedc396b625da502fcb94",
+    "signatures-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "signatures-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "INTEGRITY_FIRST_FAILURE.json": "02e1670347eac618785ca9acf8b26c9557570615cd17d76b91d38b2b718524a5",
+    "INTEGRITY_PROOF.json": "06c620643e5d471f30e64979233c890a71244e7fd39fa4b5d81fc9e0a58d9221"
+  }
+}

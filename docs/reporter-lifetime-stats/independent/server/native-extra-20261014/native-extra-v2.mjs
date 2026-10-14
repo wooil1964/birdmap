@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+const root=process.cwd();
+const mod=p=>import(pathToFileURL(resolve(root,p)));
+const {handleRequest}=await mod('reports-api/src/public.js');
+const {fakeDb,publicEnv,ORIGIN}=await mod('reports-api/test/helpers.mjs');
+const sourceHash=createHash('sha256').update(readFileSync(resolve(root,'reports-api/src/publication.js'))).digest('hex');
+const A='11111111-1111-4111-8111-111111111111',B='22222222-2222-4222-8222-222222222222',C='33333333-3333-4333-8333-333333333333';
+const row=(id,species,extra={})=>({id,status:'approved',name_public:1,reporter:'SYNTHETIC',species,lat:0,lon:0,observed_on:'2026-10-02',...extra});
+const e=publicEnv(fakeDb([row(A,'A · B'),row(B,'B · C'),row(C,'PRIVATE',{name_public:0,reporter:'PRIVATE_NICKNAME'}),row('hidden','HIDDEN',{reporter:'SYNTHETIC ',public_lat:1,public_lon:1})]),{REPORTS_PUBLICATION_REQUIRED:'true'});
+const nonce='e'.repeat(32);let checks=[];
+const call=async(p,headers=ORIGIN)=>{const r=await handleRequest(new Request('https://reports.example'+p,{headers}),e);return {status:r.status,body:await r.json(),cache:r.headers.get('Cache-Control')};};
+const head=()=>call('/reports/public-state?nonce='+nonce);
+async function statsPath(extra={}){const h=await head();return '/reports/reporter-stats?'+new URLSearchParams({contract:'publication-v1',nonce,expectedEpoch:h.body.publication.epoch,expectedRevision:h.body.publication.revision,reporter:'SYNTHETIC',source:'history',reportId:A,...extra});}
+function passed(id,fn){fn();checks.push(id);}
+const normal=await call(await statsPath());passed('native literal SQL distinct',()=>assert.deepEqual([normal.status,normal.body.speciesCount,normal.body.reportCount],[200,3,2]));
+passed('only two numeric fields plus permission metadata',()=>assert.deepEqual(Object.keys(normal.body).sort(),['publication','reportCount','serverTime','speciesCount']));
+passed('native exact BINARY trailing name is separate',()=>assert.equal(normal.body.reportCount,2));
+const unknown=await call(await statsPath({reporter:'NONEXISTENT'})),privateName=await call(await statsPath({reporter:'PRIVATE_NICKNAME'}));passed('uniform absent/private result',()=>assert.deepEqual(unknown,privateName));
+const currentBefore=await statsPath();const base=e.REPORTS_DB;let mutation=true;
+e.REPORTS_DB={prepare:base.prepare.bind(base),withSession(mode){assert.equal(mode,'first-primary');return this;},async batch(list){if(mutation){mutation=false;await base.prepare('UPDATE reports SET name_public=0 WHERE id=?').bind(A).run();}return base.batch(list);}};
+const raced=await call(currentBefore);passed('mutation after HEAD before actual batch',()=>assert.equal(raced.status,409));
+const oldWitness=await call(await statsPath());passed('revoked specific witness cannot use other same-name approved row',()=>assert.equal(oldWitness.status,404));
+const otherWitness=await call(await statsPath({reportId:B}));passed('other valid public witness yields remaining row only',()=>assert.deepEqual([otherWitness.status,otherWitness.body.speciesCount,otherWitness.body.reportCount],[200,2,1]));
+await base.prepare('UPDATE reports SET name_public=1 WHERE id=?').bind(A).run();
+const oldRevision=await statsPath();await base.prepare("UPDATE reports SET status='rejected' WHERE id=?").bind(B).run();
+const rejectedOld=await call(oldRevision);passed('status transition invalidates old revision',()=>assert.equal(rejectedOld.status,409));
+const fresh=await call(await statsPath());passed('rejection removes report and unique species',()=>assert.deepEqual([fresh.status,fresh.body.speciesCount,fresh.body.reportCount],[200,2,1]));
+const before=JSON.stringify(base.rows);const final=await call(await statsPath());passed('read is record-preserving and no-store',()=>{assert.equal(JSON.stringify(base.rows),before);assert.equal(final.cache,'no-store');});
+console.log(JSON.stringify({sourceHash,pass:checks.length,fail:0,skip:0,checks,scope:'Synthetic in-memory SQLite only; independent extra privacy and preflight/batch race cases'},null,2));

@@ -563,6 +563,8 @@ body.fieldPicking .folium-map{cursor:crosshair}
 .monthTideButtonWrap{margin-top:7px;padding-top:6px;border-top:1px solid rgba(118,86,0,.18)}
 .monthTideButton{padding:6px 9px;border:1px solid #2d6f9f;border-radius:5px;background:#eef7ff;color:#174d6f;font-weight:bold;cursor:pointer}
 body.monthTideOpen{overflow:hidden}
+.reporterMapOpen{display:block;width:100%;border:0;padding:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.resultItem.reportResult{box-sizing:border-box}
 .reporterStatsLink{border:0;background:transparent;color:#174d6f;font:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px;padding:2px 3px;cursor:pointer;overflow-wrap:anywhere}
 .reporterStatsLink:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
 #reporterStatsModal{z-index:11020}
@@ -1218,12 +1220,12 @@ function renderRecentReports(){
   var shown=recent.slice(0,RECENT_REPORT_LIMIT);
   if(count)count.textContent=shown.length+'건';
   shown.forEach(function(entry){
-    var item=document.createElement('button');
-    item.type='button';
+    var item=document.createElement('div');
     item.className='recentReportItem';
     item.onclick=function(){openReportEntry(entry);};
-    var species=document.createElement('div');
-    species.className='recentReportSpecies';
+    var species=document.createElement('button');
+    species.type='button';
+    species.className='recentReportSpecies reporterMapOpen';
     species.textContent=(entry.species||[]).join(' · ');
     item.appendChild(species);
     // 있는 항목만 이어 붙인다. 없는 값에 '미확인' 같은 문구를 넣지 않는다.
@@ -1235,7 +1237,7 @@ function renderRecentReports(){
     if(bits.length||entry.reporter){
       var meta=document.createElement('div');
       meta.className='recentReportMeta';
-      if(entry.reporter){meta.appendChild(reporterStatsElement(entry.reporter,reporterStatsContextForEntry(entry),true));if(bits.length)meta.appendChild(document.createTextNode(' · '));}
+      if(entry.reporter){meta.appendChild(reporterStatsElement(entry.reporter,reporterStatsContextForEntry(entry),false));if(bits.length)meta.appendChild(document.createTextNode(' · '));}
       meta.appendChild(document.createTextNode(bits.join(' · ')));
       item.appendChild(meta);
     }
@@ -3075,6 +3077,7 @@ function publicationInvalidate(reason){
  reportPublicSpots={};reportSearchIndex=[];reportFixedHistory={};recentSiteSightings={};
  document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
  if(typeof fieldUpdates!=='undefined')fieldUpdates=[];
+ if(typeof clearRenderedSiteHistories==='function')clearRenderedSiteHistories();
  if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
  if(typeof clearContributors==='function')clearContributors();
  if(dynamicPopup&&map&&map.closePopup){map.closePopup(currentPopup);currentPopup._source=null;map._popup=null;}
@@ -3241,7 +3244,25 @@ function setSiteHistoryCount(box,total){
   if(badge)badge.textContent=' '+Number(total||0)+'건';
 }
 
+function clearRenderedSiteHistories(){
+ var boxes=new Set();
+ function collect(root){if(root&&root.querySelectorAll)root.querySelectorAll('.siteHistoryBox').forEach(function(box){boxes.add(box);});}
+ collect(document);
+ if(typeof markerRegistry!=='undefined')Object.keys(markerRegistry).forEach(function(key){
+  var marker=markerRegistry[key],popup=marker&&marker.getPopup&&marker.getPopup();
+  if(popup){collect(popup.getElement&&popup.getElement());collect(popup.getContent&&popup.getContent());}
+ });
+ boxes.forEach(function(box){
+  if(Array.isArray(box._birdmapLoaded))box._birdmapLoaded.length=0;
+  box._birdmapLoaded=[];
+  var list=box.querySelector('.siteHistoryList'),badge=box.querySelector('.siteHistoryCount');
+  if(list){list.className='siteHistoryList siteHistoryEmpty';list.textContent='공개 이력의 최신 상태를 확인할 수 없습니다.';}
+  if(badge)badge.textContent='';
+ });
+}
+
 function renderSiteHistory(box,site,data,popup){
+  if(!box||!document.body.contains(box)||siteHistoryBoxIn(popup)!==box||!publicationDataAllowed(data))return;
   var list=box.querySelector('.siteHistoryList');
   box._birdmapLoaded=(box._birdmapLoaded||[]).concat(data.history);
   var loaded=box._birdmapLoaded;
@@ -3261,7 +3282,9 @@ function renderSiteHistory(box,site,data,popup){
     // 팝업 안의 클릭이 지도까지 새어 팝업이 닫히는 것을 막는다.
     if(event&&event.stopPropagation)event.stopPropagation();
     more.disabled=true;
+    var generation=publicationState.generation;
     fetchSiteHistory(site,loaded.length).then(function(next){
+      if(generation!==publicationState.generation||siteHistoryBoxIn(popup)!==box||!publicationAllowed())return;
       if(!next){more.disabled=false;return;}
       renderSiteHistory(box,site,next,popup);
     });
@@ -3277,12 +3300,13 @@ function siteHistoryBoxIn(popup){
 
 function initSiteHistory(site,popup){
   if(!siteHistoryBoxIn(popup))return;
+  var generation=publicationState.generation;
   fetchSiteHistory(site,0).then(function(data){
     // 받아 오는 사이에 팝업이 다시 그려졌을 수 있어 그릴 때 칸을 다시 찾는다.
     // 처음 잡아 둔 칸만 믿으면 떨어져 나간 칸에 그리고 끝나, 화면에는
     // '불러오는 중입니다.'가 그대로 남는다.
     var box=siteHistoryBoxIn(popup);
-    if(!box)return;
+    if(!box||generation!==publicationState.generation||!publicationAllowed())return;
     if(!data){
       // 이력 API 가 없거나 실패하면 이 블록만 없애고 기존 프로필은 그대로 둔다.
       if(box.parentNode)box.parentNode.removeChild(box);
@@ -3419,19 +3443,20 @@ function renderReportResults(box,entries){
   if(!entries.length)return;
   box.appendChild(resultSectionTitle('출현종 제보 '+entries.length+'건'));
   entries.slice(0,80).forEach(function(entry){
-    var button=document.createElement('button');
+    var button=document.createElement('div');
     button.setAttribute('data-publication-entry','true');
     button.className='resultItem reportResult';
     button.onclick=function(){openReportEntry(entry);};
-    var name=document.createElement('div');
-    name.className='resultName';
+    var name=document.createElement('button');
+    name.type='button';
+    name.className='resultName reporterMapOpen';
     name.textContent=(entry.species||[]).join(' · ');
     var meta=document.createElement('div');
     meta.className='resultMeta';
     meta.textContent=(entry.date?String(entry.date).replace(/-/g,'.'):'관찰일 미확인')
       +' · '+reportEntryPlace(entry)
       +' · 제보자: ';
-    meta.appendChild(reporterStatsElement(entry.reporter,reporterStatsContextForEntry(entry),true));
+    meta.appendChild(reporterStatsElement(entry.reporter,reporterStatsContextForEntry(entry),false));
     button.appendChild(name);
     button.appendChild(meta);
     box.appendChild(button);

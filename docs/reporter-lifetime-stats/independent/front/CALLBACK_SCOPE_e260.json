@@ -1,0 +1,28 @@
+{
+  "sourceCommit": "e2603e0f4236fa74755ba8b7c11b211ef1603dbc",
+  "method": "Read-only actual source review",
+  "functions": [
+    {
+      "name": "fetchSiteHistory",
+      "finding": "Checks publicationDataAllowed at transport completion; callers still need application-time gate."
+    },
+    {
+      "name": "initSiteHistory",
+      "finding": "Reacquires connected popup box, but no authority/generation gate immediately before applying response."
+    },
+    {
+      "name": "renderSiteHistory",
+      "finding": "Unconditionally concatenates data.history into box._birdmapLoaded and renders names; add application-time permission/context gate."
+    },
+    {
+      "name": "renderSiteHistory More callback",
+      "finding": "Captures old box and loaded array; no connected/current-generation checks before applying late next page."
+    },
+    {
+      "name": "clearSiteHistoryCache",
+      "finding": "Also called by valid approved refresh; destructive DOM cleanup should not indiscriminately blank histories on all cache refreshes."
+    }
+  ],
+  "recommendation": "P1-only synchronous static history DOM/reference purge; permission+context+connected current popup checks in asynchronous application paths. Preserve static profile and coordinates.",
+  "runtimeProof": "Pending root Chrome baseline and repaired scenario"
+}

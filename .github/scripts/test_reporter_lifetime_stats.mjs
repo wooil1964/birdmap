@@ -20,3 +20,17 @@ test('Tab remains in own dialog and close does not clear parent modal class',()=
 test('source hooks close statistic synchronously on P1 barrier',()=>{assert.match(source('publicationInvalidate'),/closeReporterStats\(false\)/);assert.ok(html.includes("node.contains(reporterStatsOwner))closeReporterStats(false)"));assert.ok(html.includes("reporterStatsOwner&&!reporterStatsOwner.isConnected"));});
 
 test('existing search DTO keys preserved with exact transient source id',()=>{const f=fixture();f.c.buildReportSearchIndex([{id:'spot',lat:37,lon:127,history:[{id:'report1',date:'2026-10-14',reporter:'공개검증',species:['까치']}]}]);const row=f.c.reportSearchIndex[0];assert.deepEqual(Object.keys(row).sort(),['date','kind','lat','lon','reporter','species','spotId']);assert.equal(f.c.reporterStatsContextForEntry(row).reportId,'report1');});
+
+
+test('P1 clears site history DOM and retained loaded aliases including closed popup',()=>{
+ const loaded=[{reporter:'Synthetic name'}],list={className:'',textContent:'Synthetic name'},badge={textContent:'1'};
+ const box={_birdmapLoaded:loaded,querySelector:q=>q==='.siteHistoryList'?list:badge};
+ const root={querySelectorAll:()=>[box]};
+ const c={document:{querySelectorAll:()=>[]},markerRegistry:{one:{getPopup:()=>({getContent:()=>root,getElement:()=>null})}}};
+ vm.createContext(c);vm.runInContext(source('clearRenderedSiteHistories'),c);c.clearRenderedSiteHistories();
+ assert.equal(loaded.length,0);assert.equal(box._birdmapLoaded.length,0);assert.ok(!list.textContent.includes('Synthetic'));assert.equal(badge.textContent,'');
+});
+test('history final renderer rejects unverified or disconnected payload without mutation',()=>{
+ const box={};const c={document:{body:{contains:()=>true}},siteHistoryBoxIn:()=>box,publicationDataAllowed:()=>false};vm.createContext(c);vm.runInContext(source('renderSiteHistory'),c);c.renderSiteHistory(box,{}, {history:[{reporter:'Synthetic'}]},{});assert.equal(box._birdmapLoaded,undefined);
+ c.publicationDataAllowed=()=>true;c.document.body.contains=()=>false;c.renderSiteHistory(box,{}, {history:[{reporter:'Synthetic'}]},{});assert.equal(box._birdmapLoaded,undefined);
+});

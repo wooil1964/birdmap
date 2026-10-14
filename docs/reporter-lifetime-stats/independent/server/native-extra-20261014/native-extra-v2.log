@@ -1,0 +1,19 @@
+{
+  "sourceHash": "013734a44b428d8c20253351829464848bb5ae58fac15d0a6d7547c55c0a149e",
+  "pass": 10,
+  "fail": 0,
+  "skip": 0,
+  "checks": [
+    "native literal SQL distinct",
+    "only two numeric fields plus permission metadata",
+    "native exact BINARY trailing name is separate",
+    "uniform absent/private result",
+    "mutation after HEAD before actual batch",
+    "revoked specific witness cannot use other same-name approved row",
+    "other valid public witness yields remaining row only",
+    "status transition invalidates old revision",
+    "rejection removes report and unique species",
+    "read is record-preserving and no-store"
+  ],
+  "scope": "Synthetic in-memory SQLite only; independent extra privacy and preflight/batch race cases"
+}
