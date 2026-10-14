@@ -1,0 +1,19 @@
+{"publishLocation":true,"allowNavigation":true,"observation":"unconfirmed","weather":"insufficient data","occurrenceProbability":null,"scoreBonus":0}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: unverified weather event must not offer a special location
+
+true !== false
+
+    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/weather-migration-research/birdmap/docs/issue9-weather-migration-research-20261014/event_evidence_counterexample.mjs:3:44 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: true,
+  expected: false,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.0
