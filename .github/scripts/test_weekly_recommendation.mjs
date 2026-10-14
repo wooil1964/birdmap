@@ -51,7 +51,7 @@ const NAMES = [
   'weeklyQualifyingHighTides', 'weeklyMudflatTideGateOpen', 'weeklyBestMudflatTide',
   'autumnBirdingAxes', 'autumnRecommendationSeason', 'weeklyPelagicSafety',
   'weeklySeasonForDate', 'weeklyDatePolicy', 'weeklySeasonalBestWeatherDay', 'weeklySeasonQuotaEntries',
-  'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
+  'weeklyIdOrder', 'weeklyRuleGroup', 'weeklyDiverseTake', 'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
   'todayIsAutumnRemoteIsland', 'todaySpringIslandReason', 'weeklyIssueReason',
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
   'weeklyEditorialRecommendations',
@@ -406,7 +406,7 @@ function candidate(id,axis,score=92,extra={}) {
     score,recommendationDate:'2026-09-10',stableOrder:100+Number(id),priority:4,isMandatory:false},extra);
 }
 
-test('들판은 score → core → 날짜 → 안정 순서 → ID로 정렬', () => {
+test('들판은 score → core → 날짜 → ID로 정렬하고 배열 위치(stableOrder)는 쓰지 않는다', () => {
   const rank=loadApi().autumnFieldRank;
   const general=candidate(2,'field',100), core=candidate(7,'field',92);
   assert.ok(rank(general,core)<0);
@@ -414,7 +414,8 @@ test('들판은 score → core → 날짜 → 안정 순서 → ID로 정렬', (
   const near=candidate(20,'field',92,{recommendationDate:'2026-09-09'});
   assert.ok(rank(near,core)<0);
   const stable=candidate(20,'field',92,{stableOrder:0});
-  assert.ok(rank(stable,core)<0,'ID가 아닌 기존 순서');
+  assert.ok(rank(core,stable)<0,'stableOrder가 앞서도 ID 순서');
+  assert.equal(rank(core,stable,true),0,'기존 기준이 모두 같으면 prefix 비교는 동점');
   const equal=candidate(20,'field',92,{stableOrder:core.stableOrder});
   assert.ok(rank(core,equal)<0,'모두 같을 때만 ID');
 });
@@ -1102,7 +1103,7 @@ test('여름 실제 188 후보 배분 6월 3/3/2/1/1, 7~8월 3/3/2/2 및 점수 
   const state=summerFixture(`2027-0${month}-10`),before=JSON.stringify(state),api=loadApi(state),top=api.todayRecommendedSites();
   assert.equal(top.length,10);assert.equal(new Set(top.map(e=>e.site.id)).size,10);
   assert.deepEqual(Object.fromEntries(['forest','water','coast','other','pelagic'].map(a=>[a,top.filter(e=>e.selectedAxis===a).length])),{forest:3,water:3,coast:2,other:month===6?1:2,pelagic:month===6?1:0});
-  assert.ok(top.some(e=>e.site.id==='109'));assert.equal(top.some(e=>e.site.id==='48'),month===6);
+  assert.ok(top.filter(e=>e.selectedAxis==='other').every(e=>api.summerBirdingAxes(e.site).other));assert.equal(top.some(e=>e.site.id==='48'),month===6);
   assert.ok(top.every(e=>e.score===92&&e.recommendationTime==='09:00'&&e.recommendationDate===`2027-0${month}-10`));
   assert.equal(JSON.stringify(state),before);
  }
@@ -2720,4 +2721,65 @@ test('R5 비정상 today 만조는 차단하고 정상 주간 대체 만조는 �
     p0Tide('14', P0_DATE, '12:00,15:30', '900,870'), {});
   const chosen = healthy.weeklyRecommendationForSite(site, healthy.weeklyInfo());
   assert.ok(chosen); assert.equal(chosen.score, 80); assert.match(chosen.tideText, /15:30 · 870cm/);
+});
+
+
+/* ── Issue #9 대안 B: 완전 동점 후보에서만 지역 다양성, 배열 순서 무관 ── */
+function ent(id,sido,rule,score=92,extra={}){
+  return Object.assign({site:{id:String(id),sido,weatherRuleKey:rule},axes:{field:true,mudflat:false,pelagic:false},score,recommendationDate:'2026-10-14',priority:4,isMandatory:false},extra);
+}
+function pick(api,list,limit,already=[]){
+  const selected=already.slice(),ids=new Set(selected.map(e=>String(e.site.id)));
+  api.weeklyDiverseTake(list,api.autumnFieldRank,limit,selected,e=>!ids.has(String(e.site.id)),e=>{ids.add(String(e.site.id));selected.push(e);return true;});
+  return selected.map(e=>String(e.site.id));
+}
+test('B: 기존 기준이 완전히 같은 후보만 이미 선발한 sido·규칙군 개수로 분산한다', () => {
+  const api=loadApi();
+  const tied=[ent(1,'인천','island'),ent(2,'인천','island'),ent(3,'제주','island'),ent(4,'경기','mudflat')];
+  assert.deepEqual(pick(api,tied,3),['1','4','3'],'인천 1곳 뒤: 지역·규칙군 개수가 모두 0인 경기 4, 그다음 제주 3');
+  assert.deepEqual(pick(api,tied,3),pick(api,tied.slice().reverse(),3),'입력 배열 순서 무관');
+});
+test('B: 점수·가점이 더 높은 후보를 지역 때문에 추월하지 않는다', () => {
+  const api=loadApi();
+  const list=[ent(5,'인천','island',100),ent(6,'인천','island',92),ent(7,'제주','island',92)];
+  assert.deepEqual(pick(api,list,2,[ent(9,'인천','island',100)]),['9','5','7'],'100점 인천 5가 먼저, 92점 동점군에서만 제주 7');
+});
+
+test('B: 규칙군 별칭은 weather_rules.json aliases와 같다', () => {
+  const api=loadApi();
+  for(const [key,canonical] of Object.entries(RULES.aliases))assert.equal(api.weeklyRuleGroup({site:{weatherRuleKey:key}}),canonical);
+  assert.equal(api.weeklyRuleGroup({site:{weatherRuleKey:'island_migrant'}}),'island_migrant');
+  assert.equal(api.weeklyRuleGroup({site:{}}),'general_birding');
+});
+function shuffled(list,seed){
+  const out=list.slice();let s=seed>>>0;
+  for(let i=out.length-1;i>0;i--){s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;const j=s%(i+1);[out[i],out[j]]=[out[j],out[i]];}
+  return out;
+}
+function autumnFixture(extra={}){
+ const date='2026-10-14',sites=extra.siteData||RUNTIME,doc={generatedAt:'2020-01-01 00:00 KST',sites:{}};
+ for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[
+  sample(date+' 09:00 KST',92,{waveM:0.5}),sample(date+' 12:00 KST',92,{waveM:0.5}),sample(date+' 15:00 KST',100,{waveM:0.5})
+ ]}).sites);
+ return {month:10,now:date+'T08:00:00+09:00',siteData:sites,weatherWeek:doc,tideMonth:qualifyingTideMonth([19,14,107,9,11,22],weekDates(date)),...extra};
+}
+test('B: 190곳 실제 후보 파이프라인은 siteData 배열 순서(역순·무작위 20회)와 무관하다(4개 계절)', () => {
+  const cases=[['autumn',autumnFixture()],['winter',winterFixture()],['spring',springFixture('2027-05-05')],['summer',summerFixture('2027-07-10')]];
+  for(const [season,state] of cases){
+    const base=loadApi(state).todayRecommendedSites().map(e=>[String(e.site.id),e.selectedAxis]);
+    assert.equal(base.length,10,season);
+    const orders=[RUNTIME.slice().reverse(),...Array.from({length:20},(_,i)=>shuffled(RUNTIME,982451653+i))];
+    for(const order of orders){
+      const got=loadApi({...state,siteData:order}).todayRecommendedSites().map(e=>[String(e.site.id),e.selectedAxis]);
+      assert.deepEqual(got,base,season+' 순서 불변');
+    }
+  }
+});
+test('B: 정원·점수·안전 조건은 그대로이고 같은 입력은 항상 같은 결과다', () => {
+  const state=autumnFixture(),a=loadApi(state).todayRecommendedSites(),b=loadApi(state).todayRecommendedSites();
+  assert.deepEqual(a.map(e=>e.site.id),b.map(e=>e.site.id));
+  assert.equal(new Set(a.map(e=>e.site.id)).size,10);assert.ok(a.filter(e=>e.axes.pelagic).length<=1);
+  assert.ok(a.every(e=>loadApi(state).weeklyRecommendationEligible(e)&&loadApi(state).weeklyRecommendationIsSafe(e)!==false));
+  const quota={};for(const e of a)quota[e.selectedAxis]=(quota[e.selectedAxis]||0)+1;
+  assert.ok((quota.field||0)<=4&&(quota.mudflat||0)<=3&&(quota.pelagic||0)<=1&&(quota.other||0)<=2||quota.fill>0);
 });

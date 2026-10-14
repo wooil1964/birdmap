@@ -3868,11 +3868,41 @@ function weeklyPelagicSafety(sample){
     return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=check[1];
   });
 }
-function autumnFieldRank(a,b){
+/* 대안 B(Issue #9): 점수·가점·날짜·조위 등 기존 정렬 기준이 완전히 같은 후보끼리만 지역을 분산한다.
+   rank(a,b,true)는 ID 처리를 뺀 기존 기준이다. 그 기준이 0인 후보들을 한 묶음으로 보고, 묶음 안에서는
+   이미 선발된 장소의 원문 sido 개수 → 기상 규칙군 개수 → 장소 ID 순으로 하나씩 고른다.
+   siteData 배열 위치(stableOrder)는 더 이상 순서에 쓰지 않으므로 배열 순서가 바뀌어도 결과가 같다. */
+function weeklyIdOrder(a,b){return Number(a.site.id)-Number(b.site.id);}
+function weeklyRuleGroup(entry){
+  // weather_rules.json 의 aliases 와 같은 값(수동 이중 관리: 테스트가 일치를 검증한다).
+  var aliases={pelagic:'pelagic_seabird',raptor:'raptor_migration',coastal_gull:'coastal_seabird'};
+  var key=String((entry&&entry.site&&entry.site.weatherRuleKey)||'');
+  return aliases[key]||key||'general_birding';
+}
+function weeklyDiverseTake(candidates,rank,limit,selected,canAdd,add){
+  var sorted=candidates.slice().sort(function(a,b){return rank(a,b)||weeklyIdOrder(a,b);}),i=0,added=0;
+  function region(entry){return String(entry.site.sido||'unknown');}
+  function tally(key){var n={};selected.forEach(function(e){var k=key(e);n[k]=(n[k]||0)+1;});return n;}
+  while(i<sorted.length&&added<limit&&selected.length<10){
+    var j=i+1;
+    while(j<sorted.length&&rank(sorted[i],sorted[j],true)===0)j++;
+    var group=sorted.slice(i,j);i=j;
+    while(added<limit&&selected.length<10){
+      var choices=group.filter(canAdd);
+      if(!choices.length)break;
+      var regions=tally(region),rules=tally(weeklyRuleGroup);
+      choices.sort(function(a,b){
+        return (regions[region(a)]||0)-(regions[region(b)]||0)||(rules[weeklyRuleGroup(a)]||0)-(rules[weeklyRuleGroup(b)]||0)||weeklyIdOrder(a,b);
+      });
+      group.splice(group.indexOf(choices[0]),1);
+      if(add(choices[0]))added++;
+    }
+  }
+}
+function autumnFieldRank(a,b,prefixOnly){
   var as=weeklyRankScore(a), bs=weeklyRankScore(b);
   return (bs-as)||weeklyRecentTieBreak(a,b)||(Number(AUTUMN_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(AUTUMN_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
-    String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
-    ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
+    String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||(prefixOnly?0:weeklyIdOrder(a,b));
 }
 /* 화면의 계절 quota는 그 계절 날짜의 후보에만 배정한다. 다른 계절 날짜의 후보는 기존 fill 단계에서만
    채우며, 계절별 soft target 숫자·순서와 혼합 주간의 배분 규칙은 새로 만들지 않는다. */
@@ -3881,23 +3911,22 @@ function weeklySeasonQuotaEntries(entries,season){
 }
 function autumnBalancedRecommendations(entries){
   var selected=[], selectedIds=new Set(), pelagicCount=0, quota=weeklySeasonQuotaEntries(entries,'autumn');
-  function rank(a,b){return (a.priority-b.priority)||(weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||(b.sortLevel||0)-(a.sortLevel||0)||(a.stableOrder-b.stableOrder)||Number(a.site.id)-Number(b.site.id);}
-  function add(entry,axis){
-    var id=String(entry.site.id);
-    if(selected.length>=10||selectedIds.has(id)||(entry.axes.pelagic&&pelagicCount>=1))return false;
-    selectedIds.add(id);if(entry.axes.pelagic)pelagicCount++;
-    selected.push(Object.assign({},entry,{selectedAxis:axis}));return true;
+  function rank(a,b,prefixOnly){return (a.priority-b.priority)||(weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||(b.sortLevel||0)-(a.sortLevel||0)||(prefixOnly?0:weeklyIdOrder(a,b));}
+  function pelagicRank(a,b,prefixOnly){return (weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||String(a.recommendationDate).localeCompare(String(b.recommendationDate))||(prefixOnly?0:weeklyIdOrder(a,b));}
+  function fillRank(a,b,prefixOnly){return (weeklyRankScore(b)-weeklyRankScore(a))||rank(a,b,prefixOnly);}
+  function canAdd(entry){return !selectedIds.has(String(entry.site.id))&&!(entry.axes.pelagic&&pelagicCount>=1);}
+  function take(candidates,count,axis,order){
+    weeklyDiverseTake(candidates,order,count,selected,canAdd,function(entry){
+      selectedIds.add(String(entry.site.id));if(entry.axes.pelagic)pelagicCount++;
+      selected.push(Object.assign({},entry,{selectedAxis:axis}));return true;
+    });
   }
-  function take(candidates,count,axis){
-    var added=0;
-    candidates.forEach(function(entry){if(added<count&&add(entry,axis))added++;});
-  }
-  take(quota.filter(function(e){return e.axes.field&&!e.axes.pelagic;}).sort(autumnFieldRank),4,'field');
-  take(quota.filter(function(e){return e.axes.mudflat&&!e.axes.pelagic;}).sort(rank),3,'mudflat');
-  take(quota.filter(function(e){return e.axes.pelagic;}).sort(function(a,b){return (weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||String(a.recommendationDate).localeCompare(String(b.recommendationDate))||a.stableOrder-b.stableOrder;}),1,'pelagic');
-  take(quota.filter(function(e){return !e.axes.field&&!e.axes.mudflat&&!e.axes.pelagic;}).sort(rank),2,'other');
+  take(quota.filter(function(e){return e.axes.field&&!e.axes.pelagic;}),4,'field',autumnFieldRank);
+  take(quota.filter(function(e){return e.axes.mudflat&&!e.axes.pelagic;}),3,'mudflat',rank);
+  take(quota.filter(function(e){return e.axes.pelagic;}),1,'pelagic',pelagicRank);
+  take(quota.filter(function(e){return !e.axes.field&&!e.axes.mudflat&&!e.axes.pelagic;}),2,'other',rank);
   // 부족 슬롯은 전체 점수순으로 채운다. 한 장소에는 한 슬롯만 배정한다.
-  take(entries.slice().sort(function(a,b){return (weeklyRankScore(b)-weeklyRankScore(a))||rank(a,b);}),10,'fill');
+  take(entries,10,'fill',fillRank);
   return selected;
 }
 /* 카드 표시도 추천 날짜의 계절을 따른다. 계절 정보가 없는 기존 호출은 종전대로 오늘 기준이다. */
@@ -3939,11 +3968,10 @@ function winterBirdingAxes(site){
   if(!axes.field&&!axes.water&&!axes.coast)axes.excludedReason='unclassified';
   return axes;
 }
-function winterRecommendationRank(a,b){
+function winterRecommendationRank(a,b,prefixOnly){
   var as=weeklyRankScore(a),bs=weeklyRankScore(b);
   return (bs-as)||weeklyRecentTieBreak(a,b)||(Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(b.site.id)))-Number(WINTER_CORE_FIELD_SITE_IDS.has(Number(a.site.id))))||
-    String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
-    ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
+    String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||(prefixOnly?0:weeklyIdOrder(a,b));
 }
 function winterBalancedRecommendations(entries){
   var selected=[],ids=new Set(),pelagicCount=0;
@@ -3951,13 +3979,12 @@ function winterBalancedRecommendations(entries){
   var ranked=weeklySeasonQuotaEntries(eligible,'winter').filter(function(e){return e.axes.field||e.axes.water||e.axes.coast||e.axes.pelagic;});
   var fillable=ranked.concat(eligible.filter(function(e){return e.season&&e.season!=='winter';})).sort(winterRecommendationRank);
   function take(axis,count){
-    var added=0;
-    (axis==='fill'?fillable:ranked).forEach(function(entry){
-      var id=String(entry.site.id);
-      if(selected.length>=10||added>=count||ids.has(id)||(axis!=='fill'&&!entry.axes[axis])||(entry.axes.pelagic&&pelagicCount>=1))return;
-      ids.add(id);if(entry.axes.pelagic)pelagicCount++;
-      selected.push(Object.assign({},entry,{selectedAxis:axis}));added++;
-    });
+    weeklyDiverseTake(axis==='fill'?fillable:ranked.filter(function(e){return e.axes[axis];}),winterRecommendationRank,count,selected,
+      function(entry){return !ids.has(String(entry.site.id))&&!(entry.axes.pelagic&&pelagicCount>=1);},
+      function(entry){
+        ids.add(String(entry.site.id));if(entry.axes.pelagic)pelagicCount++;
+        selected.push(Object.assign({},entry,{selectedAxis:axis}));return true;
+      });
   }
   take('field',3);take('water',3);take('coast',3);take('pelagic',1);take('fill',10);
   return selected;
@@ -4017,26 +4044,24 @@ function springIslandRainWindCondition(site,sample){
     });
   });
 }
-function springRecommendationRank(a,b){
+function springRecommendationRank(a,b,prefixOnly){
   var as=weeklyRankScore(a),bs=weeklyRankScore(b);
-  return (bs-as)||weeklyRecentTieBreak(a,b)||String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||
-    ((a.stableOrder??Infinity)-(b.stableOrder??Infinity))||Number(a.site.id)-Number(b.site.id);
+  return (bs-as)||weeklyRecentTieBreak(a,b)||String(a.recommendationDate||'9999').localeCompare(String(b.recommendationDate||'9999'))||(prefixOnly?0:weeklyIdOrder(a,b));
 }
 function springBalancedRecommendations(entries){
   var selected=[],ids=new Set(),pelagicCount=0;
   var candidates=entries.filter(function(e){return e.axes&&!e.axes.excludedReason;});
   var quota=weeklySeasonQuotaEntries(candidates,'spring');
   function take(axis,count,rank){
-    var added=0;
-    (axis==='fill'?candidates:quota).filter(function(e){return axis==='fill'||e.axes[axis];}).sort(rank||springRecommendationRank).forEach(function(entry){
-      var id=String(entry.site.id);
-      if(selected.length>=10||added>=count||ids.has(id)||(entry.axes.pelagic&&pelagicCount>=1))return;
-      ids.add(id);if(entry.axes.pelagic)pelagicCount++;
-      selected.push(Object.assign({},entry,{selectedAxis:axis}));added++;
-    });
+    weeklyDiverseTake((axis==='fill'?candidates:quota).filter(function(e){return axis==='fill'||e.axes[axis];}),rank||springRecommendationRank,count,selected,
+      function(entry){return !ids.has(String(entry.site.id))&&!(entry.axes.pelagic&&pelagicCount>=1);},
+      function(entry){
+        ids.add(String(entry.site.id));if(entry.axes.pelagic)pelagicCount++;
+        selected.push(Object.assign({},entry,{selectedAxis:axis}));return true;
+      });
   }
-  take('island',4,function(a,b){return (weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(b.site.id)))-Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(a.site.id)))||springRecommendationRank(a,b);});
-  take('mudflat',3,function(a,b){return Number(!!b.springGeolmaeriPriority)-Number(!!a.springGeolmaeriPriority)||springRecommendationRank(a,b);});
+  take('island',4,function(a,b,prefixOnly){return (weeklyRankScore(b)-weeklyRankScore(a))||weeklyRecentTieBreak(a,b)||Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(b.site.id)))-Number(SPRING_CORE_ISLAND_SITE_IDS.has(Number(a.site.id)))||springRecommendationRank(a,b,prefixOnly);});
+  take('mudflat',3,function(a,b,prefixOnly){return Number(!!b.springGeolmaeriPriority)-Number(!!a.springGeolmaeriPriority)||springRecommendationRank(a,b,prefixOnly);});
   take('pelagic',1);take('other',2);take('fill',10);
   return selected;
 }
@@ -4079,12 +4104,9 @@ function summerBalancedRecommendations(entries){
   });
   var fillable=candidates.concat(eligible.filter(function(e){return e.season&&e.season!=='summer';}));
   function take(axis,count){
-    var added=0;
-    (axis==='fill'?fillable:candidates).filter(function(e){return axis==='fill'?!e.axes.pelagic:e.axes[axis];}).sort(springRecommendationRank).forEach(function(entry){
-      var id=String(entry.site.id);
-      if(selected.length>=10||added>=count||ids.has(id))return;
-      ids.add(id);selected.push(Object.assign({},entry,{selectedAxis:axis}));added++;
-    });
+    weeklyDiverseTake((axis==='fill'?fillable:candidates).filter(function(e){return axis==='fill'?!e.axes.pelagic:e.axes[axis];}),springRecommendationRank,count,selected,
+      function(entry){return !ids.has(String(entry.site.id));},
+      function(entry){ids.add(String(entry.site.id));selected.push(Object.assign({},entry,{selectedAxis:axis}));return true;});
   }
   take('forest',3);take('water',3);take('coast',2);take('other',june?1:2);
   if(june)take('pelagic',1);
@@ -4711,12 +4733,11 @@ function weeklyRecommendationIsSafe(entry){
 }
 function todayRecommendedSites(){
   var week=weeklyInfo(), mandatory=[], general=[], selected=[], selectedIds={};
-  siteData.forEach(function(site,stableOrder){
+  siteData.forEach(function(site){
     var entry=weeklyRecommendationForSite(site,week);
     if(!entry||!weeklyRecommendationEligible(entry))return;
     // mandatory/공지 정보는 후보에 보존하고, 현장주의만 최종 선발에서 제외한다.
     if(weeklyRecommendationIsSafe(entry)===false)return;
-    entry.stableOrder=stableOrder;
     (entry.isMandatory?mandatory:general).push(entry);
   });
   // 두 번째 관문: 계절별 선발·정원 보충이 돌려준 최종 목록에도 검증된 현재 기상자료 조건을 다시 적용한다.
