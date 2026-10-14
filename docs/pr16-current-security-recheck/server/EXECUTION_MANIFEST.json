@@ -1,0 +1,107 @@
+{
+  "atUtc": "2026-10-14T03:37:12.279876+00:00",
+  "sourceSha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "branch": "codex/pr16-current-security-recheck-20261014",
+  "trackedDiffBefore": "",
+  "sourceHashesBefore": {
+    "index.html": "3a16b5c34c02554f256d4df23197f4c47afcfde79133b3c813cb22b538c906f0",
+    "reports-api/src/publication.js": "013734a44b428d8c20253351829464848bb5ae58fac15d0a6d7547c55c0a149e",
+    "reports-api/src/field-updates.js": "353223bd3b0c492bc95fd6b0b91c010f199810596f760255f1ed5b27628ce2da",
+    "reports-api/src/writer-fence.js": "dfa5b55b66c8261f4d01920ec8b8e8416f381ba1ffd1334376380024c427fe16",
+    "reports-api/src/public.js": "111249637cbe65c96ac4a94d1f926502f93ac43b94f4c8fb92c52bfd48c00f54",
+    "reports-api/src/admin.js": "6f98af1334395a172baffe0700fd81739032421286d52cad0bf07c1508dbd3c7",
+    "reports-api/schema.sql": "47f857e0721fc2999fa87adb02ebae39c39e07b416de4efa7bc5de098f2fb204",
+    "reports-api/migrations/0004b_publication_writer_fence.sql": "cfb636a31005e5d100ee656ecc88d268ceeab1ff5fdb5878b46779f1515fed4d",
+    "reports-api/migrations/0005_publication_security.sql": "3a0b470626880fe86fe8957f9e628b6a1b7b7ad5b0659aea3c15f4227d9f98aa",
+    "reports-api/test/publication-security.test.mjs": "93284957f1d139beab80c0b46de89362950a2d67c1f18574df0c1bc656121ccf",
+    "reports-api/test/field-updates.test.mjs": "87822049460712991e72640ebe43a7dc4e4fd91203974bccb36ab38d311e69b2",
+    "reports-api/test/publication-path.test.mjs": "343caf035b716673a2cd24f39678b59760fc26a261abaffefd715eb91cf0c933",
+    "reports-api/local-test/helpers.mjs": "6bd9522d43d4cc95903677f6f8ecf6df4bd254ad37c65f6af13917a6ab9c56e8",
+    "docs/p1-paid-deployment/writer-fence-review/native_fence.mjs": "66ad32ab6fad7845983210a6cb767e361145427c239b5fc389c90d10ac69d78f",
+    "docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs": "6bfd55339c111cce5cc5991f2164ca052e91bf36d2ae0a2923a2a8b0efb2a083"
+  },
+  "scope": "Local synthetic SQLite and Miniflare/workerd D1 only; no product/test changes, no operating API calls or user data. Access JWT and Turnstile are synthetic stubs.",
+  "runs": [
+    {
+      "name": "targeted-node",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "reports-api/test/publication-security.test.mjs",
+        "reports-api/test/field-updates.test.mjs",
+        "reports-api/test/publication-path.test.mjs"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap",
+      "startedUtc": "2026-10-14T03:37:12.561635+00:00",
+      "finishedUtc": "2026-10-14T03:37:13.374383+00:00",
+      "exitCode": 0,
+      "logFile": "docs/pr16-current-security-recheck/server/targeted-node.log",
+      "logSha256": "a108ca52f69867da6f1a0c42964302a8b1a2fd1326abc7ed612607d4bd2e6893",
+      "tapSummary": {}
+    },
+    {
+      "name": "native-fence",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "docs/p1-paid-deployment/writer-fence-review/native_fence.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap\\docs\\pr16-current-security-recheck\\server\\native-fence",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap",
+      "startedUtc": "2026-10-14T03:37:12.562637+00:00",
+      "finishedUtc": "2026-10-14T03:37:14.805852+00:00",
+      "exitCode": 0,
+      "logFile": "docs/pr16-current-security-recheck/server/native-fence.log",
+      "logSha256": "a013a650cfb393443e77bac9ffca7545201792275d91d4aaf621be5011ee4f27",
+      "tapSummary": {},
+      "nativeSummary": {
+        "pass": 13,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "name": "native-cas",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs",
+        "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap",
+        "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap\\docs\\pr16-current-security-recheck\\server\\native-cas",
+        "C:/Users/김진호/AppData/Local/npm-cache/_npx/32026684e21afda6/node_modules"
+      ],
+      "cwd": "C:\\Users\\김진호\\.codex\\worktrees\\pr16-current-security-recheck\\birdmap",
+      "startedUtc": "2026-10-14T03:37:12.562637+00:00",
+      "finishedUtc": "2026-10-14T03:37:20.073626+00:00",
+      "exitCode": 0,
+      "logFile": "docs/pr16-current-security-recheck/server/native-cas.log",
+      "logSha256": "809eadc1db239953472a65aaa52b0479a3507aa4a2273689a584205d17d9bf09",
+      "tapSummary": {},
+      "nativeSummary": {
+        "pass": 10,
+        "fail": 0,
+        "skip": 0
+      }
+    }
+  ],
+  "sourceHashesAfter": {
+    "index.html": "3a16b5c34c02554f256d4df23197f4c47afcfde79133b3c813cb22b538c906f0",
+    "reports-api/src/publication.js": "013734a44b428d8c20253351829464848bb5ae58fac15d0a6d7547c55c0a149e",
+    "reports-api/src/field-updates.js": "353223bd3b0c492bc95fd6b0b91c010f199810596f760255f1ed5b27628ce2da",
+    "reports-api/src/writer-fence.js": "dfa5b55b66c8261f4d01920ec8b8e8416f381ba1ffd1334376380024c427fe16",
+    "reports-api/src/public.js": "111249637cbe65c96ac4a94d1f926502f93ac43b94f4c8fb92c52bfd48c00f54",
+    "reports-api/src/admin.js": "6f98af1334395a172baffe0700fd81739032421286d52cad0bf07c1508dbd3c7",
+    "reports-api/schema.sql": "47f857e0721fc2999fa87adb02ebae39c39e07b416de4efa7bc5de098f2fb204",
+    "reports-api/migrations/0004b_publication_writer_fence.sql": "cfb636a31005e5d100ee656ecc88d268ceeab1ff5fdb5878b46779f1515fed4d",
+    "reports-api/migrations/0005_publication_security.sql": "3a0b470626880fe86fe8957f9e628b6a1b7b7ad5b0659aea3c15f4227d9f98aa",
+    "reports-api/test/publication-security.test.mjs": "93284957f1d139beab80c0b46de89362950a2d67c1f18574df0c1bc656121ccf",
+    "reports-api/test/field-updates.test.mjs": "87822049460712991e72640ebe43a7dc4e4fd91203974bccb36ab38d311e69b2",
+    "reports-api/test/publication-path.test.mjs": "343caf035b716673a2cd24f39678b59760fc26a261abaffefd715eb91cf0c933",
+    "reports-api/local-test/helpers.mjs": "6bd9522d43d4cc95903677f6f8ecf6df4bd254ad37c65f6af13917a6ab9c56e8",
+    "docs/p1-paid-deployment/writer-fence-review/native_fence.mjs": "66ad32ab6fad7845983210a6cb767e361145427c239b5fc389c90d10ac69d78f",
+    "docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs": "6bfd55339c111cce5cc5991f2164ca052e91bf36d2ae0a2923a2a8b0efb2a083"
+  },
+  "sourceUnchanged": true,
+  "headAfter": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "trackedDiffAfter": ""
+}

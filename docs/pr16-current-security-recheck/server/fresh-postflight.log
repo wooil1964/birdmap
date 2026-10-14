@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: route/GPS check does not treat a pre-action in-flight authority response as fresh
+ok 1 - route/GPS check does not treat a pre-action in-flight authority response as fresh
+  ---
+  duration_ms: 6.6964
+  type: 'test'
+  ...
+# Subtest: postflight after delayed payload initiates authority read after payload delivery
+ok 2 - postflight after delayed payload initiates authority read after payload delivery
+  ---
+  duration_ms: 2.0529
+  type: 'test'
+  ...
+# Subtest: normal current route remains allowed after an independent fresh read
+ok 3 - normal current route remains allowed after an independent fresh read
+  ---
+  duration_ms: 1.6913
+  type: 'test'
+  ...
+# Subtest: normal matching preflight payload and postflight remain usable
+ok 4 - normal matching preflight payload and postflight remain usable
+  ---
+  duration_ms: 1.7615
+  type: 'test'
+  ...
+# Subtest: authority lease ends at primary-request-start plus5s, response latency 0ms
+ok 5 - authority lease ends at primary-request-start plus5s, response latency 0ms
+  ---
+  duration_ms: 1.1341
+  type: 'test'
+  ...
+# Subtest: authority lease ends at primary-request-start plus5s, response latency 4000ms
+ok 6 - authority lease ends at primary-request-start plus5s, response latency 4000ms
+  ---
+  duration_ms: 0.8019
+  type: 'test'
+  ...
+# Subtest: authority lease ends at primary-request-start plus5s, response latency 4999ms
+ok 7 - authority lease ends at primary-request-start plus5s, response latency 4999ms
+  ---
+  duration_ms: 0.7985
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed undefined
+ok 8 - invalid or expired local request-start metadata fails closed undefined
+  ---
+  duration_ms: 0.9822
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed null
+ok 9 - invalid or expired local request-start metadata fails closed null
+  ---
+  duration_ms: 0.904
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed NaN
+ok 10 - invalid or expired local request-start metadata fails closed NaN
+  ---
+  duration_ms: 0.8651
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed Infinity
+ok 11 - invalid or expired local request-start metadata fails closed Infinity
+  ---
+  duration_ms: 0.7596
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed -Infinity
+ok 12 - invalid or expired local request-start metadata fails closed -Infinity
+  ---
+  duration_ms: 0.7465
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 6000
+ok 13 - invalid or expired local request-start metadata fails closed 6000
+  ---
+  duration_ms: 0.7163
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 
+ok 14 - invalid or expired local request-start metadata fails closed 
+  ---
+  duration_ms: 0.7834
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed [object Object]
+ok 15 - invalid or expired local request-start metadata fails closed [object Object]
+  ---
+  duration_ms: 0.7588
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed true
+ok 16 - invalid or expired local request-start metadata fails closed true
+  ---
+  duration_ms: 0.7085
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed -1
+ok 17 - invalid or expired local request-start metadata fails closed -1
+  ---
+  duration_ms: 0.7431
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 10001
+ok 18 - invalid or expired local request-start metadata fails closed 10001
+  ---
+  duration_ms: 0.7195
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 5000
+ok 19 - invalid or expired local request-start metadata fails closed 5000
+  ---
+  duration_ms: 1.4112
+  type: 'test'
+  ...
+# Subtest: invalid or expired local request-start metadata fails closed 4999
+ok 20 - invalid or expired local request-start metadata fails closed 4999
+  ---
+  duration_ms: 0.717
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 93.3364

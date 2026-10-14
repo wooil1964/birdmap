@@ -1,0 +1,14 @@
+PASS N01 ready current writer and primary read
+PASS N02 same native batch body result order and changes
+PASS N03 middle CHECK failure rolls back body/version/claim
+PASS N04 suffix failure rolls back body/version/claim
+PASS N05 20 concurrent current batches have no orphan
+PASS N06 concurrent old unclaimed requests cannot borrow a current claim
+PASS N07 first(column), DML RETURNING and native session brand
+PASS N08 request response lost after commit cannot leave claim or replay a write automatically
+PASS N09 frozen current writer closes and thaw still blocks old source
+PASS N10 native warm primary authority rows_read and writes
+PASS N11 prebarrier survives actual D1 publication migration rollback
+PASS N13 successful additive migration retains originals and starts frozen
+PASS N12 committed orphan fails reads and current writes without repair
+{"pass":13,"fail":0,"skip":0}

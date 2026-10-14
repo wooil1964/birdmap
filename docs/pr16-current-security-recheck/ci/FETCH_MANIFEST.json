@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-14T03:38:11.569750+00:00",
+  "fixedLocalSha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "requests": [
+    "GET /pulls/16",
+    "GET /pulls/17",
+    "GET /pulls/22",
+    "GET /pulls/23",
+    "GET /actions/runs?head_sha=399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+    "GET /actions/runs/38481187572",
+    "GET /actions/runs/38481187572/jobs",
+    "GET /actions/runs/38494318678",
+    "GET /actions/runs/38494318678/jobs",
+    "GET /actions/runs/38501900711",
+    "GET /actions/runs/38501900711/jobs"
+  ],
+  "limitations": [
+    {
+      "jobId": 115583898586,
+      "operation": "GET job logs",
+      "errorType": "HTTPError",
+      "message": "HTTP Error 401: Server failed to authenticate the request. Please refer to the information in the www-authenticate header."
+    },
+    {
+      "jobId": 115626504456,
+      "operation": "GET job logs",
+      "errorType": "HTTPError",
+      "message": "HTTP Error 401: Server failed to authenticate the request. Please refer to the information in the www-authenticate header."
+    },
+    {
+      "jobId": 115650568198,
+      "operation": "GET job logs",
+      "errorType": "HTTPError",
+      "message": "HTTP Error 401: Server failed to authenticate the request. Please refer to the information in the www-authenticate header."
+    }
+  ],
+  "operatingCalls": 0,
+  "mutations": 0,
+  "exactMainRuns": [
+    {
+      "id": 38503313657,
+      "name": "pages build and deployment",
+      "event": "dynamic",
+      "head_sha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+      "head_branch": "main",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38503313657"
+    }
+  ]
+}

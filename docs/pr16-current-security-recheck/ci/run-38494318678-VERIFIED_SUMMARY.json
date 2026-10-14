@@ -1,0 +1,740 @@
+{
+  "runId": 38494318678,
+  "url": "https://github.com/wooil1964/birdmap/actions/runs/38494318678",
+  "runEvent": "pull_request",
+  "apiHeadSha": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "actualCheckoutSha": "d4d9948ce5cfd791cd6933c0324cdf940aca1280",
+  "jobId": 115626504456,
+  "jobConclusion": "success",
+  "stepsSuccess": 21,
+  "stepsTotal": 21,
+  "tapSummaries": [
+    {
+      "tests": 395,
+      "pass": 395,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 322,
+      "pass": 322,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 36,
+      "pass": 36,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "pythonExecuted": [
+    {
+      "tests": 60,
+      "pass": 60,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "tests": 22,
+      "pass": 21,
+      "fail": 0,
+      "skip": 1
+    },
+    {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skip": 0
+    }
+  ],
+  "autoCorePass": 856,
+  "autoCoreFail": 0,
+  "autoCoreSkip": 1,
+  "jsonOutputs": [
+    {
+      "head": "d4d9948ce5cfd791cd6933c0324cdf940aca1280",
+      "baseline": "b12e20c1b6d856a021898a0c1c9221b30393a221",
+      "clock": "2026-10-08T22:40:00+09:00",
+      "weekGeneratedAt": "2026-10-08 21:04 KST",
+      "conditions": {
+        "withSightings": {
+          "siteCount": 190,
+          "candidates": 176,
+          "signature": "47c90497b6995318031b10e85c0750f77f5898c5ce1a75bfb951b820eb5e9afb",
+          "allSignatureEqual": true,
+          "top10Exact": true,
+          "unsafeCount": 0
+        },
+        "withoutSightings": {
+          "siteCount": 190,
+          "candidates": 176,
+          "signature": "ecd3d28b8c3d5f23cfbf00bcc305c2171bff01ea4f81027dc1407ffe1a84a758",
+          "allSignatureEqual": true,
+          "top10Exact": true,
+          "unsafeCount": 0
+        }
+      }
+    },
+    {
+      "summary": {
+        "pass": 242,
+        "fail": 0,
+        "skip": 0,
+        "notRun": 0
+      },
+      "oldChrome15": {
+        "total": 15,
+        "unsafe": 0
+      },
+      "network": {
+        "allowedLocal": 78,
+        "allowedDependencyGet": 199,
+        "blockedOther": 268,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "resultPath": "/home/runner/work/birdmap/birdmap/.ci-results/chrome/publication_chrome.json"
+    },
+    {
+      "checkoutSha": "d4d9948ce5cfd791cd6933c0324cdf940aca1280",
+      "indexSha256": "22f26a7b57334773d15b6dcf30be53d13309912eb763ef1a33bd0a1cd8121117",
+      "widths": [
+        344,
+        375,
+        768,
+        1024,
+        1440
+      ],
+      "rows": [
+        {
+          "width": 344,
+          "id": "static-history-purge",
+          "pass": true,
+          "evidence": {
+            "before": true,
+            "name": false,
+            "button": false,
+            "loaded": false,
+            "staticSites": 190
+          }
+        },
+        {
+          "width": 344,
+          "id": "history-counts-dialog",
+          "pass": true,
+          "evidence": {
+            "text": "누적 출현종 수3종승인 제보 건수2건",
+            "fields": 2,
+            "nums": [
+              "3종",
+              "2건"
+            ],
+            "focus": "reporterStatsClose",
+            "private": false,
+            "width": 328
+          }
+        },
+        {
+          "width": 344,
+          "id": "escape-focus-owner",
+          "pass": true,
+          "evidence": {
+            "closed": true,
+            "cleared": true,
+            "focus": true
+          }
+        },
+        {
+          "width": 344,
+          "id": "recent-search-native-sibling-controls",
+          "pass": true,
+          "evidence": {
+            "recent": true,
+            "search": true,
+            "nested": 0,
+            "mapControls": 2
+          }
+        },
+        {
+          "width": 344,
+          "id": "monthly-parent-modal-kept",
+          "pass": true,
+          "evidence": {
+            "parent": "flex",
+            "child": "none",
+            "parentClass": true
+          }
+        },
+        {
+          "width": 344,
+          "id": "two-replies-race-and-close",
+          "pass": true,
+          "evidence": {
+            "n": 2
+          }
+        },
+        {
+          "width": 344,
+          "id": "bad-body-fail-closed",
+          "pass": true,
+          "evidence": {
+            "empty": true,
+            "text": "공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.",
+            "fields": 0
+          }
+        },
+        {
+          "width": 344,
+          "id": "zero-counts-valid",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 344,
+          "id": "removed-owner-closes",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 344,
+          "id": "late-history-cannot-reinsert",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 344,
+          "id": "hidden-barrier-and-late-stats",
+          "pass": true,
+          "evidence": {
+            "data": null,
+            "owner": false,
+            "text": "",
+            "visible": "none"
+          }
+        },
+        {
+          "width": 344,
+          "id": "expiry-clears-dialog",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 344,
+          "id": "offline-and-recovery",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 375,
+          "id": "static-history-purge",
+          "pass": true,
+          "evidence": {
+            "before": true,
+            "name": false,
+            "button": false,
+            "loaded": false,
+            "staticSites": 190
+          }
+        },
+        {
+          "width": 375,
+          "id": "history-counts-dialog",
+          "pass": true,
+          "evidence": {
+            "text": "누적 출현종 수3종승인 제보 건수2건",
+            "fields": 2,
+            "nums": [
+              "3종",
+              "2건"
+            ],
+            "focus": "reporterStatsClose",
+            "private": false,
+            "width": 359
+          }
+        },
+        {
+          "width": 375,
+          "id": "escape-focus-owner",
+          "pass": true,
+          "evidence": {
+            "closed": true,
+            "cleared": true,
+            "focus": true
+          }
+        },
+        {
+          "width": 375,
+          "id": "recent-search-native-sibling-controls",
+          "pass": true,
+          "evidence": {
+            "recent": true,
+            "search": true,
+            "nested": 0,
+            "mapControls": 2
+          }
+        },
+        {
+          "width": 375,
+          "id": "monthly-parent-modal-kept",
+          "pass": true,
+          "evidence": {
+            "parent": "flex",
+            "child": "none",
+            "parentClass": true
+          }
+        },
+        {
+          "width": 375,
+          "id": "two-replies-race-and-close",
+          "pass": true,
+          "evidence": {
+            "n": 2
+          }
+        },
+        {
+          "width": 375,
+          "id": "bad-body-fail-closed",
+          "pass": true,
+          "evidence": {
+            "empty": true,
+            "text": "공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.",
+            "fields": 0
+          }
+        },
+        {
+          "width": 375,
+          "id": "zero-counts-valid",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 375,
+          "id": "removed-owner-closes",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 375,
+          "id": "late-history-cannot-reinsert",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 375,
+          "id": "hidden-barrier-and-late-stats",
+          "pass": true,
+          "evidence": {
+            "data": null,
+            "owner": false,
+            "text": "",
+            "visible": "none"
+          }
+        },
+        {
+          "width": 375,
+          "id": "expiry-clears-dialog",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 375,
+          "id": "offline-and-recovery",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 768,
+          "id": "static-history-purge",
+          "pass": true,
+          "evidence": {
+            "before": true,
+            "name": false,
+            "button": false,
+            "loaded": false,
+            "staticSites": 190
+          }
+        },
+        {
+          "width": 768,
+          "id": "history-counts-dialog",
+          "pass": true,
+          "evidence": {
+            "text": "누적 출현종 수3종승인 제보 건수2건",
+            "fields": 2,
+            "nums": [
+              "3종",
+              "2건"
+            ],
+            "focus": "reporterStatsClose",
+            "private": false,
+            "width": 380
+          }
+        },
+        {
+          "width": 768,
+          "id": "escape-focus-owner",
+          "pass": true,
+          "evidence": {
+            "closed": true,
+            "cleared": true,
+            "focus": true
+          }
+        },
+        {
+          "width": 768,
+          "id": "recent-search-native-sibling-controls",
+          "pass": true,
+          "evidence": {
+            "recent": true,
+            "search": true,
+            "nested": 0,
+            "mapControls": 2
+          }
+        },
+        {
+          "width": 768,
+          "id": "monthly-parent-modal-kept",
+          "pass": true,
+          "evidence": {
+            "parent": "flex",
+            "child": "none",
+            "parentClass": true
+          }
+        },
+        {
+          "width": 768,
+          "id": "two-replies-race-and-close",
+          "pass": true,
+          "evidence": {
+            "n": 2
+          }
+        },
+        {
+          "width": 768,
+          "id": "bad-body-fail-closed",
+          "pass": true,
+          "evidence": {
+            "empty": true,
+            "text": "공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.",
+            "fields": 0
+          }
+        },
+        {
+          "width": 768,
+          "id": "zero-counts-valid",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 768,
+          "id": "removed-owner-closes",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 768,
+          "id": "late-history-cannot-reinsert",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 768,
+          "id": "hidden-barrier-and-late-stats",
+          "pass": true,
+          "evidence": {
+            "data": null,
+            "owner": false,
+            "text": "",
+            "visible": "none"
+          }
+        },
+        {
+          "width": 768,
+          "id": "expiry-clears-dialog",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 768,
+          "id": "offline-and-recovery",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1024,
+          "id": "static-history-purge",
+          "pass": true,
+          "evidence": {
+            "before": true,
+            "name": false,
+            "button": false,
+            "loaded": false,
+            "staticSites": 190
+          }
+        },
+        {
+          "width": 1024,
+          "id": "history-counts-dialog",
+          "pass": true,
+          "evidence": {
+            "text": "누적 출현종 수3종승인 제보 건수2건",
+            "fields": 2,
+            "nums": [
+              "3종",
+              "2건"
+            ],
+            "focus": "reporterStatsClose",
+            "private": false,
+            "width": 380
+          }
+        },
+        {
+          "width": 1024,
+          "id": "escape-focus-owner",
+          "pass": true,
+          "evidence": {
+            "closed": true,
+            "cleared": true,
+            "focus": true
+          }
+        },
+        {
+          "width": 1024,
+          "id": "recent-search-native-sibling-controls",
+          "pass": true,
+          "evidence": {
+            "recent": true,
+            "search": true,
+            "nested": 0,
+            "mapControls": 2
+          }
+        },
+        {
+          "width": 1024,
+          "id": "monthly-parent-modal-kept",
+          "pass": true,
+          "evidence": {
+            "parent": "flex",
+            "child": "none",
+            "parentClass": true
+          }
+        },
+        {
+          "width": 1024,
+          "id": "two-replies-race-and-close",
+          "pass": true,
+          "evidence": {
+            "n": 2
+          }
+        },
+        {
+          "width": 1024,
+          "id": "bad-body-fail-closed",
+          "pass": true,
+          "evidence": {
+            "empty": true,
+            "text": "공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.",
+            "fields": 0
+          }
+        },
+        {
+          "width": 1024,
+          "id": "zero-counts-valid",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1024,
+          "id": "removed-owner-closes",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1024,
+          "id": "late-history-cannot-reinsert",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1024,
+          "id": "hidden-barrier-and-late-stats",
+          "pass": true,
+          "evidence": {
+            "data": null,
+            "owner": false,
+            "text": "",
+            "visible": "none"
+          }
+        },
+        {
+          "width": 1024,
+          "id": "expiry-clears-dialog",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1024,
+          "id": "offline-and-recovery",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1440,
+          "id": "static-history-purge",
+          "pass": true,
+          "evidence": {
+            "before": true,
+            "name": false,
+            "button": false,
+            "loaded": false,
+            "staticSites": 190
+          }
+        },
+        {
+          "width": 1440,
+          "id": "history-counts-dialog",
+          "pass": true,
+          "evidence": {
+            "text": "누적 출현종 수3종승인 제보 건수2건",
+            "fields": 2,
+            "nums": [
+              "3종",
+              "2건"
+            ],
+            "focus": "reporterStatsClose",
+            "private": false,
+            "width": 380
+          }
+        },
+        {
+          "width": 1440,
+          "id": "escape-focus-owner",
+          "pass": true,
+          "evidence": {
+            "closed": true,
+            "cleared": true,
+            "focus": true
+          }
+        },
+        {
+          "width": 1440,
+          "id": "recent-search-native-sibling-controls",
+          "pass": true,
+          "evidence": {
+            "recent": true,
+            "search": true,
+            "nested": 0,
+            "mapControls": 2
+          }
+        },
+        {
+          "width": 1440,
+          "id": "monthly-parent-modal-kept",
+          "pass": true,
+          "evidence": {
+            "parent": "flex",
+            "child": "none",
+            "parentClass": true
+          }
+        },
+        {
+          "width": 1440,
+          "id": "two-replies-race-and-close",
+          "pass": true,
+          "evidence": {
+            "n": 2
+          }
+        },
+        {
+          "width": 1440,
+          "id": "bad-body-fail-closed",
+          "pass": true,
+          "evidence": {
+            "empty": true,
+            "text": "공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.",
+            "fields": 0
+          }
+        },
+        {
+          "width": 1440,
+          "id": "zero-counts-valid",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1440,
+          "id": "removed-owner-closes",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1440,
+          "id": "late-history-cannot-reinsert",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1440,
+          "id": "hidden-barrier-and-late-stats",
+          "pass": true,
+          "evidence": {
+            "data": null,
+            "owner": false,
+            "text": "",
+            "visible": "none"
+          }
+        },
+        {
+          "width": 1440,
+          "id": "expiry-clears-dialog",
+          "pass": true,
+          "evidence": {}
+        },
+        {
+          "width": 1440,
+          "id": "offline-and-recovery",
+          "pass": true,
+          "evidence": {}
+        }
+      ],
+      "network": {
+        "allowedLocal": 31,
+        "allowedDependencyGet": 91,
+        "blockedOther": 95,
+        "operatingRequests": 0,
+        "externalNonGet": 0
+      },
+      "browserErrors": [],
+      "summary": {
+        "pass": 65,
+        "fail": 0,
+        "skip": 0
+      }
+    },
+    {
+      "pass": 13,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "head": "d4d9948ce5cfd791cd6933c0324cdf940aca1280",
+      "files": 388,
+      "indexSha256": "22f26a7b57334773d15b6dcf30be53d13309912eb763ef1a33bd0a1cd8121117",
+      "out": "/home/runner/work/birdmap/birdmap/.ci-results/protected-pages"
+    }
+  ],
+  "logSha256": "dfe8f589e941bb04d477acb7d20eae28447c7d32c7fa29943f423d7af7a3f133"
+}
