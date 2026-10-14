@@ -95,6 +95,7 @@ def map_url(site: dict, base_url: str) -> str:
     return "%s/?site=%s" % (base_url, site["id"])
 
 
+# 검색용 본문은 sites/<ID>/ (build_seo_pages.py)가 맡는다. 이 페이지는 공유 미리보기용이라 검색 색인에서만 뺀다.
 def page_html(site: dict, base_url: str = BASE_URL) -> str:
     """수집기가 자바스크립트 없이 읽을 수 있도록 메타태그를 HTML에 그대로 넣는다."""
     e = html.escape
@@ -121,6 +122,7 @@ def page_html(site: dict, base_url: str = BASE_URL) -> str:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>%(title)s | 들뫼생태연구회</title>
 <meta name="description" content="%(description)s">
+<meta name="robots" content="noindex,follow">
 <link rel="canonical" href="%(share_url)s">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="들뫼생태연구회 전국 탐조지도">

@@ -59,6 +59,8 @@ jobs:
           python .github/scripts/test_validator_time_contract.py
           python .github/scripts/test_tide.py
           python .github/scripts/test_share_pages.py
+          python .github/scripts/build_seo_pages.py --check
+          python .github/scripts/test_seo_pages.py
       - name: Exact normal recommendation signatures
         run: node .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221
       - name: Chrome publication and consent security with local mock only
