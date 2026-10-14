@@ -1,0 +1,298 @@
+TAP version 13
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO
+ok 1 - overlapping approved consumers preserve fixed history and shared DTO
+  ---
+  duration_ms: 10.4193
+  type: 'test'
+  ...
+# Subtest: overlapping approved consumers preserve fixed history and shared DTO (frozen)
+ok 2 - overlapping approved consumers preserve fixed history and shared DTO (frozen)
+  ---
+  duration_ms: 0.8722
+  type: 'test'
+  ...
+# Subtest: unverified approved response cannot restore fixed history or popup names
+ok 3 - unverified approved response cannot restore fixed history or popup names
+  ---
+  duration_ms: 0.5946
+  type: 'test'
+  ...
+# Subtest: approved withdrawal clears previously linked fixed history
+ok 4 - approved withdrawal clears previously linked fixed history
+  ---
+  duration_ms: 0.6924
+  type: 'test'
+  ...
+# Subtest: hidden permission detection destructively removes live coordinates and names
+ok 5 - hidden permission detection destructively removes live coordinates and names
+  ---
+  duration_ms: 2.6817
+  type: 'test'
+  ...
+# Subtest: exact5000ms expiry detection destructively removes live coordinates and names
+ok 6 - exact5000ms expiry detection destructively removes live coordinates and names
+  ---
+  duration_ms: 0.6606
+  type: 'test'
+  ...
+# Subtest: valid4999ms permission stays public and the lease cap is unchanged
+ok 7 - valid4999ms permission stays public and the lease cap is unchanged
+  ---
+  duration_ms: 0.5934
+  type: 'test'
+  ...
+# Subtest: hidden HEAD issues no network request
+ok 8 - hidden HEAD issues no network request
+  ---
+  duration_ms: 0.8174
+  type: 'test'
+  ...
+# Subtest: hidden payload/refresh/route issues no network and never executes callback
+ok 9 - hidden payload/refresh/route issues no network and never executes callback
+  ---
+  duration_ms: 0.8404
+  type: 'test'
+  ...
+# Subtest: HEAD started before visibility barrier is rejected after late arrival
+ok 10 - HEAD started before visibility barrier is rejected after late arrival
+  ---
+  duration_ms: 2.28
+  type: 'test'
+  ...
+# Subtest: payload arriving after hide never issues postflight or restores data
+ok 11 - payload arriving after hide never issues postflight or restores data
+  ---
+  duration_ms: 5.9904
+  type: 'test'
+  ...
+# Subtest: late old HEAD failure cannot invalidate newer visible recovered state
+ok 12 - late old HEAD failure cannot invalidate newer visible recovered state
+  ---
+  duration_ms: 1.0145
+  type: 'test'
+  ...
+# Subtest: visibility barrier releases old in-flight references for normal recovery
+ok 13 - visibility barrier releases old in-flight references for normal recovery
+  ---
+  duration_ms: 1.2169
+  type: 'test'
+  ...
+# Subtest: new primary authority is accepted through fresh payload and postflight
+ok 14 - new primary authority is accepted through fresh payload and postflight
+  ---
+  duration_ms: 1.4003
+  type: 'test'
+  ...
+# Subtest: renewal must match current epoch/revision and generation
+ok 15 - renewal must match current epoch/revision and generation
+  ---
+  duration_ms: 0.6953
+  type: 'test'
+  ...
+# Subtest: A. 3명: 모바일 3명 표시, 전체 보기 없음
+ok 16 - A. 3명: 모바일 3명 표시, 전체 보기 없음
+  ---
+  duration_ms: 1.7164
+  type: 'test'
+  ...
+# Subtest: B. 4명: 모바일 3명 표시, 전체 보기 있음
+ok 17 - B. 4명: 모바일 3명 표시, 전체 보기 있음
+  ---
+  duration_ms: 0.7417
+  type: 'test'
+  ...
+# Subtest: C. 5명: 데스크톱 5명 표시, 전체 보기 없음
+ok 18 - C. 5명: 데스크톱 5명 표시, 전체 보기 없음
+  ---
+  duration_ms: 0.1171
+  type: 'test'
+  ...
+# Subtest: D. 6명: 데스크톱 5명 표시, 전체 보기 있음
+ok 19 - D. 6명: 데스크톱 5명 표시, 전체 보기 있음
+  ---
+  duration_ms: 0.1056
+  type: 'test'
+  ...
+# Subtest: 서버 순서를 그대로 쓰고 다시 정렬하지 않는다
+ok 20 - 서버 순서를 그대로 쓰고 다시 정렬하지 않는다
+  ---
+  duration_ms: 0.217
+  type: 'test'
+  ...
+# Subtest: E. 빈 응답은 유효하고 기여자가 없다
+ok 21 - E. 빈 응답은 유효하고 기여자가 없다
+  ---
+  duration_ms: 0.2851
+  type: 'test'
+  ...
+# Subtest: F. 비정상 응답은 거부한다
+ok 22 - F. 비정상 응답은 거부한다
+  ---
+  duration_ms: 0.2129
+  type: 'test'
+  ...
+# Subtest: H. 운영 응답(2026-10)을 그대로 받아들이고 이름·건수만 남긴다
+ok 23 - H. 운영 응답(2026-10)을 그대로 받아들이고 이름·건수만 남긴다
+  ---
+  duration_ms: 0.2064
+  type: 'test'
+  ...
+# Subtest: 이미 받아 둔 승인 자료로 검색 목록을 만든다
+ok 24 - 이미 받아 둔 승인 자료로 검색 목록을 만든다
+  ---
+  duration_ms: 12.8001
+  type: 'test'
+  ...
+# Subtest: 고정 붉은 점에 연결된 제보도 함께 들어간다
+ok 25 - 고정 붉은 점에 연결된 제보도 함께 들어간다
+  ---
+  duration_ms: 0.8989
+  type: 'test'
+  ...
+# Subtest: 종명으로 검색되고 과거 관찰도 걸린다
+ok 26 - 종명으로 검색되고 과거 관찰도 걸린다
+  ---
+  duration_ms: 0.8578
+  type: 'test'
+  ...
+# Subtest: 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+ok 27 - 같은 지점의 여러 관찰이 각각 한 줄로 나온다
+  ---
+  duration_ms: 0.5681
+  type: 'test'
+  ...
+# Subtest: 검색어가 없으면 아무것도 돌려주지 않는다
+ok 28 - 검색어가 없으면 아무것도 돌려주지 않는다
+  ---
+  duration_ms: 0.5693
+  type: 'test'
+  ...
+# Subtest: 공개 API 가 준 공개 좌표만 목록에 들어간다
+ok 29 - 공개 API 가 준 공개 좌표만 목록에 들어간다
+  ---
+  duration_ms: 0.596
+  type: 'test'
+  ...
+# Subtest: 승인되지 않은 제보는 애초에 목록에 없다
+ok 30 - 승인되지 않은 제보는 애초에 목록에 없다
+  ---
+  duration_ms: 0.5354
+  type: 'test'
+  ...
+# Subtest: 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+ok 31 - 위치 이름은 고정 점이면 탐조지명, 독립 점이면 공개 좌표를 쓴다
+  ---
+  duration_ms: 0.5817
+  type: 'test'
+  ...
+# Subtest: 좌표가 없는 제보는 목록에 넣지 않는다
+ok 32 - 좌표가 없는 제보는 목록에 넣지 않는다
+  ---
+  duration_ms: 0.5529
+  type: 'test'
+  ...
+# Subtest: 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+ok 33 - 검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 않는다
+  ---
+  duration_ms: 0.409
+  type: 'test'
+  ...
+# Subtest: 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+ok 34 - 승인 제보를 다시 받아 오면 검색 목록도 다시 만든다
+  ---
+  duration_ms: 0.2979
+  type: 'test'
+  ...
+# Subtest: normal two count types zero and multi species accepted
+ok 35 - normal two count types zero and multi species accepted
+  ---
+  duration_ms: 5.18
+  type: 'test'
+  ...
+# Subtest: numeric coercion and unexpected private fields rejected
+ok 36 - numeric coercion and unexpected private fields rejected
+  ---
+  duration_ms: 2.2116
+  type: 'test'
+  ...
+# Subtest: anonymous blank missing witness never clickable
+ok 37 - anonymous blank missing witness never clickable
+  ---
+  duration_ms: 2.231
+  type: 'test'
+  ...
+# Subtest: nickname identity retained literally and escaped history button
+ok 38 - nickname identity retained literally and escaped history button
+  ---
+  duration_ms: 2.2723
+  type: 'test'
+  ...
+# Subtest: actual search renderer does not promote anonymous label to nickname
+ok 39 - actual search renderer does not promote anonymous label to nickname
+  ---
+  duration_ms: 2.0373
+  type: 'test'
+  ...
+# Subtest: open calls P1 transport only and shows two fields
+ok 40 - open calls P1 transport only and shows two fields
+  ---
+  duration_ms: 2.3254
+  type: 'test'
+  ...
+# Subtest: late A cannot overwrite newer B
+ok 41 - late A cannot overwrite newer B
+  ---
+  duration_ms: 2.42
+  type: 'test'
+  ...
+# Subtest: close clears counts and references and late reply remains closed
+ok 42 - close clears counts and references and late reply remains closed
+  ---
+  duration_ms: 2.074
+  type: 'test'
+  ...
+# Subtest: different publication generation cannot display response
+ok 43 - different publication generation cannot display response
+  ---
+  duration_ms: 1.8438
+  type: 'test'
+  ...
+# Subtest: permission failure and disconnected trigger never restore payload
+ok 44 - permission failure and disconnected trigger never restore payload
+  ---
+  duration_ms: 3.6569
+  type: 'test'
+  ...
+# Subtest: fetch error does not expose input or restore old statistics
+ok 45 - fetch error does not expose input or restore old statistics
+  ---
+  duration_ms: 1.9297
+  type: 'test'
+  ...
+# Subtest: Tab remains in own dialog and close does not clear parent modal class
+ok 46 - Tab remains in own dialog and close does not clear parent modal class
+  ---
+  duration_ms: 1.862
+  type: 'test'
+  ...
+# Subtest: source hooks close statistic synchronously on P1 barrier
+ok 47 - source hooks close statistic synchronously on P1 barrier
+  ---
+  duration_ms: 0.2684
+  type: 'test'
+  ...
+# Subtest: existing search DTO keys preserved with exact transient source id
+ok 48 - existing search DTO keys preserved with exact transient source id
+  ---
+  duration_ms: 2.1384
+  type: 'test'
+  ...
+1..48
+# tests 48
+# suites 0
+# pass 48
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 244.0914

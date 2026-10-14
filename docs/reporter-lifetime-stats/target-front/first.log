@@ -1,0 +1,128 @@
+TAP version 13
+# Subtest: normal two count types zero and multi species accepted
+ok 1 - normal two count types zero and multi species accepted
+  ---
+  duration_ms: 3.7326
+  type: 'test'
+  ...
+# Subtest: numeric coercion and unexpected private fields rejected
+ok 2 - numeric coercion and unexpected private fields rejected
+  ---
+  duration_ms: 1.3577
+  type: 'test'
+  ...
+# Subtest: anonymous blank missing witness never clickable
+ok 3 - anonymous blank missing witness never clickable
+  ---
+  duration_ms: 1.4337
+  type: 'test'
+  ...
+# Subtest: nickname identity retained literally and escaped history button
+not ok 4 - nickname identity retained literally and escaped history button
+  ---
+  duration_ms: 2.0359
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\reporter-lifetime-stats\\birdmap\\.github\\scripts\\test_reporter_lifetime_stats.mjs:11:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /&quot;&lt;safe&gt;&quot;/. Input:
+    
+    '<button type="button" class="reporterStatsLink" data-reporter="Bird &quot;&lt;safe>&quot;" data-reporter-source="history" data-reporter-report="id1" aria-label="Bird &quot;&lt;safe>&quot;님의 누적 출현종 수와 승인 제보 건수">Bird &quot;&lt;safe>&quot;</button>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<button type="button" class="reporterStatsLink" data-reporter="Bird &quot;&lt;safe>&quot;" data-reporter-source="history" data-reporter-report="id1" aria-label="Bird &quot;&lt;safe>&quot;님의 누적 출현종 수와 승인 제보 건수">Bird &quot;&lt;safe>&quot;</button>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/reporter-lifetime-stats/birdmap/.github/scripts/test_reporter_lifetime_stats.mjs:11:185)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: actual search renderer does not promote anonymous label to nickname
+not ok 5 - actual search renderer does not promote anonymous label to nickname
+  ---
+  duration_ms: 1.7058
+  type: 'test'
+  location: 'C:\\Users\\김진호\\.codex\\worktrees\\reporter-lifetime-stats\\birdmap\\.github\\scripts\\test_reporter_lifetime_stats.mjs:12:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/reporter-lifetime-stats/birdmap/.github/scripts/test_reporter_lifetime_stats.mjs:12:251)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: open calls P1 transport only and shows two fields
+ok 6 - open calls P1 transport only and shows two fields
+  ---
+  duration_ms: 1.8097
+  type: 'test'
+  ...
+# Subtest: late A cannot overwrite newer B
+ok 7 - late A cannot overwrite newer B
+  ---
+  duration_ms: 1.4274
+  type: 'test'
+  ...
+# Subtest: close clears counts and references and late reply remains closed
+ok 8 - close clears counts and references and late reply remains closed
+  ---
+  duration_ms: 1.3497
+  type: 'test'
+  ...
+# Subtest: different publication generation cannot display response
+ok 9 - different publication generation cannot display response
+  ---
+  duration_ms: 1.362
+  type: 'test'
+  ...
+# Subtest: permission failure and disconnected trigger never restore payload
+ok 10 - permission failure and disconnected trigger never restore payload
+  ---
+  duration_ms: 2.6249
+  type: 'test'
+  ...
+# Subtest: fetch error does not expose input or restore old statistics
+ok 11 - fetch error does not expose input or restore old statistics
+  ---
+  duration_ms: 1.3343
+  type: 'test'
+  ...
+# Subtest: Tab remains in own dialog and close does not clear parent modal class
+ok 12 - Tab remains in own dialog and close does not clear parent modal class
+  ---
+  duration_ms: 1.2267
+  type: 'test'
+  ...
+# Subtest: source hooks close statistic synchronously on P1 barrier
+ok 13 - source hooks close statistic synchronously on P1 barrier
+  ---
+  duration_ms: 0.2713
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 11
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 95.0023
