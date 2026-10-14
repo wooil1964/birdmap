@@ -15,3 +15,7 @@
 재현은본문명령을사용한다. 결과파일/기존실패/원본CI로그를덮어쓰지않도록새출력폴더를지정한다. captureCI metadata/원본zipdigest검증은배포/실제운영rollback확보와다르다.
 
 새구현기능추가나생태가중치변경은권고하지않는다. 남은것은별도운영승인및승인시점최신main/PR/운영전환확인이다.
+
+## 게시·최종 저장 영수증
+
+검증문서f2fdb051a73fa590308b8b9d747ab58800de6d28 push완료. PR24댓글6165147963 및Issue9댓글6165149567을게시한뒤전체댓글을재조회해양쪽본문이전송문자열과정확히일치함을확인했다. POSTED_REPORT/REPORTED_COMMENT_RECEIPT를읽고중복게시하지않는다. 이영수증을포함한마지막checkpoint는git log -1로확인한다. Draft제품head는6195c357이며검증문서commit은제품head가아니다.
