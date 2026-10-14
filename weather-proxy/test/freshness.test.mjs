@@ -18,7 +18,10 @@ const today = {date: '2026-09-06', forecastTime: '2026-09-06 17:00 KST',
   generatedAt: '2026-09-06 14:30 KST', scoreEligible: true, missingScoreFields: [], wind: '북풍 0.0m/s', rain: '강수 없음', wave: '0.5m', score: 90};
 
 test('all inline scripts compile', () => {
-  for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) new vm.Script(match[1]);
+  for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    if (/type\s*=\s*["']application\/ld\+json/i.test(match[1])) continue; // JSON-LD is data, not code
+    new vm.Script(match[2]);
+  }
 });
 test('today, component fallback, yesterday, old and no data remain distinct', () => {
   assert.equal(context.storedWeatherState(today, {}, now).kind, 'today_saved');

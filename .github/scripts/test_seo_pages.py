@@ -52,10 +52,14 @@ for sid in ids:
     for ld in re.findall(r'<script type="application/ld\+json">(.+?)</script>', text):
         json.loads(ld)
     assert "../../?site=%s" % sid in text
+    listed = set(re.findall(r"<li>([^<]+)</li>", text))
+    assert not listed & seo.NEST_SENSITIVE, (sid, listed & seo.NEST_SENSITIVE)
     # relative links resolve
     for href in re.findall(r'href="(\.\./[^"?#]*)"', text):
         target = (ROOT / "sites" / sid / href).resolve()
         assert (target / "index.html").exists(), (sid, href)
+names = [s["name"] for s in pages]
+assert len(names) == len(set(names)), "page labels must be unique"
 hub = (ROOT / "sites/index.html").read_text(encoding="utf-8")
 assert all('href="%s/"' % sid in hub for sid in ids)
 index = (ROOT / "index.html").read_text(encoding="utf-8")

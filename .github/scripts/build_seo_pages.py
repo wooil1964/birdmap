@@ -9,9 +9,9 @@ Source is the runtime siteData in index.html, using only fields the map already 
 Never written: coordinates (no lat/lon, no geo JSON-LD), reports, news, reporter names.
 
 A site gets its own indexable page only when it has enough distinct facts:
-  - the first site of its name (island spots such as 어청도 repeat one name, so their
-    titles and species lists would be near-duplicates), and
-  - at least MIN_SPECIES listed species, with region, environment and season present.
+  - at least MIN_SPECIES listed species, with region, environment and season present, and
+  - for sites sharing a name (island spots such as 어청도), a species list that differs from
+    the pages already kept for that name; copies are reachable through map links on the kept page.
 The rest stay reachable on the map (?site=<ID>) and get no page and no sitemap entry.
 
 Usage:
@@ -34,6 +34,11 @@ from site_data import load_runtime_sites  # noqa: E402
 BASE_URL = "https://wooil1964.github.io/birdmap"
 SITES_DIR = ROOT / "sites"
 MIN_SPECIES = 3
+DUP_JACCARD = 0.5
+# 번식·둥지 위치 추정에 쓰일 수 있는 종은 검색용 페이지에 싣지 않는다(지도의 공개 자료에는 그대로 있다).
+# 목록은 보수적으로 잡았으며, 바꾸려면 여기만 고치고 다시 생성한다.
+NEST_SENSITIVE = frozenset("""긴점박이올빼미 수리부엉이 솔부엉이 올빼미 팔색조 황새 따오기 호사비오리 뜸부기 흰눈썹뜸부기
+검독수리 뿔쇠오리 알락쇠오리 쇠부리슴새""".split())
 SIDO_ORDER = ["서울", "인천", "경기", "서울·경기", "강원", "충남", "충북", "대전", "대전·충북", "세종", "충북·경북",
               "전북", "전북·충남", "전남", "전남·전북·경남", "전북·경남", "광주", "경북", "경남", "대구", "부산", "울산", "제주", "중국"]
 
@@ -70,7 +75,7 @@ def species_of(site: dict) -> list[str]:
     seen: list[str] = []
     for name in raw.split(","):
         name = name.strip()
-        if name and name not in seen:
+        if name and name not in seen and name not in NEST_SENSITIVE:
             seen.append(name)
     return seen
 
@@ -79,20 +84,31 @@ def split_tags(value: str) -> list[str]:
     return [t.strip() for t in value.replace("·", ";").split(";") if t.strip()]
 
 
+def jaccard(a: list[str], b: list[str]) -> float:
+    a, b = set(a), set(b)
+    return len(a & b) / len(a | b) if a | b else 1.0
+
+
 def indexable_sites(sites: list[dict]) -> list[dict]:
-    seen_names: set[str] = set()
+    """Pages to publish. Same-name sites are separate spots, so one that lists clearly different
+    species (Jaccard < DUP_JACCARD against every kept page of that name) gets its own page titled
+    "<name> 지점 <id>"; a copy of an already kept list is left to the kept page's map links.
+    Returned dicts are copies: "name" is the page label, "_otherIds" the same-name sites without a page."""
+    kept: dict[str, list[dict]] = {}
     result = []
-    for site in sites:  # siteData order = id order; the first site of a name is the one kept
+    for site in sites:  # siteData order = id order
         name = text_of(site, "name")
-        first = name not in seen_names
-        seen_names.add(name)
-        if not first:
+        species = species_of(site)
+        if len(species) < MIN_SPECIES or not all(text_of(site, k) for k in ("region", "env", "bestSeason")):
             continue
-        if len(species_of(site)) < MIN_SPECIES:
+        peers = kept.setdefault(name, [])
+        if any(jaccard(species, species_of(p)) >= DUP_JACCARD for p in peers):
             continue
-        if not all(text_of(site, k) for k in ("region", "env", "bestSeason")):
-            continue
-        result.append(site)
+        result.append(dict(site, name=name if not peers else "%s 지점 %s" % (name, site["id"]), _base=name))
+        peers.append(site)
+    for page in result:
+        page["_otherIds"] = [str(s["id"]) for s in sites if text_of(s, "name") == page["_base"]
+                             and s["id"] not in {p["id"] for p in kept[page["_base"]]}] if page["name"] == page["_base"] else []
     return result
 
 
@@ -185,6 +201,9 @@ def site_page(site: dict, pages: list[dict]) -> str:
     if related:
         related_html = "<h2>같은 지역의 다른 탐조지</h2><ul>%s</ul>" % "".join(
             '<li><a href="../%s/">%s</a> (%s)</li>' % (e(s["id"]), e(text_of(s, "name")), e(text_of(s, "region"))) for s in related)
+    if site.get("_otherIds"):
+        related_html += "<h2>지도의 같은 이름 탐조 지점</h2><ul>%s</ul>" % "".join(
+            '<li><a href="../../?site=%s">%s 지점 %s (지도에서 열기)</a></li>' % (e(i), e(site["_base"]), e(i)) for i in site["_otherIds"])
     crumbs = [("전국 탐조지도", BASE_URL + "/"), ("탐조지 가이드", BASE_URL + "/sites/"), (name, page_url(site))]
     out = head(title, desc, page_url(site), "%s/share/og/%s.png?v=2" % (BASE_URL, site["id"]), "article")
     out += json_ld(breadcrumb(crumbs))
@@ -204,7 +223,7 @@ def site_page(site: dict, pages: list[dict]) -> str:
     out += related_html + "\n"
     out += '<p style="margin-top:24px"><a class="open" href="%s">전국탐조지도에서 %s 열기</a></p>\n' % (e(map_href(site)), e(name))
     out += ('<p class="note">들뫼생태연구회 전국 탐조지도의 공개 탐조지 정보입니다. 정확한 위치, 실시간 기상·조석, 최근 출현 제보는 '
-            '지도에서 확인할 수 있으며, 이 페이지에는 포함되지 않습니다.</p>\n</div>\n</body>\n</html>\n')
+            '지도에서 확인할 수 있으며, 이 페이지에는 포함되지 않습니다. 번식에 민감한 일부 종은 보호를 위해 이 페이지에 싣지 않았습니다.</p>\n</div>\n</body>\n</html>\n')
     return out
 
 
