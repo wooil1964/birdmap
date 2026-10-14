@@ -1,0 +1,96 @@
+✔ missing weekly windSpeed cannot be rescued by bonus/notice/fill (292.9161ms)
+✔ missing weekly windDirectionDeg cannot be rescued by bonus/notice/fill (262.1072ms)
+✔ missing weekly precipitation3h cannot be rescued by bonus/notice/fill (253.2324ms)
+✔ missing today required wind excludes island fallback (2.3174ms)
+✔ missing today required rain excludes island fallback (1.8342ms)
+✔ missing today required wave excludes island fallback (1.8182ms)
+✔ missing weekly required island wave blocks candidate (22.727ms)
+✔ missing tide 14 blocks bonus and notice (0.4705ms)
+✔ missing tide 19 blocks bonus and notice (0.5142ms)
+✔ missing tide 107 blocks bonus and notice (0.4585ms)
+✔ absolute tide gap 90 (21.9313ms)
+✔ absolute tide gap 91 (20.6194ms)
+✖ safe alternative tide retained after dangerous highest tide (29.7745ms)
+✔ raw rain boundary 0.96 (0.1006ms)
+✔ raw rain boundary 1 (0.0551ms)
+✔ raw rain boundary 1.01 (0.0533ms)
+✔ pelagic 6,0.7,0 (0.0921ms)
+✔ pelagic 6.01,0.7,0 (0.0783ms)
+✔ pelagic 6,0.701,0 (0.0507ms)
+✔ pelagic 6,0.7,0.001 (0.0568ms)
+✔ typed score null (0.0715ms)
+✔ typed score undefined (0.0544ms)
+✔ typed score NaN (0.0452ms)
+✔ typed score Infinity (0.0627ms)
+✔ typed score 92 (0.0419ms)
+✔ typed score true (0.0413ms)
+✔ typed score -1 (0.0419ms)
+✔ typed score 101 (0.0414ms)
+✔ typed score 0 (0.0419ms)
+✔ typed score 92.5 (0.0628ms)
+✔ typed score 100 (0.0583ms)
+✖ repeat literal strings do not add bonus; quantity variants do (0.7001ms)
+✔ latest site date refreshes union recency without effort information (0.2857ms)
+✔ protected expression "저어새" (0.1823ms)
+✔ protected expression "저어새1" (0.1268ms)
+✔ protected expression "저어새 1" (0.0841ms)
+✔ protected expression "저어새 2마리" (0.0515ms)
+✔ protected expression "흰꼬리수리1" (0.049ms)
+✔ protected expression "매1" (0.0446ms)
+✔ protected expression "동박새/저어새1" (0.0444ms)
+✔ protected expression "동박새\n저어새1" (0.0537ms)
+✔ protected expression "동박새\r\n저어새1" (0.0491ms)
+✔ ordinary no false positive 갈매기 (0.0799ms)
+✔ ordinary no false positive 알락오리 (0.044ms)
+✔ ordinary no false positive 알락할미새 (0.0527ms)
+✔ ordinary no false positive 동박새 (0.0623ms)
+✔ ordinary no false positive 한국동박새 (0.0428ms)
+✔ ordinary no false positive 동박새 2마리 (0.0406ms)
+✔ season policies are month rules, independent of report popularity (0.6265ms)
+✔ source authority/nonce/CAS and raw static data unchanged (480.5815ms)
+✔ same fixed study time and acquisition-time replay yield same top10 (640.3056ms)
+✔ actual protected primary recent-site projection removes full sensitive rows (23.6111ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 50
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2454.194
+
+✖ failing tests:
+
+test at docs\issue9-current-analysis-20261014\targeted.test.mjs:12:1
+✖ safe alternative tide retained after dangerous highest tide (29.7745ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - '15:00'
+  
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/issue9-recommendation-current/birdmap/docs/issue9-current-analysis-20261014/targeted.test.mjs:12:795)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: '15:00',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\issue9-current-analysis-20261014\targeted.test.mjs:16:1
+✖ repeat literal strings do not add bonus; quantity variants do (0.7001ms)
+  TypeError: Cannot read properties of undefined (reading 'length')
+      at TestContext.<anonymous> (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/issue9-recommendation-current/birdmap/docs/issue9-current-analysis-20261014/targeted.test.mjs:16:506)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
