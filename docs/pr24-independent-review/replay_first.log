@@ -1,0 +1,17 @@
+<anonymous_script>:5
+  return {id:String(e.site.id),name:e.site.name,score:e.score,displayScore:e.today?api.v251EffectiveScore(e.today):null,rank:api.weeklyRankScore(e),bonus:e.recentReport?.bonus||0,
+                                                                                       ^
+
+TypeError: api.v251EffectiveScore is not a function
+    at candidateContract (eval at runtime (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/runtime.mjs:5:861), <anonymous>:5:88)
+    at eval (eval at runtime (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/runtime.mjs:5:861), <anonymous>:12:9)
+    at Object.record (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/runtime.mjs:5:1030)
+    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/runtime.mjs:6:242
+    at Array.map (<anonymous>)
+    at collect (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/runtime.mjs:6:232)
+    at assess (file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/replay.mjs:9:65)
+    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/replay.mjs:10:346
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+
+Node.js v24.18.0

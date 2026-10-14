@@ -1,0 +1,43 @@
+✔ normal P1-S176 contract allows verified B ID replacements and per-ID dates (15.9045ms)
+✔ negative control date: old gate accepted, strict gate rejects (12.9716ms)
+✔ negative control time: old gate accepted, strict gate rejects (12.0499ms)
+✔ negative control unknownId: old gate accepted, strict gate rejects (10.7398ms)
+✔ negative control duplicate: old gate accepted, strict gate rejects (12.5706ms)
+✔ negative control mandatory: old gate accepted, strict gate rejects (12.1827ms)
+✔ negative control notice: old gate accepted, strict gate rejects (11.2302ms)
+✔ negative control tide: old gate accepted, strict gate rejects (11.0465ms)
+✔ negative control syntheticZero: old gate accepted, strict gate rejects (13.7187ms)
+✔ negative control syntheticId: old gate accepted, strict gate rejects (16.511ms)
+✔ same-ID contract rejects changed date (3.1187ms)
+✔ same-ID contract rejects changed time (2.8098ms)
+✔ same-ID contract rejects changed score (2.6858ms)
+✔ same-ID contract rejects changed rank (2.6148ms)
+✔ same-ID contract rejects changed bonus (5.2254ms)
+✔ same-ID contract rejects changed priority (8.6866ms)
+✔ same-ID contract rejects changed mandatory (2.3319ms)
+✔ same-ID contract rejects changed selectedAxis (4.3113ms)
+✔ same-ID contract rejects changed safe (2.9819ms)
+✔ same-ID contract rejects changed eligible (2.6027ms)
+✔ same-ID contract rejects changed sortLevel (2.5611ms)
+✔ same-ID contract rejects changed axes (2.4212ms)
+✔ same-ID contract rejects changed recent (2.3037ms)
+✔ same-ID contract rejects changed weather (2.3264ms)
+✔ same-ID contract rejects changed sample (2.4586ms)
+✔ same-ID contract rejects changed cautionText (2.7645ms)
+✔ same-ID contract rejects changed weatherText (2.4308ms)
+✔ same-ID contract rejects changed label (2.2727ms)
+✔ candidate membership/core/type/region constraints cannot be erased (108.1622ms)
+✔ all-season independent prefix respects date/recent/core and stable ID 10 (0.4845ms)
+✔ all-season independent prefix respects date/recent/core and stable ID 12 (0.1834ms)
+✔ all-season independent prefix respects date/recent/core and stable ID 5 (0.1849ms)
+✔ all-season independent prefix respects date/recent/core and stable ID 6 (0.212ms)
+✔ all-season independent prefix respects date/recent/core and stable ID 7 (0.1624ms)
+✔ autumn notice priority and tide level precede regional diversity (0.1024ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5290.7098

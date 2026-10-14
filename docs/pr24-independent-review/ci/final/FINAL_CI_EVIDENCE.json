@@ -1,0 +1,517 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-14T09:09:06.631Z",
+  "repo": "wooil1964/birdmap",
+  "pr": 24,
+  "runId": 38539112245,
+  "jobId": 115769205193,
+  "requestedHeadSha": "6195c357e76201fee6625155b29c6148f73feef1",
+  "runHeadSha": "6195c357e76201fee6625155b29c6148f73feef1",
+  "checkoutSha": "8d73af5c64b79a0a28c53fec5889f5ec2157d6a7",
+  "checkoutParentShas": [
+    "efe1c1b97b8f2da0e52ce45bedce031c915ed522",
+    "6195c357e76201fee6625155b29c6148f73feef1"
+  ],
+  "checkoutTreeSha": "82e40ae22355075af3092fbbc4e16a0a456e1942",
+  "event": "pull_request",
+  "status": "completed",
+  "conclusion": "success",
+  "attempt": 1,
+  "rawLogFile": "job-115769205193.original.log",
+  "rawLogSha256": "8c68dc8fd64fbb667a5cdb36d81decc5ae8254fa332936dc97ef7313fcc3c941",
+  "rawLogBytes": 420607,
+  "downloadMethod": "Authenticated GitHub REST job-log endpoint; followed GitHub temporary redirect; exact response bytes saved without editing. Credential retained only in memory.",
+  "mcpDecodedLogChars": 371459,
+  "suiteCounts": [
+    {
+      "name": "front",
+      "pass": 435,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "reports-api public/admin/SQLite",
+      "pass": 322,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "weather-proxy",
+      "pass": 36,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "Python weather",
+      "pass": 60,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "Python weekly weather",
+      "pass": 11,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "Python tide",
+      "pass": 21,
+      "fail": 0,
+      "skip": 1
+    },
+    {
+      "name": "Python shared cards",
+      "pass": 11,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "publication Chrome",
+      "pass": 242,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "reporter-statistics Chrome",
+      "pass": 65,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "native D1 fence",
+      "pass": 13,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "name": "native D1 CAS",
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    }
+  ],
+  "sums": {
+    "requestedSevenSuites": {
+      "pass": 1123,
+      "fail": 0,
+      "skip": 0
+    },
+    "allCountedSuites": {
+      "pass": 1226,
+      "fail": 0,
+      "skip": 1
+    }
+  },
+  "priorRun": {
+    "runId": 38525333687,
+    "head": "519b4bd18a55bb11ed8e0f6a53e18e691b5afc82",
+    "frontPass": 400,
+    "countedPass": 1191,
+    "fail": 0,
+    "skip": 1
+  },
+  "frontAddedContractTests": {
+    "pass": 35,
+    "fail": 0,
+    "skip": 0,
+    "globalTestIds": "144..178",
+    "breakdown": {
+      "positiveNormal": 1,
+      "negativeOldGateControls": 9,
+      "sameIdMutations": 18,
+      "candidateMembershipConstraints": 1,
+      "seasonPrefixes": 5,
+      "noticeTidePriority": 1
+    }
+  },
+  "signatureGateCommand": "node .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "originalFiles": [
+    {
+      "file": "job-115769205193.original.log",
+      "bytes": 420607,
+      "sha256": "8c68dc8fd64fbb667a5cdb36d81decc5ae8254fa332936dc97ef7313fcc3c941"
+    },
+    {
+      "file": "run-38539112245.original.json",
+      "bytes": 12419,
+      "sha256": "b5e37672f3820d2a9fb0e3ed89c88b556798dae869bf696d164abbebc233bdfe"
+    },
+    {
+      "file": "job-115769205193.original.json",
+      "bytes": 4601,
+      "sha256": "f08fd954b75dfd773e32e4c865505a7a268f864be5e52de0ba77171efcd628d5"
+    },
+    {
+      "file": "artifacts-38539112245.original.json",
+      "bytes": 1539,
+      "sha256": "377f750d45df25a741b92220733f36b23906352ac8e4481a1882eec27856ab0f"
+    },
+    {
+      "file": "checkout-8d73af5.original.json",
+      "bytes": 123487,
+      "sha256": "94955be7159e46e5ef83797ac4c08b6e397989e9bfb1567bbb06f774ae64f28f"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11882095061,
+      "name": "protected-pages-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7",
+      "sizeInBytes": 5188174,
+      "digest": "sha256:ade1fa2592de3105a28e42cf1bcf363bbbee4d1e214dcb562bd282037840a139",
+      "expired": false
+    },
+    {
+      "id": 11881487996,
+      "name": "publication-security-diagnostics-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7",
+      "sizeInBytes": 666545,
+      "digest": "sha256:e925ea0af3c0bcc3d9424e1b7d5007c391e2f06ab047e69ce4d19fe1ef30bc85",
+      "expired": false
+    }
+  ],
+  "cautionArtifacts": "ZIP metadata/digests recorded; ZIPs not downloaded/extracted in this evidence subtask.",
+  "scopeCaution": "Original full verification-only CI execution evidence applies to GitHub synthetic merge 8d73af5 with base efe1c1..., not bare PR head and not a later latest-main combination. Contract assertion adequacy remains covered by root independent review.",
+  "countsProof": [
+    {
+      "line": 2946,
+      "text": "2026-10-14T09:01:23.6644643Z # tests 435"
+    },
+    {
+      "line": 2948,
+      "text": "2026-10-14T09:01:23.6644738Z # pass 435"
+    },
+    {
+      "line": 2949,
+      "text": "2026-10-14T09:01:23.6644785Z # fail 0"
+    },
+    {
+      "line": 2951,
+      "text": "2026-10-14T09:01:23.6644885Z # skipped 0"
+    },
+    {
+      "line": 4911,
+      "text": "2026-10-14T09:01:25.4404086Z # tests 322"
+    },
+    {
+      "line": 4913,
+      "text": "2026-10-14T09:01:25.4404184Z # pass 322"
+    },
+    {
+      "line": 4914,
+      "text": "2026-10-14T09:01:25.4404231Z # fail 0"
+    },
+    {
+      "line": 4916,
+      "text": "2026-10-14T09:01:25.4404334Z # skipped 0"
+    },
+    {
+      "line": 5153,
+      "text": "2026-10-14T09:01:25.5779809Z # tests 36"
+    },
+    {
+      "line": 5155,
+      "text": "2026-10-14T09:01:25.5779968Z # pass 36"
+    },
+    {
+      "line": 5156,
+      "text": "2026-10-14T09:01:25.5780097Z # fail 0"
+    },
+    {
+      "line": 5158,
+      "text": "2026-10-14T09:01:25.5780429Z # skipped 0"
+    },
+    {
+      "line": 5187,
+      "text": "2026-10-14T09:01:25.9914968Z Ran 60 tests in 0.217s"
+    },
+    {
+      "line": 5192,
+      "text": "2026-10-14T09:01:27.2965270Z Ran 11 tests in 1.122s"
+    },
+    {
+      "line": 5197,
+      "text": "2026-10-14T09:01:27.6299317Z Ran 22 tests in 0.117s"
+    },
+    {
+      "line": 5199,
+      "text": "2026-10-14T09:01:27.6299457Z OK (skipped=1)"
+    },
+    {
+      "line": 5202,
+      "text": "2026-10-14T09:01:27.9272456Z Ran 11 tests in 0.219s"
+    },
+    {
+      "line": 5546,
+      "text": "2026-10-14T09:02:25.0220215Z     \"pass\": 242,"
+    },
+    {
+      "line": 6193,
+      "text": "2026-10-14T09:02:34.4494301Z     \"pass\": 65,"
+    },
+    {
+      "line": 6236,
+      "text": "2026-10-14T09:02:39.1634867Z {\"pass\":13,\"fail\":0,\"skip\":0}"
+    },
+    {
+      "line": 6252,
+      "text": "2026-10-14T09:02:44.1519684Z {\"pass\":10,\"fail\":0,\"skip\":0}"
+    }
+  ],
+  "checkoutProof": [
+    {
+      "line": 108,
+      "text": "2026-10-14T08:59:56.6217101Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +8d73af5c64b79a0a28c53fec5889f5ec2157d6a7:refs/remotes/pull/24/merge"
+    },
+    {
+      "line": 145,
+      "text": "2026-10-14T09:00:01.2907473Z  * [new ref]         8d73af5c64b79a0a28c53fec5889f5ec2157d6a7 -> pull/24/merge"
+    },
+    {
+      "line": 152,
+      "text": "2026-10-14T09:00:01.4798106Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/24/merge"
+    },
+    {
+      "line": 153,
+      "text": "2026-10-14T09:00:01.7394395Z Note: switching to 'refs/remotes/pull/24/merge'."
+    },
+    {
+      "line": 173,
+      "text": "2026-10-14T09:00:01.7514295Z 8d73af5c64b79a0a28c53fec5889f5ec2157d6a7"
+    },
+    {
+      "line": 5225,
+      "text": "2026-10-14T09:01:31.1038825Z   \"head\": \"8d73af5c64b79a0a28c53fec5889f5ec2157d6a7\","
+    },
+    {
+      "line": 5583,
+      "text": "2026-10-14T09:02:34.4379778Z   \"checkoutSha\": \"8d73af5c64b79a0a28c53fec5889f5ec2157d6a7\","
+    },
+    {
+      "line": 6269,
+      "text": "2026-10-14T09:02:44.2842344Z {\"head\":\"8d73af5c64b79a0a28c53fec5889f5ec2157d6a7\",\"files\":562,\"indexSha256\":\"e12e1e5b83606c8e26fb231eab1238b88aa9c7ab929482f5923407ea1dd8f81b\",\"out\":\"/home/runner/work/birdmap/birdmap/.ci-results/protected-pages\"}"
+    },
+    {
+      "line": 6272,
+      "text": "2026-10-14T09:02:44.2944305Z   name: protected-pages-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7"
+    },
+    {
+      "line": 6303,
+      "text": "2026-10-14T09:02:46.0113293Z Artifact protected-pages-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7.zip successfully finalized. Artifact ID 11882095061"
+    },
+    {
+      "line": 6304,
+      "text": "2026-10-14T09:02:46.0114334Z Artifact protected-pages-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7 has been successfully uploaded! Final size is 5188174 bytes. Artifact ID is 11882095061"
+    },
+    {
+      "line": 6308,
+      "text": "2026-10-14T09:02:46.0281031Z   name: publication-security-diagnostics-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7"
+    },
+    {
+      "line": 6345,
+      "text": "2026-10-14T09:02:47.1331051Z Artifact publication-security-diagnostics-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7.zip successfully finalized. Artifact ID 11881487996"
+    },
+    {
+      "line": 6346,
+      "text": "2026-10-14T09:02:47.1332481Z Artifact publication-security-diagnostics-8d73af5c64b79a0a28c53fec5889f5ec2157d6a7 has been successfully uploaded! Final size is 666545 bytes. Artifact ID is 11881487996"
+    }
+  ],
+  "frontAddedTestsProof": [
+    {
+      "line": 1194,
+      "text": "2026-10-14T09:01:23.6327388Z ok 144 - normal P1-S176 contract allows verified B ID replacements and per-ID dates"
+    },
+    {
+      "line": 1200,
+      "text": "2026-10-14T09:01:23.6329069Z ok 145 - negative control date: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1206,
+      "text": "2026-10-14T09:01:23.6331541Z ok 146 - negative control time: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1212,
+      "text": "2026-10-14T09:01:23.6355004Z ok 147 - negative control unknownId: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1218,
+      "text": "2026-10-14T09:01:23.6357211Z ok 148 - negative control duplicate: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1224,
+      "text": "2026-10-14T09:01:23.6358945Z ok 149 - negative control mandatory: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1230,
+      "text": "2026-10-14T09:01:23.6360619Z ok 150 - negative control notice: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1236,
+      "text": "2026-10-14T09:01:23.6362497Z ok 151 - negative control tide: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1242,
+      "text": "2026-10-14T09:01:23.6364208Z ok 152 - negative control syntheticZero: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1248,
+      "text": "2026-10-14T09:01:23.6366225Z ok 153 - negative control syntheticId: old gate accepted, strict gate rejects"
+    },
+    {
+      "line": 1254,
+      "text": "2026-10-14T09:01:23.6367638Z ok 154 - same-ID contract rejects changed date"
+    },
+    {
+      "line": 1260,
+      "text": "2026-10-14T09:01:23.6368961Z ok 155 - same-ID contract rejects changed time"
+    },
+    {
+      "line": 1266,
+      "text": "2026-10-14T09:01:23.6370302Z ok 156 - same-ID contract rejects changed score"
+    },
+    {
+      "line": 1272,
+      "text": "2026-10-14T09:01:23.6371620Z ok 157 - same-ID contract rejects changed rank"
+    },
+    {
+      "line": 1278,
+      "text": "2026-10-14T09:01:23.6373054Z ok 158 - same-ID contract rejects changed bonus"
+    },
+    {
+      "line": 1284,
+      "text": "2026-10-14T09:01:23.6374330Z ok 159 - same-ID contract rejects changed priority"
+    },
+    {
+      "line": 1290,
+      "text": "2026-10-14T09:01:23.6376021Z ok 160 - same-ID contract rejects changed mandatory"
+    },
+    {
+      "line": 1296,
+      "text": "2026-10-14T09:01:23.6377422Z ok 161 - same-ID contract rejects changed selectedAxis"
+    },
+    {
+      "line": 1302,
+      "text": "2026-10-14T09:01:23.6378744Z ok 162 - same-ID contract rejects changed safe"
+    },
+    {
+      "line": 1308,
+      "text": "2026-10-14T09:01:23.6380075Z ok 163 - same-ID contract rejects changed eligible"
+    },
+    {
+      "line": 1314,
+      "text": "2026-10-14T09:01:23.6381425Z ok 164 - same-ID contract rejects changed sortLevel"
+    },
+    {
+      "line": 1320,
+      "text": "2026-10-14T09:01:23.6383616Z ok 165 - same-ID contract rejects changed axes"
+    },
+    {
+      "line": 1326,
+      "text": "2026-10-14T09:01:23.6385047Z ok 166 - same-ID contract rejects changed recent"
+    },
+    {
+      "line": 1332,
+      "text": "2026-10-14T09:01:23.6386378Z ok 167 - same-ID contract rejects changed weather"
+    },
+    {
+      "line": 1338,
+      "text": "2026-10-14T09:01:23.6387711Z ok 168 - same-ID contract rejects changed sample"
+    },
+    {
+      "line": 1344,
+      "text": "2026-10-14T09:01:23.6389091Z ok 169 - same-ID contract rejects changed cautionText"
+    },
+    {
+      "line": 1350,
+      "text": "2026-10-14T09:01:23.6390486Z ok 170 - same-ID contract rejects changed weatherText"
+    },
+    {
+      "line": 1356,
+      "text": "2026-10-14T09:01:23.6391831Z ok 171 - same-ID contract rejects changed label"
+    },
+    {
+      "line": 1362,
+      "text": "2026-10-14T09:01:23.6393687Z ok 172 - candidate membership/core/type/region constraints cannot be erased"
+    },
+    {
+      "line": 1368,
+      "text": "2026-10-14T09:01:23.6395480Z ok 173 - all-season independent prefix respects date/recent/core and stable ID 10"
+    },
+    {
+      "line": 1374,
+      "text": "2026-10-14T09:01:23.6397277Z ok 174 - all-season independent prefix respects date/recent/core and stable ID 12"
+    },
+    {
+      "line": 1380,
+      "text": "2026-10-14T09:01:23.6399087Z ok 175 - all-season independent prefix respects date/recent/core and stable ID 5"
+    },
+    {
+      "line": 1386,
+      "text": "2026-10-14T09:01:23.6400848Z ok 176 - all-season independent prefix respects date/recent/core and stable ID 6"
+    },
+    {
+      "line": 1392,
+      "text": "2026-10-14T09:01:23.6402960Z ok 177 - all-season independent prefix respects date/recent/core and stable ID 7"
+    },
+    {
+      "line": 1398,
+      "text": "2026-10-14T09:01:23.6404631Z ok 178 - autumn notice priority and tide level precede regional diversity"
+    }
+  ],
+  "signatureGateProof": [
+    {
+      "line": 5208,
+      "text": "2026-10-14T09:01:28.2294850Z ##[group]Run node .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221"
+    },
+    {
+      "line": 5209,
+      "text": "2026-10-14T09:01:28.2295291Z \u001b[36;1mnode .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221\u001b[0m"
+    },
+    {
+      "line": 5231,
+      "text": "2026-10-14T09:01:31.1040445Z       \"siteCount\": 190,"
+    },
+    {
+      "line": 5232,
+      "text": "2026-10-14T09:01:31.1040647Z       \"candidates\": 176,"
+    },
+    {
+      "line": 5234,
+      "text": "2026-10-14T09:01:31.1041208Z       \"allSignatureEqual\": true,"
+    },
+    {
+      "line": 5235,
+      "text": "2026-10-14T09:01:31.1041375Z       \"top10ScoreRankBonusExact\": true,"
+    },
+    {
+      "line": 5236,
+      "text": "2026-10-14T09:01:31.1041577Z       \"sameIdPayloadExact\": true,"
+    },
+    {
+      "line": 5237,
+      "text": "2026-10-14T09:01:31.1041771Z       \"independentSelectionExact\": true,"
+    },
+    {
+      "line": 5356,
+      "text": "2026-10-14T09:01:31.1074948Z       \"siteCount\": 190,"
+    },
+    {
+      "line": 5357,
+      "text": "2026-10-14T09:01:31.1075081Z       \"candidates\": 176,"
+    },
+    {
+      "line": 5359,
+      "text": "2026-10-14T09:01:31.1075589Z       \"allSignatureEqual\": true,"
+    },
+    {
+      "line": 5360,
+      "text": "2026-10-14T09:01:31.1075760Z       \"top10ScoreRankBonusExact\": true,"
+    },
+    {
+      "line": 5361,
+      "text": "2026-10-14T09:01:31.1076165Z       \"sameIdPayloadExact\": true,"
+    },
+    {
+      "line": 5362,
+      "text": "2026-10-14T09:01:31.1076334Z       \"independentSelectionExact\": true,"
+    }
+  ]
+}

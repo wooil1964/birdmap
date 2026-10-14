@@ -1,0 +1,256 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: weeklyRecommendationForSite source protection invariant
++ actual - expected
+
++ 'function weeklyRecommendationForSite(site,week){\r\n' +
++   '  /* 물때 기준이 있는 갯벌 탐조지는 적합한 만조가 없으면 공지·기상·동풍 등 어떤 사유로도\r\n' +
++   '     추천에 들어오지 않는다. 고정 추천·자동 추천·공지 연계가 모두 이 함수를 지난다. */\r\n' +
++   '  if(!weeklyMudflatTideGateOpen(site,week))return null;\r\n' +
++   '  var seasonalBest=weeklySeasonalBestWeatherDay(site,week);\r\n' +
++   '  var bestWeather=seasonalBest?{date:seasonalBest.date,sample:seasonalBest.sample}:null;\r\n' +
++   '  var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);\r\n' +
++   '  // 주간 sample이 없으면 today fallback 날짜(그것도 없으면 오늘)의 계절 정책으로 판단한다.\r\n' +
++   '  var policy=seasonalBest?seasonalBest.policy:weeklyDatePolicy(site,(weatherEntry&&weatherEntry.date)||weeklyTodayDateText());\r\n' +
++   '  if(!policy)return null;\r\n' +
++   '  var axes=policy.axes, pelagic=policy.pelagic, sampleFilter=policy.sampleFilter;\r\n' +
++   '  var autumn=policy.autumn, winter=policy.winter, spring=policy.spring, summer=policy.summer;\r\n' +
++   '  // 선상과 주간 자료가 있는 탐조지는 유효 sample이 0이면 공지/물때/동풍이나 today fallback으로 승격하지 않는다.\r\n' +
++   '  if((pelagic||weeklyWeekSite(site))&&!bestWeather)return null;\r\n' +
++   '  // 저장 기상이 명시적으로 부적격(scoreEligible===false)이면 계절·공지·mandatory와 무관하게 제외한다.\r\n' +
++   '  // 값이 없거나 null인 미확인 상태는 기존 의미를 그대로 둔다.\r\n' +
++   '  if(weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;\r\n' +
++   '  var issueReason=weeklyIssueReason(site);\r\n' +
++   '  var tideRec=autumn?weeklyBestMudflatTide(site,week):null;\r\n' +
++   '  // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.\r\n' +
++   '  var windRec=(pelagic||!autumn)?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));\r\n' +
++   '  var reasons=[], caution=[];\r\n' +
++   '  if(issueReason)reasons.push(issueReason);\r\n' +
++   '  if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}\r\n' +
++   "  if(windRec){reasons.push(windRec.reason); if(windRec.detailText)reasons.push(windRec.detailText); if(windRec.cautionText)caution.push('⚠️ '+windRec.cautionText);}\r\n" +
++   "  var springReason=spring?'':todaySpringIslandReason(site,policy.month);\r\n" +
++   '  var priority=issueReason?1:(tideRec?2:(windRec?3:4));\r\n' +
++   '  if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;\r\n' +
++   "  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';\r\n" +
++   '  // 물때가 추천 사유인 탐조지는 기상 최적일로 날짜를 옮기지 않는다. 카드의 사유 날짜와\r\n' +
++   '  // 표시되는 만조 날짜가 어긋나지 않게 한다.\r\n' +
++   '  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather&&!tideRec)date=bestWeather.date;\r\n' +
++   '  /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */\r\n' +
++   '  // 물때 추천은 그 만조에 가장 가까운 예보로 평가한다. 대표성 있는 예보가 없으면 기상은 미확인으로 둔다.\r\n' +
++   '  var tideDay=!!tideRec&&date===tideRec.date;\r\n' +
++   '  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?tideRec.sample:(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;\r\n' +
++   '  var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(tideDay?tideRec.weather:((!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather));\r\n' +
++   '  var dayScore=dayBest?dayBest.score:((tideDay&&dayWeather)?dayWeather.score:(dayWeather&&weatherEntry?weatherEntry.score:null));\r\n' +
++   '  /* 유효한 기상 점수가 없는 후보(공지·물때·동풍 사유만 있는 경우 포함)는 추천하지 않는다.\r\n' +
++   '     공지 내용과 조석·참고 기상 표시는 별도 경로라 그대로다. */\r\n' +
++   '  if(!weeklyScoreValid(dayScore))return null;\r\n' +
++   '  var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);\r\n' +
++   '  if(spring&&axes.island){\r\n' +
++   "    reasons.push('봄 도서 이동기');\r\n" +
++   "    if(springIslandRainWindCondition(site,dayBest))reasons.push('비 뒤 서풍·북서풍 전환으로 이동성 조류 유입 가능성에 주목');\r\n" +
++   '  }\r\n' +
++   "  if(geolmaeriPriority)reasons.push('5월 초 긴부리흑꼬리도요 이동 시기로 최우선 검토');\r\n" +
++   "  if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);\r\n" +
++   '  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:dayScore,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,\r\n' +
++   "    recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',\r\n" +
++   "    tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 인접 오늘 저장 기상 기준':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};\r\n" +
++   '  if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;\r\n' +
++   '  // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.\r\n' +
++   '  entry.recentReport=weeklyRecentReportBonus(site);\r\n' +
++   '  entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;\r\n' +
++   '  // C 정책 후보 관문: 검증된 현재 기상자료가 아닌 근거(참고·시각 불명)는 점수·가점·공지·mandatory 와 무관하게 후보가 아니다.\r\n' +
++   '  if(!weeklyRecommendationEligible(entry))return null;\r\n' +
++   '  return entry;\r\n' +
+- 'function weeklyRecommendationForSite(site,week){\n' +
+-   '  /* 물때 기준이 있는 갯벌 탐조지는 적합한 만조가 없으면 공지·기상·동풍 등 어떤 사유로도\n' +
+-   '     추천에 들어오지 않는다. 고정 추천·자동 추천·공지 연계가 모두 이 함수를 지난다. */\n' +
+-   '  if(!weeklyMudflatTideGateOpen(site,week))return null;\n' +
+-   '  var seasonalBest=weeklySeasonalBestWeatherDay(site,week);\n' +
+-   '  var bestWeather=seasonalBest?{date:seasonalBest.date,sample:seasonalBest.sample}:null;\n' +
+-   '  var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);\n' +
+-   '  // 주간 sample이 없으면 today fallback 날짜(그것도 없으면 오늘)의 계절 정책으로 판단한다.\n' +
+-   '  var policy=seasonalBest?seasonalBest.policy:weeklyDatePolicy(site,(weatherEntry&&weatherEntry.date)||weeklyTodayDateText());\n' +
+-   '  if(!policy)return null;\n' +
+-   '  var axes=policy.axes, pelagic=policy.pelagic, sampleFilter=policy.sampleFilter;\n' +
+-   '  var autumn=policy.autumn, winter=policy.winter, spring=policy.spring, summer=policy.summer;\n' +
+-   '  // 선상과 주간 자료가 있는 탐조지는 유효 sample이 0이면 공지/물때/동풍이나 today fallback으로 승격하지 않는다.\n' +
+-   '  if((pelagic||weeklyWeekSite(site))&&!bestWeather)return null;\n' +
+-   '  // 저장 기상이 명시적으로 부적격(scoreEligible===false)이면 계절·공지·mandatory와 무관하게 제외한다.\n' +
+-   '  // 값이 없거나 null인 미확인 상태는 기존 의미를 그대로 둔다.\n' +
+-   '  if(weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;\n' +
+-   '  var issueReason=weeklyIssueReason(site);\n' +
+-   '  var tideRec=autumn?weeklyBestMudflatTide(site,week):null;\n' +
+-   '  // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.\n' +
+-   '  var windRec=(pelagic||!autumn)?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));\n' +
+-   '  var reasons=[], caution=[];\n' +
+-   '  if(issueReason)reasons.push(issueReason);\n' +
+-   '  if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}\n' +
+-   "  if(windRec){reasons.push(windRec.reason); if(windRec.detailText)reasons.push(windRec.detailText); if(windRec.cautionText)caution.push('⚠️ '+windRec.cautionText);}\n" +
+-   "  var springReason=spring?'':todaySpringIslandReason(site,policy.month);\n" +
+-   '  var priority=issueReason?1:(tideRec?2:(windRec?3:4));\n' +
+-   '  if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;\n' +
+-   "  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';\n" +
+-   '  // 물때가 추천 사유인 탐조지는 기상 최적일로 날짜를 옮기지 않는다. 카드의 사유 날짜와\n' +
+-   '  // 표시되는 만조 날짜가 어긋나지 않게 한다.\n' +
+-   '  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather&&!tideRec)date=bestWeather.date;\n' +
+-   '  /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */\n' +
+-   '  // 물때 추천은 그 만조에 가장 가까운 예보로 평가한다. 대표성 있는 예보가 없으면 기상은 미확인으로 둔다.\n' +
+-   '  var tideDay=!!tideRec&&date===tideRec.date;\n' +
+-   '  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?tideRec.sample:(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;\n' +
+-   '  var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(tideDay?tideRec.weather:((!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather));\n' +
+-   '  var dayScore=dayBest?dayBest.score:((tideDay&&dayWeather)?dayWeather.score:(dayWeather&&weatherEntry?weatherEntry.score:null));\n' +
+-   '  /* 유효한 기상 점수가 없는 후보(공지·물때·동풍 사유만 있는 경우 포함)는 추천하지 않는다.\n' +
+-   '     공지 내용과 조석·참고 기상 표시는 별도 경로라 그대로다. */\n' +
+-   '  if(!weeklyScoreValid(dayScore))return null;\n' +
+-   '  var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);\n' +
+-   '  if(spring&&axes.island){\n' +
+-   "    reasons.push('봄 도서 이동기');\n" +
+-   "    if(springIslandRainWindCondition(site,dayBest))reasons.push('비 뒤 서풍·북서풍 전환으로 이동성 조류 유입 가능성에 주목');\n" +
+-   '  }\n' +
+-   "  if(geolmaeriPriority)reasons.push('5월 초 긴부리흑꼬리도요 이동 시기로 최우선 검토');\n" +
+-   "  if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);\n" +
+-   '  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:dayScore,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,\n' +
+-   "    recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',\n" +
+-   "    tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 인접 오늘 저장 기상 기준':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};\n" +
+-   '  if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;\n' +
+-   '  // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.\n' +
+-   '  entry.recentReport=weeklyRecentReportBonus(site);\n' +
+-   '  entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;\n' +
+-   '  // C 정책 후보 관문: 검증된 현재 기상자료가 아닌 근거(참고·시각 불명)는 점수·가점·공지·mandatory 와 무관하게 후보가 아니다.\n' +
+-   '  if(!weeklyRecommendationEligible(entry))return null;\n' +
+-   '  return entry;\n' +
+    '}'
+
+    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/freeze_manifest.mjs:2:654
+    at Array.map (<anonymous>)
+    at file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/freeze_manifest.mjs:2:580
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'function weeklyRecommendationForSite(site,week){\r\n' +
+    '  /* 물때 기준이 있는 갯벌 탐조지는 적합한 만조가 없으면 공지·기상·동풍 등 어떤 사유로도\r\n' +
+    '     추천에 들어오지 않는다. 고정 추천·자동 추천·공지 연계가 모두 이 함수를 지난다. */\r\n' +
+    '  if(!weeklyMudflatTideGateOpen(site,week))return null;\r\n' +
+    '  var seasonalBest=weeklySeasonalBestWeatherDay(site,week);\r\n' +
+    '  var bestWeather=seasonalBest?{date:seasonalBest.date,sample:seasonalBest.sample}:null;\r\n' +
+    '  var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);\r\n' +
+    '  // 주간 sample이 없으면 today fallback 날짜(그것도 없으면 오늘)의 계절 정책으로 판단한다.\r\n' +
+    '  var policy=seasonalBest?seasonalBest.policy:weeklyDatePolicy(site,(weatherEntry&&weatherEntry.date)||weeklyTodayDateText());\r\n' +
+    '  if(!policy)return null;\r\n' +
+    '  var axes=policy.axes, pelagic=policy.pelagic, sampleFilter=policy.sampleFilter;\r\n' +
+    '  var autumn=policy.autumn, winter=policy.winter, spring=policy.spring, summer=policy.summer;\r\n' +
+    '  // 선상과 주간 자료가 있는 탐조지는 유효 sample이 0이면 공지/물때/동풍이나 today fallback으로 승격하지 않는다.\r\n' +
+    '  if((pelagic||weeklyWeekSite(site))&&!bestWeather)return null;\r\n' +
+    '  // 저장 기상이 명시적으로 부적격(scoreEligible===false)이면 계절·공지·mandatory와 무관하게 제외한다.\r\n' +
+    '  // 값이 없거나 null인 미확인 상태는 기존 의미를 그대로 둔다.\r\n' +
+    '  if(weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;\r\n' +
+    '  var issueReason=weeklyIssueReason(site);\r\n' +
+    '  var tideRec=autumn?weeklyBestMudflatTide(site,week):null;\r\n' +
+    '  // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.\r\n' +
+    '  var windRec=(pelagic||!autumn)?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));\r\n' +
+    '  var reasons=[], caution=[];\r\n' +
+    '  if(issueReason)reasons.push(issueReason);\r\n' +
+    '  if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}\r\n' +
+    "  if(windRec){reasons.push(windRec.reason); if(windRec.detailText)reasons.push(windRec.detailText); if(windRec.cautionText)caution.push('⚠️ '+windRec.cautionText);}\r\n" +
+    "  var springReason=spring?'':todaySpringIslandReason(site,policy.month);\r\n" +
+    '  var priority=issueReason?1:(tideRec?2:(windRec?3:4));\r\n' +
+    '  if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;\r\n' +
+    "  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';\r\n" +
+    '  // 물때가 추천 사유인 탐조지는 기상 최적일로 날짜를 옮기지 않는다. 카드의 사유 날짜와\r\n' +
+    '  // 표시되는 만조 날짜가 어긋나지 않게 한다.\r\n' +
+    '  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather&&!tideRec)date=bestWeather.date;\r\n' +
+    '  /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */\r\n' +
+    '  // 물때 추천은 그 만조에 가장 가까운 예보로 평가한다. 대표성 있는 예보가 없으면 기상은 미확인으로 둔다.\r\n' +
+    '  var tideDay=!!tideRec&&date===tideRec.date;\r\n' +
+    '  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?tideRec.sample:(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;\r\n' +
+    '  var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(tideDay?tideRec.weather:((!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather));\r\n' +
+    '  var dayScore=dayBest?dayBest.score:((tideDay&&dayWeather)?dayWeather.score:(dayWeather&&weatherEntry?weatherEntry.score:null));\r\n' +
+    '  /* 유효한 기상 점수가 없는 후보(공지·물때·동풍 사유만 있는 경우 포함)는 추천하지 않는다.\r\n' +
+    '     공지 내용과 조석·참고 기상 표시는 별도 경로라 그대로다. */\r\n' +
+    '  if(!weeklyScoreValid(dayScore))return null;\r\n' +
+    '  var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);\r\n' +
+    '  if(spring&&axes.island){\r\n' +
+    "    reasons.push('봄 도서 이동기');\r\n" +
+    "    if(springIslandRainWindCondition(site,dayBest))reasons.push('비 뒤 서풍·북서풍 전환으로 이동성 조류 유입 가능성에 주목');\r\n" +
+    '  }\r\n' +
+    "  if(geolmaeriPriority)reasons.push('5월 초 긴부리흑꼬리도요 이동 시기로 최우선 검토');\r\n" +
+    "  if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);\r\n" +
+    '  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:dayScore,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,\r\n' +
+    "    recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',\r\n" +
+    "    tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 인접 오늘 저장 기상 기준':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};\r\n" +
+    '  if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;\r\n' +
+    '  // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.\r\n' +
+    '  entry.recentReport=weeklyRecentReportBonus(site);\r\n' +
+    '  entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;\r\n' +
+    '  // C 정책 후보 관문: 검증된 현재 기상자료가 아닌 근거(참고·시각 불명)는 점수·가점·공지·mandatory 와 무관하게 후보가 아니다.\r\n' +
+    '  if(!weeklyRecommendationEligible(entry))return null;\r\n' +
+    '  return entry;\r\n' +
+    '}',
+  expected: 'function weeklyRecommendationForSite(site,week){\n' +
+    '  /* 물때 기준이 있는 갯벌 탐조지는 적합한 만조가 없으면 공지·기상·동풍 등 어떤 사유로도\n' +
+    '     추천에 들어오지 않는다. 고정 추천·자동 추천·공지 연계가 모두 이 함수를 지난다. */\n' +
+    '  if(!weeklyMudflatTideGateOpen(site,week))return null;\n' +
+    '  var seasonalBest=weeklySeasonalBestWeatherDay(site,week);\n' +
+    '  var bestWeather=seasonalBest?{date:seasonalBest.date,sample:seasonalBest.sample}:null;\n' +
+    '  var weatherEntry=weeklyWeatherEntryForSite(site,week,bestWeather);\n' +
+    '  // 주간 sample이 없으면 today fallback 날짜(그것도 없으면 오늘)의 계절 정책으로 판단한다.\n' +
+    '  var policy=seasonalBest?seasonalBest.policy:weeklyDatePolicy(site,(weatherEntry&&weatherEntry.date)||weeklyTodayDateText());\n' +
+    '  if(!policy)return null;\n' +
+    '  var axes=policy.axes, pelagic=policy.pelagic, sampleFilter=policy.sampleFilter;\n' +
+    '  var autumn=policy.autumn, winter=policy.winter, spring=policy.spring, summer=policy.summer;\n' +
+    '  // 선상과 주간 자료가 있는 탐조지는 유효 sample이 0이면 공지/물때/동풍이나 today fallback으로 승격하지 않는다.\n' +
+    '  if((pelagic||weeklyWeekSite(site))&&!bestWeather)return null;\n' +
+    '  // 저장 기상이 명시적으로 부적격(scoreEligible===false)이면 계절·공지·mandatory와 무관하게 제외한다.\n' +
+    '  // 값이 없거나 null인 미확인 상태는 기존 의미를 그대로 둔다.\n' +
+    '  if(weatherEntry&&weatherEntry.weather.scoreEligible===false)return null;\n' +
+    '  var issueReason=weeklyIssueReason(site);\n' +
+    '  var tideRec=autumn?weeklyBestMudflatTide(site,week):null;\n' +
+    '  // 육상 동풍 이슈는 선상 추천 사유와 날짜에 사용하지 않는다.\n' +
+    '  var windRec=(pelagic||!autumn)?null:(weeklyEastWindFromWeek(site,week)||weeklyEastWindRecommendation(site,weatherEntry,week));\n' +
+    '  var reasons=[], caution=[];\n' +
+    '  if(issueReason)reasons.push(issueReason);\n' +
+    '  if(tideRec){reasons.push(tideRec.reason); if(tideRec.cautionText)caution.push(tideRec.cautionText);}\n' +
+    "  if(windRec){reasons.push(windRec.reason); if(windRec.detailText)reasons.push(windRec.detailText); if(windRec.cautionText)caution.push('⚠️ '+windRec.cautionText);}\n" +
+    "  var springReason=spring?'':todaySpringIslandReason(site,policy.month);\n" +
+    '  var priority=issueReason?1:(tideRec?2:(windRec?3:4));\n' +
+    '  if(!issueReason&&!tideRec&&!windRec&&!weatherEntry)return null;\n' +
+    "  var date=(tideRec&&tideRec.date)||(windRec&&windRec.date)||(weatherEntry&&weatherEntry.date)||'';\n" +
+    '  // 물때가 추천 사유인 탐조지는 기상 최적일로 날짜를 옮기지 않는다. 카드의 사유 날짜와\n' +
+    '  // 표시되는 만조 날짜가 어긋나지 않게 한다.\n' +
+    '  if((summer||spring||winter||pelagic||(autumn&&axes.field))&&bestWeather&&!tideRec)date=bestWeather.date;\n' +
+    '  /* 추천 날짜가 정해지면 그 날짜의 대표 sample을 함께 보여준다. 물때·동풍은 점수와 별도 축이다. */\n' +
+    '  // 물때 추천은 그 만조에 가장 가까운 예보로 평가한다. 대표성 있는 예보가 없으면 기상은 미확인으로 둔다.\n' +
+    '  var tideDay=!!tideRec&&date===tideRec.date;\n' +
+    '  var dayBest=(weatherEntry&&weatherEntry.fromWeek)?(tideDay?tideRec.sample:(weeklyDailyBestSample(site,date,policy.safeFilter)||weeklyDailyBestSample(site,date,sampleFilter))):null;\n' +
+    '  var dayWeather=dayBest?weeklySampleAsWeather(site,dayBest,date):(tideDay?tideRec.weather:((!weatherEntry||weatherEntry.date!==date)?null:weatherEntry.weather));\n' +
+    '  var dayScore=dayBest?dayBest.score:((tideDay&&dayWeather)?dayWeather.score:(dayWeather&&weatherEntry?weatherEntry.score:null));\n' +
+    '  /* 유효한 기상 점수가 없는 후보(공지·물때·동풍 사유만 있는 경우 포함)는 추천하지 않는다.\n' +
+    '     공지 내용과 조석·참고 기상 표시는 별도 경로라 그대로다. */\n' +
+    '  if(!weeklyScoreValid(dayScore))return null;\n' +
+    '  var geolmaeriPriority=spring&&!!dayBest&&springGeolmaeriPriority(site,date);\n' +
+    '  if(spring&&axes.island){\n' +
+    "    reasons.push('봄 도서 이동기');\n" +
+    "    if(springIslandRainWindCondition(site,dayBest))reasons.push('비 뒤 서풍·북서풍 전환으로 이동성 조류 유입 가능성에 주목');\n" +
+    '  }\n' +
+    "  if(geolmaeriPriority)reasons.push('5월 초 긴부리흑꼬리도요 이동 시기로 최우선 검토');\n" +
+    "  if(windRec&&windRec.evidenceText)reasons.push((windRec.date!==date?weeklyDateLabel(windRec.date)+' ':'')+windRec.evidenceText);\n" +
+    '  var entry={site:site,today:dayWeather,sample:dayBest,axes:axes,season:policy.season,score:dayScore,isMandatory:priority<4,priority:priority,reasons:reasons,springReason:springReason,recommendationDate:date,\n' +
+    "    recommendationTime:dayBest?weeklySampleTimeText(dayBest):'',\n" +
+    "    tideText:tideRec&&((tideRec.date!==date?weeklyDateLabel(tideRec.date)+' ':'')+tideRec.tideText),extraText:tideRec&&tideRec.extraText,weatherText:(dayWeather&&dayWeather.wind)||(windRec&&windRec.weatherText)||'',cautionText:caution.join(' · '),basisText:dayBest?(tideDay?'만조 인접 3시간 예보 기준(만조와 '+Math.abs(weeklySampleMinutes(dayBest)-tideRec.minutes)+'분 차)':'주간 3시간 예보 기준'):(tideDay?'만조 시각 인접 오늘 저장 기상 기준':weatherEntry?'확인 가능한 예보 기간 내 추천':(tideRec?'조석 주간 자료 기준':'탐조 이슈 기준')),sortLevel:tideRec&&tideRec.sortLevel,tideMatched:tideDay&&!!dayBest};\n" +
+    '  if(spring)entry.springGeolmaeriPriority=geolmaeriPriority;\n' +
+    '  // 추천 가점은 자격·안전 판정이 모두 끝난 뒤 순위에만 더한다. entry.score(화면 기상 점수)는 그대로다.\n' +
+    '  entry.recentReport=weeklyRecentReportBonus(site);\n' +
+    '  entry.rankScore=Number.isFinite(entry.score)?entry.score+(entry.recentReport?entry.recentReport.bonus:0):null;\n' +
+    '  // C 정책 후보 관문: 검증된 현재 기상자료가 아닌 근거(참고·시각 불명)는 점수·가점·공지·mandatory 와 무관하게 후보가 아니다.\n' +
+    '  if(!weeklyRecommendationEligible(entry))return null;\n' +
+    '  return entry;\n' +
+    '}',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.0

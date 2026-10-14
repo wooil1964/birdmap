@@ -1,0 +1,64 @@
+{
+  "originalHead": "519b4bd18a55bb11ed8e0f6a53e18e691b5afc82",
+  "originalGateSHA256": "a73699d50af7d5687582b11054e95d63d1807b43a8903d9324ff3050b3a1e407",
+  "originalVerdict": "FAIL verification coverage; no observed product leak",
+  "cases": [
+    {
+      "id": "date2099",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "time99:99",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "unknownID",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "duplicateID",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "mandatoryToggle",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "noticeErased",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "tideChanged",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "syntheticZeroInserted",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    },
+    {
+      "id": "syntheticUnknownID",
+      "originalGateAccepted": true,
+      "patchedGateRejected": true,
+      "evidence": "test_recommendation_contract.mjs negative-control tests; contract_first.tap and final contract.tap"
+    }
+  ],
+  "finalSameIdMutationCases": 18,
+  "unitPass": 35,
+  "unitFail": 0
+}

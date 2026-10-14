@@ -1,0 +1,987 @@
+{
+  "checks": 193,
+  "fail": 0,
+  "rawRegions": {
+    "전북": 10,
+    "충남": 17,
+    "인천": 20,
+    "경기": 24,
+    "전북·충남": 1,
+    "전남": 27,
+    "부산": 7,
+    "경남": 8,
+    "서울·경기": 3,
+    "서울": 7,
+    "강원": 22,
+    "경북": 12,
+    "울산": 7,
+    "제주": 11,
+    "충북": 3,
+    "충북·경북": 1,
+    "전남·전북·경남": 1,
+    "전북·경남": 1,
+    "대전·충북": 1,
+    "세종": 2,
+    "대구": 2,
+    "중국": 2,
+    "대전": 1
+  },
+  "canonicalAliasMap": {
+    "pelagic": "pelagic_seabird",
+    "raptor": "raptor_migration",
+    "coastal_gull": "coastal_seabird"
+  },
+  "entries": [
+    {
+      "id": "1",
+      "rawRegion": "전북",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "2",
+      "rawRegion": "충남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "3",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "4",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "5",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "6",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "7",
+      "rawRegion": "인천",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "8",
+      "rawRegion": "인천",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "9",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "10",
+      "rawRegion": "인천",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "11",
+      "rawRegion": "인천",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "12",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "13",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "14",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "15",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "16",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "17",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "18",
+      "rawRegion": "전북·충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "19",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "20",
+      "rawRegion": "전북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "21",
+      "rawRegion": "전북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "22",
+      "rawRegion": "전북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "23",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "24",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "25",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "26",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "27",
+      "rawRegion": "부산",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "28",
+      "rawRegion": "경남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "29",
+      "rawRegion": "경남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "30",
+      "rawRegion": "경남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "31",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "32",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "33",
+      "rawRegion": "서울·경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "34",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "35",
+      "rawRegion": "서울",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "36",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "37",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "38",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "39",
+      "rawRegion": "강원",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "40",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "41",
+      "rawRegion": "인천",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "42",
+      "rawRegion": "강원",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "43",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "44",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "45",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "46",
+      "rawRegion": "강원",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "47",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "48",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "49",
+      "rawRegion": "경북",
+      "canonicalRule": "coastal_seabird"
+    },
+    {
+      "id": "50",
+      "rawRegion": "경북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "51",
+      "rawRegion": "경북",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "52",
+      "rawRegion": "경북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "53",
+      "rawRegion": "강원",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "54",
+      "rawRegion": "강원",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "55",
+      "rawRegion": "경북",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "56",
+      "rawRegion": "울산",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "57",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "58",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "59",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "60",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "61",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "62",
+      "rawRegion": "제주",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "63",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "64",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "65",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "66",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "67",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "68",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "69",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "70",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "71",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "72",
+      "rawRegion": "경남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "73",
+      "rawRegion": "경남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "74",
+      "rawRegion": "울산",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "75",
+      "rawRegion": "부산",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "76",
+      "rawRegion": "부산",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "77",
+      "rawRegion": "충북",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "78",
+      "rawRegion": "충북·경북",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "79",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "80",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "81",
+      "rawRegion": "전남·전북·경남",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "82",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "83",
+      "rawRegion": "전북·경남",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "84",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "85",
+      "rawRegion": "서울·경기",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "86",
+      "rawRegion": "경기",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "87",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "88",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "89",
+      "rawRegion": "경북",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "90",
+      "rawRegion": "대전·충북",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "91",
+      "rawRegion": "세종",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "92",
+      "rawRegion": "충남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "93",
+      "rawRegion": "경북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "94",
+      "rawRegion": "대구",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "95",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "96",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "97",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "98",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "99",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "100",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "101",
+      "rawRegion": "전북",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "102",
+      "rawRegion": "전북",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "103",
+      "rawRegion": "전북",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "104",
+      "rawRegion": "충남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "105",
+      "rawRegion": "충남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "106",
+      "rawRegion": "충남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "107",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "108",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "109",
+      "rawRegion": "경기",
+      "canonicalRule": "general_birding"
+    },
+    {
+      "id": "110",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "111",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "112",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "113",
+      "rawRegion": "경기",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "114",
+      "rawRegion": "충남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "115",
+      "rawRegion": "충남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "116",
+      "rawRegion": "인천",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "117",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "118",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "119",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "120",
+      "rawRegion": "인천",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "121",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "122",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "123",
+      "rawRegion": "전남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "124",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "125",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "126",
+      "rawRegion": "전북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "127",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "128",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "129",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "130",
+      "rawRegion": "전남",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "131",
+      "rawRegion": "경남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "132",
+      "rawRegion": "중국",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "133",
+      "rawRegion": "중국",
+      "canonicalRule": "forest_songbird"
+    },
+    {
+      "id": "134",
+      "rawRegion": "울산",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "135",
+      "rawRegion": "울산",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "136",
+      "rawRegion": "울산",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "137",
+      "rawRegion": "경남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "138",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "139",
+      "rawRegion": "인천",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "140",
+      "rawRegion": "강원",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "141",
+      "rawRegion": "강원",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "142",
+      "rawRegion": "충북",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "143",
+      "rawRegion": "서울",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "144",
+      "rawRegion": "인천",
+      "canonicalRule": "forest_songbird"
+    },
+    {
+      "id": "145",
+      "rawRegion": "전북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "146",
+      "rawRegion": "전북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "147",
+      "rawRegion": "부산",
+      "canonicalRule": "forest_songbird"
+    },
+    {
+      "id": "148",
+      "rawRegion": "부산",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "149",
+      "rawRegion": "부산",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "150",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "151",
+      "rawRegion": "경기",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "152",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "153",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "154",
+      "rawRegion": "강원",
+      "canonicalRule": "raptor_migration"
+    },
+    {
+      "id": "155",
+      "rawRegion": "서울",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "156",
+      "rawRegion": "경기",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "157",
+      "rawRegion": "서울",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "158",
+      "rawRegion": "서울",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "159",
+      "rawRegion": "서울·경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "160",
+      "rawRegion": "서울",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "162",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "163",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "164",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "165",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "167",
+      "rawRegion": "경기",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "168",
+      "rawRegion": "충남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "169",
+      "rawRegion": "충남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "170",
+      "rawRegion": "세종",
+      "canonicalRule": "forest_songbird"
+    },
+    {
+      "id": "172",
+      "rawRegion": "충북",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "173",
+      "rawRegion": "강원",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "174",
+      "rawRegion": "강원",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "175",
+      "rawRegion": "울산",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "176",
+      "rawRegion": "대구",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "178",
+      "rawRegion": "전남",
+      "canonicalRule": "forest_songbird"
+    },
+    {
+      "id": "179",
+      "rawRegion": "전남",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "180",
+      "rawRegion": "전남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "181",
+      "rawRegion": "제주",
+      "canonicalRule": "island_migrant"
+    },
+    {
+      "id": "182",
+      "rawRegion": "경북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "183",
+      "rawRegion": "경북",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "185",
+      "rawRegion": "경남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "186",
+      "rawRegion": "대전",
+      "canonicalRule": "winter_waterfowl"
+    },
+    {
+      "id": "187",
+      "rawRegion": "경기",
+      "canonicalRule": "forest_songbird"
+    },
+    {
+      "id": "188",
+      "rawRegion": "부산",
+      "canonicalRule": "coastal_seabird"
+    },
+    {
+      "id": "189",
+      "rawRegion": "경북",
+      "canonicalRule": "coastal_seabird"
+    },
+    {
+      "id": "190",
+      "rawRegion": "경북",
+      "canonicalRule": "coastal_seabird"
+    },
+    {
+      "id": "191",
+      "rawRegion": "경북",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "192",
+      "rawRegion": "울산",
+      "canonicalRule": "pelagic_seabird"
+    },
+    {
+      "id": "193",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "194",
+      "rawRegion": "충남",
+      "canonicalRule": "mudflat_shorebird"
+    },
+    {
+      "id": "195",
+      "rawRegion": "서울",
+      "canonicalRule": "forest_songbird"
+    }
+  ],
+  "meaning": "Raw compound sido and foreign regions preserved as buckets, not 17-province normalization."
+}

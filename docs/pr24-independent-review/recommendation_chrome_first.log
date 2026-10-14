@@ -1,0 +1,17 @@
+file:///C:/Users/%EA%B9%80%EC%A7%84%ED%98%B8/.codex/worktrees/pr24-independent-review/birdmap/docs/pr24-independent-review/browser/recommendation_chrome.mjs:481
+const result={sourceSHA:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),indexSha256:createHash('sha256').update(HTML).digest('hex'),clock:'2026-10-14T13:33:05+09:00',input:fixed,reportAggregate:a,widths,rows,network,browserErrors,summary:{pass:rows.filter(x=>x.pass).length,fail:rows.filter(x=>!x.pass).length,skip:0,notRun:0},limits:['Clock frozen only in this separate recommendation test; full real-timer P1 tests ran separately.','Synthetic authority and opaque recent-species labels; no operating API requests.']};writeFileSync(join(OUT,'recommendation_chrome.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({summary:result.summary,network,browserErrors}));process.exitCode=result.summary.fail||network.operatingRequests||network.externalNonGet||browserErrors.length?1:0;
+      ^
+
+SyntaxError: Identifier 'result' has already been declared
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:89:18)
+    at #translate (node:internal/modules/esm/loader:434:20)
+    at afterLoad (node:internal/modules/esm/loader:502:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:507:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:560:36)
+    at afterResolve (node:internal/modules/esm/loader:607:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:613:12)
+    at node:internal/modules/esm/loader:632:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.18.0

@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "sourceMain": "efe1c1b97b8f2da0e52ce45bedce031c915ed522",
+  "originalHead": "519b4bd18a55bb11ed8e0f6a53e18e691b5afc82",
+  "finalHead": "6195c357e76201fee6625155b29c6148f73feef1",
+  "reviewVerdict": "PASS verification; waiting for separate operating approval",
+  "CI": {
+    "original": {
+      "run": 38525333687,
+      "checkout": "2edbe6ab22880184ef855c1184aee3330244f734",
+      "pass": 1191,
+      "fail": 0,
+      "skip": 1
+    },
+    "final": {
+      "run": 38539112245,
+      "checkout": "8d73af5c64b79a0a28c53fec5889f5ec2157d6a7",
+      "pass": 1226,
+      "fail": 0,
+      "skip": 1
+    }
+  },
+  "local": {
+    "frontBeforeExtraWarningFields": {
+      "pass": 432,
+      "fail": 0,
+      "skip": 0
+    },
+    "finalTargetedIncludedInCI": {
+      "pass": 35,
+      "fail": 0,
+      "skip": 0
+    },
+    "API": {
+      "pass": 322,
+      "fail": 0,
+      "skip": 0
+    },
+    "proxy": {
+      "pass": 36,
+      "fail": 0,
+      "skip": 0
+    },
+    "publicationChrome": {
+      "pass": 242,
+      "fail": 0,
+      "skip": 0
+    },
+    "reporterChrome": {
+      "pass": 65,
+      "fail": 0,
+      "skip": 0
+    },
+    "recommendationChrome": {
+      "pass": 15,
+      "fail": 0,
+      "skip": 0
+    },
+    "nativeFence": {
+      "pass": 13,
+      "fail": 0,
+      "skip": 0
+    },
+    "nativeCAS": {
+      "pass": 10,
+      "fail": 0,
+      "skip": 0
+    },
+    "independentReplay": {
+      "assertions": 1024,
+      "permutations": 320,
+      "fail": 0
+    },
+    "normalization": {
+      "checks": 193,
+      "fail": 0
+    }
+  },
+  "historicalGateCoverageFails": 9,
+  "remainingProductBlockingFails": 0,
+  "siteCount": 190,
+  "studyCandidates174": true,
+  "P1SCandidates176": true,
+  "operation": {
+    "mainMerge": false,
+    "WorkerDeployment": false,
+    "PagesDeployment": false,
+    "D1Mutation": false,
+    "realUserDataMutation": false
+  },
+  "notRun": [
+    "Physical GPS and actual external navigation apps",
+    "Operating Cloudflare API/D1 or POP consistency",
+    "Artifact ZIP downloads",
+    "Multi-season bird observation success measurement"
+  ],
+  "mergeTree": "82e40ae22355075af3092fbbc4e16a0a456e1942",
+  "siteDataSHA256": "fd50e35a1f1ad828f425918e28bb1632c9acb2e9206806263cd64d18a8513fd8",
+  "coordinatesSHA256": "21c25db5b1aa0de03a2f037f720715696c3a2c14f016a00e0c0c4acb18e9df89"
+}

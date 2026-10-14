@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-14T08:43:42.313Z",
+  "task": "PR24 independent review original CI evidence",
+  "repo": "wooil1964/birdmap",
+  "pr": 24,
+  "runId": 38525333687,
+  "jobId": 115724250437,
+  "requestedHeadSha": "519b4bd18a55bb11ed8e0f6a53e18e691b5afc82",
+  "runHeadSha": "519b4bd18a55bb11ed8e0f6a53e18e691b5afc82",
+  "checkoutSha": "2edbe6ab22880184ef855c1184aee3330244f734",
+  "checkoutParentShas": [
+    "efe1c1b97b8f2da0e52ce45bedce031c915ed522",
+    "519b4bd18a55bb11ed8e0f6a53e18e691b5afc82"
+  ],
+  "checkoutMessage": "Merge 519b4bd18a55bb11ed8e0f6a53e18e691b5afc82 into efe1c1b97b8f2da0e52ce45bedce031c915ed522",
+  "checkoutTreeSha": "d449c6977de8c78461120194fb64fc59c6bf3dde",
+  "event": "pull_request",
+  "runStatus": "completed",
+  "runConclusion": "success",
+  "runAttempt": 1,
+  "rawLogFile": "job-115724250437.original.log",
+  "rawLogSha256": "f4d49a4ad6cd18fe4f2b80fb27e5a558a4e1be99ecb0ac438b05f884646f4ed5",
+  "rawLogBytes": 396201,
+  "downloadMethod": "Authenticated GitHub REST job-log endpoint; followed GitHub temporary redirect; exact response bytes saved without editing. Token retained only in memory.",
+  "mcpDecodedLogChars": 347053,
+  "suiteCounts": [
+    {
+      "name": "front",
+      "pass": 400,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "reports-api public/admin/SQLite",
+      "pass": 322,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "weather-proxy",
+      "pass": 36,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "Python weather",
+      "pass": 60,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "Python weather-week",
+      "pass": 11,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "Python tide",
+      "pass": 21,
+      "fail": 0,
+      "skip": 1,
+      "status": "PASS with 1 SKIP"
+    },
+    {
+      "name": "Python shared-card",
+      "pass": 11,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "publication Chrome",
+      "pass": 242,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "reporter-stats Chrome",
+      "pass": 65,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "native D1 fence",
+      "pass": 13,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "native D1 CAS",
+      "pass": 10,
+      "fail": 0,
+      "skip": 0,
+      "status": "PASS"
+    }
+  ],
+  "sums": {
+    "requestedSevenSuites": {
+      "pass": 1088,
+      "fail": 0,
+      "skip": 0
+    },
+    "allCountedSuites": {
+      "pass": 1191,
+      "fail": 0,
+      "skip": 1
+    }
+  },
+  "signatureGateCommand": "node .github/scripts/publication_ci_signatures.mjs . HEAD b12e20c1b6d856a021898a0c1c9221b30393a221",
+  "countsProof": [
+    {
+      "line": 2736,
+      "text": "2026-10-14T06:59:37.3859123Z # tests 400"
+    },
+    {
+      "line": 2738,
+      "text": "2026-10-14T06:59:37.3859275Z # pass 400"
+    },
+    {
+      "line": 2739,
+      "text": "2026-10-14T06:59:37.3859353Z # fail 0"
+    },
+    {
+      "line": 2741,
+      "text": "2026-10-14T06:59:37.3859508Z # skipped 0"
+    },
+    {
+      "line": 4701,
+      "text": "2026-10-14T06:59:39.4462914Z # tests 322"
+    },
+    {
+      "line": 4703,
+      "text": "2026-10-14T06:59:39.4463220Z # pass 322"
+    },
+    {
+      "line": 4704,
+      "text": "2026-10-14T06:59:39.4463292Z # fail 0"
+    },
+    {
+      "line": 4706,
+      "text": "2026-10-14T06:59:39.4463464Z # skipped 0"
+    },
+    {
+      "line": 4943,
+      "text": "2026-10-14T06:59:39.6116057Z # tests 36"
+    },
+    {
+      "line": 4945,
+      "text": "2026-10-14T06:59:39.6116397Z # pass 36"
+    },
+    {
+      "line": 4946,
+      "text": "2026-10-14T06:59:39.6116601Z # fail 0"
+    },
+    {
+      "line": 4948,
+      "text": "2026-10-14T06:59:39.6116942Z # skipped 0"
+    },
+    {
+      "line": 4977,
+      "text": "2026-10-14T06:59:40.1995636Z Ran 60 tests in 0.262s"
+    },
+    {
+      "line": 4982,
+      "text": "2026-10-14T06:59:41.7052595Z Ran 11 tests in 1.311s"
+    },
+    {
+      "line": 4987,
+      "text": "2026-10-14T06:59:42.0764911Z Ran 22 tests in 0.140s"
+    },
+    {
+      "line": 4989,
+      "text": "2026-10-14T06:59:42.0765358Z OK (skipped=1)"
+    },
+    {
+      "line": 4992,
+      "text": "2026-10-14T06:59:42.4375840Z Ran 11 tests in 0.277s"
+    },
+    {
+      "line": 5085,
+      "text": "2026-10-14T07:00:40.2701835Z     \"pass\": 242,"
+    },
+    {
+      "line": 5732,
+      "text": "2026-10-14T07:00:50.1219938Z     \"pass\": 65,"
+    },
+    {
+      "line": 5775,
+      "text": "2026-10-14T07:00:56.0595354Z {\"pass\":13,\"fail\":0,\"skip\":0}"
+    },
+    {
+      "line": 5791,
+      "text": "2026-10-14T07:01:02.5076671Z {\"pass\":10,\"fail\":0,\"skip\":0}"
+    }
+  ],
+  "checkoutProof": [
+    {
+      "line": 108,
+      "text": "2026-10-14T06:58:01.0946010Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +2edbe6ab22880184ef855c1184aee3330244f734:refs/remotes/pull/24/merge"
+    },
+    {
+      "line": 145,
+      "text": "2026-10-14T06:58:06.5860397Z  * [new ref]         2edbe6ab22880184ef855c1184aee3330244f734 -> pull/24/merge"
+    },
+    {
+      "line": 152,
+      "text": "2026-10-14T06:58:06.5944480Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/24/merge"
+    },
+    {
+      "line": 153,
+      "text": "2026-10-14T06:58:06.8427553Z Note: switching to 'refs/remotes/pull/24/merge'."
+    },
+    {
+      "line": 173,
+      "text": "2026-10-14T06:58:06.8510051Z 2edbe6ab22880184ef855c1184aee3330244f734"
+    },
+    {
+      "line": 5015,
+      "text": "2026-10-14T06:59:45.4878169Z   \"head\": \"2edbe6ab22880184ef855c1184aee3330244f734\","
+    },
+    {
+      "line": 5122,
+      "text": "2026-10-14T07:00:50.1080427Z   \"checkoutSha\": \"2edbe6ab22880184ef855c1184aee3330244f734\","
+    },
+    {
+      "line": 5808,
+      "text": "2026-10-14T07:01:02.6380746Z {\"head\":\"2edbe6ab22880184ef855c1184aee3330244f734\",\"files\":562,\"indexSha256\":\"e12e1e5b83606c8e26fb231eab1238b88aa9c7ab929482f5923407ea1dd8f81b\",\"out\":\"/home/runner/work/birdmap/birdmap/.ci-results/protected-pages\"}"
+    },
+    {
+      "line": 5811,
+      "text": "2026-10-14T07:01:02.6487766Z   name: protected-pages-2edbe6ab22880184ef855c1184aee3330244f734"
+    },
+    {
+      "line": 5842,
+      "text": "2026-10-14T07:01:04.5010149Z Artifact protected-pages-2edbe6ab22880184ef855c1184aee3330244f734.zip successfully finalized. Artifact ID 11875681716"
+    },
+    {
+      "line": 5843,
+      "text": "2026-10-14T07:01:04.5011880Z Artifact protected-pages-2edbe6ab22880184ef855c1184aee3330244f734 has been successfully uploaded! Final size is 5188174 bytes. Artifact ID is 11875681716"
+    },
+    {
+      "line": 5847,
+      "text": "2026-10-14T07:01:04.5162567Z   name: publication-security-diagnostics-2edbe6ab22880184ef855c1184aee3330244f734"
+    },
+    {
+      "line": 5884,
+      "text": "2026-10-14T07:01:14.1528707Z Artifact publication-security-diagnostics-2edbe6ab22880184ef855c1184aee3330244f734.zip successfully finalized. Artifact ID 11875607096"
+    },
+    {
+      "line": 5885,
+      "text": "2026-10-14T07:01:14.1530297Z Artifact publication-security-diagnostics-2edbe6ab22880184ef855c1184aee3330244f734 has been successfully uploaded! Final size is 665097 bytes. Artifact ID is 11875607096"
+    }
+  ],
+  "scopeCaution": "This original run tests GitHub synthetic merge 2edbe6... with CI base efe1c1..., not bare PR head and not any later latest-main combination. Counts verify execution only; relaxed signature assertions require independent safety-contract review.",
+  "originalFiles": [
+    {
+      "file": "job-115724250437.original.log",
+      "bytes": 396201,
+      "sha256": "f4d49a4ad6cd18fe4f2b80fb27e5a558a4e1be99ecb0ac438b05f884646f4ed5"
+    },
+    {
+      "file": "run-38525333687.original.json",
+      "bytes": 13148,
+      "sha256": "4b0fd518ff57c5f90510e61774d135414a0a13c6a7f0052027ed88f846d82141"
+    },
+    {
+      "file": "job-115724250437.original.json",
+      "bytes": 4601,
+      "sha256": "91ccc60771adcbd1a15beb1063d11bf6814854ff9830ffbe5c4366cf7da15831"
+    },
+    {
+      "file": "artifacts-38525333687.original.json",
+      "bytes": 1539,
+      "sha256": "6428d64b63baa9b01fbb03e83ed190ca38a03086914063c8d5498b5f86588ba6"
+    },
+    {
+      "file": "checkout-2edbe6.original.json",
+      "bytes": 104325,
+      "sha256": "558986ec67c28b7e686b823429705ed07bad30077a716286b5ead7713195776e"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11875681716,
+      "name": "protected-pages-2edbe6ab22880184ef855c1184aee3330244f734",
+      "sizeInBytes": 5188174,
+      "digest": "sha256:e5d214126e2b59d5508c4a3e3726c3336e7083be4d505cad08b8f68ee7f8213b",
+      "expired": false
+    },
+    {
+      "id": 11875607096,
+      "name": "publication-security-diagnostics-2edbe6ab22880184ef855c1184aee3330244f734",
+      "sizeInBytes": 665097,
+      "digest": "sha256:b344acc0307bc4c7357f881f715040b1e1a1e9eaa7b379a2f7092ea4238fa5fa",
+      "expired": false
+    }
+  ],
+  "cautionArtifacts": "Artifact metadata and GitHub digest are recorded. ZIP files were not downloaded/extracted in this evidence subtask; metadata alone does not verify ZIP byte contents."
+}
