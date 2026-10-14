@@ -74,8 +74,10 @@ def species_of(site: dict) -> list[str]:
         raw = raw[len(group):]
     seen: list[str] = []
     for name in raw.split(","):
-        name = name.strip()
-        if name and name not in seen and name not in NEST_SENSITIVE:
+        # Existing siteData sometimes joins two species with whitespace instead of a comma.
+        # Strip standalone sensitive names inside such composite tokens, preserving safe species.
+        name = " ".join(part for part in name.strip().split() if part not in NEST_SENSITIVE)
+        if name and name not in seen:
             seen.append(name)
     return seen
 

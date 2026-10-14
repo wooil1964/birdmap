@@ -16,6 +16,7 @@ files = seo.build_all(sites)
 for path, content in files.items():
     assert path.exists() and path.read_text(encoding="utf-8") == content, "stale: %s" % path
 
+assert seo.species_of({"birds": "검독수리 노랑부리저어새, 쇠뜸부기, 검독수리"}) == ["노랑부리저어새", "쇠뜸부기"]
 pages = seo.indexable_sites(sites)
 ids = [s["id"] for s in pages]
 assert len(ids) == len(set(ids)) and 150 <= len(ids) <= 190, len(ids)
@@ -52,8 +53,9 @@ for sid in ids:
     for ld in re.findall(r'<script type="application/ld\+json">(.+?)</script>', text):
         json.loads(ld)
     assert "../../?site=%s" % sid in text
-    listed = set(re.findall(r"<li>([^<]+)</li>", text))
-    assert not listed & seo.NEST_SENSITIVE, (sid, listed & seo.NEST_SENSITIVE)
+    # Whole-word scan covers meta descriptions and accidentally joined source bird names too.
+    sensitive_pattern = re.compile(r'(?<![가-힣])(?:%s)(?![가-힣])' % '|'.join(re.escape(w) for w in sorted(seo.NEST_SENSITIVE, key=len, reverse=True)))
+    assert not sensitive_pattern.search(text), sid
     # relative links resolve
     for href in re.findall(r'href="(\.\./[^"?#]*)"', text):
         target = (ROOT / "sites" / sid / href).resolve()
