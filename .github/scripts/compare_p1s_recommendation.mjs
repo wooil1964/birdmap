@@ -56,7 +56,7 @@ const NAMES = [
   'weeklyQualifyingHighTides', 'weeklyMudflatTideGateOpen', 'weeklyBestMudflatTide',
   'autumnBirdingAxes', 'autumnRecommendationSeason', 'weeklyPelagicSafety',
   'weeklySeasonForDate', 'weeklyDatePolicy', 'weeklySeasonalBestWeatherDay', 'weeklySeasonQuotaEntries',
-  'weeklyIdOrder', 'weeklyRuleGroup', 'weeklyDiverseTake', 'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
+  'v251EffectiveScore', 'weatherScoreAllowed', 'weeklyIdOrder', 'weeklyRuleGroup', 'weeklyDiverseTake', 'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
   'todayIsAutumnRemoteIsland', 'todaySpringIslandReason', 'weeklyIssueReason',
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
   'weeklyEditorialRecommendations',
@@ -102,6 +102,20 @@ snapshot.sites.forEach((item) => { if (item && item.siteId && /^\d{4}-\d{2}-\d{2
 const NOW = '2026-10-08T22:40:00+09:00';
 const revs = process.argv.slice(2).length ? process.argv.slice(2) : ['worktree'];
 const out = {};
+function registrySignature(html){
+  const c=vm.createContext({});vm.runInContext(html.match(/var siteData=([^\n]+);/)[0]+'\n'+html.match(/siteData=siteData\.concat\([\s\S]*?\);/)[0],c);
+  assert.equal(c.siteData.length,190);assert.equal(new Set(c.siteData.map(s=>String(s.id))).size,190);
+  return createHash('sha256').update(JSON.stringify(c.siteData)).digest('hex');
+}
+function candidateContract(api,e){
+  function core(name){const m=HTML.match(new RegExp('var '+name+'=new Set\\((\\[[^;]+\\])\\)'));return !!m&&JSON.parse(m[1]).map(String).includes(String(e.site.id));}
+  return {id:String(e.site.id),name:e.site.name,score:e.score,displayScore:e.today?api.v251EffectiveScore(e.today):null,rank:api.weeklyRankScore(e),bonus:e.recentReport?.bonus||0,
+    recent:e.recentReport||null,date:e.recommendationDate,time:e.recommendationTime,season:e.season,axes:e.axes,priority:e.priority,mandatory:e.isMandatory,
+    sortLevel:e.sortLevel||0,springGeolmaeriPriority:!!e.springGeolmaeriPriority,autumnCore:core('AUTUMN_CORE_FIELD_SITE_IDS'),winterCore:core('WINTER_CORE_FIELD_SITE_IDS'),springCore:core('SPRING_CORE_ISLAND_SITE_IDS'),
+    region:String(e.site.sido||'unknown'),rule:RULES.aliases[e.site.weatherRuleKey]||e.site.weatherRuleKey||'general_birding',
+    eligible:api.weeklyRecommendationEligible(e),safe:api.weeklyRecommendationIsSafe(e),pelagicSafe:api.weeklyPelagicSafety(e.sample),
+    cautionText:e.cautionText||'',weatherText:e.weatherText||'',label:api.weeklyRecommendationDateLabel(e),reasons:e.reasons||[],tide:e.tideText||'',extra:e.extraText||'',basis:e.basisText||'',tideMatched:!!e.tideMatched,weather:e.today||null,sample:e.sample||null};
+}
 for (const rev of revs) {
   HTML = rev === 'worktree' ? readFileSync(join(ROOT, 'index.html'), 'utf8') : show(rev, 'index.html');
   const run = (recent) => {
@@ -111,7 +125,7 @@ for (const rev of revs) {
     const signature = createHash('sha256').update(JSON.stringify(all.map((e) => [e.site.id, e.score, api.weeklyRankScore(e), e.recommendationDate, e.recommendationTime, e.isMandatory, e.priority, e.reasons, e.tideText || '', e.basisText, e.recentReport ? e.recentReport.bonus : 0, e.today && e.today.wind, e.today && e.today.rain, e.today && e.today.wave]))).digest('hex');
     const unsafe = all.filter((e) => api.weeklyRecommendationIsSafe(e) === false);
     const top = api.todayRecommendedSites();
-    return { siteCount: RUNTIME.length, candidates: all.length, allCandidateSignature: signature, unsafe: unsafe.map((e) => e.site.name), safeCandidates: all.length - unsafe.length,
+    return { siteCount: RUNTIME.length, registrySignature:registrySignature(HTML), selectionMonth:10, candidateContracts:all.map(e=>candidateContract(api,e)), topContracts:top.map(e=>({...candidateContract(api,e),selectedAxis:e.selectedAxis})), candidates: all.length, allCandidateSignature: signature, unsafe: unsafe.map((e) => e.site.name), safeCandidates: all.length - unsafe.length,
       top: top.map((e) => ({ id: e.site.id, name: e.site.name, date: e.recommendationDate, time: e.recommendationTime, score: e.score, rank: api.weeklyRankScore(e),
         bonus: e.recentReport ? e.recentReport.bonus : 0, mandatory: e.isMandatory, reasons: (e.reasons || []).join(' / '), tide: e.tideText || '', basis: e.basisText })) };
   };
@@ -126,7 +140,7 @@ for (const rev of revs) {
   const apiB = loadApi({ month: 10, now: NOW, siteData: RUNTIME, weatherWeek: broken, tideMonth, notices, recentSiteSightings: sightings });
   const weekB = apiB.weeklyInfo();
   const candB = RUNTIME.map((x) => apiB.weeklyRecommendationForSite(x, weekB)).filter(Boolean);
-  out[rev].syntheticNullScores = { nulledSites: Object.keys(sightings).length, candidates: candB.length,
+  out[rev].syntheticNullScores = { nulledSites: Object.keys(sightings).length, nulledSiteIds:Object.keys(sightings), candidateContracts:candB.map(e=>candidateContract(apiB,e)), topContracts:apiB.todayRecommendedSites().map(e=>({...candidateContract(apiB,e),selectedAxis:e.selectedAxis})), candidates: candB.length,
     zeroScoreCandidates: candB.filter((e) => e.score === 0).map((e) => e.site.id),
     top: apiB.todayRecommendedSites().map((e) => ({ id: e.site.id, name: e.site.name, date: e.recommendationDate, time: e.recommendationTime, score: e.score, rank: apiB.weeklyRankScore(e) })) };
 }
