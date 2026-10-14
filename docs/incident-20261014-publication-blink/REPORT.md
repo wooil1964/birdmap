@@ -56,7 +56,7 @@ PC에서 최근 출현 제보 패널에 "공개 제보의 최신 상태를 확�
 | 범위 | 결과 |
 |---|---|
 | 신규 `test_publication_renewal_margin.mjs` (가상 시계, 실제 함수) | 9/9 PASS (수정 전 코드로 돌리면 6 FAIL — 회귀 검출 확인) |
-| `.github/scripts/test_*.mjs` 전체(로컬, `PYTHONUTF8=1`) | 444 중 412 PASS, 7 FAIL(#91~97: Chromium 부재 등 로컬 환경, 수정 전에도 동일 7건) → CI에서 확인 필요 |
+| `.github/scripts/test_*.mjs` 전체(로컬, `PYTHONUTF8=1 CHROME_PATH=…`) | 444/444 PASS (초판의 "7 FAIL"은 CHROME_PATH 미지정 때문이었다) |
 | reports-api / weather-proxy | 322/322, 36/36 PASS |
 | 추천 CI 서명(P1-S 고정 입력, 190곳·176후보) | PASS, 대안 B 결과 불변 |
 | Python 기상·조석·SEO | PASS |
@@ -73,3 +73,26 @@ PC에서 최근 출현 제보 패널에 "공개 제보의 최신 상태를 확�
 ## 롤백
 
 `PUBLICATION_RENEW_MARGIN_MS`를 250으로 되돌리는 revert. 데이터·서버 변경 없음.
+
+## CI 실패 분석 (PR #25, run 38569301560, head 5372438)
+
+- 실패 단계: "Chrome publication and consent security with local mock only" 209 PASS / 19 FAIL, 기존 위험 사례 15건 중 1건 false. 이후 단계(통계 Chrome, D1 fence/CAS, 보호 패키지)는 앞 단계 실패로 미실행.
+- 아티팩트 `publication_chrome.json` 전수: **19건 모두 1024px**. 첫 실패 `V06-refresh-stale-first-field-list`가 `ReferenceError: fieldUpdates is not defined`, 이후 같은 페이지의 18건이 `fieldNavChoiceClose is not defined`(또는 요청 0건)로 연쇄 실패. "unsafe 1"은 V06 1024이며 **좌표·길찾기 노출이 아니라 페이지 미로딩 오류**다(evidence에 데이터 없음, error만 있음).
+- 원인: V06은 `Page.reload({ignoreCache:true})` 뒤 **고정 1200ms만 대기**한다. CI 네트워크 계수가 로컬 대비 로컬 GET 5건(로드 후 JSON 5개)·CDN GET 2건이 적어, reload 뒤 CDN 자산이 늦게 끝나 페이지 파싱·스크립트 실행 전에 평가가 시작된 것으로 확인된다.
+- 재현: 기존 하네스에 CDN 지연 2500ms만 주입하고 1024px로 실행 → **PASS 14 / FAIL 19, 실패 ID 19개와 오류 문구, unsafe 1이 CI와 동일**. main의 index.html(`PUBLICATION_TEST_INDEX_REF=origin/main`)로도 동일하게 19건 실패 → **250→1000ms 변경과 무관한 하네스 타이밍 결함**.
+- 지연 없이 로컬 Chrome: 수정 브랜치·main 모두 242/242 PASS, unsafe 0.
+
+### 수정 (시험 하네스만, 보안 단정 불변)
+
+- `publication_chrome_final_r4.mjs`: 최초 로드와 reload가 같은 준비 조건(Leaflet·publication 함수·190 마커, 최대 40초)을 기다린 뒤 기존 1200ms를 둔다. 40초 안에 준비되지 않으면 V06은 `page not ready after reload`로 **FAIL**(SKIP·PASS 처리 없음). 모든 시나리오의 판정식은 그대로다.
+- 시험 전용 `PUBLICATION_TEST_DEPENDENCY_DELAY_MS`(기본 0): CDN GET만 지연.
+- CI에 회귀 단계 추가: "Chrome publication security with slow dependencies (1024px)" — CDN 2500ms 지연에서 1024px 전 항목 PASS 요구.
+
+| 실행(로컬 Chrome) | 결과 |
+|---|---|
+| 기존 하네스 + CDN 2500ms, 1024, 수정 브랜치 | 14 PASS / 19 FAIL, unsafe 1 (CI 재현) |
+| 기존 하네스 + CDN 2500ms, 1024, main | 14 PASS / 19 FAIL, unsafe 1 |
+| 수정 하네스 + CDN 2500ms, 1024, 수정 브랜치 / main | 47/47 PASS, unsafe 0 |
+| 수정 하네스, 5개 폭, 지연 없음 | 242/242 PASS, unsafe 0, 운영 요청 0 |
+| 통계 Chrome(reporter_chrome) | 65/65 PASS |
+| 보호 Pages 패키지 생성 | 정상(562 files) |

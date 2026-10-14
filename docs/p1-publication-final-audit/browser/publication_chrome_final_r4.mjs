@@ -24,6 +24,16 @@ const server=createServer((req,res)=>{
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port;
+/* The page is usable only after every blocking CDN asset and inline script ran. A fixed sleep after
+   Page.reload failed on a slow CI runner (ReferenceError on the half-parsed page, CI run 38569301560),
+   so both the first load and the reload wait for this same condition (max 40s, then fail). */
+async function pageReady(evaluate){
+ const until=Date.now()+40000;
+ while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof fieldMarkers!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===190").catch(()=>false))return true;await new Promise(r=>setTimeout(r,200));}
+ return false;
+}
+// Test-only knob to reproduce a slow CDN (delays allowed dependency GETs). Default 0.
+const dependencyDelayMs=Number(process.env.PUBLICATION_TEST_DEPENDENCY_DELAY_MS||0);
 
 function hook(){
  const realFetch=window.fetch.bind(window),fine=window.matchMedia.bind(window);
@@ -106,7 +116,7 @@ class CDP{
     let allowed=method==='GET'&&(u.origin===origin||allowedCDN.includes(u.hostname));
     if(u.hostname.endsWith('workers.dev')){network.operatingRequests++;allowed=false;}
     if(method!=='GET'&&u.origin!==origin)network.externalNonGet++;
-    if(allowed){u.origin===origin?network.allowedLocal++:network.allowedDependencyGet++;await this.send('Fetch.continueRequest',{requestId:m.params.requestId},sessionId).catch(()=>{});}
+    if(allowed){u.origin===origin?network.allowedLocal++:network.allowedDependencyGet++;if(dependencyDelayMs&&u.origin!==origin)await new Promise(r=>setTimeout(r,dependencyDelayMs));await this.send('Fetch.continueRequest',{requestId:m.params.requestId},sessionId).catch(()=>{});}
     else{network.blockedOther++;await this.send('Fetch.failRequest',{requestId:m.params.requestId,errorReason:'BlockedByClient'},sessionId).catch(()=>{});}
    }
    if(m.method==='Runtime.exceptionThrown')browserErrors.push({width,text:m.params.exceptionDetails.text,description:String(m.params.exceptionDetails.exception?.description||'').split('\n')[0]});
@@ -115,9 +125,7 @@ class CDP{
   await this.send('Page.addScriptToEvaluateOnNewDocument',{source:pre+'('+hook.toString()+')()'},sessionId);
   const evaluate=async expression=>{const r=await this.send('Runtime.evaluate',{expression:'(async function(){var v=await eval('+JSON.stringify(expression)+');try{return JSON.parse(JSON.stringify(v));}catch{return null;}})()',awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw new Error(r.exceptionDetails.text+' '+String(r.exceptionDetails.exception?.description||'').split('\n')[0]);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
-  const until=Date.now()+40000;let ready=false;
-  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof fieldMarkers!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===190").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
-  if(!ready)throw new Error('Actual Leaflet/publication page initialization unavailable');
+  if(!await pageReady(evaluate))throw new Error('Actual Leaflet/publication page initialization unavailable');
   return {evaluate,sessionId,targetId,browserContextId,close:async()=>{await this.send('Target.closeTarget',{targetId});if(browserContextId)await this.send('Target.disposeBrowserContext',{browserContextId});}};
  }
  async dispose(){try{this.socket.close();}catch{}this.proc.kill();await new Promise(r=>setTimeout(r,250));try{const checked=resolve(this.profile),prefix=resolve(tmpdir(),'birdmap-publication-cdp-');if(checked!==this.profile||!checked.startsWith(prefix))throw new Error('Temporary profile path outside approved prefix');rmSync(checked,{recursive:true,force:true});}catch{}}
@@ -183,7 +191,9 @@ try{
     await e("__mock.field=[];__mock.revision=String(BigInt(__mock.revision)+1n);loadFieldUpdates()");
     const preset=await e("({revision:__mock.revision,epoch:__mock.epoch,field:[],approved:[],pendingSpots:[],dataFieldOverride:{publication:{revision:String(BigInt(__mock.revision)-1n)},updates:[__mock.upd()]}})");
     await e("sessionStorage.setItem('publication-test-preset',"+JSON.stringify(JSON.stringify(preset))+")");
-    await browser.send('Page.reload',{ignoreCache:true},page.sessionId);await new Promise(r=>setTimeout(r,1200));
+    await browser.send('Page.reload',{ignoreCache:true},page.sessionId);
+    if(!await pageReady(e))return {pass:false,evidence:{error:'page not ready after reload'}};
+    await new Promise(r=>setTimeout(r,1200));
     const evidence=await e("({updates:fieldUpdates.length,markers:Object.keys(fieldMarkers).length,guide:fieldGuide===null,allowed:publicationAllowed()})");
     await e("sessionStorage.removeItem('publication-test-preset')");
     return {pass:evidence.updates===0&&evidence.markers===0&&evidence.guide,evidence};

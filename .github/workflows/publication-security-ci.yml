@@ -67,6 +67,14 @@ jobs:
         env:
           PUBLICATION_TEST_OUTPUT: .ci-results/chrome
         run: node docs/p1-publication-final-audit/browser/publication_chrome_final_r4.mjs
+      # Regression for run 38569301560: a slow CDN after Page.reload left a half-parsed page and
+      # 19 checks failed at 1024px. Every dependency is delayed here; all checks must still pass.
+      - name: Chrome publication security with slow dependencies (1024px)
+        env:
+          PUBLICATION_TEST_OUTPUT: .ci-results/chrome-slow-cdn
+          PUBLICATION_TEST_WIDTHS: "1024"
+          PUBLICATION_TEST_DEPENDENCY_DELAY_MS: "2500"
+        run: node docs/p1-publication-final-audit/browser/publication_chrome_final_r4.mjs
       - name: Reporter lifetime statistics Chrome (synthetic only)
         env:
           PUBLICATION_TEST_OUTPUT: .ci-results/reporter
@@ -94,6 +102,7 @@ jobs:
           name: publication-security-diagnostics-${{ github.sha }}
           path: |
             .ci-results/chrome
+            .ci-results/chrome-slow-cdn
             .ci-results/reporter
             .ci-results/native-fence
             .ci-results/native-cas
