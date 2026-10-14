@@ -97,6 +97,7 @@
   <div id="fieldCaptcha" class="fieldCaptcha"></div>
 </div>
 <div id="birdmapPanel">
+  <button id="birdmapPanelClose" type="button" onclick="closeBirdmapPanelFromPanel()">닫기</button>
   <b>🔍 탐조지·지역·국가·종 검색</b><br>
   <input id="searchBox" type="text" placeholder="예: 호미곶 대왕암공원 / 호미곶, 대왕암공원">
   <button onclick="searchSite()">검색</button>
@@ -159,6 +160,13 @@
   <div class="monthTideDialog">
     <div class="monthTideHeader"><strong id="contributorsTitle">기여자</strong><button type="button" onclick="closeContributorsModal()">닫기</button></div>
     <div id="contributorsMeta" class="monthTideMeta"></div>
+    <div class="contribTools">
+      <div class="contribScope" role="tablist" aria-label="기여자 범위">
+        <button id="contributorsScopeMonth" type="button" role="tab" aria-selected="true" onclick="selectContributorsScope('month')">이번 달</button>
+        <button id="contributorsScopeAll" type="button" role="tab" aria-selected="false" tabindex="-1" onclick="selectContributorsScope('all')">전체 기여자</button>
+      </div>
+      <input id="contributorsSearch" type="search" placeholder="닉네임 검색" aria-label="닉네임 검색" autocomplete="off" oninput="renderContributorsModal()">
+    </div>
     <div id="contributorsContent" class="monthTideContent"></div>
   </div>
 </div>
@@ -286,6 +294,20 @@ a.ebird,.btn.ebird{display:none !important}
 .contribRow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 11px;font-size:13px;color:#22333c}
 .contribName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:bold}
 .contribCount{flex:0 0 auto;white-space:nowrap;color:#31576f}
+.contribTools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 14px 0}
+.contribScope{display:flex;gap:4px}
+.contribScope button{padding:5px 10px;border:1px solid #2d6f9f;border-radius:6px;background:#fff;color:#174d6f;font:inherit;font-size:13px;cursor:pointer}
+.contribScope button[aria-selected="true"]{background:#2d6f9f;color:#fff}
+#contributorsSearch,#reporterSpeciesSearch{flex:1 1 140px;min-width:0;box-sizing:border-box;padding:5px 8px;border:1px solid #9bb3c4;border-radius:6px;font:inherit;font-size:13px}
+#reporterSpeciesSearch{width:100%;margin-top:6px}
+.reporterSpeciesOpen{border:0;background:none;padding:0;font:inherit;font-weight:bold;color:#174d6f;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.reporterSpeciesOpen:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
+.reporterSpeciesList{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:5px}
+.reporterSpeciesList li{background:#eef5fa;border-radius:12px;padding:3px 10px;font-size:13px;color:#22333c}
+.reporterSpeciesNote{margin-top:6px;font-size:12px;color:#5a6b75}
+/* PC 전용 필터 패널 닫기. 모바일(700px 이하)은 기존 '필터 숨기기' 버튼만 쓴다. */
+#birdmapPanelClose{float:right;margin:-2px 0 4px 8px}
+@media(max-width:700px){#birdmapPanelClose{display:none}}
 .contribMore{display:block;margin:4px 11px 8px;padding:5px 10px;border:1px solid #2d6f9f;border-radius:6px;background:#fff;color:#174d6f;font:inherit;font-size:12px;cursor:pointer}
 .contribMore:focus-visible{outline:2px solid #2d6f9f;outline-offset:1px}
 /* 제목은 고정하고 목록만 남은 높이 안에서 스크롤한다. 건수가 적으면 내용만큼만
@@ -1292,7 +1314,7 @@ var reporterStatsRequest=0,reporterStatsData=null,reporterStatsOwner=null,report
 var reporterStatsWitnesses=new WeakMap();
 function reporterStatsNameAllowed(name){return typeof name==='string'&&name.trim()!==''&&name.length<=40&&!/[\u0000-\u001f\u007f]/.test(name);}
 function reporterStatsContextAllowed(context){
- return !!context&&((context.source==='history'&&typeof context.reportId==='string'&&/^[0-9A-Za-z_-]{1,64}$/.test(context.reportId))||(context.source==='monthly'&&typeof context.month==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(context.month)));
+ return !!context&&(context.source==='all'||(context.source==='history'&&typeof context.reportId==='string'&&/^[0-9A-Za-z_-]{1,64}$/.test(context.reportId))||(context.source==='monthly'&&typeof context.month==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(context.month)));
 }
 // Keep existing search DTO fields unchanged; source ids stay transient and non-enumerable.
 function reporterStatsRememberEntry(entry,id){if(reporterStatsContextAllowed({source:'history',reportId:id}))reporterStatsWitnesses.set(entry,id);}
@@ -1304,7 +1326,7 @@ function reporterStatsElement(name,context,inline){
  if(inline){node.setAttribute('role','button');node.tabIndex=0;}else node.type='button';
  node.className='reporterStatsLink';node.setAttribute('aria-label',name+'님의 누적 출현종 수와 승인 제보 건수');
  node.dataset.reporter=name;node.dataset.reporterSource=context.source;
- if(context.source==='history')node.dataset.reporterReport=context.reportId;else node.dataset.reporterMonth=context.month;
+ if(context.source==='history')node.dataset.reporterReport=context.reportId;else if(context.source==='monthly')node.dataset.reporterMonth=context.month;
  return node;
 }
 function reporterStatsHistoryHtml(entry){
@@ -1320,7 +1342,7 @@ function reporterStatsCounts(body){
  return {speciesCount:species,reportCount:reports};
 }
 function closeReporterStats(restoreFocus){
- reporterStatsRequest++;reporterStatsData=null;
+ reporterStatsRequest++;reporterStatsData=null;reporterSpeciesData=null;
  var owner=reporterStatsOwner;reporterStatsOwner=null;
  if(reporterStatsObserver){reporterStatsObserver.disconnect();reporterStatsObserver=null;}
  var modal=document.getElementById('reporterStatsModal'),content=document.getElementById('reporterStatsContent');
@@ -1339,25 +1361,81 @@ function openReporterStats(trigger){
  var request=++reporterStatsRequest,generation=publicationState.generation,modal=document.getElementById('reporterStatsModal'),content=document.getElementById('reporterStatsContent');
  content.textContent='통계를 불러오는 중입니다.';modal.style.display='flex';document.body.classList.add('reporterStatsOpen');document.getElementById('reporterStatsClose').focus();
  reporterStatsObserver=new MutationObserver(function(){if(reporterStatsOwner&&!reporterStatsOwner.isConnected)closeReporterStats(false);});reporterStatsObserver.observe(document.body,{childList:true,subtree:true});
- var query=new URLSearchParams({reporter:name,source:context.source});if(context.source==='history')query.set('reportId',context.reportId);else query.set('month',context.month);
+ var query=new URLSearchParams({reporter:name,source:context.source});if(context.source==='history')query.set('reportId',context.reportId);else if(context.source==='monthly')query.set('month',context.month);
  return publicationFetch('/reports/reporter-stats?'+query.toString()).then(function(body){
   if(!reporterStatsStillCurrent(request,generation)||!publicationDataAllowed(body))return false;
   var counts=reporterStatsCounts(body);if(!counts)throw new Error('reporter statistic invalid');
   reporterStatsData=counts;content.textContent='';var list=document.createElement('dl');list.className='reporterStatsNumbers';
-  [['누적 출현종 수',counts.speciesCount+'종'],['승인 제보 건수',counts.reportCount+'건']].forEach(function(pair){var label=document.createElement('dt'),value=document.createElement('dd');label.textContent=pair[0];value.textContent=pair[1];list.appendChild(label);list.appendChild(value);});content.appendChild(list);return true;
+  [['누적 출현종 수',counts.speciesCount+'종'],['승인 제보 건수',counts.reportCount+'건']].forEach(function(pair,i){var label=document.createElement('dt'),value=document.createElement('dd');label.textContent=pair[0];
+   if(i===0&&counts.speciesCount>0){var open=document.createElement('button');open.type='button';open.id='reporterSpeciesOpen';open.className='reporterSpeciesOpen';open.textContent=pair[1];open.setAttribute('aria-label',name+'님의 누적 출현종 '+pair[1]+' 이름 보기');open.onclick=function(){openReporterSpecies(query.toString(),request,generation);};value.appendChild(open);}
+   else value.textContent=pair[1];
+   list.appendChild(label);list.appendChild(value);});content.appendChild(list);return true;
  }).catch(function(){if(reporterStatsStillCurrent(request,generation)){reporterStatsData=null;content.textContent='공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.';}return false;});
 }
+/* 출현종 이름 목록. 숫자와 같은 증명(공개 이력·월간 목록·전체 목록)으로 /reports/reporter-species 를 부른다.
+   서버가 보호종·번식 표현·위치 가림 제보를 통째로 빼고 이름만 준다. 검증에 실패하면 목록을 그리지 않는다. */
+var reporterSpeciesData=null;
+function reporterSpeciesPayload(body){
+ if(!body||typeof body!=='object'||Array.isArray(body)||!Array.isArray(body.species)||typeof body.restricted!=='boolean')return null;
+ if(Object.keys(body).some(function(key){return ['species','restricted','publication','serverTime','publicationCheckedAt'].indexOf(key)<0;}))return null;
+ var seen={},out=[];
+ for(var i=0;i<body.species.length;i++){
+  var name=body.species[i];
+  if(typeof name!=='string'||!name.trim()||name.length>60||/[\u0000-\u001f\u007f]/.test(name)||seen[name])return null;
+  seen[name]=true;out.push(name);
+ }
+ // 가나다(코드 포인트) 순으로 다시 정렬해 서버 순서에 기대지 않는다.
+ out.sort(function(a,b){return a<b?-1:a>b?1:0;});
+ return {species:out,restricted:body.restricted};
+}
+function renderReporterSpecies(){
+ var box=document.getElementById('reporterSpeciesBox');if(!box||!reporterSpeciesData)return;
+ var input=document.getElementById('reporterSpeciesSearch'),list=document.getElementById('reporterSpeciesList');
+ var q=(input&&input.value||'').trim(),rows=reporterSpeciesData.species.filter(function(name){return !q||name.indexOf(q)>=0;});
+ list.textContent='';
+ rows.forEach(function(name){var li=document.createElement('li');li.textContent=name;list.appendChild(li);});
+ var count=document.getElementById('reporterSpeciesCount');
+ count.textContent=reporterSpeciesData.species.length?(q?'검색 결과 '+rows.length+'종 / ':'')+'표시 '+reporterSpeciesData.species.length+'종':'표시할 수 있는 종 이름이 없습니다.';
+ if(q&&!rows.length)count.textContent='검색 결과가 없습니다. (표시 '+reporterSpeciesData.species.length+'종)';
+}
+function openReporterSpecies(query,request,generation){
+ if(!reporterStatsStillCurrent(request,generation))return Promise.resolve(false);
+ var content=document.getElementById('reporterStatsContent'),old=document.getElementById('reporterSpeciesBox');if(old)old.remove();
+ reporterSpeciesData=null;
+ var box=document.createElement('div');box.id='reporterSpeciesBox';box.textContent='출현종 목록을 불러오는 중입니다.';content.appendChild(box);
+ return publicationFetch('/reports/reporter-species?'+query).then(function(body){
+  if(!reporterStatsStillCurrent(request,generation)||!publicationDataAllowed(body))return false;
+  var data=reporterSpeciesPayload(body);if(!data)throw new Error('reporter species invalid');
+  reporterSpeciesData=data;box.textContent='';
+  var title=document.createElement('div');title.className='reporterSpeciesNote';title.id='reporterSpeciesCount';box.appendChild(title);
+  if(data.species.length){
+   var input=document.createElement('input');input.type='search';input.id='reporterSpeciesSearch';input.placeholder='종명 검색';input.setAttribute('aria-label','출현종 이름 검색');input.autocomplete='off';input.oninput=renderReporterSpecies;box.appendChild(input);
+  }
+  var list=document.createElement('ul');list.id='reporterSpeciesList';list.className='reporterSpeciesList';box.appendChild(list);
+  if(data.restricted){var note=document.createElement('div');note.className='reporterSpeciesNote';note.textContent='보호종·번식 관련 제보와 위치를 가린 제보의 종 이름은 표시하지 않습니다.';box.appendChild(note);}
+  renderReporterSpecies();
+  var search=document.getElementById('reporterSpeciesSearch');if(search)search.focus();
+  return true;
+ }).catch(function(){if(reporterStatsStillCurrent(request,generation)){reporterSpeciesData=null;box.textContent='출현종 목록을 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.';}return false;});
+}
+/* 대화상자 안에서만 Tab 이 돈다(닫기·종 수·검색창). */
 function reporterStatsKeydown(event){
- if(event.key==='Tab'){event.preventDefault();document.getElementById('reporterStatsClose').focus();}
+ if(event.key!=='Tab')return;
+ event.preventDefault();
+ var modal=document.getElementById('reporterStatsModal');
+ var items=modal&&modal.querySelectorAll?Array.prototype.filter.call(modal.querySelectorAll('button,input'),function(node){return !node.disabled&&node.getClientRects().length;}):[];
+ if(items.length<2){document.getElementById('reporterStatsClose').focus();return;}
+ var index=items.indexOf(document.activeElement),next=event.shiftKey?(index<=0?items.length-1:index-1):(index<0||index>=items.length-1?0:index+1);
+ items[next].focus();
 }
 document.addEventListener('click',function(event){var node=event.target.closest&&event.target.closest('.reporterStatsLink');if(!node)return;event.preventDefault();event.stopPropagation();openReporterStats(node);},true);
 document.addEventListener('keydown',function(event){var node=event.target.closest&&event.target.closest('.reporterStatsLink');if(!node||(event.key!=='Enter'&&event.key!==' '))return;event.preventDefault();event.stopPropagation();openReporterStats(node);},true);
 window.addEventListener('load',function(){var map=typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'?map_7010a44f6ac2025090f0fe07508ed485:null;if(map)map.on('popupclose',function(event){var node=event.popup&&event.popup.getElement();if(node&&reporterStatsOwner&&node.contains(reporterStatsOwner))closeReporterStats(false);});});
 
-function contributorRowElement(row){
+function contributorRowElement(row,context){
   var item=document.createElement('div');
   item.className='contribRow';
-  var name=reporterStatsElement(row.name,{source:'monthly',month:contributorsData&&contributorsData.month},false);
+  var name=reporterStatsElement(row.name,context||{source:'monthly',month:contributorsData&&contributorsData.month},false);
   name.className+=(name.className?' ':'')+'contribName';
   name.title=row.name;
   var count=document.createElement('span');
@@ -1368,7 +1446,77 @@ function contributorRowElement(row){
   return item;
 }
 function contributorsCurrent(){return !!contributorsData&&publicationDataAllowed({publication:contributorsPublication});}
+/* 전체 누적 기여자: /contributors/all 을 200명씩 받는다. 월간 목록과 같은 공개 조건(승인·이름 공개 동의)이다. */
+var CONTRIBUTORS_ALL_PAGE=200;
+var contributorsScope='month',contributorsAll=null,contributorsAllPublication=null,contributorsAllRequest=0,contributorsAllState='idle';
+function contributorsAllCurrent(){return !!contributorsAll&&publicationDataAllowed({publication:contributorsAllPublication});}
+function contributorsAllPayload(data,offset){
+  if(!data||data.scope!=='all'||data.offset!==offset||data.limit!==CONTRIBUTORS_ALL_PAGE||!Array.isArray(data.contributors))return null;
+  if(!Number.isSafeInteger(data.approvedReports)||data.approvedReports<0||!Number.isSafeInteger(data.publicContributors)||data.publicContributors<0)return null;
+  if(data.contributors.length>CONTRIBUTORS_ALL_PAGE||offset+data.contributors.length>data.publicContributors)return null;
+  for(var i=0;i<data.contributors.length;i++){
+    var row=data.contributors[i];
+    if(!row||!reporterStatsNameAllowed(row.name)||!Number.isSafeInteger(row.count)||row.count<1)return null;
+  }
+  return {approvedReports:data.approvedReports,publicContributors:data.publicContributors,
+    contributors:data.contributors.map(function(row){return {name:row.name,count:row.count};})};
+}
+function loadContributorsAll(more){
+  if(contributorsAllState==='loading')return Promise.resolve(false);
+  var offset=more&&contributorsAllCurrent()?contributorsAll.contributors.length:0;
+  if(!offset){contributorsAll=null;contributorsAllPublication=null;}
+  var request=++contributorsAllRequest;contributorsAllState='loading';renderContributorsModal();
+  return publicationFetch('/contributors/all?limit='+CONTRIBUTORS_ALL_PAGE+'&offset='+offset).then(function(body){
+    if(request!==contributorsAllRequest||!publicationDataAllowed(body))return false;
+    var page=contributorsAllPayload(body,offset);if(!page)throw new Error('contributors all invalid');
+    // 다음 쪽은 같은 공개 상태에서 받은 쪽에만 이어 붙인다. 상태가 바뀌었으면 처음부터 다시 받는다.
+    if(offset&&(!contributorsAllCurrent()||!publicationSame(contributorsAllPublication,body.publication))){contributorsAllState='idle';return loadContributorsAll(false);}
+    contributorsAll=offset?{approvedReports:page.approvedReports,publicContributors:page.publicContributors,contributors:contributorsAll.contributors.concat(page.contributors)}:page;
+    contributorsAllPublication=body.publication;contributorsAllState='idle';return true;
+  }).catch(function(error){
+    if(request!==contributorsAllRequest)return false;
+    contributorsAll=null;contributorsAllPublication=null;contributorsAllState='failed';
+    console.warn('전체 기여자를 불러오지 못했습니다.',error);return false;
+  }).then(function(ok){if(request===contributorsAllRequest&&contributorsAllState==='loading')contributorsAllState='idle';renderContributorsModal();return ok;});
+}
+function selectContributorsScope(scope){
+  contributorsScope=scope==='all'?'all':'month';
+  [['month','contributorsScopeMonth'],['all','contributorsScopeAll']].forEach(function(pair){var b=document.getElementById(pair[1]);if(!b)return;b.setAttribute('aria-selected',String(pair[0]===contributorsScope));b.tabIndex=pair[0]===contributorsScope?0:-1;});
+  if(contributorsScope==='all'&&!contributorsAllCurrent()&&contributorsAllState!=='loading')loadContributorsAll(false);
+  else renderContributorsModal();
+}
+function renderContributorsModal(){
+  var modal=document.getElementById('contributorsModal');
+  if(!modal||modal.style.display!=='flex')return;
+  var title=document.getElementById('contributorsTitle'),meta=document.getElementById('contributorsMeta'),content=document.getElementById('contributorsContent');
+  var input=document.getElementById('contributorsSearch'),q=(input&&input.value||'').trim().toLowerCase();
+  var all=contributorsScope==='all',data=all?(contributorsAllCurrent()?contributorsAll:null):(contributorsCurrent()?contributorsData:null);
+  meta.textContent='';content.textContent='';
+  function note(text){var n=document.createElement('div');n.className='recentReportEmpty';n.textContent=text;content.appendChild(n);}
+  if(all){
+    title.textContent='전체 누적 기여자';
+    if(!data){note(contributorsAllState==='loading'?'불러오는 중입니다.':'전체 기여자 정보를 불러오지 못했습니다.');return;}
+  }else{
+    if(!data){note('기여자 정보를 불러오지 못했습니다.');return;}
+    var parts=contributorsMonthParts(data.month);title.textContent=parts.year+'년 '+parts.month+'월 기여자';
+  }
+  meta.appendChild(document.createTextNode('승인 제보 '+data.approvedReports+'건'));
+  meta.appendChild(document.createElement('br'));
+  meta.appendChild(document.createTextNode('공개 기여자 '+data.publicContributors+'명'+(all&&data.contributors.length<data.publicContributors?' (불러온 '+data.contributors.length+'명에서 검색)':'')));
+  var context=all?{source:'all'}:{source:'monthly',month:data.month};
+  var rows=data.contributors.filter(function(row){return !q||row.name.toLowerCase().indexOf(q)>=0;});
+  rows.forEach(function(row){content.appendChild(contributorRowElement(row,context));});
+  if(!data.contributors.length)note(all?'공개 기여자가 없습니다.':'이번 달 공개 기여자가 없습니다.');
+  else if(!rows.length)note('검색 결과가 없습니다.');
+  if(all&&data.contributors.length<data.publicContributors){
+    var more=document.createElement('button');more.type='button';more.className='contribMore';
+    more.textContent=contributorsAllState==='loading'?'불러오는 중입니다.':'기여자 더 보기';more.disabled=contributorsAllState==='loading';
+    more.onclick=function(){loadContributorsAll(true);};content.appendChild(more);
+  }
+}
 function clearContributors(){
+ contributorsAllRequest++;contributorsAll=null;contributorsAllPublication=null;contributorsAllState='idle';contributorsScope='month';
+ var search=document.getElementById('contributorsSearch');if(search)search.value='';
  contributorsRequest++;contributorsData=null;contributorsPublication=null;contributorsLoading=false;contributorsPromise=null;
  closeContributorsModal();
  ['contributorsContent','contributorsMeta'].forEach(function(id){var node=document.getElementById(id);if(node)node.textContent='';});
@@ -1397,18 +1545,16 @@ function renderContributors(){
     empty.className='recentReportEmpty';
     empty.textContent='이번 달 공개 기여자가 없습니다.';
     box.appendChild(empty);
-    return;
   }
   var view=contributorsVisible(data.contributors,contributorsIsMobile());
   view.rows.forEach(function(row){box.appendChild(contributorRowElement(row));});
-  if(view.more){
-    var button=document.createElement('button');
-    button.type='button';
-    button.className='contribMore';
-    button.textContent='전체 보기';
-    button.onclick=openContributorsModal;
-    box.appendChild(button);
-  }
+  // 전체 보기는 이번 달 전체 목록과 전체 누적 기여자로 가는 입구라 인원과 관계없이 둔다.
+  var button=document.createElement('button');
+  button.type='button';
+  button.className='contribMore';
+  button.textContent='전체 보기';
+  button.onclick=openContributorsModal;
+  box.appendChild(button);
 }
 var contributorsPromise=null;
 /* 완료되면 성공 자료(실패면 null)로 이행하는 Promise 를 돌려준다. 이미 받았거나 받는 중이면 그걸 그대로 쓴다. */
@@ -1465,24 +1611,11 @@ function openContributorsModal(verified){
   if(verified!==true){publicationRouteCheck(function(){openContributorsModal(true);});return;}
   if(!contributorsCurrent())return;
   var modal=document.getElementById('contributorsModal');
-  var parts=contributorsMonthParts(contributorsData.month);
-  document.getElementById('contributorsTitle').textContent=parts.year+'년 '+parts.month+'월 기여자';
-  var meta=document.getElementById('contributorsMeta');
-  meta.innerHTML='';
-  meta.appendChild(document.createTextNode('승인 제보 '+contributorsData.approvedReports+'건'));
-  meta.appendChild(document.createElement('br'));
-  meta.appendChild(document.createTextNode('공개 기여자 '+contributorsData.publicContributors+'명'));
   var content=document.getElementById('contributorsContent');
-  content.innerHTML='';
-  contributorsData.contributors.forEach(function(row){content.appendChild(contributorRowElement(row));});
-  if(!contributorsData.contributors.length){
-    var empty=document.createElement('div');
-    empty.className='recentReportEmpty';
-    empty.textContent='이번 달 공개 기여자가 없습니다.';
-    content.appendChild(empty);
-  }
   contributorsReturnFocus=document.activeElement;
   modal.style.display='flex';
+  var search=document.getElementById('contributorsSearch');if(search)search.value='';
+  selectContributorsScope('month');
   modal.querySelector('.monthTideHeader button').focus();
   document.body.classList.add('monthTideOpen');
   content.scrollTop=0;
@@ -1545,6 +1678,12 @@ function setBirdmapPanelOpen(open){
   if(p)p.style.display=open?'block':'none';
   if(b){b.innerText=open?'필터 숨기기':'☰ 필터 열기';b.setAttribute('aria-expanded',open?'true':'false');}
   updateMobileUiMetrics();
+}
+
+/* PC 패널의 '닫기'. 필터·검색어는 그대로 두고 패널만 숨긴 뒤 여는 버튼으로 초점을 돌린다. */
+function closeBirdmapPanelFromPanel(){
+  setBirdmapPanelOpen(false);
+  var b=document.getElementById('togglePanelBtn');if(b)b.focus();
 }
 
 function toggleBirdmapPanel(){
