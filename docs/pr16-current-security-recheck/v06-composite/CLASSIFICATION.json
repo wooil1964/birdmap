@@ -1,0 +1,50 @@
+{
+  "classification": "harness native D1 metadata assumption",
+  "rawSummary": {
+    "pass": 0,
+    "fail": 5,
+    "skip": 0,
+    "notRun": 0
+  },
+  "reason": "Expected meta.changes=1. Actual D1 field update plus publication trigger reports changes=2/rows_written=2. Test SQL CAS unchanged; repaired harness explicitly verifies row revision old+1, location_hidden and both masked coordinates before accepting successful fixture mutation.",
+  "finalRowMetadataProof": [
+    {
+      "changes": 2,
+      "rowsWritten": 2,
+      "expectedBeforeRevision": 1,
+      "actualAfterRevision": 2,
+      "allMaskAndRevisionInvariantsVerified": true
+    },
+    {
+      "changes": 2,
+      "rowsWritten": 2,
+      "expectedBeforeRevision": 1,
+      "actualAfterRevision": 2,
+      "allMaskAndRevisionInvariantsVerified": true
+    },
+    {
+      "changes": 2,
+      "rowsWritten": 2,
+      "expectedBeforeRevision": 1,
+      "actualAfterRevision": 2,
+      "allMaskAndRevisionInvariantsVerified": true
+    },
+    {
+      "changes": 2,
+      "rowsWritten": 2,
+      "expectedBeforeRevision": 1,
+      "actualAfterRevision": 2,
+      "allMaskAndRevisionInvariantsVerified": true
+    },
+    {
+      "changes": 2,
+      "rowsWritten": 2,
+      "expectedBeforeRevision": 1,
+      "actualAfterRevision": 2,
+      "allMaskAndRevisionInvariantsVerified": true
+    }
+  ],
+  "productChanged": false,
+  "originalAssertionsAndSQLKept": true,
+  "previousEvidencePreserved": true
+}

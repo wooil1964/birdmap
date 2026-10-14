@@ -1,0 +1,56 @@
+{
+  "schema": "pr16-v06-evidence-source-eol-reconciliation-v1",
+  "relatesTo": "v06-composite-review.json",
+  "reason": "Initial audit recorded strict byte equality false, correctly. Windows working files use CRLF and pinned Git blobs use LF. All source text is identical after only CRLF-to-LF conversion. No product modification occurred.",
+  "productSha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "results": [
+    {
+      "path": "index.html",
+      "rawWorkingSha256": "3a16b5c34c02554f256d4df23197f4c47afcfde79133b3c813cb22b538c906f0",
+      "gitBlobSha256": "4e3abfd626a6bbea570a1947502316e42d95444c329824d753014c9e1fdf8f7c",
+      "workingCRLFCount": 15571,
+      "gitCRLFCount": 0,
+      "equalAfterCRLFtoLF": true,
+      "normalizedSha256": "4e3abfd626a6bbea570a1947502316e42d95444c329824d753014c9e1fdf8f7c"
+    },
+    {
+      "path": "reports-api/src/publication.js",
+      "rawWorkingSha256": "013734a44b428d8c20253351829464848bb5ae58fac15d0a6d7547c55c0a149e",
+      "gitBlobSha256": "efd16aef81ea7202ee3a4447816b92eb348503d6555e7efbcbf3faa97c801a35",
+      "workingCRLFCount": 159,
+      "gitCRLFCount": 0,
+      "equalAfterCRLFtoLF": true,
+      "normalizedSha256": "efd16aef81ea7202ee3a4447816b92eb348503d6555e7efbcbf3faa97c801a35"
+    },
+    {
+      "path": "reports-api/src/field-updates.js",
+      "rawWorkingSha256": "353223bd3b0c492bc95fd6b0b91c010f199810596f760255f1ed5b27628ce2da",
+      "gitBlobSha256": "45afe2b2a543d67f1816bbc0d7348ebd2fd5cedc7ebb7dbccb49081937c8fb61",
+      "workingCRLFCount": 431,
+      "gitCRLFCount": 0,
+      "equalAfterCRLFtoLF": true,
+      "normalizedSha256": "45afe2b2a543d67f1816bbc0d7348ebd2fd5cedc7ebb7dbccb49081937c8fb61"
+    },
+    {
+      "path": "reports-api/schema.sql",
+      "rawWorkingSha256": "47f857e0721fc2999fa87adb02ebae39c39e07b416de4efa7bc5de098f2fb204",
+      "gitBlobSha256": "33d9dbfd4d272ee67896aa700585935185751cd6323441bfaf75f9c7352339fd",
+      "workingCRLFCount": 255,
+      "gitCRLFCount": 0,
+      "equalAfterCRLFtoLF": true,
+      "normalizedSha256": "33d9dbfd4d272ee67896aa700585935185751cd6323441bfaf75f9c7352339fd"
+    },
+    {
+      "path": "reports-api/src/writer-fence.js",
+      "rawWorkingSha256": "dfa5b55b66c8261f4d01920ec8b8e8416f381ba1ffd1334376380024c427fe16",
+      "gitBlobSha256": "aed59e364415430ef16da9b0514da2abcfe0da8ea3117829a940d9a50c636cd5",
+      "workingCRLFCount": 79,
+      "gitCRLFCount": 0,
+      "equalAfterCRLFtoLF": true,
+      "normalizedSha256": "aed59e364415430ef16da9b0514da2abcfe0da8ea3117829a940d9a50c636cd5"
+    }
+  ],
+  "allNormalizedEqual": true,
+  "trackedProductDiff": [],
+  "executionScope": "No test rerun; evidence/source analysis only."
+}

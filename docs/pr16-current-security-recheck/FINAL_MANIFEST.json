@@ -1,0 +1,82 @@
+{
+  "at": "2026-10-14T04:05:30.738048+00:00",
+  "verdict": "PASS \u2014 current source blocks the four historical failures and all original15 risks",
+  "productBaseSha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "localInitialCheckoutSha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "CIcheckoutSha": "c85bb595d224300c33738989c8bf1f1184ff50a6",
+  "CIrunId": 38508291864,
+  "productsUnchanged": true,
+  "localScopes": {
+    "serverNativeFrontend": {
+      "pass": 153,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    },
+    "publicationChrome": {
+      "pass": 242,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    },
+    "nativeD1Browser": {
+      "pass": 30,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    },
+    "V06CompositeSupplementLocalOnly": {
+      "pass": 5,
+      "fail": 0,
+      "skip": 0,
+      "notRun": 0
+    }
+  },
+  "primaryRequiredFourKindMatrix": {
+    "pass": 20,
+    "fail": 0,
+    "skip": 0,
+    "notRun": 0
+  },
+  "original15SeparateSubset": {
+    "pass": 15,
+    "fail": 0,
+    "skip": 0,
+    "notRun": 0
+  },
+  "CIscopes": {
+    "core": {
+      "pass": 856,
+      "fail": 0,
+      "skip": 1
+    },
+    "publicationChrome": 242,
+    "reporterChrome": 65,
+    "nativeFence": 13,
+    "nativeCAS": 10,
+    "nativeBridge": 30,
+    "fourKinds": 20,
+    "old15": 15,
+    "V06CompositeSupplement": "NOT_RUN_IN_CI"
+  },
+  "countingRule": "FourKind20 and old15 are subsets of nativeBridge30. Additional V06 composite5 local-only. 242 also contains its own15 subset. Never add subsets to totals. Local distinct completed conditions:153+242+30+5=430. These do not represent the fullCI856 executed locally.",
+  "originalEvidencePreserved": true,
+  "limits": {
+    "operatingWorkerD1Pages": "NOT_RUN, prohibited by user",
+    "physicalGPSAndNativeMapApps": "NOT_RUN",
+    "externalUserSSO": "NOT_RUN (synthetic keys/CAPTCHA stubs)",
+    "CloudflarePOPConsistency": "NOT_RUN (localD1 proof only)"
+  },
+  "mutations": {
+    "productCode": 0,
+    "main": 0,
+    "operatingWorkerPagesD1": 0,
+    "realUsers": 0,
+    "PR16MergeClose": 0
+  },
+  "harnessHashes": {
+    "browser/native_bridge.mjs": "62ed4522ebf66c7bb45fc3fa7001411fa04108774f43a9f8a4e06c4da09e08f6",
+    "browser/native_v06_composite.mjs": "d8e1285e903fa87a76a2ba71de362b3a72d1244f058e7c61198ca8c1ef8649b6"
+  },
+  "sourceHashRule": "Git blob identity and LF-normalized hashes; rawWindowsCRLF differs fromLinuxLF, both recorded separately."
+}

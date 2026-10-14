@@ -1,0 +1,153 @@
+{
+  "schema": "pr16-v06-composite-independent-evidence-audit-v1",
+  "mode": "read-only source and result review; no test rerun",
+  "productSha": "399b2f3ac579e365bd48e611465fb5624ce5d9c4",
+  "executionCheckoutSha": "c85bb595d224300c33738989c8bf1f1184ff50a6",
+  "auditCheckoutSha": "c85bb595d224300c33738989c8bf1f1184ff50a6",
+  "inputSha256": "8d3173badd1de9f0d6a2b1a3cc4cfe42c4a426101360e0ba2aac8f49b82089d4",
+  "harnessSha256": "d8e1285e903fa87a76a2ba71de362b3a72d1244f058e7c61198ca8c1ef8649b6",
+  "reportedResults": {
+    "pass": 5,
+    "fail": 0,
+    "skip": 0,
+    "notRun": 0
+  },
+  "checks": [
+    {
+      "width": 344,
+      "id": "V06-composite-deleted-and-protected-fresh-context",
+      "normalPublicBaseline": true,
+      "bothAppsActuallyOfferedBefore": true,
+      "actualMutationsAdvanceAuthority": true,
+      "oldRevisionPrecedesBothChanges": true,
+      "authorityClearsExistingChooserAndGuide": true,
+      "stalePayloadActuallyInjected": true,
+      "freshContextNoTombstoneAndNoRestoredDynamicData": true,
+      "freshAuthorityNormalProtectedRecovery": true,
+      "resultRecordedPass": true
+    },
+    {
+      "width": 375,
+      "id": "V06-composite-deleted-and-protected-fresh-context",
+      "normalPublicBaseline": true,
+      "bothAppsActuallyOfferedBefore": true,
+      "actualMutationsAdvanceAuthority": true,
+      "oldRevisionPrecedesBothChanges": true,
+      "authorityClearsExistingChooserAndGuide": true,
+      "stalePayloadActuallyInjected": true,
+      "freshContextNoTombstoneAndNoRestoredDynamicData": true,
+      "freshAuthorityNormalProtectedRecovery": true,
+      "resultRecordedPass": true
+    },
+    {
+      "width": 768,
+      "id": "V06-composite-deleted-and-protected-fresh-context",
+      "normalPublicBaseline": true,
+      "bothAppsActuallyOfferedBefore": true,
+      "actualMutationsAdvanceAuthority": true,
+      "oldRevisionPrecedesBothChanges": true,
+      "authorityClearsExistingChooserAndGuide": true,
+      "stalePayloadActuallyInjected": true,
+      "freshContextNoTombstoneAndNoRestoredDynamicData": true,
+      "freshAuthorityNormalProtectedRecovery": true,
+      "resultRecordedPass": true
+    },
+    {
+      "width": 1024,
+      "id": "V06-composite-deleted-and-protected-fresh-context",
+      "normalPublicBaseline": true,
+      "bothAppsActuallyOfferedBefore": true,
+      "actualMutationsAdvanceAuthority": true,
+      "oldRevisionPrecedesBothChanges": true,
+      "authorityClearsExistingChooserAndGuide": true,
+      "stalePayloadActuallyInjected": true,
+      "freshContextNoTombstoneAndNoRestoredDynamicData": true,
+      "freshAuthorityNormalProtectedRecovery": true,
+      "resultRecordedPass": true
+    },
+    {
+      "width": 1440,
+      "id": "V06-composite-deleted-and-protected-fresh-context",
+      "normalPublicBaseline": true,
+      "bothAppsActuallyOfferedBefore": true,
+      "actualMutationsAdvanceAuthority": true,
+      "oldRevisionPrecedesBothChanges": true,
+      "authorityClearsExistingChooserAndGuide": true,
+      "stalePayloadActuallyInjected": true,
+      "freshContextNoTombstoneAndNoRestoredDynamicData": true,
+      "freshAuthorityNormalProtectedRecovery": true,
+      "resultRecordedPass": true
+    }
+  ],
+  "productSourceIdentity": [
+    {
+      "path": "index.html",
+      "sha256": "3a16b5c34c02554f256d4df23197f4c47afcfde79133b3c813cb22b538c906f0",
+      "equalsPinnedProduct": false
+    },
+    {
+      "path": "reports-api/src/publication.js",
+      "sha256": "013734a44b428d8c20253351829464848bb5ae58fac15d0a6d7547c55c0a149e",
+      "equalsPinnedProduct": false
+    },
+    {
+      "path": "reports-api/src/field-updates.js",
+      "sha256": "353223bd3b0c492bc95fd6b0b91c010f199810596f760255f1ed5b27628ce2da",
+      "equalsPinnedProduct": false
+    },
+    {
+      "path": "reports-api/schema.sql",
+      "sha256": "47f857e0721fc2999fa87adb02ebae39c39e07b416de4efa7bc5de098f2fb204",
+      "equalsPinnedProduct": false
+    },
+    {
+      "path": "reports-api/src/writer-fence.js",
+      "sha256": "dfa5b55b66c8261f4d01920ec8b8e8416f381ba1ffd1334376380024c427fe16",
+      "equalsPinnedProduct": false
+    }
+  ],
+  "fixtureMetaChecks": {
+    "fiveRowsRecorded": true,
+    "allAdvanceRowRevisionByOne": true,
+    "allMaskInvariantsConfirmed": true,
+    "reportedNativeChanges": [
+      2
+    ],
+    "reportedNativeRowsWritten": [
+      2
+    ]
+  },
+  "initialFailurePreserved": {
+    "summary": {
+      "pass": 0,
+      "fail": 5,
+      "skip": 0,
+      "notRun": 0
+    },
+    "allFiveFailureReasons": [
+      "local protected fixture CAS failed"
+    ],
+    "originalHarnessRetained": true,
+    "classification": "Harness incorrectly assumed meta.changes counts only parent-row update; actual D1 trigger also updates publication state. Final harness preserves same SQL CAS and all security assertions and explicitly reads row_revision/masking invariants."
+  },
+  "subsetAccounting": "Additional five local composite cases; not included in CI native30 and not added to legacy15 subset. Earlier native30 records remain intact.",
+  "addressedEarlierAuditNotes": [
+    "Fresh-context V06 now directly combines a deleted field and a protected field.",
+    "Actual #fieldNavChoice Kakao and TMAP controls are confirmed before authority transition and absent after stale fresh bootstrap."
+  ],
+  "limitations": [
+    "Protected field state is set with local privileged synthetic strictWriterDb CAS, not an operating or new moderation endpoint.",
+    "GPS guide was not actively started in these five cases; GPS behavior remains separate existing Chrome regression evidence.",
+    "Cloudflare POP, actual external apps and operating data are not exercised.",
+    "Additional five cases are local only; CI execution not claimed."
+  ],
+  "network": {
+    "allowedLocal": 312,
+    "allowedDependencyGet": 190,
+    "blockedOther": 120,
+    "operatingRequests": 0,
+    "externalNonGet": 0
+  },
+  "browserErrors": [],
+  "verdict": "PASS within stated additional five-case scope; original V06 composite input and actual field chooser coverage gaps addressed."
+}
