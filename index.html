@@ -152,6 +152,14 @@
   </div>
 </div>
 
+<div id="reporterStatsModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="reporterStatsTitle" aria-describedby="reporterStatsBasis" onclick="if(event.target===this)closeReporterStats(true)" onkeydown="reporterStatsKeydown(event)">
+  <div class="monthTideDialog">
+    <div class="monthTideHeader"><strong id="reporterStatsTitle">누적 출현 제보 통계</strong><button id="reporterStatsClose" type="button" onclick="closeReporterStats(true)">닫기</button></div>
+    <div id="reporterStatsBasis" class="monthTideMeta">닉네임 기준 집계 · 같은 닉네임의 제보는 합산됩니다.<br>승인된 이름 공개 동의 제보만 집계합니다.</div>
+    <div id="reporterStatsContent" class="monthTideContent" aria-live="polite"></div>
+  </div>
+</div>
+
 <div id="noticePanel">
   <div class="panelHeader"><strong>📢 이달의 탐조 기획</strong><button onclick="toggleNoticePanel(false)">닫기</button></div>
   <div id="noticeList">현재 게시 중인 기획글이 없습니다.</div>
@@ -555,6 +563,16 @@ body.fieldPicking .folium-map{cursor:crosshair}
 .monthTideButtonWrap{margin-top:7px;padding-top:6px;border-top:1px solid rgba(118,86,0,.18)}
 .monthTideButton{padding:6px 9px;border:1px solid #2d6f9f;border-radius:5px;background:#eef7ff;color:#174d6f;font-weight:bold;cursor:pointer}
 body.monthTideOpen{overflow:hidden}
+.reporterMapOpen{display:block;width:100%;border:0;padding:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.resultItem.reportResult{box-sizing:border-box}
+.reporterStatsLink{border:0;background:transparent;color:#174d6f;font:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px;padding:2px 3px;cursor:pointer;overflow-wrap:anywhere}
+.reporterStatsLink:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
+#reporterStatsModal{z-index:11020}
+#reporterStatsModal .monthTideDialog{width:min(380px,100%)}
+.reporterStatsNumbers{display:grid;grid-template-columns:1fr auto;gap:16px 12px;margin:8px 0;color:#174d6f}
+.reporterStatsNumbers dt{align-self:center}.reporterStatsNumbers dd{margin:0;font-size:22px;font-weight:bold}
+body.reporterStatsOpen{overflow:hidden}
+
 
 .v23InfoBox{margin:8px 0;padding:8px;border:1px solid #d7e8d2;background:#f7fff5;border-radius:7px;line-height:1.55}
 .v23InfoBox .v23Title{font-weight:bold;color:#245b1d;margin-bottom:4px}
@@ -1081,6 +1099,7 @@ var reportSearchIndex=[];
 
 function buildReportSearchIndex(spots){
   var out=[];
+  if(typeof reporterStatsWitnesses!=='undefined')reporterStatsWitnesses=new WeakMap();
   // 독립 붉은 점: 지점마다 자기 이력을 갖는다.
   (spots||[]).forEach(function(spot){
     // isFinite(null) 은 true 라 숫자인지 먼저 본다. 그러지 않으면 좌표 없는 제보가
@@ -1092,6 +1111,7 @@ function buildReportSearchIndex(spots){
     (spot.history||[]).forEach(function(entry){
       out.push({kind:'spot',spotId:id,date:String(entry.date||''),
         species:entry.species||[],reporter:entry.reporter||'',lat:spot.lat,lon:spot.lon});
+      if(typeof reporterStatsRememberEntry==='function')reporterStatsRememberEntry(out[out.length-1],entry.id);
     });
   });
   // 지도에 고정된 붉은 점에 연결된 제보. 좌표·출현종은 siteSpotData 가 정본이라 그대로 쓴다.
@@ -1102,6 +1122,7 @@ function buildReportSearchIndex(spots){
     (reportFixedHistory[key]||[]).forEach(function(entry){
       out.push({kind:'fixed',spotId:key,date:String(entry.date||''),
         species:entry.species||[],reporter:entry.reporter||'',lat:fixed.lat,lon:fixed.lon});
+      if(typeof reporterStatsRememberEntry==='function')reporterStatsRememberEntry(out[out.length-1],entry.id);
     });
   });
   // 실제 관찰일 최신순. 같은 날짜면 종 이름으로 순서를 고정한다.
@@ -1199,25 +1220,25 @@ function renderRecentReports(){
   var shown=recent.slice(0,RECENT_REPORT_LIMIT);
   if(count)count.textContent=shown.length+'건';
   shown.forEach(function(entry){
-    var item=document.createElement('button');
-    item.type='button';
+    var item=document.createElement('div');
     item.className='recentReportItem';
     item.onclick=function(){openReportEntry(entry);};
-    var species=document.createElement('div');
-    species.className='recentReportSpecies';
+    var species=document.createElement('button');
+    species.type='button';
+    species.className='recentReportSpecies reporterMapOpen';
     species.textContent=(entry.species||[]).join(' · ');
     item.appendChild(species);
     // 있는 항목만 이어 붙인다. 없는 값에 '미확인' 같은 문구를 넣지 않는다.
     var bits=[];
-    if(entry.reporter)bits.push(entry.reporter);
     var siteName=recentReportSiteName(entry);
     if(siteName)bits.push(siteName);
     var dateText=recentReportDateText(entry.date);
     if(dateText)bits.push(dateText);
-    if(bits.length){
+    if(bits.length||entry.reporter){
       var meta=document.createElement('div');
       meta.className='recentReportMeta';
-      meta.textContent=bits.join(' · ');
+      if(entry.reporter){meta.appendChild(reporterStatsElement(entry.reporter,reporterStatsContextForEntry(entry),false));if(bits.length)meta.appendChild(document.createTextNode(' · '));}
+      meta.appendChild(document.createTextNode(bits.join(' · ')));
       item.appendChild(meta);
     }
     list.appendChild(item);
@@ -1255,12 +1276,78 @@ function contributorsMonthParts(month){
 function contributorsIsMobile(){
   return window.matchMedia('(max-width:899px)').matches;
 }
+/* Public nickname statistics reuse the publication read contract; no nickname search/cache. */
+var reporterStatsRequest=0,reporterStatsData=null,reporterStatsOwner=null,reporterStatsObserver=null;
+var reporterStatsWitnesses=new WeakMap();
+function reporterStatsNameAllowed(name){return typeof name==='string'&&name.trim()!==''&&name.length<=40&&!/[\u0000-\u001f\u007f]/.test(name);}
+function reporterStatsContextAllowed(context){
+ return !!context&&((context.source==='history'&&typeof context.reportId==='string'&&/^[0-9A-Za-z_-]{1,64}$/.test(context.reportId))||(context.source==='monthly'&&typeof context.month==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(context.month)));
+}
+// Keep existing search DTO fields unchanged; source ids stay transient and non-enumerable.
+function reporterStatsRememberEntry(entry,id){if(reporterStatsContextAllowed({source:'history',reportId:id}))reporterStatsWitnesses.set(entry,id);}
+function reporterStatsContextForEntry(entry){return {source:'history',reportId:reporterStatsWitnesses.get(entry)||''};}
+function reporterStatsElement(name,context,inline){
+ var valid=reporterStatsNameAllowed(name)&&reporterStatsContextAllowed(context),node=document.createElement(valid&&!inline?'button':'span');
+ node.textContent=name||'익명 제보';
+ if(!valid)return node;
+ if(inline){node.setAttribute('role','button');node.tabIndex=0;}else node.type='button';
+ node.className='reporterStatsLink';node.setAttribute('aria-label',name+'님의 누적 출현종 수와 승인 제보 건수');
+ node.dataset.reporter=name;node.dataset.reporterSource=context.source;
+ if(context.source==='history')node.dataset.reporterReport=context.reportId;else node.dataset.reporterMonth=context.month;
+ return node;
+}
+function reporterStatsHistoryHtml(entry){
+ if(!entry||!entry.reporter)return '익명 제보';
+ if(!reporterStatsNameAllowed(entry.reporter)||!reporterStatsContextAllowed({source:'history',reportId:entry.id}))return escapeHtml(entry.reporter);
+ return '<button type="button" class="reporterStatsLink" data-reporter="'+escapeHtml(entry.reporter)+'" data-reporter-source="history" data-reporter-report="'+escapeHtml(entry.id)+'" aria-label="'+escapeHtml(entry.reporter+'님의 누적 출현종 수와 승인 제보 건수')+'">'+escapeHtml(entry.reporter)+'</button>';
+}
+function reporterStatsCounts(body){
+ if(!body||typeof body!=='object'||Array.isArray(body)||!Object.hasOwn(body,'speciesCount')||!Object.hasOwn(body,'reportCount'))return null;
+ if(Object.keys(body).some(function(key){return ['speciesCount','reportCount','publication','serverTime','publicationCheckedAt'].indexOf(key)<0;}))return null;
+ var species=body.speciesCount,reports=body.reportCount;
+ if(!Number.isSafeInteger(species)||species<0||!Number.isSafeInteger(reports)||reports<0||(reports===0&&species!==0))return null;
+ return {speciesCount:species,reportCount:reports};
+}
+function closeReporterStats(restoreFocus){
+ reporterStatsRequest++;reporterStatsData=null;
+ var owner=reporterStatsOwner;reporterStatsOwner=null;
+ if(reporterStatsObserver){reporterStatsObserver.disconnect();reporterStatsObserver=null;}
+ var modal=document.getElementById('reporterStatsModal'),content=document.getElementById('reporterStatsContent');
+ if(modal)modal.style.display='none';if(content)content.textContent='';
+ document.body.classList.remove('reporterStatsOpen');
+ if(restoreFocus&&owner&&owner.isConnected&&owner.getClientRects().length)owner.focus();
+}
+function reporterStatsStillCurrent(request,generation){
+ return request===reporterStatsRequest&&generation===publicationState.generation&&publicationAllowed()&&!!reporterStatsOwner&&reporterStatsOwner.isConnected&&document.getElementById('reporterStatsModal').style.display==='flex';
+}
+function openReporterStats(trigger){
+ if(!trigger||!trigger.isConnected||!publicationAllowed())return Promise.resolve(false);
+ var name=trigger.dataset.reporter,context={source:trigger.dataset.reporterSource,reportId:trigger.dataset.reporterReport,month:trigger.dataset.reporterMonth};
+ if(!reporterStatsNameAllowed(name)||!reporterStatsContextAllowed(context))return Promise.resolve(false);
+ closeReporterStats(false);reporterStatsOwner=trigger;
+ var request=++reporterStatsRequest,generation=publicationState.generation,modal=document.getElementById('reporterStatsModal'),content=document.getElementById('reporterStatsContent');
+ content.textContent='통계를 불러오는 중입니다.';modal.style.display='flex';document.body.classList.add('reporterStatsOpen');document.getElementById('reporterStatsClose').focus();
+ reporterStatsObserver=new MutationObserver(function(){if(reporterStatsOwner&&!reporterStatsOwner.isConnected)closeReporterStats(false);});reporterStatsObserver.observe(document.body,{childList:true,subtree:true});
+ var query=new URLSearchParams({reporter:name,source:context.source});if(context.source==='history')query.set('reportId',context.reportId);else query.set('month',context.month);
+ return publicationFetch('/reports/reporter-stats?'+query.toString()).then(function(body){
+  if(!reporterStatsStillCurrent(request,generation)||!publicationDataAllowed(body))return false;
+  var counts=reporterStatsCounts(body);if(!counts)throw new Error('reporter statistic invalid');
+  reporterStatsData=counts;content.textContent='';var list=document.createElement('dl');list.className='reporterStatsNumbers';
+  [['누적 출현종 수',counts.speciesCount+'종'],['승인 제보 건수',counts.reportCount+'건']].forEach(function(pair){var label=document.createElement('dt'),value=document.createElement('dd');label.textContent=pair[0];value.textContent=pair[1];list.appendChild(label);list.appendChild(value);});content.appendChild(list);return true;
+ }).catch(function(){if(reporterStatsStillCurrent(request,generation)){reporterStatsData=null;content.textContent='공개 통계를 확인할 수 없습니다. 잠시 후 다시 확인해 주세요.';}return false;});
+}
+function reporterStatsKeydown(event){
+ if(event.key==='Tab'){event.preventDefault();document.getElementById('reporterStatsClose').focus();}
+}
+document.addEventListener('click',function(event){var node=event.target.closest&&event.target.closest('.reporterStatsLink');if(!node)return;event.preventDefault();event.stopPropagation();openReporterStats(node);},true);
+document.addEventListener('keydown',function(event){var node=event.target.closest&&event.target.closest('.reporterStatsLink');if(!node||(event.key!=='Enter'&&event.key!==' '))return;event.preventDefault();event.stopPropagation();openReporterStats(node);},true);
+window.addEventListener('load',function(){var map=typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'?map_7010a44f6ac2025090f0fe07508ed485:null;if(map)map.on('popupclose',function(event){var node=event.popup&&event.popup.getElement();if(node&&reporterStatsOwner&&node.contains(reporterStatsOwner))closeReporterStats(false);});});
+
 function contributorRowElement(row){
   var item=document.createElement('div');
   item.className='contribRow';
-  var name=document.createElement('span');
-  name.className='contribName';
-  name.textContent=row.name;
+  var name=reporterStatsElement(row.name,{source:'monthly',month:contributorsData&&contributorsData.month},false);
+  name.className+=(name.className?' ':'')+'contribName';
   name.title=row.name;
   var count=document.createElement('span');
   count.className='contribCount';
@@ -1574,7 +1661,7 @@ function spotHistoryHtml(history){
   var items=history.map(function(entry,index){
     var date=String(entry.date||'').replace(/-/g,'.');
     var names=(entry.species||[]).map(escapeHtml).join(' · ');
-    var who=entry.reporter?escapeHtml(entry.reporter):'익명 제보';
+    var who=reporterStatsHistoryHtml(entry);
     return '<li class="spotHistoryItem'+(index>=SPOT_HISTORY_VISIBLE?' spotHistoryHidden':'')+'">'
       +'<span class="spotHistoryDate">'+escapeHtml(date)+'</span>'
       +'<span class="spotHistoryName">'+names+'</span>'
@@ -2925,7 +3012,7 @@ function siteHistoryContainerHtml(site){
 
 function siteHistoryEntryHtml(entry){
   var names=(entry.species||[]).map(escapeHtml).join(' · ');
-  var who=entry.reporter?escapeHtml(entry.reporter):'익명 제보';
+  var who=reporterStatsHistoryHtml(entry);
   return '<div class="siteHistoryEntry">'
     +'<div class="siteHistoryDate">'+escapeHtml(String(entry.date||'').replace(/-/g,'.'))+'</div>'
     +'<div class="siteHistoryName">출현종: '+names+'</div>'
@@ -2975,6 +3062,8 @@ function publicationForgetLayer(layer,map){
  if(map)map.removeLayer(layer);
 }
 function publicationInvalidate(reason){
+ if(typeof closeReporterStats==='function')closeReporterStats(false);
+ if(typeof reporterStatsWitnesses!=='undefined')reporterStatsWitnesses=new WeakMap();
  publicationState.generation++;publicationState.until=0;publicationState.ready=false;publicationState.needsRefresh=true;
  publicationHeadPromise=null;publicationRefreshPromise=null;publicationState.pending={};
  if(publicationExpiryTimer)clearTimeout(publicationExpiryTimer);
@@ -2988,6 +3077,7 @@ function publicationInvalidate(reason){
  reportPublicSpots={};reportSearchIndex=[];reportFixedHistory={};recentSiteSightings={};
  document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
  if(typeof fieldUpdates!=='undefined')fieldUpdates=[];
+ if(typeof clearRenderedSiteHistories==='function')clearRenderedSiteHistories();
  if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
  if(typeof clearContributors==='function')clearContributors();
  if(dynamicPopup&&map&&map.closePopup){map.closePopup(currentPopup);currentPopup._source=null;map._popup=null;}
@@ -3154,7 +3244,25 @@ function setSiteHistoryCount(box,total){
   if(badge)badge.textContent=' '+Number(total||0)+'건';
 }
 
+function clearRenderedSiteHistories(){
+ var boxes=new Set();
+ function collect(root){if(root&&root.querySelectorAll)root.querySelectorAll('.siteHistoryBox').forEach(function(box){boxes.add(box);});}
+ collect(document);
+ if(typeof markerRegistry!=='undefined')Object.keys(markerRegistry).forEach(function(key){
+  var marker=markerRegistry[key],popup=marker&&marker.getPopup&&marker.getPopup();
+  if(popup){collect(popup.getElement&&popup.getElement());collect(popup.getContent&&popup.getContent());}
+ });
+ boxes.forEach(function(box){
+  if(Array.isArray(box._birdmapLoaded))box._birdmapLoaded.length=0;
+  box._birdmapLoaded=[];
+  var list=box.querySelector('.siteHistoryList'),badge=box.querySelector('.siteHistoryCount');
+  if(list){list.className='siteHistoryList siteHistoryEmpty';list.textContent='공개 이력의 최신 상태를 확인할 수 없습니다.';}
+  if(badge)badge.textContent='';
+ });
+}
+
 function renderSiteHistory(box,site,data,popup){
+  if(!box||!document.body.contains(box)||siteHistoryBoxIn(popup)!==box||!publicationDataAllowed(data))return;
   var list=box.querySelector('.siteHistoryList');
   box._birdmapLoaded=(box._birdmapLoaded||[]).concat(data.history);
   var loaded=box._birdmapLoaded;
@@ -3174,7 +3282,9 @@ function renderSiteHistory(box,site,data,popup){
     // 팝업 안의 클릭이 지도까지 새어 팝업이 닫히는 것을 막는다.
     if(event&&event.stopPropagation)event.stopPropagation();
     more.disabled=true;
+    var generation=publicationState.generation;
     fetchSiteHistory(site,loaded.length).then(function(next){
+      if(generation!==publicationState.generation||siteHistoryBoxIn(popup)!==box||!publicationAllowed())return;
       if(!next){more.disabled=false;return;}
       renderSiteHistory(box,site,next,popup);
     });
@@ -3190,12 +3300,13 @@ function siteHistoryBoxIn(popup){
 
 function initSiteHistory(site,popup){
   if(!siteHistoryBoxIn(popup))return;
+  var generation=publicationState.generation;
   fetchSiteHistory(site,0).then(function(data){
     // 받아 오는 사이에 팝업이 다시 그려졌을 수 있어 그릴 때 칸을 다시 찾는다.
     // 처음 잡아 둔 칸만 믿으면 떨어져 나간 칸에 그리고 끝나, 화면에는
     // '불러오는 중입니다.'가 그대로 남는다.
     var box=siteHistoryBoxIn(popup);
-    if(!box)return;
+    if(!box||generation!==publicationState.generation||!publicationAllowed())return;
     if(!data){
       // 이력 API 가 없거나 실패하면 이 블록만 없애고 기존 프로필은 그대로 둔다.
       if(box.parentNode)box.parentNode.removeChild(box);
@@ -3332,18 +3443,20 @@ function renderReportResults(box,entries){
   if(!entries.length)return;
   box.appendChild(resultSectionTitle('출현종 제보 '+entries.length+'건'));
   entries.slice(0,80).forEach(function(entry){
-    var button=document.createElement('button');
+    var button=document.createElement('div');
     button.setAttribute('data-publication-entry','true');
     button.className='resultItem reportResult';
     button.onclick=function(){openReportEntry(entry);};
-    var name=document.createElement('div');
-    name.className='resultName';
+    var name=document.createElement('button');
+    name.type='button';
+    name.className='resultName reporterMapOpen';
     name.textContent=(entry.species||[]).join(' · ');
     var meta=document.createElement('div');
     meta.className='resultMeta';
     meta.textContent=(entry.date?String(entry.date).replace(/-/g,'.'):'관찰일 미확인')
       +' · '+reportEntryPlace(entry)
-      +' · 제보자: '+(entry.reporter||'익명 제보');
+      +' · 제보자: ';
+    meta.appendChild(reporterStatsElement(entry.reporter,reporterStatsContextForEntry(entry),false));
     button.appendChild(name);
     button.appendChild(meta);
     box.appendChild(button);
@@ -5486,7 +5599,7 @@ function submitReport(event){
 }
 
 document.getElementById('searchBox').addEventListener('keydown',function(e){if(e.key==='Enter')searchSite();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMonthTideModal();closeReportModal();closeContributorsModal();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(document.getElementById('reporterStatsModal').style.display==='flex'){e.preventDefault();closeReporterStats(true);return;}closeMonthTideModal();closeReportModal();closeContributorsModal();}});
 document.getElementById('recentTabs').addEventListener('keydown',function(e){
   if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
   var next=recentTab==='reports'?'contributors':'reports';

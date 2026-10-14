@@ -1,0 +1,18 @@
+import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import vm from 'node:vm';
+const sha='e2603e0f4236fa74755ba8b7c11b211ef1603dbc';
+const read=spawnSync('git',['show',sha+':index.html'],{encoding:'utf8',maxBuffer:32*1024*1024});
+if(read.status!==0)throw new Error('Cannot read pinned synthetic-test source');
+const h=read.stdout;
+const src=h.slice(h.indexOf('function publicationInvalidate('),h.indexOf('function publicationRenew('));
+if(!src.startsWith('function publicationInvalidate('))throw new Error('Source extraction failed');
+const historyBox={_birdmapLoaded:[{reporter:'SYNTHETIC_PRIVATE_NAME',species:['SYNTHETIC_SPECIES']}],textContent:'SYNTHETIC_PRIVATE_NAME',innerHTML:'<button class="reporterStatsLink" data-reporter="SYNTHETIC_PRIVATE_NAME">SYNTHETIC_PRIVATE_NAME</button>'};
+const c={document:{hidden:false,querySelectorAll(selector){return selector==='.siteHistoryBox'?[historyBox]:[];}},publicationState:{generation:1,ready:true},publicationExpiryTimer:0,reportSpotLayers:{},reportPendingLayers:{},reportSearchIndex:[],reportFixedHistory:{},recentSiteSightings:{},reporterStatsWitnesses:new WeakMap(),WeakMap,clearSiteHistoryCache(){},clearContributors(){},closeReporterStats(){},publicationNotice(){},clearTimeout(){}};
+vm.createContext(c);vm.runInContext(src,c);c.publicationInvalidate('synthetic-consent-withdrawal');
+const result={kind:'actual_product_function_readonly_probe',sourceCommit:sha,indexGitSha256:createHash('sha256').update(h).digest('hex'),publicationClosed:c.publicationState.ready===false,siteHistoryNameDOMSurvives:historyBox.innerHTML.includes('SYNTHETIC_PRIVATE_NAME'),siteHistoryLoadedReferencesSurvive:historyBox._birdmapLoaded.length===1};
+result.expected={publicationClosed:true,siteHistoryNameDOMSurvives:false,siteHistoryLoadedReferencesSurvive:false};
+result.pass=Number(result.publicationClosed)+Number(!result.siteHistoryNameDOMSurvives)+Number(!result.siteHistoryLoadedReferencesSurvive);
+result.fail=3-result.pass;
+console.log(JSON.stringify(result,null,2));
+process.exitCode=result.fail?1:0;

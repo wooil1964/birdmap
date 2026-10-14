@@ -1,6 +1,6 @@
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload} from './field-updates.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='legacy-public-v1';
@@ -66,10 +66,48 @@ export async function publicationAnchor(binding,request) {
   rememberGuardLocators(binding,row);return anchor;
  }catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');}
 }
-const paths=new Set(['/reports/approved','/reports/pending','/reports/recent-sites','/field-updates','/contributors/monthly']);
+const paths=new Set(['/reports/approved','/reports/pending','/reports/recent-sites','/field-updates','/contributors/monthly','/reports/reporter-stats']);
 export function isPublicationPath(path){return paths.has(path)||path.startsWith('/reports/site/');}
+// One public nickname and a source already exposed by an existing public projection.
+// These are membership witnesses, not secret credentials. The same primary batch
+// rechecks approval/name consent before producing numbers; there is no name search.
+function reporterStatsRequest(url) {
+ const single=name=>{const values=url.searchParams.getAll(name);if(values.length>1)fail('REPORTER_STATS_REQUEST_INVALID','통계 요청 형식이 유효하지 않습니다.',400);return values.length?values[0]:null;};
+ const reporter=single('reporter'),source=single('source'),reportId=single('reportId'),month=single('month');
+ if(typeof reporter!=='string'||!reporter.trim()||reporter.length>MAX_REPORTER_LENGTH||/[\u0000-\u001f\u007f]/.test(reporter))fail('REPORTER_STATS_REQUEST_INVALID','통계 요청 형식이 유효하지 않습니다.',400);
+ if(source==='history'){
+  if(typeof reportId!=='string'||! /^[0-9A-Za-z_-]{1,64}$/.test(reportId)||(month!==null&&month!==''))fail('REPORTER_STATS_REQUEST_INVALID','통계 요청 형식이 유효하지 않습니다.',400);
+  return {reporter,source,reportId};
+ }
+ if(source==='monthly'){
+  if(typeof month!=='string'||!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)||(reportId!==null&&reportId!==''))fail('REPORTER_STATS_REQUEST_INVALID','통계 요청 형식이 유효하지 않습니다.',400);
+  const [year,mon]=month.split('-').map(Number),end=mon===12?String(year+1).padStart(4,'0')+'-01-01':String(year).padStart(4,'0')+'-'+String(mon+1).padStart(2,'0')+'-01';
+  return {reporter,source,start:month+'-01',end};
+ }
+ fail('REPORTER_STATS_REQUEST_INVALID','통계 요청 형식이 유효하지 않습니다.',400);
+}
+export function reporterLifetimeCounts(rows) {
+ const species=new Set();
+ for(const row of rows)for(const name of splitSpecies(row.species))species.add(name);
+ return {speciesCount:species.size,reportCount:rows.length};
+}
+function reporterStatsPlan(db,url) {
+ const input=reporterStatsRequest(url);
+ const eligible="status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND reporter=?1 COLLATE BINARY";
+ const witness=input.source==='history'?`id=?2 AND ${eligible}`:`${eligible} AND observed_on>=?2 AND observed_on<?3`;
+ // No coordinates, names, IDs or notes are selected or returned by the statistic.
+ const statement=db.prepare(`SELECT species FROM reports WHERE ${eligible} AND EXISTS(SELECT 1 FROM reports WHERE ${witness})`);
+ const params=input.source==='history'?[input.reporter,input.reportId]:[input.reporter,input.start,input.end];
+ return {statements:[statement.bind(...params)],build:sets=>{
+  const rows=sets[0].results||[];
+  if(!rows.length)fail('REPORTER_STATS_UNAVAILABLE','공개 통계를 확인할 수 없습니다.',404);
+  return reporterLifetimeCounts(rows);
+ }};
+}
+
 function readPlan(db,url,now) {
  const path=url.pathname;
+ if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url);
  if(path==='/reports/approved')return {statements:[db.prepare("SELECT id,species,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC")],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
  if(path==='/reports/pending')return {statements:[db.prepare(`SELECT id,species,observed_on,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,${LOCATION_HIDDEN_SQL} AS location_hidden FROM reports WHERE status='pending' AND pending_public=1 AND approx_lat IS NOT NULL AND approx_lon IS NOT NULL ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),spots:pendingPayload(s[0].results||[])})};
  if(path==='/reports/recent-sites') {

@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: I21 core shared splitSpecies distinct row counts
+ok 1 - I21 core shared splitSpecies distinct row counts
+  ---
+  duration_ms: 1.3404
+  type: 'test'
+  ...
+# Subtest: I21 core history lifetime not month and public consent
+ok 2 - I21 core history lifetime not month and public consent
+  ---
+  duration_ms: 27.6269
+  type: 'test'
+  ...
+# Subtest: I21 core monthly source uses existing month membership
+ok 3 - I21 core monthly source uses existing month membership
+  ---
+  duration_ms: 5.5044
+  type: 'test'
+  ...
+# Subtest: I21 core same primary snapshot and no-store
+ok 4 - I21 core same primary snapshot and no-store
+  ---
+  duration_ms: 4.8171
+  type: 'test'
+  ...
+# Subtest: same exact nickname combines rows without account inference
+ok 5 - same exact nickname combines rows without account inference
+  ---
+  duration_ms: 5.3715
+  type: 'test'
+  ...
+# Subtest: nickname case and Unicode strings not normalized
+ok 6 - nickname case and Unicode strings not normalized
+  ---
+  duration_ms: 5.5882
+  type: 'test'
+  ...
+# Subtest: reuses literal existing species splitter, not guessed taxonomy
+ok 7 - reuses literal existing species splitter, not guessed taxonomy
+  ---
+  duration_ms: 0.1183
+  type: 'test'
+  ...
+# Subtest: empty species on valid public row means zero species one report
+ok 8 - empty species on valid public row means zero species one report
+  ---
+  duration_ms: 4.0939
+  type: 'test'
+  ...
+# Subtest: protected consenting approved report contributes counts only
+ok 9 - protected consenting approved report contributes counts only
+  ---
+  duration_ms: 4.1822
+  type: 'test'
+  ...
+# Subtest: no public witness {"name_public":0}
+ok 10 - no public witness {"name_public":0}
+  ---
+  duration_ms: 4.5323
+  type: 'test'
+  ...
+# Subtest: no public witness {"status":"pending"}
+ok 11 - no public witness {"status":"pending"}
+  ---
+  duration_ms: 4.072
+  type: 'test'
+  ...
+# Subtest: no public witness {"status":"rejected"}
+ok 12 - no public witness {"status":"rejected"}
+  ---
+  duration_ms: 4.2134
+  type: 'test'
+  ...
+# Subtest: no public witness {"reporter":null}
+ok 13 - no public witness {"reporter":null}
+  ---
+  duration_ms: 3.9711
+  type: 'test'
+  ...
+# Subtest: no public witness {"reporter":""}
+ok 14 - no public witness {"reporter":""}
+  ---
+  duration_ms: 3.9511
+  type: 'test'
+  ...
+# Subtest: no public witness {"reporter":"   "}
+ok 15 - no public witness {"reporter":"   "}
+  ---
+  duration_ms: 3.9607
+  type: 'test'
+  ...
+# Subtest: missing private and wrong witness all use same unavailable error
+ok 16 - missing private and wrong witness all use same unavailable error
+  ---
+  duration_ms: 5.8026
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"reporter":""}
+ok 17 - bounded single context validation {"reporter":""}
+  ---
+  duration_ms: 3.6981
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"reporter":"   "}
+ok 18 - bounded single context validation {"reporter":"   "}
+  ---
+  duration_ms: 3.7538
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"reporter":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+ok 19 - bounded single context validation {"reporter":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+  ---
+  duration_ms: 3.6116
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"reporter":"x\\nname"}
+ok 20 - bounded single context validation {"reporter":"x\\nname"}
+  ---
+  duration_ms: 3.6831
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"source":"search"}
+ok 21 - bounded single context validation {"source":"search"}
+  ---
+  duration_ms: 3.7101
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"source":"monthly","month":"2026-13"}
+ok 22 - bounded single context validation {"source":"monthly","month":"2026-13"}
+  ---
+  duration_ms: 3.7718
+  type: 'test'
+  ...
+# Subtest: bounded single context validation {"reportId":"bad?ID"}
+ok 23 - bounded single context validation {"reportId":"bad?ID"}
+  ---
+  duration_ms: 3.5244
+  type: 'test'
+  ...
+# Subtest: duplicates and bulk parameters rejected, SQL bind literal safe
+ok 24 - duplicates and bulk parameters rejected, SQL bind literal safe
+  ---
+  duration_ms: 7.9116
+  type: 'test'
+  ...
+# Subtest: legacy and missing publication route cannot bypass contract
+ok 25 - legacy and missing publication route cannot bypass contract
+  ---
+  duration_ms: 10.1631
+  type: 'test'
+  ...
+# Subtest: nonce epoch revision guard on new route
+ok 26 - nonce epoch revision guard on new route
+  ---
+  duration_ms: 6.2668
+  type: 'test'
+  ...
+# Subtest: consent and status change invalidate old publication and remove witness
+ok 27 - consent and status change invalidate old publication and remove witness
+  ---
+  duration_ms: 9.1465
+  type: 'test'
+  ...
+# Subtest: no schema or user record write during statistic read
+ok 28 - no schema or user record write during statistic read
+  ---
+  duration_ms: 6.0795
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 258.4279
