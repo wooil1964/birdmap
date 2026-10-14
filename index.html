@@ -3047,8 +3047,10 @@ function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
 var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='legacy-public-v1';
 var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
 // Renew before the request-start lease boundary; the 5s safety cap is unchanged.
-// Slow responses/timer delays still expire and destructively close all data.
-var PUBLICATION_RENEW_MARGIN_MS=250;
+// The margin is the time a renewal response (network + timer delay) may take: 250ms expired in
+// production on ordinary 250~300ms responses and blinked the lists, so the poll starts 1s early.
+// Responses or timers later than that still expire and destructively close all data.
+var PUBLICATION_RENEW_MARGIN_MS=1000;
 var publicationState={generation:0,anchor:null,until:0,checkedMono:0,ready:false,needsRefresh:true},publicationHeadPromise=null,publicationExpiryTimer=0,publicationRefreshPromise=null;
 var reportPublicSpots={};
 function publicationRevision(value){return typeof value==='string'&&/^(0|[1-9][0-9]{0,18})$/.test(value)&&BigInt(value)<=9223372036854775807n;}
