@@ -538,6 +538,7 @@ test('원거리 섬 제외/봄 정책과 structured notice linkage 유지', () =
 test('전체 inline JavaScript 문법 정상', () => {
   let count=0;
   for(const match of HTML.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+    if(/type\s*=\s*["']application\/ld\+json/i.test(match[0].slice(0,match[0].indexOf('>')))) continue; /* JSON-LD 는 실행 코드가 아니다 */
     if(match[1].trim()){new vm.Script(match[1]);count++;}
   }
   assert.ok(count>=3);
