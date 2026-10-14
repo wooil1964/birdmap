@@ -1,5 +1,5 @@
 import {mkdtempSync,rmSync,mkdirSync,writeFileSync} from 'node:fs';import{join,resolve}from'node:path';import{spawn}from'node:child_process';import{tmpdir}from'node:os';
-const OUT=resolve(process.argv[2]||'docs/reporter-lifetime-stats/operating-browser');mkdirSync(OUT,{recursive:true});const origin='https://wooil1964.github.io';const allowedCDN=['cdn.jsdelivr.net','code.jquery.com','cdnjs.cloudflare.com','netdna.bootstrapcdn.com'];const chrome='C:/Program Files/Google/Chrome/Application/chrome.exe';const browserErrors=[],network={allowedLocal:0,allowedDependencyGet:0,blockedOther:0,operatingRequests:0,externalNonGet:0};
+const OUT=resolve(process.argv[2]||'docs/reporter-lifetime-stats/operating-browser');mkdirSync(OUT,{recursive:true});const origin='https://wooil1964.github.io';const allowedCDN=['cdn.jsdelivr.net','code.jquery.com','cdnjs.cloudflare.com','netdna.bootstrapcdn.com','tile.openstreetmap.org','a.tile.openstreetmap.org','b.tile.openstreetmap.org','c.tile.openstreetmap.org'];const chrome='C:/Program Files/Google/Chrome/Application/chrome.exe';const browserErrors=[],network={allowedLocal:0,allowedDependencyGet:0,blockedOther:0,operatingRequests:0,externalNonGet:0};
 function hook(){Object.defineProperty(navigator,'sendBeacon',{configurable:true,value:()=>true});const real=window.fetch.bind(window);window.fetch=(url,options={})=>{if(options.method&&options.method!=='GET')return Promise.reject(new Error('READONLY_ONLY'));return real(url,options);};}
 class CDP{
  constructor(proc,socket,profile){this.proc=proc;this.socket=socket;this.profile=profile;this.seq=0;this.pending=new Map();this.events=[];
@@ -51,6 +51,7 @@ try{for(const width of [344,375,768,1024,1440]){let page;try{
  page=await browser.page(width);const e=page.evaluate;
  check(width,'actual-deployed-feature-source',await e("typeof reporterStatsCounts==='function'&&typeof clearRenderedSiteHistories==='function'&&siteData.length===190"));
  await e("Promise.all([publicationRefresh(),loadContributors()])");
+ check(width,'actual-basemap-tiles-loaded',await until(e,"[...document.querySelectorAll('.leaflet-tile')].some(x=>x.complete&&x.naturalWidth>0)"));
  const ready=await until(e,"publicationAllowed()&&contributorsCurrent()&&contributorsData.contributors.length>0");check(width,'current-public-authority-and-contributors',ready);
  if(!ready)continue;
  await e("openContributorsModal();true");await until(e,"contributorsModal.style.display==='flex'&&!!contributorsModal.querySelector('.reporterStatsLink')");

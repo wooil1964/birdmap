@@ -1,0 +1,8 @@
+{
+  "status": "HARNESS_SOURCE_CHECKPOINT_MISMATCH",
+  "productFailure": false,
+  "operatingRequestsBeforeFailure": 0,
+  "cause": "Root committed docs-only checkpoint53b4bf during setup; exact source HEAD no longer equals productab7. Product index/Worker/config diff verified empty.",
+  "repair": "Pin productab7 and require empty product-path diff, record current documentation checkpoint separately.",
+  "failureLog": "snapshot1.log"
+}

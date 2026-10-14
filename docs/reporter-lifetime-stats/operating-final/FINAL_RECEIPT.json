@@ -1,0 +1,108 @@
+{
+  "at": "2026-10-14T01:30:50.931124+00:00",
+  "status": "PASS",
+  "product": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "merge": "31b5f6d6e0b400ff610ba065d893299c56a12af8",
+  "currentMainAfterAutoWeather": "f774ed9da23f7d0cc114778d941b515cd4a0210f",
+  "workerPublicVersion": "5338a88a-d26b-450c-9e9b-5095872136ca",
+  "workerPublicDeployment": "4bdd4b3f-7225-4d04-b29c-78914e442b76",
+  "adminUnchangedVersion": "a7723404-a3c2-4739-91ff-44049e1302cb",
+  "D1SchemaStateAndCountsPreserved": true,
+  "D1PrimaryReadsOnly": true,
+  "privateRowsRead": 0,
+  "writes": 0,
+  "mergedTreeMatchesExactFeature": true,
+  "currentMainOnlyWeatherJSONChanged": true,
+  "PagesMergedDeployment": 7054248077,
+  "PagesLatestDeployments": [
+    {
+      "id": 7054363742,
+      "sha": "f774ed9da23f7d0cc114778d941b515cd4a0210f",
+      "createdAt": "2026-10-14T01:28:23Z",
+      "state": "success",
+      "updatedAt": "2026-10-14T01:28:38Z"
+    }
+  ],
+  "automaticWeatherRun": 38495106285,
+  "automaticWeatherJob": 115628988425,
+  "actualBuildValidateCommitAllSuccess": true,
+  "actualCurrentClockValidators": {
+    "pass": 2,
+    "fail": 0,
+    "skip": 0
+  },
+  "currentBatches": [
+    {
+      "file": "weather_today.json",
+      "status": "PASS",
+      "sha256": "e0e89845812d655a1afafc9137fcf92f62ba42ce0da996240b0087e1bf5402e3",
+      "gitBlob": "2c6e97585b9db45583b333ac91730bbfe2940c8c",
+      "generatedAt": "2026-10-14 10:19 KST",
+      "date": "2026-10-14",
+      "siteCount": 190,
+      "statusOfBatch": "ok",
+      "scoreEligibleCount": 190,
+      "scoreEligibleSampleCount": null,
+      "sampleCount": null,
+      "sourceSHA256MatchesActualMain": true,
+      "actualValidatorFunction": "validate_weather.validate(path)",
+      "codeSHA256": "748bc91648df9fd3867b03e9cf0a868e4dfe30f8e256d1f536256c12290d8d68"
+    },
+    {
+      "file": "weather_week.json",
+      "status": "PASS",
+      "sha256": "b496d13b6d0da50ca3400a1a1c766f82b78daf28667ad6889129d4ab6ac81077",
+      "gitBlob": "76ea050c69216420830e036c412d2b776ec6b09c",
+      "generatedAt": "2026-10-14 10:19 KST",
+      "date": null,
+      "siteCount": 190,
+      "statusOfBatch": "ok",
+      "scoreEligibleCount": null,
+      "scoreEligibleSampleCount": 10260,
+      "sampleCount": 10260,
+      "sourceSHA256MatchesActualMain": true,
+      "actualValidatorFunction": "validate_weather_week.validate(path)",
+      "codeSHA256": "aae3a6c6b09536646c8d41de5ea9c4ad67cd3dee75765b28aba08ffc03e88d43"
+    }
+  ],
+  "actualOrdinaryURLWeatherHashes": {
+    "pass": 2,
+    "fail": 0
+  },
+  "rootChromeRepeated": false,
+  "failuresPreserved": {
+    "snapshot1.log": "LocalHEAD became root docs-only checkpoint while setting up exact source assert; no operating request before failure. Product path diff remains empty.",
+    "priorPendingSnapshots": [
+      "WEATHER_PROGRESS_1.json",
+      "WEATHER_PROGRESS_2.json"
+    ],
+    "currentAuthoritative": "WEATHER_PAGES_FINAL.json"
+  },
+  "files": {
+    "CURRENT_BATCH_VALIDATORS.json": "80744866640cdb97875d2e1de2be8948455832e9ea93e7975da3de9795271ad7",
+    "current_batch_validators_readonly.py": "f699d5c79b485698a6b82be3c727500d1a2e2f26a603a5a0f0b9fdd7981b3a82",
+    "LIVE_CURRENT_ASSETS.json": "690645e06414c7c4743f87d6dbca1a9810ed7698b5407e6c7ff2d45dfe1cac6f",
+    "operating_final_readonly.py": "e5a54259b211570b837fd2b6b13ca4f774173d72524856aaf7d3dd10ff3d3cb8",
+    "operating_final_readonly_v2.py": "c4b836b491e2b37f7f3f1c0c75db1fdb8c4020178b37cb8f74e405e3d9633497",
+    "PAGES_LATEST_DEPLOYMENT.json": "ba8922b97ef827b6151e9a668c438c6bad2cbd2a5545a452bd9287d5747b8bf2",
+    "snapshot1-exit.txt": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "snapshot1.log": "569b3ce2d13892971ec95206ee6b27ee4b1a04c211a2068c085595d8369a60ce",
+    "SNAPSHOT1_FAILURE_CLASSIFICATION.json": "65545689eff7ce6692192bb32646d2babe4e45bdd386bd1cce41d1f4a068329b",
+    "snapshot2-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "snapshot2.log": "37dceeda00de84376ed9d29bab894d4f49dc85f8443b61daddab4be40876d4fc",
+    "SNAPSHOT_2.json": "961d166f0097ae61819e81ffe356b3785a4aa22edaf0708ffa92cfb76330a3f2",
+    "validators-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "validators.log": "4d199e8fd99a295ccc34b9fba592d9bf237141f1e27230cabaf74990948f66b5",
+    "weather-pages-final-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "weather-pages-final.log": "23da8e13da7e54e1b362eea1d4d21ffb77bff5d41595b15b475e7aa1f17eb0ab",
+    "weather2-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "weather2.log": "c6dad863cff104dd81232010e2aa2412b7660a9236afdaf06967cc0f7e63b9c8",
+    "weather3-exit.txt": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "weather3.log": "ed2ade127cc8cf0880a787b7254d5f84ea7636966cddffa17b20c7f9fbc80e62",
+    "weather_followup_readonly.py": "cd6d9699580a7c70e8b3a9bae92546c341daa48f4815c1a8c1675ec2720b3b3a",
+    "WEATHER_PAGES_FINAL.json": "9de728f077e4b4a8c0100c56ae26af47555d34b7cb013fcfe75ed70f11abe5d1",
+    "WEATHER_PROGRESS_1.json": "28a3e25e25ac537bb9dacfcc5171c784d5acda130ad344b2468c63d61ebe3735",
+    "WEATHER_PROGRESS_2.json": "8733feb3848755ae65a172e8ee9329c44c88b129ff7fb3aa541dfb57f3278521",
+    "WEATHER_PROGRESS_3.json": "23b322b82feb0386b46ca6df629c93755d8c77133620c7331ac06cf9112f8206"
+  }
+}

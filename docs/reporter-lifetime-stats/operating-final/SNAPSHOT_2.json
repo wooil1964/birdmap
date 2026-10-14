@@ -1,0 +1,314 @@
+{
+  "at": "2026-10-14T01:22:11.058426+00:00",
+  "product": "ab7f0504aaf028dd01ffaf28abea0078875a9314",
+  "localEvidenceCheckpoint": "53b4bf4074c5c5e71f188f2910a920c7ccf73036",
+  "mergedMain": "31b5f6d6e0b400ff610ba065d893299c56a12af8",
+  "scope": {
+    "readOnly": true,
+    "operatingD1Writes": 0,
+    "privateRecordRowsRead": 0,
+    "mutations": 0,
+    "chromeDuplicated": false,
+    "secretValuesLogged": false
+  },
+  "checks": [
+    {
+      "id": "public-new-version-admin-unchanged-with-P1-gates",
+      "status": "PASS"
+    },
+    {
+      "id": "D1-state-schema-count-only-preserved",
+      "status": "PASS"
+    },
+    {
+      "id": "exact-main-merge-tree-no-source-regression",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "activeWorkers": [
+    {
+      "worker": "birdmap-reports",
+      "deploymentId": "4bdd4b3f-7225-4d04-b29c-78914e442b76",
+      "versions": [
+        {
+          "version_id": "5338a88a-d26b-450c-9e9b-5095872136ca",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "worker": "birdmap-reports-admin",
+      "deploymentId": "9470f6a3-db3d-4a95-bf8c-562a59d4e064",
+      "versions": [
+        {
+          "version_id": "a7723404-a3c2-4739-91ff-44049e1302cb",
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "verifiedBindings": [
+    {
+      "role": "public",
+      "version": "5338a88a-d26b-450c-9e9b-5095872136ca",
+      "strictPublication": true,
+      "dualWrite": true,
+      "gateSecretPresent": true,
+      "operatingD1BindingExact": true,
+      "previewOff": true,
+      "rolloutBindingValuesUnchanged": true,
+      "annotationSource": "ab7f0504aaf028dd01ffaf28abea0078875a9314"
+    },
+    {
+      "role": "admin",
+      "version": "a7723404-a3c2-4739-91ff-44049e1302cb",
+      "strictPublication": true,
+      "dualWrite": true,
+      "gateSecretPresent": true,
+      "operatingD1BindingExact": true,
+      "previewOff": true,
+      "rolloutBindingValuesUnchanged": true,
+      "annotationSource": "9f8f8954314ef16ee60433d77fca58099f6a4108"
+    }
+  ],
+  "d1ReadMetadata": [
+    {
+      "rows_read": 149,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 1,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 1,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 86,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    },
+    {
+      "rows_read": 142,
+      "rows_written": 0,
+      "served_by_primary": true,
+      "served_by_region": "APAC"
+    }
+  ],
+  "d1": {
+    "system": {
+      "id": 1,
+      "mode": "NORMAL",
+      "generation": 4
+    },
+    "publication": {
+      "epoch": "d062b1684fedee0da8ca30fa8364e635",
+      "revision": "1",
+      "revisionType": "integer",
+      "write_frozen": 0,
+      "claims": 0
+    },
+    "countsOnly": {
+      "reports": 74,
+      "fieldUpdates": 3,
+      "fieldEvents": 9,
+      "fieldConfirmations": 0
+    },
+    "guardsExact": true,
+    "guardCount": 34,
+    "canonicalSchemaFingerprint": "76b07a469650dd96be326daf3bbb711922d30fd343624efe3422b67caab0ceb0",
+    "preflightStateAndCountsExact": true
+  },
+  "git": {
+    "currentMain": "31b5f6d6e0b400ff610ba065d893299c56a12af8",
+    "mergedTreeEqualsFeatureTree": true,
+    "featureTree": "d00e0766080528596b4b1a1027bd515ec77e78ad",
+    "mainAfterMerge": {
+      "status": "identical",
+      "files": [],
+      "nonAutomaticSourceChanges": 0
+    }
+  },
+  "pages": {
+    "configuration": {
+      "status": "built",
+      "build_type": "legacy",
+      "source": {
+        "branch": "main",
+        "path": "/"
+      },
+      "html_url": "https://wooil1964.github.io/birdmap/"
+    },
+    "latestBuild": {
+      "status": "built",
+      "commit": "31b5f6d6e0b400ff610ba065d893299c56a12af8",
+      "created_at": "2026-10-14T01:19:39Z",
+      "updated_at": "2026-10-14T01:20:27Z",
+      "duration": 48088
+    },
+    "errorMessagePresent": false,
+    "deployments": [
+      {
+        "id": 7054248077,
+        "sha": "31b5f6d6e0b400ff610ba065d893299c56a12af8",
+        "createdAt": "2026-10-14T01:20:15Z",
+        "latestState": "success",
+        "statusAt": "2026-10-14T01:20:32Z"
+      },
+      {
+        "id": 7053003904,
+        "sha": "1bac2450d408d949249ad5170dceee594ab19a0a",
+        "createdAt": "2026-10-13T23:54:21Z",
+        "latestState": "success",
+        "statusAt": "2026-10-13T23:55:30Z"
+      },
+      {
+        "id": 7052768616,
+        "sha": "99740ff11ca3a19d1437de8ffd457899407943c1",
+        "createdAt": "2026-10-13T23:38:49Z",
+        "latestState": "success",
+        "statusAt": "2026-10-13T23:39:03Z"
+      }
+    ],
+    "mergedDeploymentConfirmed": true,
+    "scope": "Read-only metadata only, actual deployed index hash/browser verified separately by root."
+  },
+  "weatherRuns": [
+    {
+      "id": 38495106285,
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "31b5f6d6e0b400ff610ba065d893299c56a12af8",
+      "head_branch": "main",
+      "created_at": "2026-10-14T01:19:40Z",
+      "updated_at": "2026-10-14T01:19:44Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38495106285",
+      "jobs": [
+        {
+          "id": 115628988425,
+          "name": "update-weather",
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set up Python",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Check updater syntax",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build weather_today.json and weather_week.json",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Validate weather_today.json and weather_week.json",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Commit updated weather",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Set up Python",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 38486617501,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "99740ff11ca3a19d1437de8ffd457899407943c1",
+      "head_branch": "main",
+      "created_at": "2026-10-13T23:50:04Z",
+      "updated_at": "2026-10-13T23:53:50Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38486617501"
+    },
+    {
+      "id": 38485167154,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cb3dd3b2b10752dd59cccec9e0a449eaca48cefb",
+      "head_branch": "main",
+      "created_at": "2026-10-13T23:35:25Z",
+      "updated_at": "2026-10-13T23:38:18Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38485167154"
+    },
+    {
+      "id": 38464757630,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d6c41e98061a3801e0db778f49f4dc2e435674ed",
+      "head_branch": "main",
+      "created_at": "2026-10-13T20:40:56Z",
+      "updated_at": "2026-10-13T20:46:03Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38464757630"
+    },
+    {
+      "id": 38434397929,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d736eed629210c14766c7708e206d391649befb1",
+      "head_branch": "main",
+      "created_at": "2026-10-13T16:55:04Z",
+      "updated_at": "2026-10-13T16:58:45Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38434397929"
+    },
+    {
+      "id": 38428696303,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "0107e1419af7bea1d758f35a427db81e06681e28",
+      "head_branch": "codex/p1-paid-weather-check-20261014",
+      "created_at": "2026-10-13T16:13:16Z",
+      "updated_at": "2026-10-13T16:17:17Z",
+      "html_url": "https://github.com/wooil1964/birdmap/actions/runs/38428696303"
+    }
+  ],
+  "status": "PASS_READONLY_METADATA",
+  "summary": {
+    "pass": 3,
+    "fail": 0,
+    "deploymentChecksPending": false
+  }
+}
