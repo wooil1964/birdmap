@@ -53,7 +53,7 @@ const NAMES = [
   'weeklyQualifyingHighTides', 'weeklyMudflatTideGateOpen', 'weeklyBestMudflatTide',
   'autumnBirdingAxes', 'autumnRecommendationSeason', 'weeklyPelagicSafety',
   'weeklySeasonForDate', 'weeklyDatePolicy', 'weeklySeasonalBestWeatherDay', 'weeklySeasonQuotaEntries',
-  'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
+  'weeklyIdOrder', 'weeklyRuleGroup', 'weeklyDiverseTake', 'autumnFieldRank', 'autumnBalancedRecommendations', 'autumnAxisLabel',
   'todayIsAutumnRemoteIsland', 'todaySpringIslandReason', 'weeklyIssueReason',
   'weeklyRecommendationDateLabel', 'weeklyWeatherEntryForSite', 'weeklyRecommendationForSite',
   'weeklyEditorialRecommendations',
