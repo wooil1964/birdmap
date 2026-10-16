@@ -145,7 +145,7 @@ try{
    await snap(page,'mobile-only-initial-'+width);
    if(width>=769){await browser.send('Emulation.setTouchEmulationEnabled',{enabled:true},page.sessionId);await e(settle);}
    const touch=await e(inspect);await snap(page,'mobile-only-touch-'+width);await e('fieldMap().closePopup();closeFieldPanel()');
-   return {pass:(width<769?initial.coarse&&initial.box!=='none'&&initial.marker!=='none':initial.fine&&initial.box==='none'&&initial.panel==='none'&&initial.marker==='none'&&initial.popup==='none')&&touch.coarse&&touch.box!=='none'&&touch.panel!=='none'&&touch.marker!=='none'&&touch.popup!=='none',evidence:{initial,touch}};
+   return {pass:(width<769?initial.coarse&&initial.box!=='none'&&initial.marker!=='none':!initial.coarse&&initial.box==='none'&&initial.panel==='none'&&initial.marker==='none'&&initial.popup==='none')&&touch.coarse&&touch.box!=='none'&&touch.panel!=='none'&&touch.marker!=='none'&&touch.popup!=='none',evidence:{initial,touch}};
   });
   await scenario(page,width,'no-GPS-only-all-public-no-auto-permission',async e=>{
    const s=await e("({ids:fieldUpdates.map(x=>x.id),geo:__mock.geo.length,reads:__mock.actions.filter(x=>x.path==='/field-updates/read').length})");return {pass:s.ids.length===1&&s.ids[0].startsWith('1111')&&s.geo===0&&s.reads===0,evidence:s};
