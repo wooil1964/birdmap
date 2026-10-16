@@ -1,10 +1,10 @@
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
 import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
-import {fieldSnapshotStatements,fieldSnapshotPayload} from './field-updates.js';
+import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='legacy-public-v1';
-export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
+export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
 const MAX_REV=9223372036854775807n;
 export function publicationRevision(value,minimum=0n) {
  if(typeof value!=='string'||!/^(0|[1-9][0-9]{0,18})$/.test(value))return false;
@@ -150,8 +150,10 @@ function contributorsAllPlan(db,url) {
   contributors:(s[2].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}))})};
 }
 
-function readPlan(db,url,now) {
+function readPlan(db,url,now,fieldInput={viewer:null}) {
  const path=url.pathname;
+ const draft=/^\/field-updates\/([0-9a-f-]{36})\/report-draft$/.exec(path);
+ if(draft)return fieldDraftPlan(db,draft[1],fieldInput.owner,now);
  if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url);
  if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url);
  if(path==='/contributors/all')return contributorsAllPlan(db,url);
@@ -164,7 +166,7 @@ function readPlan(db,url,now) {
    return {ok:true,days,since,today,sites:[...bySite.values()]};
   }};
  }
- if(path==='/field-updates')return {statements:fieldSnapshotStatements(db,now),build:s=>fieldSnapshotPayload(s,now)};
+ if(path==='/field-updates'||path==='/field-updates/read')return {statements:fieldSnapshotStatements(db,now,fieldInput.viewer),build:s=>fieldSnapshotPayload(s,now,fieldInput.viewer)};
  if(path.startsWith('/reports/site/')) {
   const siteId=decodeURIComponent(path.slice('/reports/site/'.length));if(!/^[0-9A-Za-z_-]{1,16}$/.test(siteId))fail('SITE_ID_INVALID','탐조지 ID 형식이 아닙니다.',400);
   const limit=Math.min(50,Math.max(1,Number(url.searchParams.get('limit'))||5)),offset=Math.max(0,Number(url.searchParams.get('offset'))||0);
@@ -176,17 +178,19 @@ function readPlan(db,url,now) {
  return {statements:[db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved' AND observed_on>=?1 AND observed_on<?2").bind(start,end),db.prepare("SELECT reporter,COUNT(*) AS n FROM reports WHERE status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND observed_on>=?1 AND observed_on<?2 GROUP BY reporter ORDER BY n DESC,reporter ASC").bind(start,end)],build:s=>{const contributors=(s[1].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}));return {month,approvedReports:Number(s[0].results?.[0]?.n||0),publicContributors:contributors.length,contributors};}};
 }
 export async function handlePublicationRead(request,env,url) {
- if(request.method!=='GET')return null;
+ const fieldPost=request.method==='POST'&&(url.pathname==='/field-updates/read'||/^\/field-updates\/[0-9a-f-]{36}\/report-draft$/.test(url.pathname));
+ if(request.method!=='GET'&&!fieldPost)return null;
  const head=url.pathname==='/reports/public-state';
- if(!head&&!isPublicationPath(url.pathname))return null;
- if(!head&&!url.searchParams.has('contract')&&env.REPORTS_PUBLICATION_REQUIRED!=='true')return null;
+ if(!head&&!fieldPost&&!isPublicationPath(url.pathname))return null;
+ if(!head&&!url.pathname.endsWith('/report-draft')&&!url.searchParams.has('contract')&&env.REPORTS_PUBLICATION_REQUIRED!=='true')return null;
  const input=publicationRequest(url,head),binding=env.REPORTS_DB;
  if(!binding)fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');
  const now=new Date();
  if(head)return jsonResponse(request,env,{ok:true,publication:await publicationAnchor(binding,input),serverTime:now.toISOString()},200,{'Cache-Control':'no-store'});
+ const fieldInput=(url.pathname==='/field-updates'||fieldPost)?await fieldReadInput(request,env):{viewer:null};
  try {
   const db=primary(binding),slots=guardLookupHints.get(binding)||null;
-  let plan=readPlan(db,url,now);
+  let plan=readPlan(db,url,now,fieldInput);
   let sets=await db.batch([publicationStateStatement(db,slots),...plan.statements]);
   if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
   let row=sets[0].results?.[0],usedSlots=slots;
@@ -194,13 +198,13 @@ export async function handlePublicationRead(request,env,url) {
    // Never bless the first payload using a later schema-only check. Reread
    // state and every payload statement together from the primary instead.
    guardLookupHints.delete(binding);usedSlots=null;
-   const recoveryDb=primary(binding);plan=readPlan(recoveryDb,url,now);
+   const recoveryDb=primary(binding);plan=readPlan(recoveryDb,url,now,fieldInput);
    sets=await recoveryDb.batch([publicationStateStatement(recoveryDb),...plan.statements]);
    if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
    row=sets[0].results?.[0];
   }
   const publication=validateState(verifiedState(row,usedSlots),input,false),payload=plan.build(sets.slice(1));
   rememberGuardLocators(binding,row);
-  return jsonResponse(request,env,{...payload,publication,serverTime:now.toISOString()},200,{'Cache-Control':'no-store'});
+  return jsonResponse(request,env,{...payload,publication,serverTime:new Date().toISOString()},200,{'Cache-Control':'no-store'});
  } catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');}
 }

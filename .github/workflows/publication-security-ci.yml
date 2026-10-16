@@ -79,6 +79,10 @@ jobs:
         env:
           PUBLICATION_TEST_OUTPUT: .ci-results/reporter
         run: node docs/reporter-lifetime-stats/browser/reporter_chrome.mjs
+      - name: Issue 28 scope and optional report Chrome (synthetic only)
+        env:
+          ISSUE28_OUTPUT: .ci-results/issue28-chrome
+        run: node docs/issue28/chrome.mjs
       - name: Native local D1 atomic fence and CAS (synthetic only)
         shell: bash
         run: |
@@ -86,6 +90,7 @@ jobs:
           mkdir -p .ci-results/native-fence .ci-results/native-cas
           node docs/p1-paid-deployment/writer-fence-review/native_fence.mjs . .ci-results/native-fence "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs . .ci-results/native-cas "$PWD/.ci-toolchain/node_modules"
+          ISSUE28_OUTPUT=.ci-results/issue28-native node docs/issue28/native.mjs "$PWD/.ci-toolchain/node_modules"
       - name: Prepare protective Pages rollback artifact
         run: node .github/scripts/package_protected_pages.mjs .ci-results/protected-pages
       - name: Upload protective standby artifact (no deployment)
@@ -106,5 +111,7 @@ jobs:
             .ci-results/reporter
             .ci-results/native-fence
             .ci-results/native-cas
+            .ci-results/issue28-chrome
+            .ci-results/issue28-native
           retention-days: 14
           if-no-files-found: ignore

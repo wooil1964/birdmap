@@ -25,7 +25,7 @@ async function call(env, method, path, body, ip) {
 }
 
 const valid = (extra = {}) => ({
-  species: "검은어깨매", status: "visible", lat: 37.9, lon: 126.7, count: 1, nickname: "행복합니다",
+  species: "검은어깨매", status: "visible", visibilityRadius: "all", lat: 37.9, lon: 126.7, count: 1, nickname: "행복합니다",
   deviceId: DEVICE_A, turnstileToken: "t", locationSource: "gps", gpsAccuracy: 18, ...extra,
 });
 const create = (env, extra) => call(env, "POST", "/field-updates", valid(extra));
