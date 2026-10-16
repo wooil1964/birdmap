@@ -540,7 +540,7 @@ body.fieldMode #noticePanel,body.fieldMode #todayPanel,body.fieldMode #recentRep
 .fieldMarker.aging{opacity:.8}
 .fieldMarker.newsFocus{box-shadow:0 0 0 6px rgba(255,193,7,.95),0 1px 5px rgba(0,0,0,.55);animation:fieldNewsPulse 1s ease-in-out 3}
 @keyframes fieldNewsPulse{50%{box-shadow:0 0 0 12px rgba(255,193,7,.35),0 1px 5px rgba(0,0,0,.55)}}
-/* 현장소식 작은 박스: 왼쪽 아래. 빈 목록에도 GPS 조회를 제공하고 공개 권한 미확인 시 숨긴다. */
+/* 현장소식 작은 박스: 왼쪽 아래. 현재 조회 가능한 소식이 있을 때만 표시한다. */
 #fieldNewsBox{position:fixed;left:10px;bottom:56px;z-index:9990;display:flex;flex-direction:column;box-sizing:border-box;width:270px;max-height:58vh;background:rgba(255,255,255,.97);border:2px solid #1565c0;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
 #fieldNewsBox[hidden]{display:none}
 body.fieldMode #fieldNewsBox,body.reportPicking #fieldNewsBox,body.fieldGuiding #fieldNewsBox,body.rightPanelOpen #fieldNewsBox{display:none!important}
@@ -6369,6 +6369,7 @@ function renderFieldNews(){
   box.textContent='';
   if(!publicationAllowed()||!fieldAvailable){box.hidden=true;return;}
   var list=fieldNewsList();
+  if(!list.length){box.hidden=true;return;}
   box.hidden=false;
   var max=innerWidth<900?FIELD_NEWS_MOBILE_MAX:FIELD_NEWS_PC_MAX;
   var head=document.createElement('button');
@@ -6383,7 +6384,6 @@ function renderFieldNews(){
   var locate=fieldNewsButton(fieldViewerBusy?'위치 확인 중…':'내 주변 소식 확인',fieldViewerLocate,fieldViewerBusy);
   locate.className='fieldNewsLocate';viewer.appendChild(locate);box.appendChild(viewer);
   if(!fieldNewsOpen)return;
-  if(!list.length){viewer.appendChild(fieldLine('현재 볼 수 있는 소식이 없어요.','fieldNewsMeta'));return;}
   var body=document.createElement('div');
   body.className='fieldNewsList';
   (fieldNewsAll?list:list.slice(0,max)).forEach(function(update){
