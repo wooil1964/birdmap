@@ -5785,7 +5785,7 @@ window.matchMedia('(max-width:899px)').addEventListener('change',function(){if(c
    출현종 제보(reports)와 데이터·API·마커가 모두 따로이며, 서버(/field-updates)가 응답할 때만 버튼이 나타난다.
    GPS 는 '지금 보여요'·'찾는 중'을 고른 그 순간 한 번만 읽고(watchPosition 없음), 사용자가 확인하고 등록 버튼을
    눌러야만 서버로 간다. 위치를 계속 따라가거나 이동 경로를 저장하는 코드는 없다. */
-var FIELD_TTL_HOURS_DEFAULT=3;         // 서버 응답의 ttlHours 가 없을 때만 쓴다
+var FIELD_TTL_HOURS_DEFAULT=8;         // 서버 응답의 ttlHours 가 없을 때만 쓴다
 var FIELD_AGING_MIN=30;                // 이 시간부터 '몇 분 전 정보'를 강조한다
 var FIELD_OLD_MIN=60;                  // 이 시간부터 마커를 흐리게 한다
 var FIELD_REFRESH_MS=60*1000;
