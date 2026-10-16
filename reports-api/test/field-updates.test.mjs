@@ -178,24 +178,30 @@ test("직접 올린 소식은 확인할 수 없고, 보이지 않는 상태도 �
   assert.equal(missing.response.status, 404);
 });
 
-test("6. TTL: 마지막 활동 3시간 뒤에는 비노출, 확인이 있으면 그 시각부터 다시 센다", async () => {
+test("6. TTL: 마지막 활동 8시간 뒤에는 비노출, 확인이 있으면 그 시각부터 다시 센다", async () => {
   const { env } = setup();
   const start = Date.parse("2026-10-10T05:00:00Z");
   mock.timers.enable({ apis: ["Date"], now: start });
   try {
     const made = (await create(env)).body.update;
+    assert.equal(FIELD_UPDATE_TTL_HOURS, 8);
+    assert.equal(Date.parse(made.expiresAt), start + 8 * 3600 * 1000);
     assert.equal((await list(env)).body.updates.length, 1);
 
     mock.timers.setTime(start + 2 * 3600 * 1000 + 30 * 60 * 1000); // 2시간 30분
     const confirmed = await call(env, "POST", `/field-updates/${made.id}/confirm`, { deviceId: DEVICE_B });
     assert.equal(confirmed.response.status, 201);
     assert.equal(confirmed.body.update.firstSeenAt, made.firstSeenAt);
+    assert.equal(Date.parse(confirmed.body.update.expiresAt), start + (8 * 60 + 150) * 60 * 1000);
 
-    mock.timers.setTime(start + 3 * 3600 * 1000 + 60 * 1000); // 최초 등록으로부터 3시간 1분
+    mock.timers.setTime(start + FIELD_UPDATE_TTL_HOURS * 3600 * 1000 + 60 * 1000); // 최초 등록으로부터 8시간 1분
     assert.equal((await list(env)).body.updates.length, 1, "최근 확인이 있으면 아직 유효하다");
 
+    mock.timers.setTime(start + 2 * 3600 * 1000 + 30 * 60 * 1000 + FIELD_UPDATE_TTL_HOURS * 3600 * 1000 - 60 * 1000);
+    assert.equal((await list(env)).body.updates.length, 1, "마지막 활동 8시간 직전에는 유효하다");
+
     mock.timers.setTime(start + 2 * 3600 * 1000 + 30 * 60 * 1000 + FIELD_UPDATE_TTL_HOURS * 3600 * 1000 + 60 * 1000);
-    assert.equal((await list(env)).body.updates.length, 0, "마지막 활동 3시간이 지나면 사라진다");
+    assert.equal((await list(env)).body.updates.length, 0, "마지막 활동 8시간이 지나면 사라진다");
     const late = await call(env, "POST", `/field-updates/${made.id}/confirm`, { deviceId: DEVICE_C });
     assert.equal(late.response.status, 410);
     assert.equal(late.body.error.code, "FIELD_EXPIRED");

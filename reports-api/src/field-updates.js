@@ -27,7 +27,7 @@ import { assertion,clearAssertion } from "./canonical/data.js";
 
 // 소식이 지도에 남는 시간. 마지막 활동(상태 변경 또는 확인) 뒤로 이 시간이 지나면 응답에서 빠진다.
 // 값을 바꿀 곳은 여기 하나다. 프런트 표시는 응답의 ttlHours 를 따른다.
-export const FIELD_UPDATE_TTL_HOURS = 3;
+export const FIELD_UPDATE_TTL_HOURS = 8;
 
 export const FIELD_STATUSES = ["visible", "searching", "not_visible", "reappeared"];
 // 상태가 아니라 삭제 표시다. FIELD_STATUSES 에 넣지 않아 상태 변경 API 로는 만들 수 없다.
@@ -325,7 +325,7 @@ async function handleStatus(request, env, id, helpers) {
   const writeNow=new Date(),at=iso(writeNow),key='field-status:'+crypto.randomUUID();
   try {
     await db.batch([
-      db.prepare("UPDATE field_updates SET status=?2,updated_at=?3,last_activity_at=?3,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?4 AND status=?5 AND status<>'deleted' AND last_activity_at>=?6"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?" AND julianday(last_activity_at)>=julianday('now','-3 hours')":"")).bind(id,status,at,row.row_revision,row.status,cutoffIso(writeNow)),
+      db.prepare("UPDATE field_updates SET status=?2,updated_at=?3,last_activity_at=?3,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?4 AND status=?5 AND status<>'deleted' AND last_activity_at>=?6"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?` AND julianday(last_activity_at)>=julianday('now','-${FIELD_UPDATE_TTL_HOURS} hours')`:"")).bind(id,status,at,row.row_revision,row.status,cutoffIso(writeNow)),
       assertion(db,key),clearAssertion(db,key),
       db.prepare("INSERT INTO field_update_events(id,field_update_id,status,nickname,created_at,user_hash,ip_hash) VALUES (?1,?2,?3,?4,?5,?6,?7)").bind(crypto.randomUUID(),id,status,nickname,at,user,hash),
     ]);
@@ -355,7 +355,7 @@ async function handleConfirm(request, env, id, helpers) {
   const writeNow=new Date(),at=iso(writeNow),key='field-confirm:'+crypto.randomUUID();
   try {
     await db.batch([
-      db.prepare("UPDATE field_updates SET last_confirmed_at=?2,last_activity_at=?2,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?3 AND status IN ('visible','reappeared') AND last_activity_at>=?4"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?" AND julianday(last_activity_at)>=julianday('now','-3 hours')":"")).bind(id,at,row.row_revision,cutoffIso(writeNow)),
+      db.prepare("UPDATE field_updates SET last_confirmed_at=?2,last_activity_at=?2,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?3 AND status IN ('visible','reappeared') AND last_activity_at>=?4"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?` AND julianday(last_activity_at)>=julianday('now','-${FIELD_UPDATE_TTL_HOURS} hours')`:"")).bind(id,at,row.row_revision,cutoffIso(writeNow)),
       assertion(db,key),clearAssertion(db,key),
       db.prepare("INSERT INTO field_update_confirmations(id,field_update_id,user_hash,ip_hash,created_at) VALUES (?1,?2,?3,?4,?5)").bind(crypto.randomUUID(),id,user,hash,at),
     ]);
