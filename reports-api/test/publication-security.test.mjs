@@ -6,6 +6,7 @@ import test, { mock } from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { handleRequest, handleLegacyRequest } from '../src/public.js';
+import { FIELD_UPDATE_TTL_HOURS } from '../src/field-updates.js';
 import { schemaReady } from '../src/canonical/control.js';
 import { publicationRevision, PUBLICATION_GUARDS } from '../src/publication.js';
 import { persistQuick } from '../src/canonical/persistence.js';
@@ -328,11 +329,30 @@ test('field CAS: status expiry during asynchronous validation cannot revive expi
   const { env, sqlite } = fixture(); const now = Date.now();
   mock.timers.enable({ apis: ['Date'], now });
   try {
-    const id = await create(env); mock.timers.setTime(now + 3 * 3600000 - 1);
-    const result = await post(env, id, 'status', { status: 'not_visible', deviceId: DEVICE_B, turnstileToken: 'synthetic-token' }, { onTurnstile: () => mock.timers.setTime(now + 3 * 3600000 + 1) });
+    const id = await create(env); mock.timers.setTime(now + FIELD_UPDATE_TTL_HOURS * 3600000 - 1);
+    const result = await post(env, id, 'status', { status: 'not_visible', deviceId: DEVICE_B, turnstileToken: 'synthetic-token' }, { onTurnstile: () => mock.timers.setTime(now + FIELD_UPDATE_TTL_HOURS * 3600000 + 1) });
     assert.ok([409, 410].includes(result.status), JSON.stringify(result.body)); assert.equal(field(sqlite, id).status, 'visible');
     assert.deepEqual(events(sqlite, id).map(e => e.status), ['visible']);
   } finally { mock.timers.reset(); }
+});
+
+test('field TTL: guarded writes remain valid at four hours, expire after eight', async () => {
+  const {env,sqlite}=fixture();
+  assert.equal(FIELD_UPDATE_TTL_HOURS,8);
+  const fourHoursAgo=new Date(Date.now()-4*3600000).toISOString();
+  const statusId=await create(env);
+  sqlite.prepare('UPDATE field_updates SET last_activity_at=? WHERE id=?').run(fourHoursAgo,statusId);
+  const statusResult=await post(env,statusId,'status',{status:'not_visible',deviceId:DEVICE_B,turnstileToken:'synthetic-token'});
+  assert.equal(statusResult.status,201,JSON.stringify(statusResult.body));
+  const confirmId=await create(env);
+  sqlite.prepare('UPDATE field_updates SET last_activity_at=? WHERE id=?').run(fourHoursAgo,confirmId);
+  const confirmResult=await post(env,confirmId,'confirm',{deviceId:DEVICE_B});
+  assert.equal(confirmResult.status,201,JSON.stringify(confirmResult.body));
+  const expiredId=await create(env);
+  const expiredAt=new Date(Date.now()-(FIELD_UPDATE_TTL_HOURS*60+1)*60000).toISOString();
+  sqlite.prepare('UPDATE field_updates SET last_activity_at=? WHERE id=?').run(expiredAt,expiredId);
+  const expired=await post(env,expiredId,'status',{status:'not_visible',deviceId:DEVICE_B,turnstileToken:'synthetic-token'});
+  assert.equal(expired.status,410,JSON.stringify(expired.body));
 });
 
 test('field CAS: normal expire/reappear/reapprove are not permanent tombstones', async () => {
