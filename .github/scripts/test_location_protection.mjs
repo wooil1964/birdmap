@@ -29,7 +29,7 @@ const NOW = Date.parse('2026-10-08T10:00:00+09:00');
 const AUTHORITY={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
 const iso = (minAgo) => new Date(NOW - minAgo * 60000).toISOString();
 const upd = (id, extra = {}) => Object.assign({ id, species: 's' + id, status: 'visible', lat: 36.6, lon: 126.4, updatedAt: iso(5),
-  firstSeenAt: iso(5), lastConfirmedAt: null, history: [],rowRevision:'1',expiresAt:new Date(NOW+3*3600000).toISOString() }, extra);
+  firstSeenAt: iso(5), lastConfirmedAt: null, history: [],rowRevision:'1',expiresAt:new Date(NOW+8*3600000).toISOString() }, extra);
 
 /* 제어 가능한 가짜 환경. fetch/GPS 응답은 테스트가 원하는 순서로 풀어 준다. */
 function env() {
@@ -40,7 +40,7 @@ function env() {
     'fieldGuideWatchStop', 'fieldGuideOnError', 'fieldGuideWatch', 'fieldGuideStart', 'fieldGuideStop', 'fieldBearing', 'fieldDistanceText',
     'fieldPublicPoint', 'fieldNavMode', 'fieldNavDistanceText', 'fieldNewsNavigate', 'fieldNavManualGuide', 'fieldNavGuide', 'fieldNavChoiceClose',
     'fieldNavChoiceGuard', 'fieldReplace', 'fieldRemoveLocal', 'fieldNewsList', 'haversineKm', 'fieldAgeText', 'publicationAllowed','publicationSame','publicationDataAllowed','publicationRevision','publicationValidate','publicationRenew','publicationRouteCheck'];
-  const consts = [line(/var FIELD_TTL_HOURS_DEFAULT=3;/), line(/var FIELD_OLD_MIN=60;/), line(/var FIELD_AGING_MIN=30;/),
+  const consts = [line(/var FIELD_TTL_HOURS_DEFAULT=8;/), line(/var FIELD_OLD_MIN=60;/), line(/var FIELD_AGING_MIN=30;/),
     line(/var FIELD_STATUS_LABEL=\{[^\n]+/), line(/var FIELD_GUIDE_MIN_ZOOM=11;/), line(/var FIELD_COMPASS=\[[^\n]+/), line(/var FIELD_NEWS_PC_MAX=[^\n]+/)].join('\n');
   const fakeLatLng = (lat, lng) => ({ lat, lng, distanceTo: () => 1234 });
   const sandbox = {
@@ -62,7 +62,7 @@ function env() {
     'var publicationState={generation:0,ready:true,until:NOW+5000,checkedMono:performance.now(),anchor:AUTHORITY},PUBLICATION_MAX_AGE=5000,publicationExpiryTimer=0,headUnavailable=false,headChecks=0,PUBLICATION_CONTRACT="publication-v1",PUBLICATION_PROJECTION="legacy-public-v1";'+
     // Unit boundary: a synthetic fresh head; use actual validator, renewal and route gate.
     'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString(),_publicationStartedMono:performance.now(),_publicationGeneration:publicationState.generation};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationInvalidate(){publicationState.generation++;publicationState.ready=false;publicationState.until=0;}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
-    'var fieldUpdates=[],fieldAvailable=false,fieldClockOffset=0,fieldTtlHours=3,fieldMarkers={},fieldLayer=null,fieldGuide=null;' +
+    'var fieldUpdates=[],fieldAvailable=false,fieldClockOffset=0,fieldTtlHours=8,fieldMarkers={},fieldLayer=null,fieldGuide=null;' +
     'var fieldRequestSeq=0,fieldAppliedSeq=0,fieldBarrierSeq=0,fieldTombstones={},fieldProtectedIds={},fieldStepName="menu";' +
     'function fieldNowMs(){return NOW;} function fieldMap(){return map;} function fieldToast(t){toast(t);} function reportsConfigured(){return true;}' +
     'function fieldEl(id){return id==="fieldNavChoice"?window_navBox:id==="fieldPanel"?{hidden:true}:id==="fieldToggleBtn"?{hidden:true}:null;}' +
