@@ -29,6 +29,7 @@ function hook(){
  const realFetch=window.fetch.bind(window),fine=window.matchMedia.bind(window);
  const mk=(id,radius,extra={})=>Object.assign({id,species:'직박구리',count:1,status:'visible',lat:37.1,lon:127.1,nickname:'합성검증',note:'',updatedAt:new Date().toISOString(),firstSeenAt:new Date().toISOString(),lastConfirmedAt:null,confirmCount:0,history:[],rowRevision:'1',expiresAt:new Date(Date.now()+8*3600000).toISOString(),visibilityRadius:radius,locationHidden:false},extra);
  const m=window.__mock={revision:'1',epoch:'11111111111141118111111111111111',actions:[],geo:[],watches:new Map(),watchSeq:0,fieldSeq:100,reports:[],draftProtected:false,deferred:[],deferRead:false,deferReports:false,reportReplies:[],hidden:false};
+ m.nativeMedia=query=>fine(query).matches;
  try{const preset=JSON.parse(sessionStorage.getItem('publication-test-preset')||'null');if(preset?.blockStorage)Object.defineProperty(window,'localStorage',{configurable:true,get:()=>{throw Error('Synthetic storage denied');}});}catch{}
  m.all=mk('11111111-1111-4111-8111-111111111111','all',{species:'참새'});m.near=mk('22222222-2222-4222-8222-222222222222','10',{species:'박새'});m.fields=[m.all,m.near];
  const pub=u=>({contract:'publication-v1',epoch:m.epoch,revision:m.revision,projection:'legacy-public-v1',nonce:u.searchParams.get('nonce')});
@@ -138,6 +139,14 @@ const locate="fieldViewerLocate();__mock.geo.at(-1).ok(__mock.fix());";
 try{
  for(const width of widths){let page;try{
   page=await browser.page(width);const e=page.evaluate;await e(refresh);await e(settle);
+  await scenario(page,width,'field-news-mobile-only-PC-hidden-wide-touch-kept',async e=>{
+   const inspect="(function(){closeFieldPanel();renderFieldNews();var boxDisplay=getComputedStyle(document.getElementById('fieldNewsBox')).display;openFieldPanel();var marker=Object.values(fieldMarkers)[0]?.marker;if(marker)marker.openPopup();return {fine:__mock.nativeMedia('(pointer:fine)'),coarse:__mock.nativeMedia('(pointer:coarse)'),box:boxDisplay,panel:getComputedStyle(document.getElementById('fieldPanel')).display,marker:marker?getComputedStyle(marker.getElement()).display:null,popup:document.querySelector('.fieldPop')?getComputedStyle(document.querySelector('.fieldPop')).display:null};})()";
+   const initial=await e(inspect);
+   await snap(page,'mobile-only-initial-'+width);
+   if(width>=769){await browser.send('Emulation.setTouchEmulationEnabled',{enabled:true},page.sessionId);await e(settle);}
+   const touch=await e(inspect);await snap(page,'mobile-only-touch-'+width);await e('fieldMap().closePopup();closeFieldPanel()');
+   return {pass:(width<769?initial.coarse&&initial.box!=='none'&&initial.marker!=='none':!initial.coarse&&initial.box==='none'&&initial.panel==='none'&&initial.marker==='none'&&initial.popup==='none')&&touch.coarse&&touch.box!=='none'&&touch.panel!=='none'&&touch.marker!=='none'&&touch.popup!=='none',evidence:{initial,touch}};
+  });
   await scenario(page,width,'no-GPS-only-all-public-no-auto-permission',async e=>{
    const s=await e("({ids:fieldUpdates.map(x=>x.id),geo:__mock.geo.length,reads:__mock.actions.filter(x=>x.path==='/field-updates/read').length})");return {pass:s.ids.length===1&&s.ids[0].startsWith('1111')&&s.geo===0&&s.reads===0,evidence:s};
   });
