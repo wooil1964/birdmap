@@ -165,11 +165,11 @@ try{
   await scenario(page,width,'created-receipt-explicit-GPS-fetches-own-news-no-optimistic-content',async e=>{
    const before=await e('__mock.geo.length');
    await e("__mock.deferRead=true;Array.from(document.querySelectorAll('#fieldBody button')).find(x=>x.textContent==='내 주변 소식 확인').click()");
-   const pending=await e("({closed:document.getElementById('fieldPanel').hidden,geo:__mock.geo.length,busy:fieldViewerBusy,buttonDisabled:document.querySelector('.fieldNewsLocate')?.disabled,own:fieldUpdates.some(x=>x.id===__mock.created.id)})");
+   const pending=await e("({closed:document.getElementById('fieldPanel').hidden,geo:__mock.geo.length,busy:fieldViewerBusy,boxHidden:document.getElementById('fieldNewsBox').hidden,own:fieldUpdates.some(x=>x.id===__mock.created.id)})");
    await e("__mock.geo.at(-1).ok(__mock.fix())");await e(settle);const beforeResponse=await e('fieldUpdates.some(x=>x.id===__mock.created.id)');
    await e("__mock.deferRead=false;__mock.deferred.splice(0).forEach(r=>r())");await waitEval(e,'fieldUpdates.some(x=>x.id===__mock.created.id)');
    const s=await e("({shown:document.querySelector('#fieldNewsBox .fieldNewsList')?.textContent.includes(__mock.created.species),request:__mock.actions.filter(x=>x.path==='/field-updates/read').at(-1),reports:__mock.reports.length,buttonsFit:Array.from(document.querySelectorAll('#fieldNewsBox button')).every(x=>x.scrollWidth<=x.clientWidth+1)})");
-   await snap(page,'own-news-after-GPS-'+width);return {pass:pending.closed&&pending.geo===before+1&&pending.busy&&pending.buttonDisabled&&!pending.own&&!beforeResponse&&s.shown&&!!s.request.payload.viewer&&s.reports===0&&s.buttonsFit,evidence:{pending,beforeResponse,...s}};
+   await snap(page,'own-news-after-GPS-'+width);return {pass:pending.closed&&pending.geo===before+1&&pending.busy&&pending.boxHidden&&!pending.own&&!beforeResponse&&s.shown&&!!s.request.payload.viewer&&s.reports===0&&s.buttonsFit,evidence:{pending,beforeResponse,...s}};
   });
   await scenario(page,width,'map-created5-does-not-borrow-location-outside-hidden-nearby-shown',async e=>{
    await e("fieldViewerClear(true);openFieldPanel();fieldStartForm('visible');fieldDraft.species='직박구리';fieldDraft.source='map';fieldDraft.lat=37.1;fieldDraft.lon=127.1;fieldDraft.visibilityRadius='5';document.getElementById('fieldVisibilityRadius').value='5';fieldTurnstileToken='synthetic-token';fieldSubmitCreate();");await waitEval(e,"!fieldBusy&&fieldStepName==='created'");
@@ -218,16 +218,20 @@ try{
    const renewal=await e("({visible:!document.getElementById('fieldNewsBox').hidden,button:!!document.querySelector('.fieldNewsLocate'),ownContent:document.querySelector('#fieldNewsBox .fieldNewsList')?.textContent.includes('직박구리')||false})");
    return {pass:states.every(s=>s.viewer===null&&!s.near&&s.guide===null)&&renewal.visible&&renewal.button&&!renewal.ownContent,evidence:{states,renewal}};
   });
-  await scenario(page,width,'empty-and-folded-box-GPS-denial-and-authority-loss',async e=>{
+  await scenario(page,width,'empty-box-hidden-menu-GPS-and-new-news-reappear',async e=>{
    await e('window.__savedFields=__mock.fields;__mock.fields=[];fieldViewerClear(false);publicationInvalidate("empty test");');await e(refresh);await e(settle);
    const before=await e('__mock.geo.length');const empty=await e("({visible:!document.getElementById('fieldNewsBox').hidden,text:document.getElementById('fieldNewsBox').textContent,button:!!document.querySelector('.fieldNewsLocate')})");
-   await e("fieldNewsOpen=false;renderFieldNews();document.querySelector('.fieldNewsLocate').click();document.querySelector('.fieldNewsLocate').click();");
-   const pending=await e("({geo:__mock.geo.length,disabled:document.querySelector('.fieldNewsLocate').disabled})");
+   await e("fieldNewsOpen=false;renderFieldNews();openFieldPanel();Array.from(document.querySelectorAll('#fieldBody button')).find(x=>x.textContent==='내 주변 소식 확인').click();fieldViewerLocate();");
+   const pending=await e("({geo:__mock.geo.length,busy:fieldViewerBusy,hidden:document.getElementById('fieldNewsBox').hidden})");
    await e('__mock.geo.at(-1).error({code:1});fieldNewsOpen=true;renderFieldNews()');await e(settle);
-   const failed=await e("({text:document.getElementById('fieldNewsBox').textContent,visible:!document.getElementById('fieldNewsBox').hidden,disabled:document.querySelector('.fieldNewsLocate')?.disabled,viewer:fieldViewer,ids:fieldUpdates.map(x=>x.id),rect:document.getElementById('fieldNewsBox').getBoundingClientRect().toJSON(),overflow:document.documentElement.scrollWidth>innerWidth})");
-   await snap(page,'empty-GPS-denied-'+width);await e('publicationInvalidate("authority test")');const hidden=await e('document.getElementById("fieldNewsBox").hidden');
+   const failed=await e("({text:document.getElementById('fieldBody').textContent,hidden:document.getElementById('fieldNewsBox').hidden,viewer:fieldViewer,ids:fieldUpdates.map(x=>x.id),busy:fieldViewerBusy})");
+   await e('closeFieldPanel()');await snap(page,'empty-GPS-denied-'+width);
+   const statusOnly=[];for(const status of ['searching','not_visible']){await e('__mock.fields=[{...__mock.all,status:'+JSON.stringify(status)+'}];');await e(refresh);await e(settle);statusOnly.push(await e('document.getElementById("fieldNewsBox").hidden'));}
+   await e('__mock.fields=[__mock.all];');await e(refresh);await e(settle);const appeared=await e('!document.getElementById("fieldNewsBox").hidden&&fieldNewsList().length===1');
+   await e('__mock.fields=[];');await e(refresh);await e(settle);const disappeared=await e('document.getElementById("fieldNewsBox").hidden&&document.getElementById("fieldNewsBox").textContent===""');
+   await e('publicationInvalidate("authority test")');const hidden=await e('document.getElementById("fieldNewsBox").hidden');
    await e('__mock.fields=__savedFields;');await e(refresh);await e(settle);
-   return {pass:empty.visible&&empty.button&&empty.text.includes('0건')&&!empty.text.includes('직박구리')&&pending.geo===before+1&&pending.disabled&&failed.visible&&!failed.disabled&&failed.viewer===null&&failed.ids.length===0&&failed.text.includes('권한이 거부')&&failed.rect.left>=0&&failed.rect.right<=width&&!failed.overflow&&hidden,evidence:{empty,pending,failed,hidden}};
+   return {pass:!empty.visible&&!empty.button&&empty.text===''&&pending.geo===before+1&&pending.busy&&pending.hidden&&failed.hidden&&!failed.busy&&failed.viewer===null&&failed.ids.length===0&&failed.text.includes('권한이 거부')&&statusOnly.every(Boolean)&&appeared&&disappeared&&hidden,evidence:{empty,pending,failed,statusOnly,appeared,disappeared,hidden}};
   });
   await scenario(page,width,'monotonic-GPS-expiry-closes-route-even-before-timer',async e=>{
    await e(locate);await e(settle);const s=await e("(function(){var u=fieldFind('22222222-2222-4222-8222-222222222222');clearTimeout(fieldViewerTimer);fieldViewer.started-=30001;var scope=fieldScopeAllowed(u),point=fieldPublicPoint(u),found=fieldFind(u.id);return {scope,point,found,viewer:fieldViewer};})()");return {pass:s.scope===false&&s.point===null&&s.found===null&&s.viewer===null,evidence:s};
