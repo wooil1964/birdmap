@@ -30,7 +30,7 @@ function load(updates) {
     'fieldActivityMs', 'fieldAgeMin', 'fieldIsActive', 'haversineKm', 'publicationAllowed','escapeHtml','tmapNavigationUrl','tmapNavigationLink','spotTmapRouteHtml','spotRouteButtonsHtml'];
   const consts = HTML.match(/var FIELD_NEWS_PC_MAX=[^\n]+/)[0];
   return new Function('updates', 'NOW',
-    "var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_TTL_HOURS_DEFAULT=3,fieldTtlHours=3,fieldClockOffset=0,fieldUpdates=updates;function fieldNowMs(){return NOW;}" +
+    "var document={hidden:false};function publicationInvalidate(){publicationState.ready=false;publicationState.until=0;}var PUBLICATION_MAX_AGE=5000,publicationState={ready:true,until:Date.now()+5000,checkedMono:performance.now()};var FIELD_TTL_HOURS_DEFAULT=8,fieldTtlHours=8,fieldClockOffset=0,fieldUpdates=updates;function fieldNowMs(){return NOW;}" +
     consts + '\n' + names.map(functionSource).join('\n') +
     '\nreturn {' + names.join(',') + ',expireAuthority(){publicationState.until=0;},expireMonotonic(){publicationState.until=Date.now()+5000;publicationState.checkedMono=performance.now()-5001;},unknownAuthority(){publicationState.ready=false;}};')(updates, NOW);
 }
@@ -39,7 +39,7 @@ const upd = (id, status, minAgo, extra = {}) => Object.assign({ id, species: 's'
 
 test('박스 목록: 지금 보여요·다시 나타남만, 유효시간 안, 최신 확인순', () => {
   const api = load([upd('a', 'visible', 30), upd('b', 'reappeared', 5), upd('c', 'searching', 1), upd('d', 'not_visible', 1),
-    upd('e', 'visible', 181), upd('f', 'visible', 100, { lastConfirmedAt: new Date(NOW - 2 * 60000).toISOString() })]);
+    upd('e', 'visible', 481), upd('f', 'visible', 100, { lastConfirmedAt: new Date(NOW - 2 * 60000).toISOString() })]);
   assert.deepEqual(api.fieldNewsList().map((u) => u.id), ['f', 'b', 'a']);
   assert.deepEqual(load([]).fieldNewsList(), []);
   assert.deepEqual(load([upd('c', 'searching', 1), upd('d', 'not_visible', 1)]).fieldNewsList(), []);
