@@ -142,7 +142,7 @@
   <div class="smallText"><a href="sites/">탐조지별 가이드 목록 보기</a></div>
 </div>
 
-<!-- 지금 보여요·다시 나타남 현장소식 작은 박스. 해당 소식이 없으면 숨는다(JS 가 채운다). -->
+<!-- 지금 보여요·다시 나타남 현장소식과 명시적인 주변 GPS 조회(JS 가 채운다). -->
 <div id="fieldNewsBox" hidden></div>
 
 <!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면과 모바일 화면(작은 크기)에서 보인다.
@@ -540,11 +540,14 @@ body.fieldMode #noticePanel,body.fieldMode #todayPanel,body.fieldMode #recentRep
 .fieldMarker.aging{opacity:.8}
 .fieldMarker.newsFocus{box-shadow:0 0 0 6px rgba(255,193,7,.95),0 1px 5px rgba(0,0,0,.55);animation:fieldNewsPulse 1s ease-in-out 3}
 @keyframes fieldNewsPulse{50%{box-shadow:0 0 0 12px rgba(255,193,7,.35),0 1px 5px rgba(0,0,0,.55)}}
-/* 현장소식 작은 박스: 왼쪽 아래(출현 제보 박스는 오른쪽 아래). 부적격 소식이 없으면 hidden. */
+/* 현장소식 작은 박스: 왼쪽 아래. 빈 목록에도 GPS 조회를 제공하고 공개 권한 미확인 시 숨긴다. */
 #fieldNewsBox{position:fixed;left:10px;bottom:56px;z-index:9990;display:flex;flex-direction:column;box-sizing:border-box;width:270px;max-height:58vh;background:rgba(255,255,255,.97);border:2px solid #1565c0;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
 #fieldNewsBox[hidden]{display:none}
 body.fieldMode #fieldNewsBox,body.reportPicking #fieldNewsBox,body.fieldGuiding #fieldNewsBox,body.rightPanelOpen #fieldNewsBox{display:none!important}
 .fieldNewsHead{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;min-height:36px;padding:6px 10px;border:0;background:#e8f1fb;font:inherit;font-size:13px;font-weight:bold;color:#0d47a1;cursor:pointer;text-align:left}
+.fieldNewsViewer{flex:0 0 auto;padding:6px 8px;font-size:11px;line-height:1.4;color:#455a64}
+.fieldNewsLocate{display:block;width:100%;min-height:34px;margin-top:4px;border:1px solid #1565c0;border-radius:6px;background:#fff;color:#0d47a1;font:inherit;font-weight:bold;cursor:pointer}
+.fieldNewsLocate:disabled{opacity:.55;cursor:wait}
 .fieldNewsList{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 .fieldNewsItem{padding:6px 10px;border-top:1px solid #e3e8eb}
 .fieldNewsName{font-size:13px;font-weight:bold;color:#22333c;word-break:keep-all;overflow-wrap:anywhere}
@@ -560,7 +563,7 @@ body.fieldMode #fieldNewsBox,body.reportPicking #fieldNewsBox,body.fieldGuiding 
 @media(max-width:899px){
   #fieldNewsBox{left:8px;bottom:56px;width:calc(100vw - 190px);max-width:230px;max-height:46vh}
   .fieldNewsHead{min-height:34px;padding:4px 8px;font-size:12px}
-  .fieldNewsBtns button{padding:4px 2px;font-size:11px;white-space:nowrap}
+  .fieldNewsBtns button{padding:4px 2px;font-size:11px;white-space:normal;overflow-wrap:anywhere}
   .fieldNewsItem{padding:5px 8px}
   .fieldNewsName{font-size:12px}
 }
@@ -5865,10 +5868,12 @@ function fieldViewerLocate(){
   fieldViewerClear(false);
   var generation=++fieldViewerRequest;fieldViewerBusy=true;
   fieldViewerMessage='내 주변 소식을 위한 위치 확인 중…';
+  renderFieldNews();
   if(fieldStepName==='menu')fieldRender();
   function fail(message){
     if(generation!==fieldViewerRequest)return;
     fieldViewerBusy=false;fieldViewerMessage=message+' 전체 공개 소식만 표시해요.';
+    renderFieldNews();
     loadFieldUpdates();if(fieldStepName==='menu')fieldRender();
   }
   if(!navigator.geolocation){fail('위치를 확인할 수 없어요.');return;}
@@ -5882,6 +5887,7 @@ function fieldViewerLocate(){
     fieldViewer.started-=FIELD_VIEWER_MAX_AGE-remaining;
     fieldViewerTimer=setTimeout(function(){fieldViewerClear(true);},remaining);
     fieldViewerMessage='내 주변 소식 표시 중 · 30초 후 위치를 다시 확인해 주세요.';
+    renderFieldNews();
     loadFieldUpdates();if(fieldStepName==='menu')fieldRender();
   },function(error){fail(error&&error.code===1?'위치 권한이 거부됐어요.':'GPS 확인에 실패했어요.');},{enableHighAccuracy:true,timeout:10000,maximumAge:0});
 }
@@ -5920,10 +5926,15 @@ function fieldConfirmReportPoint(){
   document.getElementById('reportFieldLocationConfirm').hidden=true;
   setReportGpsInfo('가져온 관찰 위치를 확인했어요.','');
 }
-function fieldCreated(id){
+function fieldCreated(id,radius,status){
   fieldDraft=null;fieldGo('created');
   var body=fieldEl('fieldBody');
   body.appendChild(fieldLine('현장소식을 등록했어요. 출현종 제보로도 남길지는 직접 선택해 주세요.','fieldHelp'));
+  if(radius!=='all'){
+    body.appendChild(fieldLine(radius+'km 공개로 등록했어요. 목록에서 보려면 현재 GPS를 따로 확인해 주세요. 등록 지점에서 범위 밖이거나 위치 보호 대상인 소식은 표시되지 않아요.','fieldHelp'));
+    body.appendChild(fieldButton('내 주변 소식 확인','fieldBtn fieldPrimary',function(){closeFieldPanel();fieldNewsOpen=true;fieldViewerLocate();}));
+  }else body.appendChild(fieldLine('전체 공개로 등록했어요. GPS 확인 없이 볼 수 있어요.','fieldHelp'));
+  if(status==='searching'||status==='not_visible')body.appendChild(fieldLine('현장소식 박스에는 지금 보여요·다시 나타남 소식만 표시해요. 공개 조건을 충족하면 지도에 표시돼요. 제보·삭제는 현장소식 메뉴에서 할 수 있어요.','fieldHelp'));
   body.appendChild(fieldButton('출현종 제보로 남기기','fieldBtn fieldPrimary',function(){fieldReportDraft(id);}));
   body.appendChild(fieldButton('완료','fieldBtn',closeFieldPanel));
 }
@@ -6355,9 +6366,9 @@ function fieldNewsButton(label,handler,disabled,title){
 function renderFieldNews(){
   var box=fieldEl('fieldNewsBox');
   if(!box)return;
-  var list=publicationAllowed()&&fieldAvailable?fieldNewsList():[];
   box.textContent='';
-  if(!list.length){box.hidden=true;return;}
+  if(!publicationAllowed()||!fieldAvailable){box.hidden=true;return;}
+  var list=fieldNewsList();
   box.hidden=false;
   var max=innerWidth<900?FIELD_NEWS_MOBILE_MAX:FIELD_NEWS_PC_MAX;
   var head=document.createElement('button');
@@ -6366,7 +6377,13 @@ function renderFieldNews(){
   head.textContent='📡 현장소식 '+list.length+'건 '+(fieldNewsOpen?'▾':'▸');
   head.onclick=function(){fieldNewsOpen=!fieldNewsOpen;renderFieldNews();};
   box.appendChild(head);
+  var viewer=document.createElement('div');
+  viewer.className='fieldNewsViewer';
+  if(fieldNewsOpen)viewer.appendChild(fieldLine(fieldViewerMessage,'fieldNewsMeta'));
+  var locate=fieldNewsButton(fieldViewerBusy?'위치 확인 중…':'내 주변 소식 확인',fieldViewerLocate,fieldViewerBusy);
+  locate.className='fieldNewsLocate';viewer.appendChild(locate);box.appendChild(viewer);
   if(!fieldNewsOpen)return;
+  if(!list.length){viewer.appendChild(fieldLine('현재 볼 수 있는 소식이 없어요.','fieldNewsMeta'));return;}
   var body=document.createElement('div');
   body.className='fieldNewsList';
   (fieldNewsAll?list:list.slice(0,max)).forEach(function(update){
@@ -7085,7 +7102,7 @@ function fieldSubmitCreate(verified){
       fieldMineAdd(result.body.id);
       loadFieldUpdates();
       fieldToast('현장소식을 등록했어요.');
-      fieldCreated(result.body.id);
+      fieldCreated(result.body.id,draft.visibilityRadius,draft.status);
     }else{
       fieldSay(fieldErrorText(result,'현장소식을 등록하지 못했습니다. 잠시 후 다시 시도해 주세요.'),'error');
     }

@@ -51,7 +51,7 @@ function hook(){
    }
    if(u.pathname==='/field-updates'&&method==='POST'){
     const id='33333333-3333-4333-8333-'+String(++m.fieldSeq).padStart(12,'0');
-    const item=mk(id,payload.visibilityRadius,{species:payload.species,lat:payload.lat,lon:payload.lon});m.fields.push(item);m.created=item;m.revision=String(BigInt(m.revision)+1n);return reply({ok:true,id,status:item.status},201);
+    const item=mk(id,payload.visibilityRadius,{species:payload.species,status:payload.status,lat:payload.lat,lon:payload.lon});m.fields.push(item);m.created=item;m.revision=String(BigInt(m.revision)+1n);return reply({ok:true,id,status:item.status},201);
    }
    if(u.pathname.endsWith('/report-draft')){
     const id=u.pathname.split('/')[2],row=m.fields.find(x=>x.id===id)||m.created;
@@ -150,8 +150,25 @@ try{
    await e("__mock.oldWorker=true;__mock.geo.at(-1).ok(__mock.fix());fieldDraft.species='직박구리';fieldTurnstileToken='synthetic-token';fieldSubmitCreate();");await waitEval(e,'!fieldBusy');
    const blockedOldWorker=await e("__mock.actions.filter(x=>x.path==='/field-updates'&&x.method==='POST').length===0&&document.getElementById('fieldMsg').textContent.includes('중지')");await e('__mock.oldWorker=false');
    await e("__mock.geo.at(-1).ok(__mock.fix());fieldDraft.species='직박구리';fieldDraft.visibilityRadius='20';document.getElementById('fieldVisibilityRadius').value='20';fieldTurnstileToken='synthetic-token';fieldSubmitCreate();");await waitEval(e,"!fieldBusy&&fieldStepName==='created'");
-   const s=await e("({create:__mock.actions.filter(x=>x.path==='/field-updates'&&x.method==='POST').at(-1),reports:__mock.reports.length,button:Array.from(document.querySelectorAll('#fieldBody button')).some(x=>x.textContent==='출현종 제보로 남기기'),mine:fieldIsMine(__mock.created.id)})");
-   await snap(page,'created-optin-'+width);await e("Array.from(document.querySelectorAll('#fieldBody button')).find(x=>x.textContent==='완료').click();");return {pass:blockedOldWorker&&s.create.payload.visibilityRadius==='20'&&s.reports===0&&s.button&&s.mine,evidence:{blockedOldWorker,...s}};
+   const s=await e("({create:__mock.actions.filter(x=>x.path==='/field-updates'&&x.method==='POST').at(-1),reports:__mock.reports.length,button:Array.from(document.querySelectorAll('#fieldBody button')).some(x=>x.textContent==='출현종 제보로 남기기'),mine:fieldIsMine(__mock.created.id),viewer:fieldViewer,publicHasCreated:fieldUpdates.some(x=>x.id===__mock.created.id),receipt:document.getElementById('fieldBody').textContent})");
+   await snap(page,'created-optin-'+width);return {pass:blockedOldWorker&&s.create.payload.visibilityRadius==='20'&&s.reports===0&&s.button&&s.mine&&s.viewer===null&&!s.publicHasCreated&&s.receipt.includes('20km 공개')&&s.receipt.includes('현재 GPS')&&s.receipt.includes('내 주변 소식 확인'),evidence:{blockedOldWorker,...s}};
+  });
+  await scenario(page,width,'created-receipt-explicit-GPS-fetches-own-news-no-optimistic-content',async e=>{
+   const before=await e('__mock.geo.length');
+   await e("__mock.deferRead=true;Array.from(document.querySelectorAll('#fieldBody button')).find(x=>x.textContent==='내 주변 소식 확인').click()");
+   const pending=await e("({closed:document.getElementById('fieldPanel').hidden,geo:__mock.geo.length,busy:fieldViewerBusy,buttonDisabled:document.querySelector('.fieldNewsLocate')?.disabled,own:fieldUpdates.some(x=>x.id===__mock.created.id)})");
+   await e("__mock.geo.at(-1).ok(__mock.fix())");await e(settle);const beforeResponse=await e('fieldUpdates.some(x=>x.id===__mock.created.id)');
+   await e("__mock.deferRead=false;__mock.deferred.splice(0).forEach(r=>r())");await waitEval(e,'fieldUpdates.some(x=>x.id===__mock.created.id)');
+   const s=await e("({shown:document.querySelector('#fieldNewsBox .fieldNewsList')?.textContent.includes(__mock.created.species),request:__mock.actions.filter(x=>x.path==='/field-updates/read').at(-1),reports:__mock.reports.length,buttonsFit:Array.from(document.querySelectorAll('#fieldNewsBox button')).every(x=>x.scrollWidth<=x.clientWidth+1)})");
+   await snap(page,'own-news-after-GPS-'+width);return {pass:pending.closed&&pending.geo===before+1&&pending.busy&&pending.buttonDisabled&&!pending.own&&!beforeResponse&&s.shown&&!!s.request.payload.viewer&&s.reports===0&&s.buttonsFit,evidence:{pending,beforeResponse,...s}};
+  });
+  await scenario(page,width,'map-created5-does-not-borrow-location-outside-hidden-nearby-shown',async e=>{
+   await e("fieldViewerClear(true);openFieldPanel();fieldStartForm('visible');fieldDraft.species='직박구리';fieldDraft.source='map';fieldDraft.lat=37.1;fieldDraft.lon=127.1;fieldDraft.visibilityRadius='5';document.getElementById('fieldVisibilityRadius').value='5';fieldTurnstileToken='synthetic-token';fieldSubmitCreate();");await waitEval(e,"!fieldBusy&&fieldStepName==='created'");
+   const saved=await e("({source:__mock.actions.filter(x=>x.path==='/field-updates'&&x.method==='POST').at(-1).payload.locationSource,viewer:fieldViewer,receipt:document.getElementById('fieldBody').textContent,shown:fieldUpdates.some(x=>x.id===__mock.created.id)})");
+   await e("Array.from(document.querySelectorAll('#fieldBody button')).find(x=>x.textContent==='내 주변 소식 확인').click();var far=__mock.fix();far.coords.latitude=36;__mock.geo.at(-1).ok(far)");await e(settle);await e('loadFieldUpdates()');
+   const far=await e("({found:fieldFind(__mock.created.id)!==null,marker:!!fieldMarkers[__mock.created.id],inBox:document.getElementById('fieldNewsBox').textContent.includes('직박구리')})");
+   await e("document.querySelector('.fieldNewsLocate').click();__mock.geo.at(-1).ok(__mock.fix())");await waitEval(e,'fieldUpdates.some(x=>x.id===__mock.created.id)');
+   const near=await e('!!fieldMarkers[__mock.created.id]&&fieldNewsList().some(x=>x.id===__mock.created.id)');return {pass:saved.source==='map'&&saved.viewer===null&&!saved.shown&&saved.receipt.includes('5km 공개')&&!far.found&&!far.marker&&!far.inBox&&near,evidence:{saved,far,near}};
   });
   await scenario(page,width,'own-card-prefill-cancel-no-auto-submit',async e=>{
    await e(locate);await e(settle);await e('publicationRefresh()');await e(settle);
@@ -189,7 +206,19 @@ try{
   });
   await scenario(page,width,'viewer30sec-expiry-hidden-blur-pageshow-clear',async e=>{
    const states=[];for(const mode of ['age','hidden','blur','pageshow','permission']){await e(locate);await e(settle);if(mode==='age')await e('fieldViewer.started-=30001;fieldViewerPayload()');if(mode==='hidden')await e("__mock.hidden=true;document.dispatchEvent(new Event('visibilitychange'));__mock.hidden=false;");if(mode==='blur')await e("window.dispatchEvent(new Event('blur'))");if(mode==='pageshow')await e("window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))");if(mode==='permission')await e("__mock.permission.state='denied';__mock.permission.onchange()");await e(settle);states.push(await e("({viewer:fieldViewer,near:fieldUpdates.some(x=>x.id.startsWith('2222')),guide:fieldGuide})"));}
-   return {pass:states.every(s=>s.viewer===null&&!s.near&&s.guide===null),evidence:{states}};
+   const renewal=await e("({visible:!document.getElementById('fieldNewsBox').hidden,button:!!document.querySelector('.fieldNewsLocate'),ownContent:document.querySelector('#fieldNewsBox .fieldNewsList')?.textContent.includes('직박구리')||false})");
+   return {pass:states.every(s=>s.viewer===null&&!s.near&&s.guide===null)&&renewal.visible&&renewal.button&&!renewal.ownContent,evidence:{states,renewal}};
+  });
+  await scenario(page,width,'empty-and-folded-box-GPS-denial-and-authority-loss',async e=>{
+   await e('window.__savedFields=__mock.fields;__mock.fields=[];fieldViewerClear(false);publicationInvalidate("empty test");');await e(refresh);await e(settle);
+   const before=await e('__mock.geo.length');const empty=await e("({visible:!document.getElementById('fieldNewsBox').hidden,text:document.getElementById('fieldNewsBox').textContent,button:!!document.querySelector('.fieldNewsLocate')})");
+   await e("fieldNewsOpen=false;renderFieldNews();document.querySelector('.fieldNewsLocate').click();document.querySelector('.fieldNewsLocate').click();");
+   const pending=await e("({geo:__mock.geo.length,disabled:document.querySelector('.fieldNewsLocate').disabled})");
+   await e('__mock.geo.at(-1).error({code:1});fieldNewsOpen=true;renderFieldNews()');await e(settle);
+   const failed=await e("({text:document.getElementById('fieldNewsBox').textContent,visible:!document.getElementById('fieldNewsBox').hidden,disabled:document.querySelector('.fieldNewsLocate')?.disabled,viewer:fieldViewer,ids:fieldUpdates.map(x=>x.id),rect:document.getElementById('fieldNewsBox').getBoundingClientRect().toJSON(),overflow:document.documentElement.scrollWidth>innerWidth})");
+   await snap(page,'empty-GPS-denied-'+width);await e('publicationInvalidate("authority test")');const hidden=await e('document.getElementById("fieldNewsBox").hidden');
+   await e('__mock.fields=__savedFields;');await e(refresh);await e(settle);
+   return {pass:empty.visible&&empty.button&&empty.text.includes('0건')&&!empty.text.includes('직박구리')&&pending.geo===before+1&&pending.disabled&&failed.visible&&!failed.disabled&&failed.viewer===null&&failed.ids.length===0&&failed.text.includes('권한이 거부')&&failed.rect.left>=0&&failed.rect.right<=width&&!failed.overflow&&hidden,evidence:{empty,pending,failed,hidden}};
   });
   await scenario(page,width,'monotonic-GPS-expiry-closes-route-even-before-timer',async e=>{
    await e(locate);await e(settle);const s=await e("(function(){var u=fieldFind('22222222-2222-4222-8222-222222222222');clearTimeout(fieldViewerTimer);fieldViewer.started-=30001;var scope=fieldScopeAllowed(u),point=fieldPublicPoint(u),found=fieldFind(u.id);return {scope,point,found,viewer:fieldViewer};})()");return {pass:s.scope===false&&s.point===null&&s.found===null&&s.viewer===null,evidence:s};
