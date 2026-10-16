@@ -22,7 +22,7 @@ const HERE = new URL('../../docs/p1-publication-security-implementation/results/
 const baseline = readFileSync(new URL('pre-publication-schema.sql', HERE), 'utf8');
 const canonical = ['../../docs/long-term-db-phase2a/migrations/0001_core.sql', '../../docs/long-term-db-phase2d1/migrations/0003_captcha_redemptions.sql']
   .map(p => readFileSync(new URL(p, import.meta.url), 'utf8')).join('\n');
-const migration = () => readFileSync(new URL('../migrations/0005_publication_security.sql', import.meta.url), 'utf8');
+const migration = () => ['0005_publication_security.sql','0006_field_visibility.sql'].map(name=>readFileSync(new URL('../migrations/'+name, import.meta.url), 'utf8')).join('\n');
 
 // Real SQL, transaction rollback, and SELECT results in D1.batch order; no hand-written query branches.
 function fixture({ migrate = true } = {}) {
@@ -107,7 +107,7 @@ function canonicalInput(n) {
   const id='10000000-0000-4000-8000-'+String(n).padStart(12,'0'),at=new Date().toISOString();
   return { row:{id,status:'pending',species:'참새',lat:37.123,lon:127.456,public_lat:null,public_lon:null,approx_lat:37.12,approx_lon:127.45,pending_public:1,observed_on:'2026-10-12',received_at:at,decided_at:null,bird_count:1,reporter:'합성시험',note:null,admin_note:null,site_id:null,name_public:0,spot_key:null,ip_hash:'synthetic',dedupe_hash:'canonical-'+id},input:{species:'참새',lat:37.123,lon:127.456,observedOn:'2026-10-12',non_breeding_confirmed:true},accepted:{ok:true,id,status:'pending',publicVisibility:'approximate'},tokenHash:n.toString(16).padStart(64,'0') };
 }
-const fieldInput = patch => ({ species: '참새', status: 'visible', lat: 37.123, lon: 127.456, nickname: '합성시험', deviceId: DEVICE_A, turnstileToken: 'synthetic-token', ...patch });
+const fieldInput = patch => ({ species: '참새', status: 'visible', visibilityRadius:'all', lat: 37.123, lon: 127.456, nickname: '합성시험', deviceId: DEVICE_A, turnstileToken: 'synthetic-token', ...patch });
 async function create(env, patch) {
   const result = await call(env, '/field-updates', { method: 'POST', body: fieldInput(patch) });
   assert.equal(result.status, 201, JSON.stringify(result.body));

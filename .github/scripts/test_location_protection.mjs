@@ -63,7 +63,7 @@ function env() {
     // Unit boundary: a synthetic fresh head; use actual validator, renewal and route gate.
     'function publicationHead(){headChecks++;if(headUnavailable)return Promise.reject(new Error("head unavailable"));var head={publication:publicationState.anchor,serverTime:new Date(NOW).toISOString(),_publicationStartedMono:performance.now(),_publicationGeneration:publicationState.generation};publicationValidate(head,AUTHORITY.nonce);return Promise.resolve(head);}function publicationInvalidate(){publicationState.generation++;publicationState.ready=false;publicationState.until=0;}function publicationNotice(){}function publicationRefresh(){return Promise.resolve(false);}'+
     'var fieldUpdates=[],fieldAvailable=false,fieldClockOffset=0,fieldTtlHours=8,fieldMarkers={},fieldLayer=null,fieldGuide=null;' +
-    'var fieldRequestSeq=0,fieldAppliedSeq=0,fieldBarrierSeq=0,fieldTombstones={},fieldProtectedIds={},fieldStepName="menu";' +
+    'var fieldRequestSeq=0,fieldAppliedSeq=0,fieldBarrierSeq=0,fieldViewerRequest=0,fieldTombstones={},fieldProtectedIds={},fieldStepName="menu";' +
     'function fieldNowMs(){return NOW;} function fieldMap(){return map;} function fieldToast(t){toast(t);} function reportsConfigured(){return true;}' +
     'function fieldEl(id){return id==="fieldNavChoice"?window_navBox:id==="fieldPanel"?{hidden:true}:id==="fieldToggleBtn"?{hidden:true}:null;}' +
     'var window_navBox=null; function setNavBox(b){window_navBox=b;}' +
@@ -75,7 +75,7 @@ function env() {
   function constsAndFns() { return consts + '\n' + names.map(functionSource).join('\n'); }
   const api = new Function(...Object.keys(sandbox), body +
     '\nreturn {loadFieldUpdates,fieldReplace,fieldRemoveLocal,fieldGuideStart,fieldGuideOnPosition,fieldNewsNavigate,fieldNavManualGuide,fieldNavChoiceGuard,setNavBox,' +
-    'get fieldUpdates(){return fieldUpdates;},get fieldGuide(){return fieldGuide;},get fieldMarkers(){return fieldMarkers;},fieldPublicPoint,'+
+    'get fieldUpdates(){return fieldUpdates;},get fieldGuide(){return fieldGuide;},get fieldMarkers(){return fieldMarkers;},fieldPublicPoint,clearViewer(){fieldViewerRequest++;},'+
     'acceptAuthority(revision){if(BigInt(revision)>=BigInt(publicationState.anchor.revision))publicationState.anchor={...AUTHORITY,revision};},blockHead(){headUnavailable=true;},get headChecks(){return headChecks;},expireAuthority(){publicationState.until=0;headUnavailable=true;},unknownAuthority(){publicationState.ready=false;headUnavailable=true;}};')(...Object.values(sandbox));
   const respond = (callIndex, updates, ok = true, revision=String(callIndex+1)) => {api.acceptAuthority(revision);calls[callIndex].resolve({ ok, status: ok ? 200 : 500, body: { ok, updates,publication:{...AUTHORITY,revision},publicationCheckedAt:new Date(NOW).toISOString(),serverTime: new Date(NOW).toISOString() } });};
   const settle = () => new Promise((r) => setImmediate(r));
@@ -110,6 +110,15 @@ test('여러 GET 이 뒤바뀌어 도착해도(응답 세대) 나중에 보낸 �
   e.respond(1, [upd('a'), upd('b')]); await older;
   assert.deepEqual(e.api.fieldUpdates.map((u) => u.id), ['b']);
   assert.ok(!('a' in e.api.fieldMarkers));
+});
+
+test('Issue28: GPS 권한 세대가 바뀐 뒤 도착한 근거리 응답은 목록·마커를 복구하지 않는다', async () => {
+  const e=env(),pending=e.api.loadFieldUpdates();
+  e.api.clearViewer();
+  e.respond(0,[upd('late-nearby',{visibilityRadius:'10'})]);
+  await pending;
+  assert.deepEqual(e.api.fieldUpdates,[]);
+  assert.deepEqual(Object.keys(e.api.fieldMarkers),[]);
 });
 
 test('위치 가림 → 오래된 응답 도착 → 정확 좌표 재노출 0건', async () => {

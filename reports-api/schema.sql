@@ -55,6 +55,7 @@ CREATE INDEX IF NOT EXISTS reports_ip_recent ON reports (ip_hash, received_at);
 CREATE TABLE IF NOT EXISTS field_updates (
   id               TEXT PRIMARY KEY,           -- UUID
   species          TEXT NOT NULL,              -- 종명 하나
+  visibility_radius TEXT NOT NULL DEFAULT 'all' CHECK(typeof(visibility_radius)='text' AND visibility_radius IN ('5','10','20','all')),
   bird_count       INTEGER,                    -- 모르면 NULL
   status           TEXT NOT NULL,              -- 현재 상태: visible | searching | not_visible | reappeared
   lat              REAL NOT NULL,              -- 사용자가 확인한 실제 좌표. 공개 API 는 이 값을 내보내지 않는다.
@@ -132,7 +133,7 @@ BEGIN
  SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
 END;
-CREATE TRIGGER publication_field_updates_insert AFTER INSERT ON field_updates
+CREATE TRIGGER publication_field_updates_insert_scoped AFTER INSERT ON field_updates
 BEGIN
  SELECT RAISE(ABORT,'publication_state_unavailable') WHERE NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND typeof(epoch)='text' AND length(epoch)=32 AND epoch NOT GLOB '*[^0-9a-f]*' AND typeof(revision)='integer' AND revision>=0 AND revision<9223372036854775807);
  UPDATE public_publication_state SET revision=revision+1 WHERE id=1;
@@ -162,6 +163,11 @@ BEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END;
 CREATE TRIGGER field_confirmation_live BEFORE INSERT ON field_update_confirmations
 WHEN NOT EXISTS(SELECT 1 FROM field_updates WHERE id=NEW.field_update_id AND status<>'deleted')
 BEGIN SELECT RAISE(ABORT,'field_deleted_terminal'); END;
+
+CREATE INDEX idx_field_updates_visibility_activity ON field_updates(visibility_radius,last_activity_at DESC);
+CREATE TRIGGER field_visibility_immutable BEFORE UPDATE ON field_updates
+WHEN NEW.visibility_radius IS NOT OLD.visibility_radius
+BEGIN SELECT RAISE(ABORT,'field_visibility_immutable'); END;
 
 CREATE TRIGGER field_freeze_field_updates_insert BEFORE INSERT ON field_updates
 WHEN NOT EXISTS(SELECT 1 FROM public_publication_state WHERE id=1 AND write_frozen=0)

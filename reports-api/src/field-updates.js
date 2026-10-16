@@ -22,6 +22,7 @@ import {
   sha256Hex,
   verifyTurnstile,
   rethrowIfFrozen,
+  LAT_MIN, LAT_MAX, LON_MIN, LON_MAX,
 } from "./shared.js";
 import { assertion,clearAssertion } from "./canonical/data.js";
 
@@ -55,6 +56,59 @@ const CONFIRM_WINDOW_MAX = 30;
 
 const DEVICE_ID = /^[A-Za-z0-9_-]{16,64}$/;
 const SOURCES = ["gps", "map"];
+export const FIELD_VISIBILITY_RADII = ["5", "10", "20", "all"];
+const VIEWER_MAX_AGE_MS = 30000;
+const readWindows = new Map();
+
+function validateVisibility(raw) {
+  const value = raw === undefined ? "10" : raw;
+  if (!FIELD_VISIBILITY_RADII.includes(value)) throw new WorkerError("FIELD_VISIBILITY_INVALID", "공개 범위를 다시 선택해 주세요.", 400);
+  return value;
+}
+
+// Browser GPS is a user assertion, not trusted proof of physical presence. No
+// coordinate, GPS token or IP is written by these reads or included in responses.
+export function fieldViewer(raw, now = new Date()) {
+  if (!raw || ![raw.lat, raw.lon, raw.accuracy, raw.capturedAt].every(v => typeof v === "number" && Number.isFinite(v))) return null;
+  if (raw.lat < LAT_MIN || raw.lat > LAT_MAX || raw.lon < LON_MIN || raw.lon > LON_MAX || raw.accuracy < 0 || raw.accuracy > 1000) return null;
+  if (now.getTime() - raw.capturedAt > VIEWER_MAX_AGE_MS || raw.capturedAt - now.getTime() > 5000) return null;
+  return { lat: raw.lat, lon: raw.lon, accuracy: raw.accuracy, capturedAt: raw.capturedAt };
+}
+
+export function fieldVisible(row, viewer, now = new Date()) {
+  if (protection(row.species, row.note).breeding) return false;
+  if (row.visibility_radius === "all") return true;
+  if (!FIELD_VISIBILITY_RADII.includes(row.visibility_radius) || !fieldViewer(viewer, now)) return false;
+  // Never measure a private/masked point: repeated boundary probes must not
+  // triangulate a protected location. Restricted protected rows stay withheld.
+  if (Number(row.location_hidden) === 1 || isSensitiveReport({ note: row.note || "", speciesText: row.species, species: [row.species] })) return false;
+  if (!Number.isFinite(row.public_lat) || !Number.isFinite(row.public_lon)) return false;
+  const rad = Math.PI / 180, dy = (row.public_lat - viewer.lat) * rad, dx = (row.public_lon - viewer.lon) * rad;
+  const a = Math.sin(dy / 2) ** 2 + Math.cos(viewer.lat * rad) * Math.cos(row.public_lat * rad) * Math.sin(dx / 2) ** 2;
+  const km = 6371.0088 * 2 * Math.atan2(Math.sqrt(Math.min(1, a)), Math.sqrt(Math.max(0, 1 - a)));
+  return km + viewer.accuracy / 1000 <= Number(row.visibility_radius) + 1e-9;
+}
+
+// A bounded isolate-local abuse brake; it makes no D1 writes and is not an
+// authentication boundary. Cloudflare edge rate limiting can complement it.
+export async function fieldReadInput(request, env) {
+  const hash = await ipHash(request.headers.get("CF-Connecting-IP") || "", env.REPORT_IP_SALT);
+  const now = Date.now(), previous = readWindows.get(hash);
+  if (previous && now - previous.at < 60000) {
+    if (++previous.n > 60) throw new WorkerError("FIELD_READ_RATE_LIMITED", "소식을 너무 자주 확인하고 있어요. 잠시 후 다시 시도해 주세요.", 429);
+  } else {
+    if (readWindows.size >= 2048) readWindows.delete(readWindows.keys().next().value);
+    readWindows.set(hash, { at: now, n: 1 });
+  }
+  if (request.method === "GET") return { viewer: null };
+  const raw = await request.text();
+  if (raw.length > 4096) throw new WorkerError("BODY_TOO_LARGE", "요청 내용이 너무 깁니다.", 413);
+  let body; try { body = JSON.parse(raw); } catch { throw new WorkerError("BODY_INVALID", "요청 내용을 읽을 수 없습니다.", 400); }
+  if (/\/report-draft$/.test(new URL(request.url).pathname)) return { owner: await userHash(validateDevice(body?.deviceId), env) };
+  return { viewer: fieldViewer(body?.viewer) };
+}
+
+function notFound() { throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404); }
 
 function cleanText(raw, max, field) {
   if (raw === undefined || raw === null) return null;
@@ -139,6 +193,7 @@ export function publicEntry(row, events, confirmCount) {
     species: row.species,
     count: row.bird_count,
     status: row.status,
+    visibilityRadius: row.visibility_radius,
     lat: row.public_lat,
     lon: row.public_lon,
     nickname: row.nickname,
@@ -157,6 +212,10 @@ export function publicEntry(row, events, confirmCount) {
   const storedHidden = Number(row.location_hidden) === 1;
   const sensitiveSpecies = protection(row.species, "").sensitiveSpecies;
   if (storedHidden || sensitiveSpecies) {
+    // Free text can disclose an exact coordinate or address despite a masked point.
+    entry.note = null;
+    entry.nickname = "익명";
+    entry.history = entry.history.map(event => ({ ...event, nickname: "익명" }));
     entry.locationHidden = true;
     if (!storedHidden || row.public_point_masked !== 1) {
       entry.lat = null;
@@ -196,16 +255,17 @@ async function loadEntries(db, rows) {
   });
 }
 
-const COLUMNS = `id, species, bird_count, status, public_lat, public_lon, location_hidden, nickname, note,
+const COLUMNS = `id, species, bird_count, status, visibility_radius, public_lat, public_lon, location_hidden, nickname, note,
                  CASE WHEN public_lat IS NOT NULL AND public_lon IS NOT NULL
                    AND (public_lat <> lat OR public_lon <> lon) THEN 1 ELSE 0 END AS public_point_masked,
                  created_at, updated_at, last_confirmed_at, last_activity_at, user_hash, CAST(row_revision AS TEXT) AS row_revision`;
 
-async function loadActive(db, id, now) {
+async function loadActive(db, id, now, viewer) {
   const row = await db
     .prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id = ?1`)
     .bind(id)
     .first();
+  if (row && !fieldVisible(row, viewer, now)) notFound();
   if(row&&!/^[1-9][0-9]{0,18}$/.test(row.row_revision))throw new WorkerError('FIELD_UNAVAILABLE','현장소식 상태를 확인할 수 없어요.',503);
   if (!row || row.status === DELETED) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
   if (row.last_activity_at < cutoffIso(now)) {
@@ -231,18 +291,12 @@ function fieldResponse(request,env,body,status=200,headers={}) {
 async function handleList(request, env, helpers) {
   const db = helpers.database(env);
   const now = new Date();
-  const { results } = await db
-    .prepare(
-      `SELECT ${COLUMNS} FROM field_updates
-        WHERE last_activity_at >= ?1 AND status <> '${DELETED}' ORDER BY last_activity_at DESC LIMIT ${LIST_LIMIT}`,
-    )
-    .bind(cutoffIso(now))
-    .all();
-  const updates = await loadEntries(db, results || []);
+  const input = await fieldReadInput(request, env);
+  const sets = await db.batch(fieldSnapshotStatements(db, now, input.viewer));
   return jsonResponse(
     request,
     env,
-    { ok: true, serverTime: iso(now), ttlHours: FIELD_UPDATE_TTL_HOURS, updates },
+    fieldSnapshotPayload(sets, now, input.viewer),
     200,
     { "Cache-Control": "no-store" },
   );
@@ -253,6 +307,7 @@ async function handleCreate(request, env, helpers) {
   const now = new Date();
   const body = await helpers.readJsonBody(request);
   const status = validateStatus(body?.status);
+  const visibility = validateVisibility(body?.visibilityRadius);
   if (!CREATE_STATUSES.includes(status)) {
     throw new WorkerError("FIELD_STATUS_NOT_ALLOWED", "처음 등록은 '지금 보여요' 또는 '찾는 중'만 가능해요.", 400);
   }
@@ -287,11 +342,11 @@ async function handleCreate(request, env, helpers) {
   try{await db.batch([
     db.prepare(
       `INSERT INTO field_updates
-         (id, species, bird_count, status, lat, lon, public_lat, public_lon, location_hidden, nickname, note,
+         (id, species, bird_count, status, lat, lon, public_lat, public_lon, location_hidden, nickname, note, visibility_radius,
           location_source, gps_accuracy, created_at, updated_at, last_confirmed_at, last_activity_at, user_hash, ip_hash)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?14, NULL, ?14, ?15, ?16)`,
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?17, ?12, ?13, ?14, ?14, NULL, ?14, ?15, ?16)`,
     ).bind(id, species[0], count, status, lat, lon, publicPoint.lat, publicPoint.lon, sensitiveSpecies ? 1 : 0,
-      nickname, note, source, accuracy, at, user, hash),
+      nickname, note, source, accuracy, at, user, hash, visibility),
     db.prepare(
       `INSERT INTO field_update_events (id, field_update_id, status, nickname, created_at, user_hash, ip_hash)
        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
@@ -309,7 +364,8 @@ async function handleStatus(request, env, id, helpers) {
   const status = validateStatus(body?.status);
   const nickname = cleanText(body?.nickname, FIELD_NICKNAME_MAX, "닉네임") || "익명";
   const device = validateDevice(body?.deviceId);
-  const row = await loadActive(db, id, now);
+  const viewer = fieldViewer(body?.viewer, now);
+  const row = await loadActive(db, id, now, viewer);
   if (row.status === status) {
     throw new WorkerError("FIELD_STATUS_SAME", "이미 같은 상태로 올라와 있어요.", 409);
   }
@@ -323,6 +379,7 @@ async function handleStatus(request, env, id, helpers) {
 
   const user = await userHash(device, env);
   const writeNow=new Date(),at=iso(writeNow),key='field-status:'+crypto.randomUUID();
+  if (!fieldVisible(row, viewer, writeNow)) notFound();
   try {
     await db.batch([
       db.prepare("UPDATE field_updates SET status=?2,updated_at=?3,last_activity_at=?3,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?4 AND status=?5 AND status<>'deleted' AND last_activity_at>=?6"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?` AND julianday(last_activity_at)>=julianday('now','-${FIELD_UPDATE_TTL_HOURS} hours')`:"")).bind(id,status,at,row.row_revision,row.status,cutoffIso(writeNow)),
@@ -340,7 +397,8 @@ async function handleConfirm(request, env, id, helpers) {
   const now = new Date();
   const body = await helpers.readJsonBody(request);
   const device = validateDevice(body?.deviceId);
-  const row = await loadActive(db, id, now);
+  const viewer = fieldViewer(body?.viewer, now);
+  const row = await loadActive(db, id, now, viewer);
   if (!CONFIRMABLE.includes(row.status)) {
     throw new WorkerError("FIELD_NOT_CONFIRMABLE", "지금 보이는 상태의 소식만 확인할 수 있어요.", 409);
   }
@@ -353,6 +411,7 @@ async function handleConfirm(request, env, id, helpers) {
   await enforceRate(db, "field_update_confirmations", hash, now, CONFIRM_WINDOW_MAX);
 
   const writeNow=new Date(),at=iso(writeNow),key='field-confirm:'+crypto.randomUUID();
+  if (!fieldVisible(row, viewer, writeNow)) notFound();
   try {
     await db.batch([
       db.prepare("UPDATE field_updates SET last_confirmed_at=?2,last_activity_at=?2,row_revision=row_revision+1 WHERE id=?1 AND CAST(row_revision AS TEXT)=?3 AND status IN ('visible','reappeared') AND last_activity_at>=?4"+(env.REPORTS_PUBLICATION_REQUIRED==='true'?` AND julianday(last_activity_at)>=julianday('now','-${FIELD_UPDATE_TTL_HOURS} hours')`:"")).bind(id,at,row.row_revision,cutoffIso(writeNow)),
@@ -379,6 +438,8 @@ async function handleDelete(request, env, id, helpers) {
   if (!row) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
   const user = await userHash(device, env);
   if (user !== row.user_hash) {
+    if (row.visibility_radius !== 'all' && row.last_activity_at < cutoffIso(now)) notFound();
+    if (!fieldVisible(row, fieldViewer(body?.viewer, now), now)) notFound();
     // 지운 소식의 존재는 등록자 말고는 알 필요가 없다.
     if (row.status === DELETED) throw new WorkerError("FIELD_NOT_FOUND", "찾을 수 없는 현장소식이에요.", 404);
     throw new WorkerError("FIELD_DELETE_FORBIDDEN", "직접 올린 현장소식만 삭제할 수 있어요.", 403);
@@ -406,6 +467,7 @@ const PATH = /^\/field-updates(?:\/([0-9a-f-]{36})\/(status|confirm|delete))?$/;
 
 // /field-updates 경로가 아니면 null 을 돌려주어 호출한 쪽이 기존 라우팅을 이어가게 한다.
 export async function handleFieldUpdates(request, env, url, helpers) {
+  if (url.pathname === "/field-updates/read" && request.method === "POST") return handleList(request, env, helpers);
   const match = PATH.exec(url.pathname);
   if (!match) return null;
   const [, id, action] = match;
@@ -419,13 +481,33 @@ export async function handleFieldUpdates(request, env, url, helpers) {
 }
 
 // All three reads execute in the caller's one D1 read transaction.
-export function fieldSnapshotStatements(db,now) {
- const cutoff=cutoffIso(now),active=`SELECT id FROM field_updates WHERE last_activity_at>=?1 AND status<>'deleted' ORDER BY last_activity_at DESC LIMIT ${LIST_LIMIT}`;
- return [db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id IN (${active}) ORDER BY last_activity_at DESC`).bind(cutoff),
- db.prepare(`SELECT field_update_id,status,nickname,created_at FROM field_update_events WHERE field_update_id IN (${active}) ORDER BY created_at ASC,rowid ASC`).bind(cutoff),
- db.prepare(`SELECT field_update_id,COUNT(*) AS n FROM field_update_confirmations WHERE field_update_id IN (${active}) GROUP BY field_update_id`).bind(cutoff)];
+export function fieldSnapshotStatements(db,now,viewer=null) {
+ const cutoff=cutoffIso(now), live="last_activity_at>=?1 AND status<>'deleted'";
+ // Apply all-only visibility before the existing cap. With GPS, add nearby
+ // candidates and apply exact distance before the final cap, so invisible rows
+ // cannot displace public rows and reveal their existence through list length.
+ const params=[cutoff];
+ let active=`SELECT id FROM (SELECT id FROM field_updates WHERE ${live} AND visibility_radius='all' ORDER BY last_activity_at DESC LIMIT ${LIST_LIMIT})`;
+ if(viewer){
+  const deltaLat=20/110.5,deltaLon=20/(110.5*Math.cos(viewer.lat*Math.PI/180));
+  active+=` UNION SELECT id FROM field_updates WHERE ${live} AND visibility_radius IN ('5','10','20') AND location_hidden=0 AND public_lat BETWEEN ?2 AND ?3 AND public_lon BETWEEN ?4 AND ?5`;
+  params.push(viewer.lat-deltaLat,viewer.lat+deltaLat,viewer.lon-deltaLon,viewer.lon+deltaLon);
+ }
+ return [db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id IN (${active}) ORDER BY last_activity_at DESC`).bind(...params),
+ db.prepare(`SELECT field_update_id,status,nickname,created_at FROM field_update_events WHERE field_update_id IN (${active}) ORDER BY created_at ASC,rowid ASC`).bind(...params),
+ db.prepare(`SELECT field_update_id,COUNT(*) AS n FROM field_update_confirmations WHERE field_update_id IN (${active}) GROUP BY field_update_id`).bind(...params)];
 }
-export function fieldSnapshotPayload(sets,now) {
+export function fieldSnapshotPayload(sets,now,viewer=null) {
  const parents=sets[0].results||[],events=sets[1].results||[],counts=sets[2].results||[];
- return {ok:true,serverTime:iso(now),ttlHours:FIELD_UPDATE_TTL_HOURS,updates:parents.map(row=>publicEntry(row,events.filter(e=>e.field_update_id===row.id).slice(-HISTORY_LIMIT),Number(counts.find(c=>c.field_update_id===row.id)?.n||0)))};
+ const readNow=new Date();
+ return {ok:true,fieldIntegrationVersion:'radius-report-v1',serverTime:iso(readNow),ttlHours:FIELD_UPDATE_TTL_HOURS,updates:parents.filter(row=>row.last_activity_at>=cutoffIso(readNow)&&fieldVisible(row,viewer,readNow)).slice(0,LIST_LIMIT).map(row=>publicEntry(row,events.filter(e=>e.field_update_id===row.id).slice(-HISTORY_LIMIT),Number(counts.find(c=>c.field_update_id===row.id)?.n||0)))};
+}
+
+export function fieldDraftPlan(db,id,owner,now) {
+ return {statements:[db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id=?1`).bind(id)],build:sets=>{
+  const row=sets[0].results?.[0];
+  if(!row||row.user_hash!==owner||row.status===DELETED||row.last_activity_at<cutoffIso(now))notFound();
+  const entry=publicEntry(row,[],0),protectedLocation=Number(row.location_hidden)===1||isSensitiveReport({note:row.note||"",speciesText:row.species,species:[row.species]});
+  return {ok:true,draft:{id:row.id,species:row.species,firstSeenAt:row.created_at,lat:protectedLocation?null:entry.lat,lon:protectedLocation?null:entry.lon,locationHidden:protectedLocation}};
+ }};
 }
