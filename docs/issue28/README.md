@@ -45,6 +45,8 @@ node docs/issue28/native.mjs /path/to/node_modules
 
 등록 직후 본인 소식이 안 보일 때도 소유자 예외나 등록 좌표 재사용으로 공개하지 않는다. 등록 완료 화면에서 선택 범위와 별도 열람 GPS 필요성을 안내하고, 빈 목록·접힌 박스에도 명시적인 주변 조회 버튼을 제공한다. 지도에서 지정한 5km 소식은 GPS 미확인/범위 밖에서 비표시, 범위 안의 새 GPS와 서버 응답 후에만 표시, 위치 만료·blur 후 내용 제거 및 재확인 버튼 유지, 빈 목록의 GPS 거부·중복 클릭·공개 권한 철회까지 실제 Chrome에서 회귀시험한다. 이 화면 수정에는 Worker/D1 변경이 없다.
 
+현장소식은 모바일 전용이다. 기존 주 입력 장치 기준을 박스·GPS 버튼·패널·마커·팝업·길안내 선택창에도 동일하게 적용해 pointer:fine PC에서는 숨긴다. 화면 폭이 넓은 pointer:coarse 폴드·태블릿에서는 유지한다. Chrome 시험은 실제 CSS 미디어 쿼리와 computed style로 PC 비표시 및 넓은 터치 화면 표시를 구분해 확인한다.
+
 ## D1 및 운영 전환
 
 `0006_field_visibility.sql` SHA256은 `addd63e875e4e2e01e2d62fd57f83a71c5bd4d71ed63e93e01d37fcee0b4537b`이다. 정확한 파일 하나만 별도 migrations_dir에 복사해 해시를 대조한다. 기존 migration 전체를 운영에 다시 apply하지 않는다. 운영 ledger에는 과거 레거시 파일과 다른 이력이 있기 때문이다.
