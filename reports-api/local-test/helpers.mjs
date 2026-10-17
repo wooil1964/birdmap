@@ -44,7 +44,7 @@ export async function installAuthStubs() {
   return {token,restore:()=>{globalThis.fetch=old;}};
 }
 export function environments(db) {
-  const common={ENVIRONMENT:'test',REPORTS_DB:db,REPORT_IP_SALT:'synthetic-salt',TURNSTILE_SECRET_KEY:'synthetic-key',
+  const common={FIELD_NEWS_RETIRED:'false',ENVIRONMENT:'test',REPORTS_DB:db,REPORT_IP_SALT:'synthetic-salt',TURNSTILE_SECRET_KEY:'synthetic-key',
     REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE',REPORTS_DUAL_WRITE_ENABLED:'true',REPORTS_CONFIRMATION_REQUIRED:'true',REPORTS_SCHEMA_VERSION:SCHEMA_VERSION,
     REPORTS_ACTIVATION_ID:'local-activation',REPORTS_GATE_TOKEN:'local-gate',REPORTS_PENDING_PUBLIC:'1',ACCESS_TEAM_DOMAIN:'phase2b-test',ACCESS_AUD:'phase2b-test',ADMIN_EMAILS:ADMIN};
   const pub={...common,REPORTS_RELEASE_ID:'public-local',REPORTS_PEER_RELEASE_ID:'admin-local'};
