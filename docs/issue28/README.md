@@ -1,4 +1,6 @@
-# Issue #28 현장소식 통합 개선
+# Issue #28 현장소식 통합 개선 (종료 전 기록)
+
+2026-10-17 사용자 요청으로 기능 전체를 종료했다. 아래 내용은 이전 설계·검증 기록이며 현재 서비스 설명이 아니다. 현재 상태와 종료 시험은 [현장소식 종료](../field-news-retirement/README.md)를 따른다.
 
 현장소식의 공개 반경과 등록자 선택형 출현종 제보 입력을 하나의 변경으로 제공한다. 기준 main은 `79f372f48edee1215ff0d021723051023e9a99b5`이다. 이 문서는 구현·검증·운영 전환 절차를 설명하며 PR 병합이나 Worker 배포가 완료됐다는 증명은 아니다. 실제 배포 결과는 활성 Worker version, PR/CI와 운영 확인 기록으로 별도 확인한다.
 
@@ -36,7 +38,7 @@ Node 24의 SQLite 시험과 실제 workerd/Miniflare D1을 함께 사용한다. 
 node --test .github/scripts/test_*.mjs
 cd reports-api && node --test
 # 저장소 루트, CHROME_PATH는 설치된 Chrome 실행파일
-node docs/issue28/chrome.mjs
+node docs/field-news-retirement/chrome.mjs
 # CI에 고정한 miniflare@5.20261006.1-alpha의 node_modules 경로
 node docs/issue28/native.mjs /path/to/node_modules
 ```

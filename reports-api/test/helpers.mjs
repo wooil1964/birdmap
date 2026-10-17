@@ -86,6 +86,7 @@ export const ORIGIN = { Origin: "https://wooil1964.github.io" };
 
 export function publicEnv(db, overrides = {}) {
   return {
+    FIELD_NEWS_RETIRED: 'false', // historical field/D1 security fixtures only
     ENVIRONMENT: "production",
     REPORTS_DB: db,
     REPORT_IP_SALT: "test-salt",
