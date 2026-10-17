@@ -122,7 +122,7 @@ class CDP{
   const evaluate=async expression=>{if(/\bawait\b/.test(expression))expression='(async()=>{'+expression+'})()';const r=await this.send('Runtime.evaluate',{expression:'(async function(){var v=await eval('+JSON.stringify(expression)+');try{return JSON.parse(JSON.stringify(v));}catch{return null;}})()',awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw new Error(r.exceptionDetails.text+' '+String(r.exceptionDetails.exception?.description||'').split('\n')[0]);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
   const until=Date.now()+40000;let ready=false;
-  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof fieldMarkers!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===190").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
+  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===190").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
   if(!ready)throw new Error('Actual Leaflet/publication page initialization unavailable');
   return {evaluate,sessionId,targetId,browserContextId,close:async()=>{await this.send('Target.closeTarget',{targetId});if(browserContextId)await this.send('Target.disposeBrowserContext',{browserContextId});}};
  }
@@ -136,11 +136,11 @@ const ws=new WebSocket(endpoint);await new Promise(r=>ws.addEventListener('open'
 const browser=new CDP(proc,ws,profile);
 function check(width,id,pass,evidence={}){rows.push({width,id,pass:pass===true,evidence});}
 const tick="new Promise(r=>setTimeout(r,80))";
-const refresh="Promise.all([loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings(),loadFieldUpdates()])";
-const normal="fieldNavChoiceClose();fieldGuideStop();__mock.headDelayMs=0;__mock.deferHead=false;__mock.deferredHead=[];__mock.offline=false;__mock.headHangs=false;__mock.headOverride=null;__mock.dataApprovedOverride=null;__mock.dataFieldOverride=null;__mock.headAfterData=null;__mock.deferApproved=false;__mock.deferField=false;__mock.deferredApproved=[];__mock.deferredField=[];__mock.id='11111111-1111-4111-8111-'+String((__mock.testIdSequence||0)+1).padStart(12,'0');__mock.testIdSequence=(__mock.testIdSequence||0)+1;__mock.field=[__mock.upd()];__mock.approved=[__mock.spot()];__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리'],date:new Date().toISOString().slice(0,10)}];__mock.revision=String(BigInt(__mock.revision)+1n);publicationInvalidate();";
-const noDynamic="Object.keys(reportSpotLayers).length===0&&Object.keys(reportPendingLayers).length===0&&Object.keys(fieldMarkers).length===0&&fieldUpdates.length===0&&Object.keys(reportPublicSpots).length===0&&reportSearchIndex.length===0&&!document.querySelector('a[data-publication-report]')&&!document.getElementById('fieldNavChoice')&&fieldGuide===null";
+const refresh="Promise.all([loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings()])";
+const normal="__mock.headDelayMs=0;__mock.deferHead=false;__mock.deferredHead=[];__mock.offline=false;__mock.headHangs=false;__mock.headOverride=null;__mock.dataApprovedOverride=null;__mock.dataFieldOverride=null;__mock.headAfterData=null;__mock.deferApproved=false;__mock.deferField=false;__mock.deferredApproved=[];__mock.deferredField=[];__mock.id='11111111-1111-4111-8111-'+String((__mock.testIdSequence||0)+1).padStart(12,'0');__mock.testIdSequence=(__mock.testIdSequence||0)+1;__mock.field=[__mock.upd()];__mock.approved=[__mock.spot()];__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리'],date:new Date().toISOString().slice(0,10)}];__mock.revision=String(BigInt(__mock.revision)+1n);publicationInvalidate();";
+const noDynamic="Object.keys(reportSpotLayers).length===0&&Object.keys(reportPendingLayers).length===0&&Object.keys(reportPublicSpots).length===0&&reportSearchIndex.length===0&&!document.querySelector('a[data-publication-report]')";
 const noApproved="Object.keys(reportSpotLayers).length===0&&reportSearchIndex.length===0";
-const dynamicSnapshot="({approved:Object.keys(reportSpotLayers),pending:Object.keys(reportPendingLayers),fields:Object.keys(fieldMarkers),fieldData:fieldUpdates.map(x=>x.id),publicSpots:Object.keys(reportPublicSpots),search:reportSearchIndex.length,anchors:Array.from(document.querySelectorAll('a[data-publication-report]')).map(x=>({id:x.dataset.publicationReport,visible:!!x.offsetParent,href:x.getAttribute('href'),parent:x.parentElement?.className,popup:!!x.closest('.leaflet-popup')})),choice:!!document.getElementById('fieldNavChoice'),guide:!!fieldGuide,state:{ready:publicationState.ready,generation:publicationState.generation,until:publicationState.until},allowed:publicationAllowed()})";
+const dynamicSnapshot="({approved:Object.keys(reportSpotLayers),pending:Object.keys(reportPendingLayers),publicSpots:Object.keys(reportPublicSpots),search:reportSearchIndex.length,anchors:Array.from(document.querySelectorAll('a[data-publication-report]')).map(x=>({id:x.dataset.publicationReport,visible:!!x.offsetParent,href:x.getAttribute('href'),parent:x.parentElement?.className,popup:!!x.closest('.leaflet-popup')})),state:{ready:publicationState.ready,generation:publicationState.generation,until:publicationState.until},allowed:publicationAllowed()})";
 const routeSnapshot="(function(){var marker=reportSpotLayers['synthetic-approved'];if(!marker)return {exists:false};marker.openPopup();var n=marker.getPopup().getElement();return {exists:true,hidden:n.textContent.includes('대략'),kakao:!!n.querySelector('.spotKakaoRoute'),tmap:!!n.querySelector('.spotTmapRoute'),point:[marker.getLatLng().lat,marker.getLatLng().lng]};})()";
 async function scenario(page,width,id,fn){try{const result=await fn(page.evaluate);check(width,id,result.pass,result.evidence||{});}catch(error){check(width,id,false,{error:String(error.message).slice(0,400)});}}
 
@@ -149,7 +149,7 @@ try{
   page=await browser.page(width);const e=page.evaluate;await e(refresh);
   await e("__mock.monthly={month:'2026-10',approvedReports:2,publicContributors:1,contributors:[{name:'합성검증',count:2}]};");
   await scenario(page,width,'static-history-purge',async e=>{
-   await e("window.__site=siteData.find(x=>x.country==='대한민국'&&window[x.markerVar]&&fieldMap().hasLayer(window[x.markerVar]));window[__site.markerVar].openPopup();");await e(tick);
+   await e("window.__site=siteData.find(x=>x.country==='대한민국'&&window[x.markerVar]&&map_7010a44f6ac2025090f0fe07508ed485.hasLayer(window[x.markerVar]));window[__site.markerVar].openPopup();");await e(tick);
    const before=await e("document.querySelector('.siteHistoryBox')?.textContent.includes('합성검증')");
    await e("window.__box=document.querySelector('.siteHistoryBox');publicationInvalidate('independent barrier');");
    const s=await e("({name:!!__box?.textContent.includes('합성검증'),button:!!__box?.querySelector('.reporterStatsLink'),loaded:!!__box?._birdmapLoaded?.length,staticSites:siteData.length})");
@@ -193,7 +193,7 @@ try{
   await scenario(page,width,'removed-owner-closes',async e=>{await e("await openReporterStats(__triggers[0]);__triggers[0].remove();");await e(tick);return {pass:await e("reporterStatsOwner===null&&reporterStatsData===null&&reporterStatsContent.textContent===''&&reporterStatsModal.style.display==='none'")};});
   await e(refresh);
   await scenario(page,width,'late-history-cannot-reinsert',async e=>{
-   await e("fieldMap().closePopup();__mock.deferHistory=true;__mock.deferredHistory=[];window[__site.markerVar].openPopup();");await e(tick);
+   await e("map_7010a44f6ac2025090f0fe07508ed485.closePopup();__mock.deferHistory=true;__mock.deferredHistory=[];window[__site.markerVar].openPopup();");await e(tick);
    await e("window.__lateBox=document.querySelector('.siteHistoryBox');publicationInvalidate('late history test');__mock.deferredHistory.forEach(fn=>fn());__mock.deferHistory=false;");await e(tick);
    return {pass:await e("!__lateBox?.textContent.includes('합성검증')&&!__lateBox?._birdmapLoaded?.length&&!__lateBox?.querySelector('.reporterStatsLink')")};
   });

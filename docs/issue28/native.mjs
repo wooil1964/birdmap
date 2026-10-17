@@ -13,7 +13,7 @@ const {fieldVisible}=await load('reports-api/src/field-updates.js');
 const toolchain=process.env.ISSUE28_TOOLCHAIN||process.argv[2];
 if(!toolchain)throw Error('Set ISSUE28_TOOLCHAIN or pass the Miniflare node_modules directory');
 const local=await localDb(toolchain);
-const db=local.db,auth=await installAuthStubs(),env=environments(db).pub;env.REPORTS_PUBLICATION_REQUIRED='true';
+const db=local.db,auth=await installAuthStubs(),env=environments(db).pub;env.REPORTS_PUBLICATION_REQUIRED='true';env.FIELD_NEWS_RETIRED='false'; // archived feature security replay
 const evidence={schema:'issue28-native-workerd-d1-v1',at:new Date().toISOString(),source:{field:createHash('sha256').update(readFileSync(join(ROOT,'reports-api/src/field-updates.js'))).digest('hex')},checks:[],errors:[],scope:'Actual product handleRequest with native Miniflare/workerd D1 in memory. Synthetic data only. Turnstile and peer authentication stubbed. No operating API or D1.'};
 let seq=0;const owner='synthetic-owner-aaaaaaaa',other='synthetic-other-bbbbbbbb';
 const viewer=(patch={})=>({lat:37.1,lon:127.1,accuracy:0,capturedAt:Date.now(),...patch});

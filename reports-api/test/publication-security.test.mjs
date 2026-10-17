@@ -63,7 +63,7 @@ function fixture({ migrate = true } = {}) {
       catch (error) { sqlite.exec('ROLLBACK'); throw error; }
     },
   };
-  const env = { ENVIRONMENT: 'production', REPORTS_DB: db, REPORT_IP_SALT: 'synthetic-salt', TURNSTILE_SECRET_KEY: 'synthetic-key', REPORTS_PUBLICATION_REQUIRED: 'true' };
+  const env = { FIELD_NEWS_RETIRED:'false', ENVIRONMENT: 'production', REPORTS_DB: db, REPORT_IP_SALT: 'synthetic-salt', TURNSTILE_SECRET_KEY: 'synthetic-key', REPORTS_PUBLICATION_REQUIRED: 'true' };
   return { sqlite:migrate?trustedFixtureSqlite(sqlite):sqlite, db, env };
 }
 

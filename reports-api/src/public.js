@@ -37,6 +37,7 @@ import { applicationDb } from "./canonical/data.js";
 import { shadowRead } from "./canonical/shadow.js";
 import { notifyNewReport } from "./notify.js";
 import { handleFieldUpdates } from "./field-updates.js";
+import { assertFieldServiceActive } from './field-retirement.js';
 import { handlePublicationRead } from "./publication.js";
 
 function reportReceipt(request,env,body,status=201) {
@@ -468,6 +469,7 @@ export async function handleLegacyRequest(request, env, ctx) {
       return preflightResponse(request, env, "GET, POST, OPTIONS");
     }
     const url = new URL(request.url);
+    assertFieldServiceActive(env, url.pathname);
     const publicationResponse=await handlePublicationRead(request,env,url);
     if(publicationResponse)return publicationResponse;
     if(request.method==='GET'&&url.pathname==='/reports/capabilities')return publicCapability(request,env);

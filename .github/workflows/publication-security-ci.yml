@@ -79,10 +79,10 @@ jobs:
         env:
           PUBLICATION_TEST_OUTPUT: .ci-results/reporter
         run: node docs/reporter-lifetime-stats/browser/reporter_chrome.mjs
-      - name: Issue 28 scope and optional report Chrome (synthetic only)
+      - name: Field retirement and ordinary reports Chrome (current app)
         env:
           ISSUE28_OUTPUT: .ci-results/issue28-chrome
-        run: node docs/issue28/chrome.mjs
+        run: node docs/field-news-retirement/chrome.mjs
       - name: Native local D1 atomic fence and CAS (synthetic only)
         shell: bash
         run: |

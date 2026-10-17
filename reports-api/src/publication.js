@@ -2,6 +2,7 @@ import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
 import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
+import {assertFieldServiceActive} from './field-retirement.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='legacy-public-v1';
 export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
@@ -178,6 +179,7 @@ function readPlan(db,url,now,fieldInput={viewer:null}) {
  return {statements:[db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved' AND observed_on>=?1 AND observed_on<?2").bind(start,end),db.prepare("SELECT reporter,COUNT(*) AS n FROM reports WHERE status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND observed_on>=?1 AND observed_on<?2 GROUP BY reporter ORDER BY n DESC,reporter ASC").bind(start,end)],build:s=>{const contributors=(s[1].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}));return {month,approvedReports:Number(s[0].results?.[0]?.n||0),publicContributors:contributors.length,contributors};}};
 }
 export async function handlePublicationRead(request,env,url) {
+ assertFieldServiceActive(env,url.pathname);
  const fieldPost=request.method==='POST'&&(url.pathname==='/field-updates/read'||/^\/field-updates\/[0-9a-f-]{36}\/report-draft$/.test(url.pathname));
  if(request.method!=='GET'&&!fieldPost)return null;
  const head=url.pathname==='/reports/public-state';

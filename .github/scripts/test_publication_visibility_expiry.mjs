@@ -26,7 +26,7 @@ function env(){
  function hide(){doc.hidden=true;for(const fn of events.visibilitychange||[])fn();}
  return {c,doc,calls,queue,seed,hide,authority,advance(ms){wall+=ms;mono+=ms;},removed};
 }
-const closed=e=>!e.c.publicationState.ready&&Object.keys(e.c.reportPublicSpots).length===0&&Object.keys(e.c.reportSpotLayers).length===0&&e.c.fieldUpdates.length===0&&e.c.contributorsData===null;
+const closed=e=>!e.c.publicationState.ready&&Object.keys(e.c.reportPublicSpots).length===0&&Object.keys(e.c.reportSpotLayers).length===0&&e.c.contributorsData===null;
 test('hidden permission detection destructively removes live coordinates and names',()=>{const e=env();e.seed();e.doc.hidden=true;assert.equal(e.c.publicationAllowed(),false);assert.ok(closed(e));});
 test('exact5000ms expiry detection destructively removes live coordinates and names',()=>{const e=env();e.seed();e.advance(5000);assert.equal(e.c.publicationAllowed(),false);assert.ok(closed(e));});
 test('valid4999ms permission stays public and the lease cap is unchanged',()=>{const e=env();e.seed();e.advance(4999);assert.equal(e.c.publicationAllowed(),true);assert.equal(e.c.PUBLICATION_MAX_AGE,5000);assert.equal(e.c.PUBLICATION_POLL_MS,5000);assert.equal(e.c.PUBLICATION_RENEW_MARGIN_MS,1000);/* renewal starts 1s before the unchanged 5s cap (was 250ms; expired on ordinary slow responses) */assert.equal(Object.keys(e.c.reportPublicSpots).length,1);});
