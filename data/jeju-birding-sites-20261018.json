@@ -1,0 +1,393 @@
+{
+  "reviewedAt": "2026-10-18",
+  "baselineCommit": "f0341645596df8f093c72be0ae1cb666a6699ddc",
+  "oldSiteCount": 200,
+  "newSiteCount": 202,
+  "imageInterpretation": "보라색 점은 관찰 기록 밀도이며 종수·개체수·탐조 적합성의 직접 근거가 아니다. 관찰 기간·필터·노력량·동정과 중복 여부 미상. 이미지만으로 좌표·종을 추출하지 않음.",
+  "coordinatePolicy": "공식 공개 포구 및 주차장 관광안내소의 접근 좌표만 사용. 조류 휴식·둥지·실시간 출현 좌표 추가 없음. 원본 수치 보정 없음.",
+  "existingJejuSites": [
+    {
+      "id": "57",
+      "name": "제주 하도리 성산포",
+      "lat": 33.51,
+      "lon": 126.9
+    },
+    {
+      "id": "58",
+      "name": "제주 용수저수지",
+      "lat": 33.325,
+      "lon": 126.18
+    },
+    {
+      "id": "59",
+      "name": "동백동산 선흘곶자왈",
+      "lat": 33.515,
+      "lon": 126.715
+    },
+    {
+      "id": "60",
+      "name": "한라산 선덕사",
+      "lat": 33.320802,
+      "lon": 126.59349
+    },
+    {
+      "id": "61",
+      "name": "마라도 가파도",
+      "lat": 33.125,
+      "lon": 126.275
+    },
+    {
+      "id": "62",
+      "name": "제주 남방",
+      "lat": 33,
+      "lon": 126.5
+    },
+    {
+      "id": "112",
+      "name": "알뜨르비행장",
+      "lat": 33.205271,
+      "lon": 126.276705
+    },
+    {
+      "id": "124",
+      "name": "추자도",
+      "lat": 33.95061944444445,
+      "lon": 126.30627222222222
+    },
+    {
+      "id": "125",
+      "name": "오조리철새도래지",
+      "lat": 33.46103333333333,
+      "lon": 126.92145277777779
+    },
+    {
+      "id": "150",
+      "name": "한라수목원",
+      "lat": 33.47005555555556,
+      "lon": 126.49140833333334
+    },
+    {
+      "id": "181",
+      "name": "제주 예래생태공원·논짓물 하천",
+      "lat": 33.243852778,
+      "lon": 126.391102778
+    }
+  ],
+  "workbookComparison": [
+    {
+      "file": "birdmap_latest_v21.xlsx.xlsx",
+      "sha256": "71a29371545c30f7aed00215a931693d45fec788b91a37215c14cd432593ca80",
+      "matches": {
+        "북촌포구": false,
+        "다려도": false,
+        "천지연": false
+      }
+    },
+    {
+      "file": "birdmap_latest_v24_MasterDB_조석연동_업데이트용.xlsx",
+      "sha256": "959861a0b391d0e55f44097a0f994d08cb17b8215b0228cbc8585c3e5e5da50c",
+      "matches": {
+        "북촌포구": false,
+        "다려도": false,
+        "천지연": false
+      }
+    }
+  ],
+  "duplicateDecisions": [
+    {
+      "candidate": "하도리·종달리·성산·광치기",
+      "existingIds": [
+        "57",
+        "125"
+      ],
+      "decision": "기존 하도리 성산포·오조리 관찰권 중첩. 신규 핀 없음."
+    },
+    {
+      "candidate": "용수저수지",
+      "existingIds": [
+        "58"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "동백동산·선흘곶자왈",
+      "existingIds": [
+        "59"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "선덕사",
+      "existingIds": [
+        "60"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "마라도·가파도",
+      "existingIds": [
+        "61"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "제주 남방 선상",
+      "existingIds": [
+        "62"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "알뜨르·대정 농경지",
+      "existingIds": [
+        "112"
+      ],
+      "decision": "기존 권역 중첩·농지 진입 추가 없음"
+    },
+    {
+      "candidate": "추자도",
+      "existingIds": [
+        "124"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "오조포구·오조리",
+      "existingIds": [
+        "125"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "한라수목원",
+      "existingIds": [
+        "150"
+      ],
+      "decision": "기등록"
+    },
+    {
+      "candidate": "예래·논짓물",
+      "existingIds": [
+        "181"
+      ],
+      "decision": "기등록"
+    }
+  ],
+  "deferredCandidates": [
+    {
+      "name": "용수포구·생이기정 바당길",
+      "reason": "공개 포구 좌표는 확보했으나 절부암 주변 공사·폐쇄 이후 연결 동선의 현재 안전성 재확인 미완료.",
+      "sources": [
+        "https://www.jejudatahub.net/data/view/data/730",
+        "https://www.visitjeju.net/kr/detail/view?contentsid=CONT_000000000500526",
+        "https://www.jejuolle.org/trail#/road/12"
+      ]
+    },
+    {
+      "name": "남생이못",
+      "reason": "공식 습지 조류 자료는 있으나 공개 접근점·주차·현행 관리 미검증.",
+      "sources": [
+        "https://clik.nanet.go.kr/clikr-collection/policyinfo/95/624/2022/CLIKC4815781149608071_attach_1.pdf"
+      ]
+    },
+    {
+      "name": "강정천·효돈천·서중천",
+      "reason": "원앙 월동 근거는 있으나 휴식지 보호와 공개 접근점·허용 주차·개방 동선의 동시 검증 미완료.",
+      "sources": [
+        "https://jeju.ekfem.or.kr/posts/92tL84",
+        "https://www.korea.kr/news/examPassView.do?newsId=148855549"
+      ]
+    },
+    {
+      "name": "김녕·함덕·신양해변·비자림·사려니·절물",
+      "reason": "공공 관광 접근과 장소별 조류·시기 근거를 모두 충족하는 신규 레코드로 검증하지 못하여 이번 추가에서 보류.",
+      "sources": []
+    }
+  ],
+  "operatingPolicy": "검토용 로컬 변경. push/merge/deploy 및 운영 D1·Worker 변경 금지. 자동 기상 파일은 보존하고 신규 자료 결측 시 추천 제외를 검사.",
+  "records": [
+    {
+      "site": {
+        "id": "206",
+        "name": "북촌포구·다려도 육상 조망",
+        "country": "대한민국",
+        "region": "제주 제주시 조천읍",
+        "sido": "제주",
+        "sigungu": "제주시",
+        "env": "해안·항구",
+        "birds": "원앙",
+        "searchText": "206 북촌포구·다려도 육상 조망 대한민국 제주 해안·항구 원앙 겨울 물새 도보탐조 북촌포구",
+        "seasons": [
+          "겨울"
+        ],
+        "rare": false,
+        "mijo": false,
+        "island": false,
+        "pelagic": false,
+        "publicTransitHigh": false,
+        "recommend5": false,
+        "overseas": false,
+        "lat": 33.550053,
+        "lon": 126.69415,
+        "markerVar": "marker_birdmap_site_206",
+        "habitatType": "해안·항구",
+        "birdingFeature": "겨울철새;물새;육상 원거리 관찰",
+        "mainBirdGroup": "오리류",
+        "bestSeason": "겨울 12~2월 · 과거 월동 기록",
+        "bestMonth": "겨울",
+        "siteGrade": "",
+        "oneLineIntro": "공개 육상 동선에서 겨울 물새 관찰 · 출현 보장 없음",
+        "weatherRuleKey": "winter_waterfowl",
+        "windyPriority": "wind;rain;wave",
+        "tideSensitive": "아니오",
+        "waveSensitive": "예",
+        "bestTime": "주간 · 현장 개방시간 준수",
+        "lensRecommend": "망원경·쌍안경",
+        "photoDistance": "원거리",
+        "carBirding": "주차 후 도보",
+        "walkingLevel": "포구의 공개 육상 공간 · 방파제 끝·테트라포드 진입 제외",
+        "parkingV23": "주변 허용 주차공간 이용 · 항만 작업·마을 통행 우선",
+        "restroomV23": "현장 확인",
+        "difficulty": "공개 동선 이용",
+        "dataConfidence": "공개 접근 자료·과거 월동 기록 교차 검증",
+        "lastReviewDate": "2026-10-18",
+        "dataSource": "https://m.visitjeju.net/kr/detail/view?contentsid=CNTS_000000000021207 | https://www.visitjeju.net/kr/detail/view?contentsid=CONT_000000000500121 | https://jeju.ekfem.or.kr/posts/92tL84 | https://kiss.kstudy.com/Detail/Ar?key=2011021 | https://m.visitjeju.net/kr/festival/view?contentsid=CNTS_300000000014761",
+        "aiSummary": "",
+        "aiTip": "",
+        "recommendedLensAuto": "망원경·쌍안경",
+        "recommendedLensReason": "원앙의 주간 휴식을 방해하지 않는 거리에서 관찰하세요.",
+        "environmentBirdingLabel": "해안탐조",
+        "seasonTags": "겨울",
+        "tideUse": "아니오",
+        "tideStationName": "",
+        "tideStationCode": "",
+        "showTide": false,
+        "showWave": true,
+        "localTipUse": true,
+        "localTipSiteKey": "",
+        "localDeparturePoint": "",
+        "localBirdingTip": "대표 접근점: 북촌포구.\n좌표는 공개 방문 출발점이며 조류의 휴식지·둥지·현재 출현을 뜻하지 않습니다.\n겨울 원앙은 과거 월동 기록이며 현재 출현과 개체수를 보장하지 않습니다.\n주변 허용 주차공간에서 내려 포구의 공개 육상 공간에서 망원경으로 관찰하세요. 북촌리 정류장에서는 도보 접근이 가능합니다.\n다려도 상륙과 보트 근접 관찰을 동선에 포함하지 않습니다. 항만 작업구역·통제선·방파제 끝·테트라포드에 진입하지 마세요.\n풍랑·월파·강풍과 현장 통제 시 접근을 중단하세요. 드론·재생음·먹이주기·새를 날리는 행동을 삼가세요.",
+        "ebirdHotspotUrl": "",
+        "naverMapUrl": "https://map.naver.com/v5/search/%EB%B6%81%EC%B4%8C%ED%8F%AC%EA%B5%AC",
+        "kakaoMapUrl": "https://map.kakao.com/link/map/%EB%B6%81%EC%B4%8C%ED%8F%AC%EA%B5%AC%C2%B7%EB%8B%A4%EB%A0%A4%EB%8F%84%20%EC%9C%A1%EC%83%81%20%EC%A1%B0%EB%A7%9D,33.550053,126.69415",
+        "windyUrl": "https://www.windy.com/33.550053/126.69415?33.550053,126.69415,10",
+        "ksaUrl": ""
+      },
+      "pointLabel": "북촌포구",
+      "coordinateSource": "https://m.visitjeju.net/kr/detail/view?contentsid=CNTS_000000000021207",
+      "coordinateEvidence": "관광공사 북촌포구 공개 관광점 33.550053 / 126.69415를 보정 없이 사용. 섬 좌표는 사용하지 않음.",
+      "habitatEvidence": "북촌 해안 앞바다 바위섬과 연안; 관찰자는 포구의 육상 공간에 머묾.",
+      "speciesSources": [
+        "https://www.visitjeju.net/kr/detail/view?contentsid=CONT_000000000500121",
+        "https://jeju.ekfem.or.kr/posts/92tL84",
+        "https://kiss.kstudy.com/Detail/Ar?key=2011021"
+      ],
+      "accessSources": [
+        "https://m.visitjeju.net/kr/detail/view?contentsid=CNTS_000000000021207",
+        "https://m.visitjeju.net/kr/festival/view?contentsid=CNTS_300000000014761"
+      ],
+      "evidenceDates": [
+        "2001 원저 논문: 1999~2001 조사",
+        "2019-09-02 전문가 글",
+        "2026-08 행사 교통안내"
+      ],
+      "limits": [
+        "공식 관광페이지의 과거 수백~수천 마리 수치는 현황으로 사용하지 않음.",
+        "행사 주차 안내는 상시 주차권·주차대수·무료 주차의 근거가 아님.",
+        "화장실 및 당일 개방은 현장 확인. 관광 안내를 상시 개방 허가로 해석하지 않음."
+      ],
+      "recommendationPolicy": "겨울 해안 축. showWave=true로 파고 결측 시 추천 제외. 섬 상륙이 아니므로 island=false/pelagic=false. 프로필의 겨울은 관찰 근거 시기이며 기존 엔진은 기상이 유효하면 여름·가을 일반 후보로도 허용한다."
+    },
+    {
+      "site": {
+        "id": "207",
+        "name": "천지연폭포·공식 산책로",
+        "country": "대한민국",
+        "region": "제주 서귀포시",
+        "sido": "제주",
+        "sigungu": "서귀포시",
+        "env": "하천·연못·난대림",
+        "birds": "원앙",
+        "searchText": "207 천지연폭포·공식 산책로 대한민국 제주 하천·연못·난대림 원앙 겨울 물새 도보탐조 천지연폭포 주차장 서귀포종합관광안내소",
+        "seasons": [
+          "겨울"
+        ],
+        "rare": false,
+        "mijo": false,
+        "island": false,
+        "pelagic": false,
+        "publicTransitHigh": true,
+        "recommend5": false,
+        "overseas": false,
+        "lat": 33.24452585,
+        "lon": 126.5596972,
+        "markerVar": "marker_birdmap_site_207",
+        "habitatType": "하천·연못·난대림",
+        "birdingFeature": "겨울철새;물새;육상 원거리 관찰",
+        "mainBirdGroup": "오리류",
+        "bestSeason": "겨울 중심 · 과거 월동 기록",
+        "bestMonth": "겨울",
+        "siteGrade": "",
+        "oneLineIntro": "공개 육상 동선에서 겨울 물새 관찰 · 출현 보장 없음",
+        "weatherRuleKey": "winter_waterfowl",
+        "windyPriority": "wind;rain",
+        "tideSensitive": "아니오",
+        "waveSensitive": "아니오",
+        "bestTime": "주간 · 현장 개방시간 준수",
+        "lensRecommend": "망원경·쌍안경",
+        "photoDistance": "원거리",
+        "carBirding": "주차 후 도보",
+        "walkingLevel": "주차장 → 매표소 → 공식 산책로 · 관람 약 30~60분",
+        "parkingV23": "공식 주차장 이용",
+        "restroomV23": "공식 화장실 이용",
+        "difficulty": "공개 동선 이용",
+        "dataConfidence": "공개 접근 자료·과거 월동 기록 교차 검증",
+        "lastReviewDate": "2026-10-18",
+        "dataSource": "https://www.data.go.kr/en/data/15013112/standard.do | https://eticket.seogwipo.go.kr/contents?bmcode=cheonjiyeon | https://www.korea.kr/news/examPassView.do?newsId=148855549 | https://jeju.ekfem.or.kr/posts/92tL84",
+        "aiSummary": "",
+        "aiTip": "",
+        "recommendedLensAuto": "망원경·쌍안경",
+        "recommendedLensReason": "원앙의 주간 휴식을 방해하지 않는 거리에서 관찰하세요.",
+        "environmentBirdingLabel": "하천탐조",
+        "seasonTags": "겨울",
+        "tideUse": "아니오",
+        "tideStationName": "",
+        "tideStationCode": "",
+        "showTide": false,
+        "showWave": false,
+        "localTipUse": true,
+        "localTipSiteKey": "",
+        "localDeparturePoint": "",
+        "localBirdingTip": "대표 접근점: 천지연폭포 주차장 서귀포종합관광안내소.\n좌표는 공개 방문 출발점이며 조류의 휴식지·둥지·현재 출현을 뜻하지 않습니다.\n겨울 원앙은 공개 문헌의 과거 월동 기록이며 현재 출현과 개체수를 보장하지 않습니다.\n공식 주차장 관광안내소에서 매표소를 거쳐 개방된 산책로에서만 관찰하세요. 운영 안내는 09:00~22:00, 입장 마감 21:20이며 방문 전 변경 여부를 확인하세요. 탐조는 주간에 하세요.\n유료 관람 구간입니다. 하천 바닥·수면·난대림 안쪽과 통제구역에 들어가지 마세요. 재난·공사·방역 시 현장 통제를 우선하세요.\n원앙 휴식 방해, 드론·재생음·플래시·먹이주기와 둥지 탐색을 삼가세요.",
+        "ebirdHotspotUrl": "",
+        "naverMapUrl": "https://map.naver.com/v5/search/%EC%B2%9C%EC%A7%80%EC%97%B0%ED%8F%AD%ED%8F%AC%20%EC%A3%BC%EC%B0%A8%EC%9E%A5%20%EC%84%9C%EA%B7%80%ED%8F%AC%EC%A2%85%ED%95%A9%EA%B4%80%EA%B4%91%EC%95%88%EB%82%B4%EC%86%8C",
+        "kakaoMapUrl": "https://map.kakao.com/link/map/%EC%B2%9C%EC%A7%80%EC%97%B0%ED%8F%AD%ED%8F%AC%C2%B7%EA%B3%B5%EC%8B%9D%20%EC%82%B0%EC%B1%85%EB%A1%9C,33.24452585,126.5596972",
+        "windyUrl": "https://www.windy.com/33.24452585/126.5596972?33.24452585,126.5596972,10",
+        "ksaUrl": ""
+      },
+      "pointLabel": "천지연폭포 주차장 서귀포종합관광안내소",
+      "coordinateSource": "https://www.data.go.kr/en/data/15013112/standard.do",
+      "coordinateEvidence": "전국관광안내소표준데이터 서귀포시청 제공 행: 천지연폭포 주차장 / 남성중로 2-13 / 33.24452585 / 126.5596972 / 기준일 2025-12-01.",
+      "habitatEvidence": "공식 운영 안내의 연못·하천과 난대성 식물 계곡. 방문지는 개방된 공식 산책로만 포함.",
+      "speciesSources": [
+        "https://www.korea.kr/news/examPassView.do?newsId=148855549",
+        "https://jeju.ekfem.or.kr/posts/92tL84"
+      ],
+      "accessSources": [
+        "https://www.data.go.kr/en/data/15013112/standard.do",
+        "https://eticket.seogwipo.go.kr/contents?bmcode=cheonjiyeon"
+      ],
+      "evidenceDates": [
+        "2018-11-15 정책브리핑",
+        "2019-09-02 전문가 글",
+        "2025-12-01 접근점 데이터"
+      ],
+      "limits": [
+        "원앙 외 대표종을 추정 추가하지 않음.",
+        "공식 안내 운영시간과 당일 임시 통제는 달라질 수 있음.",
+        "겨울(11~2월) 자동 추천에서 제외(2026-10-18 운영 정책 결정). 기존 겨울 분류에서 unclassified. 지도 검색·마커·상세 정보는 정상 표시."
+      ],
+      "recommendationPolicy": "기존 엔진을 보존. 겨울 자동추천 제외는 운영 정책이며, 서식지를 습지·호수로 바꾸거나 엔진 분류를 수정하지 않음. showTide=false/showWave=false. 프로필의 겨울은 관찰 근거 시기이며 기존 엔진은 기상이 유효하면 여름·가을 일반 후보로도 허용한다."
+    }
+  ]
+}

@@ -15,6 +15,7 @@ from unittest.mock import patch
 import validate_weather as today_validator
 import validate_weather_week as week_validator
 from update_weather import KST
+from site_data import load_runtime_sites
 
 ROOT = Path(__file__).resolve().parents[2]
 EVALUATION = datetime(2026, 10, 12, 16, 26, tzinfo=KST)
@@ -33,15 +34,27 @@ class ValidatorTimeContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.today = json.loads((ROOT / "weather_today.json").read_text(encoding="utf-8"))
         cls.week = json.loads((ROOT / "weather_week.json").read_text(encoding="utf-8"))
+        # Time-contract fixtures represent the saved batch. Registry completeness is tested separately.
+        cls.fixture_runtime = [s for s in load_runtime_sites() if str(s['id']) in cls.today['sites']]
 
-    def run_validator(self, document, weekly=False, now=EVALUATION):
+    def run_validator(self, document, weekly=False, now=EVALUATION, runtime=None):
         validator = week_validator if weekly else today_validator
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "synthetic.json"
             path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
-            with patch.object(FixedClock, "evaluation", now), patch.object(validator, "datetime", FixedClock):
+            with patch.object(FixedClock, "evaluation", now), patch.object(validator, "datetime", FixedClock), \
+                    patch.object(validator, "load_runtime_sites", return_value=self.fixture_runtime if runtime is None else runtime):
                 with contextlib.redirect_stdout(io.StringIO()):
                     return validator.validate(path)
+
+    def test_saved_batch_requires_regeneration_for_expanded_registry(self):
+        runtime=load_runtime_sites()
+        for document,weekly in [(self.document(),False),(copy.deepcopy(self.week),True)]:
+            missing={str(s['id']) for s in runtime}-set(document['sites'])
+            if missing:
+                self.assertEqual(missing,{'206','207'})
+                with self.assertRaisesRegex(AssertionError,'IDs mismatch'):
+                    self.run_validator(document,weekly=weekly,runtime=runtime)
 
     def document(self):
         # Align synthetic input and evaluation explicitly; do not edit the source fixture.

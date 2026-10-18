@@ -104,9 +104,9 @@ const revs = process.argv.slice(2).length ? process.argv.slice(2) : ['worktree']
 const out = {};
 function registrySignature(html){
   const c=vm.createContext({});vm.runInContext(html.match(/var siteData=([^\n]+);/)[0]+'\n'+html.match(/siteData=siteData\.concat\([\s\S]*?\);/)[0],c);
-  assert.ok([190,200].includes(c.siteData.length));assert.equal(new Set(c.siteData.map(s=>String(s.id))).size,c.siteData.length);
+  assert.ok([190,200,202].includes(c.siteData.length));assert.equal(new Set(c.siteData.map(s=>String(s.id))).size,c.siteData.length);
   const additions=c.siteData.filter(s=>!RUNTIME.some(old=>old.id===s.id));
-  assert.deepEqual(Array.from(additions,s=>String(s.id)),c.siteData.length===200?Array.from({length:10},(_,i)=>String(196+i)):[]);
+  assert.deepEqual(Array.from(additions,s=>String(s.id)),c.siteData.length>=200?Array.from({length:c.siteData.length-190},(_,i)=>String(196+i)):[]);
   c.siteData=c.siteData.filter(s=>RUNTIME.some(old=>old.id===s.id));
   assert.equal(c.siteData.length,190); // Original full records must remain exactly unchanged.
   return createHash('sha256').update(JSON.stringify(c.siteData)).digest('hex');
