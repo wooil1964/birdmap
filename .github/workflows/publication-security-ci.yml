@@ -90,6 +90,7 @@ jobs:
         run: |
           npm install --prefix .ci-toolchain --no-save --package-lock=false --no-audit --no-fund miniflare@5.20261006.1-alpha
           mkdir -p .ci-results/native-fence .ci-results/native-cas
+          node docs/central-sites-20261018/native-registry.mjs "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_fence.mjs . .ci-results/native-fence "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs . .ci-results/native-cas "$PWD/.ci-toolchain/node_modules"
           ISSUE28_OUTPUT=.ci-results/issue28-native node docs/issue28/native.mjs "$PWD/.ci-toolchain/node_modules"
