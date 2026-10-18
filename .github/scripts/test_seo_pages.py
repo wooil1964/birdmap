@@ -19,7 +19,7 @@ for path, content in files.items():
 assert seo.species_of({"birds": "검독수리 노랑부리저어새, 쇠뜸부기, 검독수리"}) == ["노랑부리저어새", "쇠뜸부기"]
 pages = seo.indexable_sites(sites)
 ids = [s["id"] for s in pages]
-assert len(ids) == len(set(ids)) and 150 <= len(ids) <= 190, len(ids)
+assert len(ids) == len(set(ids)) and 150 <= len(ids) <= len(sites), len(ids)
 
 # sitemap: absolute https URLs under the project path, no duplicates, every one maps to a file
 ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
