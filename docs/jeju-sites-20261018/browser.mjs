@@ -36,8 +36,8 @@ try{
   });
   const page=await context.newPage();page.on('pageerror',e=>errors.push({width,message:e.message}));
   await page.goto(origin+'/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>typeof markerRegistry!=='undefined'&&Object.keys(markerRegistry).length===202,{timeout:40000});
-  for(const [id,word] of [['206','북촌'],['207','천지연']]){
+  await page.waitForFunction(()=>typeof markerRegistry!=='undefined'&&Object.keys(markerRegistry).length===205,{timeout:40000});
+  for(const [id,word,spring,winter,bird] of [['206','북촌',false,true,'원앙'],['207','천지연',false,true,'원앙'],['208','한라생태숲',true,true,'곤줄박이'],['209','곶자왈도립공원',true,true,'동박새'],['210','비자림',true,false,'직박구리']]){
    const result=await page.evaluate(({id,word})=>{
     const site=siteData.find(s=>s.id===id),mk=window[site.markerVar];
     document.getElementById('searchBox').value=word;searchSite();
@@ -53,10 +53,10 @@ try{
    },{id,word});
    await page.waitForFunction(()=>document.querySelector('.leaflet-popup')?.textContent.includes('탐조 팁'));
    result.popup=await page.locator('.leaflet-popup').innerHTML();
-   assert.equal(result.count,202);assert.equal(result.unique,202);
+   assert.equal(result.count,205);assert.equal(result.unique,205);
    assert.deepEqual(result.marker,result.expected);assert.ok(result.search.includes(word));
-   assert.equal(result.springVisible,false);assert.equal(result.winterVisible,true);
-   assert.ok(result.profile.includes('제주'));assert.ok(result.profile.includes('원앙'));assert.ok(result.profile.includes('겨울'));
+   assert.equal(result.springVisible,spring,id);assert.equal(result.winterVisible,winter,id);
+   assert.ok(result.profile.includes('제주'));assert.ok(result.profile.includes(bird),id);
    assert.ok(result.popup.includes('현재 출현'));assert.ok(result.popup.includes('드론'));
    assert.ok(!result.popup.includes('출항지'));
    assert.ok(result.popup.includes(result.kakao));assert.ok(result.popup.includes(result.windy));

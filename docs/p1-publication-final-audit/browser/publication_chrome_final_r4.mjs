@@ -29,7 +29,7 @@ const origin='http://127.0.0.1:'+server.address().port;
    so both the first load and the reload wait for this same condition (max 40s, then fail). */
 async function pageReady(evaluate){
  const until=Date.now()+40000;
- while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===202").catch(()=>false))return true;await new Promise(r=>setTimeout(r,200));}
+ while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===205").catch(()=>false))return true;await new Promise(r=>setTimeout(r,200));}
  return false;
 }
 // Test-only knob to reproduce a slow CDN (delays allowed dependency GETs). Default 0.
@@ -151,7 +151,7 @@ try{
   try{
    page=await browser.page(width);const e=page.evaluate;
    await e(refresh);
-   await scenario(page,width,'normal-202-sites-leaflet',async e=>({pass:await e("!!L.version&&siteData.length===202&&!!map_7010a44f6ac2025090f0fe07508ed485.getContainer()")}));
+   await scenario(page,width,'normal-202-sites-leaflet',async e=>({pass:await e("!!L.version&&siteData.length===205&&!!map_7010a44f6ac2025090f0fe07508ed485.getContainer()")}));
    await scenario(page,width,'normal-approved-kakao-tmap-dom',async e=>{
     const s=await e(routeSnapshot);return {pass:s.exists&&s.kakao&&s.tmap,evidence:s};
    });
@@ -188,7 +188,7 @@ try{
    await scenario(page,width,'unknown-network-removes-all-dynamic-location',async e=>{
     await e(normal+refresh);
     await e("__mock.offline=true;loadApprovedReports()");
-    const pass=await e(noDynamic),statics=await e("siteData.length===202");return {pass:pass&&statics,evidence:{noDynamic:pass,staticSitesRetained:statics,components:await e(dynamicSnapshot)}};
+    const pass=await e(noDynamic),statics=await e("siteData.length===205");return {pass:pass&&statics,evidence:{noDynamic:pass,staticSitesRetained:statics,components:await e(dynamicSnapshot)}};
    });
    await scenario(page,width,'recovery-after-network-error',async e=>{
     await e(normal+refresh);return {pass:await e("!!reportSpotLayers['synthetic-approved']&&publicationAllowed()")};

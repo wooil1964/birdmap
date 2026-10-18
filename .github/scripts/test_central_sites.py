@@ -23,7 +23,7 @@ class CentralSitesTests(unittest.TestCase):
         self.assertEqual(current[:190], old)
         self.assertEqual(current[190:200], [r['site'] for r in SOURCE['records']])
         self.assertEqual([s['id'] for s in current[190:200]], [str(i) for i in range(196, 206)])
-        self.assertEqual(len(current), 202)
+        self.assertEqual(len(current), 205)
         self.assertTrue(all('삽교' not in s['name'] for s in current[190:]))
 
     def test_coordinate_links_and_weather_match_reviewed_source(self):
