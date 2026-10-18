@@ -136,3 +136,16 @@
 3. 실행: `append-registry.sql` 1회(조건 불일치 시 `REGISTRY_PRECONDITION_FAILED`로 원자적 중단). 사후 확인: 202행, 기존 200행 해시 동일, 206·207만 추가, `checklists` 등 다른 표 행수 불변.
 4. 복구(우선순위): ① 표적 롤백 `DELETE FROM sites WHERE site_id IN ('206','207')`. `checklists.site_id`가 `ON DELETE RESTRICT`라 두 ID를 참조한 제보가 있으면 실패한다(그 경우 제보 보존을 위해 ②보다 먼저 관리자와 협의). ② Time Travel restore는 bookmark 이후의 모든 쓰기(신규 제보·승인)와 `system_state`까지 되돌리므로 최후 수단이며, 실행 전 그 사이 쓰기를 따로 보존한다.
 5. 사전 검증 `native-registry.mjs`(native local D1, CI 포함): 실제 0001 스키마와 실제 200행 seed에서 실패 조건 7종 원자적 중단·기존 200행 바이트 동일·재실행 거부·표적 롤백 후 백업과 완전 동일·참조 제보가 있으면 RESTRICT로 롤백 차단까지 13/13 통과(CI 고정 miniflare 5.20261006.1-alpha와 wrangler 4.149.0 동봉판 모두).
+
+### 3단계 사전 확인 결과 (2026-10-18, 운영 D1 읽기 전용)
+
+읽기는 `reports-api/tools/d1-rest.mjs`의 `read()`(SELECT만 허용, `rows_written=0`·`changed_db=false` 강제)와 `wrangler d1 time-travel info`만 사용했다. 쓰기 0건.
+
+- **현재 상태:** `sites` 200행(registry_revision 190행 + 중부권 10행), `system_state` NORMAL·generation 4, 206·207 없음, 206·207을 가리키는 `checklists`·`reports` 0건. 다른 표 행수: `reports`·`checklists`·`raw_submissions`·`sightings` 각 93, `reviews` 134, `audit_log` 134, `field_updates` 20, `field_update_events` 36, `field_update_confirmations` 5.
+- **registry와 런타임 차이(기존 문제, 이번 작업과 무관):** D1의 14 걸매리(`kakaoMapUrl`·`naverMapUrl`)와 107 매향리(`localBirdingTip`)의 `source_record_json`이 현재 런타임 문구보다 이전 값이다. 이름·좌표는 같다. append SQL은 실행 직전 D1에서 읽은 스냅샷을 그대로 ?2로 넘기므로 영향 없음. 이번 작업에서 두 행을 고치지 않는다.
+- **Time Travel:** 보존 기간 30일(API 응답: "within the last 30 days"). 8일 전(2026-10-10) 시점 bookmark가 조회되어 Free(7일)가 아닌 Paid 보존 기간이 적용됨을 확인. 복구점 확보는 실행 직전 `d1 time-travel info birdmap-reports --json`의 bookmark를 기록하는 것(조회만으로 생성되며 쓰기 없음).
+- **독립 백업:** 가능. ① 표별 전체 행 SELECT 사본(읽기, 차단 없음). ② `d1 export --remote`(Cloudflare가 서버에서 SQL을 만들어 서명 URL로 내려받음). Cloudflare 문서상 **실행 중 다른 DB 요청이 차단**되므로(현재 DB는 수백 행이라 짧음) 저사용 시간대에 실행한다. 가상 테이블 없음.
+- **Windows 로컬 export 오류의 구분:** `d1 export --local`은 로컬 Miniflare가 `.wrangler/state`를 열어 `PRAGMA miniflare_d1_export`를 실행하고, `--remote`는 Cloudflare API가 덤프를 만든다. 같은 PRAGMA를 직접 Miniflare(메모리·이 한글 경로의 영속 저장소 모두)로 실행하면 정상이었고, 이 PC에서는 `wrangler d1 execute --local`(기본 상태 경로)도 같은 `internal error`가 났다. 따라서 이 PC의 wrangler 로컬 상태 처리 문제이며 원격 export 경로와는 무관하다. 원격 export 자체는 운영 DB를 잠시 차단하므로 이번 단계에서 실행하지 않았다.
+- **덤프 복원 리허설:** 운영과 같은 표 구조(sites·raw_submissions·checklists·system_state)와 실제 200행으로 같은 PRAGMA 덤프 → 새 D1에 `PRAGMA defer_foreign_keys = true` 후 실행 → 4개 표 완전 동일(한글·작은따옴표·외래키 포함).
+- **롤백 시 제보·현장소식 보존:** `sites`를 외래키로 참조하는 표는 `checklists`뿐(`ON DELETE RESTRICT`). `reports.site_id`는 외래키가 아니고, `field_update*`에는 `site_id`가 없다. 표적 롤백(206·207 두 행 DELETE)은 다른 표를 건드리지 않아 출현종 제보·현장소식이 그대로 남는다. 206·207을 참조하는 checklist가 생긴 뒤에는 RESTRICT로 삭제가 거부되므로, 그때는 두 행을 그대로 두는 것이 기본이다(지도에서만 숨기는 것은 Pages 되돌림으로 충분). Time Travel restore는 bookmark 이후의 제보·승인·현장소식·감사기록까지 되돌리므로 쓰지 않는 것이 원칙이며, 불가피하면 먼저 bookmark 이후 생성·변경된 행을 표별로 SELECT해 보관한 뒤 복원하고 재삽입한다.
+- **추가 SQL 안전성:** 단일 문장(CTE+INSERT), UPDATE·DELETE·스키마 변경 없음. 실행 직전 읽은 generation(현재 4)과 200행 전체 스냅샷(9개 열 모두)이 그대로이고 NORMAL 상태일 때만 정확히 206·207 두 행을 넣는다. 그 외에는 `json('REGISTRY_PRECONDITION_FAILED')` 오류로 문장 전체가 중단된다. native local D1 13/13, SQLite 시험 통과. 실행 경로는 `d1-rest.mjs`의 `write()`(매개변수 바인딩, `PHASE2E_PRODUCTION_WRITE_APPROVED=<운영 DB id>` 없이는 거부).
