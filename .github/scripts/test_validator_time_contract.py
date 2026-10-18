@@ -82,7 +82,7 @@ class ValidatorTimeContractTests(unittest.TestCase):
 
     def test_future_forecast_is_not_future_publication(self):
         document = self.document()
-        self.assertEqual(self.run_validator(document)["scoreEligibleCount"], 190)
+        self.assertEqual(self.run_validator(document)["scoreEligibleCount"], len(self.today["sites"]))
         week = copy.deepcopy(self.week)
         week["generatedAt"] = "2026-10-12 16:26 KST"
         self.assertGreater(self.run_validator(week, weekly=True)["sampleCount"], 0)
@@ -115,7 +115,7 @@ class ValidatorTimeContractTests(unittest.TestCase):
                 item.update(date=document["date"], generatedAt=document["generatedAt"],
                             forecastTime=now.strftime("%Y-%m-%d 03:00 KST"))
             with self.subTest(now=now):
-                self.assertEqual(self.run_validator(document, now=now)["scoreEligibleCount"], 190)
+                self.assertEqual(self.run_validator(document, now=now)["scoreEligibleCount"], len(self.today["sites"]))
 
     def test_today_rejects_invalid_calendar_and_non_string(self):
         for value in ["2026-02-29 12:00 KST", "2026-10-12 16:26 KST extra", None,
@@ -136,9 +136,9 @@ class ValidatorTimeContractTests(unittest.TestCase):
         for item in document["sites"].values():
             item.update(scoreEligible=False, score=None, stale=True, fallbackSource="previous_saved",
                         generatedAt=None, forecastTime=None, wind=None, rain=None, missingScoreFields=["wind"])
-        document.update(scoreEligibleCount=0, staleCount=190)
+        document.update(scoreEligibleCount=0, staleCount=len(self.today["sites"]))
         result = self.run_validator(document)
-        self.assertEqual(result["siteCount"], 190)
+        self.assertEqual(result["siteCount"], len(self.today["sites"]))
         self.assertEqual(result["scoreEligibleCount"], 0)
         self.assertTrue(all(item["fallbackSource"] == "previous_saved" for item in result["sites"].values()))
 
