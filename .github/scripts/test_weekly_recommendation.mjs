@@ -557,7 +557,7 @@ test('실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 �
   const safeSamples=ships.flatMap(s=>window.dates.flatMap(d=>api.weeklyDaylightCandidates(s,d).filter(api.weeklyPelagicSafety)));
   const safeSites=ships.filter(s=>api.weeklyBestWeatherDay(s,window,api.weeklyPelagicSafety));
   const top=api.todayRecommendedSites();
-  assert.equal(RUNTIME.length,200);assert.equal(top.length,10);
+  assert.equal(RUNTIME.length,208);assert.equal(top.length,10);
   assert.equal(new Set(top.map(e=>String(e.site.id))).size,top.length);
   assert.ok(top.filter(e=>e.axes.pelagic).length<=1);
   for(const e of top) {
@@ -766,6 +766,43 @@ function winterFixture(extra={}){
  return {month:12,now:'2026-12-10T08:00:00+09:00',siteData:sites,weatherWeek:doc,...extra};
 }
 
+test('제주 신규 접근점: 기상 결측은 사계절 추천에서 제외',()=>{
+ const sites=RUNTIME.filter(s=>['206','207'].includes(s.id));assert.equal(sites.length,2);
+ for(const month of [1,4,7,10]){
+  const api=loadApi({month,now:'2026-'+String(month).padStart(2,'0')+'-10T08:00:00+09:00',siteData:sites,weatherToday:{sites:{}},weatherWeek:{sites:{}}});
+  assert.equal(api.todayRecommendedSites().length,0,'month '+month);
+ }
+});
+
+test('제주 신규 겨울 분류: 북촌 육상 해안만 선정하고 천지연은 겨울 자동추천 제외(정책)',()=>{
+ const sites=RUNTIME.filter(s=>['206','207'].includes(s.id)),api=loadApi(winterFixture({siteData:sites}));
+ assert.equal(api.winterBirdingAxes(sites[0]).coast,true);
+ assert.equal(api.winterBirdingAxes(sites[0]).excludedReason,'');
+ assert.equal(api.winterBirdingAxes(sites[1]).excludedReason,'unclassified');
+ assert.deepEqual(api.todayRecommendedSites().map(e=>e.site.id),['206']);
+});
+
+test('북촌 신규 해안: 파고 필수 조건을 결측·고파고가 우회하지 못한다',()=>{
+ const site=RUNTIME.find(s=>s.id==='206'),state=winterFixture({siteData:[site]});
+ assert.equal(loadApi(state).todayRecommendedSites().length,1);
+ for(const bad of [null,3]){
+  const copy=JSON.parse(JSON.stringify(state));
+  Object.values(copy.weatherWeek.sites['206'].days).forEach(d=>d.samples.forEach(s=>{s.waveM=bad;}));
+  assert.equal(loadApi(copy).todayRecommendedSites().length,0,'wave '+bad);
+ }
+});
+
+test('종달리 211 해안: 겨울 해안 축으로 선정되고 파고 결측·고파고는 제외',()=>{
+ const site=RUNTIME.find(s=>s.id==='211'),state=winterFixture({siteData:[site]}),api=loadApi(state);
+ assert.equal(api.winterBirdingAxes(site).coast,true);assert.equal(api.winterBirdingAxes(site).excludedReason,'');
+ assert.deepEqual(api.todayRecommendedSites().map(e=>e.site.id),['211']);
+ for(const bad of [null,3]){
+  const copy=JSON.parse(JSON.stringify(state));
+  Object.values(copy.weatherWeek.sites['211'].days).forEach(d=>d.samples.forEach(s=>{s.waveM=bad;}));
+  assert.equal(loadApi(copy).todayRecommendedSites().length,0,'wave '+bad);
+ }
+});
+
 test('겨울 추천 달 경계와 전역 가을/이동기 정의 독립',()=>{
  for(const [date,winter] of [['2026-10-31',false],['2026-11-01',true],['2026-12-31',true],['2027-01-01',true],['2027-02-28',true],['2028-02-29',true],['2027-03-01',false]]){
   const month=Number(date.slice(5,7)),api=loadApi({month,now:date+'T12:00:00+09:00'});
@@ -892,7 +929,7 @@ test('겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)
  const api=loadApi(),rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,island:s.island,runtimePelagic:s.pelagic,...api.winterBirdingAxes(s)}));
  const counts=Object.fromEntries(['field','water','coast','pelagic'].map(axis=>[axis,rows.filter(e=>e[axis]).length]));
  const excluded=Object.fromEntries(['explicit','dokdo','island','forest','marine','unclassified'].map(reason=>[reason,rows.filter(e=>e.excludedReason===reason).length]));
- assert.equal(rows.length,200);assert.equal(counts.pelagic,5);assert.equal(excluded.explicit,3);
+ assert.equal(rows.length,208);assert.equal(counts.pelagic,5);assert.equal(excluded.explicit,3);
  if(process.env.WINTER_REPORT==='1')console.log(JSON.stringify({counts,excluded,
   core:rows.filter(e=>['39','15','10','7','20'].includes(e.id)),
   ships:rows.filter(e=>RUNTIME.find(s=>s.id===e.id).pelagic),
@@ -1057,13 +1094,21 @@ test('봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가
  const api=loadApi(),coreNames=['어청도','외연도','백령도','흑산도','홍도','가거도'];
  const rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,runtimeIsland:s.island,runtimePelagic:s.pelagic,seasons:s.seasons,birdingFeature:s.birdingFeature,...api.springBirdingAxes(s)}));
  const counts=Object.fromEntries(['island','mudflat','pelagic','other'].map(axis=>[axis,rows.filter(e=>e[axis]).length]));
- counts.unique=rows.filter(e=>!e.excludedReason).length;assert.equal(counts.pelagic,8);assert.equal(rows.length,200);
+ counts.unique=rows.filter(e=>!e.excludedReason).length;assert.equal(counts.pelagic,8);assert.equal(rows.length,208);
  if(process.env.SPRING_REPORT==='1')console.log(JSON.stringify({counts,core:rows.filter(e=>coreNames.includes(e.name)),excluded:rows.filter(e=>e.excludedReason),
   fixtureTop:loadApi(springFixture()).todayRecommendedSites().map(e=>({id:e.site.id,name:e.site.name,axis:e.selectedAxis,score:e.score,time:e.recommendationTime}))},null,2));
 });
 
 // 여름도 실제 index.html 함수를 호출하며, 시계/예보만 합성한다.
 function summerFixture(date='2027-06-10',extra={}){return springFixture(date,extra);}
+
+test('제주 신규 계절 적격성: 겨울 기록과 기존 엔진의 여름·가을 허용을 구분',()=>{
+ const sites=RUNTIME.filter(s=>['206','207'].includes(s.id));
+ for(const [date,want] of [['2027-01-10',['206']],['2027-04-10',[]],['2027-07-10',['206','207']],['2027-10-10',['206','207']]]){
+  const api=loadApi(springFixture(date,{siteData:sites}));
+  assert.deepEqual(api.todayRecommendedSites().map(e=>e.site.id).sort(),want,date+' synthetic weather');
+ }
+});
 
 test('여름 6/1~8/31 월 경계',()=>{
  for(const [date,want] of [['2027-05-31',false],['2027-06-01',true],['2027-06-30',true],['2027-07-01',true],['2027-07-31',true],['2027-08-01',true],['2027-08-31',true],['2027-09-01',false]])
@@ -1156,7 +1201,7 @@ test('여름 실제 환경 전수 보고',()=>{
  const excludes=Object.fromEntries(['field','island','pelagic','unclassified'].map(a=>[a,rows.filter(r=>r.axes.excludedReason===a).length]));
  const rawField=RUNTIME.filter(s=>s.env.split(/[·,;\/|\s]+/).some(t=>['농경지','간척지','목초지','초지'].includes(t)));
  const rawIsland=RUNTIME.filter(s=>s.island===true||s.env.split(/[·,;\/|\s]+/).some(t=>['도서','섬','해양도서'].includes(t)));
- assert.equal(rows.length,200);assert.equal(counts.pelagic,1);assert.equal(counts.tomb,1);
+ assert.equal(rows.length,208);assert.equal(counts.pelagic,1);assert.equal(counts.tomb,1);
  if(process.env.SUMMER_REPORT)console.log(JSON.stringify({counts,excludes,uniqueJune:rows.filter(r=>!r.axes.excludedReason).length,uniqueJuly:RUNTIME.filter(s=>!api.summerBirdingAxes(s,7).excludedReason).length,rawField:rawField.length,rawIsland:rawIsland.length,islandTrue:RUNTIME.filter(s=>s.island===true).length,fieldIslandOverlap:rawField.filter(s=>rawIsland.includes(s)).length,compoundFields:rawField.filter(s=>s.env.split(/[·,;\/|\s]+/).length>1).map(s=>({id:s.id,name:s.name,env:s.env})),unclassified:rows.filter(r=>r.axes.excludedReason==='unclassified'),other:rows.filter(r=>r.axes.other)},null,2));
 });
 
