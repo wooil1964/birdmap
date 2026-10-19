@@ -101,11 +101,15 @@ class JejuSitesTests(unittest.TestCase):
         for book in SOURCE['workbookComparison']:
             self.assertEqual(hashlib.sha256((ROOT/'data'/book['file']).read_bytes()).hexdigest(),book['sha256'])
             self.assertFalse(any(book['matches'].values()))
-        for file in ['weather_today.json','weather_week.json','tide_today.json','tide_month.json',
-                     'tide_station_mapping.json','weather_rules.json','notices.json',
+        # Actions and editorial posts rewrite these on main, so on a PR merge commit compare with its main parent;
+        # either way the Jeju change itself must not touch them.
+        merge=len(subprocess.check_output(['git','rev-list','--parents','-n','1','HEAD'],cwd=ROOT).split())>2
+        for file in ['weather_today.json','weather_week.json','tide_today.json','tide_month.json','notices.json',
+                     'tide_station_mapping.json','weather_rules.json',
                      'reports-api/src/site-picker.js','reports-api/tools/sites-seed.mjs']:
+            ref='HEAD^1' if merge and file.endswith(('today.json','week.json','month.json','notices.json')) else SOURCE['baselineCommit']
             self.assertEqual((ROOT/file).read_bytes().replace(b'\r\n',b'\n'),
-              subprocess.check_output(['git','show',SOURCE['baselineCommit']+':'+file],cwd=ROOT).replace(b'\r\n',b'\n'),file)
+              subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT).replace(b'\r\n',b'\n'),file)
         # Everything outside the single literal concat block stays byte-equivalent after newline normalization.
         current=(ROOT/'index.html').read_text(encoding='utf-8')
         old=subprocess.check_output(['git','show',SOURCE['baselineCommit']+':index.html'],cwd=ROOT).decode('utf-8')
