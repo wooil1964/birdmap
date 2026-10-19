@@ -93,6 +93,7 @@ jobs:
           mkdir -p .ci-results/native-fence .ci-results/native-cas
           node docs/central-sites-20261018/native-registry.mjs "$PWD/.ci-toolchain/node_modules"
           node docs/jeju-sites-20261018/native-registry.mjs "$PWD/.ci-toolchain/node_modules"
+          node docs/jeju-sites-20261018/ops-local.mjs "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_fence.mjs . .ci-results/native-fence "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs . .ci-results/native-cas "$PWD/.ci-toolchain/node_modules"
           ISSUE28_OUTPUT=.ci-results/issue28-native node docs/issue28/native.mjs "$PWD/.ci-toolchain/node_modules"
