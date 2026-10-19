@@ -1,3 +1,4 @@
+import {execFileSync} from 'node:child_process';
 // Native local D1 (Miniflare) check of append-registry.sql and rollback-registry.sql on the production table shapes.
 // Usage: node docs/jeju-sites-20261018/native-registry.mjs <node_modules dir containing miniflare>
 import {createRequire} from 'node:module';import path from 'node:path';
@@ -10,7 +11,7 @@ const sql=fs.readFileSync('docs/jeju-sites-20261018/append-registry.sql','utf8')
 const undo=fs.readFileSync('docs/jeju-sites-20261018/rollback-registry.sql','utf8');
 const core=fs.readFileSync('docs/long-term-db-phase2e/migrations-main/0001_core.sql','utf8');
 const table=name=>core.match(new RegExp('CREATE TABLE '+name+' \\([\\s\\S]*?\\n\\);'))[0];
-const plan=await prepareSiteSeed(fs.readFileSync('index.html','utf8'),{capturedAt:'2026-10-18T00:00:00+09:00',expectedCount:208});
+const plan=await prepareSiteSeed(execFileSync('git',['show','d7214f280be43c2c90657eaf87ee2284df7ca0a9:index.html'],{encoding:'utf8',maxBuffer:20*1024*1024}),{capturedAt:'2026-10-18T00:00:00+09:00',expectedCount:208});
 const NEW=['206','207','208','209','210','211','212','213'];
 const old=plan.sites.filter(s=>!NEW.includes(s.site_id)),added=plan.sites.filter(s=>NEW.includes(s.site_id));
 assert.equal(old.length,200);assert.equal(added.length,8);

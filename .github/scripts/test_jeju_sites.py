@@ -27,15 +27,15 @@ class JejuSitesTests(unittest.TestCase):
         sites=load_runtime_sites()
         self.assertEqual(len(old),200)
         self.assertEqual(sites[:200],old)  # Full records, not selected fields.
-        self.assertEqual(sites[200:],[r['site'] for r in SOURCE['records']])
-        self.assertEqual([s['id'] for s in sites[200:]],NEW_IDS)
-        self.assertEqual(len(sites),208)
+        self.assertEqual(sites[200:208],[r['site'] for r in SOURCE['records']])
+        self.assertEqual([s['id'] for s in sites[200:208]],NEW_IDS)
+        self.assertEqual(len(sites),229)
         self.assertEqual(len([s for s in sites if s['sido']=='제주']),19)
-        for s in sites[200:]:self.assertEqual(set(s),set(old[-1]))
+        for s in sites[200:208]:self.assertEqual(set(s),set(old[-1]))
 
     def test_public_access_coordinates_worker_and_all_map_links(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())
-        self.assertEqual(report['commonIdCount'],208)
+        self.assertEqual(report['commonIdCount'],229)
         self.assertFalse(any(v for v in report.values() if isinstance(v,list)),report)
         expected=[(33.550053,126.69415),(33.24452585,126.5596972),(33.430924,126.595761),(33.282955,126.27152),(33.491318,126.811386),(33.511246,126.898868),(33.473698,126.686472),(33.48976,126.792654)]
         self.assertEqual(len(SOURCE['records']),len(expected))
@@ -125,7 +125,8 @@ class JejuSitesTests(unittest.TestCase):
         for file in ['weather_today.json','weather_week.json','tide_today.json','tide_month.json','notices.json',
                      'tide_station_mapping.json','weather_rules.json',
                      'reports-api/src/site-picker.js','reports-api/tools/sites-seed.mjs']:
-            ref='HEAD^1' if merge and file.endswith(('today.json','week.json','month.json','notices.json')) else SOURCE['baselineCommit']
+            automatic=file.endswith(('today.json','week.json','month.json','notices.json'))
+            ref=('HEAD^1' if merge else 'd7214f280be43c2c90657eaf87ee2284df7ca0a9') if automatic else SOURCE['baselineCommit']
             self.assertEqual((ROOT/file).read_bytes().replace(b'\r\n',b'\n'),
               subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT).replace(b'\r\n',b'\n'),file)
         # Everything outside the single literal concat block stays byte-equivalent after newline normalization.
@@ -134,6 +135,7 @@ class JejuSitesTests(unittest.TestCase):
         def strip(t):
             t=t.replace('중부권 탐조지 10곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">200','id="mapTitleSiteCount">208')
             t=t.replace('엑셀 위도·경도 좌표 그대로 반영','탐조지 이름 또는 지역 검색')
+            t=t.replace('수도권 21곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">229','id="mapTitleSiteCount">208').replace('최종 업데이트: 2026.10.19','최종 업데이트: 2026.10.18')
             return re.sub(r'siteData=siteData\.concat\([\s\S]*?\);','SITE_ARRAY',t.replace('\r\n','\n'),count=1)
         self.assertEqual(strip(current),strip(old))
 
