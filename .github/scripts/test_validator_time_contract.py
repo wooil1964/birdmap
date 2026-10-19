@@ -52,7 +52,7 @@ class ValidatorTimeContractTests(unittest.TestCase):
         for document,weekly in [(self.document(),False),(copy.deepcopy(self.week),True)]:
             missing={str(s['id']) for s in runtime}-set(document['sites'])
             if missing:
-                self.assertEqual(missing,{'206','207','208','209','210','211'})
+                self.assertEqual(missing,{'206','207','208','209','210','211','212','213'})
                 with self.assertRaisesRegex(AssertionError,'IDs mismatch'):
                     self.run_validator(document,weekly=weekly,runtime=runtime)
 

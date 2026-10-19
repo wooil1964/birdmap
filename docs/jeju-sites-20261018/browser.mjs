@@ -36,8 +36,8 @@ try{
   });
   const page=await context.newPage();page.on('pageerror',e=>errors.push({width,message:e.message}));
   await page.goto(origin+'/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>typeof markerRegistry!=='undefined'&&Object.keys(markerRegistry).length===206,{timeout:40000});
-  for(const [id,word,spring,winter,bird] of [['206','북촌',false,true,'원앙'],['207','천지연',false,true,'원앙'],['208','한라생태숲',true,true,'곤줄박이'],['209','곶자왈도립공원',true,true,'동박새'],['210','비자림',true,false,'직박구리'],['211','종달리',true,true,'괭이갈매기']]){
+  await page.waitForFunction(()=>typeof markerRegistry!=='undefined'&&Object.keys(markerRegistry).length===208,{timeout:40000});
+  for(const [id,word,spring,winter,bird] of [['206','북촌',false,true,'원앙'],['207','천지연',false,true,'원앙'],['208','한라생태숲',true,true,'곤줄박이'],['209','곶자왈도립공원',true,true,'동박새'],['210','비자림',true,false,'직박구리'],['211','종달리',true,true,'괭이갈매기'],['212','종남마을',false,true,'검은멧새'],['213','송당곶자왈',false,true,'검은멧새']]){
    const result=await page.evaluate(({id,word})=>{
     const site=siteData.find(s=>s.id===id),mk=window[site.markerVar];
     document.getElementById('searchBox').value=word;searchSite();
@@ -53,7 +53,7 @@ try{
    },{id,word});
    await page.waitForFunction(()=>document.querySelector('.leaflet-popup')?.textContent.includes('탐조 팁'));
    result.popup=await page.locator('.leaflet-popup').innerHTML();
-   assert.equal(result.count,206);assert.equal(result.unique,206);
+   assert.equal(result.count,208);assert.equal(result.unique,208);
    assert.deepEqual(result.marker,result.expected);assert.ok(result.search.includes(word));
    assert.equal(result.springVisible,spring,id);assert.equal(result.winterVisible,winter,id);
    assert.ok(result.profile.includes('제주'));assert.ok(result.profile.includes(bird),id);

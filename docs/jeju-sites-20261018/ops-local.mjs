@@ -17,8 +17,8 @@ try{
     "CREATE TABLE system_state (id INTEGER PRIMARY KEY, mode TEXT NOT NULL, generation INTEGER NOT NULL, reason TEXT, updated_at TEXT NOT NULL)",
     "INSERT INTO system_state VALUES (1,'NORMAL',4,'x','2026-10-13T00:00:00Z')",
     "CREATE TABLE reports (id TEXT PRIMARY KEY, site_id TEXT, species TEXT)","INSERT INTO reports VALUES ('keep','59','동박새')"])await db.prepare(s).run();
-  const seed=await prepareSiteSeed(fs.readFileSync('index.html','utf8'),{capturedAt:'2026-10-01T00:00:00Z',expectedCount:206});
-  const old=seed.sites.filter(s=>!['206','207','208','209','210','211'].includes(s.site_id)),ks=Object.keys(old[0]);
+  const seed=await prepareSiteSeed(fs.readFileSync('index.html','utf8'),{capturedAt:'2026-10-01T00:00:00Z',expectedCount:208});
+  const old=seed.sites.filter(s=>!['206','207','208','209','210','211','212','213'].includes(s.site_id)),ks=Object.keys(old[0]);
   await db.batch(old.map(s=>db.prepare(`INSERT INTO sites (${ks}) VALUES (${ks.map(()=>'?')})`).bind(...ks.map(k=>s[k]))));
   // Route d1-rest's REST calls into the local D1, reporting rows_written/changed_db like the real API.
   globalThis.fetch=async(url,init)=>{
@@ -37,8 +37,8 @@ try{
   const reports=async()=>JSON.stringify((await db.prepare('SELECT * FROM reports').all()).results);
   const rep0=await reports();
   assert.equal(await ops('plan'),0);assert.equal(await count(),200);
-  assert.equal(await ops('apply'),0);assert.equal(await count(),206);
-  await assert.rejects(()=>ops('apply'),/already present/);assert.equal(await count(),206);
+  assert.equal(await ops('apply'),0);assert.equal(await count(),208);
+  await assert.rejects(()=>ops('apply'),/already present/);assert.equal(await count(),208);
   assert.equal(await ops('rollback'),0);assert.equal(await count(),200);assert.equal(await reports(),rep0);
-  console.log(JSON.stringify({engine:'registry-ops.mjs on local Miniflare D1',plan:'ok',apply:'206',reapply:'refused',rollback:'200, reports unchanged'}));
+  console.log(JSON.stringify({engine:'registry-ops.mjs on local Miniflare D1',plan:'ok',apply:'208',reapply:'refused',rollback:'200, reports unchanged'}));
 }finally{await mf.dispose();fs.rmSync(tmp,{recursive:true,force:true});}
