@@ -358,11 +358,19 @@ test('주간 창은 오늘부터 7일이며 과거 날짜를 포함하지 않는
 
 test('실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다', () => {
   const week = JSON.parse(readFileSync(join(ROOT, 'weather_week.json'), 'utf8'));
-  const api = loadApi({ weatherWeek: week });
+  // Evaluate the saved batch at its publication time; passage of time is tested separately.
+  const api = loadApi({ weatherWeek: week, now: week.generatedAt.replace(' ', 'T').replace(' KST', '+09:00') });
   const siteData = JSON.parse(HTML.slice(HTML.indexOf('var siteData=') + 'var siteData='.length).match(/^\[[\s\S]*?\}\]/)[0]);
   const site = siteData.find((s) => String(s.id) === '19');
   assert.ok(site, 'siteData에 유부도가 있어야 한다');
   const dates = Object.keys(week.sites['19'].days);
+  // A valid outage document deliberately has no forecast samples. It must not create a recommendation.
+  if (dates.length === 0) {
+    assert.equal(week.sites['19'].dataUnavailable, true, '빈 예보는 결측으로 명시되어야 한다');
+    assert.deepEqual(api.weeklyDaylightCandidates(site, week.startDate), []);
+    assert.equal(api.weeklyBestWeatherDay(site, { dates }), null);
+    return;
+  }
   let daylightTotal = 0;
   dates.forEach((date) => {
     const candidates = api.weeklyDaylightCandidates(site, date);
