@@ -11,6 +11,9 @@ const table=n=>core.match(new RegExp('CREATE TABLE '+n+' \\([\\s\\S]*?\\n\\);'))
 const LOCAL_DB='00000000-0000-0000-0000-00000000jeju';
 const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {}',d1Databases:{DB:'ops-local'},d1Persist:false}));
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'jeju-ops-'));
+// d1-rest reads the Wrangler login from %APPDATA%; give it a dummy token so no real credential is read (and Linux CI works).
+process.env.APPDATA=tmp;fs.mkdirSync(path.join(tmp,'xdg.config/.wrangler/config'),{recursive:true});
+fs.writeFileSync(path.join(tmp,'xdg.config/.wrangler/config/default.toml'),'oauth_token = "local-test-only"\n');
 try{
   const db=await mf.getD1Database('DB');
   for(const s of [table('sites'),table('raw_submissions'),table('checklists'),
