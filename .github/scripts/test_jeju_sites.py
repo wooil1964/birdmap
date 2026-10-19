@@ -109,6 +109,8 @@ class JejuSitesTests(unittest.TestCase):
                 self.assertIn(phrase,s['localBirdingTip'])
             for claim in ['매년','마리','번식']:
                 self.assertNotIn(claim,s['localBirdingTip'])
+        tip=SOURCE['records'][7]['site']['localBirdingTip']  # 213: winter and the 2025-04 spring record kept apart.
+        self.assertIn('모두 2024/25 한 겨울의 기록',tip);self.assertIn('2025년 4월 17일 iNaturalist 관찰 1건은 봄 기록으로 따로',tip)
         sites={s['id']:s for s in load_runtime_sites()}
         self.assertEqual((sites['59']['lat'],sites['59']['lon']),(33.515,126.715))  # 동백동산 untouched.
         self.assertEqual(sites['181']['name'],'제주 예래생태공원·논짓물 하천')
