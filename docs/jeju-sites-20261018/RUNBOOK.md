@@ -154,3 +154,19 @@ PHASE2E_PRODUCTION_WRITE_APPROVED=<운영 DB id> node docs/jeju-sites-20261018/r
 | 종달리 겨울 AI 방역 통제 | 하도리 철새도래지 통제초소(2026-10-07~, 범위 미공개)가 해안도로까지 미치면 조망 불가 | 안내문에 통제선·안내 준수 명시. 상시 제한으로 분류하지 않음 |
 | 212·213 지정 좌표의 차량 접근 | 좌표 지점까지 차량 진입·주차 미확인 | 마커·길찾기 목적지는 지정 좌표 그대로, 안내문에 차량 접근 미확인·허용 장소 주차 명시 |
 | 212 종남마을 근거 | 공개 기록 1건(2026-02) | 개체수·반복 월동 미기재, 출현 보장 없음 명시 |
+
+## 실행 기록
+
+### 1단계 기상 Worker — 완료 (2026-10-19, 사용자 승인)
+
+- 소스: `4fcea58`. 변경 파일은 `weather-proxy/src/sites.js` 하나다. 운영 SITES 200개(f034164와 동일)는 그대로 두고 206~213을 추가했다.
+- `versions upload --tag jeju-206-213` → 새 버전 `a9bbbc1d-8906-40ad-b286-6509a84f7dbc`.
+  - 바인딩·compat·flags·handlers가 76c6023b와 동일하다(`ENVIRONMENT=production`, secret `KMA_SERVICE_KEY` 승계, compat 2026-07-03).
+- 배포 전 Preview URL 확인: 1·206·213은 `ok`, 214는 404.
+- `versions deploy a9bbbc1d…@100%` 성공, 2026-10-19 07:35:50 UTC.
+- 운영 GET 결과:
+  - 1·205·206~213 → HTTP 200 `ok`(KMA, CORS `https://wooil1964.github.io`).
+  - 214 → 404 `INVALID_SITE_ID`.
+- 기존 ID 표본 17곳: 일반 지점은 200(ok, 100만 partial). 선상 48·62·191은 기존과 같이 422 `MARINE_PRIMARY_REQUIRED`.
+- **복구**: `npx -y wrangler@4.149.0 versions deploy 76c6023b-7974-4a49-928e-1014135bad4b@100% -y`. 버전은 보존돼 있다.
+- Pages·운영 D1·다른 Worker는 변경하지 않았다. 2단계는 별도 승인 대기 중이다.
