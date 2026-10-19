@@ -36,6 +36,10 @@ class ValidatorTimeContractTests(unittest.TestCase):
         cls.week = json.loads((ROOT / "weather_week.json").read_text(encoding="utf-8"))
         # Time-contract fixtures represent the saved batch. Registry completeness is tested separately.
         cls.fixture_runtime = [s for s in load_runtime_sites() if str(s['id']) in cls.today['sites']]
+        # Upstream outages may make some saved records ineligible; changing only time must preserve that state.
+        cls.expected_eligible = sum(item.get('scoreEligible') is True for item in cls.today['sites'].values())
+        cls.expected_samples = sum(len(day.get('samples', [])) for site in cls.week['sites'].values()
+                                   for day in site.get('days', {}).values())
 
     def run_validator(self, document, weekly=False, now=EVALUATION, runtime=None):
         validator = week_validator if weekly else today_validator
@@ -52,7 +56,7 @@ class ValidatorTimeContractTests(unittest.TestCase):
         for document,weekly in [(self.document(),False),(copy.deepcopy(self.week),True)]:
             missing={str(s['id']) for s in runtime}-set(document['sites'])
             if missing:
-                self.assertEqual(missing,{'206','207','208','209','210','211','212','213'})
+                self.assertEqual(missing,{str(i) for i in range(214,235)})
                 with self.assertRaisesRegex(AssertionError,'IDs mismatch'):
                     self.run_validator(document,weekly=weekly,runtime=runtime)
 
@@ -95,10 +99,10 @@ class ValidatorTimeContractTests(unittest.TestCase):
 
     def test_future_forecast_is_not_future_publication(self):
         document = self.document()
-        self.assertEqual(self.run_validator(document)["scoreEligibleCount"], len(self.today["sites"]))
+        self.assertEqual(self.run_validator(document)["scoreEligibleCount"], self.expected_eligible)
         week = copy.deepcopy(self.week)
         week["generatedAt"] = "2026-10-12 16:26 KST"
-        self.assertGreater(self.run_validator(week, weekly=True)["sampleCount"], 0)
+        self.assertEqual(self.run_validator(week, weekly=True)["sampleCount"], self.expected_samples)
 
     def test_current_date_requirement_remains(self):
         with self.assertRaisesRegex(AssertionError, "Batch date mismatch"):
@@ -128,7 +132,7 @@ class ValidatorTimeContractTests(unittest.TestCase):
                 item.update(date=document["date"], generatedAt=document["generatedAt"],
                             forecastTime=now.strftime("%Y-%m-%d 03:00 KST"))
             with self.subTest(now=now):
-                self.assertEqual(self.run_validator(document, now=now)["scoreEligibleCount"], len(self.today["sites"]))
+                self.assertEqual(self.run_validator(document, now=now)["scoreEligibleCount"], self.expected_eligible)
 
     def test_today_rejects_invalid_calendar_and_non_string(self):
         for value in ["2026-02-29 12:00 KST", "2026-10-12 16:26 KST extra", None,

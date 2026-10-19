@@ -17,12 +17,12 @@ test('runtime inline JavaScript parses after literal additions',()=>{
  }
 });
 
-test('208-site plan uses existing picker and requires explicit count, with reviewed payloads',async()=>{
+test('229-site plan uses existing picker and requires explicit count, with reviewed payloads',async()=>{
  const options={capturedAt:'2026-10-18T00:00:00+09:00'};
  await assert.rejects(prepareSiteSeed(html,options),/탐조지 수/); // Default 190 guard stays enabled.
- const plan=await prepareSiteSeed(html,{...options,expectedCount:208});
- assert.equal(plan.source_count,208);
- assert.equal(new Set(plan.sites.map(s=>s.site_id)).size,208);
+ const plan=await prepareSiteSeed(html,{...options,expectedCount:229});
+ assert.equal(plan.source_count,229);
+ assert.equal(new Set(plan.sites.map(s=>s.site_id )).size,229);
  for(const r of reviewed.records){
   const row=plan.sites.find(s=>s.site_id===r.site.id);
   assert.equal(row.site_name,r.site.name);

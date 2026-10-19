@@ -358,11 +358,19 @@ test('주간 창은 오늘부터 7일이며 과거 날짜를 포함하지 않는
 
 test('실제 weather_week.json 으로 대표 sample 을 뽑을 수 있다', () => {
   const week = JSON.parse(readFileSync(join(ROOT, 'weather_week.json'), 'utf8'));
-  const api = loadApi({ weatherWeek: week });
+  // Evaluate the saved batch at its publication time; passage of time is tested separately.
+  const api = loadApi({ weatherWeek: week, now: week.generatedAt.replace(' ', 'T').replace(' KST', '+09:00') });
   const siteData = JSON.parse(HTML.slice(HTML.indexOf('var siteData=') + 'var siteData='.length).match(/^\[[\s\S]*?\}\]/)[0]);
   const site = siteData.find((s) => String(s.id) === '19');
   assert.ok(site, 'siteData에 유부도가 있어야 한다');
   const dates = Object.keys(week.sites['19'].days);
+  // A valid outage document deliberately has no forecast samples. It must not create a recommendation.
+  if (dates.length === 0) {
+    assert.equal(week.sites['19'].dataUnavailable, true, '빈 예보는 결측으로 명시되어야 한다');
+    assert.deepEqual(api.weeklyDaylightCandidates(site, week.startDate), []);
+    assert.equal(api.weeklyBestWeatherDay(site, { dates }), null);
+    return;
+  }
   let daylightTotal = 0;
   dates.forEach((date) => {
     const candidates = api.weeklyDaylightCandidates(site, date);
@@ -557,7 +565,7 @@ test('실데이터 190곳의 가을 추천·선상 안전·score 무변경 및 �
   const safeSamples=ships.flatMap(s=>window.dates.flatMap(d=>api.weeklyDaylightCandidates(s,d).filter(api.weeklyPelagicSafety)));
   const safeSites=ships.filter(s=>api.weeklyBestWeatherDay(s,window,api.weeklyPelagicSafety));
   const top=api.todayRecommendedSites();
-  assert.equal(RUNTIME.length,208);assert.equal(top.length,10);
+  assert.equal(RUNTIME.length,229);assert.equal(top.length,10);
   assert.equal(new Set(top.map(e=>String(e.site.id))).size,top.length);
   assert.ok(top.filter(e=>e.axes.pelagic).length<=1);
   for(const e of top) {
@@ -929,7 +937,7 @@ test('겨울 실제 환경 분류 전수 보고 (실제 겨울 예보가 아님)
  const api=loadApi(),rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,island:s.island,runtimePelagic:s.pelagic,...api.winterBirdingAxes(s)}));
  const counts=Object.fromEntries(['field','water','coast','pelagic'].map(axis=>[axis,rows.filter(e=>e[axis]).length]));
  const excluded=Object.fromEntries(['explicit','dokdo','island','forest','marine','unclassified'].map(reason=>[reason,rows.filter(e=>e.excludedReason===reason).length]));
- assert.equal(rows.length,208);assert.equal(counts.pelagic,5);assert.equal(excluded.explicit,3);
+ assert.equal(rows.length,229);assert.equal(counts.pelagic,5);assert.equal(excluded.explicit,3);
  if(process.env.WINTER_REPORT==='1')console.log(JSON.stringify({counts,excluded,
   core:rows.filter(e=>['39','15','10','7','20'].includes(e.id)),
   ships:rows.filter(e=>RUNTIME.find(s=>s.id===e.id).pelagic),
@@ -1094,7 +1102,7 @@ test('봄 실제 환경 분류 보고 (합성 fixture 결과는 실제 예보가
  const api=loadApi(),coreNames=['어청도','외연도','백령도','흑산도','홍도','가거도'];
  const rows=RUNTIME.map(s=>({id:s.id,name:s.name,env:s.env,runtimeIsland:s.island,runtimePelagic:s.pelagic,seasons:s.seasons,birdingFeature:s.birdingFeature,...api.springBirdingAxes(s)}));
  const counts=Object.fromEntries(['island','mudflat','pelagic','other'].map(axis=>[axis,rows.filter(e=>e[axis]).length]));
- counts.unique=rows.filter(e=>!e.excludedReason).length;assert.equal(counts.pelagic,8);assert.equal(rows.length,208);
+ counts.unique=rows.filter(e=>!e.excludedReason).length;assert.equal(counts.pelagic,8);assert.equal(rows.length,229);
  if(process.env.SPRING_REPORT==='1')console.log(JSON.stringify({counts,core:rows.filter(e=>coreNames.includes(e.name)),excluded:rows.filter(e=>e.excludedReason),
   fixtureTop:loadApi(springFixture()).todayRecommendedSites().map(e=>({id:e.site.id,name:e.site.name,axis:e.selectedAxis,score:e.score,time:e.recommendationTime}))},null,2));
 });
@@ -1201,7 +1209,7 @@ test('여름 실제 환경 전수 보고',()=>{
  const excludes=Object.fromEntries(['field','island','pelagic','unclassified'].map(a=>[a,rows.filter(r=>r.axes.excludedReason===a).length]));
  const rawField=RUNTIME.filter(s=>s.env.split(/[·,;\/|\s]+/).some(t=>['농경지','간척지','목초지','초지'].includes(t)));
  const rawIsland=RUNTIME.filter(s=>s.island===true||s.env.split(/[·,;\/|\s]+/).some(t=>['도서','섬','해양도서'].includes(t)));
- assert.equal(rows.length,208);assert.equal(counts.pelagic,1);assert.equal(counts.tomb,1);
+ assert.equal(rows.length,229);assert.equal(counts.pelagic,1);assert.equal(counts.tomb,1);
  if(process.env.SUMMER_REPORT)console.log(JSON.stringify({counts,excludes,uniqueJune:rows.filter(r=>!r.axes.excludedReason).length,uniqueJuly:RUNTIME.filter(s=>!api.summerBirdingAxes(s,7).excludedReason).length,rawField:rawField.length,rawIsland:rawIsland.length,islandTrue:RUNTIME.filter(s=>s.island===true).length,fieldIslandOverlap:rawField.filter(s=>rawIsland.includes(s)).length,compoundFields:rawField.filter(s=>s.env.split(/[·,;\/|\s]+/).length>1).map(s=>({id:s.id,name:s.name,env:s.env})),unclassified:rows.filter(r=>r.axes.excludedReason==='unclassified'),other:rows.filter(r=>r.axes.other)},null,2));
 });
 

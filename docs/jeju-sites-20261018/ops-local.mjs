@@ -1,3 +1,4 @@
+import {execFileSync} from 'node:child_process';
 // Runs registry-ops.mjs plan -> apply -> rollback against a local Miniflare D1 by routing its
 // Cloudflare REST calls to the local database. Never contacts Cloudflare.
 // Usage: node docs/jeju-sites-20261018/ops-local.mjs <node_modules dir containing miniflare>
@@ -14,6 +15,9 @@ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'jeju-ops-'));
 // d1-rest reads the Wrangler login from %APPDATA%; give it a dummy token so no real credential is read (and Linux CI works).
 process.env.APPDATA=tmp;fs.mkdirSync(path.join(tmp,'xdg.config/.wrangler/config'),{recursive:true});
 fs.writeFileSync(path.join(tmp,'xdg.config/.wrangler/config/default.toml'),'oauth_token = "local-test-only"\n');
+const historicalHtml=execFileSync('git',['show','d7214f280be43c2c90657eaf87ee2284df7ca0a9:index.html'],{encoding:'utf8',maxBuffer:20*1024*1024});
+const originalRead=fs.readFileSync;
+fs.readFileSync=function(file,...args){return file==='index.html'?historicalHtml:originalRead.call(this,file,...args);};
 try{
   const db=await mf.getD1Database('DB');
   for(const s of [table('sites'),table('raw_submissions'),table('checklists'),
