@@ -1,6 +1,6 @@
 -- One atomic append, no schema changes and no UPDATE/DELETE.
 -- ?1: inspected system_state generation, ?2: exact inspected 200 sites,
--- ?3: five reviewed new site rows (206-210) prepared from current index.html.
+-- ?3: six reviewed new site rows (206-211) prepared from current index.html.
 WITH checked AS (
  SELECT json(CASE WHEN
   EXISTS (SELECT 1 FROM system_state WHERE id=1 AND mode='NORMAL' AND generation=?1)
@@ -17,10 +17,10 @@ WITH checked AS (
    AND s.source_record_json IS json_extract(e.value,'$.source_record_json')
    AND s.created_at IS json_extract(e.value,'$.created_at')
    AND s.retired_at IS json_extract(e.value,'$.retired_at'))=200
-  AND json_array_length(?3)=5
-  AND (SELECT COUNT(DISTINCT json_extract(value,'$.site_id')) FROM json_each(?3))=5
+  AND json_array_length(?3)=6
+  AND (SELECT COUNT(DISTINCT json_extract(value,'$.site_id')) FROM json_each(?3))=6
   AND NOT EXISTS (SELECT 1 FROM json_each(?3)
-   WHERE json_extract(value,'$.site_id') NOT IN ('206','207','208','209','210'))
+   WHERE json_extract(value,'$.site_id') NOT IN ('206','207','208','209','210','211'))
   AND NOT EXISTS (SELECT 1 FROM sites s JOIN json_each(?3) a ON s.site_id=json_extract(a.value,'$.site_id'))
  THEN '{}' ELSE 'REGISTRY_PRECONDITION_FAILED' END) AS proof
 )

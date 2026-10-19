@@ -14,7 +14,7 @@ import build_seo_pages as seo
 import update_weather as weather
 
 ROOT = Path(__file__).resolve().parents[2]
-NEW_IDS = ['206','207','208','209','210']
+NEW_IDS = ['206','207','208','209','210','211']
 SOURCE = json.loads((ROOT/'data/jeju-birding-sites-20261018.json').read_text(encoding='utf-8'))
 
 
@@ -29,22 +29,22 @@ class JejuSitesTests(unittest.TestCase):
         self.assertEqual(sites[:200],old)  # Full records, not selected fields.
         self.assertEqual(sites[200:],[r['site'] for r in SOURCE['records']])
         self.assertEqual([s['id'] for s in sites[200:]],NEW_IDS)
-        self.assertEqual(len(sites),205)
-        self.assertEqual(len([s for s in sites if s['sido']=='제주']),16)
+        self.assertEqual(len(sites),206)
+        self.assertEqual(len([s for s in sites if s['sido']=='제주']),17)
         for s in sites[200:]:self.assertEqual(set(s),set(old[-1]))
 
     def test_public_access_coordinates_worker_and_all_map_links(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())
-        self.assertEqual(report['commonIdCount'],205)
+        self.assertEqual(report['commonIdCount'],206)
         self.assertFalse(any(v for v in report.values() if isinstance(v,list)),report)
-        expected=[(33.550053,126.69415),(33.24452585,126.5596972),(33.430924,126.595761),(33.282955,126.27152),(33.491318,126.811386)]
+        expected=[(33.550053,126.69415),(33.24452585,126.5596972),(33.430924,126.595761),(33.282955,126.27152),(33.491318,126.811386),(33.511246,126.898868)]
         self.assertEqual(len(SOURCE['records']),len(expected))
         for i,(r,coordinate) in enumerate(zip(SOURCE['records'],expected)):
             s=r['site']
             self.assertEqual((s['lat'],s['lon']),coordinate)
             self.assertEqual(s['kakaoMapUrl'].split(',')[-2:],[str(v) for v in coordinate])
             self.assertIn(f"/{s['lat']}/{s['lon']}?{s['lat']},{s['lon']},10",s['windyUrl'])
-            self.assertIn(r['pointLabel'],unquote(s['naverMapUrl']))
+            self.assertIn(r['pointLabel'] if s['id']!='211' else s['name'],unquote(s['naverMapUrl']))  # 211 searches the findable beach name.
             self.assertIn(r['pointLabel'],s['localBirdingTip'])
             self.assertGreaterEqual(len(r['speciesSources']),2 if i<2 else 1)
             self.assertGreaterEqual(len(r['accessSources']),2 if i<2 else 1)
@@ -71,7 +71,7 @@ class JejuSitesTests(unittest.TestCase):
         shared=(ROOT/'reports-api/src/shared.js').read_text(encoding='utf-8')
         protected=set(re.findall(r"'([^']+)'",shared.split('SENSITIVE_SPECIES = [')[1].split(']')[0]))
         self.assertIn('팔색조',protected)
-        for r in SOURCE['records'][2:]:
+        for r in SOURCE['records'][2:5]:
             s=r['site'];birds=[b.strip() for b in s['birds'].split(',')]
             self.assertFalse(set(birds)&(protected|{'긴꼬리딱새','두견이','휘파람새','섬휘파람새','팔색조'}),s['id'])
             self.assertFalse(s['rare'] or s['mijo'] or s['recommend5'] or s['island'] or s['pelagic'])
@@ -80,8 +80,22 @@ class JejuSitesTests(unittest.TestCase):
             for phrase in ['현재 출현을 뜻하지 않습니다','보장하지 않습니다','둥지 탐색','재생음','드론','번식기']:
                 self.assertIn(phrase,s['localBirdingTip'],s['id'])
         review=SOURCE['forestReview20261019']
-        self.assertEqual([c['decision'][:2] for c in review['candidates']].count('등록'),3)
+        self.assertEqual([c['decision'][:2] for c in review['candidates']].count('등록'),4)
         self.assertEqual(len(review['candidates']),7)
+
+    def test_jongdal_coastal_record(self):
+        shared=(ROOT/'reports-api/src/shared.js').read_text(encoding='utf-8')
+        protected=set(re.findall(r"'([^']+)'",shared.split('SENSITIVE_SPECIES = [')[1].split(']')[0]))
+        r=SOURCE['records'][5];s=r['site']
+        self.assertEqual(s['id'],'211')
+        self.assertFalse(set(b.strip() for b in s['birds'].split(','))&(protected|{'노랑부리백로'}))
+        self.assertEqual((s['weatherRuleKey'],s['showWave'],s['seasons']),('coastal_seabird',True,['봄','가을','겨울']))
+        for phrase in ['현재 출현을 뜻하지 않습니다','보장하지 않습니다','통제초소','통제 구간에는 들어가지 마세요','차도·갓길','드론·재생음']:
+            self.assertIn(phrase,s['localBirdingTip'])
+        self.assertNotIn('출입 제한 지역',s['localBirdingTip'])
+        # Roadside pin on the OSM public path, within 50 m of the official beach point.
+        o=r['officialBeachPoint'];self.assertIn('openstreetmap.org/way/370073534',r['coordinateSource'])
+        self.assertLess(((o['lat']-s['lat'])*110540)**2+((o['lon']-s['lon'])*92900)**2,50**2)
 
     def test_old_workbooks_automatic_data_security_and_engine_code_unchanged(self):
         for book in SOURCE['workbookComparison']:
@@ -96,7 +110,7 @@ class JejuSitesTests(unittest.TestCase):
         current=(ROOT/'index.html').read_text(encoding='utf-8')
         old=subprocess.check_output(['git','show',SOURCE['baselineCommit']+':index.html'],cwd=ROOT).decode('utf-8')
         def strip(t):
-            t=t.replace('중부권 탐조지 10곳 추가','중부권 10곳·제주 5곳 추가').replace('id="mapTitleSiteCount">200','id="mapTitleSiteCount">205')
+            t=t.replace('중부권 탐조지 10곳 추가','중부권 10곳·제주 6곳 추가').replace('id="mapTitleSiteCount">200','id="mapTitleSiteCount">206')
             t=t.replace('엑셀 위도·경도 좌표 그대로 반영','탐조지 이름 또는 지역 검색')
             return re.sub(r'siteData=siteData\.concat\([\s\S]*?\);','SITE_ARRAY',t.replace('\r\n','\n'),count=1)
         self.assertEqual(strip(current),strip(old))
@@ -140,11 +154,11 @@ class JejuRegistryAppendTests(unittest.TestCase):
 
     def test_atomic_append_preserves_every_old_field_and_reports_and_rejects_replay(self):
         old=self.snapshot();self.apply()
-        self.assertEqual(len(self.snapshot()),205)
+        self.assertEqual(len(self.snapshot()),206)
         self.assertEqual([r for r in self.snapshot() if r[0] not in NEW_IDS],old)
         self.assertEqual(self.db.execute('SELECT note FROM reports').fetchone()[0],'unchanged')
         with self.assertRaises(sqlite3.DatabaseError):self.apply()
-        self.assertEqual(len(self.snapshot()),205)
+        self.assertEqual(len(self.snapshot()),206)
 
     def test_stale_changed_incomplete_duplicate_unreviewed_and_maintenance_fail_closed(self):
         old=self.snapshot()
