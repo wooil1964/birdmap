@@ -6,6 +6,7 @@ import sqlite3
 import subprocess
 import tempfile
 import unittest
+from report_archive_contract import without_report_archive, automatic_data_base
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -119,20 +120,20 @@ class JejuSitesTests(unittest.TestCase):
         for book in SOURCE['workbookComparison']:
             self.assertEqual(hashlib.sha256((ROOT/'data'/book['file']).read_bytes()).hexdigest(),book['sha256'])
             self.assertFalse(any(book['matches'].values()))
-        # Actions and editorial posts rewrite these on main, so on a PR merge commit compare with its main parent;
-        # either way the Jeju change itself must not touch them.
-        merge=len(subprocess.check_output(['git','rev-list','--parents','-n','1','HEAD'],cwd=ROOT).split())>2
+        # Actions and editorial posts rewrite these on main. Compare automatic files with
+        # the current PR/main base, retaining the original source baseline for static files.
         for file in ['weather_today.json','weather_week.json','tide_today.json','tide_month.json','notices.json',
                      'tide_station_mapping.json','weather_rules.json',
                      'reports-api/src/site-picker.js','reports-api/tools/sites-seed.mjs']:
             automatic=file.endswith(('today.json','week.json','month.json','notices.json'))
-            ref=('HEAD^1' if merge else 'd7214f280be43c2c90657eaf87ee2284df7ca0a9') if automatic else SOURCE['baselineCommit']
+            ref=automatic_data_base(ROOT) if automatic else SOURCE['baselineCommit']
             self.assertEqual((ROOT/file).read_bytes().replace(b'\r\n',b'\n'),
               subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT).replace(b'\r\n',b'\n'),file)
         # Everything outside the single literal concat block stays byte-equivalent after newline normalization.
         current=(ROOT/'index.html').read_text(encoding='utf-8')
         old=subprocess.check_output(['git','show',SOURCE['baselineCommit']+':index.html'],cwd=ROOT).decode('utf-8')
         def strip(t):
+            t=without_report_archive(t)
             t=t.replace('중부권 탐조지 10곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">200','id="mapTitleSiteCount">208')
             t=t.replace('엑셀 위도·경도 좌표 그대로 반영','탐조지 이름 또는 지역 검색')
             t=t.replace('수도권 21곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">229','id="mapTitleSiteCount">208').replace('최종 업데이트: 2026.10.19','최종 업데이트: 2026.10.18')

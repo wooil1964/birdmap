@@ -55,6 +55,7 @@ jobs:
       - name: Python weather, tide and shared pages
         shell: bash
         run: |
+          python .github/scripts/test_report_archive_contract.py
           python .github/scripts/test_central_sites.py
           python .github/scripts/test_jeju_sites.py
           python .github/scripts/test_metro_sites.py

@@ -145,8 +145,22 @@
     <button id="recentTabContributors" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="recentContributors" onclick="selectRecentTab('contributors')">이번 달 기여자</button>
   </div>
   <div id="recentReportsList" role="tabpanel" aria-labelledby="recentTabReports"><div class="recentReportEmpty">불러오는 중입니다.</div></div>
+  <button id="reportArchiveOpen" class="contribMore" type="button" onclick="openReportArchive()">전체 보기</button>
   <div id="recentContributors" role="tabpanel" aria-labelledby="recentTabContributors" hidden></div>
 </div>
+<!-- report-archive:modal:start -->
+<div id="reportArchiveModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="reportArchiveTitle" onclick="if(event.target===this)closeReportArchive()" onkeydown="reportArchiveKeydown(event)">
+  <div class="monthTideDialog">
+    <div class="monthTideHeader"><strong id="reportArchiveTitle">승인 제보 전체 보기</strong><button type="button" onclick="closeReportArchive()">닫기</button></div>
+    <form class="contribTools" onsubmit="searchReportArchive(false);return false">
+      <input id="reportArchiveSearch" type="search" maxlength="100" placeholder="종명 · 지역 · 탐조지 · 공개 제보자" aria-label="전체 승인 제보 검색" autocomplete="off" oninput="searchReportArchive(true)">
+      <button type="submit">검색</button><button type="button" onclick="resetReportArchiveSearch()">초기화</button>
+    </form>
+    <div id="reportArchiveMeta" class="monthTideMeta" role="status" aria-live="polite"></div>
+    <div id="reportArchiveContent" class="monthTideContent" aria-busy="false"></div>
+  </div>
+</div>
+<!-- report-archive:modal:end -->
 <div id="contributorsModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="contributorsTitle" onclick="if(event.target===this)closeContributorsModal()">
   <div class="monthTideDialog">
     <div class="monthTideHeader"><strong id="contributorsTitle">기여자</strong><button type="button" onclick="closeContributorsModal()">닫기</button></div>
@@ -290,6 +304,18 @@ a.ebird,.btn.ebird{display:none !important}
 .contribScope button{padding:5px 10px;border:1px solid #2d6f9f;border-radius:6px;background:#fff;color:#174d6f;font:inherit;font-size:13px;cursor:pointer}
 .contribScope button[aria-selected="true"]{background:#2d6f9f;color:#fff}
 #contributorsSearch,#reporterSpeciesSearch{flex:1 1 140px;min-width:0;box-sizing:border-box;padding:5px 8px;border:1px solid #9bb3c4;border-radius:6px;font:inherit;font-size:13px}
+/* report-archive:styles:start */
+#reportArchiveSearch{flex:1 1 240px;min-width:0;box-sizing:border-box;padding:7px;border:1px solid #9bb3c4;border-radius:6px;font:inherit;font-size:16px}
+#recentReportsBox.contribMode #reportArchiveOpen{display:none}
+#reportArchiveOpen{flex:0 0 auto}
+body.reportArchiveOpen{overflow:hidden}
+#reportArchiveContent{overflow-anchor:none}
+#reportArchiveContent .recentReportItem{cursor:default;padding:10px 0}
+#reportArchiveContent button[aria-disabled="true"]{opacity:.65;cursor:default}
+#reportArchiveContent .recentReportMeta{font-size:12px}
+#reportArchiveModal .contribTools button{padding:6px 10px;border:1px solid #2d6f9f;border-radius:6px;background:#fff;color:#174d6f;font:inherit;font-size:13px;cursor:pointer}
+@media(max-width:600px){#reportArchiveSearch{flex-basis:100%}}
+/* report-archive:styles:end */
 #reporterSpeciesSearch{width:100%;margin-top:6px}
 .reporterSpeciesOpen{border:0;background:none;padding:0;font:inherit;font-weight:bold;color:#174d6f;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .reporterSpeciesOpen:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
@@ -1167,6 +1193,139 @@ function renderRecentReports(){
     list.appendChild(item);
   });
 }
+
+/* report-archive:script:start */
+/* 전체 승인 제보: 검색은 서버의 공개 projection 전체에 적용한다. */
+var REPORT_ARCHIVE_PAGE=20;
+var reportArchiveData=null,reportArchivePublication=null,reportArchiveRequest=0,reportArchiveTimer=0;
+var reportArchiveState='idle',reportArchiveQuery='',reportArchiveReturnFocus=null,reportArchiveMessage='';
+function reportArchiveCurrent(){return !!reportArchiveData&&publicationDataAllowed({publication:reportArchivePublication});}
+function reportArchivePayload(body,offset){
+  if(!body||body.ok!==true||body.offset!==offset||body.limit!==REPORT_ARCHIVE_PAGE||!Number.isSafeInteger(body.total)||body.total<0||!Array.isArray(body.reports))return null;
+  if(body.reports.length!==Math.min(REPORT_ARCHIVE_PAGE,Math.max(0,body.total-offset))||body.hasMore!==(offset+body.reports.length<body.total))return null;
+  var reports=[];
+  for(var i=0;i<body.reports.length;i++){
+    var r=body.reports[i];
+    if(!r||typeof r.id!=='string'||!/^[0-9A-Za-z_-]{1,64}$/.test(r.id)||!/^\d{4}-\d{2}-\d{2}$/.test(r.date)||!Array.isArray(r.species)||!r.species.every(function(s){return typeof s==='string';})||typeof r.locationHidden!=='boolean')return null;
+    if(r.reporter!==undefined&&typeof r.reporter!=='string')return null;
+    var row={id:r.id,date:r.date,species:r.species.slice(),reporter:r.reporter||'',locationHidden:r.locationHidden};
+    if(!row.locationHidden){
+      if(typeof r.siteName==='string')row.siteName=r.siteName;
+      if(typeof r.region==='string')row.region=r.region;
+      if(r.target&&(r.target.kind==='spot'||r.target.kind==='fixed')&&typeof r.target.spotId==='string')row.target={kind:r.target.kind,spotId:r.target.spotId};
+    }
+    reports.push(row);
+  }
+  return {total:body.total,reports:reports,hasMore:body.hasMore};
+}
+function clearReportArchive(){
+  reportArchiveRequest++;clearTimeout(reportArchiveTimer);reportArchiveTimer=0;
+  reportArchiveData=null;reportArchivePublication=null;reportArchiveState='failed';reportArchiveMessage='';
+  var content=document.getElementById('reportArchiveContent'),modal=document.getElementById('reportArchiveModal');
+  var restoreFocus=content&&content.contains(document.activeElement)&&modal&&modal.style.display==='flex';
+  if(content){content._reportArchiveView=null;content.textContent='';}
+  renderReportArchive();
+  if(restoreFocus)document.getElementById('reportArchiveSearch').focus({preventScroll:true});
+}
+function loadReportArchive(more){
+  var offset=more&&reportArchiveCurrent()?reportArchiveData.reports.length:0;
+  if(more&&(!offset||reportArchiveState==='loading'||!reportArchiveData.hasMore))return Promise.resolve(false);
+  var request=++reportArchiveRequest,query=reportArchiveQuery;
+  if(!offset){reportArchiveData=null;reportArchivePublication=null;}
+  reportArchiveState='loading';reportArchiveMessage='';renderReportArchive();
+  return publicationFetch('/reports/search?limit='+REPORT_ARCHIVE_PAGE+'&offset='+offset+'&q='+encodeURIComponent(query)).then(function(body){
+    if(request!==reportArchiveRequest||!publicationDataAllowed(body))return false;
+    var page=reportArchivePayload(body,offset);if(!page)throw new Error('report archive invalid');
+    if(offset&&(!reportArchiveCurrent()||!publicationSame(reportArchivePublication,body.publication)))return loadReportArchive(false);
+    if(offset){
+      var ids=new Set(reportArchiveData.reports.map(function(row){return row.id;}));
+      if(page.reports.some(function(row){return ids.has(row.id);})||page.total!==reportArchiveData.total)throw new Error('report archive page changed');
+      page.reports=reportArchiveData.reports.concat(page.reports);
+    }
+    reportArchiveData=page;reportArchivePublication=body.publication;reportArchiveState='idle';return true;
+  }).catch(function(){
+    if(request!==reportArchiveRequest)return false;
+    reportArchiveData=null;reportArchivePublication=null;reportArchiveState='failed';return false;
+  }).then(function(ok){if(request===reportArchiveRequest){if(reportArchiveState==='loading')reportArchiveState='failed';renderReportArchive();}return ok;});
+}
+function searchReportArchive(delayed){
+  clearTimeout(reportArchiveTimer);reportArchiveRequest++;
+  reportArchiveQuery=document.getElementById('reportArchiveSearch').value.trim();
+  reportArchiveData=null;reportArchivePublication=null;reportArchiveState='loading';renderReportArchive();
+  if(delayed)reportArchiveTimer=setTimeout(function(){reportArchiveTimer=0;loadReportArchive(false);},250);
+  else loadReportArchive(false);
+}
+function resetReportArchiveSearch(){
+  var search=document.getElementById('reportArchiveSearch');search.value='';searchReportArchive(false);search.focus();
+}
+function renderReportArchive(){
+  var modal=document.getElementById('reportArchiveModal');if(!modal||modal.style.display!=='flex')return;
+  var content=document.getElementById('reportArchiveContent'),meta=document.getElementById('reportArchiveMeta');
+  var data=reportArchiveCurrent()?reportArchiveData:null,view=content._reportArchiveView;
+  var keep=!!data&&!!view&&view.query===reportArchiveQuery&&publicationSame(view.publication,reportArchivePublication)&&view.ids.length<=data.reports.length&&view.ids.every(function(id,i){return data.reports[i].id===id;});
+  var scroll=content.scrollTop,restoreFocus=!keep&&content.contains(document.activeElement);
+  if(!keep){content.textContent='';content._reportArchiveView=null;view={ids:[],more:null,message:null};}
+  content.setAttribute('aria-busy',String(reportArchiveState==='loading'));
+  meta.textContent=data?(reportArchiveQuery?'검색 결과 ':'승인 제보 ')+data.total+'건 · '+data.reports.length+'건 표시 (관찰일 최신순)':'';
+  function note(text){var node=document.createElement('div');node.className='recentReportEmpty';node.textContent=text;content.appendChild(node);}
+  function button(text,fn){var node=document.createElement('button');node.type='button';node.className='contribMore';node.textContent=text;node.onclick=fn;content.appendChild(node);return node;}
+  if(data){
+    data.reports.slice(view.ids.length).forEach(function(row){
+      var item=document.createElement('div');item.className='recentReportItem';
+      var name=document.createElement(row.target&&!row.locationHidden?'button':'div');name.className='recentReportSpecies';name.textContent=row.species.join(' · ');
+      if(name.tagName==='BUTTON'){name.type='button';name.classList.add('reporterMapOpen');name.onclick=function(){openReportArchiveEntry(row.id);};name.setAttribute('aria-label',name.textContent+' 지도에서 보기');}
+      item.appendChild(name);
+      var detail=document.createElement('div');detail.className='recentReportMeta';
+      detail.textContent=[row.date,row.reporter||'익명 제보',row.siteName,row.region,row.locationHidden?'위치 비공개':''].filter(Boolean).join(' · ');
+      item.appendChild(detail);content.insertBefore(item,view.more);
+    });
+    if(!keep&&!data.reports.length)note(reportArchiveQuery?'검색 결과가 없습니다.':'승인된 제보가 없습니다.');
+    if(data.hasMore&&!view.more)view.more=button('',function(){if(reportArchiveState!=='loading'&&reportArchiveData&&reportArchiveData.hasMore)loadReportArchive(true);});
+    if(view.more){view.more.textContent=reportArchiveState==='loading'?'불러오는 중입니다.':data.hasMore?'20건 더 보기':'모두 불러왔습니다.';view.more.setAttribute('aria-disabled',String(reportArchiveState==='loading'||!data.hasMore));}
+    view.ids=data.reports.map(function(row){return row.id;});view.query=reportArchiveQuery;view.publication=reportArchivePublication;content._reportArchiveView=view;
+  }else if(reportArchiveState==='loading'){meta.textContent='불러오는 중입니다.';note('승인 제보를 불러오는 중입니다.');}
+  else{meta.textContent='제보를 불러오지 못했습니다.';note('공개 제보의 최신 상태를 확인할 수 없습니다. 다시 시도해 주세요.');button('다시 시도',function(){loadReportArchive(false);});}
+  if(view.message){view.message.remove();view.message=null;}
+  if(reportArchiveMessage){view.message=document.createElement('div');view.message.className='recentReportEmpty';view.message.textContent=reportArchiveMessage;content.appendChild(view.message);}
+  if(keep)content.scrollTop=scroll;
+  if(restoreFocus)document.getElementById('reportArchiveSearch').focus({preventScroll:true});
+}
+function openReportArchive(){
+  reportArchiveReturnFocus=document.activeElement;
+  document.getElementById('reportArchiveModal').style.display='flex';document.body.classList.add('reportArchiveOpen');
+  document.getElementById('reportArchiveSearch').value='';reportArchiveQuery='';
+  document.getElementById('reportArchiveContent').scrollTop=0;
+  loadReportArchive(false);document.getElementById('reportArchiveSearch').focus();
+}
+function closeReportArchive(){
+  var modal=document.getElementById('reportArchiveModal');if(!modal||modal.style.display!=='flex')return;
+  modal.style.display='none';clearReportArchive();reportArchiveState='idle';reportArchiveQuery='';
+  document.getElementById('reportArchiveContent').textContent='';document.getElementById('reportArchiveMeta').textContent='';document.getElementById('reportArchiveSearch').value='';
+  document.body.classList.remove('reportArchiveOpen');
+  if(reportArchiveReturnFocus&&reportArchiveReturnFocus.isConnected)reportArchiveReturnFocus.focus();reportArchiveReturnFocus=null;
+}
+function reportArchiveKeydown(event){
+  if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeReportArchive();return;}
+  if(event.key!=='Tab')return;
+  var modal=document.getElementById('reportArchiveModal'),nodes=Array.from(modal.querySelectorAll('button:not([disabled]),input'));
+  var first=nodes[0],last=nodes[nodes.length-1];
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+}
+function openReportArchiveEntry(id){
+  if(!reportArchiveCurrent())return;
+  var request=reportArchiveRequest;
+  return publicationRouteCheck(function(){
+    if(request!==reportArchiveRequest||!reportArchiveCurrent())return false;
+    var row=reportArchiveData.reports.find(function(item){return item.id===id;});
+    if(!row||row.locationHidden||!row.target)return false;
+    var entry=reportSearchIndex.find(function(item){return reporterStatsWitnesses.get(item)===id&&item.kind===row.target.kind&&item.spotId===row.target.spotId;});
+    if(!entry||(entry.kind==='spot'&&(!reportPublicSpots[entry.spotId]||reportPublicSpots[entry.spotId].locationHidden))){reportArchiveMessage='지도 지점을 확인할 수 없습니다. 목록을 다시 불러와 주세요.';renderReportArchive();return false;}
+    closeReportArchive();openReportEntry(entry,true);return true;
+  });
+}
+
+/* report-archive:script:end */
 
 /* ── 이번 달 기여자 ────────────────────────────────────────────────────
    /contributors/monthly 가 내려주는 월간 집계(month, approvedReports, publicContributors,
@@ -3118,6 +3277,7 @@ function publicationInvalidate(reason){
  if(typeof clearRenderedSiteHistories==='function')clearRenderedSiteHistories();
  if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
  if(typeof clearContributors==='function')clearContributors();
+ if(typeof clearReportArchive==='function')clearReportArchive();
  if(dynamicPopup&&map&&map.closePopup){map.closePopup(currentPopup);currentPopup._source=null;map._popup=null;}
  if(typeof refreshFixedSpotPopups==='function')refreshFixedSpotPopups();
  if(typeof renderRecentReports==='function')renderRecentReports();
