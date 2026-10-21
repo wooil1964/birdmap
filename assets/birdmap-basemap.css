@@ -1,0 +1,66 @@
+/* Base-map choice is part of the existing map; observation/report state is untouched. */
+.leaflet-control.birdmap-basemap {
+  box-sizing: border-box;
+  width: 184px;
+  /* Reserve the existing publication notice and author's seal below the control. */
+  margin: 0 0 calc(64px + env(safe-area-inset-bottom, 0px)) 10px;
+  padding: 3px;
+  border: 1px solid #73847c;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .97);
+  color: #244e43;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+  font: 12px/1.35 Arial, 'Malgun Gothic', sans-serif;
+  pointer-events: auto;
+}
+.birdmap-basemap__choices { display: flex; gap: 2px; }
+.birdmap-basemap .birdmap-basemap__choice,
+.birdmap-basemap .birdmap-basemap__retry {
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: #fff;
+  color: #244e43;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: none;
+}
+.birdmap-basemap__choice { flex: 1 1 0; }
+.birdmap-basemap .birdmap-basemap__choice[aria-pressed='true'] { background: #235a49; color: #fff; }
+.birdmap-basemap button:focus-visible { outline: 3px solid #b66d0b; outline-offset: 2px; }
+.birdmap-basemap__status { padding: 4px 5px 2px; overflow-wrap: anywhere; font-size: 11px; }
+.birdmap-basemap .birdmap-basemap__retry { width: 100%; border: 1px solid #a7b8ae; margin-top: 4px; }
+.birdmap-basemap button[hidden] { display: none !important; }
+.birdmap-basemap button:disabled { opacity: .6; cursor: default; }
+@media (max-width: 700px) {
+  #topBtnRow .birdmap-basemap {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+    align-self: start;
+    justify-self: start;
+    width: 144px;
+    max-width: 100%;
+    margin: 0;
+    float: none;
+  }
+  #topBtnRow .birdmap-basemap .birdmap-basemap__choice,
+  #topBtnRow .birdmap-basemap .birdmap-basemap__retry {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    width: auto;
+    padding: 6px 4px;
+    border-radius: 7px;
+    font-size: 12px;
+    box-shadow: none;
+  }
+  #topBtnRow .birdmap-basemap .birdmap-basemap__retry { width: 100%; }
+  #topBtnRow .birdmap-basemap .birdmap-basemap__status { font-size: 10px; }
+}
