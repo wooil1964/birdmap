@@ -30,7 +30,8 @@ const origin='http://127.0.0.1:'+server.address().port;
 function mockBeforeLoad(){
  const realFetch=window.fetch.bind(window);
  const qa=window.__pilotQA={actions:[],writes:0,beacons:0,geo:0};
- qa.weather=id=>({ok:true,siteId:String(id),generatedAt:new Date().toISOString(),observation:{dataTime:new Date().toISOString(),temperature:20,windSpeed:2,windDirection:'북풍',windDirectionDegrees:0,rain:0,humidity:60,weatherText:'맑음'},forecast:{},tomorrow:{}});
+ // Use one timestamp: two clock reads can put observation after generation by 1ms.
+ qa.weather=id=>{const at=new Date(Date.now()-1000).toISOString();return {ok:true,siteId:String(id),generatedAt:at,observation:{dataTime:at,temperature:20,windSpeed:2,windDirection:'북풍',windDirectionDegrees:0,rain:0,humidity:60,weatherText:'맑음'},forecast:{},tomorrow:{}};};
  const reply=(body,status=200)=>Promise.resolve(new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}}));
  window.fetch=(input,options={})=>{
   const u=new URL(typeof input==='string'?input:input.url,location.href),method=String(options.method||'GET').toUpperCase();
