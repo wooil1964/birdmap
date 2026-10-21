@@ -14,6 +14,8 @@ def without_report_archive(text):
     text = text.replace('\r\n', '\n')
     if 'report-archive:' not in text and 'id="reportArchiveOpen"' not in text:
         return text
+    from island_nearby_contract import without_island_nearby
+    text = without_island_nearby(text)
     for literal in (BUTTON, HOOK):
         if text.count(literal) != 1:
             raise ValueError('Archive entry/hook must occur exactly once')

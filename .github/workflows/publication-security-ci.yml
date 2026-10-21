@@ -47,6 +47,11 @@ jobs:
           "$chrome" --version
       - name: Front regression with actual Chrome
         run: node --test --test-reporter=tap .github/scripts/test_*.mjs
+      - name: Island search pilot Chrome with synthetic API reads
+        env:
+          ISLAND_PILOT_OUTPUT: .ci-results/island-pilot
+          ISLAND_PILOT_OSM_TILES: '0'
+        run: node docs/island-nearby-pilot/browser.mjs
       - name: Public and admin API and SQLite security
         working-directory: reports-api
         run: node --test --test-reporter=tap
@@ -56,6 +61,7 @@ jobs:
         shell: bash
         run: |
           python .github/scripts/test_report_archive_contract.py
+          python .github/scripts/test_island_nearby_contract.py
           python .github/scripts/test_central_sites.py
           python .github/scripts/test_jeju_sites.py
           python .github/scripts/test_metro_sites.py
@@ -123,5 +129,6 @@ jobs:
             .ci-results/native-cas
             .ci-results/issue28-chrome
             .ci-results/issue28-native
+            .ci-results/island-pilot
           retention-days: 14
           if-no-files-found: ignore

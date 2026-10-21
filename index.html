@@ -538,6 +538,16 @@ body.reporterStatsOpen{overflow:hidden}
 .popup-extra-info summary{cursor:pointer;font-weight:700;color:#31572c;list-style-position:inside}
 .popup-extra-info[open] summary{margin-bottom:6px}
 .popup-extra-info .v23InfoBox,.popup-extra-info .v23FieldInfoBox{margin:0;padding:0;border:0;background:transparent}
+/* island-nearby:styles:start */
+.island-nearby-search summary{min-height:44px;display:flex;align-items:center;gap:6px}
+.island-nearby-search summary::before{content:'▸'}
+.island-nearby-search[open] summary::before{content:'▾'}
+.island-nearby-search .nearby-search-row{margin-top:8px}
+.island-nearby-search .nearby-search-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:4px}
+.island-nearby-search .nearby-search-link{display:flex;align-items:center;justify-content:center;min-height:44px;padding:6px;border:1px solid #879c82;border-radius:6px;background:#fff;color:#244620;text-align:center;font-size:12px;line-height:1.4;box-sizing:border-box}
+.island-nearby-search .nearby-search-link:focus-visible{outline:3px solid #155c90;outline-offset:2px}
+.island-nearby-search p{margin:6px 0 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+/* island-nearby:styles:end */
 .v23WeatherBox{margin:7px 0;padding:7px;border:1px solid #bee1e5;background:#f0fcff;border-radius:7px;line-height:1.55}
 .v23WeatherBox .v23Title{font-weight:bold;color:#006064;margin-bottom:4px}
 .v23TodayBox{margin:7px 0;padding:8px;border:1px solid #e1c46a;background:#fffbea;border-radius:7px;line-height:1.55}
@@ -3512,6 +3522,37 @@ function initSiteHistory(site,popup){
   });
 }
 
+/* island-nearby:script:start */
+// Six islands, including their existing sub-location markers. No business data or API requests.
+var ISLAND_NEARBY_PILOT=[
+  {ids:['1','101','102','103'],name:'어청도',query:'전북 군산 어청도'},
+  {ids:['2','104','105','106'],name:'외연도',query:'충남 보령 외연도'},
+  {ids:['63','127','128','129','130'],name:'흑산도',query:'전남 신안 흑산도'},
+  {ids:['4','117','118','119'],name:'백령도',query:'인천 옹진 백령도'},
+  {ids:['110','111'],name:'소청도',query:'인천 옹진 소청도'},
+  {ids:['64'],name:'홍도',query:'전남 신안 홍도'}
+];
+function islandNearbySearchHtml(site){
+  if(!site||site.country!=='대한민국'||!site.island)return '';
+  var pilot=ISLAND_NEARBY_PILOT.find(function(item){
+    return item.ids.indexOf(String(site.id))>=0&&String(site.name).indexOf(item.name)===0;
+  });
+  if(!pilot)return '';
+  var rows=[{label:'맛집 찾기',term:'음식점'},{label:'숙박 찾기',term:'숙박'}].map(function(category){
+    var query=pilot.query+' '+category.term;
+    var links=[{name:'카카오맵',url:'https://map.kakao.com/link/search/'},
+      {name:'네이버지도',url:'https://map.naver.com/p/search/'}].map(function(provider){
+      return '<a class="nearby-search-link" href="'+provider.url+encodeURIComponent(query)+'" target="_blank" rel="noopener noreferrer" aria-label="'+escapeHtml(provider.name+'에서 '+query+' 검색 (새 창)')+'">'+provider.name+' ↗</a>';
+    }).join('');
+    return '<div class="nearby-search-row"><b>'+category.label+'</b><div class="nearby-search-links">'+links+'</div></div>';
+  }).join('');
+  return '<details class="popup-extra-info island-nearby-search"><summary>주변 맛집·숙박 검색 <small>시범</small></summary>'
+    +'<p>'+escapeHtml(pilot.name)+' 섬 이름으로 지도에서 검색합니다. 결과의 실제 위치를 확인하세요. 링크는 새 창으로 열립니다.</p>'+rows
+    +'<p>지도 검색 결과이며 추천·영업 여부·잔여 객실을 보장하지 않습니다. 숙박 가능 여부와 예약은 해당 업체의 공식 예약처에 확인하세요.</p>'
+    +'<p>여객선은 기존 선박 정보와 KSA 섬여객선 예매를 이용하세요. 운항 여부와 예약 가능 여부는 선사·공식 예약처에서 출발 전에 확인하세요.</p></details>';
+}
+/* island-nearby:script:end */
+
 function v23PopupContent(site,desktopContent){
   if(site.id==='189'||site.id==='190')return directCoastalPopupContent(site,desktopContent);
   var source=popupContentElement(desktopContent);
@@ -3528,6 +3569,7 @@ function v23PopupContent(site,desktopContent){
     '<div class="v24ProfileWide"><b>추천 시간:</b> '+escapeHtml(v25DisplayBestTime(site))+'</div>'+
     '<div class="v24ProfileWide"><b>추천 장비:</b> '+escapeHtml(gear.lens)+(gear.reason?'<br><span class="smallText">'+escapeHtml(gear.reason)+'</span>':'')+'</div>'+
     '</div></div></details>'+
+    islandNearbySearchHtml(site)+
     v23ButtonsFromLegacy(source,site)+
     (cafe?'<a href="'+escapeHtml(cafe.href)+'" target="_blank" class="cafe">📷 들뫼 탐조 보기</a>':'');
   return root;
