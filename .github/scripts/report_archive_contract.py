@@ -1,5 +1,57 @@
-"""Exclude only the approved additive archive from older whole-HTML freeze checks."""
+"""Exclude the exact approved archive and basemap additions from HTML freeze checks."""
 import subprocess
+
+BASEMAP_HEAD = (
+    '    <!-- Optional base-map configuration has no credential in the reviewed source. -->\n'
+    '    <link rel="stylesheet" href="assets/birdmap-basemap.css">\n'
+    '    <script src="assets/map-runtime-config.js"></script>\n'
+    '    <script src="assets/birdmap-basemap.js"></script>\n'
+    '    <script src="assets/birdmap-basemap-init.js"></script>\n'
+)
+BASEMAP_INITIALIZATION = (
+    '            // Frame the existing map before requesting either base layer.\n'
+    '            fitKoreaView();\n'
+    '            var birdmapBasemap = null;\n'
+    "            if (typeof initializeBirdmapBasemap === 'function') {\n"
+    '                birdmapBasemap = initializeBirdmapBasemap(\n'
+    '                    map_7010a44f6ac2025090f0fe07508ed485,\n'
+    '                    tile_layer_62315ff8219cb818078bbef8d2f68bcb\n'
+    '                );\n'
+    '            } else {\n'
+    '                tile_layer_62315ff8219cb818078bbef8d2f68bcb.addTo(map_7010a44f6ac2025090f0fe07508ed485);\n'
+    '            }\n'
+)
+BASEMAP_ORIGINAL_INITIALIZATION = (
+    '            tile_layer_62315ff8219cb818078bbef8d2f68bcb.addTo(map_7010a44f6ac2025090f0fe07508ed485);\n'
+    '        \n'
+    '    \n'
+    '            fitKoreaView();\n'
+)
+BASEMAP_FOLLOWING_CONTEXT = '        \n    \n            L.control.fullscreen(\n'
+BASEMAP_SIGNATURES = (
+    'Optional base-map configuration',
+    'assets/birdmap-basemap',
+    'assets/map-runtime-config',
+    'Frame the existing map before requesting either base layer.',
+    'birdmapBasemap',
+    'initializeBirdmapBasemap',
+)
+
+
+def without_approved_basemap(text):
+    if not any(signature in text for signature in BASEMAP_SIGNATURES):
+        return text
+    # These are two exact approved text islands, not open-ended marker regions.
+    # Partial, duplicated or edited islands must never widen the freeze scope.
+    if (text.count(BASEMAP_HEAD) != 1 or text.count(BASEMAP_INITIALIZATION) != 1
+            or text.count(BASEMAP_INITIALIZATION + BASEMAP_FOLLOWING_CONTEXT) != 1):
+        raise ValueError('Exact approved basemap head and initialization must each occur once')
+    text = text.replace(BASEMAP_HEAD, '', 1)
+    text = text.replace(BASEMAP_INITIALIZATION, BASEMAP_ORIGINAL_INITIALIZATION, 1)
+    if any(signature in text for signature in BASEMAP_SIGNATURES):
+        raise ValueError('Unexpected basemap fragment outside approved additions')
+    return text
+
 
 BUTTON = '  <button id="reportArchiveOpen" class="contribMore" type="button" onclick="openReportArchive()">전체 보기</button>\n'
 HOOK = " if(typeof clearReportArchive==='function')clearReportArchive();\n"
@@ -11,7 +63,7 @@ BLOCKS = [
 
 
 def without_report_archive(text):
-    text = text.replace('\r\n', '\n')
+    text = without_approved_basemap(text.replace('\r\n', '\n'))
     if 'report-archive:' not in text and 'id="reportArchiveOpen"' not in text:
         return text
     for literal in (BUTTON, HOOK):
