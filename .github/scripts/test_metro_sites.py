@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
+from report_archive_contract import without_report_archive
 
 ROOT=Path(__file__).resolve().parents[2]
 SOURCE=json.loads((ROOT/'data/metro-birding-sites-20261019.json').read_text(encoding='utf-8'))
@@ -23,6 +24,7 @@ class MetroSitesTests(unittest.TestCase):
         self.assertEqual(current[208:],[r['site'] for r in SOURCE['records']])
         self.assertEqual([s['id'] for s in current[208:]],NEW);self.assertEqual(len(current),229)
         def strip(t):
+            t=without_report_archive(t)
             t=t.replace('최종 업데이트: 2026.10.19','최종 업데이트: 2026.10.18').replace('수도권 21곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">229','id="mapTitleSiteCount">208')
             return re.sub(r'siteData=siteData\.concat\([\s\S]*?\);','SITE_ARRAY',t.replace('\r\n','\n'),count=1)
         self.assertEqual(strip((ROOT/'index.html').read_text(encoding='utf-8')),strip(old))

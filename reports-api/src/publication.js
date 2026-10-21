@@ -3,6 +3,7 @@ import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
+import {reportSearchPlan} from './report-search.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='legacy-public-v1';
 export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
@@ -67,7 +68,7 @@ export async function publicationAnchor(binding,request) {
   rememberGuardLocators(binding,row);return anchor;
  }catch(e){if(e instanceof WorkerError)throw e;fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');}
 }
-const paths=new Set(['/reports/approved','/reports/pending','/reports/recent-sites','/field-updates','/contributors/monthly','/contributors/all','/reports/reporter-stats','/reports/reporter-species']);
+const paths=new Set(['/reports/search','/reports/approved','/reports/pending','/reports/recent-sites','/field-updates','/contributors/monthly','/contributors/all','/reports/reporter-stats','/reports/reporter-species']);
 export function isPublicationPath(path){return paths.has(path)||path.startsWith('/reports/site/');}
 // One public nickname and a source already exposed by an existing public projection.
 // These are membership witnesses, not secret credentials. The same primary batch
@@ -153,6 +154,7 @@ function contributorsAllPlan(db,url) {
 
 function readPlan(db,url,now,fieldInput={viewer:null}) {
  const path=url.pathname;
+ if(path==='/reports/search')return reportSearchPlan(db,url);
  const draft=/^\/field-updates\/([0-9a-f-]{36})\/report-draft$/.exec(path);
  if(draft)return fieldDraftPlan(db,draft[1],fieldInput.owner,now);
  if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url);
@@ -184,7 +186,7 @@ export async function handlePublicationRead(request,env,url) {
  if(request.method!=='GET'&&!fieldPost)return null;
  const head=url.pathname==='/reports/public-state';
  if(!head&&!fieldPost&&!isPublicationPath(url.pathname))return null;
- if(!head&&!url.pathname.endsWith('/report-draft')&&!url.searchParams.has('contract')&&env.REPORTS_PUBLICATION_REQUIRED!=='true')return null;
+ if(!head&&url.pathname!=='/reports/search'&&!url.pathname.endsWith('/report-draft')&&!url.searchParams.has('contract')&&env.REPORTS_PUBLICATION_REQUIRED!=='true')return null;
  const input=publicationRequest(url,head),binding=env.REPORTS_DB;
  if(!binding)fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');
  const now=new Date();
