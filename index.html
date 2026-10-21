@@ -309,7 +309,9 @@ a.ebird,.btn.ebird{display:none !important}
 #recentReportsBox.contribMode #reportArchiveOpen{display:none}
 #reportArchiveOpen{flex:0 0 auto}
 body.reportArchiveOpen{overflow:hidden}
+#reportArchiveContent{overflow-anchor:none}
 #reportArchiveContent .recentReportItem{cursor:default;padding:10px 0}
+#reportArchiveContent button[aria-disabled="true"]{opacity:.65;cursor:default}
 #reportArchiveContent .recentReportMeta{font-size:12px}
 #reportArchiveModal .contribTools button{padding:6px 10px;border:1px solid #2d6f9f;border-radius:6px;background:#fff;color:#174d6f;font:inherit;font-size:13px;cursor:pointer}
 @media(max-width:600px){#reportArchiveSearch{flex-basis:100%}}
@@ -1219,11 +1221,15 @@ function reportArchivePayload(body,offset){
 function clearReportArchive(){
   reportArchiveRequest++;clearTimeout(reportArchiveTimer);reportArchiveTimer=0;
   reportArchiveData=null;reportArchivePublication=null;reportArchiveState='failed';reportArchiveMessage='';
+  var content=document.getElementById('reportArchiveContent'),modal=document.getElementById('reportArchiveModal');
+  var restoreFocus=content&&content.contains(document.activeElement)&&modal&&modal.style.display==='flex';
+  if(content){content._reportArchiveView=null;content.textContent='';}
   renderReportArchive();
+  if(restoreFocus)document.getElementById('reportArchiveSearch').focus({preventScroll:true});
 }
 function loadReportArchive(more){
   var offset=more&&reportArchiveCurrent()?reportArchiveData.reports.length:0;
-  if(more&&(!offset||reportArchiveState==='loading'))return Promise.resolve(false);
+  if(more&&(!offset||reportArchiveState==='loading'||!reportArchiveData.hasMore))return Promise.resolve(false);
   var request=++reportArchiveRequest,query=reportArchiveQuery;
   if(!offset){reportArchiveData=null;reportArchivePublication=null;}
   reportArchiveState='loading';reportArchiveMessage='';renderReportArchive();
@@ -1255,28 +1261,34 @@ function resetReportArchiveSearch(){
 function renderReportArchive(){
   var modal=document.getElementById('reportArchiveModal');if(!modal||modal.style.display!=='flex')return;
   var content=document.getElementById('reportArchiveContent'),meta=document.getElementById('reportArchiveMeta');
-  var restoreFocus=content.contains(document.activeElement);
-  var data=reportArchiveCurrent()?reportArchiveData:null;content.textContent='';
+  var data=reportArchiveCurrent()?reportArchiveData:null,view=content._reportArchiveView;
+  var keep=!!data&&!!view&&view.query===reportArchiveQuery&&publicationSame(view.publication,reportArchivePublication)&&view.ids.length<=data.reports.length&&view.ids.every(function(id,i){return data.reports[i].id===id;});
+  var scroll=content.scrollTop,restoreFocus=!keep&&content.contains(document.activeElement);
+  if(!keep){content.textContent='';content._reportArchiveView=null;view={ids:[],more:null,message:null};}
   content.setAttribute('aria-busy',String(reportArchiveState==='loading'));
   meta.textContent=data?(reportArchiveQuery?'검색 결과 ':'승인 제보 ')+data.total+'건 · '+data.reports.length+'건 표시 (관찰일 최신순)':'';
   function note(text){var node=document.createElement('div');node.className='recentReportEmpty';node.textContent=text;content.appendChild(node);}
   function button(text,fn){var node=document.createElement('button');node.type='button';node.className='contribMore';node.textContent=text;node.onclick=fn;content.appendChild(node);return node;}
   if(data){
-    data.reports.forEach(function(row){
+    data.reports.slice(view.ids.length).forEach(function(row){
       var item=document.createElement('div');item.className='recentReportItem';
       var name=document.createElement(row.target&&!row.locationHidden?'button':'div');name.className='recentReportSpecies';name.textContent=row.species.join(' · ');
       if(name.tagName==='BUTTON'){name.type='button';name.classList.add('reporterMapOpen');name.onclick=function(){openReportArchiveEntry(row.id);};name.setAttribute('aria-label',name.textContent+' 지도에서 보기');}
       item.appendChild(name);
       var detail=document.createElement('div');detail.className='recentReportMeta';
       detail.textContent=[row.date,row.reporter||'익명 제보',row.siteName,row.region,row.locationHidden?'위치 비공개':''].filter(Boolean).join(' · ');
-      item.appendChild(detail);content.appendChild(item);
+      item.appendChild(detail);content.insertBefore(item,view.more);
     });
-    if(!data.reports.length)note(reportArchiveQuery?'검색 결과가 없습니다.':'승인된 제보가 없습니다.');
-    if(data.hasMore){var more=button(reportArchiveState==='loading'?'불러오는 중입니다.':'20건 더 보기',function(){loadReportArchive(true);});more.disabled=reportArchiveState==='loading';}
+    if(!keep&&!data.reports.length)note(reportArchiveQuery?'검색 결과가 없습니다.':'승인된 제보가 없습니다.');
+    if(data.hasMore&&!view.more)view.more=button('',function(){if(reportArchiveState!=='loading'&&reportArchiveData&&reportArchiveData.hasMore)loadReportArchive(true);});
+    if(view.more){view.more.textContent=reportArchiveState==='loading'?'불러오는 중입니다.':data.hasMore?'20건 더 보기':'모두 불러왔습니다.';view.more.setAttribute('aria-disabled',String(reportArchiveState==='loading'||!data.hasMore));}
+    view.ids=data.reports.map(function(row){return row.id;});view.query=reportArchiveQuery;view.publication=reportArchivePublication;content._reportArchiveView=view;
   }else if(reportArchiveState==='loading'){meta.textContent='불러오는 중입니다.';note('승인 제보를 불러오는 중입니다.');}
   else{meta.textContent='제보를 불러오지 못했습니다.';note('공개 제보의 최신 상태를 확인할 수 없습니다. 다시 시도해 주세요.');button('다시 시도',function(){loadReportArchive(false);});}
-  if(reportArchiveMessage)note(reportArchiveMessage);
-  if(restoreFocus)document.getElementById('reportArchiveSearch').focus();
+  if(view.message){view.message.remove();view.message=null;}
+  if(reportArchiveMessage){view.message=document.createElement('div');view.message.className='recentReportEmpty';view.message.textContent=reportArchiveMessage;content.appendChild(view.message);}
+  if(keep)content.scrollTop=scroll;
+  if(restoreFocus)document.getElementById('reportArchiveSearch').focus({preventScroll:true});
 }
 function openReportArchive(){
   reportArchiveReturnFocus=document.activeElement;

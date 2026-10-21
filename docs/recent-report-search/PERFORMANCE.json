@@ -1,0 +1,1373 @@
+{
+  "environment": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha",
+    "workerd": "1.20261006.1",
+    "os": "win32 10.0.19045",
+    "arch": "x64",
+    "cpuModel": "AMD Ryzen 5 5600 6-Core Processor              ",
+    "logicalCpus": 12,
+    "totalMemoryBytes": 17101799424,
+    "compatibilityDate": "2026-07-03",
+    "compatibilityFlags": [
+      "nodejs_compat"
+    ],
+    "concurrency": 1,
+    "sites": 229,
+    "repeats": 20,
+    "sourceHead": "91649629476296b43c7b4fd9613ed340e8114d9a",
+    "reportSearchSha256": "98e6b9106c67cbdf33abfaa1fdd883bc01f09aa646585560166102443066a0ec",
+    "bundleSha256": "7851e54ba96c048242e363e6bd2637af9eea5955775e57e6690fbbfcc9ad2aa6",
+    "workerHeapAvailable": false
+  },
+  "memoryEnvironment": {
+    "node": "v24.18.0",
+    "miniflare": "5.20261006.1-alpha",
+    "workerd": "1.20261006.1",
+    "os": "win32 10.0.19045",
+    "arch": "x64",
+    "cpuModel": "AMD Ryzen 5 5600 6-Core Processor              ",
+    "logicalCpus": 12,
+    "totalMemoryBytes": 17101799424,
+    "compatibilityDate": "2026-07-03",
+    "compatibilityFlags": [
+      "nodejs_compat"
+    ],
+    "concurrency": 1,
+    "sites": 229,
+    "repeats": 20,
+    "sourceHead": "91649629476296b43c7b4fd9613ed340e8114d9a",
+    "reportSearchSha256": "98e6b9106c67cbdf33abfaa1fdd883bc01f09aa646585560166102443066a0ec",
+    "bundleSha256": "7851e54ba96c048242e363e6bd2637af9eea5955775e57e6690fbbfcc9ad2aa6",
+    "workerHeapAvailable": true
+  },
+  "scope": "Actual local workerd Worker isolate and native Miniflare D1; ephemeral synthetic data. Not production Cloudflare latency, CPU, billing or memory limit evidence.",
+  "timing": "body-consumed host wall time; anchor requests excluded. First request means first use of that query/offset in the already-started isolate. Repeats are sequential and not cached.",
+  "memory": "Native child workerd whole-process working set/private bytes at scenario endpoints, including Worker+D1+runtime; not per-request isolate heap or in-flight peak. Node controller heap/RSS reported separately. Optional inspector heap snapshots/GC are enabled only by REPORT_SEARCH_INSPECTOR=1; otherwise no forced GC. Memory probes excluded from response timing.",
+  "d1": "Native local D1 meta rows_read/rows_written/duration. duration may be zero at local millisecond resolution; never substitute a fabricated value.",
+  "rawSha256": {
+    "noInspector": "b043b46026c1c6bf4d30da498f0e6743cf047ade21ce78807d1d1a22de637c41",
+    "inspector": "2197ca3c65d93d33357cbf25df1b23767a68112ab960595c5ae96e615b5873ee"
+  },
+  "measuredRequests": {
+    "noInspector": 378,
+    "inspector": 378,
+    "scenariosPerRun": 18
+  },
+  "rows": [
+    {
+      "count": 100,
+      "query": "(none)",
+      "offset": 0,
+      "firstMs": 11.740099999999984,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 4.480199999999968,
+        "p50": 5.166999999999916,
+        "p95": 6.017100000000028,
+        "max": 6.054200000000037
+      },
+      "rowsRead": {
+        "min": 465,
+        "p50": 465,
+        "p95": 465,
+        "max": 465
+      },
+      "d1DurationMs": {
+        "min": 1,
+        "p50": 1,
+        "p95": 2,
+        "max": 2
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 200,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1071548,
+        "p50": 1480864,
+        "p95": 1845268,
+        "max": 1949148
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -580768,
+        "p50": 349316,
+        "p95": 376496,
+        "max": 394100
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 109473792,
+          "PrivateMemorySize64": 100786176
+        },
+        "after": {
+          "WorkingSet64": 113741824,
+          "PrivateMemorySize64": 104005632
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 186036224,
+        "p50": 186630144,
+        "p95": 187449344,
+        "max": 187449344
+      }
+    },
+    {
+      "count": 100,
+      "query": "(none)",
+      "offset": 20,
+      "firstMs": 7.576100000000224,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 4.2948999999998705,
+        "p50": 4.824299999999766,
+        "p95": 5.269400000000132,
+        "max": 5.826499999999669
+      },
+      "rowsRead": {
+        "min": 465,
+        "p50": 465,
+        "p95": 465,
+        "max": 465
+      },
+      "d1DurationMs": {
+        "min": 0,
+        "p50": 1,
+        "p95": 2,
+        "max": 2
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 200,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 0
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1120912,
+        "p50": 1560740,
+        "p95": 2295312,
+        "max": 2644724
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1511044,
+        "p50": 349412,
+        "p95": 371040,
+        "max": 374324
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 113741824,
+          "PrivateMemorySize64": 104005632
+        },
+        "after": {
+          "WorkingSet64": 115240960,
+          "PrivateMemorySize64": 105324544
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 187469824,
+        "p50": 187793408,
+        "p95": 189063168,
+        "max": 189153280
+      }
+    },
+    {
+      "count": 100,
+      "query": "참새",
+      "offset": 0,
+      "firstMs": 6.962999999999738,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 4.398999999999887,
+        "p50": 4.711599999999635,
+        "p95": 5.28670000000011,
+        "max": 5.657400000000052
+      },
+      "rowsRead": {
+        "min": 465,
+        "p50": 465,
+        "p95": 465,
+        "max": 465
+      },
+      "d1DurationMs": {
+        "min": 0,
+        "p50": 1,
+        "p95": 1,
+        "max": 2
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 200,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1136136,
+        "p50": 1542596,
+        "p95": 1986000,
+        "max": 1992088
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -536800,
+        "p50": 400724,
+        "p95": 405892,
+        "max": 408796
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 115240960,
+          "PrivateMemorySize64": 105324544
+        },
+        "after": {
+          "WorkingSet64": 116498432,
+          "PrivateMemorySize64": 107298816
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 189734912,
+        "p50": 190963712,
+        "p95": 192360448,
+        "max": 192536576
+      }
+    },
+    {
+      "count": 100,
+      "query": "참새",
+      "offset": 20,
+      "firstMs": 6.379700000000412,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 4.324300000000221,
+        "p50": 4.677599999999984,
+        "p95": 5.001699999999801,
+        "max": 5.047499999999673
+      },
+      "rowsRead": {
+        "min": 465,
+        "p50": 465,
+        "p95": 465,
+        "max": 465
+      },
+      "d1DurationMs": {
+        "min": 0,
+        "p50": 1,
+        "p95": 1,
+        "max": 1
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 200,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1114176,
+        "p50": 1518876,
+        "p95": 1909648,
+        "max": 1919528
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -555456,
+        "p50": -342304,
+        "p95": 400960,
+        "max": 409124
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 116498432,
+          "PrivateMemorySize64": 107298816
+        },
+        "after": {
+          "WorkingSet64": 118063104,
+          "PrivateMemorySize64": 108634112
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 193003520,
+        "p50": 194576384,
+        "p95": 195919872,
+        "max": 196030464
+      }
+    },
+    {
+      "count": 100,
+      "query": "없는합성종",
+      "offset": 0,
+      "firstMs": 7.136599999999817,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 4.212199999999939,
+        "p50": 4.5628999999999,
+        "p95": 5.538800000000265,
+        "max": 6.040399999999863
+      },
+      "rowsRead": {
+        "min": 465,
+        "p50": 465,
+        "p95": 465,
+        "max": 465
+      },
+      "d1DurationMs": {
+        "min": 1,
+        "p50": 1,
+        "p95": 1,
+        "max": 2
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 200,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1079984,
+        "p50": 1228028,
+        "p95": 1639616,
+        "max": 1650924
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -449948,
+        "p50": -358880,
+        "p95": 423244,
+        "max": 423244
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 118063104,
+          "PrivateMemorySize64": 108634112
+        },
+        "after": {
+          "WorkingSet64": 120025088,
+          "PrivateMemorySize64": 110256128
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 196571136,
+        "p50": 196861952,
+        "p95": 196984832,
+        "max": 197005312
+      }
+    },
+    {
+      "count": 100,
+      "query": "없는합성종",
+      "offset": 20,
+      "firstMs": 6.279999999999745,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 4.225699999999961,
+        "p50": 4.544600000000173,
+        "p95": 4.966699999999946,
+        "max": 4.989900000000489
+      },
+      "rowsRead": {
+        "min": 465,
+        "p50": 465,
+        "p95": 465,
+        "max": 465
+      },
+      "d1DurationMs": {
+        "min": 0,
+        "p50": 1,
+        "p95": 1,
+        "max": 1
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 200,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 0
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1079580,
+        "p50": 1544532,
+        "p95": 2458420,
+        "max": 2461832
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1269508,
+        "p50": 422908,
+        "p95": 426336,
+        "max": 426556
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 120025088,
+          "PrivateMemorySize64": 110256128
+        },
+        "after": {
+          "WorkingSet64": 122040320,
+          "PrivateMemorySize64": 112386048
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 196710400,
+        "p50": 196952064,
+        "p95": 197042176,
+        "max": 197042176
+      }
+    },
+    {
+      "count": 1000,
+      "query": "(none)",
+      "offset": 0,
+      "firstMs": 17.266999999999825,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 9.061299999999392,
+        "p50": 10.114199999999983,
+        "p95": 11.393199999998615,
+        "max": 12.362300000000687
+      },
+      "rowsRead": {
+        "min": 2265,
+        "p50": 2265,
+        "p95": 2265,
+        "max": 2265
+      },
+      "d1DurationMs": {
+        "min": 2,
+        "p50": 3,
+        "p95": 3,
+        "max": 3
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 2000,
+          "rowsWritten": 0,
+          "durationMs": 2
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1458340,
+        "p50": 1530396,
+        "p95": 2012388,
+        "max": 2918960
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1430800,
+        "p50": 3452,
+        "p95": 207104,
+        "max": 1431044
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 175341568,
+          "PrivateMemorySize64": 167768064
+        },
+        "after": {
+          "WorkingSet64": 188932096,
+          "PrivateMemorySize64": 181440512
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 272945152,
+        "p50": 277868544,
+        "p95": 278204416,
+        "max": 279097344
+      }
+    },
+    {
+      "count": 1000,
+      "query": "(none)",
+      "offset": 20,
+      "firstMs": 11.25879999999961,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 8.590799999999945,
+        "p50": 9.301799999999275,
+        "p95": 10.283900000000358,
+        "max": 10.793499999999767
+      },
+      "rowsRead": {
+        "min": 2265,
+        "p50": 2265,
+        "p95": 2265,
+        "max": 2265
+      },
+      "d1DurationMs": {
+        "min": 2,
+        "p50": 3,
+        "p95": 3,
+        "max": 3
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 2000,
+          "rowsWritten": 0,
+          "durationMs": 2
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1088508,
+        "p50": 1151520,
+        "p95": 3449772,
+        "max": 3465568
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -2026300,
+        "p50": 35100,
+        "p95": 2033744,
+        "max": 2042096
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 188932096,
+          "PrivateMemorySize64": 181440512
+        },
+        "after": {
+          "WorkingSet64": 193765376,
+          "PrivateMemorySize64": 185643008
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 273342464,
+        "p50": 274038784,
+        "p95": 274354176,
+        "max": 274354176
+      }
+    },
+    {
+      "count": 1000,
+      "query": "참새",
+      "offset": 0,
+      "firstMs": 11.44629999999961,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 9.408900000000358,
+        "p50": 10.048099999999977,
+        "p95": 10.644400000001042,
+        "max": 12.965500000000247
+      },
+      "rowsRead": {
+        "min": 2265,
+        "p50": 2265,
+        "p95": 2265,
+        "max": 2265
+      },
+      "d1DurationMs": {
+        "min": 1,
+        "p50": 3,
+        "p95": 3,
+        "max": 3
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 2000,
+          "rowsWritten": 0,
+          "durationMs": 2
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 0
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1665152,
+        "p50": 2880488,
+        "p95": 4731340,
+        "max": 4970552
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1656248,
+        "p50": -693196,
+        "p95": 2562600,
+        "max": 2565464
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 193765376,
+          "PrivateMemorySize64": 185643008
+        },
+        "after": {
+          "WorkingSet64": 194678784,
+          "PrivateMemorySize64": 186957824
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 274407424,
+        "p50": 274448384,
+        "p95": 274530304,
+        "max": 274530304
+      }
+    },
+    {
+      "count": 1000,
+      "query": "참새",
+      "offset": 20,
+      "firstMs": 14.230400000000373,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 9.330399999998917,
+        "p50": 9.913699999999153,
+        "p95": 10.811999999999898,
+        "max": 13.411200000000463
+      },
+      "rowsRead": {
+        "min": 2265,
+        "p50": 2265,
+        "p95": 2265,
+        "max": 2265
+      },
+      "d1DurationMs": {
+        "min": 2,
+        "p50": 3,
+        "p95": 3,
+        "max": 3
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 2000,
+          "rowsWritten": 0,
+          "durationMs": 2
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1264504,
+        "p50": 2371848,
+        "p95": 4181912,
+        "max": 4405624
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1671616,
+        "p50": -988196,
+        "p95": 2563496,
+        "max": 2565716
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 194678784,
+          "PrivateMemorySize64": 186957824
+        },
+        "after": {
+          "WorkingSet64": 203104256,
+          "PrivateMemorySize64": 196165632
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 274616320,
+        "p50": 274817024,
+        "p95": 275447808,
+        "max": 275447808
+      }
+    },
+    {
+      "count": 1000,
+      "query": "없는합성종",
+      "offset": 0,
+      "firstMs": 15.427400000000489,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 9.677599999999074,
+        "p50": 10.039300000000367,
+        "p95": 10.64429999999993,
+        "max": 11.722899999998845
+      },
+      "rowsRead": {
+        "min": 2265,
+        "p50": 2265,
+        "p95": 2265,
+        "max": 2265
+      },
+      "d1DurationMs": {
+        "min": 2,
+        "p50": 3,
+        "p95": 3,
+        "max": 3
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 2000,
+          "rowsWritten": 0,
+          "durationMs": 2
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1269432,
+        "p50": 2271560,
+        "p95": 4661488,
+        "max": 4901116
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1403688,
+        "p50": -927296,
+        "p95": 2859332,
+        "max": 2860064
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 203104256,
+          "PrivateMemorySize64": 196165632
+        },
+        "after": {
+          "WorkingSet64": 205197312,
+          "PrivateMemorySize64": 198037504
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 275480576,
+        "p50": 275554304,
+        "p95": 275566592,
+        "max": 275570688
+      }
+    },
+    {
+      "count": 1000,
+      "query": "없는합성종",
+      "offset": 20,
+      "firstMs": 12.242299999999886,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 9.817999999999302,
+        "p50": 10.372400000000198,
+        "p95": 10.665499999999156,
+        "max": 11.425699999999779
+      },
+      "rowsRead": {
+        "min": 2265,
+        "p50": 2265,
+        "p95": 2265,
+        "max": 2265
+      },
+      "d1DurationMs": {
+        "min": 2,
+        "p50": 3,
+        "p95": 3,
+        "max": 3
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 2000,
+          "rowsWritten": 0,
+          "durationMs": 2
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 0
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 1269636,
+        "p50": 2265916,
+        "p95": 4454396,
+        "max": 4661956
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -1403632,
+        "p50": -870284,
+        "p95": 2858920,
+        "max": 2858920
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 205197312,
+          "PrivateMemorySize64": 198037504
+        },
+        "after": {
+          "WorkingSet64": 209756160,
+          "PrivateMemorySize64": 202932224
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 275652608,
+        "p50": 275763200,
+        "p95": 275976192,
+        "max": 275980288
+      }
+    },
+    {
+      "count": 10000,
+      "query": "(none)",
+      "offset": 0,
+      "firstMs": 72.6791000000012,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 57.96099999999569,
+        "p50": 59.690999999998894,
+        "p95": 65.72580000000016,
+        "max": 67.36769999999524
+      },
+      "rowsRead": {
+        "min": 20265,
+        "p50": 20265,
+        "p95": 20265,
+        "max": 20265
+      },
+      "d1DurationMs": {
+        "min": 22,
+        "p50": 23,
+        "p95": 24,
+        "max": 24
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 20000,
+          "rowsWritten": 0,
+          "durationMs": 23
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 2
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 11804880,
+        "p50": 26992132,
+        "p95": 46046472,
+        "max": 49674780
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -15065276,
+        "p50": 4164132,
+        "p95": 19060260,
+        "max": 19084040
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 393269248,
+          "PrivateMemorySize64": 394240000
+        },
+        "after": {
+          "WorkingSet64": 513794048,
+          "PrivateMemorySize64": 519716864
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 393285632,
+        "p50": 393342976,
+        "p95": 393367552,
+        "max": 393371648
+      }
+    },
+    {
+      "count": 10000,
+      "query": "(none)",
+      "offset": 20,
+      "firstMs": 70.99590000000171,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 56.87649999999849,
+        "p50": 58.64409999999771,
+        "p95": 60.61230000000069,
+        "max": 60.828999999997905
+      },
+      "rowsRead": {
+        "min": 20265,
+        "p50": 20265,
+        "p95": 20265,
+        "max": 20265
+      },
+      "d1DurationMs": {
+        "min": 22,
+        "p50": 23,
+        "p95": 23,
+        "max": 23
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 20000,
+          "rowsWritten": 0,
+          "durationMs": 21
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 2
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 11774544,
+        "p50": 27494320,
+        "p95": 47026324,
+        "max": 50770456
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -14814696,
+        "p50": 4486216,
+        "p95": 19516484,
+        "max": 19532004
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 513794048,
+          "PrivateMemorySize64": 519716864
+        },
+        "after": {
+          "WorkingSet64": 533159936,
+          "PrivateMemorySize64": 538517504
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 393408512,
+        "p50": 393535488,
+        "p95": 393814016,
+        "max": 393814016
+      }
+    },
+    {
+      "count": 10000,
+      "query": "참새",
+      "offset": 0,
+      "firstMs": 70.40529999999853,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 63.925900000002,
+        "p50": 66.85689999999886,
+        "p95": 69.21910000000207,
+        "max": 81.20889999999781
+      },
+      "rowsRead": {
+        "min": 20265,
+        "p50": 20265,
+        "p95": 20265,
+        "max": 20265
+      },
+      "d1DurationMs": {
+        "min": 22,
+        "p50": 23,
+        "p95": 25,
+        "max": 39
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 20000,
+          "rowsWritten": 0,
+          "durationMs": 22
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 10002040,
+        "p50": 26935208,
+        "p95": 45718740,
+        "max": 49454728
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -10720384,
+        "p50": -3943328,
+        "p95": 24347664,
+        "max": 24381120
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 533159936,
+          "PrivateMemorySize64": 538517504
+        },
+        "after": {
+          "WorkingSet64": 588988416,
+          "PrivateMemorySize64": 596275200
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 293056512,
+        "p50": 394096640,
+        "p95": 394121216,
+        "max": 394121216
+      }
+    },
+    {
+      "count": 10000,
+      "query": "참새",
+      "offset": 20,
+      "firstMs": 82.91320000000269,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 64.51489999999467,
+        "p50": 66.9464999999982,
+        "p95": 73.28100000000268,
+        "max": 82.10169999999925
+      },
+      "rowsRead": {
+        "min": 20265,
+        "p50": 20265,
+        "p95": 20265,
+        "max": 20265
+      },
+      "d1DurationMs": {
+        "min": 22,
+        "p50": 23,
+        "p95": 26,
+        "max": 26
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 1
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 20000,
+          "rowsWritten": 0,
+          "durationMs": 22
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 2
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 10001748,
+        "p50": 26914328,
+        "p95": 45718508,
+        "max": 49454052
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -10848092,
+        "p50": -3877136,
+        "p95": 24347724,
+        "max": 24413204
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 588988416,
+          "PrivateMemorySize64": 596275200
+        },
+        "after": {
+          "WorkingSet64": 618508288,
+          "PrivateMemorySize64": 627138560
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 288980992,
+        "p50": 289030144,
+        "p95": 289132544,
+        "max": 289144832
+      }
+    },
+    {
+      "count": 10000,
+      "query": "없는합성종",
+      "offset": 0,
+      "firstMs": 71.8076000000001,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 69.44870000000083,
+        "p50": 70.24889999999868,
+        "p95": 75.70449999999983,
+        "max": 75.76239999999962
+      },
+      "rowsRead": {
+        "min": 20265,
+        "p50": 20265,
+        "p95": 20265,
+        "max": 20265
+      },
+      "d1DurationMs": {
+        "min": 22,
+        "p50": 22,
+        "p95": 24,
+        "max": 24
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 20000,
+          "rowsWritten": 0,
+          "durationMs": 22
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 16422700,
+        "p50": 33475940,
+        "p95": 52065768,
+        "max": 57674332
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -7769880,
+        "p50": -2908916,
+        "p95": 27453468,
+        "max": 27453736
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 618508288,
+          "PrivateMemorySize64": 627138560
+        },
+        "after": {
+          "WorkingSet64": 648376320,
+          "PrivateMemorySize64": 658288640
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 125079552,
+        "p50": 126144512,
+        "p95": 289370112,
+        "max": 289370112
+      }
+    },
+    {
+      "count": 10000,
+      "query": "없는합성종",
+      "offset": 20,
+      "firstMs": 71.60960000000341,
+      "repeatRequests": 20,
+      "repeatMs": {
+        "min": 68.21540000000095,
+        "p50": 70.41730000000098,
+        "p95": 71.82269999999698,
+        "max": 72.87599999999657
+      },
+      "rowsRead": {
+        "min": 20265,
+        "p50": 20265,
+        "p95": 20265,
+        "max": 20265
+      },
+      "d1DurationMs": {
+        "min": 22,
+        "p50": 22,
+        "p95": 24,
+        "max": 24
+      },
+      "statementMeta": [
+        {
+          "kind": "publication",
+          "rowsRead": 36,
+          "rowsWritten": 0,
+          "durationMs": 0
+        },
+        {
+          "kind": "reports",
+          "rowsRead": 20000,
+          "rowsWritten": 0,
+          "durationMs": 22
+        },
+        {
+          "kind": "sites",
+          "rowsRead": 229,
+          "rowsWritten": 0,
+          "durationMs": 1
+        }
+      ],
+      "workerIsolateHeapAfterBytes": {
+        "min": 16487344,
+        "p50": 33793148,
+        "p95": 52066832,
+        "max": 57675396
+      },
+      "workerIsolateHeapDeltaBytes": {
+        "min": -7773412,
+        "p50": -2880208,
+        "p95": 27420728,
+        "max": 27453496
+      },
+      "nativeProcessMemory": {
+        "before": {
+          "WorkingSet64": 648376320,
+          "PrivateMemorySize64": 658288640
+        },
+        "after": {
+          "WorkingSet64": 678178816,
+          "PrivateMemorySize64": 689307648
+        }
+      },
+      "nodeControllerRssAfterBytes": {
+        "min": 125366272,
+        "p50": 125939712,
+        "p95": 126816256,
+        "max": 126816256
+      }
+    }
+  ]
+}

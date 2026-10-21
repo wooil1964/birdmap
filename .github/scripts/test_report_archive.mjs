@@ -10,10 +10,12 @@ function page(reports,total=reports.length,offset=0,publication=anchor){return {
 function fixture(){
   let c;
   class Node{
-    constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.style={};this.attributes={};this.isConnected=true;this.value='';this.classList={add(){}};}
-    set textContent(x){this.text=String(x);this.children=[];}
+    constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.style={};this.attributes={};this.isConnected=true;this.value='';this.scrollTop=0;this.classList={add(){}};}
+    set textContent(x){this.text=String(x);this.children.forEach(n=>n.isConnected=false);this.children=[];}
     get textContent(){return (this.text||'')+this.children.map(x=>x.textContent).join('');}
-    appendChild(n){this.children.push(n);return n;}
+    appendChild(n){this.children.push(n);n.parent=this;return n;}
+    insertBefore(n,before){const i=before?this.children.indexOf(before):-1;if(i<0)return this.appendChild(n);this.children.splice(i,0,n);n.parent=this;return n;}
+    remove(){if(this.parent)this.parent.children=this.parent.children.filter(n=>n!==this);this.isConnected=false;}
     setAttribute(k,v){this.attributes[k]=v;}
     focus(){c.document.activeElement=this;}
     contains(node){return this===node||this.children.some(child=>child.contains(node));}
@@ -95,4 +97,32 @@ test('invalid payload and duplicate page cannot restore or append data',async()=
   const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page([row('bad')],22));await f.flush();assert.equal(f.c.reportArchiveData,null);assert.equal(f.c.reportArchiveState,'failed');
   const p=f.c.loadReportArchive(false);f.calls[1].resolve(page(Array.from({length:20},(_,i)=>row('r'+i)),21));await p;
   const more=f.c.loadReportArchive(true);f.calls[2].resolve(page([row('r0')],21,20));assert.equal(await more,false);assert.equal(f.c.reportArchiveData,null);
+});
+
+test('more preserves scroller, query, existing nodes and focused button during loading and append',async()=>{
+  const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page(Array.from({length:20},(_,i)=>row('r'+i)),41));await f.flush();
+  const content=f.nodes.reportArchiveContent,first=content.children[0],more=content.children.at(-1);
+  content.scrollTop=720;more.focus();const p=f.c.loadReportArchive(true);
+  assert.equal(content.children[0],first);assert.equal(content.children.at(-1),more);assert.equal(f.c.document.activeElement,more);assert.equal(content.scrollTop,720);assert.equal(more.attributes['aria-disabled'],'true');assert.notEqual(more.disabled,true);
+  assert.equal(await f.c.loadReportArchive(true),false);assert.equal(f.calls.length,2);
+  f.calls[1].resolve(page(Array.from({length:20},(_,i)=>row('r'+(i+20))),41,20));assert.equal(await p,true);
+  assert.equal(content.children[0],first);assert.equal(content.children.at(-1),more);assert.equal(f.c.document.activeElement,more);assert.equal(content.scrollTop,720);assert.equal(more.attributes['aria-disabled'],'false');
+  const final=f.c.loadReportArchive(true);f.calls[2].resolve(page([row('last',{locationHidden:true})],41,40));await final;
+  assert.equal(content.children.at(-1),more);assert.equal(more.textContent,'모두 불러왔습니다.');assert.equal(more.attributes['aria-disabled'],'true');assert.equal(f.c.document.activeElement,more);assert.equal(content.scrollTop,720);
+  assert.equal(await f.c.loadReportArchive(true),false);assert.equal(f.calls.length,3);
+});
+test('new search supersedes a pending appended page without changing its query',async()=>{
+  const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page(Array.from({length:20},(_,i)=>row('r'+i)),21));await f.flush();
+  const pending=f.c.loadReportArchive(true);f.nodes.reportArchiveSearch.value='새검색';f.c.searchReportArchive(false);
+  f.calls[2].resolve(page([row('new')]));await f.flush();f.calls[1].resolve(page([row('old')],21,20));assert.equal(await pending,false);
+  assert.equal(f.c.reportArchiveQuery,'새검색');assert.equal(f.nodes.reportArchiveSearch.value,'새검색');assert.equal(f.c.reportArchiveData.reports[0].id,'new');
+});
+test('permission barrier clears incremental DOM/cache and keeps keyboard inside visible dialog',async()=>{
+  const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page(Array.from({length:20},(_,i)=>row('r'+i)),21));await f.flush();
+  const content=f.nodes.reportArchiveContent;content.children.at(-1).focus();assert.ok(content._reportArchiveView);
+  f.c.clearReportArchive();assert.equal(content._reportArchiveView,null);assert.ok(!content.textContent.includes('까치'));assert.equal(f.c.document.activeElement,f.nodes.reportArchiveSearch);
+});
+test('closed modal has no retained incremental cache or rows',async()=>{
+  const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page([row('private')]));await f.flush();f.c.closeReportArchive();
+  assert.equal(f.nodes.reportArchiveContent._reportArchiveView,null);assert.equal(f.nodes.reportArchiveContent.children.length,0);assert.equal(f.c.document.activeElement,f.owner);
 });
