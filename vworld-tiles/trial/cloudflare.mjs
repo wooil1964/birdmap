@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { auditNamespaces } from './namespace-audit.mjs';
+import { RUN_ID, RUN_ID_SOURCE } from './core.mjs';
 
 export const TARGET = 'birdmap-vworld-tiles';
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -200,7 +201,8 @@ export class CloudflareAdapter {
     if (mode === 'run') {
       const v = await this.activeVersion();
       const approved = this.env.APPROVED_BOOTSTRAP_RUN_ID;
-      if (!/^[1-9][0-9]{0,19}$/.test(approved ?? '') || v.annotations?.['workers/tag'] !== 'bm-' + sha ||
+      // A solo operation never consumes a GitHub-run bootstrap, and vice versa.
+      if (!RUN_ID.test(approved ?? '') || approved.startsWith('solo-') !== String(runId).startsWith('solo-') || v.annotations?.['workers/tag'] !== 'bm-' + sha ||
           v.annotations?.['workers/message'] !== `bm:${sha}:bootstrap:${approved}`) fail('NOT_UNUSED_APPROVED_BOOTSTRAP');
       this.etag = v.resources?.script?.etag;
       if (typeof this.etag !== 'string' || !this.etag) fail('SOURCE_ETAG_MISSING');
@@ -260,7 +262,7 @@ export class CloudflareAdapter {
     const items = await this.versionList();
     for (const item of items) {
       const v = await this.get(`/workers/scripts/${TARGET}/versions/${encodeURIComponent(item.id)}`);
-      if (v.annotations?.['workers/tag'] === 'bm-' + this.sha && new RegExp(`^bm:${this.sha}:(bootstrap|consumed|enabled|closed):[1-9][0-9]{0,19}$`).test(v.annotations?.['workers/message'] ?? '') &&
+      if (v.annotations?.['workers/tag'] === 'bm-' + this.sha && new RegExp(`^bm:${this.sha}:(bootstrap|consumed|enabled|closed):${RUN_ID_SOURCE}$`).test(v.annotations?.['workers/message'] ?? '') &&
           v.resources?.script?.etag === active.resources?.script?.etag && typeof v.resources?.script?.etag === 'string') {
         this.etag = v.resources.script.etag; return;
       }
@@ -329,7 +331,8 @@ export class CloudflareAdapter {
     } finally { rmSync(temp, { recursive: true, force: true }); }
   }
   async putSecret({ name, value }) {
-    if (!['VWORLD_API_KEY', 'TRIAL_ACCESS_TOKEN'].includes(name) || this.mode !== 'run') fail('SECRET_MODE_INVALID');
+    // Recovery may only overwrite the trial token with a discarded random value (solo fence).
+    if (!['VWORLD_API_KEY', 'TRIAL_ACCESS_TOKEN'].includes(name) || !(this.mode === 'run' || (this.mode === 'recover' && name === 'TRIAL_ACCESS_TOKEN'))) fail('SECRET_MODE_INVALID');
     this.localCheck(this.sha); await this.verify({ enabled: false, bootstrap: true });
     await this.execute(['secret', 'put', name, '--config', join(ROOT, 'vworld-tiles/wrangler.trial.toml'), '--name', TARGET], value);
     this.phase = 'secret';

@@ -88,6 +88,14 @@ async function publicGet(path, fetchImpl) {
   } catch { fail('PUBLIC_READ_UNAVAILABLE'); }
 }
 
+// Solo-local-v1 reuses only the source checks: exact Draft PR head and its latest full CI.
+// It never evaluates or substitutes for the independent environment approval above.
+export async function validateSourceCI(sha, fetchImpl = fetch) {
+  ensure(/^[a-f0-9]{40}$/.test(sha ?? ''), 'SHA');
+  validatePullRequest(await publicGet('/pulls/40', fetchImpl), sha);
+  validateCI(await publicGet('/actions/workflows/publication-security-ci.yml/runs?head_sha=' + sha + '&event=pull_request&per_page=100&page=1', fetchImpl), sha);
+}
+
 export async function validateWorkflowContext(env, { stage = 'approved', mode = env.TRIAL_MODE, fetchImpl = fetch, headSha } = {}) {
   if (headSha === undefined) {
     try {

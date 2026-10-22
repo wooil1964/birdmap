@@ -1,8 +1,13 @@
 // No network, credentials or files at import. All effects use the reviewed adapter.
 import { randomBytes } from 'node:crypto';
 
+// GitHub run IDs (independent-approval workflow) or solo-local-v1 operation UUIDs.
+// The two schemas never match each other, so neither path can consume the other's bootstrap.
+export const RUN_ID = /^(?:[1-9][0-9]{0,19}|solo-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/;
+export const RUN_ID_SOURCE = RUN_ID.source.slice(1, -1);
+
 export function identity(sha, runId) {
-  if (!/^[a-f0-9]{40}$/.test(sha ?? '') || !/^[1-9][0-9]{0,19}$/.test(String(runId ?? ''))) throw Error('TRIAL_IDENTITY_INVALID');
+  if (!/^[a-f0-9]{40}$/.test(sha ?? '') || !RUN_ID.test(String(runId ?? ''))) throw Error('TRIAL_IDENTITY_INVALID');
 }
 
 async function closed(adapter, bootstrap = true, secretNames) {
@@ -41,7 +46,9 @@ export async function bootstrapTrial(adapter, { sha, runId }) {
   }
 }
 
-export async function runTrial(adapter, { sha, runId, vworldKey, now = Date.now, randomBytesFn = randomBytes }) {
+// window: pre-approved absolute UTC window (solo). Absent: the GitHub path's now()+10 minutes.
+// beforeActivation: solo hook that waits for the separate signed activation approval.
+export async function runTrial(adapter, { sha, runId, vworldKey, now = Date.now, randomBytesFn = randomBytes, window, beforeActivation }) {
   identity(sha, runId);
   if (typeof vworldKey !== 'string' || !/^[A-Za-z0-9._~-]{8,256}$/.test(vworldKey)) throw Error('TRIAL_SECRET_INVALID');
   await adapter.preflight({ sha, runId, mode: 'run' });
@@ -70,17 +77,21 @@ export async function runTrial(adapter, { sha, runId, vworldKey, now = Date.now,
     vworldKey = '';
     await adapter.deploy({ enabled: false, bootstrap: false, phase: 'consumed', create: false });
     await closed(adapter, false, ['TRIAL_ACCESS_TOKEN', 'VWORLD_API_KEY']);
+    await beforeActivation?.();
     // Re-read ALL account scopes immediately before activation, never reuse old evidence.
     await adapter.audit({ allowTarget: true });
-    const startMs = now();
-    if (!Number.isSafeInteger(startMs)) throw Error('TRIAL_CLOCK_INVALID');
-    const start = new Date(startMs).toISOString(), end = new Date(startMs + 600000).toISOString();
+    const nowMs = now();
+    if (!Number.isSafeInteger(nowMs)) throw Error('TRIAL_CLOCK_INVALID');
+    // A late activation never gets a fresh window: an approved end is absolute.
+    const startMs = window ? Date.parse(window.start) : nowMs, endMs = window ? Date.parse(window.end) : nowMs + 600000;
+    if (!(endMs - startMs > 0 && endMs - startMs <= 600000) || nowMs < startMs || (window && !(nowMs <= Date.parse(window.lastActivation)))) throw Error('TRIAL_WINDOW_CLOSED');
+    const start = new Date(startMs).toISOString(), end = new Date(endMs).toISOString();
     await adapter.deploy({ enabled: true, bootstrap: false, phase: 'enabled', start, end, create: false });
     await adapter.verify({ enabled: true, bootstrap: false, start, end, secretNames: ['TRIAL_ACCESS_TOKEN', 'VWORLD_API_KEY'] });
     await adapter.probe({ x: 218, status: 403 }); // Valid tile, deliberately no token.
     for (const x of [218, 219, 220, 221]) {
       const time = now();
-      if (!Number.isSafeInteger(time) || time < startMs || time >= startMs + 600000) throw Error('TRIAL_WINDOW_CLOSED');
+      if (!Number.isSafeInteger(time) || time < startMs || time >= endMs) throw Error('TRIAL_WINDOW_CLOSED');
       attemptedTiles++;
       await adapter.probe({ token, x, status: 200 }); // Sequential, exactly one attempt, first failure stops.
       adapter.report?.('tile-ok');
