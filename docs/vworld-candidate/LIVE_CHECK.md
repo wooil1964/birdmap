@@ -105,4 +105,3 @@ matches main `8397053`; API, Worker and data files are unchanged. Focused
 protection/search/tide/recommendation/weather tests passed 233/233, and Python
 island/archive contracts passed 13/13. Real mobile devices and map-app launching
 remain unexecuted. Full CI status is reported separately from local checks.
-
