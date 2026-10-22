@@ -204,6 +204,13 @@ export class CloudflareAdapter {
           v.annotations?.['workers/message'] !== `bm:${sha}:bootstrap:${approved}`) fail('NOT_UNUSED_APPROVED_BOOTSTRAP');
       this.etag = v.resources?.script?.etag;
       if (typeof this.etag !== 'string' || !this.etag) fail('SOURCE_ETAG_MISSING');
+      const history = await this.versionList();
+      if (!history.some(item => item.id === v.id)) fail('BOOTSTRAP_HISTORY_INCOMPLETE');
+      for (const item of history) {
+        const old = await this.get(`/workers/scripts/${TARGET}/versions/${encodeURIComponent(item.id)}`);
+        if (old.annotations?.['workers/tag'] !== 'bm-' + sha || old.annotations?.['workers/message'] !== `bm:${sha}:bootstrap:${approved}`) fail('BOOTSTRAP_ALREADY_CONSUMED_OR_FOREIGN_HISTORY');
+        assertBindings(old.resources?.bindings, { enabled: false, secretNames: [] });
+      }
       this.phase = 'bootstrap';
     }
   }
@@ -217,6 +224,24 @@ export class CloudflareAdapter {
     const active = deployments?.deployments?.[0];
     if (!active || active.versions?.length !== 1 || active.versions[0].percentage !== 100 || !/^[a-f0-9-]{36}$/.test(active.versions[0].version_id ?? '')) fail('ACTIVE_DEPLOYMENT_INVALID');
     return this.get(`/workers/scripts/${TARGET}/versions/${active.versions[0].version_id}`);
+  }
+  async versionList() {
+    const items = []; let total, per;
+    for (let page = 1; page <= 10000; page++) {
+      const r = await this.api(`/workers/scripts/${TARGET}/versions?page=${page}&per_page=100`);
+      const info = r.info, values = r.result?.items;
+      if (r.status !== 200 || !r.success || !Array.isArray(values) || !Number.isInteger(info?.total_count) || info.total_count < 1 ||
+          !Number.isInteger(info.per_page) || info.per_page < 1 || info.page !== page || info.count !== values.length || values.length > info.per_page ||
+          info.cursors?.after || info.cursor || info.next_page || info.next_cursor || info.has_more) fail('TARGET_HISTORY_UNVERIFIED');
+      if (total !== undefined && (info.total_count !== total || info.per_page !== per)) fail('TARGET_HISTORY_CHANGED');
+      total = info.total_count; per = info.per_page;
+      if (info.total_pages !== undefined && info.total_pages !== Math.ceil(total / per)) fail('TARGET_HISTORY_UNVERIFIED');
+      items.push(...values);
+      if (items.length > total || new Set(items.map(item => item.id)).size !== items.length || items.some(item => !/^[a-f0-9-]{36}$/.test(item.id ?? ''))) fail('TARGET_HISTORY_UNVERIFIED');
+      if (items.length === total) return items;
+      if (!values.length || page >= Math.ceil(total / per)) fail('TARGET_HISTORY_UNVERIFIED');
+    }
+    fail('TARGET_HISTORY_UNVERIFIED');
   }
   async sourceOwnership() {
     const active = await this.activeVersion();
@@ -232,18 +257,7 @@ export class CloudflareAdapter {
     if (this.etag && active.resources?.script?.etag === this.etag) return;
     // Immutable version metadata + matching code etag supports independent recovery
     // after secret put (which may replace version annotations without changing code).
-    const response = await this.api(`/workers/scripts/${TARGET}/versions?page=1&per_page=100`);
-    const total = response.info?.total_count, per = response.info?.per_page;
-    if (response.status !== 200 || !response.success || !Number.isInteger(total) || total < 1 || !Number.isInteger(per) || per < 1 || response.info.page !== 1) fail('RECOVERY_HISTORY_UNVERIFIED');
-    let items = response.result?.items;
-    if (!Array.isArray(items)) fail('RECOVERY_HISTORY_UNVERIFIED');
-    for (let page = 2; items.length < total; page++) {
-      if (page > 10000) fail('RECOVERY_HISTORY_UNVERIFIED');
-      const r = await this.api(`/workers/scripts/${TARGET}/versions?page=${page}&per_page=100`);
-      if (r.status !== 200 || !r.success || r.info?.page !== page || r.info?.total_count !== total || !Array.isArray(r.result?.items) || !r.result.items.length) fail('RECOVERY_HISTORY_UNVERIFIED');
-      items = items.concat(r.result.items);
-    }
-    if (items.length !== total || new Set(items.map(x => x.id)).size !== total) fail('RECOVERY_HISTORY_UNVERIFIED');
+    const items = await this.versionList();
     for (const item of items) {
       const v = await this.get(`/workers/scripts/${TARGET}/versions/${encodeURIComponent(item.id)}`);
       if (v.annotations?.['workers/tag'] === 'bm-' + this.sha && new RegExp(`^bm:${this.sha}:(bootstrap|consumed|enabled|closed):[1-9][0-9]{0,19}$`).test(v.annotations?.['workers/message'] ?? '') &&

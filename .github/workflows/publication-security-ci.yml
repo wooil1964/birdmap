@@ -182,6 +182,16 @@ jobs:
       direct_live_check: ${{ inputs.vworld_live_check }}
     secrets:
       VWORLD_API_KEY: ${{ inputs.vworld_trial_mode == 'run' && inputs.vworld_live_check != true && secrets.VWORLD_API_KEY || '' }}
+      # Explicit name allowlist for environment secrets; never read repo CF credentials.
+      CF_ACCOUNT_ID: ''
+      CF_EXPECTED_ACCOUNT_ID: ''
+      TRIAL_HOST: ''
+      CF_CREATE_TOKEN: ''
+      CF_CREATE_TOKEN_SHA256: ''
+      CF_EDIT_TOKEN: ''
+      CF_EDIT_TOKEN_SHA256: ''
+      CF_READ_TOKEN: ''
+      CF_READ_TOKEN_SHA256: ''
 
   vworld-live-check:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_live_check == true && (inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '') && github.ref == 'refs/heads/review/vworld-default-keyless-20261021' }}

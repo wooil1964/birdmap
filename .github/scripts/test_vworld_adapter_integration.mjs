@@ -167,6 +167,24 @@ test('ambiguous initial create completion is disabled again through the real ada
   assert.equal(f.exists, true); disabled(f); assert.equal(f.secrets.size, 0); assert.equal(successfulTiles(f).length, 0);
   assert.deepEqual(f.toolCalls.map(c => c.enabled), ['false', 'false']);
 });
+
+test('a retained consumed version blocks reuse even if current version was reset to bootstrap', async () => {
+  const f = fixture(); await bootstrap(f);
+  f.snapshot({ message: `bm:${SHA}:consumed:${RUN}` });
+  f.snapshot({ message: `bm:${SHA}:bootstrap:${BOOT}` });
+  const before = f.toolCalls.length;
+  await assert.rejects(approvedRun(f), /BOOTSTRAP_ALREADY_CONSUMED_OR_FOREIGN_HISTORY/);
+  assert.equal(f.toolCalls.length, before); assert.equal(f.secrets.size, 0);
+});
+
+test('missing target history pagination metadata blocks reuse before the first write', async () => {
+  const f = fixture(); await bootstrap(f);
+  const adapter = f.adapter('run'), api = adapter.api.bind(adapter);
+  adapter.api = async (...args) => { const r = await api(...args); if (args[0].includes('/versions?')) delete r.info; return r; };
+  const before = f.toolCalls.length;
+  await assert.rejects(runTrial(adapter, runOptions()), /TARGET_HISTORY_UNVERIFIED/);
+  assert.equal(f.toolCalls.length, before); assert.equal(f.secrets.size, 0);
+});
 test('secret put failure after remote mutation restores false with existing secret preserved', async () => {
   const f = fixture({ failSecret: 1 }); await bootstrap(f); await assert.rejects(approvedRun(f));
   disabled(f); assert.equal(f.secrets.get('VWORLD_API_KEY'), KEY); assert.equal(f.secrets.has('TRIAL_ACCESS_TOKEN'), false);

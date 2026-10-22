@@ -94,4 +94,9 @@ test('VWorld workflow declarations isolate secrets, reuse registered caller and 
   assert.match(launcher, /uses: \.\/\.github\/workflows\/vworld-worker-trial\.yml/);
   assert.match(launcher, /publication-vworld-trial-launcher/);
   assert.doesNotMatch(launcher, /secrets: inherit/);
+  assert.doesNotMatch(launcher, /secrets\.CF_/);
+  for (const name of ['CF_ACCOUNT_ID', 'CF_EXPECTED_ACCOUNT_ID', 'TRIAL_HOST', 'CF_CREATE_TOKEN', 'CF_CREATE_TOKEN_SHA256', 'CF_EDIT_TOKEN', 'CF_EDIT_TOKEN_SHA256', 'CF_READ_TOKEN', 'CF_READ_TOKEN_SHA256']) {
+    assert.ok(launcher.includes(name + ": ''"));
+    assert.ok(workflow.includes(name + ':\n        required: false'));
+  }
 });

@@ -50,6 +50,8 @@ upstream fetch와 본문 읽기에는 기존 **8초 타임아웃**이 적용되�
 
 권한은 `contents:read`이며 service secret을 PR 회귀 job에 전달하지 않는다. caller는 실키 `run` 모드에만 기존 `VWORLD_API_KEY` 하나를 명시적으로 전달하며 `secrets:inherit`는 쓰지 않는다. Cloudflare 식별정보·인증정보는 각 보호 환경의 secret으로만 공급한다. `actions/checkout` v6.1.0과 `actions/setup-node` v6.5.0은 확인한 전체 immutable SHA로 고정하며 checkout 인증 저장·npm cache를 끈다. Node는 `24.18.0`, Wrangler는 `4.151.3`, transitive dependency는 integrity가 있는 lockfile로 고정하고 lifecycle script 없이 설치한다. 설치 단계에는 service credential이 없다.
 
+재사용 workflow는 환경 secret도 caller가 이름을 전달해야 한다는 공식 규칙에 맞춰 CF 이름을 유한 목록으로 선언한다. caller는 이 CF 이름들에 **빈 문자열만** 전달하며 repository CF secret을 읽지 않는다. 보호 job의 환경 값으로 공급하는 설계다. 공식 문서의 환경 secret 우선순위·이름 전달 규칙으로부터 이 경로를 구성했으나, 빈 값 전달 후 환경 값의 실제 공급은 dispatch 금지 때문에 아직 원격 검증하지 않았다. 빈 값이 유지되면 fingerprint/credential gate에서 원격 변경 전에 차단된다. 이를 실행 성공으로 보고하지 않는다. [재사용 workflow의 환경 secret 규칙](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows#using-inputs-and-secrets-in-a-reusable-workflow)
+
 모든 원격 단계는 고정 concurrency `birdmap-vworld-tiles-trial`, `cancel-in-progress:false`를 공유한다. 등록 launcher에는 다른 고정 group을 써 재사용 호출의 자기 대기를 막는다. GitHub는 동시에 pending run 하나만 유지할 수 있으므로 이것만으로 1회성을 주장하지 않는다. 보호 환경의 `APPROVED_RUN_ID`, `run_attempt=1`, 원격 bootstrap 소비 metadata·기존 secret 검사도 함께 확인한다. 대기 중 중복·취소 후 새 실행은 원격 상태를 검토하고 새 승인을 받아야 한다. [Concurrency](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#concurrency)
 
 보호 환경은 직접 지정한 User reviewer만 지원한다. Team membership을 추정하지 않는다. `required_reviewers.prevent_self_review=true`, `can_admins_bypass=false`, custom branch policy의 정확한 branch 이름과 `type=branch`를 모두 읽어 확인한다. `can_admins_bypass` 또는 branch 유형이 API 표현에 없으면 차단한다. 승인자는 run을 시작한 사람·triggering actor와 달라야 하며 환경 승인 comment에 다음 비밀 없는 문자열을 정확히 남겨야 한다.
@@ -98,6 +100,8 @@ Base PNG: (8,218,100), (8,219,100), (8,220,100), (8,221,100)
 네 요청은 **허가한 단일 클라이언트의 실행 예산이며 서버 전역 hard cap이 아니다**. IP당 20/60초·위치별 합계 40/60초는 Cloudflare 위치별 근사 제한이다. 토큰·시간창은 외부 사용을 줄여도 거절 invocation 비용을 없애지 않는다.
 
 클라이언트는 12초 제한, redirect 금지, 요청별 재시도 0회다. HTTP 200·`image/png`·2MiB 이하·PNG CRC/구조/256×256·no-store·비밀 응답 헤더 부재를 메모리에서 검사한다. 원본 PNG·원문 오류·HAR·upstream URL·응답 body를 저장하지 않는다. 성공은 CF→VWorld 서버 경로 관측이며 실제 브라우저·모바일·지도 내용 육안 확인은 아니다. Origin/Referer는 보조 통제이며 시험 토큰을 일반 Pages에 공급하지 않는다.
+
+소스/로컬 Worker는 세 cache-control 헤더를 모두 검사하지만 외부 probe는 `Cache-Control:no-store`를 필수로 검사한다. Cloudflare가 자체 CDN 헤더를 downstream에서 제거할 수 있으므로 두 CDN 헤더는 관측된 경우에만 no-store를 요구한다. `CF-Cache-Status`가 있으면 DYNAMIC/BYPASS만 허용하고 캐시된 응답은 거절한다. [Cloudflare의 CDN 헤더 처리](https://developers.cloudflare.com/cache/concepts/cdn-cache-control/)
 
 모든 원격 프로세스는 `WRANGLER_WRITE_LOGS=false`, `WRANGLER_LOG_SANITIZE=true`, `WRANGLER_SEND_METRICS=false`를 고정한다. full log/debug/env dump/`wrangler tail`/HAR·shell tracing을 금지한다. child 프로세스에는 필요한 credential만 전달하고 stdout/stderr/예외 원문을 버린다. 출력은 유한한 상태 결과만 허용한다. 환경 secret 마스킹만으로 보안을 보장한다고 표현하지 않는다. [Secret의 즉시 배포 성질](https://developers.cloudflare.com/workers/configuration/secrets/)
 

@@ -35,6 +35,26 @@ on:
     secrets:
       VWORLD_API_KEY:
         required: false
+      # Caller passes these names as empty values. Only the protected job's
+      # environment supplies actual CF credentials/identifiers, after approval.
+      CF_ACCOUNT_ID:
+        required: false
+      CF_EXPECTED_ACCOUNT_ID:
+        required: false
+      TRIAL_HOST:
+        required: false
+      CF_CREATE_TOKEN:
+        required: false
+      CF_CREATE_TOKEN_SHA256:
+        required: false
+      CF_EDIT_TOKEN:
+        required: false
+      CF_EDIT_TOKEN_SHA256:
+        required: false
+      CF_READ_TOKEN:
+        required: false
+      CF_READ_TOKEN_SHA256:
+        required: false
 
 permissions:
   contents: read
@@ -97,8 +117,6 @@ jobs:
     timeout-minutes: 30
     environment:
       name: ${{ inputs.mode == 'bootstrap' && 'vworld-trial-bootstrap' || inputs.mode == 'recover' && 'vworld-trial-recovery' || 'vworld-trial-execution' }}
-    env:
-      TRIAL_STATE_PATH: ${{ runner.temp }}/vworld-trial-state-${{ github.run_id }}.json
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
@@ -132,6 +150,7 @@ jobs:
       - name: Run one approved orchestration process with finally and signal recovery
         id: orchestrate
         env:
+          TRIAL_STATE_PATH: ${{ runner.temp }}/vworld-trial-state-${{ github.run_id }}.json
           APPROVED_SHA: ${{ vars.APPROVED_SHA }}
           APPROVED_RUN_ID: ${{ vars.APPROVED_RUN_ID }}
           APPROVED_BOOTSTRAP_RUN_ID: ${{ vars.APPROVED_BOOTSTRAP_RUN_ID }}
@@ -157,6 +176,7 @@ jobs:
       - name: Always verify disabled recovery after any mutation attempt
         if: ${{ always() && inputs.mode != 'recover' && steps.orchestrate.outcome != 'skipped' }}
         env:
+          TRIAL_STATE_PATH: ${{ runner.temp }}/vworld-trial-state-${{ github.run_id }}.json
           APPROVED_SHA: ${{ vars.APPROVED_SHA }}
           APPROVED_RUN_ID: ${{ vars.APPROVED_RUN_ID }}
           APPROVAL_PHRASE: DISABLE_VWORLD_TRIAL
