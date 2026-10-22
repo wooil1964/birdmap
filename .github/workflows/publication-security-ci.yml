@@ -4,6 +4,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      vworld_live_check:
+        description: 'Only run the read-only VWorld secret probe (no deployment or artifacts)'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -14,6 +20,7 @@ concurrency:
 
 jobs:
   regression:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.vworld_live_check != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -137,3 +144,135 @@ jobs:
             .ci-results/vworld-browser
           retention-days: 14
           if-no-files-found: ignore
+
+  vworld-live-check:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_live_check == true && github.ref == 'refs/heads/review/vworld-default-keyless-20261021' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      # No checkout, third-party action, cache, file output or artifact in this job.
+      # Only this step can read the secret. Never print URLs, headers, bodies or exceptions.
+      - name: Probe one WMTS tile with four Referer conditions
+        env:
+          VWORLD_API_KEY: ${{ secrets.VWORLD_API_KEY }}
+        shell: python
+        run: |
+          import binascii, json, os, struct, sys, urllib.error, urllib.parse, urllib.request, zlib
+
+          LIMIT = 2 * 1024 * 1024
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+
+          def image_info(body):
+              # Validate image framing and dimensions in memory, without saving a tile.
+              if body.startswith(b'\x89PNG\r\n\x1a\n'):
+                  pos, width, height, ended, compressed = 8, 0, 0, False, bytearray()
+                  try:
+                      while pos + 12 <= len(body):
+                          size = struct.unpack('>I', body[pos:pos+4])[0]
+                          tag = body[pos+4:pos+8]
+                          if size > LIMIT or pos + 12 + size > len(body):
+                              return 'png', 0, 0, False
+                          data = body[pos+8:pos+8+size]
+                          crc = struct.unpack('>I', body[pos+8+size:pos+12+size])[0]
+                          if binascii.crc32(tag + data) & 0xffffffff != crc:
+                              return 'png', 0, 0, False
+                          if pos == 8:
+                              if tag != b'IHDR' or size != 13:
+                                  return 'png', 0, 0, False
+                              width, height = struct.unpack('>II', data[:8])
+                          if tag == b'IDAT':
+                              compressed.extend(data)
+                          pos += 12 + size
+                          if tag == b'IEND':
+                              ended = size == 0 and pos == len(body)
+                              break
+                      decoder = zlib.decompressobj()
+                      pixels = decoder.decompress(bytes(compressed), LIMIT + 1)
+                      valid = ended and decoder.eof and not decoder.unconsumed_tail and not decoder.unused_data and 0 < len(pixels) <= LIMIT
+                      return 'png', width, height, valid
+                  except Exception:
+                      return 'png', 0, 0, False
+              if body.startswith(b'\xff\xd8'):
+                  pos = 2
+                  try:
+                      while pos < len(body):
+                          if body[pos] != 255:
+                              break
+                          while body[pos] == 255:
+                              pos += 1
+                          marker = body[pos]
+                          pos += 1
+                          if marker in (0xd8, 0x01) or 0xd0 <= marker <= 0xd7:
+                              continue
+                          if marker in (0xd9, 0xda):
+                              break
+                          size = struct.unpack('>H', body[pos:pos+2])[0]
+                          if size < 2 or pos + size > len(body):
+                              break
+                          if marker in (0xc0, 0xc1, 0xc2):
+                              height, width = struct.unpack('>HH', body[pos+3:pos+7])
+                              return 'jpeg', width, height, body.endswith(b'\xff\xd9')
+                          pos += size
+                  except Exception:
+                      pass
+                  return 'jpeg', 0, 0, False
+              if body.lstrip().startswith(b'<'):
+                  return 'xml-or-html', 0, 0, False
+              return 'other', 0, 0, False
+
+          def main():
+              key = os.environ.pop('VWORLD_API_KEY', '')
+              if not key or len(key) > 512 or any(c.isspace() for c in key):
+                  print('VWORLD_PROBE: missing-or-invalid-secret; no request made')
+                  return 1
+              # Exactly the candidate Base WMTS .png path. Extension is not format proof.
+              target = 'https://api.vworld.kr/req/wmts/1.0.0/' + urllib.parse.quote(key, safe='') + '/Base/8/100/218.png'
+              opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+              scenarios = [('no_referer', None), ('registered_page_header', 'https://wooil1964.github.io/birdmap/'), ('registered_origin_header', 'https://wooil1964.github.io/'), ('unrelated_origin_header', 'https://birdmap-auth-negative.invalid/')]
+              rows = []
+              for name, referer in scenarios:
+                  row = {'scenario': name, 'http': 0, 'mime': 'other', 'bytes': 0, 'format': 'other', 'width': 0, 'height': 0, 'image_header_valid': False, 'tile_image_response': False, 'result': 'transport-failure'}
+                  headers = {'User-Agent': 'birdmap-readonly-vworld-probe/1.0', 'Accept': 'image/png,image/jpeg', 'Cache-Control': 'no-cache'}
+                  if referer:
+                      headers['Referer'] = referer
+                  try:
+                      request = urllib.request.Request(target, headers=headers, method='GET')
+                      with opener.open(request, timeout=20) as response:
+                          row['http'] = int(response.status)
+                          mime = response.headers.get_content_type()
+                          row['mime'] = mime if mime in ('image/png', 'image/jpeg', 'text/xml', 'application/xml', 'text/html', 'application/octet-stream') else 'other'
+                          body = response.read(LIMIT + 1)
+                          row['bytes'] = len(body)
+                          if len(body) <= LIMIT:
+                              fmt, width, height, valid = image_info(body)
+                              row.update(format=fmt, width=width, height=height, image_header_valid=valid)
+                              row['tile_image_response'] = row['http'] == 200 and valid and width == 256 and height == 256
+                              row['result'] = 'image-response' if row['tile_image_response'] else 'non-tile-response'
+                          else:
+                              row['result'] = 'response-too-large'
+                          body = b''
+                  except urllib.error.HTTPError as error:
+                      row['http'] = int(error.code)
+                      row['result'] = 'http-rejected'
+                      error.close()
+                  except Exception:
+                      pass
+                  rows.append(row)
+                  # Only whitelisted metadata, never arbitrary service strings.
+                  print(json.dumps(row, sort_keys=True))
+              origin_ok = rows[2]['tile_image_response']
+              controls_no_tile = all(r['result'] in ('http-rejected', 'non-tile-response') for r in (rows[0], rows[3]))
+              print(json.dumps({'registered_origin_server_probe': origin_ok, 'negative_controls_no_tile_observed': controls_no_tile, 'domain_restriction_verified': False, 'actual_pages_browser_auth': 'not-executed', 'pixel_rendering': 'not-executed', 'deployment': 'not-executed'}, sort_keys=True))
+              # A missing tile on a negative control is not proof of auth enforcement.
+              return 0 if origin_ok and controls_no_tile else 1
+
+          try:
+              result = main()
+          except Exception:
+              print('VWORLD_PROBE: internal-failure; details suppressed')
+              result = 1
+          sys.exit(result)
+
