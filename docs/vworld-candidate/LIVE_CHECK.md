@@ -10,7 +10,7 @@ Draft PR #40 remains isolated from main. This workflow never publishes Pages,
 changes runtime configuration, sends production reports, or writes to Workers.
 The repository secret `VWORLD_API_KEY` is never retrieved into local tooling.
 
-## Current boundary
+## Earlier Actions diagnostic boundary
 
 Manually run `publication-security-ci.yml` on
 `review/vworld-default-keyless-20261021` with `vworld_live_check=true`.
@@ -81,10 +81,11 @@ or adding a wildcard is outside this diagnosis.
 
 Default [strict-origin-when-cross-origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy)
 normally sends `https://wooil1964.github.io/` and omits `/birdmap/` on cross-origin
-HTTPS requests. VWorld's actual registered path/origin matching and rejection
-on unrelated origins remain to be verified. A registration-screen URL alone
-does not establish enforcement. A real browser test on the registered Pages
-origin must be recorded separately after valid tiles and key handling are settled.
+HTTPS requests. A registration-screen URL alone does not establish enforcement.
+The later genuine registered Pages browser tests have now passed and are recorded
+separately in [the current validation report](VALIDATION_20261022.md). Rejection
+of unrelated origins and the provider's exact path/origin matching implementation
+remain unverified; a positive registered-origin result does not prove those rules.
 
 ## Earlier executions and regression evidence
 
@@ -104,10 +105,14 @@ two basemap additions (normalized SHA256
 `c9d7785bd3dab6f8c075e2ac4f25564939d266976eb3504ca9815d286f1f6001`).
 API/Worker/data are unchanged; main uses OSM. Six islands' food/lodging/KSA,
 protected-species publication controls, weather/tides, recommendations,
-reports, search and directions remain outside this workflow-only revision.
+reports, search and directions were unchanged by the earlier diagnostic revision.
 
-Fresh focused frontend tests passed 343/343, API 371/371, weather proxy 36/36.
-Python checks passed 137 with one existing skip; share pages are current at 229,
-SEO checks report 194 indexable pages / 196 sitemap URLs. Actual Pages browser
-authentication, live map imagery, mobile GPS/pinch and map-app launching remain
-unverified. No merge or production deployment is part of this work.
+At that earlier head, focused frontend tests passed 343/343, API 371/371 and
+weather proxy 36/36. Python passed 137 with one existing skip; share pages were
+current at 229 and SEO reported 194 indexable pages / 196 sitemap URLs.
+The current [validation report](VALIDATION_20261022.md) supersedes those counts
+and records completed actual Pages authentication and live candidate imagery.
+Physical-phone GPS/pinch, external map-app launching and unrelated-domain
+rejection remain outside the completed tests. No main merge or production
+deployment has been performed.
+
