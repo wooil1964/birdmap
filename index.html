@@ -62,6 +62,11 @@
         
     <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <!-- Optional base-map configuration has no credential in the reviewed source. -->
+    <link rel="stylesheet" href="assets/birdmap-basemap.css">
+    <script src="assets/map-runtime-config.js"></script>
+    <script src="assets/birdmap-basemap.js"></script>
+    <script src="assets/birdmap-basemap-init.js"></script>
 </head>
 <body>
     
@@ -5931,10 +5936,17 @@ window.addEventListener('resize',function(){
             );
         
     
-            tile_layer_62315ff8219cb818078bbef8d2f68bcb.addTo(map_7010a44f6ac2025090f0fe07508ed485);
-        
-    
+            // Frame the existing map before requesting either base layer.
             fitKoreaView();
+            var birdmapBasemap = null;
+            if (typeof initializeBirdmapBasemap === 'function') {
+                birdmapBasemap = initializeBirdmapBasemap(
+                    map_7010a44f6ac2025090f0fe07508ed485,
+                    tile_layer_62315ff8219cb818078bbef8d2f68bcb
+                );
+            } else {
+                tile_layer_62315ff8219cb818078bbef8d2f68bcb.addTo(map_7010a44f6ac2025090f0fe07508ed485);
+            }
         
     
             L.control.fullscreen(

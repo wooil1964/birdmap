@@ -14,7 +14,7 @@ const HTML=readFileSync(join(ROOT,'index.html'),'utf8');
 const WIDTHS=[320,344,375,768,1024,1440];
 const OSM_TILES=process.env.ISLAND_PILOT_OSM_TILES!=='0';
 const CDN=new Set(['cdn.jsdelivr.net','code.jquery.com','cdnjs.cloudflare.com','netdna.bootstrapcdn.com']);
-const LOCAL=new Set(['/index.html','/weather_today.json','/weather_week.json','/tide_today.json','/tide_month.json','/notices.json','/weather_rules.json']);
+const LOCAL=new Set(['/index.html','/weather_today.json','/weather_week.json','/tide_today.json','/tide_month.json','/notices.json','/weather_rules.json','/assets/birdmap-basemap.css','/assets/map-runtime-config.js','/assets/birdmap-basemap.js','/assets/birdmap-basemap-init.js']);
 const PILOT=[['어청도','전북 군산 어청도',['1','101','102','103']],['외연도','충남 보령 외연도',['2','104','105','106']],['흑산도','전남 신안 흑산도',['63','127','128','129','130']],['백령도','인천 옹진 백령도',['4','117','118','119']],['소청도','인천 옹진 소청도',['110','111']],['홍도','전남 신안 홍도',['64']]];
 const network={localGet:0,dependencyGet:0,osmGet:0,blocked:0,operatingRequests:0,externalNonGet:0};
 const rows=[],browserErrors=[];
@@ -22,7 +22,7 @@ mkdirSync(OUT,{recursive:true});
 const server=createServer((req,res)=>{
  let pathname;try{pathname=new URL(req.url,'http://localhost').pathname;}catch{res.writeHead(400);res.end();return;}
  if(req.method!=='GET'||!LOCAL.has(pathname)){res.writeHead(403);res.end('blocked');return;}
- try{const body=readFileSync(join(ROOT,pathname.slice(1)));res.writeHead(200,{'Content-Type':extname(pathname)==='.html'?'text/html;charset=utf-8':'application/json;charset=utf-8','Cache-Control':'no-store'});res.end(body);}catch{res.writeHead(404);res.end();}
+ try{const body=readFileSync(join(ROOT,pathname.slice(1))),mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};res.writeHead(200,{'Content-Type':(mime[extname(pathname)]||'application/json')+';charset=utf-8','Cache-Control':'no-store'});res.end(body);}catch{res.writeHead(404);res.end();}
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port;
@@ -84,6 +84,7 @@ class CDP{
   const evaluate=async expression=>{const r=await this.send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
   await waitFor(evaluate,"typeof L!=='undefined'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===229&&typeof PINNED_BIRDING_ISSUES!=='undefined'",40000);
+  if(HTML.includes('assets/birdmap-basemap-init.js'))await waitFor(evaluate,"typeof birdmapBasemap!=='undefined'&&birdmapBasemap!==null&&!!document.querySelector('.birdmap-basemap')",5000);
   await evaluate('Promise.all([loadTideMonth(),loadWeatherWeek(),loadRecommendationWeatherRules()])');
   return {evaluate,sessionId,close:()=>this.send('Target.closeTarget',{targetId})};
  }
