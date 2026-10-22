@@ -21,7 +21,7 @@ export function localCheck(sha) {
   const git = args => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
   try {
     if (git(['rev-parse', 'HEAD']) !== sha || git(['status', '--porcelain', '--untracked-files=all'])) fail('SOURCE_NOT_EXACT_CLEAN_SHA');
-    if (git(['remote', 'get-url', 'origin']) !== 'https://github.com/wooil1964/birdmap.git') fail('SOURCE_REPOSITORY_INVALID');
+    if (!/^https:\/\/github\.com\/wooil1964\/birdmap(?:\.git)?$/.test(git(['remote', 'get-url', 'origin']))) fail('SOURCE_REPOSITORY_INVALID');
     if (process.version !== 'v24.18.0') fail('NODE_VERSION_INVALID');
     for (const folder of [ROOT, join(ROOT, 'vworld-tiles'), TOOLS]) {
       // Wrangler dotenv/local secrets must never override the allowlisted process env.
@@ -164,7 +164,7 @@ export class CloudflareAdapter {
   report(event) {
     if (['restored-503', 'bootstrap-disabled-503', 'tile-ok'].includes(event)) process.stdout.write(JSON.stringify({ event }) + '\n');
   }
-  async api(path, token = this.env.CF_READ_TOKEN || this.env.CF_EDIT_TOKEN) {
+  async api(path, token = (this.recovering || this.mode === 'recover') ? this.writeToken : this.env.CF_READ_TOKEN || this.env.CF_EDIT_TOKEN) {
     if (!path.startsWith('/workers/') || path.includes('..') || path.includes('://')) fail('API_PATH_INVALID');
     const response = await this.fetch('https://api.cloudflare.com/client/v4/accounts/' + this.env.CF_ACCOUNT_ID + path, {
       method: 'GET', redirect: 'manual', headers: { Authorization: 'Bearer ' + token },
@@ -186,12 +186,12 @@ export class CloudflareAdapter {
     if (!/^[a-f0-9]{32}$/.test(this.env.CF_ACCOUNT_ID ?? '') || this.env.CF_ACCOUNT_ID !== this.env.CF_EXPECTED_ACCOUNT_ID) fail('ACCOUNT_ID_MISMATCH');
     if (!/^https:\/\/birdmap-vworld-tiles\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.workers\.dev$/.test(this.env.TRIAL_HOST ?? '')) fail('TARGET_HOST_INVALID');
     verifyScope(this.env, this.mode);
-    if (mode === 'recover' && !this.env.CF_READ_TOKEN) {
+    if (mode === 'recover') {
       // The operator supplies the previously verified exact host/account through
       // the protected recovery channel. Narrow Editors cannot discover account
       // subdomains. Confirm target access here; sourceOwnership checks it before
       // writing. Do not make emergency disabling depend on account-wide access.
-      const targetSubdomain = await this.get(`/workers/scripts/${TARGET}/subdomain`, this.env.CF_EDIT_TOKEN);
+      const targetSubdomain = await this.get(`/workers/scripts/${TARGET}/subdomain`, this.writeToken);
       if (typeof targetSubdomain?.enabled !== 'boolean' || typeof targetSubdomain?.previews_enabled !== 'boolean') fail('TARGET_SUBDOMAIN_UNVERIFIED');
     } else {
       const subdomain = await this.get('/workers/subdomain');
@@ -220,6 +220,15 @@ export class CloudflareAdapter {
   }
   async sourceOwnership() {
     const active = await this.activeVersion();
+    const settings = await this.get(`/workers/scripts/${TARGET}/settings`);
+    for (const bindings of [active.resources?.bindings, settings?.bindings]) {
+      // Recovery may repair disabled/expired/invalid trial vars, but never remove
+      // an unexpected data/service binding from a changed target configuration.
+      if (!Array.isArray(bindings)) fail('TARGET_BINDINGS_UNVERIFIED');
+      const values = Object.fromEntries(bindings.filter(b => b.type === 'plain_text').map(b => [b.name, b.text]));
+      if (!['TILES_ENABLED', 'TRIAL_STARTS_AT', 'TRIAL_EXPIRES_AT'].every(n => typeof values[n] === 'string')) fail('TARGET_VARS_UNVERIFIED');
+      assertBindings(bindings, { enabled: values.TILES_ENABLED, start: values.TRIAL_STARTS_AT, end: values.TRIAL_EXPIRES_AT });
+    }
     if (this.etag && active.resources?.script?.etag === this.etag) return;
     // Immutable version metadata + matching code etag supports independent recovery
     // after secret put (which may replace version annotations without changing code).
@@ -265,6 +274,7 @@ export class CloudflareAdapter {
   }
   async beginRecovery() {
     this.controller = new AbortController();
+    this.recovering = true; // An expired account-wide reader must not prevent disabling.
     if (this.child) fail('PRIOR_DEPLOY_PROCESS_NOT_QUIESCENT');
     this.localCheck(this.sha);
     await this.sourceOwnership(); // Missing/foreign target is never created or overwritten.
@@ -319,7 +329,10 @@ export class CloudflareAdapter {
     });
     try {
       if (response.status !== status) fail('PROBE_STATUS_FAILED');
-      for (const h of ['Cache-Control', 'CDN-Cache-Control', 'Cloudflare-CDN-Cache-Control']) if (response.headers.get(h) !== 'no-store') fail('PROBE_CACHE_FAILED');
+      if (response.headers.get('Cache-Control') !== 'no-store') fail('PROBE_CACHE_FAILED');
+      // Cloudflare consumes its own CDN header rather than proxying it downstream.
+      for (const h of ['CDN-Cache-Control', 'Cloudflare-CDN-Cache-Control']) if (response.headers.has(h) && response.headers.get(h) !== 'no-store') fail('PROBE_CACHE_FAILED');
+      if (response.headers.has('CF-Cache-Status') && !['DYNAMIC', 'BYPASS'].includes(response.headers.get('CF-Cache-Status'))) fail('PROBE_CACHED_RESPONSE');
       const allowed = new Set(['content-type', 'content-length', 'cache-control', 'cdn-cache-control', 'cloudflare-cdn-cache-control', 'access-control-allow-origin', 'vary', 'x-content-type-options', 'referrer-policy', 'date', 'server', 'cf-ray', 'cf-cache-status', 'report-to', 'nel', 'alt-svc', 'connection', 'transfer-encoding', 'content-encoding', 'server-timing', 'speculation-rules']);
       for (const name of response.headers.keys()) if (!allowed.has(name)) fail('PROBE_HEADER_FAILED');
       const bytes = await bytesLimited(response, status === 200 ? LIMIT : 256);
