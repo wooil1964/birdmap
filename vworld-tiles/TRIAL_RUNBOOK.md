@@ -35,7 +35,7 @@ Repository Secret `VWORLD_API_KEY`의 평문은 GitHub API로 읽을 수 없다.
 
 **현재 전용 배포 job은 없다.** 이번에는 실행 workflow를 추가하거나 dispatch하지 않는다. 향후 job은 `contents:read`, `persist-credentials:false`, 정확한 SHA/branch 확인, 제3자 action immutable SHA·Wrangler 4.151.3 고정, 사용자 승인, 고유 concurrency, 취소 중복 실행 방지, `always()` 비활성 복귀를 포함해야 한다. 새 workflow의 `workflow_dispatch`를 브랜치에만 추가하면 바로 실행할 수 있다고 가정하지 않는다. default branch의 등록 여부를 먼저 확인하고, 필요한 경우 이미 등록된 workflow의 **검토 브랜치 버전**에 분리된 수동 job을 준비한다. main 파일은 바꾸지 않는다. [GitHub 수동 실행 조건](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)
 
-secret은 CLI 인자/vars/.env/.dev.vars/임시 파일/캐시/아티팩트에 쓰지 않는다. shell tracing/debug/full env 출력과 `wrangler tail`을 사용하지 않는다. secret 단계의 stdout/stderr·전체 예외도 남기지 않고 성공 여부만 기록한다. Wrangler Action의 `secrets` 옵션은 deploy보다 먼저 원격 secret 변경을 할 수 있으므로 `--dry-run`과 결합해 무변경이라고 해석하지 않는다. [Action 구현](https://github.com/cloudflare/wrangler-action/blob/v4/src/wranglerAction.ts), [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/)
+secret은 CLI 인자/vars/.env/.dev.vars/임시 파일/캐시/아티팩트에 쓰지 않는다. 전체 실행 작업에 `WRANGLER_WRITE_LOGS=false`, `WRANGLER_LOG_SANITIZE=true`, `WRANGLER_SEND_METRICS=false`를 고정한다. stdout/stderr 억제만으로 기본 디스크 debug 로그가 꺼지는 것은 아니다. shell tracing/debug/full env 출력과 `wrangler tail`을 사용하지 않는다. secret 단계의 stdout/stderr·전체 예외도 남기지 않고 성공 여부만 기록한다. Wrangler Action의 `secrets` 옵션은 deploy보다 먼저 원격 secret 변경을 할 수 있으므로 `--dry-run`과 결합해 무변경이라고 해석하지 않는다. [Action 구현](https://github.com/cloudflare/wrangler-action/blob/v4/src/wranglerAction.ts), [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/)
 
 아래 명령은 **승인 후 실행할 형태**다. 이번에는 원격 명령을 실행하지 않았다. 모든 명령은 동일한 검토 checkout 루트, 검증된 `CLOUDFLARE_ACCOUNT_ID`/전용 token, 고정 Wrangler 바이너리를 사용한다. `npx wrangler@4.151.3`은 버전 표기이며 실제 승인 작업에서는 검증된 의존성을 사전 설치한다.
 
@@ -81,13 +81,13 @@ npx wrangler@4.151.3 deploy --config vworld-tiles/wrangler.trial.toml --name bir
 
 ## 6. 정상 종료·오류·중단 복구
 
-성공해도 즉시 **검증된 비활성 버전**으로 복귀한다. 버전 ID를 생략해 직전 버전을 추정하지 않는다.
+성공해도 즉시 **동일 검토 SHA의 정규 trial config를 false로 재배포**한다. 이 작업은 config의 빈 두 시간값도 함께 적용한다. 자동 cleanup은 이 경로를 기본으로 사용한다.
 
 ```text
-npx wrangler@4.151.3 rollback <DISABLED_VERSION_ID> --config vworld-tiles/wrangler.trial.toml --name birdmap-vworld-tiles --yes
+npx wrangler@4.151.3 deploy --config vworld-tiles/wrangler.trial.toml --name birdmap-vworld-tiles --var TILES_ENABLED:false
 ```
 
-rollback 불가 시 같은 검토 SHA의 정규 trial config로 `--var TILES_ENABLED:false` 재배포한다. secret 변경 버전 사이 rollback이 추가 확인을 요구하면 확인을 우회하지 않고 false 재배포를 사용한다. 원격 false/빈 시간값, 최종 deployment/version ID와 유효 타일 503을 확인한다. 종료 후 token은 폐기하고 다시 시험할 때 재사용하지 않는다. Worker secret 삭제는 또 다른 즉시 배포이므로 별도 승인 없이 실행하지 않는다. [Rollback 동작](https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/)
+원격 false/빈 시간값, 최종 deployment/version ID와 유효 타일 503을 확인한다. 비상시 version rollback은 기록한 `DISABLED_VERSION_ID`를 지정하는 **대화형 수동 복구**에만 사용한다. Wrangler 4.151.3은 비대화형에서 secret 변경 추가 확인도 자동 수락할 수 있으므로 CI에서 `rollback --yes`를 사용하지 않는다. 수동 복구에서 추가 확인이 나오면 무시하지 않고 현재 secret 상태를 검토하거나 false 재배포로 돌아간다. 버전 ID 없는 직전 버전 추정도 하지 않는다. 종료 후 token은 폐기하고 다시 시험할 때 재사용하지 않는다. Worker secret 삭제는 또 다른 즉시 배포이므로 별도 승인 없이 실행하지 않는다. [Rollback 동작](https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/)
 
 CI 취소·runner 소실 시 cleanup이 실행된다고 보장하지 않는다. 서버 시간창이 새로운 upstream 진입을 차단하며 운영자는 복구 명령과 새 Worker만 대상으로 삼는 계정 접근 수단을 별도로 가지고 있어야 한다. 만료는 완전한 CF 요청비용 차단이 아니므로 추후 Worker 삭제/호스트 차단은 추가 승인 대상이다. main/Pages는 처음부터 OSM이므로 이번 시험 때문에 Pages rollback이 필요하지 않다.
 
