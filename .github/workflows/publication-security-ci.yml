@@ -10,17 +10,31 @@ on:
         type: boolean
         required: false
         default: false
+      vworld_trial_mode:
+        description: 'Separately approved isolated Worker phase; never combine with direct probe'
+        type: choice
+        options: [none, bootstrap, run, recover]
+        required: false
+        default: none
+      expected_sha:
+        description: 'Final reviewed full SHA, required only for isolated Worker phase'
+        type: string
+        required: false
+      approval_phrase:
+        description: 'Exact phase phrase from TRIAL_RUNBOOK; protected approval is also required'
+        type: string
+        required: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: publication-security-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_trial_mode != 'none' && inputs.vworld_trial_mode != '' && 'publication-vworld-trial-launcher' || format('publication-security-{0}', github.event.pull_request.number || github.ref) }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' || inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '' }}
 
 jobs:
   regression:
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.vworld_live_check != true }}
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.vworld_live_check != true && (inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -52,6 +66,10 @@ jobs:
           test -n "$chrome"
           echo "CHROME_PATH=$chrome" >> "$GITHUB_ENV"
           "$chrome" --version
+      - name: Install locked isolated trial tools without service credentials
+        run: npm ci --prefix vworld-tiles/trial --ignore-scripts --no-audit --no-fund
+      - name: Verify isolated trial source, fixed tools and false config locally only
+        run: node vworld-tiles/trial/cli.mjs check
       - name: Front regression with actual Chrome
         run: node --test --test-reporter=tap .github/scripts/test_*.mjs
       - name: Island search pilot Chrome with synthetic API reads
@@ -151,8 +169,22 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+  # This path is already registered on main. A branch dispatch uses this PR's
+  # same-commit reusable workflow, without registering a new file on main.
+  # No secret inheritance: only the existing VWorld key is forwarded for run mode.
+  vworld-worker-trial:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_trial_mode != 'none' && inputs.vworld_trial_mode != '' }}
+    uses: ./.github/workflows/vworld-worker-trial.yml
+    with:
+      mode: ${{ inputs.vworld_trial_mode }}
+      expected_sha: ${{ inputs.expected_sha }}
+      approval_phrase: ${{ inputs.approval_phrase }}
+      direct_live_check: ${{ inputs.vworld_live_check }}
+    secrets:
+      VWORLD_API_KEY: ${{ inputs.vworld_trial_mode == 'run' && inputs.vworld_live_check != true && secrets.VWORLD_API_KEY || '' }}
+
   vworld-live-check:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_live_check == true && github.ref == 'refs/heads/review/vworld-default-keyless-20261021' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_live_check == true && (inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '') && github.ref == 'refs/heads/review/vworld-default-keyless-20261021' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}

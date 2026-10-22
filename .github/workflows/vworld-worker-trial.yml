@@ -1,0 +1,185 @@
+name: VWorld isolated Worker trial (separate approval required)
+
+on:
+  # This new standalone path is not registered on main. The registered caller below
+  # can invoke this exact same-commit reusable workflow on the PR review branch.
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Separately approved phase; bootstrap never uploads secrets'
+        type: choice
+        options: [bootstrap, run, recover]
+        required: true
+      expected_sha:
+        description: 'Final reviewed and CI-passing full 40-character SHA'
+        type: string
+        required: true
+      approval_phrase:
+        description: 'Exact phase phrase from TRIAL_RUNBOOK (not an approval by itself)'
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      mode:
+        type: string
+        required: true
+      expected_sha:
+        type: string
+        required: true
+      approval_phrase:
+        type: string
+        required: true
+      direct_live_check:
+        type: boolean
+        default: false
+    secrets:
+      VWORLD_API_KEY:
+        required: false
+
+permissions:
+  contents: read
+
+# One account/target-independent literal serializes bootstrap, trial and recovery.
+# The registered caller uses a different group to avoid a reusable-workflow deadlock.
+concurrency:
+  group: birdmap-vworld-tiles-trial
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  EXPECTED_SHA: ${{ inputs.expected_sha }}
+  APPROVAL_PHRASE: ${{ inputs.approval_phrase }}
+  TRIAL_MODE: ${{ inputs.mode }}
+  DIRECT_LIVE_CHECK: ${{ inputs.direct_live_check || false }}
+  WRANGLER_WRITE_LOGS: 'false'
+  WRANGLER_LOG_SANITIZE: 'true'
+  WRANGLER_SEND_METRICS: 'false'
+  NODE_OPTIONS: ''
+  NODE_DEBUG: ''
+  DEBUG: ''
+
+jobs:
+  preflight:
+    # No environment reference and no service secrets: an absent environment must
+    # fail here, before GitHub could implicitly create an unprotected environment.
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Reject nonexact source before checkout
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$EXPECTED_SHA" == "$GITHUB_SHA" ]]
+          [[ "$EXPECTED_SHA" == "$GITHUB_WORKFLOW_SHA" ]]
+          [[ "$GITHUB_REPOSITORY" == 'wooil1964/birdmap' ]]
+          [[ "$GITHUB_REF" == 'refs/heads/review/vworld-default-keyless-20261021' ]]
+          [[ "$GITHUB_RUN_ATTEMPT" == '1' ]]
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.expected_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+          token: ''
+      - name: Read-only protected environment, PR, CI and run preflight
+        run: node .github/scripts/vworld_workflow_gate.mjs preflight
+
+  approved-phase:
+    needs: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.mode == 'bootstrap' && 'vworld-trial-bootstrap' || inputs.mode == 'recover' && 'vworld-trial-recovery' || 'vworld-trial-execution' }}
+    env:
+      TRIAL_STATE_PATH: ${{ runner.temp }}/vworld-trial-state-${{ github.run_id }}.json
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.expected_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+          token: ''
+      - name: Recheck protection and independent exact-run approval before service secrets
+        env:
+          APPROVED_SHA: ${{ vars.APPROVED_SHA }}
+          APPROVED_RUN_ID: ${{ vars.APPROVED_RUN_ID }}
+          APPROVED_BOOTSTRAP_RUN_ID: ${{ vars.APPROVED_BOOTSTRAP_RUN_ID }}
+          CF_SCOPE_REVIEWED_SHA: ${{ vars.CF_SCOPE_REVIEWED_SHA }}
+          CF_CREATE_SCOPE: ${{ vars.CF_CREATE_SCOPE }}
+          CF_EDIT_SCOPE: ${{ vars.CF_EDIT_SCOPE }}
+          CF_EDIT_WORKER: ${{ vars.CF_EDIT_WORKER }}
+          CF_READ_SCOPE: ${{ vars.CF_READ_SCOPE }}
+        run: node .github/scripts/vworld_workflow_gate.mjs approved
+      - name: Install integrity-locked tools without service credentials or lifecycle scripts
+        run: npm ci --prefix vworld-tiles/trial --ignore-scripts --no-audit --no-fund
+      - name: Verify exact local source, tools and isolated false configuration
+        env:
+          APPROVED_SHA: ${{ vars.APPROVED_SHA }}
+        run: node vworld-tiles/trial/cli.mjs check
+      # These are the only service-secret-reading steps. Account/host identifiers
+      # and token fingerprints are environment secrets too, so runner env logs mask them.
+      - name: Run one approved orchestration process with finally and signal recovery
+        id: orchestrate
+        env:
+          APPROVED_SHA: ${{ vars.APPROVED_SHA }}
+          APPROVED_RUN_ID: ${{ vars.APPROVED_RUN_ID }}
+          APPROVED_BOOTSTRAP_RUN_ID: ${{ vars.APPROVED_BOOTSTRAP_RUN_ID }}
+          CF_SCOPE_REVIEWED_SHA: ${{ vars.CF_SCOPE_REVIEWED_SHA }}
+          CF_CREATE_SCOPE: ${{ vars.CF_CREATE_SCOPE }}
+          CF_EDIT_SCOPE: ${{ vars.CF_EDIT_SCOPE }}
+          CF_EDIT_WORKER: ${{ vars.CF_EDIT_WORKER }}
+          CF_READ_SCOPE: ${{ vars.CF_READ_SCOPE }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_EXPECTED_ACCOUNT_ID: ${{ secrets.CF_EXPECTED_ACCOUNT_ID }}
+          TRIAL_HOST: ${{ secrets.TRIAL_HOST }}
+          CF_CREATE_TOKEN: ${{ inputs.mode == 'bootstrap' && secrets.CF_CREATE_TOKEN || '' }}
+          CF_CREATE_TOKEN_SHA256: ${{ inputs.mode == 'bootstrap' && secrets.CF_CREATE_TOKEN_SHA256 || '' }}
+          CF_EDIT_TOKEN: ${{ inputs.mode != 'bootstrap' && secrets.CF_EDIT_TOKEN || '' }}
+          CF_EDIT_TOKEN_SHA256: ${{ inputs.mode != 'bootstrap' && secrets.CF_EDIT_TOKEN_SHA256 || '' }}
+          CF_READ_TOKEN: ${{ inputs.mode != 'recover' && secrets.CF_READ_TOKEN || '' }}
+          CF_READ_TOKEN_SHA256: ${{ inputs.mode != 'recover' && secrets.CF_READ_TOKEN_SHA256 || '' }}
+          VWORLD_API_KEY: ${{ inputs.mode == 'run' && secrets.VWORLD_API_KEY || '' }}
+        run: |
+          set -euo pipefail
+          umask 077
+          node vworld-tiles/trial/cli.mjs "$TRIAL_MODE"
+      - name: Always verify disabled recovery after any mutation attempt
+        if: ${{ always() && inputs.mode != 'recover' && steps.orchestrate.outcome != 'skipped' }}
+        env:
+          APPROVED_SHA: ${{ vars.APPROVED_SHA }}
+          APPROVED_RUN_ID: ${{ vars.APPROVED_RUN_ID }}
+          APPROVAL_PHRASE: DISABLE_VWORLD_TRIAL
+          CF_SCOPE_REVIEWED_SHA: ${{ vars.CF_SCOPE_REVIEWED_SHA }}
+          CF_CREATE_SCOPE: ${{ vars.CF_CREATE_SCOPE }}
+          CF_EDIT_SCOPE: ${{ vars.CF_EDIT_SCOPE }}
+          CF_EDIT_WORKER: ${{ vars.CF_EDIT_WORKER }}
+          CF_READ_SCOPE: ${{ vars.CF_READ_SCOPE }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_EXPECTED_ACCOUNT_ID: ${{ secrets.CF_EXPECTED_ACCOUNT_ID }}
+          TRIAL_HOST: ${{ secrets.TRIAL_HOST }}
+          CF_CREATE_TOKEN: ${{ inputs.mode == 'bootstrap' && secrets.CF_CREATE_TOKEN || '' }}
+          CF_CREATE_TOKEN_SHA256: ${{ inputs.mode == 'bootstrap' && secrets.CF_CREATE_TOKEN_SHA256 || '' }}
+          CF_EDIT_TOKEN: ${{ inputs.mode == 'run' && secrets.CF_EDIT_TOKEN || '' }}
+          CF_EDIT_TOKEN_SHA256: ${{ inputs.mode == 'run' && secrets.CF_EDIT_TOKEN_SHA256 || '' }}
+          CF_READ_TOKEN: ${{ inputs.mode == 'bootstrap' && secrets.CF_READ_TOKEN || '' }}
+          CF_READ_TOKEN_SHA256: ${{ inputs.mode == 'bootstrap' && secrets.CF_READ_TOKEN_SHA256 || '' }}
+        run: |
+          set -euo pipefail
+          umask 077
+          if [[ ! -f "$TRIAL_STATE_PATH" ]]; then exit 0; fi
+          if [[ "$TRIAL_MODE" == 'bootstrap' ]]; then
+            node vworld-tiles/trial/cli.mjs bootstrap-recover
+          else
+            node vworld-tiles/trial/cli.mjs recover
+          fi
