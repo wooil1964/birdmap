@@ -24,18 +24,9 @@ Worker 오류·429·시간 초과 시 기존 브라우저 정책으로 OSM에 �
 
 GitHub `VWORLD_API_KEY`와 Cloudflare Worker secret은 자동 공유되지 않습니다. 향후 승인된 별도 배포 job에서 GitHub Secret을 환경 변수로 전달하고, 공식 Wrangler Action의 `secrets` 목록에 같은 이름을 지정하는 방식이 적합합니다. Pages 작업에는 이 secret을 전달하지 않습니다. [Wrangler Action](https://github.com/cloudflare/wrangler-action), [GitHub Secrets](https://docs.github.com/en/actions/concepts/security/secrets)
 
-검토용 연결 모양은 아래와 같습니다. 이는 실행되는 workflow 파일이 아니며, action 버전 고정·정확한 main commit 확인·배포 환경 승인·계정 권한 설정을 마친 뒤 별도로 적용해야 합니다.
+**제한 시험은 [TRIAL_RUNBOOK.md](TRIAL_RUNBOOK.md)의 비활성 bootstrap → secret 공급 → 비활성 검증 → 최대 10분/시험 클라이언트 최대 4타일 → 비활성 복귀 순서만 사용합니다.** 검토 브랜치의 정확한 SHA를 고정하며 main 병합은 필요하지 않습니다. `wrangler.trial.toml`은 기존 중계 앞에 임시 토큰·유효시간 검사를 추가한 서버 시험 전용 설정입니다. 일반 Pages는 이 시험 토큰을 받지 않으며 계속 OSM을 유지합니다.
 
-```yaml
-# Future, separately approved Worker deployment step only.
-# A pinned cloudflare/wrangler-action invokes the dedicated config.
-with:
-  command: deploy --config vworld-tiles/wrangler.toml --var TILES_ENABLED:true
-  secrets: |
-    VWORLD_API_KEY
-env:
-  VWORLD_API_KEY: ${{ secrets.VWORLD_API_KEY }}
-```
+`[secrets].required`에 선언된 secret이 없는 신규 Worker는 정규 deploy가 실패합니다. 첫 비활성 bootstrap만 required 목록을 비운 임시 설정을 사용하고, 키 공급 후 정규 시험 설정으로 다시 비활성 배포합니다. Secret 공급 명령도 원격 배포이며 dry-run과 섞지 않습니다. 실행 workflow나 자동 활성화 경로는 추가하지 않았습니다. [공식 required secrets](https://developers.cloudflare.com/workers/wrangler/configuration/#secrets)
 
 실제 job에는 Cloudflare account ID와 최소 권한 API token도 필요합니다. 현재 계정·token·허용 리소스·namespace 충돌·공유 포함량은 조회하지 않았습니다. 기존 관리자 token을 재사용하지 말고, Cloudflare 권한이 계정의 다른 Worker에도 미치는 범위를 배포 전 확인해야 합니다. secret·명령 추적·전체 예외·upstream URL을 로그로 출력하거나 `.dev.vars`·캐시·아티팩트에 저장하지 않습니다. 소스의 `[secrets].required`는 이름만 선언합니다.
 

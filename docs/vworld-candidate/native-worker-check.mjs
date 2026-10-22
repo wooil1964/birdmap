@@ -1,6 +1,7 @@
 import {createRequire} from 'node:module';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {resolve,join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {deflateSync} from 'node:zlib';
 import assert from 'node:assert/strict';
 const require=createRequire(import.meta.url);
@@ -32,5 +33,22 @@ const limited=new Miniflare(convertV4MiniflareOptions({host:'127.0.0.1',port:0,c
  {name:'synthetic-upstream',modules:true,script:upstream,compatibilityDate:'2026-10-22'}
 ]}));
 try{const first=await limited.dispatchFetch('https://tiles.local/tiles/8/218/100.png',{headers});assert.equal(first.status,200);await first.arrayBuffer();const second=await limited.dispatchFetch('https://tiles.local/tiles/8/218/100.png',{headers});assert.equal(second.status,429);checks.nativeLimiterActuallyDenies=true;}finally{await limited.dispose();}
-const result={status:'passed',engine:'local workerd via Wrangler 4.151.3 / Miniflare',checks,realVworldRequests:0,cloudflareDeployments:0,scope:'Exact relay module, native rate-limit bindings, synthetic in-process upstream. No production authentication or Cloudflare egress proof.'};
+const trialToken='SYNTHETIC_TRIAL_TOKEN_ONLY_'.padEnd(43,'x');
+async function trialEngine(enabled,expired=false){
+ const now=Date.now(),start=now-(expired?120000:1000),end=now+(expired?-60000:60000);
+ return new Miniflare(convertV4MiniflareOptions({host:'127.0.0.1',port:0,cf:false,workers:[
+  {name:'trial',modules:['trial-worker.mjs','worker.mjs'].map(file=>({type:'ESModule',path:fileURLToPath(new URL('../../vworld-tiles/src/'+file,import.meta.url))})),compatibilityDate:'2026-10-22',bindings:{TILES_ENABLED:enabled,TRIAL_ACCESS_TOKEN:trialToken,TRIAL_STARTS_AT:new Date(start).toISOString(),TRIAL_EXPIRES_AT:new Date(end).toISOString(),VWORLD_API_KEY:sentinel},outboundService:'synthetic-upstream',ratelimits:{CLIENT_TILE_LIMITER:{namespace_id:'998044',simple:{limit:100,period:60}},GLOBAL_TILE_LIMITER:{namespace_id:'998045',simple:{limit:100,period:60}}}},
+  {name:'synthetic-upstream',modules:true,script:upstream,compatibilityDate:'2026-10-22'}
+ ]}));
+}
+const trial=await trialEngine('true');
+try{
+ const missing=await trial.dispatchFetch('https://tiles.local/tiles/8/218/100.png',{headers});assert.equal(missing.status,403);checks.trialTokenRequired=true;
+ const allowed=await trial.dispatchFetch('https://tiles.local/tiles/8/218/100.png',{headers:{...headers,'X-Birdmap-Trial-Token':trialToken}});assert.equal(allowed.status,200);assert.deepEqual(Buffer.from(await allowed.arrayBuffer()),bytes);checks.trialAuthorizedPng=true;
+}finally{await trial.dispose();}
+for(const [enabled,expired,name]of [['true',true,'trialExpiryCloses'],['false',false,'trialDisabledCloses']]){
+ const closed=await trialEngine(enabled,expired);
+ try{const r=await closed.dispatchFetch('https://tiles.local/tiles/8/218/100.png',{headers:{...headers,'X-Birdmap-Trial-Token':trialToken}});assert.equal(r.status,503);checks[name]=true;}finally{await closed.dispose();}
+}
+const result={status:'passed',engine:'local workerd via Wrangler 4.151.3 / Miniflare',checks,realVworldRequests:0,cloudflareDeployments:0,scope:'Exact relay and trial modules, native rate-limit bindings, synthetic in-process upstream. No production authentication or Cloudflare egress proof.'};
 const out=resolve(process.env.VWORLD_NATIVE_OUTPUT||'.ci-results/vworld-native-worker');mkdirSync(out,{recursive:true});writeFileSync(join(out,'result.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
