@@ -1,5 +1,11 @@
 # VWorld secret read-only diagnosis — 2026-10-22
 
+Latest result: [registered Pages browser validation](VALIDATION_20261022.md)
+passed with one real WMTS image and 15 real candidate-map tiles on 2026-10-22.
+An induced VWorld error also returned the map to actual OSM tiles. The workflow
+below documents the earlier Actions-path diagnostic; it is not evidence that
+the later domestic Pages browser test failed and need not be repeated.
+
 Draft PR #40 remains isolated from main. This workflow never publishes Pages,
 changes runtime configuration, sends production reports, or writes to Workers.
 The repository secret `VWORLD_API_KEY` is never retrieved into local tooling.
