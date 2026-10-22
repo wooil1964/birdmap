@@ -33,7 +33,7 @@ export const headers = { 'Content-Type': 'image/png', 'Cache-Control': 'no-store
 const clone = value => structuredClone(value);
 // beforeTool(call) may delay or fail a synthetic Wrangler call (solo delayed-write tests).
 // accountApi(path, init) answers account-level GETs outside /workers/ (solo handoff tests).
-export function fixture({ failSecret = 0, failTile = 0, failDeploy = 0, revokeReadWhenEnabled = false, beforeTool, accountApi, tileStatus } = {}) {
+export function fixture({ failSecret = 0, failTile = 0, failDeploy = 0, revokeReadWhenEnabled = false, beforeTool, accountApi, tileStatus, subdomain = { enabled: true, previews_enabled: false } } = {}) {
   const versions = new Map(), secrets = new Map(), apiCalls = [], toolCalls = [], probes = [], reports = [], syntheticErrors = [];
   let current = null, serial = 0, secretCalls = 0, deployCalls = 0, settingsOverride = null;
   const currentVersion = () => versions.get(current);
@@ -61,7 +61,7 @@ export function fixture({ failSecret = 0, failTile = 0, failDeploy = 0, revokeRe
       const allowed = token && token === secrets.get('TRIAL_ACCESS_TOKEN');
       const positives = probes.filter(p => p.token).length;
       const status = tileStatus?.({ enabled, allowed, token }) ?? (!enabled ? 503 : !allowed ? 403 : failTile && positives === failTile ? 502 : 200);
-      return new Response(status === 200 ? png() : 'tiles_unavailable', { status, headers: { ...headers, 'Content-Type': status === 200 ? 'image/png' : 'text/plain; charset=utf-8' } });
+      return new Response(status === 200 ? png() : status === 503 ? 'trial_disabled' : 'tiles_unavailable', { status, headers: { ...headers, 'Content-Type': status === 200 ? 'image/png' : 'text/plain; charset=utf-8' } });
     }
     const base = 'https://api.cloudflare.com/client/v4/accounts/' + '0'.repeat(32);
     assert.ok(url.startsWith(base)); assert.equal(init.method, 'GET'); assert.equal(init.redirect, 'manual');
@@ -73,7 +73,7 @@ export function fixture({ failSecret = 0, failTile = 0, failDeploy = 0, revokeRe
     const prefix = '/workers/scripts/' + TARGET;
     if (!current && path.startsWith(prefix)) return Response.json({ success: false }, { status: 404 });
     if (path === prefix + '/settings') return result({ bindings: settingsOverride ?? currentVersion().resources.bindings, observability: { enabled: false }, logpush: false, tail_consumers: [], streaming_tail_consumers: [] });
-    if (path === prefix + '/subdomain') return result({ enabled: true, previews_enabled: false });
+    if (path === prefix + '/subdomain') return result(subdomain); // mutable: workers.dev and Preview URL switches
     if (path === prefix + '/deployments') return result({ deployments: [{ id: 'synthetic-deployment-' + serial, versions: [{ version_id: current, percentage: 100 }] }] });
     if (path.startsWith(prefix + '/versions?')) {
       const parsed = new URL(url), page = Number(parsed.searchParams.get('page')), per = Number(parsed.searchParams.get('per_page'));
@@ -139,5 +139,6 @@ export function fixture({ failSecret = 0, failTile = 0, failDeploy = 0, revokeRe
     return value;
   }
   return { adapter, versions, secrets, apiCalls, toolCalls, probes, reports, syntheticErrors, snapshot, currentVersion, variables,
-    setCurrentSettings(bindings) { settingsOverride = clone(bindings); }, get exists() { return current !== null; } };
+    setCurrentSettings(bindings) { settingsOverride = clone(bindings); }, get exists() { return current !== null; },
+    rollbackTo(id) { assert.ok(versions.has(id)); current = id; } }; // dashboard Rollback: no new version
 }

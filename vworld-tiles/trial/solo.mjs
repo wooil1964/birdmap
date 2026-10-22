@@ -1,7 +1,7 @@
 // solo-local-v1: ONE operator, NO independent reviewer. This is a separate path from
 // the GitHub independent-approval workflow and is never evidence for it.
 // No network, credentials or files at import. All effects are injected by solo-cli.mjs.
-import { createHash, createPublicKey, verify as ed25519Verify, randomBytes } from 'node:crypto';
+import { createHash, createPublicKey, verify as cryptoVerify, randomBytes } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { bootstrapTrial, runTrial, recoverTrial, identity } from './core.mjs';
 import { TARGET } from './cloudflare.mjs';
@@ -10,7 +10,7 @@ import { REPOSITORY, BRANCH } from '../../.github/scripts/vworld_workflow_gate.m
 export const NAMESPACE = 'birdmap-vworld-solo-approval-v1';
 export const HARDWARE_KEY_TYPE = 'sk-ssh-ed25519@openssh.com';
 export const MAX_TTL_MS = 30 * 60000;
-export const SKEW_MS = 120000; // Allowed A/B clock difference against issuedAt only.
+export const SKEW_MS = 120000; // Allowed clock difference against issuedAt only.
 export const MAX_DRIFT_MS = 2000; // UTC vs monotonic divergence inside one process.
 const SOLO_ID = /^solo-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const COMMON = ['accountSha256', 'bootstrapOperationId', 'branch', 'expiresAt', 'independentReviewer', 'issuedAt', 'mode',
@@ -33,15 +33,29 @@ function reader(buffer) {
 }
 const sshString = bytes => { const length = Buffer.alloc(4); length.writeUInt32BE(bytes.length); return Buffer.concat([length, bytes]); };
 
+// sk-ecdsa is what Windows Hello (platform authenticator) can produce through Windows
+// OpenSSH; most FIDO2 keys support both. Whether THIS PC's Windows Hello works is unverified.
+export const ECDSA_SK_TYPE = 'sk-ecdsa-sha2-nistp256@openssh.com';
+export const HARDWARE_KEY_TYPES = new Set([HARDWARE_KEY_TYPE, ECDSA_SK_TYPE]);
+
 function parseKeyBlob(blob) {
-  const r = reader(blob), type = r.string().toString('latin1'), pk = r.string();
-  if (pk.length !== 32) fail('SOLO_SIGNER_KEY_INVALID');
-  const application = type === HARDWARE_KEY_TYPE ? r.string() : null;
-  if (!['ssh-ed25519', HARDWARE_KEY_TYPE].includes(type) || !r.done()) fail('SOLO_SIGNER_KEY_INVALID');
-  return { type, pk, application };
+  const r = reader(blob), type = r.string().toString('latin1');
+  let key;
+  if (type === ECDSA_SK_TYPE) {
+    const curve = r.string().toString('latin1'), q = r.string();
+    if (curve !== 'nistp256' || q.length !== 65 || q[0] !== 4) fail('SOLO_SIGNER_KEY_INVALID');
+    key = { type, publicKey: createPublicKey({ key: { kty: 'EC', crv: 'P-256', x: q.subarray(1, 33).toString('base64url'), y: q.subarray(33).toString('base64url') }, format: 'jwk' }) };
+  } else if (type === 'ssh-ed25519' || type === HARDWARE_KEY_TYPE) {
+    const pk = r.string();
+    if (pk.length !== 32) fail('SOLO_SIGNER_KEY_INVALID');
+    key = { type, publicKey: createPublicKey({ key: { kty: 'OKP', crv: 'Ed25519', x: pk.toString('base64url') }, format: 'jwk' }) };
+  } else fail('SOLO_SIGNER_KEY_INVALID');
+  if (HARDWARE_KEY_TYPES.has(type)) key.application = r.string();
+  if (!r.done()) fail('SOLO_SIGNER_KEY_INVALID');
+  return key;
 }
 
-// One OpenSSH public key line, pinned in the reviewed source (vworld-tiles/trial/solo-signer.pub).
+// One OpenSSH public key line, pinned in the reviewed source (see solo-cli.mjs loadSigner).
 export function parseSigner(line) {
   const [type, base64] = String(line ?? '').trim().split(/\s+/);
   const blob = Buffer.from(base64 ?? '', 'base64');
@@ -49,11 +63,23 @@ export function parseSigner(line) {
   return blob;
 }
 
+// SSH mpint pair (r, s) -> 64-byte IEEE P1363 for node's ECDSA verify.
+function ecdsaSignature(blob) {
+  const r = reader(blob), part = () => {
+    const v = r.string();
+    if (v.length > 33 || (v.length === 33 && v[0] !== 0)) fail('SOLO_SIGNATURE_MALFORMED');
+    const out = Buffer.alloc(32); v.subarray(-32).copy(out, 32 - Math.min(32, v.length)); return out;
+  };
+  const out = Buffer.concat([part(), part()]);
+  if (!r.done()) fail('SOLO_SIGNATURE_MALFORMED');
+  return out;
+}
+
 /**
  * Verifies an armored SSHSIG over exact message bytes for the pinned key.
- * Production policy requires a FIDO hardware key (sk-ssh-ed25519) whose signature
- * asserts user presence (a physical touch). allowSoftwareKey exists ONLY for
- * synthetic tests; solo-cli.mjs never sets it, so a software key blocks execution.
+ * Hardware (sk-*) keys must assert user presence (touch/PIN gesture). Software keys
+ * are accepted only with allowSoftwareKey, which solo-cli.mjs sets solely when the
+ * committed signer policy explicitly declares the lower "software-passphrase" level.
  */
 export function verifySshSignature(message, armored, signerBlob, { allowSoftwareKey = false } = {}) {
   const body = String(armored ?? '').replace(/\r/g, '').trim();
@@ -67,21 +93,24 @@ export function verifySshSignature(message, armored, signerBlob, { allowSoftware
   if (namespace.toString('latin1') !== NAMESPACE) fail('SOLO_SIGNATURE_NAMESPACE');
   if (!['sha256', 'sha512'].includes(hashName)) fail('SOLO_SIGNATURE_MALFORMED');
   const key = parseKeyBlob(keyBlob);
-  if (key.type !== HARDWARE_KEY_TYPE && !allowSoftwareKey) fail('SOLO_SIGNER_NOT_HARDWARE');
+  const hardware = HARDWARE_KEY_TYPES.has(key.type);
+  if (!hardware && !allowSoftwareKey) fail('SOLO_SIGNER_NOT_HARDWARE');
   const s = reader(sigBlob);
   if (s.string().toString('latin1') !== key.type) fail('SOLO_SIGNATURE_MALFORMED');
-  const signature = s.string();
+  let signature = s.string();
   const signed = Buffer.concat([Buffer.from('SSHSIG'), sshString(namespace), sshString(reserved), sshString(Buffer.from(hashName)),
     sshString(createHash(hashName).update(message).digest())]);
   let data = signed;
-  if (key.type === HARDWARE_KEY_TYPE) {
+  if (hardware) {
     const flags = s.take(1)[0], counter = s.take(4);
     if (!(flags & 0x01)) fail('SOLO_SIGNATURE_NO_USER_PRESENCE');
     data = Buffer.concat([sha256(key.application), Buffer.from([flags]), counter, sha256(signed)]);
   }
-  if (!s.done() || signature.length !== 64) fail('SOLO_SIGNATURE_MALFORMED');
-  const publicKey = createPublicKey({ key: { kty: 'OKP', crv: 'Ed25519', x: key.pk.toString('base64url') }, format: 'jwk' });
-  if (!ed25519Verify(null, data, publicKey, signature)) fail('SOLO_SIGNATURE_INVALID');
+  if (!s.done()) fail('SOLO_SIGNATURE_MALFORMED');
+  let valid;
+  if (key.type === ECDSA_SK_TYPE) valid = cryptoVerify('sha256', data, { key: key.publicKey, dsaEncoding: 'ieee-p1363' }, ecdsaSignature(signature));
+  else valid = signature.length === 64 && cryptoVerify(null, data, key.publicKey, signature);
+  if (!valid) fail('SOLO_SIGNATURE_INVALID');
 }
 
 // ---- Approval record ----------------------------------------------------------
@@ -165,6 +194,23 @@ export async function assertNotFenced(adapter, sha, allowed, { activating = fals
   }
 }
 
+// Out-of-band change detector. Between two of our own writes exactly one new version (ours)
+// may appear, and the active deployment must be that newest version. A dashboard variable
+// edit (extra, unannotated version) or a dashboard Rollback (older version made active) stops
+// every later write. Still check-then-act: a write already in flight is not covered.
+export function outOfBandGuard(adapter) {
+  let known = null, active = null;
+  return async () => {
+    const ids = (await adapter.versionList()).map(item => item.id);
+    const current = (await adapter.activeVersion()).id;
+    if (known) {
+      const added = ids.filter(id => !known.has(id));
+      if (added.length > 1 || current !== (added[0] ?? active)) fail('SOLO_OUT_OF_BAND_CHANGE');
+    }
+    known = new Set(ids); active = current;
+  };
+}
+
 function guardWrites(adapter, guard) {
   for (const name of ['deploy', 'putSecret']) {
     const original = adapter[name].bind(adapter);
@@ -187,23 +233,51 @@ export async function soloBootstrap(adapter, { approval, digest, claim }) {
  * restart loses the token and the remote history is already consumed, so a past
  * approval can never resume or activate. Every exit path redeploys false and checks 503.
  */
-export async function soloTrial(adapter, { approval, digest, vworldKey, claim, readActivation, verifyActivation, recheckSource, now = Date.now,
+// The single-PC fail-safe: if this PC dies at any point, the trial token dies with this
+// process (no client can authorize a tile) and the Worker answers 503 by itself after
+// the approved windowEnd. The phone card below is for restoring the clean disabled state.
+export function recoveryCard(activation) {
+  return { event: 'phone-recovery-card', target: TARGET, checkPath: '/tiles/8/218/100.png',
+    expectAfterRecovery: 'trial_disabled', windowStart: activation.windowStart, windowEnd: activation.windowEnd,
+    steps: ['revoke-or-roll-the-PC-worker-editor-token', 'deployments-rollback-to-a-bm-bootstrap-or-bm-consumed-version(both-false)-or-set-TILES_ENABLED-false-and-deploy',
+      'open-checkPath-on-workers.dev-expect-trial_disabled', 'recheck-after-5-minutes'] };
+}
+
+export async function soloTrial(adapter, { approval, digest, vworldKey, claim, readActivation, verifyActivation, recheckSource, announce, now = Date.now,
   monotonic = () => performance.now(), randomBytesFn = randomBytes }) {
   const { sha, operationId: op, bootstrapOperationId: boot } = approval;
   identity(sha, op);
   if (approval.stage !== 'secrets') fail('SOLO_APPROVAL_STAGE');
   const clock = clockGuard(now, monotonic), window = {};
   let deadline = Date.parse(approval.expiresAt);
+  const outOfBand = outOfBandGuard(adapter);
+  // Once anyone else changed the target (phone Rollback/variable edit, a recover run, a
+  // duplicate process), this run never writes again, not even its own false cleanup: a
+  // Wrangler deploy would override the operator and re-enable a workers.dev route the
+  // phone turned off. A failing read (e.g. network) does not count; cleanup then proceeds.
+  let takenOver = false;
+  const detect = async check => {
+    try { await check(); }
+    catch (error) { if (['SOLO_OUT_OF_BAND_CHANGE', 'SOLO_FENCED_BY_RECOVERY', 'SOLO_FOREIGN_HISTORY', 'SOLO_ALREADY_ACTIVATED'].includes(error.message)) takenOver = true; throw error; }
+  };
   guardWrites(adapter, async args => {
     if (clock() >= deadline) fail('SOLO_APPROVAL_EXPIRED');
-    await assertNotFenced(adapter, sha, new Set([boot, op]), { activating: args.enabled === true });
+    await detect(() => assertNotFenced(adapter, sha, new Set([boot, op]), { activating: args.enabled === true }));
+    await detect(outOfBand);
   });
+  const beginRecovery = adapter.beginRecovery.bind(adapter);
+  adapter.beginRecovery = async () => {
+    if (!takenOver) await detect(outOfBand).catch(() => {});
+    if (takenOver) fail('SOLO_OPERATOR_TOOK_OVER_NO_PC_WRITE');
+    return beginRecovery();
+  };
   await claim(digest);
   return runTrial(adapter, { sha, runId: op, vworldKey, now: clock, randomBytesFn, window, beforeActivation: async () => {
     const verified = verifyActivation(await readActivation(deadline), clock()), activation = verified.approval;
     if (activation.stage !== 'activate' || activation.parentOperationId !== op || activation.bootstrapOperationId !== boot || activation.sha !== sha) fail('SOLO_ACTIVATION_NOT_BOUND');
     await claim(verified.digest);
     await recheckSource?.(); // exact Draft PR head and its CI again, right before activation
+    await announce?.(recoveryCard(activation));
     Object.assign(window, { start: activation.windowStart, end: activation.windowEnd, lastActivation: activation.lastActivationAt });
     deadline = Date.parse(activation.lastActivationAt);
   } });
@@ -211,12 +285,14 @@ export async function soloTrial(adapter, { approval, digest, vworldKey, claim, r
 
 // P2: read-only proof of the narrowed state. No writes. Probes show denied READS on
 // D1/Pages; they cannot prove absence of every write permission (policy review does).
-export async function soloHandoff(adapter, { approval, accountGet }) {
+export const MAX_EDITOR_TOKEN_LIFETIME_MS = 7 * 86400000;
+export async function soloHandoff(adapter, { approval, accountGet, now = Date.now() }) {
   identity(approval.sha, approval.bootstrapOperationId);
   if (approval.stage !== 'handoff') fail('SOLO_APPROVAL_STAGE');
   const edit = await accountGet('/tokens/verify', 'edit');
-  // A non-expiring executor credential is refused: expiry bounds a lost or stale token.
-  if (edit.status !== 200 || edit.result?.status !== 'active' || !Number.isFinite(Date.parse(edit.result?.expires_on))) fail('SOLO_EDITOR_TOKEN_NOT_ACTIVE_WITH_EXPIRY');
+  // A forgotten PC token must die on its own: require an expiry within 7 days.
+  const expires = Date.parse(edit.result?.expires_on);
+  if (edit.status !== 200 || edit.result?.status !== 'active' || !(expires > now && expires - now <= MAX_EDITOR_TOKEN_LIFETIME_MS)) fail('SOLO_EDITOR_TOKEN_NOT_ACTIVE_WITH_SHORT_EXPIRY');
   const create = await accountGet('/tokens/verify', 'create');
   if (create.status === 200 && create.result?.status === 'active') fail('SOLO_CREATE_TOKEN_STILL_ACTIVE');
   for (const path of ['/d1/database', '/pages/projects']) if ((await accountGet(path, 'edit')).status === 200) fail('SOLO_EDITOR_SCOPE_TOO_WIDE');
@@ -225,7 +301,7 @@ export async function soloHandoff(adapter, { approval, accountGet }) {
   return soloDrill(adapter, { sha: approval.sha, op: approval.bootstrapOperationId, secretNames: [] });
 }
 
-// Read-only recovery drill (computer B, or A after handoff). Never writes.
+// Read-only recovery drill on the same PC after handoff. Never writes.
 export async function soloDrill(adapter, { sha, op, secretNames }) {
   identity(sha, op);
   await adapter.preflight({ sha, runId: op, mode: 'recover' });
@@ -236,14 +312,15 @@ export async function soloDrill(adapter, { sha, op, secretNames }) {
   return { state: 'drill-disabled-503', writes: 0 };
 }
 
-// ---- External recovery (computer B) -------------------------------------------------
+// ---- Optional PC-side recovery (the primary emergency path is the phone dashboard) ----
 /**
- * Disable-only recovery from B's own copy of a signed approval plus remote state.
- * Needs no GitHub, CI, VWorld key, account-wide reader or A's local files.
+ * Disable-only recovery after a crash/restart of the SAME PC, from the signed approval
+ * plus remote state. Needs no GitHub, CI, VWorld key, account-wide reader or ledger.
+ * Impossible once the PC token was revoked from the phone, which is intended.
  * 1. absent target: report absent-confirmed, never create.
- * 2. redeploy the same SHA false (fences A's later writes) and verify 503.
- * 3. overwrite TRIAL_ACCESS_TOKEN with a discarded random value: a delayed
- *    activation from A can no longer be used with A's token.
+ * 2. redeploy the same SHA false (fences the dead process's later writes) and verify 503.
+ * 3. overwrite TRIAL_ACCESS_TOKEN with a discarded random value: a delayed activation
+ *    from an orphaned Wrangler child can no longer be used with the old token.
  * 4. watch: re-verify; any re-enable is disabled again (bounded) and is an incident.
  */
 export async function soloRecover(adapter, { approval, sleep, watchChecks = 3, watchIntervalMs = 10000, maxRedeploys = 2, randomBytesFn = randomBytes }) {
@@ -274,6 +351,6 @@ export async function soloRecover(adapter, { approval, sleep, watchChecks = 3, w
     }
   }
   // 503 here does not prove A has stopped: an in-flight A request can still land later.
-  // Takeover is complete only after the operator revokes A's executor credential.
+  // Recovery is final only after the operator revokes the PC's Editor token (phone).
   return { state: 'disabled-503', neutralized, incident, writes: 1 + Number(neutralized) + redeploys, executorQuiescence: 'unverified' };
 }

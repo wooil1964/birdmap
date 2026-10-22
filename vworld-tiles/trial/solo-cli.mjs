@@ -10,10 +10,10 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { CloudflareAdapter, ROOT, localCheck } from './cloudflare.mjs';
 import { safeFailure } from './cli.mjs';
 import { validateSourceCI } from '../../.github/scripts/vworld_workflow_gate.mjs';
-import { HARDWARE_KEY_TYPE, NAMESPACE, accountDigest, canonical, createApproval, parseSigner, validateApproval, verifyApprovalFile,
+import { HARDWARE_KEY_TYPES, NAMESPACE, accountDigest, canonical, createApproval, parseSigner, validateApproval, verifyApprovalFile,
   soloBootstrap, soloHandoff, soloTrial, soloRecover, soloDrill } from './solo.mjs';
 
-export const SIGNER_PATH = join(ROOT, 'vworld-tiles/trial/solo-signer.pub');
+export const SIGNER_PATH = join(ROOT, 'vworld-tiles/trial/solo-signer.json');
 const fail = code => { throw Error(code); };
 const CREDENTIAL_NAMES = ['VWORLD_API_KEY', 'CF_CREATE_TOKEN', 'CF_EDIT_TOKEN', 'CF_READ_TOKEN'];
 // Each stage gets only its own credentials; anything else present is refused.
@@ -34,11 +34,22 @@ export function assertSoloEnvironment(command, env, argv = process.argv) {
   for (const key of CREDENTIAL_NAMES) if (env[key] && argv.some(arg => arg.includes(env[key]))) fail('SOLO_CREDENTIAL_IN_ARGV');
 }
 
+/**
+ * The committed signer policy (vworld-tiles/trial/solo-signer.json) names the key AND
+ * its assurance, so a lower level is a reviewed decision in a new SHA, never a fallback:
+ *   hardware-presence   : sk-ssh-ed25519 / sk-ecdsa (FIDO2 key or Windows Hello), touch/PIN per signature
+ *   software-passphrase : ssh-ed25519 with a passphrase on this PC. Binds and detects tampering
+ *                         only; it does NOT prove a human or resist malware on the same PC.
+ */
+export const ASSURANCES = ['hardware-presence', 'software-passphrase'];
 export function loadSigner(path = SIGNER_PATH) {
   if (!existsSync(path)) fail('SOLO_SIGNER_NOT_REGISTERED');
-  const line = readFileSync(path, 'utf8');
-  if (line.trim().split(/\s+/)[0] !== HARDWARE_KEY_TYPE) fail('SOLO_SIGNER_NOT_HARDWARE');
-  return parseSigner(line);
+  let policy;
+  try { policy = JSON.parse(readFileSync(path, 'utf8')); } catch { fail('SOLO_SIGNER_POLICY_INVALID'); }
+  if (!policy || JSON.stringify(Object.keys(policy).sort()) !== '["assurance","publicKey"]' || !ASSURANCES.includes(policy.assurance)) fail('SOLO_SIGNER_POLICY_INVALID');
+  const type = String(policy.publicKey).trim().split(/\s+/)[0];
+  if (policy.assurance === 'hardware-presence' ? !HARDWARE_KEY_TYPES.has(type) : type !== 'ssh-ed25519') fail('SOLO_SIGNER_POLICY_MISMATCH');
+  return { blob: parseSigner(policy.publicKey), assurance: policy.assurance, allowSoftwareKey: policy.assurance === 'software-passphrase' };
 }
 
 export function localLedger(directory) {
@@ -66,8 +77,8 @@ function args(list) {
   return out;
 }
 
-// Computer B: writes an UNSIGNED canonical approval for the operator to read and then
-// sign with the registered FIDO key (touch required). Contains no credential.
+// Same PC: writes an UNSIGNED canonical approval for the operator to read, then sign
+// with the registered key (see loadSigner for assurance levels). Contains no credential.
 function approve(stage, options, env) {
   const o = args(options), now = new Date();
   if (!['bootstrap', 'handoff', 'secrets', 'activate'].includes(stage) || !o.out) fail('SOLO_ARGUMENT_INVALID');
@@ -80,16 +91,22 @@ function approve(stage, options, env) {
   writeFileSync(resolve(o.out), canonical(approval), { flag: 'wx', mode: 0o600 });
   const { accountSha256, nonce, ...summary } = approval;
   event({ event: 'approval-written-unsigned', ...summary,
-    signWith: `ssh-keygen -Y sign -n ${NAMESPACE} -f <registered-sk-key> ${o.out}` });
+    signWith: `ssh-keygen -Y sign -n ${NAMESPACE} -f <registered-key> ${o.out}` });
 }
 
-function readLine(deadline) {
-  const rl = createInterface({ input: process.stdin });
+// Ctrl+C (signal) ends the wait at once so the finally path disables and checks 503.
+export function readLine(deadline, signal, input = process.stdin) {
+  const rl = createInterface({ input });
   process.stderr.write('{"event":"awaiting-signed-activation-approval-path"}\n');
   return new Promise((resolvePath, reject) => {
-    const timer = setTimeout(() => { rl.close(); reject(Error('SOLO_ACTIVATION_APPROVAL_TIMEOUT')); }, Math.max(0, deadline - Date.now()));
-    rl.once('line', line => { clearTimeout(timer); rl.close(); resolvePath(line.trim()); });
-    rl.once('close', () => { clearTimeout(timer); reject(Error('SOLO_ACTIVATION_APPROVAL_TIMEOUT')); });
+    // reject before close: rl.close() emits 'close' synchronously, which must not win.
+    const stop = code => { clearTimeout(timer); signal?.removeEventListener('abort', aborted); reject(Error(code)); rl.close(); };
+    const aborted = () => stop('SOLO_CANCELLED');
+    const timer = setTimeout(() => stop('SOLO_ACTIVATION_APPROVAL_TIMEOUT'), Math.max(0, deadline - Date.now()));
+    if (signal?.aborted) return aborted();
+    signal?.addEventListener('abort', aborted, { once: true });
+    rl.once('line', line => { clearTimeout(timer); signal?.removeEventListener('abort', aborted); resolvePath(line.trim()); rl.close(); });
+    rl.once('close', () => stop('SOLO_ACTIVATION_APPROVAL_TIMEOUT'));
   });
 }
 
@@ -108,10 +125,10 @@ function accountGetter(env, fetchFn = fetch) {
 export async function main(command, rest, env = { ...process.env }) {
   if (command === 'approve') return approve(rest[0], rest.slice(1), env);
   if (command === 'show') {
-    const sha = head(), file = readApproval(rest[0]);
-    const { approval } = verifyApprovalFile(file.bytes, file.armored, loadSigner(), { sha, accountSha256: accountDigest(env.CF_EXPECTED_ACCOUNT_ID), ignoreExpiry: true });
+    const signer = loadSigner(), sha = head(), file = readApproval(rest[0]);
+    const { approval } = verifyApprovalFile(file.bytes, file.armored, signer.blob, { sha, accountSha256: accountDigest(env.CF_EXPECTED_ACCOUNT_ID), ignoreExpiry: true }, signer);
     const { accountSha256, nonce, ...summary } = approval;
-    return event({ event: 'approval-signature-ok', ...summary });
+    return event({ event: 'approval-signature-ok', signerAssurance: signer.assurance, ...summary });
   }
   assertSoloEnvironment(command, env);
   const spec = STAGES[command], signer = loadSigner(), sha = head();
@@ -119,15 +136,16 @@ export async function main(command, rest, env = { ...process.env }) {
   const accountSha256 = accountDigest(env.CF_ACCOUNT_ID);
   const recovery = command === 'recover' || command === 'drill';
   const file = readApproval(rest[0]);
-  const { approval, digest } = verifyApprovalFile(file.bytes, file.armored, signer,
-    { stage: spec.stage, sha, accountSha256, now: Date.now(), ignoreExpiry: recovery });
+  const { approval, digest } = verifyApprovalFile(file.bytes, file.armored, signer.blob,
+    { stage: spec.stage, sha, accountSha256, now: Date.now(), ignoreExpiry: recovery }, signer);
+  process.stderr.write(JSON.stringify({ event: 'signer-assurance', assurance: signer.assurance }) + '\n');
   if (spec.ci) await validateSourceCI(sha);
   const op = approval.stage === 'activate' ? approval.parentOperationId : approval.operationId;
   const adapterEnv = { ...env, TRIAL_MODE: spec.mode, APPROVED_SHA: sha,
     APPROVED_RUN_ID: command === 'handoff' ? approval.bootstrapOperationId : op, APPROVED_BOOTSTRAP_RUN_ID: approval.bootstrapOperationId };
   delete adapterEnv.VWORLD_API_KEY;
   const adapter = new CloudflareAdapter(adapterEnv);
-  const cancel = () => adapter.cancel();
+  const stopped = new AbortController(), cancel = () => { stopped.abort(); adapter.cancel(); };
   process.once('SIGINT', cancel); process.once('SIGTERM', cancel);
   try {
     if (command === 'bootstrap') return await soloBootstrap(adapter, { approval, digest, claim: localLedger(env.SOLO_STATE_DIR) });
@@ -139,8 +157,9 @@ export async function main(command, rest, env = { ...process.env }) {
     if (command === 'trial') {
       const key = env.VWORLD_API_KEY; delete env.VWORLD_API_KEY; delete process.env.VWORLD_API_KEY;
       return event(await soloTrial(adapter, { approval, digest, vworldKey: key, claim: localLedger(env.SOLO_STATE_DIR),
-        readActivation: async deadline => readApproval(await readLine(deadline)), recheckSource: () => validateSourceCI(sha),
-        verifyActivation: (activation, now) => verifyApprovalFile(activation.bytes, activation.armored, signer, { stage: 'activate', sha, accountSha256, now }) }));
+        readActivation: async deadline => readApproval(await readLine(deadline, stopped.signal)), recheckSource: () => validateSourceCI(sha),
+        verifyActivation: (activation, now) => verifyApprovalFile(activation.bytes, activation.armored, signer.blob, { stage: 'activate', sha, accountSha256, now }, signer),
+        announce: card => process.stderr.write(JSON.stringify(card) + '\n') }));
     }
     if (command === 'drill') return event(await soloDrill(adapter, { sha, op }));
     return event(await soloRecover(adapter, { approval, sleep }));

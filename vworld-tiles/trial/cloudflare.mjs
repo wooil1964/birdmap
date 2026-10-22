@@ -354,7 +354,7 @@ export class CloudflareAdapter {
       for (const name of response.headers.keys()) if (!allowed.has(name)) fail('PROBE_HEADER_FAILED');
       const bytes = await bytesLimited(response, status === 200 ? LIMIT : 256);
       if (status === 200 && (response.headers.get('Content-Type')?.split(';')[0].trim() !== 'image/png' || !validPng(bytes))) fail('PROBE_PNG_FAILED');
-      if (status !== 200 && bytes.toString('utf8') !== 'tiles_unavailable') fail('PROBE_DENIAL_FAILED');
+      if (status !== 200 && bytes.toString('utf8') !== (status === 503 ? 'trial_disabled' : 'tiles_unavailable')) fail('PROBE_DENIAL_FAILED');
     } finally { if (response.body && !response.body.locked) await response.body.cancel().catch(() => {}); }
   }
 }
