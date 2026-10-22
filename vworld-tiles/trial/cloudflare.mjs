@@ -186,8 +186,17 @@ export class CloudflareAdapter {
     if (!/^[a-f0-9]{32}$/.test(this.env.CF_ACCOUNT_ID ?? '') || this.env.CF_ACCOUNT_ID !== this.env.CF_EXPECTED_ACCOUNT_ID) fail('ACCOUNT_ID_MISMATCH');
     if (!/^https:\/\/birdmap-vworld-tiles\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.workers\.dev$/.test(this.env.TRIAL_HOST ?? '')) fail('TARGET_HOST_INVALID');
     verifyScope(this.env, this.mode);
-    const subdomain = await this.get('/workers/subdomain');
-    if (this.env.TRIAL_HOST !== 'https://' + TARGET + '.' + subdomain?.subdomain + '.workers.dev') fail('TARGET_ACCOUNT_HOST_MISMATCH');
+    if (mode === 'recover' && !this.env.CF_READ_TOKEN) {
+      // The operator supplies the previously verified exact host/account through
+      // the protected recovery channel. Narrow Editors cannot discover account
+      // subdomains. Confirm target access here; sourceOwnership checks it before
+      // writing. Do not make emergency disabling depend on account-wide access.
+      const targetSubdomain = await this.get(`/workers/scripts/${TARGET}/subdomain`, this.env.CF_EDIT_TOKEN);
+      if (typeof targetSubdomain?.enabled !== 'boolean' || typeof targetSubdomain?.previews_enabled !== 'boolean') fail('TARGET_SUBDOMAIN_UNVERIFIED');
+    } else {
+      const subdomain = await this.get('/workers/subdomain');
+      if (this.env.TRIAL_HOST !== 'https://' + TARGET + '.' + subdomain?.subdomain + '.workers.dev') fail('TARGET_ACCOUNT_HOST_MISMATCH');
+    }
     if (mode === 'run') {
       const v = await this.activeVersion();
       const approved = this.env.APPROVED_BOOTSTRAP_RUN_ID;
@@ -308,12 +317,14 @@ export class CloudflareAdapter {
       method: 'GET', redirect: 'manual', cache: 'no-store', signal,
       headers: { Origin: ORIGIN, Accept: 'image/png', ...(token ? { 'X-Birdmap-Trial-Token': token } : {}) }
     });
-    if (response.status !== status) { await response.body?.cancel().catch(() => {}); fail('PROBE_STATUS_FAILED'); }
-    for (const h of ['Cache-Control', 'CDN-Cache-Control', 'Cloudflare-CDN-Cache-Control']) if (response.headers.get(h) !== 'no-store') fail('PROBE_CACHE_FAILED');
-    const allowed = new Set(['content-type', 'content-length', 'cache-control', 'cdn-cache-control', 'cloudflare-cdn-cache-control', 'access-control-allow-origin', 'vary', 'x-content-type-options', 'referrer-policy', 'date', 'server', 'cf-ray', 'cf-cache-status', 'report-to', 'nel', 'alt-svc', 'connection', 'transfer-encoding', 'content-encoding', 'server-timing', 'speculation-rules']);
-    for (const name of response.headers.keys()) if (!allowed.has(name)) fail('PROBE_HEADER_FAILED');
-    const bytes = await bytesLimited(response, status === 200 ? LIMIT : 256);
-    if (status === 200 && (response.headers.get('Content-Type')?.split(';')[0].trim() !== 'image/png' || !validPng(bytes))) fail('PROBE_PNG_FAILED');
-    if (status !== 200 && bytes.toString('utf8') !== 'tiles_unavailable') fail('PROBE_DENIAL_FAILED');
+    try {
+      if (response.status !== status) fail('PROBE_STATUS_FAILED');
+      for (const h of ['Cache-Control', 'CDN-Cache-Control', 'Cloudflare-CDN-Cache-Control']) if (response.headers.get(h) !== 'no-store') fail('PROBE_CACHE_FAILED');
+      const allowed = new Set(['content-type', 'content-length', 'cache-control', 'cdn-cache-control', 'cloudflare-cdn-cache-control', 'access-control-allow-origin', 'vary', 'x-content-type-options', 'referrer-policy', 'date', 'server', 'cf-ray', 'cf-cache-status', 'report-to', 'nel', 'alt-svc', 'connection', 'transfer-encoding', 'content-encoding', 'server-timing', 'speculation-rules']);
+      for (const name of response.headers.keys()) if (!allowed.has(name)) fail('PROBE_HEADER_FAILED');
+      const bytes = await bytesLimited(response, status === 200 ? LIMIT : 256);
+      if (status === 200 && (response.headers.get('Content-Type')?.split(';')[0].trim() !== 'image/png' || !validPng(bytes))) fail('PROBE_PNG_FAILED');
+      if (status !== 200 && bytes.toString('utf8') !== 'tiles_unavailable') fail('PROBE_DENIAL_FAILED');
+    } finally { if (response.body && !response.body.locked) await response.body.cancel().catch(() => {}); }
   }
 }
