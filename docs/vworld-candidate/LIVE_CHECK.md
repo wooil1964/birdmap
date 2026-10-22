@@ -1,107 +1,107 @@
-# VWorld secret read-only check — 2026-10-22
+# VWorld secret read-only diagnosis — 2026-10-22
 
-This check is confined to Draft PR #40's review branch. It does not merge main,
-publish Pages, modify runtime configuration, or send reports to production APIs.
-The key remains in the repository Actions secret `VWORLD_API_KEY`.
+Draft PR #40 remains isolated from main. This workflow never publishes Pages,
+changes runtime configuration, sends production reports, or writes to Workers.
+The repository secret `VWORLD_API_KEY` is never retrieved into local tooling.
 
-## Execution boundary
+## Current boundary
 
-Use the existing `publication-security-ci.yml` workflow on
-`review/vworld-default-keyless-20261021`, with boolean input
-`vworld_live_check=true`. Existing PR/default manual runs retain the regression
-job; the secret job requires manual dispatch, that input, and that exact branch.
-The existing workflow path is already present on main, so registering a new
-workflow on main is unnecessary.
+Manually run `publication-security-ci.yml` on
+`review/vworld-default-keyless-20261021` with `vworld_live_check=true`.
+The secret job requires that event, input, and exact branch; ordinary PR CI
+skips it. The ordinary regression job is skipped for a secret-only dispatch.
+The job has `permissions: {}`, no checkout, external action, installation,
+cache, file output, artifact, or deployment. Python uses only the standard library.
 
-The isolated job has `permissions: {}` and no checkout, installation, cache,
-artifact, or deployment steps. Its inline Python uses the secret only in memory
-and makes four GET requests for the same Base WMTS tile. It rejects redirects,
-disables environment proxies, reads at most 2 MiB plus one overflow-detection byte, and never prints a URL,
-raw header, response body, or exception string. Output contains finite metadata:
-scenario, numeric status and size, whitelisted MIME, sniffed image format,
-dimensions, and image framing checks. Neither the key nor a real tile is saved.
+The revised probe makes two keyless requests: the official WMTS guide on
+`www.vworld.kr` and `/` on `api.vworld.kr`. Then it makes at most one Base WMTS
+request with the registered origin Referer. Only if an internally validated
+256 x 256 Base PNG is returned may one unrelated-origin control follow.
+Failure never triggers a retry or a second header variant. If the keyless API
+connection cannot establish verified TLS, the secret request is skipped.
 
-The candidate path ends in `.png`; format is determined from the response bytes,
-not that extension. PNG framing/CRC/compressed-stream checks and JPEG framing
-and SOF dimensions are observations, not full pixel decoding or proof of map
-content. A 256×256 image could still be a provider error image.
+Each request creates a direct TCP socket and uses `ssl.create_default_context`
+with certificate and hostname verification. HTTP writes to that same verified
+TLS socket. An overridden connection method forbids implicit reconnects.
+Configured proxies are not used, redirects are not followed, and debug logging
+is off. Reads are capped at 2 MiB plus one overflow-detection byte in memory.
+Output is restricted to finite configuration/transport enums and response
+status, allowlisted MIME, and PNG/JPEG magic. No URL, key, arbitrary header,
+body, reason phrase, traceback, HAR, or tile file is emitted. The secret is
+removed from the process environment before network access.
 
-## Four observations, separate from browser authentication
+Verified TLS distinguishes this path from a configured HTTP proxy or a web
+fetch tool's gateway. It identifies the trusted TLS endpoint for the hostname;
+it cannot identify an internal load balancer/backend or rule out a trusted TLS
+intermediary. HTTP 502 after verified TLS is not proof of a key error. Root and
+guide HTTP 200 do not prove tile service health. A 256 x 256 PNG can also be a
+provider error image; framing checks are not a visual map inspection.
 
-1. No Referer.
-2. Manually supplied registered full URL `https://wooil1964.github.io/birdmap/`.
-3. Manually supplied registered origin `https://wooil1964.github.io/`.
-4. Manually supplied unrelated origin `https://birdmap-auth-negative.invalid/`.
+## Official path and independent service checks
 
-The job fails if the registered-origin probe has no valid image response, or
-either negative control returns one. Failure does not by itself identify an
-authentication error. Conversely, a negative control's missing tile can result
-from unrelated HTTP/service failures, so output always keeps
-`domain_restriction_verified=false` and `actual_pages_browser_auth=not-executed`.
-No manually set Referer proves a request from the registered live page.
+The [official WMTS guide](https://www.vworld.kr/dev/v4dv_wmtsguide_s001.do)
+was read in a real browser on 2026-10-22. It documents the template
+`https://api.vworld.kr/req/wmts/1.0.0/{key}/{layer}/{tileMatrix}/{tileRow}/{tileCol}.{tileType}`.
+Base is PNG; the existing `/Base/8/100/218.png` suffix follows that template.
+The [official TMS guide](https://www.vworld.kr/dev/v4dv_tmsguide_s001.do)
+uses the distinct `/req/tms/1.0.0/` path. No undocumented alternate host is used.
 
-Direct WMTS includes the key in visitor image requests and browser Network.
-Repository secrets cannot hide a key once it is delivered to that browser.
-Default cross-origin HTTPS referrer policy normally sends only the origin;
-`/birdmap/` can be omitted. Do not broaden registration to a wildcard to make a
-test pass. Check the account's allowed URLs, key status/expiry/quota and the
-provider's origin/path matching rules, then separately test an actual registered
-page/browser request before any deployment decision.
+At 12:22:54 KST, independent local direct HTTPS checks of the API root, WMTS
+guide and TMS guide each returned 200 / text/html with hostname-verified TLS.
+The web fetch tool returned 502 for the WMTS guide while the browser and direct
+connection read it successfully. That tool result does not establish an origin
+outage. The public notice board showed no current October 22 outage notice;
+absence of a notice does not establish tile availability.
 
-The user's 2026-10-22 VWorld consultation permits/recommends using the development
-key before the same key transitions to operation. This is user-confirmed
-guidance, separate from technical authentication evidence.
+The user's October 22 consultation explicitly confirms development keys remain
+usable during operation review. The management-screen observations supplied by
+the user are issue date 2026-10-21, expiry 2027-04-21, status development /
+operation review, registered URL `https://wooil1964.github.io/birdmap/`, and
+WMTS/TMS selected. These are user-observed account facts, not independent proof
+of request authentication. Pending review is not treated as a blocking reason.
 
-## Sources and status
+## Browser authentication and key supply
 
-- [GitHub manual workflow event](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch)
-- [GitHub secret security](https://docs.github.com/en/actions/reference/security/secure-use)
-- [Browser referrer policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy)
-- [VWorld API index](https://www.vworld.kr/dev/v4apiRefer.do); the linked WMTS
-  guide was unavailable during this review, so its exact current origin/path
-  rules are not claimed as independently verified.
+The Actions Referer is manually supplied. It is not a request from an actual
+Pages browser document. The summary always keeps
+`actual_pages_browser_auth=not-executed` and `domain_restriction_verified=false`.
+An unrelated-origin failure can be a service error rather than enforcement.
 
-The [first manual run](https://github.com/wooil1964/birdmap/actions/runs/39713091262)
-on `1ded7a4` executed all four requests and each returned HTTP 502. The job failed;
-no tile success, domain restriction, or browser authentication was established.
-The first version did not inspect HTTP error bodies, so their MIME and image
-format were unobserved. The [metadata follow-up](https://github.com/wooil1964/birdmap/actions/runs/39713445784)
-on `e1c427d` preserved the same four-request boundary. No-Referer, registered-origin
-and unrelated-origin probes returned HTTP 502 with 15-byte bodies, sniffed format
-`other`, no valid image header, and normalized MIME `other` (raw MIME not exposed).
-The registered-full-URL-header probe had a transport failure with no HTTP status.
-The job failed. Neither run established server-side tile authentication, image
-success, provider domain enforcement or actual registered-page browser success.
-Both manual runs uploaded zero artifacts and skipped the general regression job.
-No further real-key request is made automatically. Final CI status and follow-up
-are recorded in [Draft PR #40](https://github.com/wooil1964/birdmap/pull/40).
-The separate pull-request CI skips the real-secret job.
+Direct WMTS necessarily includes the key in visitor tile URLs, browser Network,
+and Leaflet memory. GitHub secret storage protects the delivery pipeline but
+cannot hide a browser-delivered key. The current reviewed runtime config stays
+empty; no key is embedded in source or a Pages build. Broadening the allowlist
+or adding a wildcard is outside this diagnosis.
 
-Offline verifier checks passed for PNG, JPEG returned at a `.png` path,
-unrestricted negative-control tiles, XML with HTTP 200, redirects, exceptions,
-oversized responses, missing secrets, and malformed image framing. Deliberately
-hostile fake values and exception messages did not appear in captured output.
+Default [strict-origin-when-cross-origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy)
+normally sends `https://wooil1964.github.io/` and omits `/birdmap/` on cross-origin
+HTTPS requests. VWorld's actual registered path/origin matching and rejection
+on unrelated origins remain to be verified. A registration-screen URL alone
+does not establish enforcement. A real browser test on the registered Pages
+origin must be recorded separately after valid tiles and key handling are settled.
 
-Chrome 155.0.8059.85 and Edge 155.0.4283.62 each passed 48/48 synthetic VWorld
-checks and 25/25 island checks at 320/344/375/768/1024/1440px. Each run observed
-zero unhandled exceptions, production Worker requests, or external non-GET
-requests. These use synthetic credentials/tiles/Worker responses. Initial
-restricted-network attempts failed CDN initialization; the same source passed
-after public CDN access was permitted.
+## Earlier executions and regression evidence
 
-PR CI run `39713049418` passed all 463 frontend tests but failed one 1440px
-island interaction check (24/25). The native details click had not settled
-before the next keyboard toggle; product data and HTML were unchanged. The
-island browser runner now waits for a stable hit-testable summary before real
-pointer input and awaits the actual native open/close state after every click
-or Enter. It never forces the state or removes an assertion. The synchronized
-runner passed Chrome 25/25 and Edge 25/25 again. Latest remote CI is reported
-in the PR, rather than treating the earlier failed run as a full pass.
+[39713091262](https://github.com/wooil1964/birdmap/actions/runs/39713091262)
+and [39713445784](https://github.com/wooil1964/birdmap/actions/runs/39713445784)
+made four secret requests each. They found HTTP 502 / one transport failure,
+no valid PNG/JPEG, and uploaded zero artifacts. Their 502 source was inconclusive.
+The revised diagnostic must not be described as a repeat of those conditions.
+The latest bounded run and final CI are recorded in the PR and follow-up report.
 
-The existing 229 sites, six islands' food/lodging/KSA, protected coordinates,
-weather/tides, search, recommendations, directions and OSM fallback are outside
-this change. Removing the two approved basemap HTML insertions still exactly
-matches main `8397053`; API, Worker and data files are unchanged. Focused
-protection/search/tide/recommendation/weather tests passed 233/233, and Python
-island/archive contracts passed 13/13. Real mobile devices and map-app launching
-remain unexecuted. Full CI status is reported separately from local checks.
+Before this revision, head `84e32e9` passed
+[general CI 39713859345](https://github.com/wooil1964/birdmap/actions/runs/39713859345),
+Chrome/Edge synthetic VWorld 48/48 each and island 25/25 each. These do not count
+as live tile authentication. Independent current-state checks re-established
+229 identical site records and exact main HTML restoration after removing the
+two basemap additions (normalized SHA256
+`c9d7785bd3dab6f8c075e2ac4f25564939d266976eb3504ca9815d286f1f6001`).
+API/Worker/data are unchanged; main uses OSM. Six islands' food/lodging/KSA,
+protected-species publication controls, weather/tides, recommendations,
+reports, search and directions remain outside this workflow-only revision.
+
+Fresh focused frontend tests passed 343/343, API 371/371, weather proxy 36/36.
+Python checks passed 137 with one existing skip; share pages are current at 229,
+SEO checks report 194 indexable pages / 196 sitemap URLs. Actual Pages browser
+authentication, live map imagery, mobile GPS/pinch and map-app launching remain
+unverified. No merge or production deployment is part of this work.
