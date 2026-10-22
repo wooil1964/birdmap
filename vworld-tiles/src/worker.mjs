@@ -97,7 +97,7 @@ async function boundedBody(response, onReader) {
   return bytes;
 }
 
-export async function handleRequest(request, env, testDependencies = {}) {
+export async function handleRequest(request, env, testDependencies = {}, upstreamAllowed = () => true) {
   if (request.method !== 'GET') return reply(405, 'method_not_allowed');
   let tile;
   try { tile = tileAt(new URL(request.url)); } catch { /* Finite response below. */ }
@@ -111,8 +111,8 @@ export async function handleRequest(request, env, testDependencies = {}) {
   try {
     // Fail closed if bindings are missing or unavailable. These location-local
     // counters cannot enforce the provider's exact account-wide daily quota.
-    if (!(await env.CLIENT_TILE_LIMITER.limit({ key: ip })).success) return reply(429, 'tile_rate_limited');
-    if (!(await env.GLOBAL_TILE_LIMITER.limit({ key: 'birdmap-vworld-base' })).success) return reply(429, 'tile_rate_limited');
+    if ((await env.CLIENT_TILE_LIMITER.limit({ key: ip })).success !== true) return reply(429, 'tile_rate_limited');
+    if ((await env.GLOBAL_TILE_LIMITER.limit({ key: 'birdmap-vworld-base' })).success !== true) return reply(429, 'tile_rate_limited');
   } catch { return reply(503, 'tiles_unavailable'); }
 
   const abort = new AbortController();
@@ -126,6 +126,9 @@ export async function handleRequest(request, env, testDependencies = {}) {
       }, testDependencies.timeoutMs ?? TIMEOUT_MS);
     });
     const operation = (async () => {
+      // Synchronous final policy check: no await between the fresh trial clock
+      // and starting fetch, after both asynchronous native limiters settle.
+      if (upstreamAllowed() !== true) return reply(503, 'tiles_unavailable');
       const upstream = await (testDependencies.fetch ?? globalThis.fetch)(
         'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/' + tile.z + '/' + tile.y + '/' + tile.x + '.png',
         { method: 'GET', redirect: 'manual', cache: 'no-store', signal: abort.signal, headers: { Accept: 'image/png' } }

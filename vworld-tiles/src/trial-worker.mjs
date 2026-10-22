@@ -32,11 +32,16 @@ function tokenMatches(actual, expected) {
 export async function handleTrialRequest(request, env, testDependencies = {}) {
   if (env.TILES_ENABLED !== 'true') return handleRequest(request, env, testDependencies);
   const start = timestamp(env.TRIAL_STARTS_AT), end = timestamp(env.TRIAL_EXPIRES_AT);
-  const now = testDependencies.nowMs ?? Date.now();
-  if (!Number.isFinite(now) || !Number.isFinite(start) || !Number.isFinite(end) ||
-      end <= start || end - start > MAX_WINDOW_MS || now < start || now >= end) return denied(503);
+  const windowOpen = () => {
+    try {
+      const now = testDependencies.nowMs ?? Date.now();
+      return Number.isFinite(now) && now >= start && now < end;
+    } catch { return false; }
+  };
+  if (!Number.isFinite(start) || !Number.isFinite(end) ||
+      end <= start || end - start > MAX_WINDOW_MS || !windowOpen()) return denied(503);
   if (!tokenMatches(request.headers.get('X-Birdmap-Trial-Token'), env.TRIAL_ACCESS_TOKEN)) return denied(403);
-  return handleRequest(request, env, testDependencies);
+  return handleRequest(request, env, testDependencies, windowOpen);
 }
 
 export default { fetch(request, env) { return handleTrialRequest(request, env); } };

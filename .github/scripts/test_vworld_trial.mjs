@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { deflateSync } from 'node:zlib';
 import { handleTrialRequest } from '../../vworld-tiles/src/trial-worker.mjs';
 
 const START = '2026-10-22T08:00:00.000Z';
@@ -36,6 +37,7 @@ test('trial disabled rejects before native limits or upstream even with a valid 
 test('trial missing, noncanonical, invalid or excessive window fails closed', async () => {
   for (const [name, value] of [['TRIAL_STARTS_AT', ''], ['TRIAL_EXPIRES_AT', ''],
     ['TRIAL_STARTS_AT', '2026-10-22T08:00:00Z'], ['TRIAL_EXPIRES_AT', '2026-02-30T08:10:00.000Z'],
+    ['TRIAL_STARTS_AT', 0], ['TRIAL_EXPIRES_AT', '2026-10-22T17:10:00.000+09:00'],
     ['TRIAL_EXPIRES_AT', START], ['TRIAL_EXPIRES_AT', '2026-10-22T07:59:59.999Z'],
     ['TRIAL_EXPIRES_AT', '2026-10-22T08:10:00.001Z']]) {
     const f = fixture(); f.env[name] = value; await closed(f, 503);
@@ -50,7 +52,9 @@ test('missing, malformed or incorrect trial token never consumes native limits o
   for (const token of [null, '', 'short', 'x'.repeat(43), 'x'.repeat(44), 'x'.repeat(42) + '!']) {
     const f = fixture(); await closed(f, 403, f.request(token));
   }
-  const f = fixture(); delete f.env.TRIAL_ACCESS_TOKEN; await closed(f, 403);
+  for (const expected of [undefined, '', 'x'.repeat(42), '!'.repeat(43)]) {
+    const f = fixture(); f.env.TRIAL_ACCESS_TOKEN = expected; await closed(f, 403);
+  }
 });
 test('valid trial still obeys the unchanged relay source and rate-limit checks', async () => {
   for (const now of [Date.parse(START), Date.parse(END) - 1]) {
@@ -77,4 +81,120 @@ test('trial config defaults closed, retains dedicated identity and has no data/s
   assert.match(config, /required = \["VWORLD_API_KEY", "TRIAL_ACCESS_TOKEN"\]/);
   assert.match(config, /preview_urls = false/); assert.match(config, /enabled = false/);
   assert.doesNotMatch(config, /\[\[?(d1_databases|services|kv_namespaces|r2_buckets|durable_objects|migrations|routes|triggers)\b/);
+});
+
+// A controlled wall clock and suspended native bindings exercise the complete
+// trial -> relay path. Record when fetch actually starts, not just the response.
+function timedFixture(t) {
+  let now = Date.parse(START);
+  t.mock.method(Date, 'now', () => { if (now instanceof Error) throw now; return now; });
+  const f = fixture(), fetchTimes = [];
+  for (const [name, label] of [['CLIENT_TILE_LIMITER', 'client'], ['GLOBAL_TILE_LIMITER', 'location']]) {
+    f.env[name].limit = async () => { f.limits.push(label); return { success: true }; };
+  }
+  const fetch = async () => {
+    fetchTimes.push(Date.now());
+    return new Response(trialPng(), { headers: { 'Content-Type': 'image/png' } });
+  };
+  return { ...f, fetchTimes, setNow(value) { now = value; },
+    run: (extra = {}) => handleTrialRequest(f.request(), f.env, { fetch, ...extra }) };
+}
+function trialPng() {
+  const crc = bytes => { let n = 0xffffffff; for (const b of bytes) { n ^= b; for (let i = 0; i < 8; i++) n = (n >>> 1) ^ ((n & 1) ? 0xedb88320 : 0); } return (n ^ 0xffffffff) >>> 0; };
+  const chunk = (tag, bytes) => { const type = Buffer.from(tag), size = Buffer.alloc(4), sum = Buffer.alloc(4); size.writeUInt32BE(bytes.length); sum.writeUInt32BE(crc(Buffer.concat([type, bytes]))); return Buffer.concat([size, type, bytes, sum]); };
+  const header = Buffer.alloc(13); header.writeUInt32BE(256); header.writeUInt32BE(256, 4); header[8] = 8; header[9] = 6;
+  return Buffer.concat([Buffer.from('89504e470d0a1a0a', 'hex'), chunk('IHDR', header), chunk('IDAT', deflateSync(Buffer.alloc(256 * (1 + 256 * 4)))), chunk('IEND', Buffer.alloc(0))]);
+}
+function deferred() {
+  let resolve;
+  const promise = new Promise(done => { resolve = done; });
+  return { promise, resolve };
+}
+
+test('fetch starts exactly once at inclusive start and one millisecond before exclusive end', async t => {
+  const f = timedFixture(t);
+  for (const now of [Date.parse(START), Date.parse(END) - 1]) {
+    f.setNow(now);
+    const before = f.fetchTimes.length;
+    const response = await f.run();
+    assert.equal(response.status, 200);
+    assert.equal(f.fetchTimes.length, before + 1);
+    assert.equal(f.fetchTimes.at(-1), now);
+    assert.ok(f.fetchTimes.at(-1) >= Date.parse(START) && f.fetchTimes.at(-1) < Date.parse(END));
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()), trialPng());
+  }
+});
+
+for (const name of ['CLIENT_TILE_LIMITER', 'GLOBAL_TILE_LIMITER']) {
+  for (const afterWait of [Date.parse(END), Date.parse(END) + 1, Date.parse(START) - 1, NaN, Infinity, new Error('synthetic_clock_failure')]) {
+    test(`clock is rechecked after ${name} wait: ${String(afterWait)}`, async t => {
+      const f = timedFixture(t), entered = deferred(), release = deferred();
+      f.setNow(Date.parse(END) - 1);
+      f.env[name].limit = async () => {
+        f.limits.push(name === 'CLIENT_TILE_LIMITER' ? 'client' : 'location');
+        entered.resolve();
+        await release.promise;
+        return { success: true };
+      };
+      const pending = f.run();
+      await entered.promise;
+      assert.deepEqual(f.fetchTimes, []);
+      f.setNow(afterWait); release.resolve();
+      const response = await pending;
+      assert.equal(response.status, 503);
+      assert.equal(await response.text(), 'tiles_unavailable');
+      assert.deepEqual(f.limits, ['client', 'location']);
+      assert.deepEqual(f.fetchTimes, []);
+    });
+  }
+}
+
+test('both asynchronous checks can advance time within the window and fetch starts at the final clock', async t => {
+  const f = timedFixture(t);
+  f.env.CLIENT_TILE_LIMITER.limit = async () => { f.limits.push('client'); await Promise.resolve(); f.setNow(Date.parse(START) + 1); return { success: true }; };
+  f.env.GLOBAL_TILE_LIMITER.limit = async () => { f.limits.push('location'); await Promise.resolve(); f.setNow(Date.parse(END) - 1); return { success: true }; };
+  assert.equal((await f.run()).status, 200);
+  assert.deepEqual(f.limits, ['client', 'location']);
+  assert.deepEqual(f.fetchTimes, [Date.parse(END) - 1]);
+});
+
+test('each limiter denial, exception, missing or malformed result makes zero fetch attempts', async t => {
+  const f = timedFixture(t);
+  for (const name of ['CLIENT_TILE_LIMITER', 'GLOBAL_TILE_LIMITER']) {
+    const original = f.env[name];
+    for (const result of [false, undefined, null, 'throw', 'missing']) {
+      f.env[name] = result === 'missing' ? undefined : { async limit() {
+        await Promise.resolve();
+        if (result === 'throw') throw Error('synthetic');
+        return result === false ? { success: false } : result;
+      } };
+      assert.equal((await f.run()).status, result === false ? 429 : 503);
+      assert.deepEqual(f.fetchTimes, []);
+    }
+    for (const result of [{}, { success: 1 }, { success: 'true' }, { success: {} }]) {
+      f.env[name] = { async limit() { await Promise.resolve(); return result; } };
+      assert.equal((await f.run()).status, 429);
+      assert.deepEqual(f.fetchTimes, []);
+    }
+    f.env[name] = original;
+  }
+});
+
+test('trial timeout aborts pending headers and body without a retry or a later fetch', async t => {
+  const f = timedFixture(t);
+  for (const stalledBody of [false, true]) {
+    const times = []; let signal, cancelled = false;
+    const response = await f.run({ timeoutMs: 10, fetch: async (_, options) => {
+      times.push(Date.now()); signal = options.signal;
+      if (!stalledBody) return new Promise(() => {});
+      return new Response(new ReadableStream({ start(c) { c.enqueue(trialPng().subarray(0, 24)); }, cancel() { cancelled = true; } }), { headers: { 'Content-Type': 'image/png' } });
+    } });
+    assert.equal(response.status, 502);
+    assert.equal(await response.text(), 'tiles_unavailable');
+    assert.equal(signal.aborted, true);
+    assert.deepEqual(times, [Date.parse(START)]);
+    if (stalledBody) assert.equal(cancelled, true);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    assert.deepEqual(times, [Date.parse(START)]);
+  }
 });
