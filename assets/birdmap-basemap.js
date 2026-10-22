@@ -195,6 +195,9 @@
           tms: false,
           detectRetina: false,
           noWrap: true,
+          // Wide domestic views can include neighboring tiles. Do not request
+          // tiles the dedicated relay intentionally rejects outside its bounds.
+          bounds: mode === 'worker' ? domesticBounds : undefined,
           attribution: '&copy; <a href="https://www.vworld.kr/">VWorld</a> / 국토교통부'
         });
         vworld = layer;

@@ -164,6 +164,7 @@ test('Worker mode uses the dedicated public endpoint and never falls back to a d
   const endpoint='https://birdmap-vworld-tiles.wooil-birdmap.workers.dev/tiles';
   const e=environment({config:{vworldMode:'worker',vworldTileEndpoint:endpoint,vworldKey:'IGNORED_SYNTHETIC_KEY'}});
   assert.equal(e.state().active,'vworld');assert.equal(e.state().transport,'worker');assert.equal(e.last()._url,endpoint+'/{z}/{x}/{y}.png');
+  assert.equal(typeof e.last().options.bounds.contains,'function');
   const camera={...e.map.center,zoom:e.map.zoom};e.last().fire('tileerror');e.last().fire('tileerror');e.last().fire('tileerror');
   assert.equal(e.state().active,'osm');assert.equal(e.state().locked,true);assert.deepEqual({...e.map.center,zoom:e.map.zoom},camera);
   const count=e.created.length;e.map.move(36.1,127.1);e.api.updateConfig({vworldKey:'ANOTHER_IGNORED_SYNTHETIC_KEY'});e.api.setPreference('vworld');

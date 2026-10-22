@@ -29,7 +29,7 @@ function allowedSource(headers) {
   return origin === ORIGIN || refOrigin === ORIGIN;
 }
 
-function tileAt(url) {
+export function tileAt(url) {
   if (url.search || url.hash) return null;
   const parts = /^\/tiles\/(\d{1,2})\/(0|[1-9]\d{0,5})\/(0|[1-9]\d{0,5})\.png$/.exec(url.pathname);
   if (!parts) return null;

@@ -10,6 +10,8 @@
 
 브라우저는 공개 `/tiles/{z}/{x}/{y}.png` 주소만 사용하고, Worker는 고정 VWorld HTTPS Base 경로로 변환합니다. 줌 6–19, 정규 정수 x/y, 국내 보기 범위와 교차하는 타일만 허용합니다. 경계 타일은 범위 밖 일부를 포함할 수 있습니다. 임의 URL·레이어·쿼리·키를 받지 않습니다.
 
+Worker 레이어에도 같은 국내 bounds를 지정했습니다. 넓은 PC 초기 화면의 주변 타일 6개가 서버에서 거절돼 정상 지도까지 OSM으로 잠기는 결합 오류를 합성 검사로 재현한 뒤 수정했습니다. 이제 이 타일들을 브라우저가 요청하지 않습니다. 국내 bounds 밖 주변 배경은 비어 있을 수 있고, 중심이 국내 범위를 벗어나면 기존 정책대로 OSM으로 바뀝니다. 실제 배포 후 넓은 PC·휴대전화의 범위 가장자리 표시도 육안 확인해야 합니다.
+
 Origin/Referer는 정확한 Pages origin과 비교하는 보조 통제입니다. 비브라우저의 헤더 위조와 공개 중계 남용을 완전히 막는 인증이 아닙니다. `CF-Connecting-IP`는 Cloudflare가 제공하는 값으로 사용하고 원본 IP를 앱 로그·저장소에 남기지 않습니다. IP별 600/분, 위치별 합계 6000/분은 **초기 제안값**이며 모바일 공유 IP와 실제 요청량에 맞춰 조정해야 합니다. Native rate-limit은 위치별 근사치여서 전 세계 합산·일일 VWorld 할당량을 보장하지 않습니다. 정확한 전역 상한이 필요하면 별도 리소스 설계가 필요합니다. [공식 Rate Limiting](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/)
 
 upstream 헤더와 본문 읽기에 총 8초 제한, 본문 2 MiB 상한, PNG magic/IHDR 256×256/청크 경계·CRC/IEND 검사를 적용합니다. PNG 구조 검사는 지리 내용 판정이나 전체 이미지 디코딩을 대신하지 않습니다. 구조가 정상인 오류 안내 PNG까지 식별하는 보장은 없습니다. 리디렉션은 `manual`로 받고 200 이외 응답을 거절합니다. Workers는 `redirect: 'error'`를 지원하지 않습니다. [공식 Request](https://developers.cloudflare.com/workers/runtime-apis/request/)
@@ -64,7 +66,7 @@ window.BIRDMAP_MAP_CONFIG = {
 
 ## 완료와 승인 후 확인할 항목
 
-- 완료: 기존 등록 Pages 16타일·실제 OSM 20개 증거 재사용, 등록 외 HTTPS 1타일 성공, 새 Worker 단위 검사, PC/모바일 합성 검사 50개, 실제 로컬 workerd/네이티브 제한 검사 7개, Wrangler 4.151.3 `--dry-run` 구성·번들 검사. 실제 키/배포를 사용한 Worker 검사가 아닙니다.
+- 완료: 기존 등록 Pages 16타일·실제 OSM 20개 증거 재사용, 등록 외 HTTPS 1타일 성공, 새 Worker 단위 검사, 실제 Worker bounds 판정을 결합한 PC/모바일 합성 검사 56개, 실제 로컬 workerd/네이티브 제한 검사 7개, Wrangler 4.151.3 `--dry-run` 구성·번들 검사. 실제 키/배포를 사용한 Worker 검사가 아닙니다.
 - 승인 후: 계정/후보 호스트/namespace/할당량/서버 호출 인증 조건 확인 → 독립 Worker secret 공급과 제한된 활성화 → 실제 Cloudflare 송신 경로의 Base 타일 및 오류 판정 → 실제 Pages에서 Worker 경로·키 부재·OSM 복귀·성능 확인 → 실제 휴대전화 확인 → 별도 승인된 운영 Pages 전환. 기존 Pages 성공을 다시 직접 요청하는 방식으로 반복하지 않습니다.
 - Worker에서 정상 응답을 얻지 못하면 서버 호출 조건을 확인하고 비활성화/OSM을 유지합니다. Pages Referer를 위조하거나 임의 인증 경로로 우회하지 않습니다.
 - 최종 승인 전에는 main 병합, 운영 Pages/Worker 배포, secret 업로드 및 운영 DB 변경을 실행하지 않습니다.

@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {spawn} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
+import {tileAt} from '../../vworld-tiles/src/worker.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const OUT=resolve(process.env.VWORLD_QA_OUTPUT||join(ROOT,'.ci-results/vworld-browser'));
@@ -23,7 +24,7 @@ const CONFIGURED=SAFE_CONFIG.replace("vworldTileEndpoint: ''","vworldTileEndpoin
 const CDN=new Set(['cdn.jsdelivr.net','code.jquery.com','cdnjs.cloudflare.com','netdna.bootstrapcdn.com']);
 const LOCAL=new Set(['/index.html','/weather_today.json','/weather_week.json','/tide_today.json','/tide_month.json','/notices.json','/weather_rules.json','/assets/birdmap-basemap.css','/assets/map-runtime-config.js','/assets/birdmap-basemap.js','/assets/birdmap-basemap-init.js']);
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64').toString('base64');
-const network={localGet:0,dependencyGet:0,osmSynthetic:0,vworldSynthetic:0,blocked:0,operatingRequests:0,externalNonGet:0,directVworldRequests:0};
+const network={localGet:0,dependencyGet:0,osmSynthetic:0,vworldSynthetic:0,blocked:0,operatingRequests:0,externalNonGet:0,directVworldRequests:0,syntheticBoundsRejections:0};
 const rows=[],browserErrors=[];
 mkdirSync(OUT,{recursive:true});
 const server=createServer((req,res)=>{
@@ -84,6 +85,7 @@ class CDP{
    if(!get&&u.origin!==origin)network.externalNonGet++;
    if(get&&(osm||vworld)){
     network[osm?'osmSynthetic':'vworldSynthetic']++;
+    if(vworld&&!tileAt(u)){network.syntheticBoundsRejections++;await fulfill(404,Buffer.from('Synthetic bounded tile rejection').toString('base64'),'text/plain');return;}
     if(vworld&&page.mode==='timeout'){page.held.push(requestId);return;}
     if(vworld&&page.mode==='offline'){await this.send('Fetch.failRequest',{requestId,errorReason:'InternetDisconnected'},sessionId).catch(()=>{});return;}
     if(vworld&&(['401','403','429','502'].includes(page.mode))){await fulfill(Number(page.mode),Buffer.from('Synthetic authorization failure').toString('base64'),'text/plain');return;}
@@ -119,7 +121,16 @@ async function enter(page){for(const type of ['keyDown','keyUp'])await browser.s
 const STATE='birdmapBasemap.getState()',MAP='map_7010a44f6ac2025090f0fe07508ed485';
 const setSynthetic="birdmapBasemap.updateConfig({vworldMode:'worker',vworldTileEndpoint:"+JSON.stringify(ENDPOINT)+'})';
 try{
- for(const width of WIDTHS){let page;try{
+ for(const initialWidth of WIDTHS){let initial;try{
+  initial=await browser.page(initialWidth,{configured:true});
+  await scenario(initial,'initial-Korea-view-respects-actual-relay-tile-bounds',async e=>{
+   await waitFor(e,`${STATE}.loading===false`);
+   const state=await e(STATE);
+   const displayed=state.eligible?state.active==='vworld'&&state.reason==='ready':state.active==='osm'&&state.reason==='zoom_out';
+   return {pass:displayed&&state.errors===0&&state.transport==='worker'&&network.syntheticBoundsRejections===0,evidence:{state,boundsRejections:network.syntheticBoundsRejections}};
+  });
+ }finally{if(initial)await initial.close();}}
+ for(const width of process.env.VWORLD_QA_BOUNDARY_ONLY==='1'?[]:WIDTHS){let page;try{
   page=await browser.page(width);const e=page.evaluate;
   await scenario(page,'keyless-default-OSM-and-initial-Korea-framing',async()=>{
    const s=await e(`(()=>{const s=${STATE},m=${MAP},bounds=L.latLngBounds(KOREA_VIEW_BOUNDS),top=document.getElementById('topUiWrap').getBoundingClientRect().bottom,north=m.latLngToContainerPoint(bounds.getNorthWest()).y,south=m.latLngToContainerPoint(bounds.getSouthEast()).y;return {state:s,markers:Object.keys(markerRegistry).length,top,north,south,height:innerHeight,framed:innerWidth>700||(north>=top&&south<=innerHeight),overflow:document.documentElement.scrollWidth>innerWidth};})()`);
@@ -161,7 +172,7 @@ try{
   });
   if(width===375||width===1440)await browser.screenshot(page,'vworld-keyless-or-osm-'+width);
  }catch{check(width,'environment-or-harness',false,{failure:'Chromium page failed to initialize; no URL or exception text recorded'});if(!page)break;}finally{if(page)await page.close();}}
- let page;try{
+ let page;try{if(process.env.VWORLD_QA_BOUNDARY_ONLY!=='1'){
   page=await browser.page(375,{configured:true});const e=page.evaluate;
   await scenario(page,'synthetic-config-default-without-saved-preference',async()=>{await e(`${MAP}.setView([36,127],10,{animate:false});void 0`);const before=await e(STATE);if(before.preference==='vworld'&&before.active==='vworld')await waitFor(e,`${STATE}.reason==='ready'`);const s=await e(STATE);return {pass:s.preference==='vworld'&&s.active==='vworld'&&s.reason==='ready',evidence:{before,state:s}};});
   for(const mode of ['401','403','429','502','xml','offline','timeout'])await scenario(page,'actual-tile-'+mode+'-fallback-lock-and-explicit-retry',async()=>{
@@ -173,9 +184,9 @@ try{
    const retried=await e(STATE);return {pass:after>before&&failed.reason===(mode==='timeout'?'tile_timeout':'tile_error')&&failed.locked&&lockedNoRequests&&retried.active==='vworld'&&!retried.locked&&(mode!=='timeout'||elapsed>=11500),evidence:{failed,elapsedMs:elapsed,syntheticRequests:after-before,lockedNoRequests,retried}};
   });
   await browser.screenshot(page,'vworld-synthetic-ready-375');
- }catch{check(375,'error-environment-or-harness',false,{failure:'Failure scenario initialization failed; details suppressed'});}finally{if(page)await page.close();}
+ }}catch{check(375,'error-environment-or-harness',false,{failure:'Failure scenario initialization failed; details suppressed'});}finally{if(page)await page.close();}
 }finally{await browser.dispose();await new Promise(r=>server.close(r));}
 const result={schema:'vworld-worker-chromium-synthetic-v2',at:new Date().toISOString(),indexSha256:createHash('sha256').update(HTML).digest('hex'),widths:WIDTHS,summary:{pass:rows.filter(x=>x.pass).length,fail:rows.filter(x=>!x.pass).length},network,browserErrors,rows,scope:'Actual current HTML and Leaflet in headless Chromium. All OSM/VWorld images and credentials are synthetic; worker fetches are mocked before application load. External non-GET and unapproved destinations are blocked. This does not establish real VWorld tiles, registered-domain authentication, real phones, GPS, pinch gestures or external app launches.'};
 writeFileSync(join(OUT,'BROWSER_QA.json'),JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({summary:result.summary,network,browserErrors,failures:rows.filter(x=>!x.pass)},null,2));
-process.exitCode=result.summary.fail||network.operatingRequests||network.directVworldRequests||network.externalNonGet||browserErrors.length?1:0;
+process.exitCode=result.summary.fail||network.syntheticBoundsRejections||network.operatingRequests||network.directVworldRequests||network.externalNonGet||browserErrors.length?1:0;

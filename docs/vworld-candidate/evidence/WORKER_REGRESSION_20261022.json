@@ -1,8 +1,8 @@
 {
-  "at": "2026-10-22T06:07:56.002Z",
+  "at": "2026-10-22T06:28:24.920Z",
   "browser": {
     "summary": {
-      "pass": 50,
+      "pass": 56,
       "fail": 0
     },
     "widths": [
@@ -14,14 +14,15 @@
       1440
     ],
     "network": {
-      "localGet": 130,
-      "dependencyGet": 211,
-      "osmSynthetic": 531,
-      "vworldSynthetic": 504,
-      "blocked": 26,
+      "localGet": 190,
+      "dependencyGet": 319,
+      "osmSynthetic": 509,
+      "vworldSynthetic": 523,
+      "blocked": 38,
       "operatingRequests": 0,
       "externalNonGet": 0,
-      "directVworldRequests": 0
+      "directVworldRequests": 0,
+      "syntheticBoundsRejections": 0
     },
     "browserExceptions": 0,
     "errorScenarios": [
@@ -36,6 +37,14 @@
     "realPhones": false,
     "scope": "Actual Chrome, synthetic Worker/OSM image responses, actual reviewed keyless runtime template with only public endpoint supplied."
   },
+  "boundaryRegression": {
+    "reproducedBeforeFix": true,
+    "initialDesktopRejectedTiles": 6,
+    "initialDesktopFallbackReason": "tile_error",
+    "afterFixRejectedTiles": 0,
+    "allConfiguredInitialWidthsChecked": true,
+    "outsideBoundsMayBeBlank": true
+  },
   "workerUnitTests": 10,
   "focusedNodeTestsPassed": 36,
   "nativeLocalWorkerdChecksPassed": 7,
@@ -48,11 +57,11 @@
   "directCandidateHarnessSelfTestsPassed": 18,
   "sourceSha256": {
     "index.html": "63716330bd82a00d9147adbe5d58071a302637e4d8c62f9474b5fb167f62f7cd",
-    "assets/birdmap-basemap.js": "4de0b981d366e732ee5e671dd5105b1b21203a11e42b539b99b4437a6b25809b",
+    "assets/birdmap-basemap.js": "3f35470efc5ca50225b2c95fc9a4ce65dfbb2c730f304bcfaf98c7fa8a9b404a",
     "assets/map-runtime-config.js": "4f28fc5654248b2d4cc601cfae72a2404b11daf77b3aaab710991e7e5e8ba85a",
-    "vworld-tiles/src/worker.mjs": "7cf5b6bda8c27bf91bc44f65c04b4e96eee513c506207c01fc10f1514cd9fc2f",
+    "vworld-tiles/src/worker.mjs": "8c1810a5531843e56563d513464e1d9ae24f63d6be903608b268d1c22967086d",
     "vworld-tiles/wrangler.toml": "9c075df9910fd425226a6a948c4e3e493b8b6e0c0225bf39bdc96df48f53cc86",
-    "docs/vworld-candidate/browser.mjs": "22ec09d1e268143c52fc0de28d61015f9e4f0486335155963f058d17cca6c783",
+    "docs/vworld-candidate/browser.mjs": "2b61b3507f50344d95b5696ec31d618bc546e71c4063eb2c4cd8e454661bf5d1",
     "docs/vworld-candidate/native-worker-check.mjs": "c6c9a4b5160ab4f44c6545044cf7d878c047c6ae574ada392ab118cfe274e3df"
   },
   "existingLiveEvidenceReused": {
