@@ -1,0 +1,43 @@
+{
+  "domainRestrictionOutcome": "unregistered_origin_accepted_restriction_insufficient",
+  "schema": "birdmap-unregistered-origin-control-v1",
+  "mode": "actual_unregistered_https_origin",
+  "startedAt": "2026-10-22T05:47:52.393Z",
+  "finishedAt": "2026-10-22T05:50:43.517Z",
+  "status": "map_confirmed",
+  "cleanup": "complete",
+  "sourceSha256": {
+    "index.html": "47b6ddddd189cc3f1dfb763a2f5d9dc84eb69180e0d32563c972f8e186afa285",
+    "assets/birdmap-basemap.js": "785f5422897346313d5b521ef8e263ce93846047eabd3646a1247556c9d99da6",
+    "assets/birdmap-basemap-init.js": "557e2a2fb75b257c1d4e4aa68dd7e9e39f28bba12f15862318400d8565e15afe",
+    "docs/vworld-candidate/domain-control-check.mjs": "2bbde5b3ebf8de06a62109aca122a1d168e074a22e477e945da94aeff5caf1dd"
+  },
+  "counters": {
+    "realVworldRequestsContinued": 1,
+    "syntheticVworldResponses": 0,
+    "vworldRequestsBlocked": 0,
+    "nonGetRequestsBlocked": 0,
+    "workerRequestsBlocked": 0,
+    "osmRequestsBlocked": 0,
+    "otherRequestsBlocked": 0,
+    "externalRequestsContinued": 2
+  },
+  "evidence": {
+    "genuineControlDocumentReceived": true,
+    "documentHttpStatus": 200,
+    "controlLocationMatch": true,
+    "tileHttpStatus": 200,
+    "reportedMimeType": "image/png",
+    "referrerOrigin": "https://example.com",
+    "browserDecodeSucceeded": true,
+    "imageWidth": 256,
+    "imageHeight": 256,
+    "actualMapUserConfirmed": true,
+    "pngSignatureVerified": false,
+    "registeredDomainRestrictionVerified": false,
+    "candidateDeployed": false,
+    "candidateFullMapValidated": false,
+    "passiveDocumentReplacedInMemory": true
+  },
+  "scope": "Genuine unrelated HTTPS static document, replaced locally in browser memory with a temporary input form. At most one Base/8/100/218 image request with the natural browser referrer. No registered-origin positive retest, deployment, header spoofing, API bypass, tile storage, or key output. A denied/failed image alone does not prove domain enforcement; compare the existing registered-origin success and provider account settings."
+}

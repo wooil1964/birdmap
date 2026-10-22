@@ -1,4 +1,5 @@
-/* Birdmap base-map selector. Runtime credentials stay in this module's closures. */
+/* Birdmap base-map selector. Worker mode keeps the upstream key off the browser.
+ * Explicit direct mode exposes its key in Leaflet and browser request URLs. */
 (function (global) {
   'use strict';
 
@@ -9,6 +10,12 @@
 
   function cleanKey(value) {
     return typeof value === 'string' ? value.trim() : '';
+  }
+
+  function cleanEndpoint(value) {
+    // This is the dedicated service only; never accept an arbitrary relay URL.
+    var endpoint = typeof value === 'string' ? value.trim().replace(/\/$/, '') : '';
+    return /^https:\/\/birdmap-vworld-tiles\.wooil-birdmap\.workers\.dev\/tiles$/.test(endpoint) ? endpoint : '';
   }
 
   function savedPreference() {
@@ -39,7 +46,11 @@
 
     // The application's domestic center policy is not a WMTS coverage guarantee.
     var domesticBounds = L.latLngBounds(options.domesticBounds);
-    var key = cleanKey(options.config && options.config.vworldKey);
+    var initialConfig = options.config || {};
+    var mode = initialConfig.vworldMode === undefined ? 'worker'
+      : initialConfig.vworldMode === 'direct' || initialConfig.vworldMode === 'worker' ? initialConfig.vworldMode : '';
+    var key = mode === 'direct' ? cleanKey(initialConfig.vworldKey) : '';
+    var endpoint = cleanEndpoint(initialConfig.vworldTileEndpoint);
     var failedKeys = new Map();
     var preference = savedPreference();
     var active = 'osm';
@@ -61,13 +72,18 @@
     }
 
     function locked() {
-      return !!key && failedKeys.has(key);
+      return !!configId() && failedKeys.has(configId());
+    }
+
+    function configId() {
+      return mode === 'direct' && key ? 'direct:' + key : mode === 'worker' && endpoint ? 'worker:' + endpoint : '';
     }
 
     function getState() {
       return {
         preference: preference,
         active: active,
+        transport: mode,
         reason: reason,
         eligible: eligible(),
         loading: loading,
@@ -143,7 +159,7 @@
       if (!current(token, layer)) return;
       // Remember failed credentials only in memory. Changing views or providers
       // cannot create an automatic retry loop for the same key in this session.
-      failedKeys.set(key, nextReason);
+      failedKeys.set(configId(), nextReason);
       showOsm(nextReason);
     }
 
@@ -170,7 +186,9 @@
       try {
         // Leaflet necessarily holds its request URL while this layer exists.
         // No credential, request URL, or error event is exposed by this API.
-        layer = L.tileLayer('https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/{z}/{y}/{x}.png', {
+        var template = mode === 'worker' ? endpoint + '/{z}/{x}/{y}.png'
+          : 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/{z}/{y}/{x}.png';
+        layer = L.tileLayer(template, {
           minZoom: 6,
           maxZoom: 19,
           maxNativeZoom: 19,
@@ -224,7 +242,7 @@
         // Deliberately discard exception details: they can contain a tile URL.
         if (current(token, layer)) fail('tile_error', token, layer);
         else {
-          failedKeys.set(key, 'tile_error');
+          failedKeys.set(configId(), 'tile_error');
           showOsm('tile_error');
         }
       }
@@ -233,10 +251,10 @@
     function reconcile() {
       if (destroyed) return;
       if (preference === 'osm') return showOsm('user_selected');
-      if (!key) return showOsm('no_config');
+      if (!configId()) return showOsm('no_config');
       if (map.getZoom() < 6) return showOsm('zoom_out');
       if (!domesticBounds.contains(map.getCenter())) return showOsm('outside_view');
-      if (locked()) return showOsm(failedKeys.get(key));
+      if (locked()) return showOsm(failedKeys.get(configId()));
       showVworld();
       render();
     }
@@ -247,17 +265,22 @@
       savePreference(provider);
       // Only an explicit retry action unlocks a failed key. Merely selecting
       // VWorld again, panning, or zooming never sends another failed request.
-      if (provider === 'vworld' && action && action.retry === true && key) failedKeys.delete(key);
+      if (provider === 'vworld' && action && action.retry === true && configId()) failedKeys.delete(configId());
       reconcile();
       return true;
     }
 
     function updateConfig(config) {
-      if (destroyed || !config || !Object.prototype.hasOwnProperty.call(config, 'vworldKey')) return;
-      var nextKey = cleanKey(config.vworldKey);
-      if (nextKey === key) return;
+      if (destroyed || !config) return;
+      var own = Object.prototype.hasOwnProperty;
+      var nextMode = own.call(config, 'vworldMode') ? (config.vworldMode === 'direct' || config.vworldMode === 'worker' ? config.vworldMode : '') : mode;
+      var nextKey = nextMode === 'direct' ? (own.call(config, 'vworldKey') ? cleanKey(config.vworldKey) : key) : '';
+      var nextEndpoint = own.call(config, 'vworldTileEndpoint') ? cleanEndpoint(config.vworldTileEndpoint) : endpoint;
+      if (nextMode === mode && nextKey === key && nextEndpoint === endpoint) return;
       detachVworld();
+      mode = nextMode;
       key = nextKey;
+      endpoint = nextEndpoint;
       errors = 0;
       reconcile();
     }
@@ -327,6 +350,7 @@
       control.remove();
       ui = null;
       key = '';
+      endpoint = '';
       failedKeys.clear();
       instances.delete(map);
     }

@@ -1,5 +1,9 @@
 # VWorld secret read-only diagnosis — 2026-10-22
 
+Current recommendation: [independent Worker candidate](../../vworld-tiles/README.md).
+The later unrelated HTTPS origin accepted the same development key. The direct
+checks below are historical evidence, not the current key-protection decision.
+
 Latest result: [registered Pages browser validation](VALIDATION_20261022.md)
 passed with one real WMTS image and 15 real candidate-map tiles on 2026-10-22.
 An induced VWorld error also returned the map to actual OSM tiles. The workflow
@@ -115,4 +119,3 @@ and records completed actual Pages authentication and live candidate imagery.
 Physical-phone GPS/pinch, external map-app launching and unrelated-domain
 rejection remain outside the completed tests. No main merge or production
 deployment has been performed.
-

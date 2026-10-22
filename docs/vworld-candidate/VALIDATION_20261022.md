@@ -1,5 +1,11 @@
 # VWorld direct WMTS validation — 2026-10-22
 
+**Historical direct-path evidence.** A later unrelated-origin control succeeded at
+14:50 KST, so the current candidate now defaults to a dedicated Worker transport.
+See [the current decision, implementation and rollout conditions](../../vworld-tiles/README.md).
+The direct-path successes below remain valid and were not repeated; they do not
+prove the new Worker's actual Cloudflare egress or authentication.
+
 Status: **actual registered Pages direct WMTS and candidate map checks passed; induced-error automatic OSM display passed**. PR #40 remains Draft. No main merge or production deployment is authorized by this validation. Final remote CI is reported separately on the PR.
 
 ## Baseline and authorization

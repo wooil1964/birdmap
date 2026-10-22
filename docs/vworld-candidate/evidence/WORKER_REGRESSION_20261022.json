@@ -1,0 +1,66 @@
+{
+  "at": "2026-10-22T06:07:56.002Z",
+  "browser": {
+    "summary": {
+      "pass": 50,
+      "fail": 0
+    },
+    "widths": [
+      320,
+      344,
+      375,
+      768,
+      1024,
+      1440
+    ],
+    "network": {
+      "localGet": 130,
+      "dependencyGet": 211,
+      "osmSynthetic": 531,
+      "vworldSynthetic": 504,
+      "blocked": 26,
+      "operatingRequests": 0,
+      "externalNonGet": 0,
+      "directVworldRequests": 0
+    },
+    "browserExceptions": 0,
+    "errorScenarios": [
+      "401",
+      "403",
+      "429",
+      "502",
+      "XML",
+      "offline",
+      "timeout"
+    ],
+    "realPhones": false,
+    "scope": "Actual Chrome, synthetic Worker/OSM image responses, actual reviewed keyless runtime template with only public endpoint supplied."
+  },
+  "workerUnitTests": 10,
+  "focusedNodeTestsPassed": 36,
+  "nativeLocalWorkerdChecksPassed": 7,
+  "wranglerDryRun": {
+    "version": "4.151.3",
+    "passed": true,
+    "deployed": false
+  },
+  "domainHarnessSelfTestsPassed": 17,
+  "directCandidateHarnessSelfTestsPassed": 18,
+  "sourceSha256": {
+    "index.html": "63716330bd82a00d9147adbe5d58071a302637e4d8c62f9474b5fb167f62f7cd",
+    "assets/birdmap-basemap.js": "4de0b981d366e732ee5e671dd5105b1b21203a11e42b539b99b4437a6b25809b",
+    "assets/map-runtime-config.js": "4f28fc5654248b2d4cc601cfae72a2404b11daf77b3aaab710991e7e5e8ba85a",
+    "vworld-tiles/src/worker.mjs": "7cf5b6bda8c27bf91bc44f65c04b4e96eee513c506207c01fc10f1514cd9fc2f",
+    "vworld-tiles/wrangler.toml": "9c075df9910fd425226a6a948c4e3e493b8b6e0c0225bf39bdc96df48f53cc86",
+    "docs/vworld-candidate/browser.mjs": "22ec09d1e268143c52fc0de28d61015f9e4f0486335155963f058d17cca6c783",
+    "docs/vworld-candidate/native-worker-check.mjs": "c6c9a4b5160ab4f44c6545044cf7d878c047c6ae574ada392ab118cfe274e3df"
+  },
+  "existingLiveEvidenceReused": {
+    "registeredVworld": 16,
+    "osm": 20
+  },
+  "newLiveVworldRequests": 1,
+  "realWorkerAuthentication": false,
+  "deployments": 0,
+  "scope": "No physical phone, production Worker, actual Cloudflare upstream, real secret supply or deployment proof. Full regression CI is reported separately."
+}

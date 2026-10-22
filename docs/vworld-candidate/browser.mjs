@@ -11,18 +11,26 @@ import {createHash} from 'node:crypto';
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const OUT=resolve(process.env.VWORLD_QA_OUTPUT||join(ROOT,'.ci-results/vworld-browser'));
 const HTML=readFileSync(join(ROOT,'index.html'),'utf8');
-const WIDTHS=[320,344,375,768,1024,1440], KEY='SYNTHETIC_QA_CREDENTIAL_NOT_VALID';
+const WIDTHS=[320,344,375,768,1024,1440], ENDPOINT='https://birdmap-vworld-tiles.wooil-birdmap.workers.dev/tiles';
+const SAFE_CONFIG=readFileSync(join(ROOT,'assets/map-runtime-config.js'),'utf8');
+const EXPECTED=`/* Deployment-time browser configuration. Never commit a credential here.
+ * The reviewed source and downloadable candidate intentionally contain no key.
+ * A separately approved deployment may supply this object before initialization.
+ */
+window.BIRDMAP_MAP_CONFIG = window.BIRDMAP_MAP_CONFIG || { vworldMode: 'worker', vworldTileEndpoint: '', vworldKey: '' };`;
+if(SAFE_CONFIG.replace(/\r\n/g,'\n').trim()!==EXPECTED)throw Error('Reviewed keyless runtime template required');
+const CONFIGURED=SAFE_CONFIG.replace("vworldTileEndpoint: ''","vworldTileEndpoint: '"+ENDPOINT+"'" );
 const CDN=new Set(['cdn.jsdelivr.net','code.jquery.com','cdnjs.cloudflare.com','netdna.bootstrapcdn.com']);
 const LOCAL=new Set(['/index.html','/weather_today.json','/weather_week.json','/tide_today.json','/tide_month.json','/notices.json','/weather_rules.json','/assets/birdmap-basemap.css','/assets/map-runtime-config.js','/assets/birdmap-basemap.js','/assets/birdmap-basemap-init.js']);
 const PNG=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aTioAAAAASUVORK5CYII=','base64').toString('base64');
-const network={localGet:0,dependencyGet:0,osmSynthetic:0,vworldSynthetic:0,blocked:0,operatingRequests:0,externalNonGet:0};
+const network={localGet:0,dependencyGet:0,osmSynthetic:0,vworldSynthetic:0,blocked:0,operatingRequests:0,externalNonGet:0,directVworldRequests:0};
 const rows=[],browserErrors=[];
 mkdirSync(OUT,{recursive:true});
 const server=createServer((req,res)=>{
  let path;try{path=new URL(req.url,'http://localhost').pathname;}catch{res.writeHead(400);res.end();return;}
  if(req.method!=='GET'||!LOCAL.has(path)){res.writeHead(403);res.end();return;}
- // Never read an on-disk runtime configuration, even if a developer has populated it.
- if(path==='/assets/map-runtime-config.js'){res.writeHead(200,{'Content-Type':'text/javascript'});res.end('window.BIRDMAP_MAP_CONFIG={vworldKey:""};');return;}
+ // Use only the exact, validated keyless on-disk template above.
+ if(path==='/assets/map-runtime-config.js'){res.writeHead(200,{'Content-Type':'text/javascript'});res.end(SAFE_CONFIG);return;}
  try{const data=readFileSync(join(ROOT,path.slice(1))),mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};res.writeHead(200,{'Content-Type':(mime[extname(path)]||'application/json')+';charset=utf-8','Cache-Control':'no-store'});res.end(data);}catch{res.writeHead(404);res.end();}
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -69,20 +77,21 @@ class CDP{
    if(m.method==='Runtime.exceptionThrown'){browserErrors.push({width,kind:'uncaught-browser-exception'});return;}
    if(m.method!=='Fetch.requestPaused')return;
    const {requestId,request}=m.params;let u;try{u=new URL(request.url);}catch{await this.send('Fetch.failRequest',{requestId,errorReason:'BlockedByClient'},sessionId).catch(()=>{});return;}
-   const get=request.method==='GET',osm=/^(?:[abc]\.)?tile\.openstreetmap\.org$/.test(u.hostname),vworld=u.hostname==='api.vworld.kr';
+   const get=request.method==='GET',osm=/^(?:[abc]\.)?tile\.openstreetmap\.org$/.test(u.hostname),workerTile=u.hostname==='birdmap-vworld-tiles.wooil-birdmap.workers.dev'&&u.pathname.startsWith('/tiles/'),vworld=workerTile;
+   if(u.hostname==='api.vworld.kr')network.directVworldRequests++;
    const fulfill=(responseCode,body,type)=>this.send('Fetch.fulfillRequest',{requestId,responseCode,responseHeaders:[{name:'Content-Type',value:type},{name:'Cache-Control',value:'no-store'}],body},sessionId).catch(()=>{});
-   if(u.hostname.endsWith('workers.dev'))network.operatingRequests++;
+   if(u.hostname.endsWith('workers.dev')&&!workerTile)network.operatingRequests++;
    if(!get&&u.origin!==origin)network.externalNonGet++;
    if(get&&(osm||vworld)){
     network[osm?'osmSynthetic':'vworldSynthetic']++;
     if(vworld&&page.mode==='timeout'){page.held.push(requestId);return;}
     if(vworld&&page.mode==='offline'){await this.send('Fetch.failRequest',{requestId,errorReason:'InternetDisconnected'},sessionId).catch(()=>{});return;}
-    if(vworld&&(page.mode==='401'||page.mode==='403')){await fulfill(Number(page.mode),Buffer.from('Synthetic authorization failure').toString('base64'),'text/plain');return;}
+    if(vworld&&(['401','403','429','502'].includes(page.mode))){await fulfill(Number(page.mode),Buffer.from('Synthetic authorization failure').toString('base64'),'text/plain');return;}
     if(vworld&&page.mode==='xml'){await fulfill(200,Buffer.from('<ExceptionReport>Synthetic failure</ExceptionReport>').toString('base64'),'application/xml');return;}
     await fulfill(200,PNG,'image/png');return;
    }
    if(get&&u.origin===origin&&u.pathname==='/assets/map-runtime-config.js'){
-    network.localGet++;await fulfill(200,Buffer.from('window.BIRDMAP_MAP_CONFIG={vworldKey:'+JSON.stringify(configured?KEY:'')+'};').toString('base64'),'text/javascript');return;
+    network.localGet++;await fulfill(200,Buffer.from(configured?CONFIGURED:SAFE_CONFIG).toString('base64'),'text/javascript');return;
    }
    const local=get&&u.origin===origin&&LOCAL.has(u.pathname),dependency=get&&u.protocol==='https:'&&CDN.has(u.hostname);
    if(local||dependency){network[local?'localGet':'dependencyGet']++;await this.send('Fetch.continueRequest',{requestId},sessionId).catch(()=>{});}
@@ -108,7 +117,7 @@ function check(width,name,pass,evidence={}){rows.push({width,name,pass:pass===tr
 async function scenario(page,name,fn){try{const r=await fn(page.evaluate);check(page.width,name,r.pass,r.evidence);}catch(error){check(page.width,name,false,{failure:'Harness condition or browser evaluation failed; details intentionally suppressed',type:error.safeType||'HarnessCondition'});}}
 async function enter(page){for(const type of ['keyDown','keyUp'])await browser.send('Input.dispatchKeyEvent',{type,key:'Enter',code:'Enter',windowsVirtualKeyCode:13,...type==='keyDown'?{text:'\r',unmodifiedText:'\r'}:{}},page.sessionId);}
 const STATE='birdmapBasemap.getState()',MAP='map_7010a44f6ac2025090f0fe07508ed485';
-const setSynthetic="birdmapBasemap.updateConfig({vworldKey:"+JSON.stringify(KEY)+'})';
+const setSynthetic="birdmapBasemap.updateConfig({vworldMode:'worker',vworldTileEndpoint:"+JSON.stringify(ENDPOINT)+'})';
 try{
  for(const width of WIDTHS){let page;try{
   page=await browser.page(width);const e=page.evaluate;
@@ -155,7 +164,7 @@ try{
  let page;try{
   page=await browser.page(375,{configured:true});const e=page.evaluate;
   await scenario(page,'synthetic-config-default-without-saved-preference',async()=>{await e(`${MAP}.setView([36,127],10,{animate:false});void 0`);const before=await e(STATE);if(before.preference==='vworld'&&before.active==='vworld')await waitFor(e,`${STATE}.reason==='ready'`);const s=await e(STATE);return {pass:s.preference==='vworld'&&s.active==='vworld'&&s.reason==='ready',evidence:{before,state:s}};});
-  for(const mode of ['401','403','xml','offline','timeout'])await scenario(page,'actual-tile-'+mode+'-fallback-lock-and-explicit-retry',async()=>{
+  for(const mode of ['401','403','429','502','xml','offline','timeout'])await scenario(page,'actual-tile-'+mode+'-fallback-lock-and-explicit-retry',async()=>{
    await e("birdmapBasemap.setPreference('osm')");await browser.mode(page,mode);const before=network.vworldSynthetic,at=Date.now();
    await e("birdmapBasemap.setPreference('vworld',{retry:true})");await waitFor(e,`${STATE}.active==='osm'&&${STATE}.locked`,mode==='timeout'?15000:6000);
    const failed=await e(STATE),elapsed=Date.now()-at,after=network.vworldSynthetic;
@@ -166,7 +175,7 @@ try{
   await browser.screenshot(page,'vworld-synthetic-ready-375');
  }catch{check(375,'error-environment-or-harness',false,{failure:'Failure scenario initialization failed; details suppressed'});}finally{if(page)await page.close();}
 }finally{await browser.dispose();await new Promise(r=>server.close(r));}
-const result={schema:'vworld-actual-chromium-synthetic-v1',at:new Date().toISOString(),indexSha256:createHash('sha256').update(HTML).digest('hex'),widths:WIDTHS,summary:{pass:rows.filter(x=>x.pass).length,fail:rows.filter(x=>!x.pass).length},network,browserErrors,rows,scope:'Actual current HTML and Leaflet in headless Chromium. All OSM/VWorld images and credentials are synthetic; worker fetches are mocked before application load. External non-GET and unapproved destinations are blocked. This does not establish real VWorld tiles, registered-domain authentication, real phones, GPS, pinch gestures or external app launches.'};
+const result={schema:'vworld-worker-chromium-synthetic-v2',at:new Date().toISOString(),indexSha256:createHash('sha256').update(HTML).digest('hex'),widths:WIDTHS,summary:{pass:rows.filter(x=>x.pass).length,fail:rows.filter(x=>!x.pass).length},network,browserErrors,rows,scope:'Actual current HTML and Leaflet in headless Chromium. All OSM/VWorld images and credentials are synthetic; worker fetches are mocked before application load. External non-GET and unapproved destinations are blocked. This does not establish real VWorld tiles, registered-domain authentication, real phones, GPS, pinch gestures or external app launches.'};
 writeFileSync(join(OUT,'BROWSER_QA.json'),JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({summary:result.summary,network,browserErrors,failures:rows.filter(x=>!x.pass)},null,2));
-process.exitCode=result.summary.fail||network.operatingRequests||network.externalNonGet||browserErrors.length?1:0;
+process.exitCode=result.summary.fail||network.operatingRequests||network.directVworldRequests||network.externalNonGet||browserErrors.length?1:0;

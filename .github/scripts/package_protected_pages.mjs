@@ -7,7 +7,7 @@ const reviewedKeylessConfig=`/* Deployment-time browser configuration. Never com
  * The reviewed source and downloadable candidate intentionally contain no key.
  * A separately approved deployment may supply this object before initialization.
  */
-window.BIRDMAP_MAP_CONFIG = window.BIRDMAP_MAP_CONFIG || { vworldKey: '' };`;
+window.BIRDMAP_MAP_CONFIG = window.BIRDMAP_MAP_CONFIG || { vworldMode: 'worker', vworldTileEndpoint: '', vworldKey: '' };`;
 let runtimeConfigBytes=null;
 if(tracked.includes(runtimeConfig)||fs.existsSync(runtimeConfig)){
  try{runtimeConfigBytes=fs.readFileSync(runtimeConfig);}catch{throw new Error('Protected Pages packaging requires the reviewed keyless runtime configuration');}

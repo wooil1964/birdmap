@@ -63,6 +63,11 @@ jobs:
         env:
           VWORLD_QA_OUTPUT: .ci-results/vworld-browser
         run: node docs/vworld-candidate/browser.mjs
+      - name: Dedicated tile relay in local workerd with synthetic upstream only
+        shell: bash
+        run: |
+          npm install --prefix .ci-vworld-toolchain --no-save --package-lock=false --no-audit --no-fund miniflare@5.20261019.1-beta
+          node docs/vworld-candidate/native-worker-check.mjs "$PWD/.ci-vworld-toolchain/node_modules"
       - name: Public and admin API and SQLite security
         working-directory: reports-api
         run: node --test --test-reporter=tap
@@ -142,6 +147,7 @@ jobs:
             .ci-results/issue28-native
             .ci-results/island-pilot
             .ci-results/vworld-browser
+            .ci-results/vworld-native-worker
           retention-days: 14
           if-no-files-found: ignore
 

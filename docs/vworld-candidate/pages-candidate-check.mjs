@@ -52,7 +52,7 @@ function installPanel(options) {
   const sites = window.siteData;
   const siteSnapshot = JSON.stringify(sites);
   const markers = sites.map(site => ({ marker: window[site.markerVar], name: site.markerVar, lat: site.lat, lon: site.lon, present: map.hasLayer(window[site.markerVar]) }));
-  window.BIRDMAP_MAP_CONFIG = { vworldKey: '' };
+  window.BIRDMAP_MAP_CONFIG = { vworldMode: 'direct', vworldKey: '' };
   const api = window.birdmapBasemap = window.initializeBirdmapBasemap(map, osm);
   if (!api) throw Error('Candidate controller unavailable');
   const state = window[options.state] = {
@@ -126,7 +126,7 @@ function installPanel(options) {
     title.textContent = '후보 지도 육안 확인';
     status.textContent = '국내 화면을 한 번 불러오고 있습니다. 화면 이동·확대·자동 재시도는 제한합니다.';
     state.phase = 'loading'; emit('started');
-    api.setPreference('vworld'); api.updateConfig({ vworldKey: key }); key = '';
+    api.setPreference('vworld'); api.updateConfig({ vworldMode: 'direct', vworldKey: key }); key = '';
     const candidateRoot = document.querySelector('.birdmap-basemap');
     if (candidateRoot) { candidateRoot.style.pointerEvents = 'none'; candidateRoot.setAttribute('inert', ''); }
     const zoomControl = map.getContainer().querySelector('.leaflet-control-zoom');

@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "engine": "local workerd via Wrangler 4.151.3 / Miniflare",
+  "checks": {
+    "nativeFetchAndNativeRateBindings": true,
+    "noStore": true,
+    "xmlRejected": true,
+    "redirectNotFollowed": true,
+    "invalidPngRejected": true,
+    "wrongSourceRejected": true,
+    "nativeLimiterActuallyDenies": true
+  },
+  "realVworldRequests": 0,
+  "cloudflareDeployments": 0,
+  "scope": "Exact relay module, native rate-limit bindings, synthetic in-process upstream. No production authentication or Cloudflare egress proof."
+}

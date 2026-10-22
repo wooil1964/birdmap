@@ -28,7 +28,7 @@ class Element {
   removeEventListener(name, fn) { if (this.listeners.get(name) === fn) this.listeners.delete(name); }
   click() { if (!this.disabled) this.listeners.get('click')?.(); }
 }
-function environment({ stored = null, blockedStorage = false, key = '', tileCreationThrows = false } = {}) {
+function environment({ stored = null, blockedStorage = false, key = '', tileCreationThrows = false, config = null } = {}) {
   let nextTimer = 1;
   const timers = new Map(), values = new Map(), storageWrites = [], created = [], controls = [];
   if (stored !== null) values.set('birdmap.basemap.preference', stored);
@@ -64,7 +64,7 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
     }
   };
   vm.runInNewContext(source, { window, document: { createElement: name => new Element(name) }, WeakMap, Set });
-  const args = { map, osm, domesticBounds: [[32.9, 124.5], [38.75, 132]], config: { vworldKey: key } };
+  const args = { map, osm, domesticBounds: [[32.9, 124.5], [38.75, 132]], config: config || { vworldMode: 'direct', vworldKey: key } };
   const api = window.BirdmapBasemap.mount(args);
   return { api, window, args, map, osm, created, controls, timers, values, storageWrites, last: () => created.at(-1),
     expire() { const [id, { fn }] = timers.entries().next().value; timers.delete(id); fn(); },
@@ -158,4 +158,27 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
     partial.last().fire('loading'); partial.last().fire('tileload'); partial.last().fire('load'); assert.equal(partial.state().reason, 'ready');
     partial.last().fire('loading'); partial.last().fire('tileerror'); assert.equal(partial.state().active, 'osm'); assert.equal(partial.state().errors, 3); partial.api.destroy();
   });
+});
+
+test('Worker mode uses the dedicated public endpoint and never falls back to a direct key', () => {
+  const endpoint='https://birdmap-vworld-tiles.wooil-birdmap.workers.dev/tiles';
+  const e=environment({config:{vworldMode:'worker',vworldTileEndpoint:endpoint,vworldKey:'IGNORED_SYNTHETIC_KEY'}});
+  assert.equal(e.state().active,'vworld');assert.equal(e.state().transport,'worker');assert.equal(e.last()._url,endpoint+'/{z}/{x}/{y}.png');
+  const camera={...e.map.center,zoom:e.map.zoom};e.last().fire('tileerror');e.last().fire('tileerror');e.last().fire('tileerror');
+  assert.equal(e.state().active,'osm');assert.equal(e.state().locked,true);assert.deepEqual({...e.map.center,zoom:e.map.zoom},camera);
+  const count=e.created.length;e.map.move(36.1,127.1);e.api.updateConfig({vworldKey:'ANOTHER_IGNORED_SYNTHETIC_KEY'});e.api.setPreference('vworld');
+  assert.equal(e.created.length,count);assert.equal(e.state().active,'osm');assert.ok(e.created.every(l=>!l._url.includes('api.vworld.kr')&&!l._url.includes('SYNTHETIC_KEY')));
+  e.api.setPreference('vworld',{retry:true});assert.equal(e.created.length,count+1);assert.equal(e.state().active,'vworld');
+  e.expire();assert.equal(e.state().active,'osm');assert.equal(e.state().reason,'tile_timeout');assert.equal(e.state().locked,true);
+  e.api.destroy();assert.equal(e.map.hasLayer(e.osm),true);
+});
+
+test('Worker config fails closed for an empty/unapproved endpoint or implicit browser key', () => {
+  for(const config of [{vworldKey:'SYNTHETIC_KEY'}, {vworldMode:'worker',vworldTileEndpoint:''},
+    {vworldMode:'unknown',vworldTileEndpoint:'https://birdmap-vworld-tiles.wooil-birdmap.workers.dev/tiles'},
+    {vworldMode:'worker',vworldTileEndpoint:'https://example.com/tiles'},
+    {vworldMode:'worker',vworldTileEndpoint:'https://birdmap-vworld-tiles.wooil-birdmap.workers.dev/tiles?key=SYNTHETIC_KEY'},
+    {vworldMode:'worker',vworldTileEndpoint:'https://birdmap-vworld-tiles.wooil-birdmap.workers.dev.evil.invalid/tiles'}]){
+    const e=environment({config});assert.equal(e.state().active,'osm');assert.equal(e.state().reason,'no_config');assert.equal(e.created.length,0);e.api.destroy();
+  }
 });

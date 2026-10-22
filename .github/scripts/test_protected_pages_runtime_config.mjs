@@ -13,7 +13,7 @@ const SAFE_CONFIG=`/* Deployment-time browser configuration. Never commit a cred
  * The reviewed source and downloadable candidate intentionally contain no key.
  * A separately approved deployment may supply this object before initialization.
  */
-window.BIRDMAP_MAP_CONFIG = window.BIRDMAP_MAP_CONFIG || { vworldKey: '' };`;
+window.BIRDMAP_MAP_CONFIG = window.BIRDMAP_MAP_CONFIG || { vworldMode: 'worker', vworldTileEndpoint: '', vworldKey: '' };`;
 const PRIVATE_SENTINEL='SYNTHETIC_PRIVATE_KEY_FOR_PACKAGING_REGRESSION_ONLY';
 
 function fixture(t,{config=SAFE_CONFIG}={}){
