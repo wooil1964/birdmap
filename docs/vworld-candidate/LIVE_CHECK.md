@@ -16,7 +16,7 @@ workflow on main is unnecessary.
 The isolated job has `permissions: {}` and no checkout, installation, cache,
 artifact, or deployment steps. Its inline Python uses the secret only in memory
 and makes four GET requests for the same Base WMTS tile. It rejects redirects,
-disables environment proxies, caps responses at 2 MiB, and never prints a URL,
+disables environment proxies, reads at most 2 MiB plus one overflow-detection byte, and never prints a URL,
 raw header, response body, or exception string. Output contains finite metadata:
 scenario, numeric status and size, whitelisted MIME, sniffed image format,
 dimensions, and image framing checks. Neither the key nor a real tile is saved.
@@ -65,10 +65,16 @@ The [first manual run](https://github.com/wooil1964/birdmap/actions/runs/3971309
 on `1ded7a4` executed all four requests and each returned HTTP 502. The job failed;
 no tile success, domain restriction, or browser authentication was established.
 The first version did not inspect HTTP error bodies, so their MIME and image
-format were unobserved. A follow-up preserves the same four-request boundary
-and inspects only bounded error-response metadata in memory. Final execution
-results and the latest retry link are recorded in [Draft PR #40](https://github.com/wooil1964/birdmap/pull/40).
-The manual run uploaded zero artifacts and skipped the general regression job.
+format were unobserved. The [metadata follow-up](https://github.com/wooil1964/birdmap/actions/runs/39713445784)
+on `e1c427d` preserved the same four-request boundary. No-Referer, registered-origin
+and unrelated-origin probes returned HTTP 502 with 15-byte bodies, sniffed format
+`other`, no valid image header, and normalized MIME `other` (raw MIME not exposed).
+The registered-full-URL-header probe had a transport failure with no HTTP status.
+The job failed. Neither run established server-side tile authentication, image
+success, provider domain enforcement or actual registered-page browser success.
+Both manual runs uploaded zero artifacts and skipped the general regression job.
+No further real-key request is made automatically. Final CI status and follow-up
+are recorded in [Draft PR #40](https://github.com/wooil1964/birdmap/pull/40).
 The separate pull-request CI skips the real-secret job.
 
 Offline verifier checks passed for PNG, JPEG returned at a `.png` path,
@@ -82,6 +88,15 @@ zero unhandled exceptions, production Worker requests, or external non-GET
 requests. These use synthetic credentials/tiles/Worker responses. Initial
 restricted-network attempts failed CDN initialization; the same source passed
 after public CDN access was permitted.
+
+PR CI run `39713049418` passed all 463 frontend tests but failed one 1440px
+island interaction check (24/25). The native details click had not settled
+before the next keyboard toggle; product data and HTML were unchanged. The
+island browser runner now waits for a stable hit-testable summary before real
+pointer input and awaits the actual native open/close state after every click
+or Enter. It never forces the state or removes an assertion. The synchronized
+runner passed Chrome 25/25 and Edge 25/25 again. Latest remote CI is reported
+in the PR, rather than treating the earlier failed run as a full pass.
 
 The existing 229 sites, six islands' food/lodging/KSA, protected coordinates,
 weather/tides, search, recommendations, directions and OSM fallback are outside

@@ -119,11 +119,17 @@ try{
    await new Promise(r=>setTimeout(r,750));
    if(width===375||width===1440)await screenshot(page,'island-pilot-collapsed-'+width);
    const initial=await e("(()=>{const d=document.querySelector('.leaflet-popup .island-nearby-search');d.querySelector('summary').scrollIntoView({block:'center'});return !d.open;})()");
+   // Scrolling and Leaflet popup positioning must settle before real pointer input.
+   await waitFor(e,"(async()=>{const s=document.querySelector('.leaflet-popup .island-nearby-search summary'),before=s.getBoundingClientRect();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));const after=s.getBoundingClientRect(),hit=document.elementFromPoint(after.x+after.width/2,after.y+after.height/2);return before.x===after.x&&before.y===after.y&&before.width===after.width&&before.height===after.height&&after.width>0&&after.height>0&&!!hit&&(hit===s||s.contains(hit));})()");
    const point=await e("(()=>{const r=document.querySelector('.leaflet-popup .island-nearby-search summary').getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};})()");
+   await browser.send('Input.dispatchMouseEvent',{type:'mouseMoved',...point},page.sessionId);
    for(const type of ['mousePressed','mouseReleased'])await browser.send('Input.dispatchMouseEvent',{type,...point,button:'left',clickCount:1},page.sessionId);
+   await waitFor(e,"document.querySelector('.leaflet-popup .island-nearby-search').open");
    const clicked=await e("document.querySelector('.leaflet-popup .island-nearby-search').open");
-   await e("document.querySelector('.leaflet-popup .island-nearby-search summary').focus()");await key(page);
+   await e("document.querySelector('.leaflet-popup .island-nearby-search summary').focus({preventScroll:true})");await key(page);
+   await waitFor(e,"!document.querySelector('.leaflet-popup .island-nearby-search').open");
    const closedByKeyboard=await e("!document.querySelector('.leaflet-popup .island-nearby-search').open");await key(page);
+   await waitFor(e,"document.querySelector('.leaflet-popup .island-nearby-search').open");
    const s=await e("(()=>{const site=siteData.find(s=>s.id==='1'),popup=window[site.markerVar].getPopup(),d=popup.getElement().querySelector('.island-nearby-search'),wasOpen=d.open;popup.update();const applied=applyLiveWeatherToPopup(site,popup,__pilotQA.weather('1'),false),links=[...d.querySelectorAll('a')],sizes=[d.querySelector('summary'),...links].map(x=>({width:x.getBoundingClientRect().width,height:x.getBoundingClientRect().height})),content=popup.getElement().querySelector('.leaflet-popup-content');d.scrollIntoView({block:'center'});return {wasOpen,open:d.open,same:d===popup.getElement().querySelector('.island-nearby-search'),applied,sizes,overflow:document.documentElement.scrollWidth>innerWidth,popupOverflow:content.scrollWidth>content.clientWidth+1,links:links.length};})()");
    if(width===375||width===1440)await screenshot(page,'island-pilot-'+width);
    const hits=await e("(()=>{const root=document.querySelector('.leaflet-popup'),links=[...root.querySelectorAll('.nearby-search-link,a.ksa,a.naver,a.kakao,a.tmap,a.windy')];return links.map(a=>{a.scrollIntoView({block:'center'});const r=a.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {label:a.textContent.trim(),className:a.className,reachable:!!hit&&(hit===a||a.contains(hit)),hit:hit?.id||hit?.className||hit?.tagName};});})()");
@@ -140,3 +146,4 @@ const result={schema:'island-nearby-actual-chrome-v1',at:new Date().toISOString(
 writeFileSync(join(OUT,'BROWSER_QA.json'),JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({summary:result.summary,network,browserErrors,failures:rows.filter(x=>!x.pass)},null,2));
 process.exitCode=result.summary.fail||network.operatingRequests||network.externalNonGet||browserErrors.length?1:0;
+
