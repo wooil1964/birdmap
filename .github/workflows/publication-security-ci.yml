@@ -257,7 +257,19 @@ jobs:
                   except urllib.error.HTTPError as error:
                       row['http'] = int(error.code)
                       row['result'] = 'http-rejected'
-                      error.close()
+                      try:
+                          mime = error.headers.get('Content-Type', '').partition(';')[0].strip().lower()
+                          row['mime'] = mime if mime in ('image/png', 'image/jpeg', 'text/xml', 'application/xml', 'text/html', 'application/octet-stream') else 'other'
+                          body = error.read(LIMIT + 1)
+                          row['bytes'] = len(body)
+                          if len(body) <= LIMIT:
+                              fmt, width, height, valid = image_info(body)
+                              row.update(format=fmt, width=width, height=height, image_header_valid=valid)
+                          body = b''
+                      except Exception:
+                          pass
+                      finally:
+                          error.close()
                   except Exception:
                       pass
                   rows.append(row)

@@ -61,7 +61,33 @@ guidance, separate from technical authentication evidence.
   guide was unavailable during this review, so its exact current origin/path
   rules are not claimed as independently verified.
 
-Execution results will be appended after the permitted manual run. The existing
-229 sites, six islands' food/lodging/KSA, protected coordinates, weather/tides,
-search, recommendations, directions and OSM fallback are outside this change.
+The [first manual run](https://github.com/wooil1964/birdmap/actions/runs/39713091262)
+on `1ded7a4` executed all four requests and each returned HTTP 502. The job failed;
+no tile success, domain restriction, or browser authentication was established.
+The first version did not inspect HTTP error bodies, so their MIME and image
+format were unobserved. A follow-up preserves the same four-request boundary
+and inspects only bounded error-response metadata in memory. Final execution
+results and the latest retry link are recorded in [Draft PR #40](https://github.com/wooil1964/birdmap/pull/40).
+The manual run uploaded zero artifacts and skipped the general regression job.
+The separate pull-request CI skips the real-secret job.
+
+Offline verifier checks passed for PNG, JPEG returned at a `.png` path,
+unrestricted negative-control tiles, XML with HTTP 200, redirects, exceptions,
+oversized responses, missing secrets, and malformed image framing. Deliberately
+hostile fake values and exception messages did not appear in captured output.
+
+Chrome 155.0.8059.85 and Edge 155.0.4283.62 each passed 48/48 synthetic VWorld
+checks and 25/25 island checks at 320/344/375/768/1024/1440px. Each run observed
+zero unhandled exceptions, production Worker requests, or external non-GET
+requests. These use synthetic credentials/tiles/Worker responses. Initial
+restricted-network attempts failed CDN initialization; the same source passed
+after public CDN access was permitted.
+
+The existing 229 sites, six islands' food/lodging/KSA, protected coordinates,
+weather/tides, search, recommendations, directions and OSM fallback are outside
+this change. Removing the two approved basemap HTML insertions still exactly
+matches main `8397053`; API, Worker and data files are unchanged. Focused
+protection/search/tide/recommendation/weather tests passed 233/233, and Python
+island/archive contracts passed 13/13. Real mobile devices and map-app launching
+remain unexecuted. Full CI status is reported separately from local checks.
 
