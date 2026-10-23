@@ -24,7 +24,9 @@
 
 승인서 필드·정규형(SHA 40자리, 단계, `solo-<UUID>` 작업 ID, 계정 해시, 유효시간 ≤30분, nonce, activate의 절대 창·4타일·재시도 0)은 그대로다. 같은 PC에서 `approve` → 내용 확인 → `ssh-keygen -Y sign -n birdmap-vworld-solo-approval-v1 -f <키>` → 실행한다.
 
-서명 정책은 커밋된 `vworld-tiles/trial/solo-signer.json`(`publicKey`, `assurance`)으로 명시한다. 파일이 없으면 모든 명령이 `SOLO_SIGNER_NOT_REGISTERED`로 차단된다(현재 상태). 등록·변경은 새 SHA·전체 CI가 필요한 별도 승인 단계다.
+서명 정책은 커밋된 `vworld-tiles/trial/solo-signer.json`(`publicKey`, `assurance`)으로 명시한다. 파일이 없으면 모든 명령이 `SOLO_SIGNER_NOT_REGISTERED`로 차단된다. 등록·변경은 새 SHA·전체 CI가 필요한 별도 승인 단계다.
+
+**등록 상태(2026-10-23):** 운영자가 FIDO2 대신 암호문 보호 소프트웨어 키를 명시적으로 선택했다. `ssh-ed25519`, 지문 `SHA256:79CPkn79g+rjRsujSY/0HjQSbkAdkSULkyLQ/izDYdI`, `assurance: software-passphrase`. 개인키는 BitLocker 암호화 PC의 사용자 프로필에만 둔다. ssh-agent에 등록하지 않는다(Windows ssh-agent는 등록 키를 재부팅 후에도 보관해 암호문 확인을 건너뛰게 한다). 이 수준에서 실제 보안은 서명보다 4장의 짧은 수명·좁은 범위 토큰과 스마트폰 복구가 담당한다.
 
 | 대안 | assurance | 얻는 것 | 얻지 못하는 것 | 준비 |
 |---|---|---|---|---|
@@ -106,7 +108,7 @@ credential은 비밀 관리 도구가 **해당 프로세스 환경에만** 주�
 
 ## 6. 실제 비활성 bootstrap 승인 전 준비
 
-- [ ] 서명 대안 결정(2장). 보안키 보유 확인 또는 Windows Hello 시험 또는 `software-passphrase` 명시 승인 → `solo-signer.json` 커밋, 새 SHA·전체 CI.
+- [x] 서명 대안 결정(2장): `software-passphrase` 명시 승인, `solo-signer.json` 작성. 커밋·새 SHA·전체 CI는 별도 승인.
 - [ ] Cloudflare 2단계 인증·백업 코드, 스마트폰 로그인과 읽기 전용 연습(4장).
 - [ ] P1 credential: 한시 Workers Admin(생성)·Content Read-Only(감사), 짧은 만료. 가능하면 집 IP로 제한.
 - [ ] bootstrap 직후 PC Editor 1개(대상 Worker 전용, 만료 7일 이내) 발급, Admin 회수, `handoff`·`drill`.

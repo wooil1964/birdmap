@@ -147,9 +147,15 @@ test('activation approval fixes an absolute window of at most 10 minutes, 4 tile
   check({ ...ok, parentOperationId: ok.bootstrapOperationId }, /SOLO_APPROVAL_OPERATION/);
 });
 
-test('the reviewed source has no registered signer, so every real solo write is blocked now', () => {
-  assert.throws(() => loadSigner(), /SOLO_SIGNER_NOT_REGISTERED/);
+// The operator explicitly chose a passphrase-protected software key (no FIDO2). Changing
+// the key or its assurance must also change this pinned fingerprint in review.
+test('the committed signer is the operator\'s software key at the explicit software-passphrase level', () => {
   assert.ok(SIGNER_PATH.endsWith(join('vworld-tiles', 'trial', 'solo-signer.json')));
+  const signer = loadSigner();
+  assert.equal(signer.assurance, 'software-passphrase');
+  assert.equal(signer.allowSoftwareKey, true);
+  assert.equal('SHA256:' + createHash('sha256').update(signer.blob).digest('base64').replace(/=+$/, ''), 'SHA256:79CPkn79g+rjRsujSY/0HjQSbkAdkSULkyLQ/izDYdI');
+  assert.doesNotMatch(readFileSync(SIGNER_PATH, 'utf8'), /PRIVATE KEY|BEGIN OPENSSH/);
 });
 
 test('signer assurance is an explicit committed policy, never inferred or downgraded silently', () => {
@@ -707,7 +713,7 @@ test('solo sources keep secrets out of output and never touch D1, Pages or other
     assert.doesNotMatch(source, /method:\s*'(POST|PUT|PATCH|DELETE)'/);
     assert.doesNotMatch(source, /birdmap-reports|wrangler d1|pages deploy/);
   }
-  assert.deepEqual(readdirSync(new URL('../../vworld-tiles/trial/', import.meta.url)).filter(n => n.includes('signer')), []);
+  assert.deepEqual(readdirSync(new URL('../../vworld-tiles/trial/', import.meta.url)).filter(n => n.includes('signer')), ['solo-signer.json']);
 });
 
 function hasSshKeygen() {
