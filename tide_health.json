@@ -1,20 +1,20 @@
 {
-  "checkedAt": "2026-10-25 02:54 KST",
+  "checkedAt": "2026-10-25 08:06 KST",
   "today": "2026-10-25",
   "tideTodayDate": "2026-10-25",
   "tideTodayFresh": true,
   "tideTodayStatus": "ok",
   "tideTodaySiteCount": 100,
   "siteCount": 100,
-  "status": "partial_api_success",
-  "apiLiveWarning": true,
+  "status": "ok",
+  "apiLiveWarning": false,
   "targetSiteCount": 100,
   "linkedSiteCount": 100,
   "uniqueStationCount": 39,
   "metricsDate": "2026-10-25",
   "liveSuccessCount": 100,
-  "tomorrowLiveSuccessCount": 99,
-  "tomorrowReusedCount": 1,
+  "tomorrowLiveSuccessCount": 100,
+  "tomorrowReusedCount": 0,
   "tomorrowUnavailableSiteCount": 0,
   "liveSuccessStationCount": 39,
   "failedCount": 0,
@@ -25,10 +25,10 @@
   "unavailableSiteIds": [],
   "staleSites": [],
   "monthFallbackCount": 0,
-  "timeoutCount": 2,
-  "apiRequestCount": 41,
-  "requestedStationDateCount": 39,
-  "retryCount": 2,
+  "timeoutCount": 0,
+  "apiRequestCount": 1,
+  "requestedStationDateCount": 1,
+  "retryCount": 0,
   "budgetSkippedRequestCount": 0,
   "noStationCount": 0,
   "noStationSites": [],
@@ -194,8 +194,8 @@
   "tomorrowDateMatches": true,
   "dailyDateMismatchSiteIds": [],
   "tomorrowDateMismatchSiteIds": [],
-  "tideMonthGeneratedAt": "2026-10-24 06:20 KST",
-  "tideMonthStatus": "ok",
+  "tideMonthGeneratedAt": "2026-10-25 05:43 KST",
+  "tideMonthStatus": "partial",
   "tideMonthTargetCount": 28,
   "dailyOnlySiteIds": [
     "1",
@@ -273,5 +273,24 @@
   ],
   "monthOnlySiteIds": [],
   "sitesWithoutTodayFallback": [],
-  "monthStaleEntries": []
+  "monthStaleEntries": [
+    {
+      "siteId": "99",
+      "name": "진도 해안",
+      "date": "2026-11-17",
+      "error": "KHOA timeout",
+      "fallbackSource": "previous_month",
+      "generatedAt": "2026-10-18 05:31 KST",
+      "refreshedAt": "2026-10-25 05:43 KST"
+    },
+    {
+      "siteId": "72",
+      "name": "남해 창선 강진만",
+      "date": "2026-11-01",
+      "error": "KHOA timeout",
+      "fallbackSource": "previous_month",
+      "generatedAt": "2026-10-18 05:31 KST",
+      "refreshedAt": "2026-10-25 05:43 KST"
+    }
+  ]
 }
