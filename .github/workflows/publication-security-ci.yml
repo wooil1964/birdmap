@@ -4,16 +4,37 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      vworld_live_check:
+        description: 'Only run the read-only VWorld secret probe (no deployment or artifacts)'
+        type: boolean
+        required: false
+        default: false
+      vworld_trial_mode:
+        description: 'Separately approved isolated Worker phase; never combine with direct probe'
+        type: choice
+        options: [none, bootstrap, run, recover]
+        required: false
+        default: none
+      expected_sha:
+        description: 'Final reviewed full SHA, required only for isolated Worker phase'
+        type: string
+        required: false
+      approval_phrase:
+        description: 'Exact phase phrase from TRIAL_RUNBOOK; protected approval is also required'
+        type: string
+        required: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: publication-security-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_trial_mode != 'none' && inputs.vworld_trial_mode != '' && 'publication-vworld-trial-launcher' || format('publication-security-{0}', github.event.pull_request.number || github.ref) }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' || inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '' }}
 
 jobs:
   regression:
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.vworld_live_check != true && (inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -45,6 +66,10 @@ jobs:
           test -n "$chrome"
           echo "CHROME_PATH=$chrome" >> "$GITHUB_ENV"
           "$chrome" --version
+      - name: Install locked isolated trial tools without service credentials
+        run: npm ci --prefix vworld-tiles/trial --ignore-scripts --no-audit --no-fund
+      - name: Verify isolated trial source, fixed tools and false config locally only
+        run: node vworld-tiles/trial/cli.mjs check
       - name: Front regression with actual Chrome
         run: node --test --test-reporter=tap .github/scripts/test_*.mjs
       - name: Island search pilot Chrome with synthetic API reads
@@ -52,6 +77,15 @@ jobs:
           ISLAND_PILOT_OUTPUT: .ci-results/island-pilot
           ISLAND_PILOT_OSM_TILES: '0'
         run: node docs/island-nearby-pilot/browser.mjs
+      - name: VWorld selection and fallback Chrome with synthetic tiles
+        env:
+          VWORLD_QA_OUTPUT: .ci-results/vworld-browser
+        run: node docs/vworld-candidate/browser.mjs
+      - name: Dedicated tile relay in local workerd with synthetic upstream only
+        shell: bash
+        run: |
+          npm install --prefix .ci-vworld-toolchain --no-save --package-lock=false --no-audit --no-fund miniflare@5.20261019.1-beta
+          node docs/vworld-candidate/native-worker-check.mjs "$PWD/.ci-vworld-toolchain/node_modules"
       - name: Public and admin API and SQLite security
         working-directory: reports-api
         run: node --test --test-reporter=tap
@@ -130,5 +164,297 @@ jobs:
             .ci-results/issue28-chrome
             .ci-results/issue28-native
             .ci-results/island-pilot
+            .ci-results/vworld-browser
+            .ci-results/vworld-native-worker
           retention-days: 14
           if-no-files-found: ignore
+
+  # This path is already registered on main. A branch dispatch uses this PR's
+  # same-commit reusable workflow, without registering a new file on main.
+  # No secret inheritance: only the existing VWorld key is forwarded for run mode.
+  vworld-worker-trial:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_trial_mode != 'none' && inputs.vworld_trial_mode != '' }}
+    uses: ./.github/workflows/vworld-worker-trial.yml
+    with:
+      mode: ${{ inputs.vworld_trial_mode }}
+      expected_sha: ${{ inputs.expected_sha }}
+      approval_phrase: ${{ inputs.approval_phrase }}
+      direct_live_check: ${{ inputs.vworld_live_check }}
+    secrets:
+      VWORLD_API_KEY: ${{ inputs.vworld_trial_mode == 'run' && inputs.vworld_live_check != true && secrets.VWORLD_API_KEY || '' }}
+      # Explicit name allowlist for environment secrets; never read repo CF credentials.
+      CF_ACCOUNT_ID: ''
+      CF_EXPECTED_ACCOUNT_ID: ''
+      TRIAL_HOST: ''
+      CF_CREATE_TOKEN: ''
+      CF_CREATE_TOKEN_SHA256: ''
+      CF_EDIT_TOKEN: ''
+      CF_EDIT_TOKEN_SHA256: ''
+      CF_READ_TOKEN: ''
+      CF_READ_TOKEN_SHA256: ''
+
+  vworld-live-check:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.vworld_live_check == true && (inputs.vworld_trial_mode == 'none' || inputs.vworld_trial_mode == '') && github.ref == 'refs/heads/review/vworld-default-keyless-20261021' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      # No checkout, third-party action, cache, file output or artifact in this job.
+      # Only this step can read the secret. Never print URLs, headers, bodies or exceptions.
+      - name: Diagnose direct TLS and conditionally probe one WMTS tile
+        env:
+          VWORLD_API_KEY: ${{ secrets.VWORLD_API_KEY }}
+        shell: python
+        run: |
+          """Bounded, stdout-allowlisted VWorld diagnostic. Stdlib only; no files/artifacts.
+
+          The caller supplies VWORLD_API_KEY in this process's environment. No raw service
+          material or exception strings are emitted. No redirects or configured proxies
+          are used. Verified TLS identifies the TLS endpoint, not an origin application
+          behind that endpoint. Browser authentication is deliberately not claimed.
+          """
+
+          import binascii
+          import http.client
+          import json
+          import os
+          import socket
+          import ssl
+          import struct
+          import sys
+          import urllib.parse
+          import zlib
+
+          TIMEOUT = 12
+          LIMIT = 2 * 1024 * 1024
+          API_HOST = "api.vworld.kr"
+          REGISTERED_ORIGIN = "https://wooil1964.github.io/"
+          NEGATIVE_PAGE = "https://birdmap-auth-negative.invalid/"
+          # Keyless checks use the official guide and API root. Neither independently
+          # establishes WMTS health or authentication.
+          HEALTH_PROBES = (
+              ("official-wmts-guide", "www.vworld.kr", "/dev/v4dv_wmtsguide_s001.do"),
+              ("api-root", API_HOST, "/"),
+          )
+          PROBES = frozenset(name for name, _, _ in HEALTH_PROBES) | {
+              "registered-origin-header", "unrelated-origin-header"
+          }
+          MIMES = frozenset(("image/png", "image/jpeg", "text/xml", "application/xml",
+                             "text/html", "application/octet-stream"))
+          STAGES = frozenset(("complete", "dns-failure", "connect-failure",
+                              "tls-certificate-failure", "tls-handshake-failure",
+                              "request-failure", "http-read-failure", "internal-failure"))
+
+
+          class NoReconnectHTTPConnection(http.client.HTTPConnection):
+              def connect(self):
+                  # The sole permitted socket is the verified TLS socket assigned below.
+                  # HTTPConnection must never reconnect itself with a plain TCP socket.
+                  raise RuntimeError("implicit-connection-forbidden")
+
+
+          def image_magic(body):
+              if body.startswith(b"\x89PNG\r\n\x1a\n"):
+                  return "png"
+              if body.startswith(b"\xff\xd8\xff"):
+                  return "jpeg"
+              return "other"
+
+
+          def tile_image(body, status, mime):
+              """Validate a 256px PNG in memory before authorizing a negative control.
+
+              The documented Base .png route must produce a structurally valid PNG with
+              matching MIME. JPEG magic is still reported, but never triggers extra calls.
+              This checks framing/data integrity, not decoded visual map correctness.
+              """
+              if status != 200 or mime != "image/png" or image_magic(body) != "png":
+                  return False
+              if len(body) > LIMIT:
+                  return False
+              try:
+                  pos, compressed, ended, seen_header = 8, bytearray(), False, False
+                  expected_bytes = None
+                  while pos + 12 <= len(body):
+                      size = struct.unpack(">I", body[pos:pos + 4])[0]
+                      tag = body[pos + 4:pos + 8]
+                      if size > LIMIT or pos + 12 + size > len(body):
+                          return False
+                      data = body[pos + 8:pos + 8 + size]
+                      crc = struct.unpack(">I", body[pos + 8 + size:pos + 12 + size])[0]
+                      if binascii.crc32(tag + data) & 0xffffffff != crc:
+                          return False
+                      if pos == 8:
+                          if tag != b"IHDR" or size != 13:
+                              return False
+                          width, height, depth, color, compression, filtering, interlace = struct.unpack(">IIBBBBB", data)
+                          if (width, height) != (256, 256):
+                              return False
+                          channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(color)
+                          allowed_depths = {0: (1, 2, 4, 8, 16), 2: (8, 16),
+                                            3: (1, 2, 4, 8), 4: (8, 16), 6: (8, 16)}
+                          if channels is None or depth not in allowed_depths[color]:
+                              return False
+                          # Interlaced PNGs are not validated by this conservative parser.
+                          if (compression, filtering, interlace) != (0, 0, 0):
+                              return False
+                          expected_bytes = height * (1 + (width * channels * depth + 7) // 8)
+                          seen_header = True
+                      elif tag == b"IHDR":
+                          return False
+                      if tag == b"IDAT":
+                          compressed.extend(data)
+                      pos += 12 + size
+                      if tag == b"IEND":
+                          ended = size == 0 and pos == len(body)
+                          break
+                  if not (seen_header and ended and compressed and expected_bytes):
+                      return False
+                  decoder = zlib.decompressobj()
+                  pixels = decoder.decompress(bytes(compressed), LIMIT + 1)
+                  if not (decoder.eof and not decoder.unconsumed_tail and not decoder.unused_data):
+                      return False
+                  if len(pixels) != expected_bytes:
+                      return False
+                  stride = expected_bytes // 256
+                  return all(pixels[offset] <= 4 for offset in range(0, expected_bytes, stride))
+              except Exception:
+                  return False
+
+
+          def safe_mime(value):
+              mime = value.partition(";")[0].strip().lower() if isinstance(value, str) else ""
+              return mime if mime in MIMES else "other"
+
+
+          def fetch(host, path, referer=None):
+              """Do exactly one direct HTTPS request; never print or return raw material.
+
+              Request body bytes are used only for bounded image validation. Exceptions,
+              status reason phrases, URLs, arbitrary headers and bodies are discarded.
+              """
+              result = {"stage": "internal-failure", "tls_hostname_verified": False,
+                        "status": 0, "mime": "other", "magic": "other", "valid_tile": False}
+              raw_socket = tls_socket = connection = response = None
+              try:
+                  try:
+                      raw_socket = socket.create_connection((host, 443), timeout=TIMEOUT)
+                  except socket.gaierror:
+                      result["stage"] = "dns-failure"
+                      return result
+                  except Exception:
+                      result["stage"] = "connect-failure"
+                      return result
+                  try:
+                      context = ssl.create_default_context()
+                      # Both checks are explicit even though create_default_context enables them.
+                      context.check_hostname = True
+                      context.verify_mode = ssl.CERT_REQUIRED
+                      tls_socket = context.wrap_socket(raw_socket, server_hostname=host)
+                      result["tls_hostname_verified"] = True
+                  except ssl.SSLCertVerificationError:
+                      result["stage"] = "tls-certificate-failure"
+                      return result
+                  except Exception:
+                      result["stage"] = "tls-handshake-failure"
+                      return result
+                  try:
+                      # HTTPConnection writes only to our already verified TLS socket.
+                      # It has no environment-proxy behavior and no redirect following.
+                      connection = NoReconnectHTTPConnection(host, timeout=TIMEOUT)
+                      connection.set_debuglevel(0)
+                      connection.sock = tls_socket
+                      headers = {"Accept": "image/png,image/jpeg", "Connection": "close",
+                                 "User-Agent": "birdmap-readonly-vworld-probe/2.0"}
+                      if referer is not None:
+                          headers["Referer"] = referer
+                      connection.request("GET", path, headers=headers)
+                      response = connection.getresponse()
+                  except Exception:
+                      result["stage"] = "request-failure"
+                      return result
+                  try:
+                      status = response.status
+                      result["status"] = status if type(status) is int and 100 <= status <= 599 else 0
+                      result["mime"] = safe_mime(response.getheader("Content-Type", ""))
+                      body = response.read(LIMIT + 1)
+                      result["magic"] = image_magic(body)
+                      result["valid_tile"] = tile_image(body, result["status"], result["mime"])
+                      result["stage"] = "complete"
+                  except Exception:
+                      result["stage"] = "http-read-failure"
+                  return result
+              finally:
+                  # Even close() exceptions must never escape with request-bearing text.
+                  for resource in (response, connection, tls_socket, raw_socket):
+                      if resource is not None:
+                          try:
+                              resource.close()
+                          except Exception:
+                              pass
+
+
+          def emit_result(probe, result):
+              """One audited stdout sink: construct all fields from finite allowlists."""
+              if probe not in PROBES:
+                  probe = "invalid-probe"
+              stage = result.get("stage")
+              if stage not in STAGES:
+                  stage = "internal-failure"
+              status = result.get("status")
+              status = status if type(status) is int and 100 <= status <= 599 else 0
+              mime = result.get("mime")
+              mime = mime if mime in MIMES else "other"
+              magic = result.get("magic")
+              magic = magic if magic in ("png", "jpeg") else "other"
+              print(json.dumps({"record": "transport", "probe": probe, "stage": stage,
+                                "tls_hostname_verified": result.get("tls_hostname_verified") is True}, sort_keys=True))
+              print(json.dumps({"record": "response", "probe": probe, "status": status,
+                                "mime": mime, "magic": magic}, sort_keys=True))
+
+
+          def main():
+              key = os.environ.pop("VWORLD_API_KEY", "")
+              proxy_present = any(bool(os.environ.get(name)) for name in (
+                  "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"))
+              print(json.dumps({"record": "configuration", "configured_proxy_present": proxy_present,
+                                "configured_proxy_used": False, "redirect_following": False}, sort_keys=True))
+              health = {}
+              for probe, host, path in HEALTH_PROBES:
+                  result = fetch(host, path)
+                  health[probe] = result
+                  emit_result(probe, result)
+              valid_key = bool(key) and len(key) <= 512 and not any(char.isspace() for char in key)
+              api_tls = health["api-root"]["tls_hostname_verified"]
+              outcome, control = "missing-or-invalid-secret", "not-executed"
+              if valid_key and not api_tls:
+                  outcome = "api-tls-unavailable-secret-skipped"
+              elif valid_key:
+                  path = "/req/wmts/1.0.0/" + urllib.parse.quote(key, safe="") + "/Base/8/100/218.png"
+                  result = fetch(API_HOST, path, REGISTERED_ORIGIN)
+                  emit_result("registered-origin-header", result)
+                  outcome = "valid-base-png-observed" if result["valid_tile"] else "no-valid-base-png"
+                  if result["valid_tile"]:
+                      negative = fetch(API_HOST, path, NEGATIVE_PAGE)
+                      emit_result("unrelated-origin-header", negative)
+                      if negative["valid_tile"]:
+                          control = "image-observed"
+                      elif negative["stage"] == "complete":
+                          control = "nonimage-http-observed"
+                      else:
+                          control = "transport-inconclusive"
+                  key, path = "", ""
+              print(json.dumps({"record": "summary", "outcome": outcome, "negative_control": control,
+                                "domain_restriction_verified": False, "actual_pages_browser_auth": "not-executed",
+                                "pixel_rendering": "not-executed", "deployment": "not-executed"}, sort_keys=True))
+              return 0 if outcome == "valid-base-png-observed" and control == "nonimage-http-observed" else 1
+
+
+          if __name__ == "__main__":
+              try:
+                  exit_code = main()
+              except BaseException:
+                  # Never let a traceback expose a request path or exception payload.
+                  print('{"record":"summary","outcome":"internal-failure-details-suppressed"}')
+                  exit_code = 1
+              sys.exit(exit_code)

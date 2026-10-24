@@ -1,0 +1,30 @@
+# Reviewed, manual trial only. This file does not deploy anything by itself.
+# Same NEW Worker as wrangler.toml; never use this to overwrite another service.
+name = "birdmap-vworld-tiles"
+main = "src/trial-worker.mjs"
+compatibility_date = "2026-10-22"
+workers_dev = true
+preview_urls = false
+
+[vars]
+TILES_ENABLED = "false"
+# Exact UTC ISO timestamps; empty/invalid/expired or >10-minute window fails closed.
+TRIAL_STARTS_AT = ""
+TRIAL_EXPIRES_AT = ""
+
+[secrets]
+required = ["VWORLD_API_KEY", "TRIAL_ACCESS_TOKEN"]
+
+# Account-wide collision check is mandatory. Location-local approximate counters.
+[[ratelimits]]
+name = "CLIENT_TILE_LIMITER"
+namespace_id = "196440"
+simple = { limit = 20, period = 60 }
+
+[[ratelimits]]
+name = "GLOBAL_TILE_LIMITER"
+namespace_id = "196441"
+simple = { limit = 40, period = 60 }
+
+[observability]
+enabled = false
