@@ -5,7 +5,7 @@ const BYTE_LIMIT = 2 * 1024 * 1024;
 const TIMEOUT_MS = 8000;
 const PNG_MAGIC = [137, 80, 78, 71, 13, 10, 26, 10];
 
-function reply(status, body, png = false) {
+function reply(status, body, png = false, diagnostic = {}) {
   return new Response(body, { status, headers: {
     'Content-Type': png ? 'image/png' : 'text/plain; charset=utf-8',
     'Cache-Control': 'no-store',
@@ -14,7 +14,8 @@ function reply(status, body, png = false) {
     'Access-Control-Allow-Origin': ORIGIN,
     'Vary': 'Origin, Referer',
     'X-Content-Type-Options': 'nosniff',
-    'Referrer-Policy': 'no-referrer'
+    'Referrer-Policy': 'no-referrer',
+    ...diagnostic
   }});
 }
 
@@ -116,10 +117,12 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
   } catch { return reply(503, 'tiles_unavailable'); }
 
   const abort = new AbortController();
-  let timer, reader;
+  // Failure class for the 502 diagnostic header; fixed vocabulary only.
+  let timer, reader, failure = 'network';
   try {
     const timeout = new Promise((_, reject) => {
       timer = setTimeout(() => {
+        failure = 'timeout';
         abort.abort();
         if (reader) void reader.cancel().catch(() => {});
         reject(Error('upstream_timeout'));
@@ -135,18 +138,23 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
       );
       // Do not impersonate the Pages Referer/Origin. Server-call authorization
       // and actual Cloudflare egress must be verified after deployment approval.
-      if (upstream.status !== 200 || upstream.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() !== 'image/png') {
+      const type = upstream.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() ?? '';
+      if (upstream.status !== 200 || type !== 'image/png') {
+        failure = upstream.status !== 200 ? 'http-' + (/^[1-5]\d\d$/.test(String(upstream.status)) ? upstream.status : 'other')
+          : /xml/.test(type) ? 'xml-exception' : 'not-png-type';
         if (upstream.body) void upstream.body.cancel().catch(() => {});
         throw Error('upstream_rejected');
       }
+      failure = 'body';
       const bytes = await boundedBody(upstream, value => { reader = value; });
+      failure = 'png';
       if (!validPng(bytes)) throw Error('invalid_png');
       return reply(200, bytes, true);
     })();
     return await Promise.race([operation, timeout]);
   } catch {
-    // Never log/return upstream URL, arbitrary exceptions, bodies or headers.
-    return reply(502, 'tiles_unavailable');
+    // Never log/return upstream URL, arbitrary exceptions, bodies or headers: only the fixed failure class.
+    return reply(502, 'tiles_unavailable', false, { 'X-Tile-Upstream': failure });
   } finally {
     clearTimeout(timer);
     abort.abort();
