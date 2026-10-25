@@ -98,26 +98,20 @@ async function boundedBody(response, onReader) {
   return bytes;
 }
 
-export async function handleRequest(request, env, testDependencies = {}, upstreamAllowed = () => true) {
-  if (request.method !== 'GET') return reply(405, 'method_not_allowed');
-  let tile;
-  try { tile = tileAt(new URL(request.url)); } catch { /* Finite response below. */ }
-  if (!tile) return reply(404, 'tile_not_available');
-  if (!allowedSource(request.headers)) return reply(403, 'source_not_allowed');
-  if (env.TILES_ENABLED !== 'true') return reply(503, 'tiles_unavailable');
-  const key = env.VWORLD_API_KEY;
-  if (typeof key !== 'string' || !/^[A-Za-z0-9._~-]{8,256}$/.test(key)) return reply(503, 'tiles_unavailable');
-  const ip = request.headers.get('CF-Connecting-IP');
-  if (!ip || !/^[a-fA-F0-9:.]{3,45}$/.test(ip)) return reply(403, 'source_not_allowed');
-  try {
-    // Fail closed if bindings are missing or unavailable. These location-local
-    // counters cannot enforce the provider's exact account-wide daily quota.
-    if ((await env.CLIENT_TILE_LIMITER.limit({ key: ip })).success !== true) return reply(429, 'tile_rate_limited');
-    if ((await env.GLOBAL_TILE_LIMITER.limit({ key: 'birdmap-vworld-base' })).success !== true) return reply(429, 'tile_rate_limited');
-  } catch { return reply(503, 'tiles_unavailable'); }
+// Fixed vocabulary of upstream failure classes for the 502 diagnostic header. A relay's own class is carried through
+// once with a 'relay-' prefix; anything else from an upstream is reduced to its HTTP status.
+const FAILURE = /^(http-(\d{3}|other)|xml-exception|not-png-type|network|timeout|body|png)$/;
+// The Seoul relay (AWS Lambda function URL) that calls VWorld, which refuses Cloudflare egress.
+const RELAY = /^https:\/\/[a-z0-9]{20,64}\.lambda-url\.ap-northeast-2\.on\.aws$/;
+const RELAY_SECRET = /^[A-Za-z0-9_-]{32,256}$/;
+const KEY = /^[A-Za-z0-9._~-]{8,256}$/;
+export const vworldTileUrl = (key, tile) => 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/' + tile.z + '/' + tile.y + '/' + tile.x + '.png';
 
+// One fixed GET with a deadline, a size bound and a strict PNG check, shared by this Worker and the Seoul relay
+// Lambda. Resolves to { bytes } or { failure } (fixed vocabulary). Never throws, never retries. The request is
+// started synchronously, before the first await.
+export async function fetchTile(url, headers, testDependencies = {}) {
   const abort = new AbortController();
-  // Failure class for the 502 diagnostic header; fixed vocabulary only.
   let timer, reader, failure = 'network';
   try {
     const timeout = new Promise((_, reject) => {
@@ -129,18 +123,12 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
       }, testDependencies.timeoutMs ?? TIMEOUT_MS);
     });
     const operation = (async () => {
-      // Synchronous final policy check: no await between the fresh trial clock
-      // and starting fetch, after both asynchronous native limiters settle.
-      if (upstreamAllowed() !== true) return reply(503, 'tiles_unavailable');
-      const upstream = await (testDependencies.fetch ?? globalThis.fetch)(
-        'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/' + tile.z + '/' + tile.y + '/' + tile.x + '.png',
-        { method: 'GET', redirect: 'manual', cache: 'no-store', signal: abort.signal, headers: { Accept: 'image/png' } }
-      );
-      // Do not impersonate the Pages Referer/Origin. Server-call authorization
-      // and actual Cloudflare egress must be verified after deployment approval.
+      const upstream = await (testDependencies.fetch ?? globalThis.fetch)(url, { method: 'GET', redirect: 'manual', cache: 'no-store', signal: abort.signal, headers });
+      // Do not impersonate the Pages Referer/Origin.
       const type = upstream.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() ?? '';
       if (upstream.status !== 200 || type !== 'image/png') {
-        failure = upstream.status !== 200 ? 'http-' + (/^[1-5]\d\d$/.test(String(upstream.status)) ? upstream.status : 'other')
+        const relayed = upstream.headers.get('X-Tile-Upstream') ?? '';
+        failure = upstream.status !== 200 ? (FAILURE.test(relayed) ? 'relay-' + relayed : 'http-' + (/^[1-5]\d\d$/.test(String(upstream.status)) ? upstream.status : 'other'))
           : /xml/.test(type) ? 'xml-exception' : 'not-png-type';
         if (upstream.body) void upstream.body.cancel().catch(() => {});
         throw Error('upstream_rejected');
@@ -149,17 +137,53 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
       const bytes = await boundedBody(upstream, value => { reader = value; });
       failure = 'png';
       if (!validPng(bytes)) throw Error('invalid_png');
-      return reply(200, bytes, true);
+      return { bytes };
     })();
     return await Promise.race([operation, timeout]);
   } catch {
-    // Never log/return upstream URL, arbitrary exceptions, bodies or headers: only the fixed failure class.
-    return reply(502, 'tiles_unavailable', false, { 'X-Tile-Upstream': failure });
+    // Never log/return the URL, arbitrary exceptions, bodies or headers: only the fixed failure class.
+    return { failure };
   } finally {
     clearTimeout(timer);
     abort.abort();
     if (reader) void reader.cancel().catch(() => {});
   }
+}
+
+export async function handleRequest(request, env, testDependencies = {}, upstreamAllowed = () => true) {
+  if (request.method !== 'GET') return reply(405, 'method_not_allowed');
+  let tile;
+  try { tile = tileAt(new URL(request.url)); } catch { /* Finite response below. */ }
+  if (!tile) return reply(404, 'tile_not_available');
+  if (!allowedSource(request.headers)) return reply(403, 'source_not_allowed');
+  if (env.TILES_ENABLED !== 'true') return reply(503, 'tiles_unavailable');
+  // With RELAY_URL the tile comes from the Seoul relay and this Worker holds no VWorld key. Without it the original
+  // direct call remains, used only by the retired trial Worker.
+  let url, headers;
+  if (env.RELAY_URL !== undefined) {
+    const relay = env.RELAY_URL, secret = env.RELAY_SHARED_SECRET;
+    if (typeof relay !== 'string' || !RELAY.test(relay) || typeof secret !== 'string' || !RELAY_SECRET.test(secret)) return reply(503, 'tiles_unavailable');
+    url = relay + '/tiles/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
+    headers = { Accept: 'image/png', 'X-Relay-Auth': secret };
+  } else {
+    const key = env.VWORLD_API_KEY;
+    if (typeof key !== 'string' || !KEY.test(key)) return reply(503, 'tiles_unavailable');
+    url = vworldTileUrl(key, tile);
+    headers = { Accept: 'image/png' };
+  }
+  const ip = request.headers.get('CF-Connecting-IP');
+  if (!ip || !/^[a-fA-F0-9:.]{3,45}$/.test(ip)) return reply(403, 'source_not_allowed');
+  try {
+    // Fail closed if bindings are missing or unavailable. These location-local
+    // counters cannot enforce the provider's exact account-wide daily quota.
+    if ((await env.CLIENT_TILE_LIMITER.limit({ key: ip })).success !== true) return reply(429, 'tile_rate_limited');
+    if ((await env.GLOBAL_TILE_LIMITER.limit({ key: 'birdmap-vworld-base' })).success !== true) return reply(429, 'tile_rate_limited');
+  } catch { return reply(503, 'tiles_unavailable'); }
+  // Synchronous final policy check: no await between the fresh trial clock and starting fetch (fetchTile starts it
+  // synchronously), after both asynchronous native limiters settle.
+  if (upstreamAllowed() !== true) return reply(503, 'tiles_unavailable');
+  const result = await fetchTile(url, headers, testDependencies);
+  return result.bytes ? reply(200, result.bytes, true) : reply(502, 'tiles_unavailable', false, { 'X-Tile-Upstream': result.failure });
 }
 
 export default { fetch(request, env) { return handleRequest(request, env); } };
