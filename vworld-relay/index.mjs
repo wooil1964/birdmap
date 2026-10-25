@@ -1,26 +1,24 @@
 // Seoul relay: AWS Lambda function URL in ap-northeast-2 between the birdmap-vworld-tiles Worker and VWorld, which
-// refuses Cloudflare egress but accepts Korean cloud addresses. It alone holds the VWorld key. It answers only requests
-// carrying the Worker's shared secret, only for in-bounds Base tiles, only with a validated PNG. No logging, no retry.
+// refuses Cloudflare egress but accepts Korean cloud addresses. It alone holds the VWorld key. Its function URL uses auth
+// type AWS_IAM, so unsigned or wrongly signed requests are rejected before this code runs (and are not invocations);
+// here only the dedicated invoker user passes, only for in-bounds Base tiles, only with a validated PNG. No logging.
 // Package: this file and ../vworld-tiles/src/worker.mjs at the same relative paths; handler vworld-relay/index.handler.
-import { createHash, timingSafeEqual } from 'node:crypto';
 import { tileAt, fetchTile, vworldTileUrl } from '../vworld-tiles/src/worker.mjs';
 
 const KEY = /^[A-Za-z0-9._~-]{8,256}$/;
-const SECRET = /^[A-Za-z0-9_-]{32,256}$/;
+const INVOKER = /^arn:aws:iam::\d{12}:user\/[A-Za-z0-9+=,.@_-]{1,64}$/;
 // Inside the Worker's 8 s deadline; the function timeout is 10 s.
 const UPSTREAM_TIMEOUT_MS = 6000;
 const HEADERS = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
-const digest = value => createHash('sha256').update(value).digest();
-// Equal-length digests: the comparison time does not depend on where a guess differs.
-const sameSecret = (given, expected) => typeof given === 'string' && timingSafeEqual(digest(given), digest(expected));
 const text = (statusCode, body, extra = {}) => ({ statusCode, headers: { 'Content-Type': 'text/plain; charset=utf-8', ...HEADERS, ...extra }, body });
 
 export async function relay(event, env, testDependencies = {}) {
-  const key = env.VWORLD_API_KEY, secret = env.RELAY_SHARED_SECRET;
-  if (typeof key !== 'string' || !KEY.test(key) || typeof secret !== 'string' || !SECRET.test(secret)) return text(503, 'relay_unavailable');
+  const key = env.VWORLD_API_KEY, invoker = env.RELAY_INVOKER_ARN;
+  if (typeof key !== 'string' || !KEY.test(key) || typeof invoker !== 'string' || !INVOKER.test(invoker)) return text(503, 'relay_unavailable');
   if (event?.requestContext?.http?.method !== 'GET') return text(405, 'method_not_allowed');
-  // Authenticate before looking at the path, so an unauthenticated caller learns nothing about valid tiles.
-  if (!sameSecret(event.headers?.['x-relay-auth'], secret)) return text(403, 'relay_auth_required');
+  // IAM already authenticated the signature; also require the dedicated invoker (not any other account principal),
+  // before looking at the path.
+  if (event?.requestContext?.authorizer?.iam?.userArn !== invoker) return text(403, 'relay_caller_not_allowed');
   let tile = null;
   try { if (!event.rawQueryString) tile = tileAt(new URL('https://relay.invalid' + event.rawPath)); } catch { /* 404 below */ }
   if (!tile) return text(404, 'tile_not_available');

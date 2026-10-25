@@ -101,11 +101,31 @@ async function boundedBody(response, onReader) {
 // Fixed vocabulary of upstream failure classes for the 502 diagnostic header. A relay's own class is carried through
 // once with a 'relay-' prefix; anything else from an upstream is reduced to its HTTP status.
 const FAILURE = /^(http-(\d{3}|other)|xml-exception|not-png-type|network|timeout|body|png)$/;
-// The Seoul relay (AWS Lambda function URL) that calls VWorld, which refuses Cloudflare egress.
+// The Seoul relay (AWS Lambda function URL, auth type AWS_IAM) that calls VWorld, which refuses Cloudflare egress.
+// Requests are SigV4-signed with a key allowed to invoke only that function URL; unsigned calls never reach it.
 const RELAY = /^https:\/\/[a-z0-9]{20,64}\.lambda-url\.ap-northeast-2\.on\.aws$/;
-const RELAY_SECRET = /^[A-Za-z0-9_-]{32,256}$/;
+const ACCESS_KEY_ID = /^AKIA[A-Z0-9]{16}$/;
+const SECRET_ACCESS_KEY = /^[A-Za-z0-9/+]{40}$/;
 const KEY = /^[A-Za-z0-9._~-]{8,256}$/;
 export const vworldTileUrl = (key, tile) => 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/' + tile.z + '/' + tile.y + '/' + tile.x + '.png';
+
+const utf8 = new TextEncoder();
+const hex = bytes => [...new Uint8Array(bytes)].map(b => b.toString(16).padStart(2, '0')).join('');
+const sha256Hex = async text => hex(await crypto.subtle.digest('SHA-256', utf8.encode(text)));
+const hmac = async (key, text) => crypto.subtle.sign('HMAC',
+  await crypto.subtle.importKey('raw', typeof key === 'string' ? utf8.encode(key) : key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), utf8.encode(text));
+// AWS Signature Version 4 for one GET without query string or body (checked against AWS's get-vanilla test vector).
+// Relay paths are 'tiles', digits and '*.png', so single and double URI encoding of the path coincide.
+export async function sigv4(url, { accessKeyId, secretAccessKey, region, service }, now = new Date()) {
+  const u = new URL(url);
+  const amzDate = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''), day = amzDate.slice(0, 8);
+  const scope = day + '/' + region + '/' + service + '/aws4_request';
+  const canonical = ['GET', u.pathname, '', 'host:' + u.host, 'x-amz-date:' + amzDate, '', 'host;x-amz-date', await sha256Hex('')].join('\n');
+  const toSign = ['AWS4-HMAC-SHA256', amzDate, scope, await sha256Hex(canonical)].join('\n');
+  let key = await hmac('AWS4' + secretAccessKey, day);
+  for (const part of [region, service, 'aws4_request']) key = await hmac(key, part);
+  return { 'X-Amz-Date': amzDate, Authorization: 'AWS4-HMAC-SHA256 Credential=' + accessKeyId + '/' + scope + ', SignedHeaders=host;x-amz-date, Signature=' + hex(await hmac(key, toSign)) };
+}
 
 // One fixed GET with a deadline, a size bound and a strict PNG check, shared by this Worker and the Seoul relay
 // Lambda. Resolves to { bytes } or { failure } (fixed vocabulary). Never throws, never retries. The request is
@@ -159,17 +179,17 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
   if (env.TILES_ENABLED !== 'true') return reply(503, 'tiles_unavailable');
   // With RELAY_URL the tile comes from the Seoul relay and this Worker holds no VWorld key. Without it the original
   // direct call remains, used only by the retired trial Worker.
-  let url, headers;
+  let url, headers = { Accept: 'image/png' }, signing = null;
   if (env.RELAY_URL !== undefined) {
-    const relay = env.RELAY_URL, secret = env.RELAY_SHARED_SECRET;
-    if (typeof relay !== 'string' || !RELAY.test(relay) || typeof secret !== 'string' || !RELAY_SECRET.test(secret)) return reply(503, 'tiles_unavailable');
+    const relay = env.RELAY_URL, accessKeyId = env.RELAY_ACCESS_KEY_ID, secretAccessKey = env.RELAY_SECRET_ACCESS_KEY;
+    if (typeof relay !== 'string' || !RELAY.test(relay) || typeof accessKeyId !== 'string' || !ACCESS_KEY_ID.test(accessKeyId)
+      || typeof secretAccessKey !== 'string' || !SECRET_ACCESS_KEY.test(secretAccessKey)) return reply(503, 'tiles_unavailable');
     url = relay + '/tiles/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
-    headers = { Accept: 'image/png', 'X-Relay-Auth': secret };
+    signing = { accessKeyId, secretAccessKey, region: 'ap-northeast-2', service: 'lambda' };
   } else {
     const key = env.VWORLD_API_KEY;
     if (typeof key !== 'string' || !KEY.test(key)) return reply(503, 'tiles_unavailable');
     url = vworldTileUrl(key, tile);
-    headers = { Accept: 'image/png' };
   }
   const ip = request.headers.get('CF-Connecting-IP');
   if (!ip || !/^[a-fA-F0-9:.]{3,45}$/.test(ip)) return reply(403, 'source_not_allowed');
@@ -179,6 +199,9 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
     if ((await env.CLIENT_TILE_LIMITER.limit({ key: ip })).success !== true) return reply(429, 'tile_rate_limited');
     if ((await env.GLOBAL_TILE_LIMITER.limit({ key: 'birdmap-vworld-base' })).success !== true) return reply(429, 'tile_rate_limited');
   } catch { return reply(503, 'tiles_unavailable'); }
+  if (signing) {
+    try { headers = { ...headers, ...(await sigv4(url, signing, testDependencies.now?.())) }; } catch { return reply(503, 'tiles_unavailable'); }
+  }
   // Synchronous final policy check: no await between the fresh trial clock and starting fetch (fetchTile starts it
   // synchronously), after both asynchronous native limiters settle.
   if (upstreamAllowed() !== true) return reply(503, 'tiles_unavailable');
