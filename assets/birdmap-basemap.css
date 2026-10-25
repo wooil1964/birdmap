@@ -13,7 +13,8 @@
   font: 12px/1.35 Arial, 'Malgun Gothic', sans-serif;
   pointer-events: auto;
 }
-.birdmap-basemap__choices { display: flex; gap: 2px; }
+/* Four choices (일반, 위성, 하이브리드, OSM) in a 2x2 grid keep 44px targets within the existing width. */
+.birdmap-basemap__choices { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
 .birdmap-basemap .birdmap-basemap__choice,
 .birdmap-basemap .birdmap-basemap__retry {
   box-sizing: border-box;
@@ -29,7 +30,7 @@
   cursor: pointer;
   box-shadow: none;
 }
-.birdmap-basemap__choice { flex: 1 1 0; }
+.birdmap-basemap__choice { min-width: 0; white-space: nowrap; }
 .birdmap-basemap .birdmap-basemap__choice[aria-pressed='true'] { background: #235a49; color: #fff; }
 .birdmap-basemap button:focus-visible { outline: 3px solid #b66d0b; outline-offset: 2px; }
 .birdmap-basemap__status { padding: 4px 5px 2px; overflow-wrap: anywhere; font-size: 11px; }

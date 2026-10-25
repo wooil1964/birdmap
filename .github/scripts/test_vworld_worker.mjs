@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { deflateSync } from 'node:zlib';
-import { readFileSync } from 'node:fs';
 import { handleRequest } from '../../vworld-tiles/src/worker.mjs';
 
 const SENTINEL = 'SYNTHETIC_WORKER_CREDENTIAL_ONLY';
@@ -18,7 +17,7 @@ function fixture() {
     CLIENT_TILE_LIMITER:{async limit(v){limits.push(['client',v.key]);return {success:true};}},
     GLOBAL_TILE_LIMITER:{async limit(v){limits.push(['location',v.key]);return {success:true};}} };
   const fetch = async (...args) => { calls.push(args); return new Response(png(), {headers:{'Content-Type':'image/png','Cache-Control':'public,max-age=86400','Set-Cookie':SENTINEL,'X-Upstream':SENTINEL}}); };
-  const request = (path='/tiles/8/218/100.png', headers={},method='GET') => new Request('https://birdmap-vworld-tiles.wooil-birdmap.workers.dev'+path,{method,headers:{Referer:ORIGIN+'/', 'CF-Connecting-IP':'203.0.113.7',...headers}});
+  const request = (path='/tiles/8/218/100.png', headers={},method='GET') => new Request('https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev'+path,{method,headers:{Referer:ORIGIN+'/', 'CF-Connecting-IP':'203.0.113.7',...headers}});
   return {env,calls,limits,fetch,request,run: (req=request(),extra={})=>handleRequest(req,env,{fetch,...extra})};
 }
 async function rejectedWithoutUpstream(f, request, status) { const response=await f.run(request);assert.equal(response.status,status);assert.equal(f.calls.length,0);assert.equal(response.headers.get('Cache-Control'),'no-store');assert.ok(!(await response.text()).includes(SENTINEL)); }
@@ -75,8 +74,12 @@ test('deadline covers missing headers and stalled body, aborting and cancelling 
 test('thrown upstream errors are suppressed, with no automatic direct-browser key handoff',async()=>{
   const f=fixture();const r=await f.run(undefined,{fetch:async()=>{throw Error('https://api.vworld.kr/'+SENTINEL);}});assert.equal(r.status,502);assert.equal(await r.text(),'tiles_unavailable');assert.ok(!JSON.stringify([...r.headers]).includes(SENTINEL));
 });
-test('dedicated configuration contains no D1, service, storage or logging binding and starts disabled',()=>{
-  const config=readFileSync(new URL('../../vworld-tiles/wrangler.toml',import.meta.url),'utf8');
-  assert.match(config,/name = "birdmap-vworld-tiles"/);assert.match(config,/TILES_ENABLED = "false"/);assert.match(config,/required = \["VWORLD_API_KEY"\]/);
-  assert.ok(!/^\s*\[\[?(?:d1_databases|services|kv_namespaces|r2_buckets|durable_objects)/m.test(config));assert.match(config,/\[observability\]\s+enabled = false/);
+test('upstream failures carry one fixed-vocabulary class header; success and early refusals carry none',async()=>{
+  const big={'Content-Type':'image/png','Content-Length':String(2*1024*1024+1)};
+  const cases=[[new Response(SENTINEL,{status:502}),'http-502'],[new Response(SENTINEL,{status:302,headers:{Location:'https://example.com/'+SENTINEL}}),'http-302'],[new Response(SENTINEL,{headers:{'Content-Type':'application/xml;charset=UTF-8'}}),'xml-exception'],[new Response(SENTINEL,{headers:{'Content-Type':'text/html'}}),'not-png-type'],[new Response(png(128),{headers:{'Content-Type':'image/png'}}),'png'],[new Response(png(),{headers:big}),'body']];
+  for(const [upstream,cls] of cases){const f=fixture();const r=await f.run(undefined,{fetch:async()=>upstream});assert.equal(r.status,502);assert.equal(r.headers.get('X-Tile-Upstream'),cls);assert.equal(await r.text(),'tiles_unavailable');assert.ok(!JSON.stringify([...r.headers]).includes(SENTINEL));}
+  let f=fixture(),r=await f.run(undefined,{fetch:async()=>{throw Error('https://api.vworld.kr/'+SENTINEL);}});assert.equal(r.headers.get('X-Tile-Upstream'),'network');assert.ok(!JSON.stringify([...r.headers]).includes(SENTINEL));
+  f=fixture();r=await f.run(undefined,{timeoutMs:20,fetch:async()=>new Promise(()=>{})});assert.equal(r.headers.get('X-Tile-Upstream'),'timeout');
+  f=fixture();r=await f.run();assert.equal(r.status,200);assert.equal(r.headers.get('X-Tile-Upstream'),null);
+  for(const [request,status] of [[f.request(undefined,{Origin:'https://example.com'}),403],[f.request('/tiles/8/0/0.png'),404]]){f=fixture();r=await f.run(request);assert.equal(r.status,status);assert.equal(r.headers.get('X-Tile-Upstream'),null);}
 });

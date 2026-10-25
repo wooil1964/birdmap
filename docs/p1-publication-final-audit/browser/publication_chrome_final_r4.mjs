@@ -114,7 +114,7 @@ class CDP{
    if(m.method==='Fetch.requestPaused'){
     const u=new URL(m.params.request.url),method=m.params.request.method;
     let allowed=method==='GET'&&(u.origin===origin||allowedCDN.includes(u.hostname));
-    if(u.hostname.endsWith('workers.dev')){network.operatingRequests++;allowed=false;}
+    if(u.hostname.endsWith('workers.dev')){if(method==='GET'&&u.hostname==='birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev'&&u.pathname.startsWith('/tiles/'))network.basemapTileRequestsBlocked=(network.basemapTileRequestsBlocked||0)+1;else network.operatingRequests++;allowed=false;}
     if(method!=='GET'&&u.origin!==origin)network.externalNonGet++;
     if(allowed){u.origin===origin?network.allowedLocal++:network.allowedDependencyGet++;if(dependencyDelayMs&&u.origin!==origin)await new Promise(r=>setTimeout(r,dependencyDelayMs));await this.send('Fetch.continueRequest',{requestId:m.params.requestId},sessionId).catch(()=>{});}
     else{network.blockedOther++;await this.send('Fetch.failRequest',{requestId:m.params.requestId,errorReason:'BlockedByClient'},sessionId).catch(()=>{});}
