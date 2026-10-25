@@ -32,7 +32,8 @@ Worker는 SigV4로 서명한다. 서명 구현은 AWS get-vanilla 시험 벡터�
 
 ## 응답
 
-- 범위 안 타일: 검증된 256×256 PNG(base64)
+- 레이어(VWorld WMTS 가이드, 모두 줌 6~19): Base PNG `/tiles/{z}/{x}/{y}.png`(또는 `/tiles/base/…`), Satellite JPEG `/tiles/satellite/{z}/{x}/{y}.jpeg`, Hybrid 투명 PNG 오버레이 `/tiles/hybrid/{z}/{x}/{y}.png`. 확장자와 레이어가 맞지 않으면 404.
+- 범위 안 타일: 검증된 256×256 PNG 또는 JPEG(SOI·256×256 프레임·EOI)(base64)
 - 그 외: 고정 문구 403/404/405/503
 - VWorld 실패: 502 + `X-Tile-Upstream` 고정 분류. Worker는 이 분류를 `relay-` 접두어로 전달한다.
 

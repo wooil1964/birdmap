@@ -68,6 +68,7 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
   const api = window.BirdmapBasemap.mount(args);
   return { api, window, args, map, osm, created, controls, timers, values, storageWrites, last: () => created.at(-1),
     expire() { const [id, { fn }] = timers.entries().next().value; timers.delete(id); fn(); },
+    expireLast() { const [id, { fn }] = [...timers.entries()].at(-1); timers.delete(id); fn(); },
     state: () => JSON.parse(JSON.stringify(api.getState())) };
 }
 
@@ -185,4 +186,56 @@ test('Worker config fails closed for an empty/unapproved endpoint or implicit br
     {vworldMode:'worker',vworldTileEndpoint:'https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev.evil.invalid/tiles'}]){
     const e=environment({config});assert.equal(e.state().active,'osm');assert.equal(e.state().reason,'no_config');assert.equal(e.created.length,0);e.api.destroy();
   }
+});
+
+test('Satellite, Hybrid and OSM choices: overlay-only fallback, independent locks, camera untouched', () => {
+  const endpoint = 'https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev/tiles';
+  const e = environment({ config: { vworldMode: 'worker', vworldTileEndpoint: endpoint } });
+  const camera = () => ({ ...e.map.center, zoom: e.map.zoom }), start = camera();
+  const root = e.controls[0].container, buttons = root.children[0].children, status = () => root.children[1].textContent, retry = root.children[2];
+  assert.deepEqual(buttons.map(b => [b.textContent, b.attrs['aria-label'], b.attrs['aria-pressed']]),
+    [['일반', '브이월드 일반지도 선택', 'true'], ['위성', '브이월드 위성영상 선택', 'false'], ['하이브리드', '브이월드 하이브리드 선택', 'false'], ['OSM', 'OSM 지도 선택', 'false']]);
+  buttons[1].click();
+  const satellite = e.last();
+  assert.deepEqual([e.state().active, satellite._url, e.map.layers.size, buttons[1].attrs['aria-pressed']], ['satellite', endpoint + '/satellite/{z}/{x}/{y}.jpeg', 1, 'true']);
+  satellite.fire('load'); assert.equal(status(), '위성영상 표시 중');
+  const count = e.created.length; buttons[2].click();
+  const overlay = e.last();
+  assert.equal(e.created.length, count + 1, 'Hybrid reuses the loaded satellite layer and adds only the overlay');
+  assert.deepEqual([overlay._url, overlay.options.zIndex, e.map.layers.size, e.state().active], [endpoint + '/hybrid/{z}/{x}/{y}.png', 2, 2, 'hybrid']);
+  assert.ok(e.map.hasLayer(satellite) && e.map.hasLayer(overlay) && !e.map.hasLayer(e.osm));
+  overlay.fire('tileerror'); overlay.fire('tileerror'); assert.equal(e.state().active, 'hybrid'); overlay.fire('tileerror');
+  assert.deepEqual([e.state().active, e.state().overlay, e.state().overlayLocked, e.state().preference], ['satellite', 'failed', true, 'hybrid']);
+  assert.ok(e.map.hasLayer(satellite) && !e.map.hasLayer(overlay) && !e.map.hasLayer(e.osm), 'overlay failure keeps the satellite imagery, not OSM');
+  assert.equal(status(), '도로·지명 표시를 불러오지 못해 위성영상만 보여요'); assert.equal(retry.hidden, false);
+  e.api.setPreference('satellite'); e.api.setPreference('hybrid'); assert.equal(e.created.length, count + 1, 'a failed overlay is not retried by reselecting');
+  e.api.setPreference('hybrid', { retry: true }); assert.equal(e.created.length, count + 2); assert.equal(e.state().active, 'hybrid'); assert.ok(e.map.hasLayer(satellite));
+  const overlay2 = e.last(); overlay2.fire('loading'); overlay2.fire('tileerror'); overlay2.fire('load'); assert.equal(e.state().active, 'satellite', 'a fully failed overlay batch drops the overlay');
+  e.api.setPreference('vworld'); assert.deepEqual([e.state().active, e.last()._url, e.map.layers.size], ['vworld', endpoint + '/{z}/{x}/{y}.png', 1]);
+  e.api.setPreference('hybrid', { retry: true }); const sat2 = e.created.at(-2), ov3 = e.last();
+  assert.deepEqual([sat2._url.endsWith('.jpeg'), ov3._url.endsWith('/hybrid/{z}/{x}/{y}.png'), e.map.layers.size], [true, true, 2]);
+  sat2.fire('tileerror'); sat2.fire('tileerror'); sat2.fire('tileerror');
+  assert.deepEqual([e.state().active, e.state().reason, e.state().locked, e.map.layers.size, e.map.hasLayer(e.osm)], ['osm', 'tile_error', true, 1, true], 'failed satellite imagery falls back to OSM and drops the overlay');
+  const n = e.created.length; e.api.setPreference('satellite'); assert.equal(e.created.length, n, 'satellite stays locked');
+  e.api.setPreference('vworld'); assert.equal(e.state().active, 'vworld', 'the Base lock is independent'); assert.equal(e.created.length, n + 1);
+  e.api.setPreference('osm'); assert.deepEqual([e.state().active, e.map.layers.size, e.map.hasLayer(e.osm)], ['osm', 1, true]);
+  assert.deepEqual(camera(), start, 'switching map types never moves the camera');
+  assert.ok(e.storageWrites.every(([, value]) => ['vworld', 'satellite', 'hybrid', 'osm'].includes(value)));
+  e.api.destroy(); assert.equal(e.map.layers.size, 1); assert.equal(e.timers.size, 0);
+});
+test('Hybrid overlay timeout keeps satellite; satellite timeout falls back to OSM; saved choices and direct URLs', () => {
+  const endpoint = 'https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev/tiles';
+  const h = environment({ stored: 'hybrid', config: { vworldMode: 'worker', vworldTileEndpoint: endpoint } });
+  assert.deepEqual([h.state().active, h.map.layers.size, h.timers.size], ['hybrid', 2, 2]);
+  h.created[0].fire('load'); h.expireLast();
+  assert.deepEqual([h.state().active, h.state().overlay, h.map.layers.size], ['satellite', 'failed', 1]);
+  assert.equal(h.timers.size, 0, 'no deadline left once the base batch loaded and the overlay was dropped'); h.api.destroy();
+  const t = environment({ stored: 'hybrid', config: { vworldMode: 'worker', vworldTileEndpoint: endpoint } });
+  t.expire(); assert.deepEqual([t.state().active, t.state().reason, t.map.layers.size, t.timers.size], ['osm', 'tile_timeout', 1, 0]); t.api.destroy();
+  for (const [stored, active] of [['satellite', 'satellite'], ['hybrid', 'hybrid'], ['vworld', 'vworld'], ['osm', 'osm'], ['gray', 'vworld'], ['Satellite', 'vworld']]) {
+    const s = environment({ stored, config: { vworldMode: 'worker', vworldTileEndpoint: endpoint } }); assert.equal(s.state().active, active, stored); s.api.destroy();
+  }
+  const d = environment({ stored: 'hybrid', key: 'LOCAL_SIMULATION_CREDENTIAL_C' });
+  assert.deepEqual(d.created.map(l => l._url), ['https://api.vworld.kr/req/wmts/1.0.0/LOCAL_SIMULATION_CREDENTIAL_C/Satellite/{z}/{y}/{x}.jpeg', 'https://api.vworld.kr/req/wmts/1.0.0/LOCAL_SIMULATION_CREDENTIAL_C/Hybrid/{z}/{y}/{x}.png']);
+  assert.ok(!JSON.stringify(d.state()).includes('LOCAL_SIMULATION_CREDENTIAL_C')); d.api.destroy();
 });

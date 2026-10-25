@@ -1,5 +1,6 @@
-/* Birdmap base-map selector. Worker mode keeps the upstream key off the browser.
- * Explicit direct mode exposes its key in Leaflet and browser request URLs. */
+/* Birdmap base-map selector: VWorld Base (default), Satellite, Hybrid (Satellite + road/label overlay) and OSM.
+ * Worker mode keeps the upstream key off the browser. Explicit direct mode exposes its key in Leaflet and browser
+ * request URLs. */
 (function (global) {
   'use strict';
 
@@ -7,6 +8,20 @@
   var TILE_BATCH_TIMEOUT_MS = 12000;
   var MAX_TILE_ERRORS = 3;
   var instances = new WeakMap();
+  // 'vworld' is the Base map (the original value, kept for saved preferences).
+  var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
+  var PRIMARY = { vworld: 'base', satellite: 'satellite', hybrid: 'satellite' };
+  var TEMPLATES = {
+    base: ['/{z}/{x}/{y}.png', 'Base/{z}/{y}/{x}.png'],
+    satellite: ['/satellite/{z}/{x}/{y}.jpeg', 'Satellite/{z}/{y}/{x}.jpeg'],
+    overlay: ['/hybrid/{z}/{x}/{y}.png', 'Hybrid/{z}/{y}/{x}.png']
+  };
+  var LABELS = {
+    vworld: ['일반', '브이월드 일반지도 선택'],
+    satellite: ['위성', '브이월드 위성영상 선택'],
+    hybrid: ['하이브리드', '브이월드 하이브리드 선택'],
+    osm: ['OSM', 'OSM 지도 선택']
+  };
 
   function cleanKey(value) {
     return typeof value === 'string' ? value.trim() : '';
@@ -22,7 +37,7 @@
   function savedPreference() {
     try {
       var value = global.localStorage.getItem(STORAGE_KEY);
-      if (value === 'osm' || value === 'vworld') return value;
+      if (CHOICES.indexOf(value) >= 0) return value;
     } catch (_) { /* Maps remain usable when browser storage is unavailable. */ }
     return 'vworld';
   }
@@ -64,7 +79,16 @@
     var generation = 0;
     var deadline = null;
     var vworld = null;
+    var vworldKind = '';
     var tileHandlers = null;
+    // The Hybrid overlay fails on its own: losing it keeps the satellite imagery instead of falling back to OSM.
+    var overlay = null;
+    var overlayHandlers = null;
+    var overlayDeadline = null;
+    var overlayState = 'off';
+    var overlayErrors = 0;
+    var overlayBatchSuccesses = 0;
+    var overlayBatchErrors = 0;
     var ui = null;
     var control = L.control({ position: 'topright' });
 
@@ -72,25 +96,36 @@
       return map.getZoom() >= 6 && domesticBounds.contains(map.getCenter());
     }
 
-    function locked() {
-      return !!configId() && failedKeys.has(configId());
-    }
-
     function configId() {
       return mode === 'direct' && key ? 'direct:' + key : mode === 'worker' && endpoint ? 'worker:' + endpoint : '';
+    }
+
+    function lockId(kind) {
+      return configId() ? configId() + '|' + kind : '';
+    }
+
+    function locked() {
+      return preference !== 'osm' && !!lockId(PRIMARY[preference]) && failedKeys.has(lockId(PRIMARY[preference]));
+    }
+
+    function overlayLocked() {
+      return preference === 'hybrid' && !!lockId('overlay') && failedKeys.has(lockId('overlay'));
     }
 
     function getState() {
       return {
         preference: preference,
         active: active,
+        overlay: overlayState,
         transport: mode,
         reason: reason,
         eligible: eligible(),
         loading: loading,
         errors: errors,
+        overlayErrors: overlayErrors,
         locked: locked(),
-        canRetry: !destroyed && preference === 'vworld' && locked() && eligible(),
+        overlayLocked: overlayLocked(),
+        canRetry: !destroyed && preference !== 'osm' && (locked() || overlayLocked()) && eligible(),
         deadlinePending: deadline !== null,
         batchTimeoutMs: TILE_BATCH_TIMEOUT_MS,
         zoom: map.getZoom(),
@@ -105,18 +140,20 @@
       if (reason === 'tile_timeout') return '지도 응답이 늦어 OSM으로 전환했어요';
       if (reason === 'tile_error') return '지도를 불러오지 못해 OSM으로 전환했어요';
       if (reason === 'partial_error') return '일부 지도를 불러오지 못했어요 · OSM을 선택할 수 있어요';
+      if (preference === 'hybrid' && active === 'satellite') return '도로·지명 표시를 불러오지 못해 위성영상만 보여요';
       if (active === 'vworld') return loading ? '브이월드 지도를 불러오는 중…' : '브이월드 표시 중';
+      if (active === 'satellite') return loading ? '위성영상을 불러오는 중…' : '위성영상 표시 중';
+      if (active === 'hybrid') return loading ? '하이브리드 지도를 불러오는 중…' : '하이브리드 표시 중';
       return 'OSM 표시 중';
     }
 
     function render() {
       if (!ui) return;
-      ui.vworld.setAttribute('aria-pressed', String(preference === 'vworld'));
-      ui.osm.setAttribute('aria-pressed', String(preference === 'osm'));
+      CHOICES.forEach(function (choice) { ui.buttons[choice].setAttribute('aria-pressed', String(preference === choice)); });
       ui.container.setAttribute('data-active-provider', active);
       ui.container.setAttribute('data-preference', preference);
       ui.status.textContent = statusText();
-      ui.retry.hidden = !(preference === 'vworld' && locked());
+      ui.retry.hidden = !(preference !== 'osm' && (locked() || overlayLocked()));
       ui.retry.disabled = !eligible();
     }
 
@@ -127,16 +164,42 @@
       }
     }
 
+    function clearOverlayDeadline() {
+      if (overlayDeadline !== null) {
+        global.clearTimeout(overlayDeadline);
+        overlayDeadline = null;
+      }
+    }
+
     function current(token, layer) {
-      return !destroyed && token === generation && active === 'vworld' && layer === vworld;
+      return !destroyed && token === generation && active !== 'osm' && layer === vworld;
+    }
+
+    function overlayCurrent(token, layer) {
+      return !destroyed && token === generation && layer === overlay;
+    }
+
+    function detachOverlay() {
+      clearOverlayDeadline();
+      var previous = overlay;
+      var handlers = overlayHandlers;
+      overlay = null;
+      overlayHandlers = null;
+      overlayState = 'off';
+      if (previous) {
+        if (handlers) previous.off(handlers);
+        if (map.hasLayer(previous)) map.removeLayer(previous);
+      }
     }
 
     function detachVworld() {
       generation++;
       clearDeadline();
+      detachOverlay();
       var previous = vworld;
       var handlers = tileHandlers;
       vworld = null;
+      vworldKind = '';
       tileHandlers = null;
       loading = false;
       active = 'osm';
@@ -160,8 +223,17 @@
       if (!current(token, layer)) return;
       // Remember failed credentials only in memory. Changing views or providers
       // cannot create an automatic retry loop for the same key in this session.
-      failedKeys.set(configId(), nextReason);
+      failedKeys.set(lockId(vworldKind), nextReason);
       showOsm(nextReason);
+    }
+
+    function failOverlay(token, layer) {
+      if (!overlayCurrent(token, layer)) return;
+      failedKeys.set(lockId('overlay'), 'overlay_error');
+      detachOverlay();
+      overlayState = 'failed';
+      if (active === 'hybrid') active = 'satellite';
+      render();
     }
 
     function armDeadline(token, layer) {
@@ -174,8 +246,101 @@
       deadline = timer;
     }
 
+    function armOverlayDeadline(token, layer) {
+      clearOverlayDeadline();
+      var timer = global.setTimeout(function () {
+        if (!overlayCurrent(token, layer) || overlayDeadline !== timer) return;
+        overlayDeadline = null;
+        failOverlay(token, layer);
+      }, TILE_BATCH_TIMEOUT_MS);
+      overlayDeadline = timer;
+    }
+
+    function template(kind) {
+      // Leaflet necessarily holds its request URL while a layer exists.
+      // No credential, request URL, or error event is exposed by this API.
+      return mode === 'worker' ? endpoint + TEMPLATES[kind][0]
+        : 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/' + TEMPLATES[kind][1];
+    }
+
+    function tileOptions() {
+      return {
+        minZoom: 6,
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        tms: false,
+        detectRetina: false,
+        noWrap: true,
+        // Wide domestic views can include neighboring tiles. Do not request
+        // tiles the dedicated relay intentionally rejects outside its bounds.
+        bounds: mode === 'worker' ? domesticBounds : undefined,
+        attribution: '&copy; <a href="https://www.vworld.kr/">VWorld</a> / 국토교통부'
+      };
+    }
+
+    function showOverlay() {
+      var token = generation;
+      var layer;
+      overlayErrors = 0;
+      overlayBatchSuccesses = 0;
+      overlayBatchErrors = 0;
+      overlayState = 'loading';
+      try {
+        var opts = tileOptions();
+        opts.zIndex = 2;
+        layer = L.tileLayer(template('overlay'), opts);
+        overlay = layer;
+        overlayHandlers = {
+          tileerror: function () {
+            if (!overlayCurrent(token, layer)) return;
+            overlayErrors++;
+            overlayBatchErrors++;
+            if (overlayErrors >= MAX_TILE_ERRORS) failOverlay(token, layer);
+          },
+          tileload: function () {
+            if (!overlayCurrent(token, layer)) return;
+            overlayBatchSuccesses++;
+          },
+          loading: function () {
+            if (!overlayCurrent(token, layer)) return;
+            overlayBatchSuccesses = 0;
+            overlayBatchErrors = 0;
+            overlayState = 'loading';
+            armOverlayDeadline(token, layer);
+          },
+          load: function () {
+            if (!overlayCurrent(token, layer)) return;
+            if (overlayBatchErrors > 0 && overlayBatchSuccesses === 0) {
+              failOverlay(token, layer);
+              return;
+            }
+            clearOverlayDeadline();
+            overlayState = 'ready';
+            render();
+          }
+        };
+        layer.on(overlayHandlers);
+        armOverlayDeadline(token, layer);
+        layer.addTo(map);
+      } catch (_) {
+        // Deliberately discard exception details: they can contain a tile URL.
+        failedKeys.set(lockId('overlay'), 'overlay_error');
+        if (overlayCurrent(token, layer)) failOverlay(token, layer);
+        else { overlayState = 'failed'; if (active === 'hybrid') active = 'satellite'; }
+      }
+    }
+
     function showVworld() {
-      if (vworld && active === 'vworld') return;
+      var kind = PRIMARY[preference];
+      var wantOverlay = preference === 'hybrid' && !overlayLocked();
+      if (vworld && active !== 'osm' && vworldKind === kind) {
+        // Same imagery (Satellite <-> Hybrid): keep the loaded layer and only add or drop the overlay.
+        if (wantOverlay && !overlay) showOverlay();
+        if (!wantOverlay && overlay) detachOverlay();
+        active = preference === 'hybrid' && overlay ? 'hybrid' : preference === 'hybrid' ? 'satellite' : preference;
+        render();
+        return;
+      }
       detachVworld();
       var token = generation;
       var layer;
@@ -185,24 +350,10 @@
       loading = true;
       reason = 'loading';
       try {
-        // Leaflet necessarily holds its request URL while this layer exists.
-        // No credential, request URL, or error event is exposed by this API.
-        var template = mode === 'worker' ? endpoint + '/{z}/{x}/{y}.png'
-          : 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/{z}/{y}/{x}.png';
-        layer = L.tileLayer(template, {
-          minZoom: 6,
-          maxZoom: 19,
-          maxNativeZoom: 19,
-          tms: false,
-          detectRetina: false,
-          noWrap: true,
-          // Wide domestic views can include neighboring tiles. Do not request
-          // tiles the dedicated relay intentionally rejects outside its bounds.
-          bounds: mode === 'worker' ? domesticBounds : undefined,
-          attribution: '&copy; <a href="https://www.vworld.kr/">VWorld</a> / 국토교통부'
-        });
+        layer = L.tileLayer(template(kind), tileOptions());
         vworld = layer;
-        active = 'vworld';
+        vworldKind = kind;
+        active = preference === 'hybrid' ? (wantOverlay ? 'hybrid' : 'satellite') : preference;
         tileHandlers = {
           tileerror: function () {
             if (!current(token, layer)) return;
@@ -242,11 +393,12 @@
         armDeadline(token, layer);
         render();
         layer.addTo(map);
+        if (wantOverlay && current(token, layer)) showOverlay();
       } catch (_) {
         // Deliberately discard exception details: they can contain a tile URL.
         if (current(token, layer)) fail('tile_error', token, layer);
         else {
-          failedKeys.set(configId(), 'tile_error');
+          failedKeys.set(lockId(kind), 'tile_error');
           showOsm('tile_error');
         }
       }
@@ -258,18 +410,21 @@
       if (!configId()) return showOsm('no_config');
       if (map.getZoom() < 6) return showOsm('zoom_out');
       if (!domesticBounds.contains(map.getCenter())) return showOsm('outside_view');
-      if (locked()) return showOsm(failedKeys.get(configId()));
+      if (locked()) return showOsm(failedKeys.get(lockId(PRIMARY[preference])));
       showVworld();
       render();
     }
 
     function setPreference(provider, action) {
-      if (destroyed || (provider !== 'osm' && provider !== 'vworld')) return false;
+      if (destroyed || CHOICES.indexOf(provider) < 0) return false;
       preference = provider;
       savePreference(provider);
-      // Only an explicit retry action unlocks a failed key. Merely selecting
-      // VWorld again, panning, or zooming never sends another failed request.
-      if (provider === 'vworld' && action && action.retry === true && configId()) failedKeys.delete(configId());
+      // Only an explicit retry action unlocks a failed layer. Merely selecting
+      // it again, panning, or zooming never sends another failed request.
+      if (provider !== 'osm' && action && action.retry === true && configId()) {
+        failedKeys.delete(lockId(PRIMARY[provider]));
+        if (provider === 'hybrid') failedKeys.delete(lockId('overlay'));
+      }
       reconcile();
       return true;
     }
@@ -290,9 +445,9 @@
     }
 
     function stopKeyPropagation(event) { event.stopPropagation(); }
-    function chooseVworld() { setPreference('vworld'); }
-    function chooseOsm() { setPreference('osm'); }
-    function retryVworld() { setPreference('vworld', { retry: true }); }
+    var choose = {};
+    CHOICES.forEach(function (choice) { choose[choice] = function () { setPreference(choice); }; });
+    function retryVworld() { setPreference(preference === 'osm' ? 'vworld' : preference, { retry: true }); }
 
     control.onAdd = function () {
       var container = document.createElement('div');
@@ -301,18 +456,17 @@
       container.setAttribute('aria-label', '바탕지도');
       var choices = document.createElement('div');
       choices.className = 'birdmap-basemap__choices';
-      var vworldButton = document.createElement('button');
-      vworldButton.type = 'button';
-      vworldButton.className = 'birdmap-basemap__choice';
-      vworldButton.textContent = '브이월드';
-      vworldButton.setAttribute('aria-label', '브이월드 지도 선택');
-      var osmButton = document.createElement('button');
-      osmButton.type = 'button';
-      osmButton.className = 'birdmap-basemap__choice';
-      osmButton.textContent = 'OSM';
-      osmButton.setAttribute('aria-label', 'OSM 지도 선택');
-      choices.appendChild(vworldButton);
-      choices.appendChild(osmButton);
+      var buttons = {};
+      CHOICES.forEach(function (choice) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'birdmap-basemap__choice';
+        button.textContent = LABELS[choice][0];
+        button.setAttribute('aria-label', LABELS[choice][1]);
+        button.addEventListener('click', choose[choice]);
+        choices.appendChild(button);
+        buttons[choice] = button;
+      });
       var status = document.createElement('div');
       status.className = 'birdmap-basemap__status';
       status.setAttribute('role', 'status');
@@ -327,13 +481,11 @@
       container.appendChild(choices);
       container.appendChild(status);
       container.appendChild(retry);
-      vworldButton.addEventListener('click', chooseVworld);
-      osmButton.addEventListener('click', chooseOsm);
       retry.addEventListener('click', retryVworld);
       container.addEventListener('keydown', stopKeyPropagation);
       L.DomEvent.disableClickPropagation(container);
       L.DomEvent.disableScrollPropagation(container);
-      ui = { container: container, vworld: vworldButton, osm: osmButton, status: status, retry: retry };
+      ui = { container: container, buttons: buttons, status: status, retry: retry };
       render();
       return container;
     };
@@ -346,8 +498,7 @@
       if (!map.hasLayer(osm)) osm.addTo(map);
       reason = 'destroyed';
       if (ui) {
-        ui.vworld.removeEventListener('click', chooseVworld);
-        ui.osm.removeEventListener('click', chooseOsm);
+        CHOICES.forEach(function (choice) { ui.buttons[choice].removeEventListener('click', choose[choice]); });
         ui.retry.removeEventListener('click', retryVworld);
         ui.container.removeEventListener('keydown', stopKeyPropagation);
       }

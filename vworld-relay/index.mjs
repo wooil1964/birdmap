@@ -1,9 +1,10 @@
 // Seoul relay: AWS Lambda function URL in ap-northeast-2 between the birdmap-vworld-tiles Worker and VWorld, which
 // refuses Cloudflare egress but accepts Korean cloud addresses. It alone holds the VWorld key. Its function URL uses auth
 // type AWS_IAM, so unsigned or wrongly signed requests are rejected before this code runs (and are not invocations);
-// here only the dedicated invoker user passes, only for in-bounds Base tiles, only with a validated PNG. No logging.
+// here only the dedicated invoker user passes, only for in-bounds Base/Satellite/Hybrid tiles, only with a validated
+// PNG or JPEG. No logging.
 // Package: this file and ../vworld-tiles/src/worker.mjs at the same relative paths; handler vworld-relay/index.handler.
-import { tileAt, fetchTile, vworldTileUrl } from '../vworld-tiles/src/worker.mjs';
+import { tileAt, fetchTile, vworldTileUrl, LAYERS } from '../vworld-tiles/src/worker.mjs';
 
 const KEY = /^[A-Za-z0-9._~-]{8,256}$/;
 const INVOKER = /^arn:aws:iam::\d{12}:user\/[A-Za-z0-9+=,.@_-]{1,64}$/;
@@ -22,9 +23,10 @@ export async function relay(event, env, testDependencies = {}) {
   let tile = null;
   try { if (!event.rawQueryString) tile = tileAt(new URL('https://relay.invalid' + event.rawPath)); } catch { /* 404 below */ }
   if (!tile) return text(404, 'tile_not_available');
-  const result = await fetchTile(vworldTileUrl(key, tile), { Accept: 'image/png' }, { timeoutMs: UPSTREAM_TIMEOUT_MS, ...testDependencies });
+  const layer = LAYERS[tile.layer];
+  const result = await fetchTile(vworldTileUrl(key, tile), { Accept: layer.type }, { timeoutMs: UPSTREAM_TIMEOUT_MS, ...testDependencies }, layer.ext);
   if (!result.bytes) return text(502, 'tiles_unavailable', { 'X-Tile-Upstream': result.failure });
-  return { statusCode: 200, headers: { 'Content-Type': 'image/png', ...HEADERS }, body: Buffer.from(result.bytes).toString('base64'), isBase64Encoded: true };
+  return { statusCode: 200, headers: { 'Content-Type': layer.type, ...HEADERS }, body: Buffer.from(result.bytes).toString('base64'), isBase64Encoded: true };
 }
 
 export const handler = event => relay(event, process.env);

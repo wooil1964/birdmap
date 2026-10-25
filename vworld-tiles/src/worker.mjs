@@ -5,9 +5,9 @@ const BYTE_LIMIT = 2 * 1024 * 1024;
 const TIMEOUT_MS = 8000;
 const PNG_MAGIC = [137, 80, 78, 71, 13, 10, 26, 10];
 
-function reply(status, body, png = false, diagnostic = {}) {
+function reply(status, body, type = null, diagnostic = {}) {
   return new Response(body, { status, headers: {
-    'Content-Type': png ? 'image/png' : 'text/plain; charset=utf-8',
+    'Content-Type': type ?? 'text/plain; charset=utf-8',
     'Cache-Control': 'no-store',
     'CDN-Cache-Control': 'no-store',
     'Cloudflare-CDN-Cache-Control': 'no-store',
@@ -30,17 +30,27 @@ function allowedSource(headers) {
   return origin === ORIGIN || refOrigin === ORIGIN;
 }
 
+// VWorld WMTS layers served here, all Google-index tiles at zoom 6-19 (VWorld WMTS guide): Base PNG (also the
+// original un-prefixed path), Satellite JPEG and the transparent Hybrid road/label overlay PNG.
+export const LAYERS = Object.freeze({
+  base: Object.freeze({ wmts: 'Base', ext: 'png', type: 'image/png' }),
+  satellite: Object.freeze({ wmts: 'Satellite', ext: 'jpeg', type: 'image/jpeg' }),
+  hybrid: Object.freeze({ wmts: 'Hybrid', ext: 'png', type: 'image/png' })
+});
+
 export function tileAt(url) {
   if (url.search || url.hash) return null;
-  const parts = /^\/tiles\/(\d{1,2})\/(0|[1-9]\d{0,5})\/(0|[1-9]\d{0,5})\.png$/.exec(url.pathname);
+  const parts = /^\/tiles\/(?:(base|satellite|hybrid)\/)?(\d{1,2})\/(0|[1-9]\d{0,5})\/(0|[1-9]\d{0,5})\.(png|jpeg)$/.exec(url.pathname);
   if (!parts) return null;
-  const [z, x, y] = parts.slice(1).map(Number), n = 2 ** z;
-  if (z < 6 || z > 19 || String(z) !== parts[1] || x >= n || y >= n) return null;
+  const layer = parts[1] ?? 'base';
+  if (parts[5] !== LAYERS[layer].ext) return null;
+  const [z, x, y] = parts.slice(2, 5).map(Number), n = 2 ** z;
+  if (z < 6 || z > 19 || String(z) !== parts[2] || x >= n || y >= n) return null;
   const lat = row => Math.atan(Math.sinh(Math.PI * (1 - 2 * row / n))) * 180 / Math.PI;
   // Tile footprints intersect the existing domestic view. Border tiles naturally
   // extend beyond it; this is a request bound, not a geographic coverage claim.
   if ((x + 1) / n * 360 - 180 <= 124.5 || x / n * 360 - 180 >= 132 || lat(y) <= 32.9 || lat(y + 1) >= 38.75) return null;
-  return { z, x, y };
+  return { layer, z, x, y };
 }
 
 function crc32(bytes, start, end) {
@@ -74,6 +84,28 @@ function validPng(bytes) {
   return false;
 }
 
+// A 256x256 JPEG: SOI, a frame header (SOFn) before the first scan, EOI as the last two bytes.
+function validJpeg(bytes) {
+  const n = bytes.length;
+  if (n < 128 || n > BYTE_LIMIT || bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes[n - 2] !== 0xff || bytes[n - 1] !== 0xd9) return false;
+  let pos = 2, frame = false;
+  while (pos + 4 <= n) {
+    if (bytes[pos] !== 0xff) return false;
+    const marker = bytes[pos + 1];
+    if (marker === 0xff) { pos++; continue; }
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd9)) return false;
+    const size = (bytes[pos + 2] << 8) | bytes[pos + 3];
+    if (size < 2 || pos + 2 + size > n) return false;
+    if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+      if (size < 8 || ((bytes[pos + 5] << 8) | bytes[pos + 6]) !== 256 || ((bytes[pos + 7] << 8) | bytes[pos + 8]) !== 256) return false;
+      frame = true;
+    }
+    if (marker === 0xda) return frame;
+    pos += 2 + size;
+  }
+  return false;
+}
+
 async function boundedBody(response, onReader) {
   const declared = response.headers.get('Content-Length');
   if (declared && (!/^\d+$/.test(declared) || Number(declared) > BYTE_LIMIT)) {
@@ -100,14 +132,14 @@ async function boundedBody(response, onReader) {
 
 // Fixed vocabulary of upstream failure classes for the 502 diagnostic header. A relay's own class is carried through
 // once with a 'relay-' prefix; anything else from an upstream is reduced to its HTTP status.
-const FAILURE = /^(http-(\d{3}|other)|xml-exception|not-png-type|network|timeout|body|png)$/;
+const FAILURE = /^(http-(\d{3}|other)|xml-exception|not-png-type|not-jpeg-type|network|timeout|body|png|jpeg)$/;
 // The Seoul relay (AWS Lambda function URL, auth type AWS_IAM) that calls VWorld, which refuses Cloudflare egress.
 // Requests are SigV4-signed with a key allowed to invoke only that function URL; unsigned calls never reach it.
 const RELAY = /^https:\/\/[a-z0-9]{20,64}\.lambda-url\.ap-northeast-2\.on\.aws$/;
 const ACCESS_KEY_ID = /^AKIA[A-Z0-9]{16}$/;
 const SECRET_ACCESS_KEY = /^[A-Za-z0-9/+]{40}$/;
 const KEY = /^[A-Za-z0-9._~-]{8,256}$/;
-export const vworldTileUrl = (key, tile) => 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/Base/' + tile.z + '/' + tile.y + '/' + tile.x + '.png';
+export const vworldTileUrl = (key, tile) => { const l = LAYERS[tile.layer ?? 'base']; return 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/' + l.wmts + '/' + tile.z + '/' + tile.y + '/' + tile.x + '.' + l.ext; };
 
 const utf8 = new TextEncoder();
 const hex = bytes => [...new Uint8Array(bytes)].map(b => b.toString(16).padStart(2, '0')).join('');
@@ -127,10 +159,10 @@ export async function sigv4(url, { accessKeyId, secretAccessKey, region, service
   return { 'X-Amz-Date': amzDate, Authorization: 'AWS4-HMAC-SHA256 Credential=' + accessKeyId + '/' + scope + ', SignedHeaders=host;x-amz-date, Signature=' + hex(await hmac(key, toSign)) };
 }
 
-// One fixed GET with a deadline, a size bound and a strict PNG check, shared by this Worker and the Seoul relay
-// Lambda. Resolves to { bytes } or { failure } (fixed vocabulary). Never throws, never retries. The request is
-// started synchronously, before the first await.
-export async function fetchTile(url, headers, testDependencies = {}) {
+// One fixed GET with a deadline, a size bound and a strict image check (format 'png' or 'jpeg'), shared by this Worker
+// and the Seoul relay Lambda. Resolves to { bytes } or { failure } (fixed vocabulary). Never throws, never retries.
+// The request is started synchronously, before the first await.
+export async function fetchTile(url, headers, testDependencies = {}, format = 'png') {
   const abort = new AbortController();
   let timer, reader, failure = 'network';
   try {
@@ -146,17 +178,17 @@ export async function fetchTile(url, headers, testDependencies = {}) {
       const upstream = await (testDependencies.fetch ?? globalThis.fetch)(url, { method: 'GET', redirect: 'manual', cache: 'no-store', signal: abort.signal, headers });
       // Do not impersonate the Pages Referer/Origin.
       const type = upstream.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() ?? '';
-      if (upstream.status !== 200 || type !== 'image/png') {
+      if (upstream.status !== 200 || type !== 'image/' + format) {
         const relayed = upstream.headers.get('X-Tile-Upstream') ?? '';
         failure = upstream.status !== 200 ? (FAILURE.test(relayed) ? 'relay-' + relayed : 'http-' + (/^[1-5]\d\d$/.test(String(upstream.status)) ? upstream.status : 'other'))
-          : /xml/.test(type) ? 'xml-exception' : 'not-png-type';
+          : /xml/.test(type) ? 'xml-exception' : 'not-' + format + '-type';
         if (upstream.body) void upstream.body.cancel().catch(() => {});
         throw Error('upstream_rejected');
       }
       failure = 'body';
       const bytes = await boundedBody(upstream, value => { reader = value; });
-      failure = 'png';
-      if (!validPng(bytes)) throw Error('invalid_png');
+      failure = format;
+      if (!(format === 'jpeg' ? validJpeg(bytes) : validPng(bytes))) throw Error('invalid_image');
       return { bytes };
     })();
     return await Promise.race([operation, timeout]);
@@ -179,12 +211,13 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
   if (env.TILES_ENABLED !== 'true') return reply(503, 'tiles_unavailable');
   // With RELAY_URL the tile comes from the Seoul relay and this Worker holds no VWorld key. Without it the original
   // direct call remains, used only by the retired trial Worker.
-  let url, headers = { Accept: 'image/png' }, signing = null;
+  const layer = LAYERS[tile.layer];
+  let url, headers = { Accept: layer.type }, signing = null;
   if (env.RELAY_URL !== undefined) {
     const relay = env.RELAY_URL, accessKeyId = env.RELAY_ACCESS_KEY_ID, secretAccessKey = env.RELAY_SECRET_ACCESS_KEY;
     if (typeof relay !== 'string' || !RELAY.test(relay) || typeof accessKeyId !== 'string' || !ACCESS_KEY_ID.test(accessKeyId)
       || typeof secretAccessKey !== 'string' || !SECRET_ACCESS_KEY.test(secretAccessKey)) return reply(503, 'tiles_unavailable');
-    url = relay + '/tiles/' + tile.z + '/' + tile.x + '/' + tile.y + '.png';
+    url = relay + '/tiles/' + tile.layer + '/' + tile.z + '/' + tile.x + '/' + tile.y + '.' + layer.ext;
     signing = { accessKeyId, secretAccessKey, region: 'ap-northeast-2', service: 'lambda' };
   } else {
     const key = env.VWORLD_API_KEY;
@@ -205,8 +238,8 @@ export async function handleRequest(request, env, testDependencies = {}, upstrea
   // Synchronous final policy check: no await between the fresh trial clock and starting fetch (fetchTile starts it
   // synchronously), after both asynchronous native limiters settle.
   if (upstreamAllowed() !== true) return reply(503, 'tiles_unavailable');
-  const result = await fetchTile(url, headers, testDependencies);
-  return result.bytes ? reply(200, result.bytes, true) : reply(502, 'tiles_unavailable', false, { 'X-Tile-Upstream': result.failure });
+  const result = await fetchTile(url, headers, testDependencies, layer.ext);
+  return result.bytes ? reply(200, result.bytes, layer.type) : reply(502, 'tiles_unavailable', null, { 'X-Tile-Upstream': result.failure });
 }
 
 export default { fetch(request, env) { return handleRequest(request, env); } };

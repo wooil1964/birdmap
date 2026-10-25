@@ -97,7 +97,7 @@ function chain({ iamKey = { accessKeyId: AKID, secretAccessKey: SECRET }, caller
 test('chain: a site tile is served through the signed relay; the Worker sends a signature, never the secret key or the VWorld key', async () => {
   const c = chain(), r = await c.run();
   assert.equal(r.status, 200); assert.deepEqual(Buffer.from(await r.arrayBuffer()), png()); assert.equal(r.headers.get('Access-Control-Allow-Origin'), ORIGIN);
-  assert.equal(c.seen.length, 1); assert.equal(c.seen[0].url, RELAY_URL + '/tiles/8/218/100.png'); assert.equal(c.v.calls.length, 1);
+  assert.equal(c.seen.length, 1); assert.equal(c.seen[0].url, RELAY_URL + '/tiles/base/8/218/100.png'); assert.equal(c.v.calls.length, 1);
   assert.deepEqual(Object.keys(c.seen[0].headers).sort(), ['Accept', 'Authorization', 'X-Amz-Date']);
   assert.ok(!JSON.stringify(c.seen).includes(SECRET) && !JSON.stringify([...r.headers]).includes(SECRET));
   const withKey = chain(); const r2 = await withKey.run(undefined, undefined, { ...withKey.env, VWORLD_API_KEY: KEY });
@@ -123,4 +123,49 @@ test('chain: access control and limiters still run first; bad relay configuratio
     const c = chain(); assert.equal((await c.run(undefined, undefined, { ...c.env, ...over })).status, 503, JSON.stringify(over)); assert.equal(c.seen.length, 0);
   }
   const c = chain(); assert.equal((await c.run(undefined, undefined, { ...c.env, GLOBAL_TILE_LIMITER: { limit: async () => ({ success: false }) } })).status, 429); assert.equal(c.seen.length, 0);
+});
+
+// Satellite (JPEG) and Hybrid (transparent PNG overlay) next to Base.
+function jpeg({ width = 256, height = 256, eoi = true, sof = true } = {}) {
+  const seg = (marker, payload) => Buffer.concat([Buffer.from([0xff, marker, (payload.length + 2) >> 8, (payload.length + 2) & 255]), payload]);
+  const frame = Buffer.from([8, height >> 8, height & 255, width >> 8, width & 255, 3, 1, 0x22, 0, 2, 0x11, 1, 3, 0x11, 1]);
+  return Buffer.concat([Buffer.from([0xff, 0xd8]), seg(0xe0, Buffer.from('JFIF\0\x01\x01\0\0\x01\0\x01\0\0', 'latin1')), seg(0xdb, Buffer.alloc(65)),
+    ...(sof ? [seg(0xc0, frame)] : []), seg(0xda, Buffer.from([3, 1, 0, 2, 0x11, 3, 0x11, 0, 0x3f, 0])), Buffer.alloc(200, 0x5a), Buffer.from(eoi ? [0xff, 0xd9] : [0x12, 0x34])]);
+}
+const satelliteOk = () => new Response(jpeg(), { headers: { 'Content-Type': 'image/jpeg' } });
+test('layers: Satellite is JPEG and Hybrid is PNG on the same z/x/y grid as Base; mismatched extensions are refused', async () => {
+  const v = vworld((url) => url.includes('/Satellite/') ? satelliteOk() : new Response(png(), { headers: { 'Content-Type': 'image/png' } }));
+  for (const [path, type, wmts] of [['/tiles/8/218/100.png', 'image/png', 'Base/8/100/218.png'], ['/tiles/base/8/218/100.png', 'image/png', 'Base/8/100/218.png'],
+    ['/tiles/satellite/8/218/100.jpeg', 'image/jpeg', 'Satellite/8/100/218.jpeg'], ['/tiles/hybrid/8/218/100.png', 'image/png', 'Hybrid/8/100/218.png']]) {
+    const r = await relay(event(path), ENV, { fetch: v.fetch });
+    assert.deepEqual([r.statusCode, r.headers['Content-Type']], [200, type], path);
+    assert.equal(v.calls.at(-1)[0], 'https://api.vworld.kr/req/wmts/1.0.0/' + KEY + '/' + wmts); assert.deepEqual(v.calls.at(-1)[1].headers, { Accept: type });
+  }
+  const calls = v.calls.length;
+  for (const path of ['/tiles/satellite/8/218/100.png', '/tiles/hybrid/8/218/100.jpeg', '/tiles/base/8/218/100.jpeg', '/tiles/8/218/100.jpeg', '/tiles/gray/8/218/100.png', '/tiles/Satellite/8/218/100.jpeg', '/tiles/satellite/5/27/12.jpeg', '/tiles/hybrid/8/0/0.png'])
+    assert.equal((await relay(event(path), ENV, { fetch: v.fetch })).statusCode, 404, path);
+  assert.equal(v.calls.length, calls);
+});
+test('Satellite JPEG check: SOI, 256x256 frame before the scan, EOI; anything else is a fixed 502 class', async () => {
+  for (const [response, cls] of [[() => new Response(jpeg({ width: 128 }), { headers: { 'Content-Type': 'image/jpeg' } }), 'jpeg'],
+    [() => new Response(jpeg({ eoi: false }), { headers: { 'Content-Type': 'image/jpeg' } }), 'jpeg'], [() => new Response(jpeg({ sof: false }), { headers: { 'Content-Type': 'image/jpeg' } }), 'jpeg'],
+    [() => new Response(png(), { headers: { 'Content-Type': 'image/jpeg' } }), 'jpeg'], [() => new Response(jpeg(), { headers: { 'Content-Type': 'image/png' } }), 'not-jpeg-type'],
+    [() => new Response('<ExceptionReport/>', { headers: { 'Content-Type': 'application/xml' } }), 'xml-exception']]) {
+    const r = await relay(event('/tiles/satellite/8/218/100.jpeg'), ENV, { fetch: vworld(response).fetch });
+    assert.deepEqual([r.statusCode, r.headers['X-Tile-Upstream']], [502, cls], cls);
+  }
+  const ok = await relay(event('/tiles/satellite/8/218/100.jpeg'), ENV, { fetch: vworld(satelliteOk).fetch });
+  assert.deepEqual([ok.statusCode, Buffer.from(ok.body, 'base64').subarray(0, 3).toString('hex')], [200, 'ffd8ff']);
+  const hybridAsJpeg = await relay(event('/tiles/hybrid/8/218/100.png'), ENV, { fetch: vworld(satelliteOk).fetch });
+  assert.deepEqual([hybridAsJpeg.statusCode, hybridAsJpeg.headers['X-Tile-Upstream']], [502, 'not-png-type']);
+});
+test('chain: Satellite and Hybrid tiles reach the browser through the signed relay with their own type; access control unchanged', async () => {
+  const c = chain({ vworldResponse: url => url.includes('/Satellite/') ? satelliteOk() : new Response(png(), { headers: { 'Content-Type': 'image/png' } }) });
+  const s = await c.run('/tiles/satellite/8/218/100.jpeg'), h = await c.run('/tiles/hybrid/8/218/100.png');
+  assert.deepEqual([s.status, s.headers.get('Content-Type'), h.status, h.headers.get('Content-Type')], [200, 'image/jpeg', 200, 'image/png']);
+  assert.deepEqual(c.seen.map(x => x.url), [RELAY_URL + '/tiles/satellite/8/218/100.jpeg', RELAY_URL + '/tiles/hybrid/8/218/100.png']);
+  assert.deepEqual(c.seen.map(x => x.headers.Accept), ['image/jpeg', 'image/png']);
+  for (const [path, headers, status] of [['/tiles/satellite/8/218/100.jpeg', {}, 403], ['/tiles/hybrid/8/0/0.png', { Referer: ORIGIN + '/' }, 404], ['/tiles/satellite/8/218/100.png', { Referer: ORIGIN + '/' }, 404]]) {
+    const d = chain(); assert.equal((await d.run(path, headers)).status, status, path); assert.equal(d.seen.length, 0);
+  }
 });
