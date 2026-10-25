@@ -5,8 +5,14 @@
   'use strict';
 
   var STORAGE_KEY = 'birdmap.basemap.preference';
+  // A batch with no tile activity for this long falls back to OSM (the timer restarts on every loaded tile and on
+  // tiles Leaflet cancels because the user zoomed).
   var TILE_BATCH_TIMEOUT_MS = 12000;
+  // Per batch: this many failures with no success fails at once; at the batch end, this many failures that
+  // outnumber the successes fail too. Scattered failures across a long session only show a partial notice.
   var MAX_TILE_ERRORS = 3;
+  // Rapid taps between VWorld types: only the choice still selected after this pause requests tiles.
+  var SWITCH_SETTLE_MS = 250;
   var instances = new WeakMap();
   // 'vworld' is the Base map (the original value, kept for saved preferences).
   var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
@@ -78,6 +84,7 @@
     var destroyed = false;
     var generation = 0;
     var deadline = null;
+    var settle = null;
     var vworld = null;
     var vworldKind = '';
     var tileHandlers = null;
@@ -168,6 +175,13 @@
       if (overlayDeadline !== null) {
         global.clearTimeout(overlayDeadline);
         overlayDeadline = null;
+      }
+    }
+
+    function clearSettle() {
+      if (settle !== null) {
+        global.clearTimeout(settle);
+        settle = null;
       }
     }
 
@@ -295,14 +309,19 @@
             if (!overlayCurrent(token, layer)) return;
             overlayErrors++;
             overlayBatchErrors++;
-            if (overlayErrors >= MAX_TILE_ERRORS) failOverlay(token, layer);
+            if (overlayBatchErrors >= MAX_TILE_ERRORS && overlayBatchSuccesses === 0) failOverlay(token, layer);
           },
           tileload: function () {
             if (!overlayCurrent(token, layer)) return;
             overlayBatchSuccesses++;
+            if (overlayDeadline !== null) armOverlayDeadline(token, layer);
+          },
+          tileabort: function () {
+            if (overlayCurrent(token, layer) && overlayDeadline !== null) armOverlayDeadline(token, layer);
           },
           loading: function () {
             if (!overlayCurrent(token, layer)) return;
+            overlayErrors = 0;
             overlayBatchSuccesses = 0;
             overlayBatchErrors = 0;
             overlayState = 'loading';
@@ -310,7 +329,8 @@
           },
           load: function () {
             if (!overlayCurrent(token, layer)) return;
-            if (overlayBatchErrors > 0 && overlayBatchSuccesses === 0) {
+            if ((overlayBatchErrors > 0 && overlayBatchSuccesses === 0)
+              || (overlayBatchErrors >= MAX_TILE_ERRORS && overlayBatchErrors > overlayBatchSuccesses)) {
               failOverlay(token, layer);
               return;
             }
@@ -359,14 +379,20 @@
             if (!current(token, layer)) return;
             errors++;
             batchErrors++;
-            if (errors >= MAX_TILE_ERRORS) fail('tile_error', token, layer);
+            if (batchErrors >= MAX_TILE_ERRORS && batchSuccesses === 0) fail('tile_error', token, layer);
           },
           tileload: function () {
             if (!current(token, layer)) return;
             batchSuccesses++;
+            if (deadline !== null) armDeadline(token, layer);
+          },
+          // Tiles cancelled by the user's own zoom are not an upstream failure: wait from the latest activity.
+          tileabort: function () {
+            if (current(token, layer) && deadline !== null) armDeadline(token, layer);
           },
           loading: function () {
             if (!current(token, layer)) return;
+            errors = 0;
             batchSuccesses = 0;
             batchErrors = 0;
             loading = true;
@@ -377,8 +403,9 @@
           load: function () {
             if (!current(token, layer)) return;
             // Leaflet's load means that a batch finished, even if every tile
-            // failed. A tiny failed batch must not masquerade as a ready map.
-            if (batchErrors > 0 && batchSuccesses === 0) {
+            // failed. A tiny failed batch must not masquerade as a ready map,
+            // and neither may a batch where failures outnumber successes.
+            if ((batchErrors > 0 && batchSuccesses === 0) || (batchErrors >= MAX_TILE_ERRORS && batchErrors > batchSuccesses)) {
               fail('tile_error', token, layer);
               return;
             }
@@ -417,13 +444,21 @@
 
     function setPreference(provider, action) {
       if (destroyed || CHOICES.indexOf(provider) < 0) return false;
+      var retry = !!(action && action.retry === true);
       preference = provider;
       savePreference(provider);
+      clearSettle();
       // Only an explicit retry action unlocks a failed layer. Merely selecting
       // it again, panning, or zooming never sends another failed request.
-      if (provider !== 'osm' && action && action.retry === true && configId()) {
+      if (provider !== 'osm' && retry && configId()) {
         failedKeys.delete(lockId(PRIMARY[provider]));
         if (provider === 'hybrid') failedKeys.delete(lockId('overlay'));
+      }
+      // Switching from one shown VWorld type to another waits for the taps to settle; the shown map stays meanwhile.
+      if (provider !== 'osm' && !retry && vworld) {
+        render();
+        settle = global.setTimeout(function () { settle = null; reconcile(); }, SWITCH_SETTLE_MS);
+        return true;
       }
       reconcile();
       return true;
@@ -493,6 +528,7 @@
     function destroy() {
       if (destroyed) return;
       destroyed = true;
+      clearSettle();
       map.off('zoomend moveend', reconcile);
       detachVworld();
       if (!map.hasLayer(osm)) osm.addTo(map);

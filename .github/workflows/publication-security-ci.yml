@@ -47,6 +47,8 @@ jobs:
           "$chrome" --version
       - name: Front regression with actual Chrome
         run: node --test --test-reporter=tap .github/scripts/test_*.mjs
+      - name: Base-map fast switching and tile faults (Chrome, local tiles only)
+        run: node docs/basemap-fast-switch/faults-chrome.mjs . .ci-results/basemap-faults/result.json ci
       - name: Island search pilot Chrome with synthetic API reads
         env:
           ISLAND_PILOT_OUTPUT: .ci-results/island-pilot
