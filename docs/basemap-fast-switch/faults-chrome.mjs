@@ -165,13 +165,16 @@ const SCENARIOS = [
 
 
 // Layout of the selector at the five checked widths (plus phone landscape): one column, at most 80 px wide, at the left
-// edge, overlapping no other control, plain status hidden. (The recent-report box needs live data: checked separately.)
+// edge, overlapping no other control, plain status hidden. Compact phones additionally start collapsed and must
+// expand into the same four-choice column. (The report rows need live data: checked separately.)
 const LAYOUT = `(function(){function r(el){if(!el)return null;var b=el.getBoundingClientRect(),cs=getComputedStyle(el);if(cs.display==='none'||cs.visibility==='hidden'||!b.width||!b.height)return null;return {x:b.left,y:b.top,w:b.width,h:b.height};}
   function hit(a,b){return a&&b&&Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>0.5&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>0.5;}
   var box=document.querySelector('.birdmap-basemap'),br=r(box),bs=[].map.call(document.querySelectorAll('.birdmap-basemap__choice'),r);
   var others=['#mapTitleBox','#togglePanelBtn','#noticeToggleBtn','#todayToggleBtn','#reportToggleBtn','#recentReportsBox','.leaflet-control-zoom','.leaflet-control-attribution','.leaflet-control-scale'].map(function(s){return [s,r(document.querySelector(s))];}).filter(function(x){return x[1];});
   return {box:br&&{x:Math.round(br.x),y:Math.round(br.y),w:Math.round(br.w),h:Math.round(br.h)},inView:!!br&&br.y>=0&&br.y+br.h<=innerHeight,
     column:bs.length===4&&bs.every(function(b,i){return b&&Math.abs(b.x-bs[0].x)<1&&(i===0||b.y>bs[i-1].y);}),buttonH:bs.map(function(b){return b&&Math.round(b.h);}),
+    collapsed:!!box&&box.classList.contains('birdmap-basemap-collapsed'),visibleChoices:bs.filter(Boolean).length,
+    toggle:r(document.querySelector('.birdmap-basemap-toggle')),expanded:document.querySelector('.birdmap-basemap-toggle')?.getAttribute('aria-expanded'),
     overlaps:others.filter(function(o){return hit(br,o[1]);}).map(function(o){return o[0];}),statusDrawn:!!r(document.querySelector('.birdmap-basemap__status'))&&document.querySelector('.birdmap-basemap__status').getBoundingClientRect().height>2,
     notice:box&&box.getAttribute('data-notice'),reason:birdmapBasemap.getState().reason};})()`;
 const LAYOUT_SIZES = [[320, 568, true], [375, 667, true], [390, 844, true], [768, 1024, true], [1366, 768, false], [640, 360, true]];
@@ -181,6 +184,19 @@ try {
   if (!process.env.FAULTS_ONLY || process.env.FAULTS_ONLY.split(',').includes('layout')) for (const [width, height, touch] of LAYOUT_SIZES) {
     const p = await browser.open({ width, height, mobile: touch, touch, answer: () => ({ status: 200, delay: 40 }) });
     await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); await sleep(600);
+    const initial = await p.evaluate(LAYOUT);
+    if (width <= 700) {
+      const expectedCollapsed = height < 700;
+      const closedOkay = initial.collapsed === expectedCollapsed && initial.expanded === String(!expectedCollapsed)
+        && initial.toggle && initial.toggle.h >= 44 && initial.inView && initial.box.w <= 80 && initial.overlaps.length === 0
+        && (!expectedCollapsed || initial.visibleChoices === 0);
+      results.push({ size: width + 'x' + height, scenario: 'mobile-toggle', ok: closedOkay, final: initial });
+      console.log(`${closedOkay ? 'PASS' : 'FAIL'} ${width}x${height} mobile-toggle -> ${JSON.stringify(initial)}`);
+      if (initial.collapsed) {
+        await p.evaluate("document.querySelector('.birdmap-basemap-toggle').click()");
+        await sleep(100);
+      }
+    }
     const m = await p.evaluate(LAYOUT);
     const informational = false;
     const ok = m.column && m.box.w <= 80 && m.box.x <= 10 && m.overlaps.length === 0 && m.inView && (m.notice === 'true' || !m.statusDrawn) && m.buttonH.every(h => h >= (touch && height > 480 ? 44 : 32));

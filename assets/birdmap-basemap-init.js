@@ -53,7 +53,7 @@
     var recent = document.getElementById('recentReportsBox');
     if (!map || !recent) return;
     var media = global.matchMedia('(max-width:700px)');
-    var activePopup = null, recentClosed = false, recentHeight = null, popupHeight = null;
+    var activePopup = null, recentClosed = media.matches && global.innerHeight < 480, recentHeight = null, popupHeight = null;
     var recentExpanded = false;
 
     function button(text, label, action) {
@@ -215,7 +215,7 @@
       document.body.style.setProperty('--birdmap-recent-offset', offset + 'px');
       if (selector) {
         var top = selector.getBoundingClientRect().top;
-        selector.style.setProperty('--birdmap-map-choices-height', Math.max(44, global.innerHeight - offset - top - 56) + 'px');
+        selector.style.setProperty('--birdmap-map-choices-height', Math.max(44, global.innerHeight - offset - top - 112) + 'px');
       }
     }
     new ResizeObserver(overlayMetrics).observe(recent);
@@ -256,7 +256,8 @@
       toggle.setAttribute('aria-expanded', 'false'); controls.appendChild(toggle);
       controls.appendChild(button('닫기 ×', '탐조지 상세정보 닫기', function () { map.closePopup(popup); }));
       toolbar.appendChild(controls); node.prepend(toolbar);
-      document.body.appendChild(node);
+      // Keep details within the map's native fullscreen subtree, outside transformed Leaflet panes.
+      map.getContainer().appendChild(node);
       setHeight(node, popupHeight || global.innerHeight * .58);
       document.body.classList.add('birdmap-detail-open');
     }

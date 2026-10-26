@@ -106,7 +106,7 @@
   body #noticeBadge { flex-shrink: 0; margin-left: 4px; }
   body .leaflet-top.leaflet-right { margin-top: 0; }
   body .leaflet-control-zoom a, body .leaflet-control-fullscreen a { width: 40px; height: 40px; line-height: 40px; }
-  body .leaflet-control.birdmap-basemap { position: fixed; top: 116px; left: 8px; bottom: auto; margin: 0; width: 86px; padding: 3px; }
+  body .leaflet-control.birdmap-basemap { position: fixed; top: 116px; left: 8px; bottom: auto; margin: 0; width: 80px; padding: 3px; }
   body .birdmap-basemap-toggle { display: block; width: 100%; min-height: 44px; padding: 4px; border: 0; border-radius: 5px; background: white; color: #244e43; font: inherit; }
   body .birdmap-basemap .birdmap-basemap__choice { min-height: 44px; padding: 5px 3px; font-size: 11px; }
   body .birdmap-basemap-collapsed .birdmap-basemap__choices,
@@ -170,8 +170,4 @@
   body .birdmap-mobile-popup .reporterStatsLink { display: inline-flex; align-items: center; }
   body .birdmap-mobile-popup .v24BriefingGrid, body .birdmap-mobile-popup .v24ProfileGrid { grid-template-columns: 1fr; }
   body .birdmap-mobile-popup .siteHistoryItem, body .birdmap-mobile-popup .spotHistoryItem { overflow-wrap: anywhere; }
-}
-@media (max-width: 700px) and (max-height: 560px) {
-  body .leaflet-control.birdmap-basemap { top: 116px; }
-  body .birdmap-basemap:not(.birdmap-basemap-collapsed) .birdmap-basemap__choices { max-height: calc(100dvh - 180px); overflow-y: auto; }
 }

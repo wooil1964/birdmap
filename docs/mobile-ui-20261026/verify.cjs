@@ -84,6 +84,7 @@ async function layout(page){return page.evaluate(()=>{
     await page.getByRole('tab',{name:'최근 제보',exact:true}).click();await page.getByRole('button',{name:'최근 제보 접기',exact:true}).click();
     await page.evaluate(()=>{map_7010a44f6ac2025090f0fe07508ed485.stop();map_7010a44f6ac2025090f0fe07508ed485.setView([36,127],7,{animate:false});});await page.waitForTimeout(250);const zoom=await page.evaluate(()=>map_7010a44f6ac2025090f0fe07508ed485.getZoom());await page.locator('.leaflet-control-zoom-in').click();await page.waitForTimeout(500);
     check(await page.evaluate(()=>map_7010a44f6ac2025090f0fe07508ed485.getZoom())===zoom+1,width+' map zoom works');
+    if(width===390){await page.locator('.leaflet-control-zoom a').last().click();await page.waitForTimeout(500);await page.evaluate(()=>window[siteData[0].markerVar].openPopup());await page.waitForSelector('.birdmap-mobile-popup');check(await page.evaluate(()=>map_7010a44f6ac2025090f0fe07508ed485.getContainer().contains(document.querySelector('.birdmap-mobile-popup'))),'fullscreen details stay inside map subtree');check(await page.locator('.birdmap-mobile-popup').isVisible(),'fullscreen details visible');await page.getByRole('button',{name:'탐조지 상세정보 닫기',exact:true}).click();await page.locator('.leaflet-control-zoom a').last().click();}
     await page.close();console.log('PASS width',width);
   }
   for(const width of [1024,1440]){
