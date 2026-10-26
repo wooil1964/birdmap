@@ -16,6 +16,14 @@
   // A failed type (or the Hybrid overlay) is tried once more by itself after the Worker's 60 s rate-limit window, at
   // most once per type in a session; failing again keeps OSM until the explicit retry.
   var RECOVERY_MS = 60000;
+  // The Worker serves zoom 6-19. Below 6 the z6 tiles are drawn scaled down (Leaflet minNativeZoom), so VWorld shows
+  // from the map's minimum zoom (4) and the Worker never receives a z4/z5 request.
+  var VWORLD_MIN_ZOOM = 4;
+  var NATIVE_MIN_ZOOM = 6;
+  // Zoom bursts (wheel or buttons): when the next zoom starts within this time of the previous one ending, the levels
+  // in between are not requested; the drawn tiles stay (scaled) and the level the map rests at is loaded. A lone zoom
+  // loads at once as before. Pinches keep Leaflet's default: the levels passed through fill the edges as they open up.
+  var ZOOM_SETTLE_MS = 200;
   var instances = new WeakMap();
   // 'vworld' is the Base map (the original value, kept for saved preferences).
   var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
@@ -104,8 +112,19 @@
     var ui = null;
     var control = L.control({ position: 'topright' });
 
+    // VWorld while any of the domestic area is in view; OSM takes over only once the view has left it entirely.
     function eligible() {
-      return map.getZoom() >= 6 && domesticBounds.contains(map.getCenter());
+      return map.getZoom() >= VWORLD_MIN_ZOOM && domesticBounds.intersects(map.getBounds());
+    }
+
+    // OSM underneath fills only what VWorld has no tiles for: around Korea below zoom 6, and beyond the border while
+    // the view's centre is outside the domestic area. It is added once the VWorld batch has loaded, so OSM does not
+    // show through over Korea while VWorld tiles are on their way.
+    function syncBackdrop() {
+      if (active === 'osm') return;
+      var want = map.getZoom() < NATIVE_MIN_ZOOM || !domesticBounds.contains(map.getCenter());
+      if (want && !loading && !map.hasLayer(osm)) osm.addTo(map);
+      if (!want && map.hasLayer(osm)) map.removeLayer(osm);
     }
 
     function configId() {
@@ -138,6 +157,7 @@
         locked: locked(),
         overlayLocked: overlayLocked(),
         canRetry: !destroyed && preference !== 'osm' && (locked() || overlayLocked()) && eligible(),
+        backdrop: active !== 'osm' && map.hasLayer(osm),
         deadlinePending: deadline !== null,
         batchTimeoutMs: TILE_BATCH_TIMEOUT_MS,
         zoom: map.getZoom(),
@@ -305,11 +325,52 @@
         : 'https://api.vworld.kr/req/wmts/1.0.0/' + encodeURIComponent(key) + '/' + TEMPLATES[kind][1];
     }
 
+    // Leaflet 1.9 TileLayer that skips the levels a zoom burst only passes through (see ZOOM_SETTLE_MS). It overrides
+    // the GridLayer zoom handlers only; pans, jumps (setView without animation) and lone zooms load as before.
+    var tileProto = L.TileLayer.prototype;
+    var SettlingTileLayer = L.TileLayer.extend({
+      _animateZoom: function (e) {
+        var lone = !this._zoomRest && Date.now() - (this._zoomEndedAt || 0) > ZOOM_SETTLE_MS;
+        if (lone) return tileProto._animateZoom.call(this, e);
+        this._restAfterZoom();
+        // Only rescale what is drawn: _setView would still load the new level (updateWhenZooming).
+        this._setZoomTransforms(e.center, e.zoom);
+      },
+      _resetView: function (e) {
+        var burst = e && e.type === 'zoom' && !e.pinch;
+        if (burst) this._zoomEndedAt = Date.now();
+        if (!(burst && this._zoomRest)) return tileProto._resetView.call(this, e);
+        this._restAfterZoom();
+        this._setZoomTransforms(this._map.getCenter(), this._map.getZoom());
+      },
+      _onMoveEnd: function () {
+        if (!this._zoomRest) tileProto._onMoveEnd.call(this);
+      },
+      _restAfterZoom: function () {
+        var layer = this;
+        global.clearTimeout(layer._zoomRest);
+        layer._zoomRest = global.setTimeout(function () {
+          // A zoom animation (250 ms) outlasts the pause: wait for it; its end restarts the pause.
+          if (layer._map && layer._map._animatingZoom) return layer._restAfterZoom();
+          layer._zoomRest = null;
+          if (layer._map) tileProto._resetView.call(layer);
+        }, ZOOM_SETTLE_MS);
+      },
+      onRemove: function (target) {
+        global.clearTimeout(this._zoomRest);
+        this._zoomRest = null;
+        return tileProto.onRemove.call(this, target);
+      }
+    });
+
     function tileOptions() {
       return {
-        minZoom: 6,
+        minZoom: VWORLD_MIN_ZOOM,
+        minNativeZoom: NATIVE_MIN_ZOOM,
         maxZoom: 19,
         maxNativeZoom: 19,
+        // Above the OSM layer (1) that fills around Korea when zoomed out.
+        zIndex: 2,
         tms: false,
         detectRetina: false,
         noWrap: true,
@@ -329,8 +390,8 @@
       overlayState = 'loading';
       try {
         var opts = tileOptions();
-        opts.zIndex = 2;
-        layer = L.tileLayer(template('overlay'), opts);
+        opts.zIndex = 3;
+        layer = new SettlingTileLayer(template('overlay'), opts);
         overlay = layer;
         overlayHandlers = {
           tileerror: function () {
@@ -398,7 +459,7 @@
       loading = true;
       reason = 'loading';
       try {
-        layer = L.tileLayer(template(kind), tileOptions());
+        layer = new SettlingTileLayer(template(kind), tileOptions());
         vworld = layer;
         vworldKind = kind;
         active = preference === 'hybrid' ? (wantOverlay ? 'hybrid' : 'satellite') : preference;
@@ -440,11 +501,11 @@
             clearDeadline();
             loading = false;
             reason = batchErrors > 0 ? 'partial_error' : 'ready';
+            syncBackdrop();
             render();
           }
         };
         layer.on(tileHandlers);
-        if (map.hasLayer(osm)) map.removeLayer(osm);
         armDeadline(token, layer);
         render();
         layer.addTo(map);
@@ -463,10 +524,11 @@
       if (destroyed) return;
       if (preference === 'osm') return showOsm('user_selected');
       if (!configId()) return showOsm('no_config');
-      if (map.getZoom() < 6) return showOsm('zoom_out');
-      if (!domesticBounds.contains(map.getCenter())) return showOsm('outside_view');
+      if (map.getZoom() < VWORLD_MIN_ZOOM) return showOsm('zoom_out');
+      if (!eligible()) return showOsm('outside_view');
       if (locked()) return showOsm(failedKeys.get(lockId(PRIMARY[preference])));
       showVworld();
+      syncBackdrop();
       render();
     }
 

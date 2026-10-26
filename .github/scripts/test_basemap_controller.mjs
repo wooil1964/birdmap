@@ -37,6 +37,8 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
   Object.assign(map, {
     center: { lat: 36, lng: 127 }, zoom: 10, minZoom: null, layers: new Set(),
     getCenter() { return this.center; }, getZoom() { return this.zoom; },
+    // A view about 360/2^zoom degrees across (wide when zoomed out).
+    getBounds() { const d = 180 / 2 ** this.zoom; return { s: this.center.lat - d, n: this.center.lat + d, w: this.center.lng - d, e: this.center.lng + d }; },
     setMinZoom(value) { this.minZoom = value; }, hasLayer(layer) { return this.layers.has(layer); },
     removeLayer(layer) { this.layers.delete(layer); },
     move(lat, lng, zoom = this.zoom) { this.center = { lat, lng }; this.zoom = zoom; this.fire('moveend'); this.fire('zoomend'); }
@@ -50,7 +52,9 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
     setTimeout(fn, ms) { const id = nextTimer++; (ms === 60000 ? recoveries : timers).set(id, { fn, ms }); return id; },
     clearTimeout(id) { timers.delete(id); recoveries.delete(id); },
     L: {
-      latLngBounds() { return { contains({ lat, lng }) { return lat >= 32.9 && lat <= 38.75 && lng >= 124.5 && lng <= 132; } }; },
+      latLngBounds() { return { contains({ lat, lng }) { return lat >= 32.9 && lat <= 38.75 && lng >= 124.5 && lng <= 132; }, intersects(v) { return v.s <= 38.75 && v.n >= 32.9 && v.w <= 132 && v.e >= 124.5; } }; },
+      // The controller's zoom-settling TileLayer subclass: in memory it is the plain layer below.
+      TileLayer: { prototype: {}, extend() { return function (url, options) { return window.L.tileLayer(url, options); }; } },
       control(options) {
         const control = { options, addTo(target) { this.container = this.onAdd(target); controls.push(this); return this; }, remove() { this.removed = true; } };
         return control;
@@ -91,7 +95,7 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
     const before = { ...e.map.center, zoom: e.map.zoom }; e.api.updateConfig({ vworldKey: testKey });
     assert.equal(e.state().active, 'vworld'); assert.deepEqual({ ...e.map.center, zoom: e.map.zoom }, before);
     assert.equal(e.map.layers.size, 1); assert.equal(e.map.hasLayer(e.osm), false);
-    assert.deepEqual(JSON.parse(JSON.stringify(e.last().options)), { minZoom: 6, maxZoom: 19, maxNativeZoom: 19, tms: false, detectRetina: false, noWrap: true, attribution: '&copy; <a href="https://www.vworld.kr/">VWorld</a> / 국토교통부' });
+    assert.deepEqual(JSON.parse(JSON.stringify(e.last().options)), { minZoom: 4, minNativeZoom: 6, maxZoom: 19, maxNativeZoom: 19, zIndex: 2, tms: false, detectRetina: false, noWrap: true, attribution: '&copy; <a href="https://www.vworld.kr/">VWorld</a> / 국토교통부' });
     assert.equal(e.timers.size, 1); e.last().fire('load'); assert.equal(e.timers.size, 0); assert.equal(e.state().reason, 'ready');
   });
   await t.test('coverage-and-zoom-fallback-and-automatic-return', () => {
@@ -99,7 +103,9 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
     e.map.move(51, 0); assert.equal(e.state().active, 'osm'); assert.equal(e.state().reason, 'outside_view');
     late(); assert.equal(e.timers.size, 0); assert.equal(e.state().active, 'osm');
     e.map.move(36, 127); assert.equal(e.state().active, 'vworld'); assert.equal(e.created.length, 2);
-    e.map.move(36, 127, 4); assert.equal(e.state().active, 'osm'); assert.equal(e.state().reason, 'zoom_out');
+    // Zoom 4-5: the same VWorld layer stays (z6 tiles scaled down); only below the map minimum is it OSM.
+    e.map.move(36, 127, 4); assert.equal(e.state().active, 'vworld'); assert.equal(e.created.length, 2);
+    e.map.move(36, 127, 3); assert.equal(e.state().active, 'osm'); assert.equal(e.state().reason, 'zoom_out');
     e.map.move(36, 127, 6); assert.equal(e.state().active, 'vworld'); assert.equal(e.created.length, 3);
   });
   await t.test('explicit-OSM-choice-survives-view-and-config-changes', () => {
@@ -209,7 +215,7 @@ test('Satellite, Hybrid and OSM choices: overlay-only fallback, independent lock
   const count = e.created.length; buttons[2].click(); e.settle();
   const overlay = e.last();
   assert.equal(e.created.length, count + 1, 'Hybrid reuses the loaded satellite layer and adds only the overlay');
-  assert.deepEqual([overlay._url, overlay.options.zIndex, e.map.layers.size, e.state().active], [endpoint + '/hybrid/{z}/{x}/{y}.png', 2, 2, 'hybrid']);
+  assert.deepEqual([overlay._url, overlay.options.zIndex, e.map.layers.size, e.state().active], [endpoint + '/hybrid/{z}/{x}/{y}.png', 3, 2, 'hybrid']);
   assert.ok(e.map.hasLayer(satellite) && e.map.hasLayer(overlay) && !e.map.hasLayer(e.osm));
   overlay.fire('tileerror'); overlay.fire('tileerror'); assert.equal(e.state().active, 'hybrid'); overlay.fire('tileerror');
   assert.deepEqual([e.state().active, e.state().overlay, e.state().overlayLocked, e.state().preference], ['satellite', 'failed', true, 'hybrid']);
@@ -337,11 +343,49 @@ test('a failed Hybrid overlay is tried once more after 60 s on the shown satelli
 test('the status line is drawn only for notices; the plain "표시 중" stays for screen readers', () => {
   const e = environment({ config: WORKER }); const root = e.controls[0].container;
   e.last().fire('load'); assert.equal(root.attrs['data-notice'], 'false');
-  e.map.move(36, 127, 5); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['zoom_out', 'true']);
+  e.map.move(36, 127, 3); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['zoom_out', 'true']);
   e.map.move(51, 0, 10); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['outside_view', 'true']);
   e.map.move(36, 127, 10); e.last().fire('tileload'); e.last().fire('tileerror'); e.last().fire('load'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['partial_error', 'true']);
   e.api.setPreference('osm'); assert.equal(root.attrs['data-notice'], 'false');
   e.api.setPreference('vworld'); e.last().fire('tileerror'); e.last().fire('tileerror'); e.last().fire('tileerror'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['tile_error', 'true']);
   e.api.destroy();
   const n = environment(); assert.equal(n.controls[0].container.attrs['data-notice'], 'true', 'no config: the 준비 중 notice is shown'); n.api.destroy();
+});
+
+// Zooming out to 4-5 or reaching the border kept switching the whole map to OSM (10/26).
+test('zoom 4-5: VWorld stays (z6 tiles scaled, no z4/z5 request); OSM fills around Korea only after the VWorld tiles loaded', () => {
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
+  assert.deepEqual([l.options.minZoom, l.options.minNativeZoom, l.options.maxNativeZoom], [4, 6, 19], 'Leaflet asks for z6 tiles below zoom 6');
+  e.map.move(36, 127, 5.9); assert.deepEqual([e.state().active, e.state().backdrop, e.created.length, e.map.hasLayer(l)], ['vworld', true, 1, true]);
+  e.map.move(36, 127, 4); assert.deepEqual([e.state().active, e.state().reason, e.state().backdrop, e.created.length], ['vworld', 'ready', true, 1]);
+  assert.equal(e.controls[0].container.attrs['data-notice'], 'false', 'no notice: Korea is still VWorld');
+  e.map.move(36, 127, 7); assert.deepEqual([e.state().active, e.state().backdrop, e.map.hasLayer(e.osm)], ['vworld', false, false], 'zoom 6+: OSM removed again');
+  // While a batch is loading, OSM is not slipped underneath (it would show through over Korea); it comes with the load.
+  l.fire('loading'); e.map.move(36, 127, 5); assert.equal(e.state().backdrop, false);
+  l.fire('tileload'); l.fire('load'); assert.equal(e.state().backdrop, true);
+  e.api.destroy();
+});
+test('border areas: VWorld while any domestic area is in view, OSM underneath beyond the border, OSM only once the view has left', () => {
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
+  e.map.move(37.97, 124.45, 11); assert.deepEqual([e.state().active, e.state().backdrop, e.created.length], ['vworld', true, 1], '백령도, centre just west of the bound');
+  e.map.move(32.85, 126.27, 11); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', true], '마라도, centre just south of the bound');
+  e.map.move(37.24, 131.87, 12); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', false], '독도, centre inside');
+  e.map.move(31.2, 121.5, 10); assert.deepEqual([e.state().active, e.state().reason], ['osm', 'outside_view'], 'Shanghai: no domestic area in view');
+  e.map.move(36.5, 127.5, 10); assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['vworld', 2, false], 'back inside: VWorld, OSM removed');
+  e.api.destroy();
+});
+test('an outage at zoom 5 (OSM already underneath): OSM takes over and stays while zooming; the one attempt at 60 s keeps OSM around Korea', () => {
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
+  e.map.move(36, 127, 5); assert.equal(e.state().backdrop, true);
+  l.fire('loading'); l.fire('tileerror'); l.fire('tileerror'); l.fire('tileerror');
+  assert.deepEqual([e.state().active, e.state().reason, e.state().locked, e.state().backdrop, e.map.hasLayer(e.osm), e.map.hasLayer(l)], ['osm', 'tile_error', true, false, true, false]);
+  const n = e.created.length; e.map.move(36, 127, 8); e.map.move(36, 127, 4);
+  assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['osm', n, true], 'zooming sends nothing and keeps OSM');
+  e.recover(); assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['vworld', n + 1, true], 'one attempt; OSM stays around Korea');
+  e.api.destroy();
+});
+test('the VWorld layers sit above the OSM layer (primary 2, overlay 3)', () => {
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created;
+  assert.deepEqual([sat.options.zIndex, ov.options.zIndex, ov.options.minNativeZoom], [2, 3, 6]);
+  h.api.destroy();
 });

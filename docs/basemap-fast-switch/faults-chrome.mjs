@@ -1,6 +1,7 @@
 // Fast switching and tile faults in real Chrome against a LOCAL index.html. The Worker config is injected and every
 // tile request is answered by CDP (no network, no credential): normal, sporadic errors, a rate-limit storm (429), an
-// outage (502), slow tiles, a hang. Reports, per scenario, the controller outcome and how many tiles were requested.
+// outage (502), slow tiles, a hang; also zooming out to 4, views at the border and a wheel burst. Reports, per scenario,
+// the controller outcome and how many tiles were requested.
 //   CHROME_PATH=... node docs/basemap-fast-switch/faults-chrome.mjs [repo=.] [result=.ci-results/basemap-faults/result.json] [label]
 import { spawn } from 'node:child_process';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -64,7 +65,7 @@ class Browser {
   dispose() { try { this.socket.close(); } catch {} this.proc.kill(); try { rmSync(this.profile, { recursive: true, force: true }); } catch {} }
 }
 
-const ST = "(function(){var g=birdmapBasemap.getState();return {active:g.active,preference:g.preference,reason:g.reason,locked:g.locked,overlay:g.overlay,errors:g.errors};})()";
+const ST = "(function(){var g=birdmapBasemap.getState();return {active:g.active,preference:g.preference,reason:g.reason,locked:g.locked,overlay:g.overlay,errors:g.errors,backdrop:g.backdrop,zoom:g.zoom};})()";
 const MAP = "(function(){for(var k in window){try{if(/^map_[0-9a-f]{32}$/.test(k)&&window[k] instanceof L.Map)return window[k];}catch(e){}}})()";
 const click = (p, l) => p.evaluate(`document.querySelector('.birdmap-basemap__choice[aria-label="${l}"]').click()`);
 const zoomBy = (p, d) => p.evaluate(`(function(){var m=${MAP};m.setZoom(m.getZoom()+${d});return 1;})()`);
@@ -79,6 +80,9 @@ const start = p => p.evaluate(`(function(){var m=${MAP};m.setView([36.3,127.6],1
 const wheelZoom = async (b, p, steps, gap) => { for (let i = 0; i < steps; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 560 + (i % 3) * 110, y: 330 + (i % 2) * 90, deltaX: 0, deltaY: i % 6 < 3 ? -120 : 120 }, p.sessionId); await sleep(gap); } };
 const pinchZoom = async (p, steps, gap) => { for (let i = 0; i < steps; i++) { const dz = [0.7, -0.6, 0.9, -0.8, 0.5, -0.7][i % 6]; await p.evaluate(`(function(){var m=${MAP};m.setZoomAround(L.point(${[120, 260, 195, 220][i % 4]},${[320, 480, 560, 400][i % 4]}),m.getZoom()+${dz});return 1;})()`); await sleep(gap); } };
 const fastZoom = (b, p, label) => label === 'pc' ? wheelZoom(b, p, 24, 140) : pinchZoom(p, 20, 180);
+const setView = (p, lat, lng, z) => p.evaluate(`(function(){var m=${MAP};m.setView([${lat},${lng}],${z},{animate:false});return 1;})()`);
+// Zoom levels of the tile requests in a log slice.
+const levels = log => [...new Set(log.map(x => +(/\/tiles\/(?:satellite\/|hybrid\/)?(\d+)\//.exec(x.url) || [])[1]))].sort((a, b) => a - b);
 const rapid = async (p, taps, gap) => { const seq = [L_SAT, L_HYB, L_BASE, L_SAT, L_BASE, L_HYB]; for (let i = 0; i < taps; i++) { await click(p, seq[i % seq.length]); if (i % 4 === 1) await zoomBy(p, i % 8 === 1 ? 1 : -1); if (i % 4 === 3) await panBy(p, 120, -80); await sleep(gap); } };
 
 const SCENARIOS = [
@@ -135,7 +139,26 @@ const SCENARIOS = [
     expect: s => s.active === 'satellite' && s.preference === 'hybrid' && s.overlay === 'failed' },
   { name: 'osm_then_back', note: 'OSM chosen in the middle of rapid taps, then Base', answer: () => ({ status: 200, delay: 60 }),
     run: async p => { await click(p, L_SAT); await sleep(150); await click(p, L_OSM); await sleep(150); const o = await p.evaluate(ST); await click(p, L_BASE); const s = await waitState(p, s => s.reason === 'ready', 10000); s.osmWas = o.active; return s; },
-    expect: s => s.osmWas === 'osm' && s.active === 'vworld' && s.reason === 'ready' }
+    expect: s => s.osmWas === 'osm' && s.active === 'vworld' && s.reason === 'ready' },
+  { name: 'zoom_out_to_4_and_back', note: 'zoom 5 and 4: VWorld stays with z6 tiles drawn smaller (no z4/z5 request) and OSM only around Korea; back at 8 OSM is removed', answer: () => ({ status: 200, delay: 60 }),
+    run: async p => { const n = p.log.length, out = {};
+      for (const z of [5, 4, 8]) { await setView(p, 36.3, 127.6, z); await sleep(300); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); out['z' + z] = s.active + '/' + s.reason + (s.backdrop ? '+osm' : ''); }
+      return { ...out, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.z5 === 'vworld/ready+osm' && s.z4 === 'vworld/ready+osm' && s.z8 === 'vworld/ready' && s.levels[0] >= 6 },
+  { name: 'border_views', note: 'centre just beyond the border (west of 백령도, south of 마라도): VWorld with OSM beyond the border; no domestic area in view (Shanghai): OSM; back inside: VWorld', answer: () => ({ status: 200, delay: 60 }),
+    run: async p => { const out = {};
+      for (const [k, lat, lng, z, done] of [['baengnyeong', 37.97, 124.45, 11, s => s.reason === 'ready'], ['marado', 32.85, 126.27, 11, s => s.reason === 'ready'], ['shanghai', 31.2, 121.5, 10, s => s.active === 'osm'], ['inside', 36.3, 127.6, 11, s => s.active !== 'osm' && s.reason === 'ready']]) {
+        await setView(p, lat, lng, z); await sleep(300); const s = await waitState(p, done, 15000); out[k] = s.active + '/' + s.reason + (s.backdrop ? '+osm' : ''); }
+      return out; },
+    expect: s => s.baengnyeong === 'vworld/ready+osm' && s.marado === 'vworld/ready+osm' && s.shanghai === 'osm/outside_view' && s.inside === 'vworld/ready' },
+  { name: 'wheel_burst_skips_levels', only: 'pc', note: 'a fast wheel burst in from zoom 7: the levels it only passes through are not requested, the level it stops at is', answer: () => ({ status: 200, delay: 60 }),
+    run: async (p, b) => { await setView(p, 36.3, 127.6, 7); await waitState(p, s => s.reason === 'ready' && s.zoom === 7, 15000); await sleep(400);
+      await p.evaluate(`(function(){var m=${MAP};window.__zoomSteps=0;m.on('zoomanim',function(){window.__zoomSteps++;});return 1;})()`);
+      const n = p.log.length;
+      for (let i = 0; i < 9; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 640, y: 400, deltaX: 0, deltaY: -120 }, p.sessionId); await sleep(100); }
+      await sleep(800); const s = await waitState(p, s => s.reason === 'ready', 15000);
+      return { ...s, steps: await p.evaluate('window.__zoomSteps'), levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) }
 ];
 
 
