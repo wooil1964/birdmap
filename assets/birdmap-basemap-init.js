@@ -52,9 +52,15 @@
     var map = global.map_7010a44f6ac2025090f0fe07508ed485;
     var recent = document.getElementById('recentReportsBox');
     if (!map || !recent) return;
-    var media = global.matchMedia('(max-width:700px)');
-    var activePopup = null, recentClosed = media.matches && global.innerHeight < 480, recentHeight = null, popupHeight = null;
-    var recentExpanded = false;
+    var media = global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)');
+    // These are per-page choices. Reload always starts with the report title bar and the exploration menu open.
+    var legacyMobileLayout = global.birdmapMobileLayout, legacyHideFilter = global.hideBirdmapPanelOnMobile;
+    global.birdmapMobileLayout = function () { return media.matches || (legacyMobileLayout && legacyMobileLayout()); };
+    global.hideBirdmapPanelOnMobile = function () {
+      if (media.matches) { global.setBirdmapPanelOpen(false); return; }
+      if (legacyHideFilter) return legacyHideFilter();
+    };
+    var activePopup = null, recentMode = 'collapsed', recentBeforeClose = 'collapsed', recentHeight = null, popupHeight = null;
 
     function button(text, label, action) {
       var node = document.createElement('button');
@@ -70,6 +76,10 @@
     }
     function setHeight(node, height) {
       var bounds = limits();
+      if (node === recent) {
+        var css = global.getComputedStyle(recent), row = parseFloat(css.getPropertyValue('--birdmap-recent-row')) || 76;
+        bounds.max = Math.min(bounds.max, 118 + 2 * row + (parseFloat(css.paddingBottom) || 0));
+      }
       var value = Math.round(Math.max(bounds.min, Math.min(bounds.max, height)));
       node.style.setProperty('--birdmap-sheet-height', value + 'px');
       updateSeparator(node, value);
@@ -128,35 +138,60 @@
       return handle;
     }
     var recentHandle = dragHandle(recent, '최근 출현 제보 패널', function (height) {
-      recentHeight = height; recentExpanded = false; syncRecent();
+      recentHeight = height; recentMode = 'expanded'; syncRecent();
     });
     recent.prepend(recentHandle);
     var actions = document.createElement('div'); actions.className = 'birdmap-sheet-actions';
     var expand = button('⌃', '최근 제보 펼치기', function () {
-      recentExpanded = !recentExpanded;
-      recentHeight = recentExpanded ? limits().max : null; syncRecent();
+      if (recentMode === 'expanded') { recentMode = 'collapsed'; recentHeight = null; syncRecent(); }
+      else openRecent();
     });
     expand.setAttribute('aria-controls', 'recentReportsList recentContributors');
     actions.appendChild(expand);
     actions.appendChild(button('×', '최근 제보 패널 닫기', function () {
-      recentClosed = true; syncRecent(); reopen.focus();
+      recentBeforeClose = recentMode; recentMode = 'closed'; syncRecent(); reopen.focus();
     }));
     document.getElementById('recentReportsTitle').appendChild(actions);
+    var titleOpen = button('', '최근 출현 제보 펼치기', openRecent);
+    titleOpen.className = 'birdmap-recent-title-open'; titleOpen.setAttribute('aria-controls', 'recentReportsList recentContributors');
+    titleOpen.setAttribute('aria-describedby', 'recentReportsCount');
+    document.getElementById('recentReportsTitle').appendChild(titleOpen);
     var reopen = button('최근 제보', '최근 출현 제보 패널 열기', function () {
-      recentClosed = false; syncRecent(); expand.focus();
+      if (activePopup && activePopup._birdmapReportLocation) map.closePopup(activePopup);
+      recentMode = recentBeforeClose; syncRecent(); expand.focus();
     });
     reopen.id = 'birdmapRecentReopen'; reopen.setAttribute('aria-controls', 'recentReportsBox');
     document.body.appendChild(reopen);
-    function syncRecent() {
-      recent.classList.toggle('birdmap-sheet-closed', recentClosed);
-      recent.classList.toggle('birdmap-sheet-expanded', recentExpanded);
-      expand.textContent = recentExpanded ? '⌄' : '⌃';
-      expand.setAttribute('aria-expanded', String(recentExpanded));
-      expand.setAttribute('aria-label', recentExpanded ? '최근 제보 접기' : '최근 제보 펼치기');
-      reopen.hidden = !recentClosed;
-      if (recentHeight !== null) setHeight(recent, recentHeight);
-      else recent.style.removeProperty('--birdmap-sheet-height');
+    function openRecent() {
+      if (activePopup && activePopup._birdmapReportLocation) map.closePopup(activePopup);
+      recentMode = 'expanded'; recentHeight = null; syncRecent();
     }
+    function syncRecent() {
+      var mode = recentMode;
+      if (mode !== 'closed' && activePopup && activePopup._birdmapReportLocation) mode = 'collapsed';
+      recent.classList.toggle('birdmap-sheet-closed', mode === 'closed');
+      recent.classList.toggle('birdmap-sheet-collapsed', mode === 'collapsed');
+      recent.classList.toggle('birdmap-sheet-expanded', mode === 'expanded');
+      expand.textContent = mode === 'expanded' ? '⌄' : '⌃';
+      expand.setAttribute('aria-expanded', String(mode === 'expanded'));
+      titleOpen.setAttribute('aria-expanded', String(mode === 'expanded'));
+      expand.setAttribute('aria-label', mode === 'expanded' ? '최근 제보 접기' : '최근 제보 펼치기');
+      reopen.hidden = mode !== 'closed';
+      if (mode === 'expanded' && recentHeight !== null) setHeight(recent, recentHeight);
+      else recent.style.removeProperty('--birdmap-sheet-height');
+      global.requestAnimationFrame(function () { measureRows(); overlayMetrics(); });
+    }
+    var menuToggle = button('탐조 메뉴 ⌃', '탐조 메뉴 접기', function () {
+      var collapsed = document.body.classList.toggle('birdmap-explore-collapsed');
+      menuToggle.textContent = collapsed ? '탐조 메뉴 ⌄' : '탐조 메뉴 ⌃';
+      menuToggle.setAttribute('aria-expanded', String(!collapsed));
+      menuToggle.setAttribute('aria-label', collapsed ? '탐조 메뉴 펼치기' : '탐조 메뉴 접기');
+      if (typeof global.updateMobileUiMetrics === 'function') global.updateMobileUiMetrics();
+    });
+    menuToggle.id = 'birdmapExploreMenuToggle'; menuToggle.setAttribute('aria-expanded', 'true');
+    menuToggle.setAttribute('aria-controls', 'noticeToggleBtn todayToggleBtn reportPickWrap');
+    document.body.classList.remove('birdmap-explore-collapsed');
+    document.getElementById('topBtnRow').appendChild(menuToggle);
     // Annotate existing metadata; desktop text and reporter statistics buttons stay in place.
     function annotateReports() {
       var entries = (global.reportSearchIndex || []).filter(function (entry) {
@@ -180,7 +215,7 @@
       measureRows();
     }
     function measureRows() {
-      if (!media.matches) return;
+      if (!media.matches || !recent.classList.contains('birdmap-sheet-expanded')) return;
       var items = recent.querySelectorAll('#recentReportsList .recentReportItem');
       var row = 76;
       Array.from(items).slice(0, 4).forEach(function (item) { row = Math.max(row, item.scrollHeight, Math.ceil(item.getBoundingClientRect().height)); });
@@ -236,7 +271,7 @@
       if (map.hasLayer(popup)) map.getPane('popupPane').appendChild(node);
     }
     function presentPopup(popup) {
-      if (!media.matches || activePopup !== popup || !map.hasLayer(popup)) return;
+      if (!media.matches || popup._birdmapReportLocation || activePopup !== popup || !map.hasLayer(popup)) return;
       var node = popup.getElement(); if (!node) return;
       // A fixed sheet needs no delayed map auto-pan. Leaflet update() would rebuild string content and detach
       // the statistics trigger while its read is pending, so cancel only the mobile positioning settle timer.
@@ -267,6 +302,8 @@
     }
     map.on('popupopen', function (event) {
       activePopup = event.popup; popupHeight = null;
+      document.body.classList.toggle('birdmap-report-location-open', !!event.popup._birdmapReportLocation);
+      syncRecent();
       // Run after the existing popupopen content/history/weather listeners have initialized the real popup.
       global.queueMicrotask(function () {
         if (activePopup === event.popup && map.hasLayer(event.popup)) presentPopup(event.popup);
@@ -275,11 +312,13 @@
     map.on('popupclose', function (event) {
       releasePopup(event.popup);
       if (activePopup === event.popup) activePopup = null;
-      document.body.classList.remove('birdmap-detail-open');
+      document.body.classList.remove('birdmap-detail-open', 'birdmap-report-location-open');
+      syncRecent();
     });
     function resize() {
       syncRecent(); measureRows(); overlayMetrics();
       if (activePopup) {
+        if (activePopup._birdmapReportLocation) return;
         if (media.matches) { presentPopup(activePopup); setHeight(activePopup.getElement(), popupHeight || global.innerHeight * .58); }
         else { releasePopup(activePopup); document.body.classList.remove('birdmap-detail-open'); activePopup.update(); }
       }

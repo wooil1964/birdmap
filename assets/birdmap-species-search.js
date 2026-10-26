@@ -1,64 +1,178 @@
 (function (global) {
   'use strict';
-
-  // Species names in a site popup's "최근 출현 이력" open the approved-report archive searched for that name. The archive
-  // searches the server's public projection only, and entries with a hidden location stay unlinked there.
-  // index.html is frozen outside approved islands, so its history renderer is wrapped here rather than edited.
-  var MAX_QUERY = 100; // The archive search accepts at most 100 characters.
-  var document = global.document;
-
-  function query(name) {
-    return String(name || '').replace(/\s+/g, ' ').replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, MAX_QUERY);
+  var document = global.document, request = 0, selected = null;
+  var MAX_PAGES = 50, MAX_WAIT = 15000;
+  function validId(id) { return typeof id === 'string' && /^[0-9A-Za-z_-]{1,64}$/.test(id); }
+  function query(name) { return String(name || '').replace(/\s+/g, ' ').replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, 100); }
+  function map() { return global.map_7010a44f6ac2025090f0fe07508ed485; }
+  function current(token, generation) { return token === request && generation === global.publicationState.generation && global.publicationAllowed(); }
+  function status(text) {
+    var node = document.getElementById('birdmapReportLocationStatus');
+    if (!node) { node = document.createElement('div'); node.id = 'birdmapReportLocationStatus'; node.setAttribute('role', 'status'); document.body.appendChild(node); }
+    node.textContent = text; node.hidden = !text;
   }
-
-  function linkedNames(species, escape) {
-    return species.map(function (name) {
-      var q = query(name);
-      if (!q) return escape(name);
-      return '<button type="button" class="speciesSearchLink" data-species="' + escape(q) + '" aria-label="' +
-        escape(name + ' 공개 출현 기록 검색') + '">' + escape(name) + '</button>';
-    }).join(' · ');
+  function forget() {
+    var old = selected; selected = null;
+    if (!old) return;
+    if (old.element) old.element.classList.remove('birdmap-report-location-selected');
+    if (old.observer) old.observer.disconnect();
+    var m = map();
+    if (old.popup.getElement()) old.popup.getElement().textContent = '';
+    if (m && m.hasLayer(old.popup)) m.closePopup(old.popup);
+    // Disposable location cards must not retain report content/coordinates through Leaflet's closed _popup.
+    old.popup.setContent(''); old.popup._source = null; old.popup._latlng = null;
+    if (m && m._popup === old.popup) m._popup = null;
   }
+  function cancel() { request++; forget(); status(''); }
 
+  // /approved history has no per-row protection flags. Use the existing /search public projection to authorize
+  // the exact report; hidden, protected, breeding and unsafe attached reports have no public target there.
+  function proof(id, term, token, generation) {
+    var offset = 0, pages = 0, anchor = null, total = null, started = Date.now();
+    function next() {
+      if (!current(token, generation) || pages++ >= MAX_PAGES || Date.now() - started > MAX_WAIT) return Promise.resolve(null);
+      return global.publicationFetch('/reports/search?limit=20&offset=' + offset + '&q=' + encodeURIComponent(query(term))).then(function (body) {
+        if (!current(token, generation) || !global.publicationDataAllowed(body)) return null;
+        if (anchor && !global.publicationSame(anchor, body.publication)) return null;
+        var page = global.reportArchivePayload(body, offset);
+        if (!page || (total !== null && total !== page.total)) return null;
+        anchor = body.publication; total = page.total;
+        var rows = page.reports.filter(function (row) { return row.id === id; });
+        if (rows.length) return rows.length === 1 && rows[0].locationHidden === false && rows[0].target ? { row: rows[0], body: body } : null;
+        if (!page.hasMore) return null;
+        offset += 20; return next();
+      });
+    }
+    return next();
+  }
+  function publicTarget(id, row) {
+    var witnesses = global.reporterStatsWitnesses;
+    if (!witnesses || !row || row.id !== id || row.locationHidden !== false || !row.target) return null;
+    var matches = (global.reportSearchIndex || []).filter(function (entry) { return witnesses.get(entry) === id; });
+    if (matches.length !== 1) return null;
+    var entry = matches[0], target = row.target, layer, canonical, history;
+    if (entry.kind !== target.kind || entry.spotId !== target.spotId) return null;
+    if (target.kind === 'spot') {
+      canonical = (global.reportPublicSpots || {})[target.spotId];
+      // /approved omits the false flag. The exact-row /search proof above must explicitly authorize this target.
+      if (!canonical || canonical.id !== target.spotId || canonical.locationHidden === true) return null;
+      history = canonical.history || []; layer = (global.reportSpotLayers || {})[target.spotId];
+      if (!layer || !map().hasLayer(layer)) return null;
+    } else if (target.kind === 'fixed') {
+      var fixed = (global.siteSpotData || []).filter(function (spot) { return spot.id === target.spotId; });
+      if (fixed.length !== 1) return null;
+      canonical = fixed[0]; history = (global.reportFixedHistory || {})[target.spotId] || [];
+      layer = (global.siteSpotLayers || [])[(global.siteSpotData || []).indexOf(canonical)];
+    } else return null;
+    if (!layer || !layer.getLatLng || history.filter(function (item) { return item.id === id; }).length !== 1) return null;
+    var point = layer.getLatLng();
+    if (!point || typeof point.lat !== 'number' || typeof point.lng !== 'number' || !Number.isFinite(point.lat) || !Number.isFinite(point.lng)
+      || Math.abs(point.lat) > 90 || Math.abs(point.lng) > 180 || point.lat !== canonical.lat || point.lng !== canonical.lon) return null;
+    return { layer: layer, point: point };
+  }
+  function content(row) {
+    var root = document.createElement('section'); root.className = 'birdmap-report-location-content';
+    root.setAttribute('data-publication-entry', row.id);
+    var name = document.createElement('strong'); name.className = 'birdmap-report-location-species'; name.textContent = row.species.join(' · '); root.appendChild(name);
+    var date = document.createElement('div'); date.textContent = '제보 날짜: ' + row.date; root.appendChild(date);
+    var who = document.createElement('div'); who.className = 'birdmap-report-location-reporter'; who.appendChild(document.createTextNode('제보자: '));
+    who.appendChild(global.reporterStatsElement(row.reporter, { source: 'history', reportId: row.id }, false)); root.appendChild(who);
+    return root;
+  }
+  function position() {
+    if (!selected || !global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) return;
+    var m = map(), node = selected.popup.getElement(); if (!node || !m.hasLayer(selected.popup)) return;
+    var container = m.getContainer(), rect = container.getBoundingClientRect(), point = m.latLngToContainerPoint(selected.layer.getLatLng());
+    var title = document.getElementById('mapTitleBox'), recent = document.getElementById('recentReportsBox');
+    var top = title ? Math.max(8, title.getBoundingClientRect().bottom - rect.top + 8) : 8;
+    var bottom = rect.height - 8;
+    if (recent && recent.getClientRects().length && global.getComputedStyle(recent).display !== 'none') bottom = Math.min(bottom, recent.getBoundingClientRect().top - rect.top - 8);
+    node.style.setProperty('--birdmap-location-max-height', Math.max(80, bottom - top) + 'px');
+    var box = node.getBoundingClientRect(), left = Math.max(8, Math.min(rect.width - box.width - 8, point.x - box.width / 2));
+    var candidates = [point.y - box.height - 14, point.y + 14].map(function (y) { return Math.max(top, Math.min(bottom - box.height, y)); });
+    var controls = ['#birdmapExploreMenuToggle', '#noticeToggleBtn', '#todayToggleBtn', '#reportToggleBtn', '.birdmap-basemap', '.leaflet-control-zoom'].map(function (selector) {
+      var el = document.querySelector(selector); return el && el.getClientRects().length ? el.getBoundingClientRect() : null;
+    }).filter(Boolean);
+    function score(y) { return controls.reduce(function (sum, r) {
+      return sum + Math.max(0, Math.min(rect.left + left + box.width, r.right) - Math.max(rect.left + left, r.left))
+        * Math.max(0, Math.min(rect.top + y + box.height, r.bottom) - Math.max(rect.top + y, r.top));
+    }, 0); }
+    var y = score(candidates[1]) < score(candidates[0]) ? candidates[1] : candidates[0];
+    node.style.setProperty('--birdmap-location-left', left + 'px'); node.style.setProperty('--birdmap-location-top', y + 'px');
+  }
+  function present() {
+    if (!selected || !map().hasLayer(selected.popup)) return;
+    var popup = selected.popup, node = popup.getElement(); if (!node) return;
+    if (popup._birdmapSettleTimer) { global.clearTimeout(popup._birdmapSettleTimer); popup._birdmapSettleTimer = null; }
+    var close = node.querySelector('.leaflet-popup-close-button'); if (close) close.setAttribute('aria-label', '제보 위치 정보 닫기');
+    if (global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) map().getContainer().appendChild(node);
+    else if (node.parentNode !== map().getPane('popupPane')) { map().getPane('popupPane').appendChild(node); popup.update(); }
+    position();
+  }
+  function show(row, target) {
+    // setView with animate:false stops pending pans itself. map.stop() can start a snapped zoom animation
+    // from the initial fractional Korea view and later undo this exact report destination.
+    var m = map(); forget(); m.closePopup();
+    if (!m.hasLayer(target.layer)) target.layer.addTo(m); // Reveal an existing authorized fixed marker; never create one.
+    m.setView(target.point, 13, { animate: false });
+    var popup = global.L.popup({ className: 'birdmap-report-location-popup', minWidth: 200, maxWidth: 240, autoPan: false, closeButton: true }, target.layer);
+    popup._birdmapReportLocation = true; popup.setLatLng(target.point).setContent(content(row));
+    var element = target.layer.getElement && target.layer.getElement();
+    selected = { popup: popup, layer: target.layer, element: element };
+    if (element) element.classList.add('birdmap-report-location-selected');
+    if (target.layer.bringToFront) target.layer.bringToFront();
+    popup.openOn(m); global.queueMicrotask(present);
+    if (global.ResizeObserver) { selected.observer = new global.ResizeObserver(position); selected.observer.observe(popup.getElement()); }
+  }
+  function open(id, term) {
+    var token = ++request;
+    if (!validId(id) || !global.publicationAllowed()) return Promise.resolve(false);
+    var generation = global.publicationState.generation;
+    status('공개 위치를 확인하고 있습니다.');
+    return proof(id, term, token, generation).then(function (verified) {
+      if (!verified || !current(token, generation)) return false;
+      return global.publicationRouteCheck(function () {
+        if (!current(token, generation) || !global.publicationDataAllowed(verified.body)) return false;
+        var target = publicTarget(id, verified.row); if (!target) return false;
+        show(verified.row, target); return true;
+      });
+    }).catch(function () { return false; }).then(function (ok) {
+      if (token === request) status(ok ? '' : '공개 위치를 확인할 수 없습니다. 위치를 표시하지 않습니다.');
+      return ok === true;
+    });
+  }
   function install() {
-    var render = global.siteHistoryEntryHtml, escape = global.escapeHtml;
-    if (typeof render !== 'function' || typeof escape !== 'function' || typeof global.openReportArchive !== 'function') return;
+    var render = global.siteHistoryEntryHtml, escape = global.escapeHtml, m = map();
+    if (typeof render !== 'function' || typeof escape !== 'function' || !m || typeof global.publicationInvalidate !== 'function') return;
     global.siteHistoryEntryHtml = function (entry) {
       var html = render(entry), species = (entry && entry.species) || [];
       var plain = '<div class="siteHistoryName">출현종: ' + species.map(escape).join(' · ') + '</div>';
-      // Only that exact line is replaced; any other shape keeps the plain names.
-      if (!species.length || html.indexOf(plain) < 0) return html;
-      return html.replace(plain, function () {
-        return '<div class="siteHistoryName">출현종: ' + linkedNames(species, escape) + '</div>';
-      });
+      if (!entry || !validId(entry.id) || !species.length || html.indexOf(plain) < 0) return html;
+      return html.replace(plain, function () { return '<div class="siteHistoryName">출현종: ' + species.map(function (name) {
+        return '<button type="button" class="speciesSearchLink" data-report-id="' + escape(entry.id) + '" data-species="' + escape(query(name))
+          + '" aria-label="' + escape(name + ' 제보 공개 위치로 이동') + '">' + escape(name) + '</button>';
+      }).join(' · ') + '</div>'; });
     };
+    var invalidate = global.publicationInvalidate;
+    global.publicationInvalidate = function () { cancel(); return invalidate.apply(this, arguments); };
+    var autoPan = global.applyMobilePopupAutoPan;
+    global.applyMobilePopupAutoPan = function (popup) { if (popup && popup._birdmapReportLocation) { popup.options.autoPan = false; return; } if (autoPan) return autoPan.apply(this, arguments); };
+    global.openPublicReportLocation = open;
+    m.on('layerremove', function (event) { if (selected && event.layer === selected.layer) cancel(); });
+    m.on('popupclose', function (event) { if (selected && event.popup === selected.popup) cancel(); });
+    m.on('popupopen', function (event) { if (!event.popup._birdmapReportLocation) { request++; forget(); status(''); } });
+    m.on('move zoom resize', position); global.addEventListener('resize', function () { if (selected) present(); });
   }
-
-  function search(name) {
-    var input = document.getElementById('reportArchiveSearch');
-    if (!name || !input || typeof global.searchReportArchive !== 'function') return;
-    // Opening the archive focuses its search box: read-only meanwhile so phones do not raise the keyboard.
-    input.readOnly = true;
-    try {
-      global.openReportArchive();
-      input.value = name;
-      global.searchReportArchive(false);
-      var close = document.querySelector('#reportArchiveModal .monthTideHeader button');
-      if (close) close.focus({ preventScroll: true });
-    } finally {
-      input.readOnly = false;
-    }
-  }
-
-  // Capture phase, like the reporter links: Leaflet stops clicks inside popups from bubbling.
   document.addEventListener('click', function (event) {
-    var node = event.target && event.target.closest && event.target.closest('.speciesSearchLink');
-    if (!node) return;
-    event.preventDefault();
-    event.stopPropagation();
-    search(query(node.getAttribute('data-species')));
+    var target = event.target, node = target && target.closest && target.closest('.speciesSearchLink');
+    if (node) { event.preventDefault(); event.stopImmediatePropagation(); open(node.getAttribute('data-report-id'), node.getAttribute('data-species')); return; }
+    var item = target && target.closest && target.closest('#recentReportsList .recentReportItem');
+    if (!item || target.closest('.reporterStatsLink')) return;
+    event.preventDefault(); event.stopImmediatePropagation();
+    var items = Array.from(document.querySelectorAll('#recentReportsList .recentReportItem'));
+    var entries = (global.reportSearchIndex || []).filter(function (entry) { return entry.date && entry.date >= global.kstDateTextBefore(global.RECENT_REPORT_DAYS); }).slice(0, global.RECENT_REPORT_LIMIT);
+    var entry = entries[items.indexOf(item)], id = entry && global.reporterStatsWitnesses.get(entry);
+    if (validId(id)) open(id, (entry.species || [])[0]);
   }, true);
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
-  else install();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })(window);
