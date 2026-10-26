@@ -1,67 +1,88 @@
 /* Base-map choice is part of the existing map; observation/report state is untouched. */
+/* PC and mobile: one narrow column at the bottom left (as narrow as its longest label, 하이브리드). */
 .leaflet-control.birdmap-basemap {
   box-sizing: border-box;
-  width: 184px;
   /* Reserve the existing publication notice and author's seal below the control. */
-  margin: 0 0 calc(64px + env(safe-area-inset-bottom, 0px)) 10px;
-  padding: 3px;
+  margin: 0 0 calc(64px + env(safe-area-inset-bottom, 0px)) 8px;
+  padding: 2px;
   border: 1px solid #73847c;
-  border-radius: 10px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, .97);
   color: #244e43;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
-  font: 12px/1.35 Arial, 'Malgun Gothic', sans-serif;
+  font: bold 12px/1.2 Arial, 'Malgun Gothic', sans-serif;
   pointer-events: auto;
 }
-/* Four choices (일반, 위성, 하이브리드, OSM) in a 2x2 grid keep 44px targets within the existing width. */
-.birdmap-basemap__choices { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.birdmap-basemap__choices { display: flex; flex-direction: column; gap: 2px; }
+/* 44px targets for touch; mouse pointers get a shorter column below. */
 .birdmap-basemap .birdmap-basemap__choice,
 .birdmap-basemap .birdmap-basemap__retry {
   box-sizing: border-box;
-  min-width: 44px;
   min-height: 44px;
-  padding: 7px 8px;
+  padding: 4px 6px;
   border: 0;
-  border-radius: 7px;
+  border-radius: 6px;
   background: #fff;
   color: #244e43;
   font: inherit;
-  font-weight: bold;
+  white-space: nowrap;
   cursor: pointer;
   box-shadow: none;
 }
-.birdmap-basemap__choice { min-width: 0; white-space: nowrap; }
+@media (hover: hover) and (pointer: fine) {
+  .birdmap-basemap .birdmap-basemap__choice,
+  .birdmap-basemap .birdmap-basemap__retry { min-height: 32px; }
+}
 .birdmap-basemap .birdmap-basemap__choice[aria-pressed='true'] { background: #235a49; color: #fff; }
 .birdmap-basemap button:focus-visible { outline: 3px solid #b66d0b; outline-offset: 2px; }
-.birdmap-basemap__status { padding: 4px 5px 2px; overflow-wrap: anywhere; font-size: 11px; }
-.birdmap-basemap .birdmap-basemap__retry { width: 100%; border: 1px solid #a7b8ae; margin-top: 4px; }
+/* width 0 + min-width 100%: a long notice wraps inside the column instead of widening it. */
+.birdmap-basemap__status {
+  box-sizing: border-box;
+  width: 0;
+  min-width: 100%;
+  padding: 3px 2px 1px;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  font-weight: normal;
+  line-height: 1.3;
+}
+/* Plain "…표시 중" is announced but not drawn; notices (fallback, zoom/area hint, partial error) are drawn. */
+.birdmap-basemap[data-notice='false'] .birdmap-basemap__status {
+  position: absolute;
+  width: 1px;
+  min-width: 0;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.birdmap-basemap .birdmap-basemap__retry { width: 0; min-width: 100%; margin-top: 3px; border: 1px solid #a7b8ae; }
 .birdmap-basemap button[hidden] { display: none !important; }
 .birdmap-basemap button:disabled { opacity: .6; cursor: default; }
+/* Phone landscape: the column must fit under the fixed top UI, so it uses the shorter buttons and sits 4px above the
+   author's seal (which ends 52px above the bottom). */
+@media (max-width: 700px) and (max-height: 480px) {
+  .leaflet-control.birdmap-basemap { margin-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+  .birdmap-basemap .birdmap-basemap__choice,
+  .birdmap-basemap .birdmap-basemap__retry { min-height: 32px; }
+}
 @media (max-width: 700px) {
-  #topBtnRow .birdmap-basemap {
-    grid-column: 1;
-    grid-row: 2 / span 2;
-    align-self: start;
-    justify-self: start;
-    width: 144px;
-    max-width: 100%;
-    margin: 0;
-    float: none;
-  }
-  #topBtnRow .birdmap-basemap .birdmap-basemap__choice,
-  #topBtnRow .birdmap-basemap .birdmap-basemap__retry {
-    position: static;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    min-width: 44px;
-    width: auto;
-    padding: 6px 4px;
-    border-radius: 7px;
-    font-size: 12px;
-    box-shadow: none;
-  }
-  #topBtnRow .birdmap-basemap .birdmap-basemap__retry { width: 100%; }
-  #topBtnRow .birdmap-basemap .birdmap-basemap__status { font-size: 10px; }
+  /* The report location panel spans the bottom of a phone screen: only the map and that panel stay while picking. */
+  body.reportPicking .leaflet-control.birdmap-basemap { display: none; }
+
+  /* Mobile recent-report box (700px and narrower only; 701px and wider are unchanged): a compact header and items so
+     two reports are visible at once; the list still scrolls through all 15, with 전체 보기, search and 더 보기 as before.
+     Kept with the other map-overlay layout here because index.html is frozen by the guard tests; this file loads
+     before the page's own <style>, hence the extra body selector. The contributors tab keeps its own height. */
+  body #recentReportsBox { max-height: none; }
+  body #recentReportsHint { display: none; }
+  body #recentReportsTitle { padding: 1px 7px; }
+  body #recentTabs button { padding: 0 2px; line-height: 1.3; }
+  /* Two items of 35px (species line, reporter/date line); font sizes are unchanged. */
+  body #recentReportsList { max-height: 70px; }
+  body #recentReportsList .recentReportItem { padding: 2px 7px; line-height: 1.2; }
+  /* The reporter link keeps its tap padding without making the line taller. */
+  body #recentReportsList .reporterStatsLink { margin: -2px 0; }
+  body #reportArchiveOpen { margin: 2px 7px 3px; padding: 2px 8px; }
 }

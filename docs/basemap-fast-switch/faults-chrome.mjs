@@ -34,7 +34,7 @@ class Browser {
     socket.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && this.pending.has(m.id)) { const p = this.pending.get(m.id); this.pending.delete(m.id); m.error ? p.reject(Error(JSON.stringify(m.error))) : p.resolve(m.result); } else if (m.method) for (const l of this.listeners) l(m); });
   }
   send(method, params = {}, sessionId) { const id = ++this.seq; return new Promise((resolve, reject) => { this.pending.set(id, { resolve, reject }); this.socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) })); }); }
-  async open({ width, height, mobile, answer }) {
+  async open({ width, height, mobile, answer, touch = false }) {
     const { targetId } = await this.send('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await this.send('Target.attachToTarget', { targetId, flatten: true });
     const log = [];
@@ -47,17 +47,19 @@ class Browser {
         ? this.send('Fetch.fulfillRequest', { requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: request.url.endsWith('.jpeg') ? 'image/jpeg' : 'image/png' }], body: request.url.endsWith('.jpeg') ? JPEG : PNG }, sessionId).catch(() => {})
         : this.send('Fetch.fulfillRequest', { requestId, responseCode: a.status, responseHeaders: [{ name: 'Content-Type', value: 'text/plain' }], body: Buffer.from('x').toString('base64') }, sessionId).catch(() => {});
       if (a.hang) return;
+      if (a.network) return this.send('Fetch.failRequest', { requestId, errorReason: 'InternetDisconnected' }, sessionId).catch(() => {});
       if (a.delay) setTimeout(reply, a.delay); else reply();
     };
     this.listeners.push(listener);
     await this.send('Page.enable', {}, sessionId); await this.send('Runtime.enable', {}, sessionId);
     await this.send('Fetch.enable', { patterns: [{ urlPattern: ENDPOINT + '/*', requestStage: 'Request' }] }, sessionId);
     await this.send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile }, sessionId);
+    if (touch) await this.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 }, sessionId);
     await this.send('Page.addScriptToEvaluateOnNewDocument', { source: CONFIG + "try{localStorage.removeItem('birdmap.basemap.preference')}catch(e){}" }, sessionId);
     const evaluate = async expression => { const { result, exceptionDetails } = await this.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }, sessionId); if (exceptionDetails) throw Error(exceptionDetails.text); return result.value; };
     await this.send('Page.navigate', { url: PAGE }, sessionId);
     for (let i = 0; i < 100 && !(await evaluate("typeof birdmapBasemap!=='undefined'&&!!birdmapBasemap").catch(() => false)); i++) await sleep(200);
-    return { evaluate, log, close: async () => { this.listeners = this.listeners.filter(l => l !== listener); await this.send('Target.closeTarget', { targetId }); } };
+    return { sessionId, evaluate, log, close: async () => { this.listeners = this.listeners.filter(l => l !== listener); await this.send('Target.closeTarget', { targetId }); } };
   }
   dispose() { try { this.socket.close(); } catch {} this.proc.kill(); try { rmSync(this.profile, { recursive: true, force: true }); } catch {} }
 }
@@ -73,6 +75,10 @@ const applied = s => s.active === 'osm' || ((s.reason === 'ready' || s.reason ==
 const waitState = async (p, pred, ms) => { const end = Date.now() + ms; let s; while (Date.now() < end) { s = await p.evaluate(ST); if (pred(s)) return s; await sleep(150); } return s; };
 // Start close in (zoom 11, central Korea) so pans stay inside the domestic view.
 const start = p => p.evaluate(`(function(){var m=${MAP};m.setView([36.3,127.6],11,{animate:false});return 1;})()`);
+// Fast zoom: real wheel steps on PC, pinch-like zoom around points on mobile (both stay inside the domestic view).
+const wheelZoom = async (b, p, steps, gap) => { for (let i = 0; i < steps; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 560 + (i % 3) * 110, y: 330 + (i % 2) * 90, deltaX: 0, deltaY: i % 6 < 3 ? -120 : 120 }, p.sessionId); await sleep(gap); } };
+const pinchZoom = async (p, steps, gap) => { for (let i = 0; i < steps; i++) { const dz = [0.7, -0.6, 0.9, -0.8, 0.5, -0.7][i % 6]; await p.evaluate(`(function(){var m=${MAP};m.setZoomAround(L.point(${[120, 260, 195, 220][i % 4]},${[320, 480, 560, 400][i % 4]}),m.getZoom()+${dz});return 1;})()`); await sleep(gap); } };
+const fastZoom = (b, p, label) => label === 'pc' ? wheelZoom(b, p, 24, 140) : pinchZoom(p, 20, 180);
 const rapid = async (p, taps, gap) => { const seq = [L_SAT, L_HYB, L_BASE, L_SAT, L_BASE, L_HYB]; for (let i = 0; i < taps; i++) { await click(p, seq[i % seq.length]); if (i % 4 === 1) await zoomBy(p, i % 8 === 1 ? 1 : -1); if (i % 4 === 3) await panBy(p, 120, -80); await sleep(gap); } };
 
 const SCENARIOS = [
@@ -88,6 +94,32 @@ const SCENARIOS = [
   { name: 'cold_tiles_continuous_zoom_pan', note: 'every tile answers after 3 s (cold start); the user zooms and pans every 250 ms for 20 s', answer: () => ({ status: 200, delay: 3000 }),
     run: async p => { await click(p, L_BASE); for (let i = 0; i < 80; i++) { if (i % 10 === 5) await zoomBy(p, i % 20 === 5 ? 1 : -1); else await panBy(p, i % 2 ? -170 : 180, i % 3 ? 70 : -80); await sleep(250); } return waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); },
     expect: s => s.active !== 'osm' },
+  { name: 'fast_zoom_normal', note: 'fast wheel (PC) or pinch (mobile) zooming inside the domestic view, every tile fine', answer: () => ({ status: 200, delay: 80 }),
+    run: async (p, b, label) => { await fastZoom(b, p, label); return waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' },
+  { name: 'fast_zoom_per_ip_limit', note: 'the Worker per-IP limit (180 tiles per 60 s, 429 beyond it) during fast zooming: VWorld, or OSM with no further request until the one automatic attempt', answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 60000).length > 180 ? 429 : 200, delay: 80 }),
+    run: async (p, b, label) => { await fastZoom(b, p, label); const s = await waitState(p, s => s.reason === 'ready' || s.reason === 'partial_error' || s.active === 'osm', 15000); s.requestsInWindow = p.log.filter(x => Date.now() - x.t < 60000).length;
+      const n = p.log.length; await panBy(p, 150, 0); await zoomBy(p, 1); await sleep(2500); s.requestsAfter = p.log.length - n; return s; },
+    expect: s => s.active !== 'osm' || (s.reason === 'tile_error' && s.requestsAfter === 0) },
+  { name: 'limit_window_then_recovery', only: 'pc', note: '429 for every tile during the first 20 s, fine afterwards: OSM, then one automatic attempt after 60 s brings VWorld back', answer: (u, i, log) => ({ status: Date.now() - log[0].t < 20000 ? 429 : 200, delay: 60 }),
+    run: async p => { await p.evaluate(`(function(){var m=${MAP};m.setView([35.2,128.9],10,{animate:false});return 1;})()`); const o = await waitState(p, s => s.active === 'osm', 15000);
+      const t0 = Date.now(); const s = await waitState(p, s => s.active === 'vworld' && s.reason === 'ready', 75000); s.fellBackTo = o.active + '/' + o.reason; s.recoveredAfterMs = Date.now() - t0; return s; },
+    expect: s => s.fellBackTo === 'osm/tile_error' && s.active === 'vworld' && s.reason === 'ready' && !s.locked },
+  { name: 'internet_down', note: 'every tile fails at the network level (connection lost): OSM; panning/zooming sends nothing; another type is tried with one batch and locked too', answer: () => ({ network: true }),
+    run: async p => { const s = await waitState(p, s => s.active === 'osm', 15000); let n = p.log.length; await panBy(p, 180, 0); await zoomBy(p, 1); await sleep(2000); s.afterFallbackPanZoom = p.log.length - n;
+      n = p.log.length; await click(p, L_SAT); await waitState(p, s => s.active === 'osm' && s.preference === 'satellite' && s.locked, 15000); s.otherTypeBatch = p.log.length - n;
+      n = p.log.length; await panBy(p, -160, 0); await zoomBy(p, -1); await click(p, L_SAT); await sleep(2000); const f = await p.evaluate(ST); return { ...f, afterFallbackPanZoom: s.afterFallbackPanZoom, otherTypeBatch: s.otherTypeBatch, afterSecondLock: p.log.length - n }; },
+    expect: s => s.active === 'osm' && s.locked && s.afterFallbackPanZoom === 0 && s.otherTypeBatch > 0 && s.otherTypeBatch <= 60 && s.afterSecondLock === 0 },
+  { name: 'slow_lte', note: 'every tile 1.2-2.4 s (slow LTE) while switching types and zooming', answer: (u, i) => ({ status: 200, delay: 1200 + (i % 7) * 200 }),
+    run: async (p, b, label) => { await rapid(p, 8, 400); await fastZoom(b, p, label); return waitState(p, applied, 25000); },
+    expect: s => s.active !== 'osm' },
+  { name: 'outage_one_recovery_only', only: 'pc', note: 'a lasting outage (502): OSM, exactly one automatic attempt after 60 s, then OSM with no further request', answer: () => ({ status: 502, delay: 60 }),
+    run: async p => { const o = await waitState(p, s => s.active === 'osm', 15000); const n0 = p.log.length; await sleep(64000); const s = await waitState(p, s => s.active === 'osm', 10000);
+      const n1 = p.log.length; await panBy(p, 160, 0); await zoomBy(p, 1); await sleep(3000); s.attemptRequests = n1 - n0; s.requestsAfterSecondFailure = p.log.length - n1; s.firstFallback = o.reason; return s; },
+    expect: s => s.firstFallback === 'tile_error' && s.active === 'osm' && s.locked && s.attemptRequests > 0 && s.attemptRequests <= 60 && s.requestsAfterSecondFailure === 0 },
+  { name: 'user_osm_during_recovery_wait', only: 'pc', note: 'after a 429 lock the user chooses OSM: the automatic attempt 60 s later does not switch back to VWorld', answer: (u, i, log) => ({ status: Date.now() - log[0].t < 20000 ? 429 : 200, delay: 60 }),
+    run: async p => { await waitState(p, s => s.active === 'osm', 15000); await click(p, L_OSM); const n = p.log.length; await sleep(64000); const s = await p.evaluate(ST); s.requestsDuringWait = p.log.length - n; return s; },
+    expect: s => s.active === 'osm' && s.preference === 'osm' && s.requestsDuringWait === 0 },
   { name: 'rate_limit_storm', note: 'Worker limiter: after 40 tiles in 10 s every tile gets 429; 12 taps at 200 ms', answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 10000).length > 40 ? 429 : 200, delay: 60 }),
     run: async p => { await rapid(p, 12, 200); const s = await waitState(p, applied, 15000);
       const n = p.log.length; await panBy(p, 200, 0); await zoomBy(p, 1); await sleep(2500); s.requestsAfterSettlePan = p.log.length - n; return s; },
@@ -106,16 +138,40 @@ const SCENARIOS = [
     expect: s => s.osmWas === 'osm' && s.active === 'vworld' && s.reason === 'ready' }
 ];
 
+
+// Layout of the selector at the five checked widths (plus phone landscape): one column, at most 80 px wide, at the left
+// edge, overlapping no other control, plain status hidden. (The recent-report box needs live data: checked separately.)
+const LAYOUT = `(function(){function r(el){if(!el)return null;var b=el.getBoundingClientRect(),cs=getComputedStyle(el);if(cs.display==='none'||cs.visibility==='hidden'||!b.width||!b.height)return null;return {x:b.left,y:b.top,w:b.width,h:b.height};}
+  function hit(a,b){return a&&b&&Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>0.5&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>0.5;}
+  var box=document.querySelector('.birdmap-basemap'),br=r(box),bs=[].map.call(document.querySelectorAll('.birdmap-basemap__choice'),r);
+  var others=['#mapTitleBox','#togglePanelBtn','#noticeToggleBtn','#todayToggleBtn','#reportToggleBtn','#recentReportsBox','.leaflet-control-zoom','.leaflet-control-attribution','.leaflet-control-scale'].map(function(s){return [s,r(document.querySelector(s))];}).filter(function(x){return x[1];});
+  return {box:br&&{x:Math.round(br.x),y:Math.round(br.y),w:Math.round(br.w),h:Math.round(br.h)},inView:!!br&&br.y>=0&&br.y+br.h<=innerHeight,
+    column:bs.length===4&&bs.every(function(b,i){return b&&Math.abs(b.x-bs[0].x)<1&&(i===0||b.y>bs[i-1].y);}),buttonH:bs.map(function(b){return b&&Math.round(b.h);}),
+    overlaps:others.filter(function(o){return hit(br,o[1]);}).map(function(o){return o[0];}),statusDrawn:!!r(document.querySelector('.birdmap-basemap__status'))&&document.querySelector('.birdmap-basemap__status').getBoundingClientRect().height>2,
+    notice:box&&box.getAttribute('data-notice'),reason:birdmapBasemap.getState().reason};})()`;
+const LAYOUT_SIZES = [[320, 568, true], [375, 667, true], [390, 844, true], [768, 1024, true], [1366, 768, false], [640, 360, true]];
 const results = [];
 const browser = await Browser.launch();
 try {
+  if (!process.env.FAULTS_ONLY || process.env.FAULTS_ONLY.split(',').includes('layout')) for (const [width, height, touch] of LAYOUT_SIZES) {
+    const p = await browser.open({ width, height, mobile: touch, touch, answer: () => ({ status: 200, delay: 40 }) });
+    await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); await sleep(600);
+    const m = await p.evaluate(LAYOUT);
+    const informational = false;
+    const ok = m.column && m.box.w <= 80 && m.box.x <= 10 && m.overlaps.length === 0 && m.inView && (m.notice === 'true' || !m.statusDrawn) && m.buttonH.every(h => h >= (touch && height > 480 ? 44 : 32));
+    results.push({ size: width + 'x' + height, scenario: 'layout', ok: informational ? undefined : ok, informational, final: m });
+    console.log(`${informational ? 'INFO' : ok ? 'PASS' : 'FAIL'} ${width}x${height} layout -> ${JSON.stringify(m)}`);
+    await p.close();
+  }
   for (const [label, size] of [['pc', { width: 1366, height: 768, mobile: false }], ['mobile', { width: 390, height: 844, mobile: true }]]) {
     for (const sc of SCENARIOS) {
+      if (sc.only && sc.only !== label) continue;
+      if (process.env.FAULTS_ONLY && !process.env.FAULTS_ONLY.split(',').includes(sc.name)) continue;
       const p = await browser.open({ ...size, answer: sc.answer });
       await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
       await start(p); await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
       const before = p.log.length;
-      const s = await sc.run(p);
+      const s = await sc.run(p, browser, label);
       const tiles = p.log.length - before;
       const ok = sc.expect(s);
       results.push({ size: label, scenario: sc.name, ok, note: sc.note, tilesRequested: tiles, final: s });
