@@ -2,7 +2,7 @@ import subprocess
 import unittest
 from unittest.mock import patch
 from pathlib import Path
-from report_archive_contract import without_report_archive, automatic_data_base, BUTTON, BLOCKS, HOOK
+from report_archive_contract import without_report_archive, automatic_data_base, BUTTON, BLOCKS, HOOK, SPECIES_SEARCH_HEAD
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -27,6 +27,16 @@ class ArchiveScopeTests(unittest.TestCase):
             for modified in [current.replace(literal, '', 1), current + literal]:
                 with self.assertRaises(ValueError):
                     without_report_archive(modified)
+
+    def test_species_search_head_is_exact_and_fail_closed(self):
+        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        self.assertEqual(current.count(SPECIES_SEARCH_HEAD), 1)
+        script_only = SPECIES_SEARCH_HEAD.splitlines(True)[1]
+        for modified in [current.replace(SPECIES_SEARCH_HEAD, SPECIES_SEARCH_HEAD * 2, 1),
+                         current.replace(SPECIES_SEARCH_HEAD, script_only, 1),
+                         current.replace('</body>', script_only + '</body>', 1)]:
+            with self.assertRaises(ValueError):
+                without_report_archive(modified)
 
     def test_old_baseline_without_archive_remains_unchanged(self):
         self.assertEqual(without_report_archive('existing engine\n'), 'existing engine\n')
