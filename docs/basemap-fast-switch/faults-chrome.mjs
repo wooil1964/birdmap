@@ -47,6 +47,7 @@ class Browser {
         ? this.send('Fetch.fulfillRequest', { requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: request.url.endsWith('.jpeg') ? 'image/jpeg' : 'image/png' }], body: request.url.endsWith('.jpeg') ? JPEG : PNG }, sessionId).catch(() => {})
         : this.send('Fetch.fulfillRequest', { requestId, responseCode: a.status, responseHeaders: [{ name: 'Content-Type', value: 'text/plain' }], body: Buffer.from('x').toString('base64') }, sessionId).catch(() => {});
       if (a.hang) return;
+      if (a.network) return this.send('Fetch.failRequest', { requestId, errorReason: 'InternetDisconnected' }, sessionId).catch(() => {});
       if (a.delay) setTimeout(reply, a.delay); else reply();
     };
     this.listeners.push(listener);
@@ -104,6 +105,21 @@ const SCENARIOS = [
     run: async p => { await p.evaluate(`(function(){var m=${MAP};m.setView([35.2,128.9],10,{animate:false});return 1;})()`); const o = await waitState(p, s => s.active === 'osm', 15000);
       const t0 = Date.now(); const s = await waitState(p, s => s.active === 'vworld' && s.reason === 'ready', 75000); s.fellBackTo = o.active + '/' + o.reason; s.recoveredAfterMs = Date.now() - t0; return s; },
     expect: s => s.fellBackTo === 'osm/tile_error' && s.active === 'vworld' && s.reason === 'ready' && !s.locked },
+  { name: 'internet_down', note: 'every tile fails at the network level (connection lost): OSM; panning/zooming sends nothing; another type is tried with one batch and locked too', answer: () => ({ network: true }),
+    run: async p => { const s = await waitState(p, s => s.active === 'osm', 15000); let n = p.log.length; await panBy(p, 180, 0); await zoomBy(p, 1); await sleep(2000); s.afterFallbackPanZoom = p.log.length - n;
+      n = p.log.length; await click(p, L_SAT); await waitState(p, s => s.active === 'osm' && s.preference === 'satellite' && s.locked, 15000); s.otherTypeBatch = p.log.length - n;
+      n = p.log.length; await panBy(p, -160, 0); await zoomBy(p, -1); await click(p, L_SAT); await sleep(2000); const f = await p.evaluate(ST); return { ...f, afterFallbackPanZoom: s.afterFallbackPanZoom, otherTypeBatch: s.otherTypeBatch, afterSecondLock: p.log.length - n }; },
+    expect: s => s.active === 'osm' && s.locked && s.afterFallbackPanZoom === 0 && s.otherTypeBatch > 0 && s.otherTypeBatch <= 60 && s.afterSecondLock === 0 },
+  { name: 'slow_lte', note: 'every tile 1.2-2.4 s (slow LTE) while switching types and zooming', answer: (u, i) => ({ status: 200, delay: 1200 + (i % 7) * 200 }),
+    run: async (p, b, label) => { await rapid(p, 8, 400); await fastZoom(b, p, label); return waitState(p, applied, 25000); },
+    expect: s => s.active !== 'osm' },
+  { name: 'outage_one_recovery_only', only: 'pc', note: 'a lasting outage (502): OSM, exactly one automatic attempt after 60 s, then OSM with no further request', answer: () => ({ status: 502, delay: 60 }),
+    run: async p => { const o = await waitState(p, s => s.active === 'osm', 15000); const n0 = p.log.length; await sleep(64000); const s = await waitState(p, s => s.active === 'osm', 10000);
+      const n1 = p.log.length; await panBy(p, 160, 0); await zoomBy(p, 1); await sleep(3000); s.attemptRequests = n1 - n0; s.requestsAfterSecondFailure = p.log.length - n1; s.firstFallback = o.reason; return s; },
+    expect: s => s.firstFallback === 'tile_error' && s.active === 'osm' && s.locked && s.attemptRequests > 0 && s.attemptRequests <= 60 && s.requestsAfterSecondFailure === 0 },
+  { name: 'user_osm_during_recovery_wait', only: 'pc', note: 'after a 429 lock the user chooses OSM: the automatic attempt 60 s later does not switch back to VWorld', answer: (u, i, log) => ({ status: Date.now() - log[0].t < 20000 ? 429 : 200, delay: 60 }),
+    run: async p => { await waitState(p, s => s.active === 'osm', 15000); await click(p, L_OSM); const n = p.log.length; await sleep(64000); const s = await p.evaluate(ST); s.requestsDuringWait = p.log.length - n; return s; },
+    expect: s => s.active === 'osm' && s.preference === 'osm' && s.requestsDuringWait === 0 },
   { name: 'rate_limit_storm', note: 'Worker limiter: after 40 tiles in 10 s every tile gets 429; 12 taps at 200 ms', answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 10000).length > 40 ? 429 : 200, delay: 60 }),
     run: async p => { await rapid(p, 12, 200); const s = await waitState(p, applied, 15000);
       const n = p.log.length; await panBy(p, 200, 0); await zoomBy(p, 1); await sleep(2500); s.requestsAfterSettlePan = p.log.length - n; return s; },
@@ -141,8 +157,8 @@ try {
     const p = await browser.open({ width, height, mobile: touch, touch, answer: () => ({ status: 200, delay: 40 }) });
     await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); await sleep(600);
     const m = await p.evaluate(LAYOUT);
-    const informational = width === 640;
-    const ok = m.column && m.box.w <= 80 && m.box.x <= 10 && m.overlaps.length === 0 && m.inView && (m.notice === 'true' || !m.statusDrawn) && m.buttonH.every(h => h >= (touch ? 44 : 32));
+    const informational = false;
+    const ok = m.column && m.box.w <= 80 && m.box.x <= 10 && m.overlaps.length === 0 && m.inView && (m.notice === 'true' || !m.statusDrawn) && m.buttonH.every(h => h >= (touch && height > 480 ? 44 : 32));
     results.push({ size: width + 'x' + height, scenario: 'layout', ok: informational ? undefined : ok, informational, final: m });
     console.log(`${informational ? 'INFO' : ok ? 'PASS' : 'FAIL'} ${width}x${height} layout -> ${JSON.stringify(m)}`);
     await p.close();
