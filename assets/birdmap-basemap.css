@@ -90,19 +90,34 @@
 /* Mobile sheets: all presentation overrides are limited to phones; desktop geometry is unchanged. */
 .birdmap-sheet-handle, .birdmap-sheet-actions, .birdmap-popup-toolbar,
 .birdmap-basemap-toggle, #birdmapRecentReopen, .birdmap-recent-date,
-.birdmap-recent-anonymous { display: none; }
-@media (max-width: 700px) {
-  body #topUiWrap { right: 56px; }
-  body #mapTitleBox { width: 100%; max-width: 100%; margin-right: 0; padding: 7px 9px; border: 1px solid #d5dfdb; border-radius: 10px; line-height: 1.35; }
+.birdmap-recent-anonymous, .birdmap-recent-title-open { display: none; }
+body #topBtnRow #birdmapExploreMenuToggle { display: none; }
+@media (max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px) {
+  body #topUiWrap { position:fixed; top:8px; left:8px; right:56px; z-index:10001; pointer-events:none; }
+  body #mapTitleBox { position:static; pointer-events:auto; width: 100%; max-width: 100%; margin-right: 0; padding: 7px 9px; border: 1px solid #d5dfdb; border-radius: 10px; line-height: 1.35; }
   body #mapTitleBox b { font-size: 16px; }
   body #mapTitleBox > span { font-size: 10px; }
   body #mapTitleBox .copyright, body #mapTitleBox .titleDetail { display: none; }
-  body #topBtnRow { position: relative; width: calc(100vw - 16px); grid-template-columns: 1fr minmax(0, 182px); gap: 4px 6px; margin-top: 6px; }
-  body #topBtnRow button { min-height: 44px; height: auto; padding: 5px 8px; font-size: 11px; line-height: 1.3; border-width: 1px; border-radius: 8px; box-shadow: 0 1px 5px #0002; }
-  body #togglePanelBtn { align-self: start; }
+  body #topBtnRow { display:grid; pointer-events:none; align-items:start; position: relative; width: calc(100vw - 16px); grid-template-columns: 1fr minmax(0, 182px); gap: 4px 6px; margin-top: 6px; }
+  body #topBtnRow button { position:static; pointer-events:auto; min-height: 44px; height: auto; padding: 5px 8px; font-size: 11px; line-height: 1.3; border-width: 1px; border-radius: 8px; box-shadow: 0 1px 5px #0002; }
+  body #togglePanelBtn { grid-column:1; grid-row:1; align-self:start; justify-self:start; }
   body #noticeToggleBtn, body #todayToggleBtn, body #reportPickWrap { width: 182px; max-width: 100%; margin: 0; }
-  body #noticeToggleBtn { margin-top: 44px; }
-  body #reportPickWrap { gap: 4px; }
+  body #topBtnRow #birdmapExploreMenuToggle { display: inline-flex; grid-column: 2; grid-row: 1; justify-self: start; width: 130px; max-width: calc(100% - 44px); }
+  body #noticeToggleBtn { grid-column:2; justify-self:end; grid-row:2; margin-top: 0; }
+  body #todayToggleBtn { grid-column:2; justify-self:end; grid-row:3; }
+  body #reportPickWrap { grid-row:4; }
+  body #birdmapPanel { top:var(--birdmapTopUiH,261px); left:8px; width:min(300px,calc(100vw - 16px)); box-sizing:border-box; max-height:min(48dvh,calc(100dvh - var(--birdmapTopUiH,261px) - 16px)); overflow-y:auto; overscroll-behavior:contain; }
+  body #birdmapPanelClose { display:none; }
+  body #birdmapPanel input[type=text] { width:calc(100% - 58px); min-width:0; box-sizing:border-box; }
+  body #birdmapPanel .mobileSectionToggle { display:block; width:100%; min-height:44px; }
+  body #birdmapPanel .mobileCollapsible { display:none; }
+  body #birdmapPanel .mobileCollapsible.mobileOpen { display:block; }
+  body #noticePanel,body #todayPanel { top:var(--birdmapTopUiH,261px); left:8px; right:8px; width:auto; box-sizing:border-box; max-height:calc(100dvh - var(--birdmapTopUiH,261px) - 12px); }
+  body.birdmap-explore-collapsed #noticeToggleBtn, body.birdmap-explore-collapsed #todayToggleBtn,
+  body.birdmap-explore-collapsed #reportPickWrap { display: none; }
+  body.reportPicking #topBtnRow #birdmapExploreMenuToggle,
+  body.fieldMode #topBtnRow #birdmapExploreMenuToggle, body.fieldGuiding #topBtnRow #birdmapExploreMenuToggle { display: none; }
+  body #reportPickWrap { position:static; grid-column:2; justify-self:end; gap:4px; }
   body #noticeBadge { flex-shrink: 0; margin-left: 4px; }
   body .leaflet-top.leaflet-right { margin-top: 0; }
   body .leaflet-control-zoom a, body .leaflet-control-fullscreen a { width: 40px; height: 40px; line-height: 40px; }
@@ -125,6 +140,18 @@
   body .birdmap-sheet-handle::before { content: ''; position: absolute; width: 44px; height: 4px; border-radius: 4px; background: #929d9e; top: 9px; left: calc(50% - 22px); }
   body .birdmap-sheet-handle:focus-visible { outline: 3px solid #176bd0; outline-offset: -3px; border-radius: 10px; }
   body .birdmap-sheet-actions { display: flex; position: absolute; right: 4px; top: 0; gap: 2px; }
+  body .birdmap-recent-title-open { display: block; position: absolute; left: 0; right: 96px; top: 0; height: 44px; border: 0; background: transparent; cursor: pointer; }
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) { height: calc(52px + env(safe-area-inset-bottom, 0px)); }
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) #recentReportsTitle { min-height: 52px; padding-right: 56px; }
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) #recentReportsCount { display: inline; }
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) .birdmap-sheet-actions { top: 4px; }
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) .birdmap-recent-title-open { right: 52px; height: 52px; }
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) > .birdmap-sheet-handle,
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) #recentTabs,
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) #recentReportsList,
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) #recentContributors,
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) #reportArchiveOpen,
+  body #recentReportsBox:not(.birdmap-sheet-expanded):not(.birdmap-sheet-closed) .birdmap-sheet-actions button:last-child { display: none; }
   body .birdmap-sheet-actions button { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #f0f4f5; color: #152a3c; font-size: 23px; }
   body #recentTabs { padding: 0 76px 0 8px; min-height: 44px; }
   body #recentTabs button { min-height: 44px; padding: 5px; font-size: 12px; }
@@ -141,7 +168,7 @@
   body #reportArchiveOpen { position: absolute; right: 6px; top: 72px; margin: 0; width: 68px; min-height: 44px; padding: 5px 4px; border: 0; border-radius: 0; text-align: center; font-size: 11px; background: transparent; }
   body #recentReportsBox.contribMode #recentTabs { padding-right: 8px; }
   body #recentReportsBox.birdmap-sheet-expanded #recentReportsList,
-  body #recentReportsBox[style*="--birdmap-sheet-height"] #recentReportsList { flex: 1 1 auto; max-height: none; }
+  body #recentReportsBox[style*="--birdmap-sheet-height"] #recentReportsList { flex: 0 1 auto; max-height: calc(2 * var(--birdmap-recent-row, 76px)); }
   body #recentContributors { min-height: 100px; }
   body #recentContributors .contribRow { padding: 6px 12px; min-height: 44px; font-size: 13px; }
   body #recentContributors .contribName { white-space: normal; overflow-wrap: anywhere; }

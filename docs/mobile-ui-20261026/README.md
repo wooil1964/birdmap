@@ -17,3 +17,5 @@ Final local mobile run: 145 checks passed, including all four requested widths. 
 The existing fast-switch layout regression now also verifies collapsed phone selectors before expanding them; width <=80px, column structure, touch heights, viewport bounds and no-overlap checks remain enforced. Focused run: 10 passed, zero failures, including 640x360 landscape. Fullscreen marker details stay inside the map subtree.
 
 A fixed mobile sheet cancels the legacy delayed positioning update after existing popup listeners finish. Regression waits beyond 650ms to ensure a pending reporter-statistics owner is not detached. Final Android candidate run: 14 checks passed.
+
+The current default-collapsed recent panel and exact-ID report routing are validated by docs/report-location-20261026/verify.cjs. The script in this directory documents the earlier UI revision.
