@@ -30,7 +30,8 @@ class Element {
 }
 function environment({ stored = null, blockedStorage = false, key = '', tileCreationThrows = false, config = null } = {}) {
   let nextTimer = 1;
-  const timers = new Map(), values = new Map(), storageWrites = [], created = [], controls = [];
+  // The once-per-type 60 s recovery timers are kept apart from the tile deadlines and the switch settle.
+  const timers = new Map(), recoveries = new Map(), values = new Map(), storageWrites = [], created = [], controls = [];
   if (stored !== null) values.set('birdmap.basemap.preference', stored);
   const map = new Events();
   Object.assign(map, {
@@ -46,8 +47,8 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
       getItem(name) { if (blockedStorage) throw new Error('storage unavailable'); return values.get(name) || null; },
       setItem(name, value) { if (blockedStorage) throw new Error('storage unavailable'); storageWrites.push([name, value]); values.set(name, value); }
     },
-    setTimeout(fn, ms) { const id = nextTimer++; timers.set(id, { fn, ms }); return id; },
-    clearTimeout(id) { timers.delete(id); },
+    setTimeout(fn, ms) { const id = nextTimer++; (ms === 60000 ? recoveries : timers).set(id, { fn, ms }); return id; },
+    clearTimeout(id) { timers.delete(id); recoveries.delete(id); },
     L: {
       latLngBounds() { return { contains({ lat, lng }) { return lat >= 32.9 && lat <= 38.75 && lng >= 124.5 && lng <= 132; } }; },
       control(options) {
@@ -66,7 +67,8 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
   vm.runInNewContext(source, { window, document: { createElement: name => new Element(name) }, WeakMap, Set });
   const args = { map, osm, domesticBounds: [[32.9, 124.5], [38.75, 132]], config: config || { vworldMode: 'direct', vworldKey: key } };
   const api = window.BirdmapBasemap.mount(args);
-  return { api, window, args, map, osm, created, controls, timers, values, storageWrites, last: () => created.at(-1),
+  return { api, window, args, map, osm, created, controls, timers, recoveries, values, storageWrites, last: () => created.at(-1),
+    recover() { for (const [id, t] of [...recoveries.entries()]) { recoveries.delete(id); t.fn(); } },
     expire() { const [id, { fn }] = timers.entries().next().value; timers.delete(id); fn(); },
     expireLast() { const [id, { fn }] = [...timers.entries()].at(-1); timers.delete(id); fn(); },
     // Fires only the pending switch-settle timer (250 ms), leaving tile deadlines alone.
@@ -304,4 +306,42 @@ test('events of a replaced type or a removed overlay change nothing', () => {
   e.api.setPreference('hybrid'); e.settle(); const ov = e.last(), lateOv = ov.events.get('tileerror')[0];
   e.api.setPreference('satellite'); e.settle(); for (let i = 0; i < 5; i++) lateOv(); assert.deepEqual([e.state().active, e.state().overlay, e.state().overlayLocked], ['satellite', 'off', false]);
   e.api.destroy();
+});
+
+// Fast zooming hit the Worker's per-IP limit (429) and locked OSM until the explicit retry (10/26).
+test('a failed type is tried once more by itself after 60 s; failing again keeps OSM with no further automatic request', () => {
+  const e = environment({ config: WORKER }); const fail3 = l => { l.fire('tileerror'); l.fire('tileerror'); l.fire('tileerror'); };
+  fail3(e.last()); assert.deepEqual([e.state().active, e.state().locked, e.recoveries.size, [...e.recoveries.values()][0].ms], ['osm', true, 1, 60000]);
+  const n = e.created.length; e.map.move(36.2, 127.2); e.api.setPreference('vworld'); assert.equal(e.created.length, n, 'still no request before the delay');
+  e.recover(); assert.deepEqual([e.state().active, e.state().locked, e.created.length], ['vworld', false, n + 1], 'one automatic attempt');
+  fail3(e.last()); assert.deepEqual([e.state().active, e.state().locked, e.recoveries.size], ['osm', true, 0], 'no second automatic attempt in this session');
+  e.map.move(36.3, 127.3); e.api.setPreference('vworld'); assert.equal(e.created.length, n + 1, 'reselecting or moving sends nothing');
+  e.api.setPreference('vworld', { retry: true }); assert.equal(e.created.length, n + 2, 'the explicit retry still works');
+  e.api.destroy();
+  const r = environment({ config: WORKER }); fail3(r.last()); r.api.setPreference('vworld', { retry: true });
+  assert.equal(r.recoveries.size, 0, 'an explicit retry cancels the pending automatic one'); r.api.destroy();
+  const o = environment({ config: WORKER }); fail3(o.last()); o.api.setPreference('osm'); const k = o.created.length; o.recover();
+  assert.deepEqual([o.state().active, o.created.length], ['osm', k], 'a user who chose OSM meanwhile stays on OSM'); o.api.setPreference('vworld'); assert.equal(o.created.length, k + 1, 'and may go back to it at once');
+  o.api.destroy();
+  const d = environment({ config: WORKER }); fail3(d.last()); d.api.destroy(); assert.equal(d.recoveries.size, 0, 'destroy clears the pending attempt');
+});
+test('a failed Hybrid overlay is tried once more after 60 s on the shown satellite imagery', () => {
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created;
+  sat.fire('load'); ov.fire('tileerror'); ov.fire('tileerror'); ov.fire('tileerror');
+  assert.deepEqual([h.state().active, h.state().overlay, h.recoveries.size], ['satellite', 'failed', 1]);
+  const n = h.created.length; h.recover(); const ov2 = h.last();
+  assert.deepEqual([h.created.length, h.state().active, ov2._url.endsWith('/hybrid/{z}/{x}/{y}.png'), h.map.hasLayer(sat)], [n + 1, 'hybrid', true, true], 'only the overlay is requested again');
+  ov2.fire('tileerror'); ov2.fire('tileerror'); ov2.fire('tileerror'); assert.deepEqual([h.state().active, h.recoveries.size], ['satellite', 0]);
+  h.api.destroy();
+});
+test('the status line is drawn only for notices; the plain "표시 중" stays for screen readers', () => {
+  const e = environment({ config: WORKER }); const root = e.controls[0].container;
+  e.last().fire('load'); assert.equal(root.attrs['data-notice'], 'false');
+  e.map.move(36, 127, 5); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['zoom_out', 'true']);
+  e.map.move(51, 0, 10); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['outside_view', 'true']);
+  e.map.move(36, 127, 10); e.last().fire('tileload'); e.last().fire('tileerror'); e.last().fire('load'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['partial_error', 'true']);
+  e.api.setPreference('osm'); assert.equal(root.attrs['data-notice'], 'false');
+  e.api.setPreference('vworld'); e.last().fire('tileerror'); e.last().fire('tileerror'); e.last().fire('tileerror'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['tile_error', 'true']);
+  e.api.destroy();
+  const n = environment(); assert.equal(n.controls[0].container.attrs['data-notice'], 'true', 'no config: the 준비 중 notice is shown'); n.api.destroy();
 });

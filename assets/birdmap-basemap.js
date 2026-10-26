@@ -13,6 +13,9 @@
   var MAX_TILE_ERRORS = 3;
   // Rapid taps between VWorld types: only the choice still selected after this pause requests tiles.
   var SWITCH_SETTLE_MS = 250;
+  // A failed type (or the Hybrid overlay) is tried once more by itself after the Worker's 60 s rate-limit window, at
+  // most once per type in a session; failing again keeps OSM until the explicit retry.
+  var RECOVERY_MS = 60000;
   var instances = new WeakMap();
   // 'vworld' is the Base map (the original value, kept for saved preferences).
   var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
@@ -74,6 +77,8 @@
     var key = mode === 'direct' ? cleanKey(initialConfig.vworldKey) : '';
     var endpoint = cleanEndpoint(initialConfig.vworldTileEndpoint);
     var failedKeys = new Map();
+    var recoveries = new Map();
+    var recovered = new Set();
     var preference = savedPreference();
     var active = 'osm';
     var reason = 'preparing';
@@ -159,6 +164,9 @@
       CHOICES.forEach(function (choice) { ui.buttons[choice].setAttribute('aria-pressed', String(preference === choice)); });
       ui.container.setAttribute('data-active-provider', active);
       ui.container.setAttribute('data-preference', preference);
+      // Notices (fallbacks, zoom/area hints, partial errors) are shown; the plain "표시 중" stays for screen readers.
+      ui.container.setAttribute('data-notice', String(['no_config', 'zoom_out', 'outside_view', 'tile_timeout', 'tile_error', 'partial_error'].indexOf(reason) >= 0
+        || (preference === 'hybrid' && active === 'satellite')));
       ui.status.textContent = statusText();
       ui.retry.hidden = !(preference !== 'osm' && (locked() || overlayLocked()));
       ui.retry.disabled = !eligible();
@@ -233,17 +241,37 @@
       render();
     }
 
+    // One delayed retry per locked type in a session (a rate-limit window passes; a real outage fails it again).
+    function scheduleRecovery(id) {
+      if (!id || recovered.has(id)) return;
+      recovered.add(id);
+      recoveries.set(id, global.setTimeout(function () {
+        recoveries.delete(id);
+        if (destroyed || !failedKeys.has(id)) return;
+        failedKeys.delete(id);
+        reconcile();
+      }, RECOVERY_MS));
+    }
+
+    function clearRecovery(id) {
+      if (!recoveries.has(id)) return;
+      global.clearTimeout(recoveries.get(id));
+      recoveries.delete(id);
+    }
+
     function fail(nextReason, token, layer) {
       if (!current(token, layer)) return;
       // Remember failed credentials only in memory. Changing views or providers
       // cannot create an automatic retry loop for the same key in this session.
       failedKeys.set(lockId(vworldKind), nextReason);
+      scheduleRecovery(lockId(vworldKind));
       showOsm(nextReason);
     }
 
     function failOverlay(token, layer) {
       if (!overlayCurrent(token, layer)) return;
       failedKeys.set(lockId('overlay'), 'overlay_error');
+      scheduleRecovery(lockId('overlay'));
       detachOverlay();
       overlayState = 'failed';
       if (active === 'hybrid') active = 'satellite';
@@ -452,7 +480,8 @@
       // it again, panning, or zooming never sends another failed request.
       if (provider !== 'osm' && retry && configId()) {
         failedKeys.delete(lockId(PRIMARY[provider]));
-        if (provider === 'hybrid') failedKeys.delete(lockId('overlay'));
+        clearRecovery(lockId(PRIMARY[provider]));
+        if (provider === 'hybrid') { failedKeys.delete(lockId('overlay')); clearRecovery(lockId('overlay')); }
       }
       // Switching from one shown VWorld type to another waits for the taps to settle; the shown map stays meanwhile.
       if (provider !== 'osm' && !retry && vworld) {
@@ -529,6 +558,8 @@
       if (destroyed) return;
       destroyed = true;
       clearSettle();
+      recoveries.forEach(function (timer) { global.clearTimeout(timer); });
+      recoveries.clear();
       map.off('zoomend moveend', reconcile);
       detachVworld();
       if (!map.hasLayer(osm)) osm.addTo(map);

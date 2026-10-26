@@ -25,29 +25,17 @@
       config = null;
     }
 
+    // PC and mobile alike: a narrow column at the bottom left, outside the fixed top UI (so the mobile top UI and the
+    // popup room computed from it stay as they were before the selector existed).
     var root = map.getContainer().querySelector('.birdmap-basemap');
     var home = map.getContainer().querySelector('.leaflet-bottom.leaflet-left');
-    var topRow = document.getElementById('topBtnRow');
-    var observer = null;
     function updateMetrics() {
       if (typeof global.updateMobileUiMetrics === 'function') global.updateMobileUiMetrics();
     }
-    function dock() {
-      if (!root || !home) return;
-      var target = global.innerWidth <= 700 && topRow ? topRow : home;
-      if (root.parentNode !== target) target.appendChild(root);
-      updateMetrics();
-    }
-    dock();
-    global.addEventListener('resize', dock);
-    if (global.ResizeObserver && root) {
-      observer = new global.ResizeObserver(updateMetrics);
-      observer.observe(root);
-    }
+    if (root && home) home.appendChild(root);
+    updateMetrics();
     var destroy = api.destroy;
     api.destroy = function () {
-      global.removeEventListener('resize', dock);
-      if (observer) observer.disconnect();
       map.off('unload', api.destroy);
       destroy();
       updateMetrics();
