@@ -77,7 +77,58 @@
     var date = document.createElement('div'); date.textContent = '제보 날짜: ' + row.date; root.appendChild(date);
     var who = document.createElement('div'); who.className = 'birdmap-report-location-reporter'; who.appendChild(document.createTextNode('제보자: '));
     who.appendChild(global.reporterStatsElement(row.reporter, { source: 'history', reportId: row.id }, false)); root.appendChild(who);
+    var routes = document.createElement('div'); routes.className = 'birdmap-report-location-routes';
+    ['kakao', 'tmap'].forEach(function (app) {
+      // No destination URL survives in the DOM. Every activation obtains fresh exact-ID authority.
+      var button = document.createElement('button'); button.type = 'button';
+      button.setAttribute('data-birdmap-report-route', app); button.setAttribute('data-report-id', row.id);
+      button.textContent = (app === 'kakao' ? '카카오맵' : '티맵') + ' ';
+      var action = document.createElement('span'); action.textContent = '찾아가기'; button.appendChild(action);
+      if (app === 'tmap') button.title = '티맵 앱이 설치된 스마트폰에서 이용';
+      routes.appendChild(button);
+    });
+    root.appendChild(routes);
+    if (row.target.kind === 'fixed') {
+      var note = document.createElement('div'); note.className = 'birdmap-report-location-note';
+      note.textContent = '공개 고정 마커로 안내합니다. 실제 관찰 지점이 아닙니다.'; root.appendChild(note);
+    }
     return root;
+  }
+  function route(button) {
+    var card = selected, app = button.getAttribute('data-birdmap-report-route');
+    function live() {
+      return selected === card && card && map().hasLayer(card.popup) && card.popup.getContent() === card.root
+        && card.root.isConnected !== false && card.root.contains(button) && button.getAttribute('data-report-id') === card.id;
+    }
+    if (!live() || (app !== 'kakao' && app !== 'tmap') || card.busy || !global.publicationAllowed()) return Promise.resolve(false);
+    var token = ++request, generation = global.publicationState.generation;
+    card.busy = true; status('길찾기 공개 위치를 다시 확인하고 있습니다.');
+    return proof(card.id, card.term, token, generation).then(function (verified) {
+      if (!verified || !live() || !current(token, generation)) return false;
+      return global.publicationRouteCheck(function () {
+        if (!live() || !current(token, generation) || !global.publicationDataAllowed(verified.body)) return false;
+        var target = publicTarget(card.id, verified.row);
+        if (!target || target.layer !== card.layer || target.point.lat !== card.point.lat || target.point.lng !== card.point.lng) return false;
+        var dest = { lat: target.point.lat, lon: target.point.lng };
+        var label = verified.row.target.kind === 'fixed' ? '탐조지 공개 고정 위치' : '출현 지점';
+        if (app === 'tmap') {
+          if (!global.openTmapNavigation()) return true; // Desktop: show the existing smartphone-only explanation, never execute a mobile scheme.
+          var tmapUrl = global.tmapNavigationUrl(dest, label); if (!tmapUrl) return false;
+          global.location.href = tmapUrl;
+        } else {
+          var url = global.spotKakaoRouteUrl(dest, label); if (!url) return false;
+          var opened = global.open('about:blank', '_blank');
+          if (!opened) { global.alert('팝업이 차단됐어요. 브라우저 설정을 확인한 뒤 다시 눌러 주세요.'); return false; }
+          try { opened.opener = null; } catch (ignore) {}
+          opened.location.href = url;
+        }
+        return true;
+      });
+    }).catch(function () { return false; }).then(function (ok) {
+      if (selected === card) card.busy = false;
+      if (token === request) status(ok ? '' : '현재 공개 위치를 확인할 수 없어 길찾기를 열지 않았습니다.');
+      return ok === true;
+    });
   }
   function position() {
     if (!selected || !global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) return;
@@ -116,9 +167,10 @@
     if (!m.hasLayer(target.layer)) target.layer.addTo(m); // Reveal an existing authorized fixed marker; never create one.
     m.setView(target.point, 13, { animate: false });
     var popup = global.L.popup({ className: 'birdmap-report-location-popup', minWidth: 200, maxWidth: 240, autoPan: false, closeButton: true }, target.layer);
-    popup._birdmapReportLocation = true; popup.setLatLng(target.point).setContent(content(row));
+    var root = content(row);
+    popup._birdmapReportLocation = true; popup.setLatLng(target.point).setContent(root);
     var element = target.layer.getElement && target.layer.getElement();
-    selected = { popup: popup, layer: target.layer, element: element };
+    selected = { popup: popup, layer: target.layer, element: element, root: root, id: row.id, term: query(row.species[0]), point: { lat: target.point.lat, lng: target.point.lng } };
     if (element) element.classList.add('birdmap-report-location-selected');
     if (target.layer.bringToFront) target.layer.bringToFront();
     popup.openOn(m); global.queueMicrotask(present);
@@ -164,7 +216,9 @@
     m.on('move zoom resize', position); global.addEventListener('resize', function () { if (selected) present(); });
   }
   document.addEventListener('click', function (event) {
-    var target = event.target, node = target && target.closest && target.closest('.speciesSearchLink');
+    var target = event.target, routeButton = target && target.closest && target.closest('[data-birdmap-report-route]');
+    if (routeButton) { event.preventDefault(); event.stopImmediatePropagation(); route(routeButton); return; }
+    var node = target && target.closest && target.closest('.speciesSearchLink');
     if (node) { event.preventDefault(); event.stopImmediatePropagation(); open(node.getAttribute('data-report-id'), node.getAttribute('data-species')); return; }
     var item = target && target.closest && target.closest('#recentReportsList .recentReportItem');
     if (!item || target.closest('.reporterStatsLink')) return;

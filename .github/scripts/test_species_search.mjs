@@ -6,10 +6,11 @@ import {reportSearchPayload} from '../../reports-api/src/report-search.js';
 const source=readFileSync(new URL('../../assets/birdmap-species-search.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../../index.html',import.meta.url),'utf8').replace(/\r\n/g,'\n');
 const pick=name=>{const start=html.indexOf('function '+name+'(');assert.ok(start>=0,name);let depth=0;for(let i=html.indexOf('{',start);i<html.length;i++){if(html[i]==='{')depth++;else if(html[i]==='}'&&--depth===0)return html.slice(start,i+1);}throw Error(name);};
-const real=['escapeHtml','siteHistoryEntryHtml','publicationSame','publicationAllowed','publicationDataAllowed','publicationRenew','publicationRouteCheck','reportArchivePayload'].map(pick).join('\n');
+const real=['escapeHtml','siteHistoryEntryHtml','publicationSame','publicationAllowed','publicationDataAllowed','publicationRenew','publicationRouteCheck','reportArchivePayload','spotKakaoRouteUrl','tmapNavigationUrl','openTmapNavigation'].map(pick).join('\n');
 class Element{
   constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.attributes={};this.hidden=false;this.value='';this.parentNode=null;this._text='';this.classes=new Set();this.classList={add:x=>this.classes.add(x),remove:x=>this.classes.delete(x),contains:x=>this.classes.has(x)};this.style={setProperty(){},removeProperty(){}};}
   appendChild(n){if(n.parentNode)n.parentNode.children=n.parentNode.children.filter(x=>x!==n);this.children.push(n);n.parentNode=this;return n;}
+  contains(n){return n===this||this.children.some(x=>x.contains(n));}
   set textContent(x){this._text=String(x);this.children=[];}get textContent(){return this._text+this.children.map(x=>x.textContent).join('');}
   setAttribute(k,v){this.attributes[k]=String(v);}getAttribute(k){return this.attributes[k]??null;}
   querySelector(s){return s==='.leaflet-popup-close-button'?this.closeButton:null;}
@@ -28,9 +29,10 @@ function environment(){
   const find=(node,id)=>node.id===id?node:node.children.map(x=>find(x,id)).find(Boolean);
   const document={readyState:'complete',hidden:false,body,createElement:t=>new Element(t),createTextNode:s=>{const n=new Element('#text');n.textContent=s;return n;},getElementById:id=>find(body,id)||null,querySelector:()=>null,querySelectorAll:()=>[],addEventListener:(name,fn,capture)=>listeners.push({name,fn,capture})};
   const state={generation:0,anchor:anchor('1'),ready:true,until:Date.now()+5000,checkedMono:performance.now()};
-  const e={calls,marker,m,layers,body,input,listeners,fetch:()=>Promise.resolve(page([row('r1'),row('r2')])),gate:null};
+  const e={calls,marker,m,layers,body,input,listeners,fetch:()=>Promise.resolve(page([row('r1'),row('r2')])),gate:null,opened:[],alerts:[]};
   const w={document,map_7010a44f6ac2025090f0fe07508ed485:m,publicationState:state,PUBLICATION_MAX_AGE:5000,REPORT_ARCHIVE_PAGE:20,
     performance,Promise,WeakMap,Number,queueMicrotask,setTimeout:()=>1,clearTimeout(){},publicationExpiryTimer:0,addEventListener(){},matchMedia:()=>({matches:false}),
+    navigator:{userAgent:'PC Chrome'},location:{href:''},alert:message=>e.alerts.push(message),open:()=>{const tab={location:{href:''},opener:w};e.opened.push(tab);return tab;},
     publicationNotice(){},publicationRefresh(){calls.push(['refresh']);},publicationInvalidate(){state.generation++;state.ready=false;state.until=0;calls.push(['invalidate']);},
     reporterStatsHistoryHtml:r=>r.reporter||'익명 제보',reporterStatsElement:name=>{const n=new Element('button');n.textContent=name||'익명 제보';return n;},
     reportPublicSpots:{root:{id:'root',lat:37,lon:127,locationHidden:false,history:[{id:'r1'},{id:'r2'}]}},reportSpotLayers:{root:marker},
@@ -45,6 +47,8 @@ function environment(){
   for(const id of ['r1','r2']){const entry={kind:'spot',spotId:'root',date:'2026-10-26',species:['직박구리'],reporter:'낡은 이름',lat:1,lon:2};w.reportSearchIndex.push(entry);w.reporterStatsWitnesses.set(entry,id);}
   vm.runInContext(source,w);e.w=w;e.originalPopup=originalPopup;
   e.click=(id,species='직박구리')=>{const node={getAttribute:k=>k==='data-report-id'?id:k==='data-species'?species:null};const ev={target:{closest:s=>s==='.speciesSearchLink'?node:null},preventDefault(){},stopImmediatePropagation(){}};for(const l of listeners)if(l.name==='click')l.fn(ev);};
+  e.buttons=()=>e.m._popup.content.children.find(n=>n.className==='birdmap-report-location-routes').children;
+  e.route=async(app,button=e.buttons()[app==='kakao'?0:1])=>{let stopped=false,prevented=false;const ev={target:{closest:s=>s==='[data-birdmap-report-route]'?button:null},preventDefault(){prevented=true;},stopImmediatePropagation(){stopped=true;}};for(const l of listeners)if(l.name==='click')l.fn(ev);await new Promise(r=>setImmediate(r));return{stopped,prevented};};
   e.moves=()=>calls.filter(x=>x[0]==='move');return e;
 }
 
@@ -163,4 +167,89 @@ test('hidden page, expired lease, malformed API and network failure never move',
     e=>{e.w.document.hidden=true;},e=>{e.w.publicationState.until=0;},
     e=>{e.fetch=()=>Promise.resolve({ok:true,reports:[]});},e=>{e.fetch=()=>Promise.reject(new Error('offline'));}
   ]){const e=environment();change(e);assert.equal(await e.w.openPublicReportLocation('r1','직박구리'),false);assert.equal(e.moves().length,0);}
+});
+
+test('mini card has two coordinate-free buttons; Kakao uses only the current public marker and consumes the click',async()=>{
+  const e=environment();e.fetch=()=>Promise.resolve(page([row('r1',{lat:89,lon:179})]));
+  assert.equal(await e.w.openPublicReportLocation('r1','직박구리'),true);
+  assert.deepEqual(e.buttons().map(n=>n.textContent),['카카오맵 찾아가기','티맵 찾아가기']);
+  for(const b of e.buttons())assert.equal(b.getAttribute('href'),null);
+  const requests=e.calls.filter(x=>x[0]==='fetch').length;
+  assert.deepEqual(await e.route('kakao'),{stopped:true,prevented:true});
+  assert.equal(e.calls.filter(x=>x[0]==='fetch').length,requests+1);
+  assert.equal(e.opened[0].location.href,'https://map.kakao.com/link/to/'+encodeURIComponent('출현 지점')+',37,127');
+  assert.equal(e.opened[0].opener,null);assert.equal(e.moves().length,1);
+});
+
+test('distinct report IDs route to their own marker, never the earlier report destination',async()=>{
+  const e=environment(),second={...e.marker,element:new Element('path'),getLatLng:()=>({lat:36.6,lng:126.4})};
+  e.w.reportPublicSpots.other={id:'other',lat:36.6,lon:126.4,history:[{id:'r2'}]};e.w.reportSpotLayers.other=second;e.layers.add(second);
+  e.w.reportSearchIndex[1].spotId='other';
+  e.fetch=()=>Promise.resolve(page([row('r1'),row('r2',{target:{kind:'spot',spotId:'other'}})]));
+  for(const [id,lat,lon] of [['r1',37,127],['r2',36.6,126.4]]){
+    assert.equal(await e.w.openPublicReportLocation(id,'직박구리'),true);await e.route('kakao');
+    assert.ok(e.opened.at(-1).location.href.endsWith(','+lat+','+lon));
+  }
+});
+
+test('TMAP stays visible on desktop, explains mobile requirement without opening an app URL; mobile reuses exact public coordinates',async()=>{
+  for(const ua of ['PC Chrome','Android Chrome','iPhone Safari']){
+    const e=environment();e.w.navigator.userAgent=ua;assert.equal(await e.w.openPublicReportLocation('r2','직박구리'),true);await e.route('tmap');
+    assert.equal(e.opened.length,0);
+    if(ua==='PC Chrome'){assert.equal(e.w.location.href,'');assert.match(e.alerts[0],/스마트폰/);}
+    else assert.equal(e.w.location.href,'tmap://route?goalname='+encodeURIComponent('출현 지점')+'&goalx=127&goaly=37');
+  }
+});
+
+test('fixed report uses the public fixed marker, with an explicit observation-location disclaimer',async()=>{
+  const e=environment();e.w.siteSpotData=[{id:'fixed:1:0',lat:37,lon:127}];e.w.siteSpotLayers=[e.marker];e.w.reportFixedHistory={'fixed:1:0':[{id:'r1'}]};
+  e.w.reportSearchIndex[0].kind='fixed';e.w.reportSearchIndex[0].spotId='fixed:1:0';
+  e.fetch=()=>Promise.resolve(page([row('r1',{lat:89,lon:179,target:{kind:'fixed',spotId:'fixed:1:0'}})]));
+  assert.equal(await e.w.openPublicReportLocation('r1','직박구리'),true);assert.match(e.m._popup.content.textContent,/실제 관찰 지점이 아닙니다/);
+  await e.route('kakao');assert.equal(e.opened[0].location.href,'https://map.kakao.com/link/to/'+encodeURIComponent('탐조지 공개 고정 위치')+',37,127');
+});
+
+test('revoked, protected, breeding, hidden, missing or wrong-target fresh proof blocks already-rendered buttons',async()=>{
+  for(const changed of [[],[row('r2')],[row('r1',{locationHidden:true,target:undefined,protection:'protected'})],[row('r1',{locationHidden:true,target:undefined,protection:'breeding'})],[row('r1',{locationHidden:true,target:undefined})],[row('r1',{target:{kind:'spot',spotId:'other'}})]]){
+    const e=environment();await e.w.openPublicReportLocation('r1','직박구리');e.fetch=()=>Promise.resolve(page(changed));await e.route('kakao');
+    assert.equal(e.opened.length,0);assert.equal(e.w.location.href,'');
+  }
+});
+
+test('fresh route gate blocks changed revision, marker removal/replacement and coordinate mismatch',async()=>{
+  for(const change of [
+    e=>e.w.publicationState.anchor=anchor('2'),e=>e.layers.delete(e.marker),e=>delete e.w.reportSpotLayers.root,
+    e=>{const replacement={...e.marker};e.w.reportSpotLayers.root=replacement;e.layers.add(replacement);},
+    e=>e.marker.getLatLng=()=>({lat:38,lng:127}),
+    e=>{e.marker.getLatLng=()=>({lat:38,lng:127});e.w.reportPublicSpots.root.lat=38;}
+  ]){const e=environment();await e.w.openPublicReportLocation('r1','직박구리');e.gate=()=>change(e);await e.route('kakao');assert.equal(e.opened.length,0);}
+});
+
+test('closing, switching cards, visibility invalidation and layer removal cancel pending external navigation',async()=>{
+  for(const action of ['close','switch','invalidate','remove']){
+    const e=environment();await e.w.openPublicReportLocation('r1','직박구리');let release;
+    e.fetch=()=>new Promise(r=>{release=r;});await e.route('kakao');
+    if(action==='close')e.m.closePopup();
+    if(action==='switch'){e.fetch=()=>Promise.resolve(page([row('r2')]));await e.w.openPublicReportLocation('r2','직박구리');}
+    if(action==='invalidate')e.w.publicationInvalidate('visibility');
+    if(action==='remove'){e.layers.delete(e.marker);e.m.fire('layerremove',{layer:e.marker});}
+    release(page([row('r1')]));await new Promise(r=>setImmediate(r));assert.equal(e.opened.length,0,action);
+  }
+});
+
+test('detached old buttons, duplicate activation and failed networking cannot navigate twice or retain a route',async()=>{
+  const e=environment();await e.w.openPublicReportLocation('r1','직박구리');const old=e.buttons()[0];e.m.closePopup();
+  await e.w.openPublicReportLocation('r2','직박구리');await e.route('kakao',old);assert.equal(e.opened.length,0);
+  let release;e.fetch=()=>new Promise(r=>{release=r;});await e.route('kakao');await e.route('tmap');
+  release(page([row('r2')]));await new Promise(r=>setImmediate(r));assert.equal(e.opened.length,1);assert.equal(e.w.location.href,'');
+  e.fetch=()=>Promise.reject(Error('offline'));await e.route('kakao');assert.equal(e.opened.length,1);
+});
+
+test('blocked Kakao popup produces an explicit message and no navigation',async()=>{
+  const e=environment();e.w.open=()=>null;await e.w.openPublicReportLocation('r1','직박구리');await e.route('kakao');
+  assert.match(e.alerts[0],/팝업이 차단/);assert.equal(e.opened.length,0);
+});
+
+test('a manually detached popup root cannot activate its retained buttons',async()=>{
+  const e=environment();await e.w.openPublicReportLocation('r1','직박구리');e.m._popup.content.isConnected=false;await e.route('kakao');assert.equal(e.opened.length,0);
 });
