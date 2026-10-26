@@ -52,7 +52,7 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
     setTimeout(fn, ms) { const id = nextTimer++; (ms === 60000 ? recoveries : timers).set(id, { fn, ms }); return id; },
     clearTimeout(id) { timers.delete(id); recoveries.delete(id); },
     L: {
-      latLngBounds() { return { contains({ lat, lng }) { return lat >= 32.9 && lat <= 38.75 && lng >= 124.5 && lng <= 132; }, intersects(v) { return v.s <= 38.75 && v.n >= 32.9 && v.w <= 132 && v.e >= 124.5; } }; },
+      latLngBounds() { return { contains(v) { return v.s !== undefined ? v.s >= 32.9 && v.n <= 38.75 && v.w >= 124.5 && v.e <= 132 : v.lat >= 32.9 && v.lat <= 38.75 && v.lng >= 124.5 && v.lng <= 132; }, intersects(v) { return v.s <= 38.75 && v.n >= 32.9 && v.w <= 132 && v.e >= 124.5; } }; },
       // The controller's zoom-settling TileLayer subclass: in memory it is the plain layer below.
       TileLayer: { prototype: {}, extend() { return function (url, options) { return window.L.tileLayer(url, options); }; } },
       control(options) {
@@ -369,7 +369,9 @@ test('border areas: VWorld while any domestic area is in view, OSM underneath be
   const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
   e.map.move(37.97, 124.45, 11); assert.deepEqual([e.state().active, e.state().backdrop, e.created.length], ['vworld', true, 1], '백령도, centre just west of the bound');
   e.map.move(32.85, 126.27, 11); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', true], '마라도, centre just south of the bound');
-  e.map.move(37.24, 131.87, 12); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', false], '독도, centre inside');
+  e.map.move(37.24, 131.87, 12); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', false], '독도, view inside');
+  e.map.move(33.0, 126.5, 10); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', true], 'south of 제주: centre inside, view past the bound');
+  e.map.move(36.5, 127.5, 10); assert.equal(e.state().backdrop, false, 'whole view inside: no OSM');
   e.map.move(31.2, 121.5, 10); assert.deepEqual([e.state().active, e.state().reason], ['osm', 'outside_view'], 'Shanghai: no domestic area in view');
   e.map.move(36.5, 127.5, 10); assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['vworld', 2, false], 'back inside: VWorld, OSM removed');
   e.api.destroy();

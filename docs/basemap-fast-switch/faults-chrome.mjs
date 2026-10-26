@@ -140,25 +140,27 @@ const SCENARIOS = [
   { name: 'osm_then_back', note: 'OSM chosen in the middle of rapid taps, then Base', answer: () => ({ status: 200, delay: 60 }),
     run: async p => { await click(p, L_SAT); await sleep(150); await click(p, L_OSM); await sleep(150); const o = await p.evaluate(ST); await click(p, L_BASE); const s = await waitState(p, s => s.reason === 'ready', 10000); s.osmWas = o.active; return s; },
     expect: s => s.osmWas === 'osm' && s.active === 'vworld' && s.reason === 'ready' },
-  { name: 'zoom_out_to_4_and_back', note: 'zoom 5 and 4: VWorld stays with z6 tiles drawn smaller (no z4/z5 request) and OSM only around Korea; back at 8 OSM is removed', answer: () => ({ status: 200, delay: 60 }),
+  { name: 'zoom_out_to_4_and_back', note: 'zoom 5 and 4: VWorld stays with z6 tiles drawn smaller (no z4/z5 request) and OSM only around Korea; back at 9 (whole view inside) OSM is removed', answer: () => ({ status: 200, delay: 60 }),
     run: async p => { const n = p.log.length, out = {};
-      for (const z of [5, 4, 8]) { await setView(p, 36.3, 127.6, z); await sleep(300); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); out['z' + z] = s.active + '/' + s.reason + (s.backdrop ? '+osm' : ''); }
+      for (const z of [5, 4, 9]) { await setView(p, 36.3, 127.6, z); await sleep(300); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); out['z' + z] = s.active + '/' + s.reason + (s.backdrop ? '+osm' : ''); }
       return { ...out, levels: levels(p.log.slice(n)) }; },
-    expect: s => s.z5 === 'vworld/ready+osm' && s.z4 === 'vworld/ready+osm' && s.z8 === 'vworld/ready' && s.levels[0] >= 6 },
-  { name: 'border_views', note: 'centre just beyond the border (west of 백령도, south of 마라도): VWorld with OSM beyond the border; no domestic area in view (Shanghai): OSM; back inside: VWorld', answer: () => ({ status: 200, delay: 60 }),
+    expect: s => s.z5 === 'vworld/ready+osm' && s.z4 === 'vworld/ready+osm' && s.z9 === 'vworld/ready' && s.levels[0] >= 6 },
+  { name: 'border_views', note: 'centre just beyond the border (west of 백령도, south of 마라도) or the view past it (south of 제주): VWorld with OSM beyond the border; no domestic area in view (Shanghai): OSM; back inside: VWorld', answer: () => ({ status: 200, delay: 60 }),
     run: async p => { const out = {};
-      for (const [k, lat, lng, z, done] of [['baengnyeong', 37.97, 124.45, 11, s => s.reason === 'ready'], ['marado', 32.85, 126.27, 11, s => s.reason === 'ready'], ['shanghai', 31.2, 121.5, 10, s => s.active === 'osm'], ['inside', 36.3, 127.6, 11, s => s.active !== 'osm' && s.reason === 'ready']]) {
+      for (const [k, lat, lng, z, done] of [['baengnyeong', 37.97, 124.45, 11, s => s.reason === 'ready'], ['marado', 32.85, 126.27, 11, s => s.reason === 'ready'], ['jeju_south', 33.0, 126.5, 10, s => s.reason === 'ready'], ['shanghai', 31.2, 121.5, 10, s => s.active === 'osm'], ['inside', 36.3, 127.6, 11, s => s.active !== 'osm' && s.reason === 'ready']]) {
         await setView(p, lat, lng, z); await sleep(300); const s = await waitState(p, done, 15000); out[k] = s.active + '/' + s.reason + (s.backdrop ? '+osm' : ''); }
       return out; },
-    expect: s => s.baengnyeong === 'vworld/ready+osm' && s.marado === 'vworld/ready+osm' && s.shanghai === 'osm/outside_view' && s.inside === 'vworld/ready' },
+    expect: s => s.baengnyeong === 'vworld/ready+osm' && s.marado === 'vworld/ready+osm' && s.jeju_south === 'vworld/ready+osm' && s.shanghai === 'osm/outside_view' && s.inside === 'vworld/ready' },
   { name: 'wheel_burst_skips_levels', only: 'pc', note: 'a fast wheel burst in from zoom 7: the levels it only passes through are not requested, the level it stops at is', answer: () => ({ status: 200, delay: 60 }),
     run: async (p, b) => { await setView(p, 36.3, 127.6, 7); await waitState(p, s => s.reason === 'ready' && s.zoom === 7, 15000); await sleep(400);
       await p.evaluate(`(function(){var m=${MAP};window.__zoomSteps=0;m.on('zoomanim',function(){window.__zoomSteps++;});return 1;})()`);
       const n = p.log.length;
       for (let i = 0; i < 9; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 640, y: 400, deltaX: 0, deltaY: -120 }, p.sessionId); await sleep(100); }
       await sleep(800); const s = await waitState(p, s => s.reason === 'ready', 15000);
-      return { ...s, steps: await p.evaluate('window.__zoomSteps'), levels: levels(p.log.slice(n)) }; },
-    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) }
+      // The burst handling overrides Leaflet 1.9.3 internals: a Leaflet upgrade must come with a fresh check.
+      const leaflet = await p.evaluate("(function(){var t=L.TileLayer.prototype,m=" + MAP + ";return L.version+'/'+['_animateZoom','_resetView','_onMoveEnd','_setView','_setZoomTransforms','onRemove'].every(function(k){return typeof t[k]==='function';})+'/'+(typeof m._animatingZoom==='boolean');})()");
+      return { ...s, steps: await p.evaluate('window.__zoomSteps'), levels: levels(p.log.slice(n)), leaflet }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) && s.leaflet === '1.9.3/true/true' }
 ];
 
 

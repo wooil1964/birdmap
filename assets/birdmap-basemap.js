@@ -117,12 +117,12 @@
       return map.getZoom() >= VWORLD_MIN_ZOOM && domesticBounds.intersects(map.getBounds());
     }
 
-    // OSM underneath fills only what VWorld has no tiles for: around Korea below zoom 6, and beyond the border while
-    // the view's centre is outside the domestic area. It is added once the VWorld batch has loaded, so OSM does not
-    // show through over Korea while VWorld tiles are on their way.
+    // OSM underneath fills what VWorld has no tiles for: around Korea below zoom 6, and beyond the border whenever the
+    // view reaches past the domestic area. It is added once the VWorld batch has loaded, so OSM does not show through
+    // over Korea while VWorld tiles are on their way.
     function syncBackdrop() {
       if (active === 'osm') return;
-      var want = map.getZoom() < NATIVE_MIN_ZOOM || !domesticBounds.contains(map.getCenter());
+      var want = map.getZoom() < NATIVE_MIN_ZOOM || !domesticBounds.contains(map.getBounds());
       if (want && !loading && !map.hasLayer(osm)) osm.addTo(map);
       if (!want && map.hasLayer(osm)) map.removeLayer(osm);
     }
