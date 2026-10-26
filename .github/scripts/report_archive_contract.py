@@ -38,7 +38,27 @@ BASEMAP_SIGNATURES = (
 )
 
 
+# Species names in the site history link to the archive search (assets/birdmap-species-search.*). Exact island right
+# after the base-map head; stripped first so every freeze check that composes the base-map islands ignores it.
+SPECIES_SEARCH_HEAD = (
+    '    <link rel="stylesheet" href="assets/birdmap-species-search.css">\n'
+    '    <script src="assets/birdmap-species-search.js"></script>\n'
+)
+
+
+def without_species_search(text):
+    if 'birdmap-species-search' not in text:
+        return text
+    if text.count(SPECIES_SEARCH_HEAD) != 1 or text.count(BASEMAP_HEAD + SPECIES_SEARCH_HEAD) != 1:
+        raise ValueError('Exact approved species-search head must occur once, right after the base-map head')
+    text = text.replace(SPECIES_SEARCH_HEAD, '', 1)
+    if 'birdmap-species-search' in text:
+        raise ValueError('Unexpected species-search fragment outside the approved head')
+    return text
+
+
 def without_approved_basemap(text):
+    text = without_species_search(text.replace('\r\n', '\n'))
     if not any(signature in text for signature in BASEMAP_SIGNATURES):
         return text
     # These are two exact approved text islands, not open-ended marker regions.
