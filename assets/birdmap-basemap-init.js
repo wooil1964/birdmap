@@ -236,8 +236,12 @@
       if (map.hasLayer(popup)) map.getPane('popupPane').appendChild(node);
     }
     function presentPopup(popup) {
-      if (!media.matches) return;
-      var node = popup.getElement(); if (!node || node.classList.contains('birdmap-mobile-popup')) return;
+      if (!media.matches || activePopup !== popup || !map.hasLayer(popup)) return;
+      var node = popup.getElement(); if (!node) return;
+      // A fixed sheet needs no delayed map auto-pan. Leaflet update() would rebuild string content and detach
+      // the statistics trigger while its read is pending, so cancel only the mobile positioning settle timer.
+      if (popup._birdmapSettleTimer) { global.clearTimeout(popup._birdmapSettleTimer); popup._birdmapSettleTimer = null; }
+      if (node.classList.contains('birdmap-mobile-popup')) return;
       popup._birdmapSheetAutoPan = popup.options.autoPan; popup.options.autoPan = false;
       node.classList.add('birdmap-mobile-popup');
       var toolbar = document.createElement('div'); toolbar.className = 'birdmap-popup-toolbar';
@@ -262,7 +266,11 @@
       document.body.classList.add('birdmap-detail-open');
     }
     map.on('popupopen', function (event) {
-      activePopup = event.popup; popupHeight = null; presentPopup(activePopup);
+      activePopup = event.popup; popupHeight = null;
+      // Run after the existing popupopen content/history/weather listeners have initialized the real popup.
+      global.queueMicrotask(function () {
+        if (activePopup === event.popup && map.hasLayer(event.popup)) presentPopup(event.popup);
+      });
     });
     map.on('popupclose', function (event) {
       releasePopup(event.popup);

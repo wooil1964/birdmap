@@ -68,7 +68,7 @@ async function layout(page){return page.evaluate(()=>{
     await drag(page,detail.locator('.birdmap-sheet-handle'),-60);check((await detail.boundingBox()).height>db.height+40,width+' real touch drag detail');
     await page.getByRole('button',{name:'상세정보 펼치기',exact:true}).click();await page.waitForTimeout(200);
     check(await detail.locator('.spotRouteButtons a').count()>=1,width+' report directions preserved');
-    const stat=detail.locator('.reporterStatsLink').first();if(await stat.count()){await stat.click();await page.waitForFunction(()=>document.querySelector('#reporterStatsContent').textContent.includes('승인 제보 건수'));check(true,width+' reporter statistics');await page.locator('#reporterStatsClose').click();}
+    const stat=detail.locator('.reporterStatsLink').first();if(await stat.count()){await stat.click();await page.waitForFunction(()=>document.querySelector('#reporterStatsContent').textContent.includes('승인 제보 건수'));await page.waitForTimeout(800);check(await page.locator('#reporterStatsModal').isVisible(),width+' statistics survive popup settle');check(true,width+' reporter statistics');await page.locator('#reporterStatsClose').click();}
     await page.screenshot({path:out+'/mobile-'+width+'-detail.png'});
     await page.getByRole('button',{name:'탐조지 상세정보 닫기',exact:true}).click();
     check(await page.locator('#recentReportsBox').isVisible(),width+' recent returns after detail');

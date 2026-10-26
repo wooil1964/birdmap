@@ -12,6 +12,8 @@ The test uses existing public production GET responses through a test-only Origi
 
 Existing frontend regression: 497 passed, zero failures, using CI's PYTHONUTF8=1 and PYTHONIOENCODING=utf-8 plus CHROME_PATH. Full required security CI remains a merge prerequisite. Physical Android validation is tracked separately; browser touch emulation is not a physical-device result.
 
-Final local mobile run: 141 checks passed, including all four requested widths. No JavaScript page errors. Desktop geometry/text comparisons passed at both widths.
+Final local mobile run: 145 checks passed, including all four requested widths. No JavaScript page errors. Desktop geometry/text comparisons passed at both widths.
 
 The existing fast-switch layout regression now also verifies collapsed phone selectors before expanding them; width <=80px, column structure, touch heights, viewport bounds and no-overlap checks remain enforced. Focused run: 10 passed, zero failures, including 640x360 landscape. Fullscreen marker details stay inside the map subtree.
+
+A fixed mobile sheet cancels the legacy delayed positioning update after existing popup listeners finish. Regression waits beyond 650ms to ensure a pending reporter-statistics owner is not detached. Final Android candidate run: 14 checks passed.
