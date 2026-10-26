@@ -44,3 +44,251 @@
     return api;
   };
 })(window);
+
+/* Mobile overlay presentation. Keep the actual Leaflet popup/content and public read contract intact. */
+(function (global) {
+  'use strict';
+  function initializeMobileSheets() {
+    var map = global.map_7010a44f6ac2025090f0fe07508ed485;
+    var recent = document.getElementById('recentReportsBox');
+    if (!map || !recent) return;
+    var media = global.matchMedia('(max-width:700px)');
+    var activePopup = null, recentClosed = media.matches && global.innerHeight < 480, recentHeight = null, popupHeight = null;
+    var recentExpanded = false;
+
+    function button(text, label, action) {
+      var node = document.createElement('button');
+      node.type = 'button'; node.textContent = text; node.setAttribute('aria-label', label);
+      node.addEventListener('click', action);
+      return node;
+    }
+    function limits() {
+      var viewport = global.visualViewport;
+      var height = viewport ? viewport.height : global.innerHeight;
+      var title = document.getElementById('mapTitleBox').getBoundingClientRect();
+      return { min: Math.min(180, height * .45), max: Math.max(180, Math.min(height - 80, height - title.bottom - 16)) };
+    }
+    function setHeight(node, height) {
+      var bounds = limits();
+      var value = Math.round(Math.max(bounds.min, Math.min(bounds.max, height)));
+      node.style.setProperty('--birdmap-sheet-height', value + 'px');
+      updateSeparator(node, value);
+      return value;
+    }
+    function updateSeparator(node, height) {
+      var handle = node.querySelector('.birdmap-sheet-handle');
+      if (!handle) return;
+      var bounds = limits();
+      handle.setAttribute('aria-valuemin', Math.round(bounds.min));
+      handle.setAttribute('aria-valuemax', Math.round(bounds.max));
+      handle.setAttribute('aria-valuenow', Math.round(height));
+    }
+    function dragHandle(node, label, changed, initial) {
+      var handle = document.createElement('div');
+      handle.className = 'birdmap-sheet-handle'; handle.tabIndex = 0;
+      handle.setAttribute('role', 'separator'); handle.setAttribute('aria-orientation', 'horizontal');
+      handle.setAttribute('aria-label', label + ' 높이 조절');
+      var drag = null;
+      function announce(height) {
+        var bounds = limits();
+        handle.setAttribute('aria-valuemin', Math.round(bounds.min));
+        handle.setAttribute('aria-valuemax', Math.round(bounds.max));
+        handle.setAttribute('aria-valuenow', Math.round(height));
+      }
+      handle.addEventListener('pointerdown', function (event) {
+        if (!media.matches || drag || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
+        event.preventDefault(); event.stopPropagation();
+        drag = { id: event.pointerId, y: event.clientY, height: node.getBoundingClientRect().height };
+        if (initial) initial();
+        handle.setPointerCapture(event.pointerId);
+        node.classList.add('birdmap-sheet-dragging');
+      });
+      handle.addEventListener('pointermove', function (event) {
+        if (!drag || drag.id !== event.pointerId) return;
+        event.preventDefault(); event.stopPropagation();
+        var height = setHeight(node, drag.height + drag.y - event.clientY);
+        announce(height); changed(height);
+      });
+      function finish(event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        drag = null; node.classList.remove('birdmap-sheet-dragging');
+      }
+      handle.addEventListener('pointerup', finish);
+      handle.addEventListener('pointercancel', finish);
+      handle.addEventListener('lostpointercapture', finish);
+      handle.addEventListener('keydown', function (event) {
+        if (!media.matches || ['ArrowUp', 'ArrowDown', 'Home', 'End'].indexOf(event.key) < 0) return;
+        event.preventDefault(); event.stopPropagation();
+        if (initial) initial();
+        var bounds = limits(), height = node.getBoundingClientRect().height;
+        height = event.key === 'Home' ? bounds.min : event.key === 'End' ? bounds.max : height + (event.key === 'ArrowUp' ? 40 : -40);
+        height = setHeight(node, height); announce(height); changed(height);
+      });
+      announce(limits().min);
+      return handle;
+    }
+    var recentHandle = dragHandle(recent, '최근 출현 제보 패널', function (height) {
+      recentHeight = height; recentExpanded = false; syncRecent();
+    });
+    recent.prepend(recentHandle);
+    var actions = document.createElement('div'); actions.className = 'birdmap-sheet-actions';
+    var expand = button('⌃', '최근 제보 펼치기', function () {
+      recentExpanded = !recentExpanded;
+      recentHeight = recentExpanded ? limits().max : null; syncRecent();
+    });
+    expand.setAttribute('aria-controls', 'recentReportsList recentContributors');
+    actions.appendChild(expand);
+    actions.appendChild(button('×', '최근 제보 패널 닫기', function () {
+      recentClosed = true; syncRecent(); reopen.focus();
+    }));
+    document.getElementById('recentReportsTitle').appendChild(actions);
+    var reopen = button('최근 제보', '최근 출현 제보 패널 열기', function () {
+      recentClosed = false; syncRecent(); expand.focus();
+    });
+    reopen.id = 'birdmapRecentReopen'; reopen.setAttribute('aria-controls', 'recentReportsBox');
+    document.body.appendChild(reopen);
+    function syncRecent() {
+      recent.classList.toggle('birdmap-sheet-closed', recentClosed);
+      recent.classList.toggle('birdmap-sheet-expanded', recentExpanded);
+      expand.textContent = recentExpanded ? '⌄' : '⌃';
+      expand.setAttribute('aria-expanded', String(recentExpanded));
+      expand.setAttribute('aria-label', recentExpanded ? '최근 제보 접기' : '최근 제보 펼치기');
+      reopen.hidden = !recentClosed;
+      if (recentHeight !== null) setHeight(recent, recentHeight);
+      else recent.style.removeProperty('--birdmap-sheet-height');
+    }
+    // Annotate existing metadata; desktop text and reporter statistics buttons stay in place.
+    function annotateReports() {
+      var entries = (global.reportSearchIndex || []).filter(function (entry) {
+        return entry.date && entry.date >= global.kstDateTextBefore(global.RECENT_REPORT_DAYS);
+      }).slice(0, global.RECENT_REPORT_LIMIT);
+      recent.querySelectorAll('#recentReportsList .recentReportItem').forEach(function (item, index) {
+        var meta = item.querySelector('.recentReportMeta'), entry = entries[index];
+        if (!meta || !entry || meta.querySelector('.birdmap-recent-date')) return;
+        Array.from(meta.childNodes).forEach(function (node) {
+          if (node.nodeType !== 3) return;
+          var span = document.createElement('span'); span.className = 'birdmap-recent-desktop-meta';
+          node.replaceWith(span); span.appendChild(node);
+        });
+        if (!entry.reporter) {
+          var anonymous = document.createElement('span'); anonymous.className = 'birdmap-recent-anonymous';
+          anonymous.textContent = '익명 제보'; meta.appendChild(anonymous);
+        }
+        var date = document.createElement('span'); date.className = 'birdmap-recent-date';
+        date.textContent = global.recentReportDateText(entry.date); meta.appendChild(date);
+      });
+      measureRows();
+    }
+    function measureRows() {
+      if (!media.matches) return;
+      var items = recent.querySelectorAll('#recentReportsList .recentReportItem');
+      var row = 76;
+      Array.from(items).slice(0, 4).forEach(function (item) { row = Math.max(row, item.scrollHeight, Math.ceil(item.getBoundingClientRect().height)); });
+      recent.style.setProperty('--birdmap-recent-row', row + 'px');
+    }
+    var queued = false;
+    new MutationObserver(function () {
+      if (queued) return;
+      queued = true; global.requestAnimationFrame(function () { queued = false; annotateReports(); });
+    }).observe(document.getElementById('recentReportsList'), { childList: true });
+
+    var selector = map.getContainer().querySelector('.birdmap-basemap');
+    if (selector) {
+      var choices = selector.querySelector('.birdmap-basemap__choices');
+      choices.id = 'birdmapMobileMapChoices';
+      var mapToggle = button('지도 ⌃', '지도 선택 접기', function () {
+        var collapsed = selector.classList.toggle('birdmap-basemap-collapsed');
+        mapToggle.textContent = collapsed ? '지도 ⌄' : '지도 ⌃';
+        mapToggle.setAttribute('aria-expanded', String(!collapsed));
+        mapToggle.setAttribute('aria-label', collapsed ? '지도 선택 펼치기' : '지도 선택 접기');
+      });
+      mapToggle.textContent = '지도 ⌃'; mapToggle.className = 'birdmap-basemap-toggle';
+      mapToggle.setAttribute('aria-expanded', 'true'); mapToggle.setAttribute('aria-controls', choices.id);
+      selector.prepend(mapToggle);
+      if (global.innerHeight < 700 && media.matches) mapToggle.click();
+    }
+    function overlayMetrics() {
+      if (!media.matches) return;
+      var visible = recent.getClientRects().length && global.getComputedStyle(recent).display !== 'none';
+      var offset = visible ? recent.getBoundingClientRect().height : 0;
+      if (visible) updateSeparator(recent, offset);
+      document.body.style.setProperty('--birdmap-recent-offset', offset + 'px');
+      if (selector) {
+        var top = selector.getBoundingClientRect().top;
+        selector.style.setProperty('--birdmap-map-choices-height', Math.max(44, global.innerHeight - offset - top - 112) + 'px');
+      }
+    }
+    new ResizeObserver(overlayMetrics).observe(recent);
+    new MutationObserver(overlayMetrics).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    var filterToggle = document.getElementById('togglePanelBtn');
+    function syncFilter() {
+      document.body.classList.toggle('birdmap-filter-open', filterToggle.getAttribute('aria-expanded') === 'true');
+    }
+    new MutationObserver(syncFilter).observe(filterToggle, { attributes: true, attributeFilter: ['aria-expanded'] });
+    syncFilter();
+    function releasePopup(popup) {
+      var node = popup && popup.getElement();
+      if (!node || !node.classList.contains('birdmap-mobile-popup')) return;
+      node.classList.remove('birdmap-mobile-popup');
+      node.style.removeProperty('--birdmap-sheet-height');
+      var toolbar = node.querySelector('.birdmap-popup-toolbar'); if (toolbar) toolbar.remove();
+      popup.options.autoPan = popup._birdmapSheetAutoPan;
+      if (map.hasLayer(popup)) map.getPane('popupPane').appendChild(node);
+    }
+    function presentPopup(popup) {
+      if (!media.matches || activePopup !== popup || !map.hasLayer(popup)) return;
+      var node = popup.getElement(); if (!node) return;
+      // A fixed sheet needs no delayed map auto-pan. Leaflet update() would rebuild string content and detach
+      // the statistics trigger while its read is pending, so cancel only the mobile positioning settle timer.
+      if (popup._birdmapSettleTimer) { global.clearTimeout(popup._birdmapSettleTimer); popup._birdmapSettleTimer = null; }
+      if (node.classList.contains('birdmap-mobile-popup')) return;
+      popup._birdmapSheetAutoPan = popup.options.autoPan; popup.options.autoPan = false;
+      node.classList.add('birdmap-mobile-popup');
+      var toolbar = document.createElement('div'); toolbar.className = 'birdmap-popup-toolbar';
+      toolbar.appendChild(dragHandle(node, '탐조지 상세정보 패널', function (height) {
+        popupHeight = height;
+        toggle.setAttribute('aria-expanded', 'false'); toggle.textContent = '펼치기';
+        toggle.setAttribute('aria-label', '상세정보 펼치기');
+      }));
+      var controls = document.createElement('div'); controls.className = 'birdmap-popup-actions';
+      var toggle = button('펼치기', '상세정보 펼치기', function () {
+        var full = toggle.getAttribute('aria-expanded') !== 'true';
+        popupHeight = setHeight(node, full ? limits().max : global.innerHeight * .58);
+        toggle.setAttribute('aria-expanded', String(full)); toggle.textContent = full ? '접기' : '펼치기';
+        toggle.setAttribute('aria-label', full ? '상세정보 접기' : '상세정보 펼치기');
+      });
+      toggle.setAttribute('aria-expanded', 'false'); controls.appendChild(toggle);
+      controls.appendChild(button('닫기 ×', '탐조지 상세정보 닫기', function () { map.closePopup(popup); }));
+      toolbar.appendChild(controls); node.prepend(toolbar);
+      // Keep details within the map's native fullscreen subtree, outside transformed Leaflet panes.
+      map.getContainer().appendChild(node);
+      setHeight(node, popupHeight || global.innerHeight * .58);
+      document.body.classList.add('birdmap-detail-open');
+    }
+    map.on('popupopen', function (event) {
+      activePopup = event.popup; popupHeight = null;
+      // Run after the existing popupopen content/history/weather listeners have initialized the real popup.
+      global.queueMicrotask(function () {
+        if (activePopup === event.popup && map.hasLayer(event.popup)) presentPopup(event.popup);
+      });
+    });
+    map.on('popupclose', function (event) {
+      releasePopup(event.popup);
+      if (activePopup === event.popup) activePopup = null;
+      document.body.classList.remove('birdmap-detail-open');
+    });
+    function resize() {
+      syncRecent(); measureRows(); overlayMetrics();
+      if (activePopup) {
+        if (media.matches) { presentPopup(activePopup); setHeight(activePopup.getElement(), popupHeight || global.innerHeight * .58); }
+        else { releasePopup(activePopup); document.body.classList.remove('birdmap-detail-open'); activePopup.update(); }
+      }
+    }
+    media.addEventListener('change', resize);
+    global.addEventListener('resize', resize);
+    if (global.visualViewport) global.visualViewport.addEventListener('resize', resize);
+    annotateReports(); syncRecent();
+  }
+  if (document.readyState === 'complete') initializeMobileSheets();
+  else global.addEventListener('load', initializeMobileSheets);
+})(window);
