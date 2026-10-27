@@ -38,15 +38,20 @@ class Browser {
   async open({ width, height, mobile, answer, touch = false }) {
     const { targetId } = await this.send('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await this.send('Target.attachToTarget', { targetId, flatten: true });
-    const log = [];
+    // Uncaught page exceptions fail the scenario; console errors are reported.
+    const log = [], exceptions = [], consoleErrors = [];
     const listener = async m => {
-      if (m.sessionId !== sessionId || m.method !== 'Fetch.requestPaused') return;
+      if (m.sessionId !== sessionId) return;
+      if (m.method === 'Runtime.exceptionThrown') { const d = m.params.exceptionDetails; exceptions.push(String(d.exception?.description || d.text).split('\n')[0].slice(0, 160)); return; }
+      if (m.method === 'Runtime.consoleAPICalled' && m.params.type === 'error') { consoleErrors.push(m.params.args.map(a => a.value ?? a.description ?? '').join(' ').split('\n')[0].slice(0, 160)); return; }
+      if (m.method !== 'Fetch.requestPaused') return;
       const { requestId, request } = m.params, i = log.length, t = Date.now();
       log.push({ url: request.url, t });
       const a = answer(request.url, i, log);
+      // no-store as the Worker sends it: without it Chrome reuses tile images already shown and undercounts requests.
       const reply = () => a.status === 200
-        ? this.send('Fetch.fulfillRequest', { requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: request.url.endsWith('.jpeg') ? 'image/jpeg' : 'image/png' }], body: request.url.endsWith('.jpeg') ? JPEG : PNG }, sessionId).catch(() => {})
-        : this.send('Fetch.fulfillRequest', { requestId, responseCode: a.status, responseHeaders: [{ name: 'Content-Type', value: 'text/plain' }], body: Buffer.from('x').toString('base64') }, sessionId).catch(() => {});
+        ? this.send('Fetch.fulfillRequest', { requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: request.url.endsWith('.jpeg') ? 'image/jpeg' : 'image/png' }, { name: 'Cache-Control', value: 'no-store' }], body: request.url.endsWith('.jpeg') ? JPEG : PNG }, sessionId).catch(() => {})
+        : this.send('Fetch.fulfillRequest', { requestId, responseCode: a.status, responseHeaders: [{ name: 'Content-Type', value: 'text/plain' }, { name: 'Cache-Control', value: 'no-store' }], body: Buffer.from('x').toString('base64') }, sessionId).catch(() => {});
       if (a.hang) return;
       if (a.network) return this.send('Fetch.failRequest', { requestId, errorReason: 'InternetDisconnected' }, sessionId).catch(() => {});
       if (a.delay) setTimeout(reply, a.delay); else reply();
@@ -60,7 +65,7 @@ class Browser {
     const evaluate = async expression => { const { result, exceptionDetails } = await this.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }, sessionId); if (exceptionDetails) throw Error(exceptionDetails.text); return result.value; };
     await this.send('Page.navigate', { url: PAGE }, sessionId);
     for (let i = 0; i < 100 && !(await evaluate("typeof birdmapBasemap!=='undefined'&&!!birdmapBasemap").catch(() => false)); i++) await sleep(200);
-    return { sessionId, evaluate, log, close: async () => { this.listeners = this.listeners.filter(l => l !== listener); await this.send('Target.closeTarget', { targetId }); } };
+    return { sessionId, evaluate, log, exceptions, consoleErrors, close: async () => { this.listeners = this.listeners.filter(l => l !== listener); await this.send('Target.closeTarget', { targetId }); } };
   }
   dispose() { try { this.socket.close(); } catch {} this.proc.kill(); try { rmSync(this.profile, { recursive: true, force: true }); } catch {} }
 }
@@ -169,7 +174,7 @@ const SCENARIOS = [
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) && s.leaflet === '1.9.3/true/true' },
   // Live 10/27: wheel flicks 0.6 s apart were each a lone zoom loading a whole screen (650-700 tiles in 14 s); the
   // Worker answered 429 and the map switched to OSM. Here the per-IP limit is answered strictly.
-  { name: 'wheel_flicks_per_ip_limit', only: 'pc', note: 'wheel flicks 0.6 s apart for 12 s against the Worker per-IP limit (180 per 60 s, 429 beyond): the levels passed through are not requested, VWorld stays and the level the map rests at is loaded',
+  { name: 'wheel_flicks_per_ip_limit', only: ['pc', 'wide'], note: 'wheel flicks 0.6 s apart for 12 s against the Worker per-IP limit (180 per 60 s, 429 beyond): the levels passed through are not requested, VWorld stays and the level the map rests at is loaded',
     answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 60000).length > 180 ? 429 : 200, delay: 200 }),
     run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 20, 600); await sleep(900); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); return { ...s, levels: levels(p.log.slice(n)) }; },
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.includes(Math.round(s.zoom)) },
@@ -180,6 +185,12 @@ const SCENARIOS = [
       const t0 = Date.now(); await notch(b, p, -100); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 12, 10000);
       const first = p.log.slice(n)[0]; return { ...s, firstRequestMs: first ? first.t - t0 : null, sharpMs: Math.round(await p.evaluate('window.__sharp-window.__t0')), levels: levels(p.log.slice(n)) }; },
     expect: s => s.active === 'vworld' && s.zoom === 12 && s.firstRequestMs !== null && s.firstRequestMs < 250 && s.levels.join() === '12' },
+  { name: 'wheel_right_after_jump_loads_at_once', only: 'pc', note: 'a jump (as to a search result), then one wheel notch 0.3 s later: the jump does not count as a zoom of a run, the new level is requested at once',
+    answer: () => ({ status: 200, delay: 200 }),
+    run: async (p, b) => { await setView(p, 35.2, 128.9, 11); await waitState(p, s => s.reason === 'ready', 10000); await setView(p, 36.3, 127.6, 10); await sleep(300);
+      const n = p.log.length, t0 = Date.now(); await notch(b, p, -100); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 11, 10000);
+      const first = p.log.slice(n).find(x => /\/tiles\/11\//.test(x.url)); return { ...s, firstRequestMs: first ? first.t - t0 : null }; },
+    expect: s => s.active === 'vworld' && s.zoom === 11 && s.firstRequestMs !== null && s.firstRequestMs < 250 },
   { name: 'slow_wheel_each_level', only: 'pc', note: 'wheel notches 1.5 s apart: every level is loaded as its zoom starts, as before', answer: () => ({ status: 200, delay: 200 }),
     run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 4, 1500); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.join() === '12,13,14' },
@@ -199,8 +210,31 @@ const SCENARIOS = [
   { name: 'real_pinch', only: 'mobile', touch: true, note: 'real two-finger pinches (touch), in 3 and out 3, 0.6 s apart: each pinch end loads its level at once (Leaflet default, unchanged), VWorld stays',
     answer: () => ({ status: 200, delay: 200 }),
     run: async (p, b) => { await sleep(600); const n = p.log.length; await pinches(b, p, 12, 600); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
-    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.length >= 3 }
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.length >= 3 },
+  // Flicks about a second apart (10/28, Codex): each was a lone zoom loading a whole screen, 183 tiles at 1366x768 and 526
+  // at 1920x1080 for 12 flicks, then 429 and OSM. The run of zooms now loads its first level and the one it rests at.
+  { name: 'wheel_flicks_1s_per_ip_limit', only: ['pc', 'wide'], note: 'wheel flicks 1 s apart (12) against the Worker per-IP limit (180 per 60 s): VWorld stays, the run requests its first level and the one it rests at',
+    answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 60000).length > 180 ? 429 : 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 12, 1000); await sleep(1300); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); return { ...s, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.includes(Math.round(s.zoom)) && s.levels.length <= 2 },
+  // The same tiles failing, answered in either order (10/28, Codex): the verdict follows how many failed, not which
+  // answered first. A few failures keep VWorld (partial); most failing falls back to OSM; no page exception either way.
+  ...[[5, 'few', s => s.active === 'vworld'], [4, 'most', s => s.active === 'osm' && s.reason === 'tile_error']].flatMap(([mod, size, expect]) => [true, false].map(errorsFirst => ({
+    name: `${size}_failures_${errorsFirst ? 'errors' : 'successes'}_first`, only: 'pc',
+    note: `a new area where ${size === 'few' ? '1 tile in 5 fails' : 'all but 1 tile in 4 fail'} (502), the ${errorsFirst ? 'failures' : 'successes'} answering first`,
+    answer: u => { const m = /\/(\d+)\/(\d+)\/(\d+)\.(png|jpeg)$/.exec(u); const bad = mixedOn && !!m && (size === 'few' ? (+m[2] + +m[3]) % mod === 0 : (+m[2] + +m[3]) % mod !== 0);
+      return { status: bad ? 502 : 200, delay: bad === errorsFirst ? 40 : 300 }; },
+    run: async p => { mixedOn = true; const t0 = Date.now(); await setView(p, 35.2, 128.9, 11); await sleep(400);
+      const s = await waitState(p, s => s.reason === 'ready' || s.reason === 'partial_error' || s.active === 'osm', 15000); mixedOn = false; return { ...s, decidedMs: Date.now() - t0 }; },
+    expect }))),
+  { name: 'recovery_attempt_with_zoom_and_pan', only: 'pc', note: 'an outage (502) for 20 s: OSM; the attempt 60 s later meets zooming and panning while it loads, then VWorld with the recovery history reset',
+    answer: (u, i, log) => ({ status: Date.now() - log[0].t < 20000 ? 502 : 200, delay: 300 }),
+    run: async p => { await setView(p, 35.2, 128.9, 11); await waitState(p, s => s.active === 'osm', 15000);
+      const a = await waitState(p, s => s.active !== 'osm', 70000); await zoomBy(p, 1); await sleep(150); await panBy(p, 160, 60); await sleep(150); await zoomBy(p, -1);
+      await sleep(1500); const s = await waitState(p, s => s.reason === 'ready', 10000); s.attemptSeenAs = a.active + '/' + a.reason; s.recoveryAttempts = await p.evaluate('birdmapBasemap.getState().recoveryAttempts'); return s; },
+    expect: s => s.attemptSeenAs === 'vworld/loading' && s.active === 'vworld' && s.reason === 'ready' && s.recoveryAttempts === 0 }
 ];
+let mixedOn = false;
 
 
 // Layout of the selector at the five checked widths (plus phone landscape): one column, at most 80 px wide, at the left
@@ -243,9 +277,10 @@ try {
     console.log(`${informational ? 'INFO' : ok ? 'PASS' : 'FAIL'} ${width}x${height} layout -> ${JSON.stringify(m)}`);
     await p.close();
   }
-  for (const [label, size] of [['pc', { width: 1366, height: 768, mobile: false }], ['mobile', { width: 390, height: 844, mobile: true }]]) {
+  // 'wide' (1920x1080) runs only the scenarios that name it.
+  for (const [label, size] of [['pc', { width: 1366, height: 768, mobile: false }], ['wide', { width: 1920, height: 1080, mobile: false }], ['mobile', { width: 390, height: 844, mobile: true }]]) {
     for (const sc of SCENARIOS) {
-      if (sc.only && sc.only !== label) continue;
+      if (label === 'wide' ? ![].concat(sc.only).includes('wide') : sc.only && ![].concat(sc.only).includes(label)) continue;
       if (process.env.FAULTS_ONLY && !process.env.FAULTS_ONLY.split(',').includes(sc.name)) continue;
       const p = await browser.open({ ...size, touch: !!sc.touch, answer: sc.answer });
       await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
@@ -253,9 +288,11 @@ try {
       const before = p.log.length;
       const s = await sc.run(p, browser, label);
       const tiles = p.log.length - before;
-      const ok = sc.expect(s);
-      results.push({ size: label, scenario: sc.name, ok, note: sc.note, tilesRequested: tiles, final: s });
-      console.log(`${ok ? 'PASS' : 'FAIL'} ${label} ${sc.name} tiles=${tiles} -> ${JSON.stringify(s)}`);
+      // Let late timers (deferred fallbacks, Leaflet's prune) run before reading the page's exceptions.
+      await sleep(300);
+      const ok = sc.expect(s) && p.exceptions.length === 0;
+      results.push({ size: label, scenario: sc.name, ok, note: sc.note, tilesRequested: tiles, final: s, exceptions: p.exceptions, consoleErrors: p.consoleErrors });
+      console.log(`${ok ? 'PASS' : 'FAIL'} ${label} ${sc.name} tiles=${tiles} -> ${JSON.stringify(s)}${p.exceptions.length ? ' EXCEPTIONS ' + JSON.stringify(p.exceptions) : ''}`);
       await p.close();
     }
   }

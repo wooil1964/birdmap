@@ -8,8 +8,9 @@
   // A batch with no tile activity for this long falls back to OSM (the timer restarts on every loaded tile and on
   // tiles Leaflet cancels because the user zoomed).
   var TILE_BATCH_TIMEOUT_MS = 12000;
-  // Per batch: this many failures with no success fails at once; at the batch end, this many failures that
-  // outnumber the successes fail too. Scattered failures across a long session only show a partial notice.
+  // Per batch, whatever order the tiles answer in (see outage()): at least this many failures that outnumber the tiles
+  // loaded fail the batch, as do only failures on a layer that has shown nothing yet. Fewer failures keep VWorld with a
+  // partial notice; scattered failures across a long session never add up.
   var MAX_TILE_ERRORS = 3;
   // Rapid taps between VWorld types: only the choice still selected after this pause requests tiles.
   var SWITCH_SETTLE_MS = 250;
@@ -21,12 +22,15 @@
   // from the map's minimum zoom (4) and the Worker never receives a z4/z5 request.
   var VWORLD_MIN_ZOOM = 4;
   var NATIVE_MIN_ZOOM = 6;
-  // Zoom bursts (wheel or buttons): when the next zoom starts within this time of the previous one ending, the levels
-  // in between are not requested; the drawn tiles stay (scaled) and the level the map rests at is loaded this long
-  // after the last zoom. A lone zoom loads at once as before. Pinches keep Leaflet's default: the levels passed through
-  // fill the edges as they open up. A wheel zoom takes ~290 ms (40 ms wheel debounce + 250 ms animation), so 400 ms
-  // also covers repeated flicks up to ~1.4 per second, which at 200 ms each loaded a whole screen (10/27, PC 429).
+  // Runs of zooms (wheel or buttons): a zoom that starts within ZOOM_RUN_MS of the previous one ending continues the run
+  // and requests nothing; the drawn tiles stay (scaled) and the level the map rests at is loaded after a pause that
+  // follows the run's rhythm: 1.25 x its latest gap, at least ZOOM_SETTLE_MS and at most ZOOM_RUN_MS. A lone zoom loads
+  // at once as before. Pinches keep Leaflet's default: the levels passed through fill the edges as they open up.
+  // A wheel zoom takes ~290 ms (40 ms wheel debounce + 250 ms animation): flicks 0.6 s apart each loaded a whole screen
+  // (10/27, PC 429), so did flicks 1 s apart with a fixed 400 ms pause (10/28); a run now covers flicks up to ~1.15 s
+  // apart while a quick burst still settles in 400 ms.
   var ZOOM_SETTLE_MS = 400;
+  var ZOOM_RUN_MS = 900;
   var instances = new WeakMap();
   // 'vworld' is the Base map (the original value, kept for saved preferences).
   var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
@@ -114,6 +118,7 @@
     var overlayErrors = 0;
     var overlayBatchSuccesses = 0;
     var overlayBatchErrors = 0;
+    var overlayDrawn = false;
     var ui = null;
     var control = L.control({ position: 'topright' });
 
@@ -165,6 +170,7 @@
         canRetry: !destroyed && preference !== 'osm' && (locked() || overlayLocked()) && eligible(),
         backdrop: active !== 'osm' && map.hasLayer(osm),
         deadlinePending: deadline !== null,
+        recoveryAttempts: preference === 'osm' ? 0 : recoveryAttempts.get(lockId(PRIMARY[preference])) || 0,
         batchTimeoutMs: TILE_BATCH_TIMEOUT_MS,
         zoom: map.getZoom(),
         destroyed: destroyed
@@ -286,6 +292,19 @@
       recoveries.delete(id);
     }
 
+    // A batch's verdict from its counts alone, not the order the tiles answered in. Tiles still unanswered count as
+    // possible successes, so a verdict before the batch ends is one its end could not change.
+    function outage(failed, loaded, unanswered, shown) {
+      return (failed >= MAX_TILE_ERRORS && failed > loaded + unanswered) || (failed > 0 && loaded + unanswered === 0 && !shown);
+    }
+
+    // A layer is never removed inside its own Leaflet event: GridLayer._tileReady goes on using this._map after firing
+    // 'load' (removing the layer there threw on _fadeAnimated, 10/28). The fallback runs on the next turn, still only
+    // for the same layer and generation.
+    function later(fn) {
+      global.setTimeout(fn, 0);
+    }
+
     function fail(nextReason, token, layer) {
       if (!current(token, layer)) return;
       // Remember failed credentials only in memory. Changing views or providers
@@ -337,16 +356,20 @@
     var tileProto = L.TileLayer.prototype;
     var SettlingTileLayer = L.TileLayer.extend({
       _animateZoom: function (e) {
+        // Only an animated zoom ending starts the clock for the next one (not a jump to a search result).
+        this._zoomStarted = true;
+        var gap = Date.now() - (this._zoomEndedAt || 0);
         // The end of a pinch is the only zoom animation Leaflet starts with noUpdate (it passes zoomSnap).
-        var lone = e.noUpdate || (!this._zoomRest && Date.now() - (this._zoomEndedAt || 0) > ZOOM_SETTLE_MS);
+        var lone = e.noUpdate || (!this._zoomRest && gap > ZOOM_RUN_MS);
         if (lone) return tileProto._animateZoom.call(this, e);
+        this._restMs = Math.max(ZOOM_SETTLE_MS, Math.min(ZOOM_RUN_MS, Math.round(gap * 1.25)));
         this._restAfterZoom();
         // Only rescale what is drawn: _setView would still load the new level (updateWhenZooming).
         this._setZoomTransforms(e.center, e.zoom);
       },
       _resetView: function (e) {
         var burst = e && e.type === 'zoom' && !e.pinch;
-        if (burst) this._zoomEndedAt = Date.now();
+        if (burst && this._zoomStarted) { this._zoomEndedAt = Date.now(); this._zoomStarted = false; }
         if (!(burst && this._zoomRest)) return tileProto._resetView.call(this, e);
         this._restAfterZoom();
         this._setZoomTransforms(this._map.getCenter(), this._map.getZoom());
@@ -362,12 +385,18 @@
           if (layer._map && layer._map._animatingZoom) return layer._restAfterZoom();
           layer._zoomRest = null;
           if (layer._map) tileProto._resetView.call(layer);
-        }, ZOOM_SETTLE_MS);
+        }, layer._restMs || ZOOM_SETTLE_MS);
+      },
+      // Tiles of this layer still loading, apart from `except` (the tile whose error is being fired: Leaflet marks it
+      // answered only after its tileerror event).
+      _unanswered: function (except) {
+        var count = 0;
+        for (var key in this._tiles) if (!this._tiles[key].loaded && this._tiles[key].el !== except) count++;
+        return count;
       },
       // Leaflet fires 'load' only when a tile finishes. When the last tiles still loading are cancelled by a zoom
       // (_abortLoading) or dropped by a pan (_removeTile), the batch stays open with nothing left to load, and the 12 s
-      // deadline would call the drawn map a timeout. Close it (marked cancelled) once Leaflet has queued whatever the
-      // new view needs.
+      // deadline would call the drawn map a timeout. Close it once Leaflet has queued whatever the new view needs.
       _abortLoading: function () {
         tileProto._abortLoading.call(this);
         this._closeIdleBatch();
@@ -383,7 +412,7 @@
           layer._idleCheck = null;
           if (layer._map && layer._loading && layer._noTilesToLoad()) {
             layer._loading = false;
-            layer.fire('load', { cancelled: true });
+            layer.fire('load');
           }
         }, 0);
       },
@@ -421,6 +450,7 @@
       overlayErrors = 0;
       overlayBatchSuccesses = 0;
       overlayBatchErrors = 0;
+      overlayDrawn = false;
       overlayState = 'loading';
       try {
         var opts = tileOptions();
@@ -428,11 +458,11 @@
         layer = new SettlingTileLayer(template('overlay'), opts);
         overlay = layer;
         overlayHandlers = {
-          tileerror: function () {
+          tileerror: function (e) {
             if (!overlayCurrent(token, layer)) return;
             overlayErrors++;
             overlayBatchErrors++;
-            if (overlayBatchErrors >= MAX_TILE_ERRORS && overlayBatchSuccesses === 0) failOverlay(token, layer);
+            if (outage(overlayBatchErrors, overlayBatchSuccesses, layer._unanswered(e && e.tile), overlayDrawn)) later(function () { failOverlay(token, layer); });
           },
           tileload: function () {
             if (!overlayCurrent(token, layer)) return;
@@ -450,16 +480,16 @@
             overlayState = 'loading';
             armOverlayDeadline(token, layer);
           },
-          load: function (e) {
+          load: function () {
             if (!overlayCurrent(token, layer)) return;
-            if ((overlayBatchErrors > 0 && overlayBatchSuccesses === 0 && !(e && e.cancelled))
-              || (overlayBatchErrors >= MAX_TILE_ERRORS && overlayBatchErrors > overlayBatchSuccesses)) {
-              failOverlay(token, layer);
-              return;
-            }
+            if (outage(overlayBatchErrors, overlayBatchSuccesses, 0, overlayDrawn)) return later(function () { failOverlay(token, layer); });
             clearOverlayDeadline();
-            recoveryAttempts.delete(lockId('overlay'));
-            overlayState = 'ready';
+            // Only labels that really loaded end a run of recovery attempts (not a batch cancelled before any answer).
+            if (overlayBatchSuccesses > 0) {
+              overlayDrawn = true;
+              recoveryAttempts.delete(lockId('overlay'));
+            }
+            overlayState = overlayDrawn ? 'ready' : 'loading';
             render();
           }
         };
@@ -500,11 +530,11 @@
         vworldKind = kind;
         active = preference === 'hybrid' ? (wantOverlay ? 'hybrid' : 'satellite') : preference;
         tileHandlers = {
-          tileerror: function () {
+          tileerror: function (e) {
             if (!current(token, layer)) return;
             errors++;
             batchErrors++;
-            if (batchErrors >= MAX_TILE_ERRORS && batchSuccesses === 0) fail('tile_error', token, layer);
+            if (outage(batchErrors, batchSuccesses, layer._unanswered(e && e.tile), drawn)) later(function () { fail('tile_error', token, layer); });
           },
           tileload: function () {
             if (!current(token, layer)) return;
@@ -525,22 +555,19 @@
             armDeadline(token, layer);
             render();
           },
-          load: function (e) {
+          load: function () {
             if (!current(token, layer)) return;
-            // Leaflet's load means that a batch finished, even if every tile
-            // failed. A tiny failed batch must not masquerade as a ready map,
-            // and neither may a batch where failures outnumber successes.
-            // A batch whose remaining tiles were cancelled left the view drawn
-            // from the tiles kept: its one or two failures are only partial.
-            if ((batchErrors > 0 && batchSuccesses === 0 && !(e && e.cancelled)) || (batchErrors >= MAX_TILE_ERRORS && batchErrors > batchSuccesses)) {
-              fail('tile_error', token, layer);
-              return;
-            }
+            // Leaflet's load means that a batch finished (or was cancelled), even if every tile failed: see outage().
+            if (outage(batchErrors, batchSuccesses, 0, drawn)) return later(function () { fail('tile_error', token, layer); });
             clearDeadline();
-            loading = false;
-            drawn = true;
-            recoveryAttempts.delete(lockId(kind));
-            reason = batchErrors > 0 ? 'partial_error' : 'ready';
+            // Only tiles that really loaded make the layer shown (OSM may go) and end a run of recovery attempts; a batch
+            // cancelled before any answer leaves both as they were.
+            if (batchSuccesses > 0) {
+              drawn = true;
+              recoveryAttempts.delete(lockId(kind));
+            }
+            loading = !drawn;
+            reason = batchErrors > 0 ? 'partial_error' : drawn ? 'ready' : 'loading';
             syncBackdrop();
             render();
           }
