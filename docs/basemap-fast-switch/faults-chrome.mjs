@@ -80,6 +80,11 @@ const start = p => p.evaluate(`(function(){var m=${MAP};m.setView([36.3,127.6],1
 const wheelZoom = async (b, p, steps, gap) => { for (let i = 0; i < steps; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 560 + (i % 3) * 110, y: 330 + (i % 2) * 90, deltaX: 0, deltaY: i % 6 < 3 ? -120 : 120 }, p.sessionId); await sleep(gap); } };
 const pinchZoom = async (p, steps, gap) => { for (let i = 0; i < steps; i++) { const dz = [0.7, -0.6, 0.9, -0.8, 0.5, -0.7][i % 6]; await p.evaluate(`(function(){var m=${MAP};m.setZoomAround(L.point(${[120, 260, 195, 220][i % 4]},${[320, 480, 560, 400][i % 4]}),m.getZoom()+${dz});return 1;})()`); await sleep(gap); } };
 const fastZoom = (b, p, label) => label === 'pc' ? wheelZoom(b, p, 24, 140) : pinchZoom(p, 20, 180);
+// Wheel flicks on PC (1366x768): one notch each, `gap` ms apart, three in then three out, inside the domestic view.
+const flicks = async (b, p, n, gap) => { for (let i = 0; i < n; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 683 + ((i % 3) - 1) * 120, y: 384 + (i % 2 ? 60 : -60), deltaX: 0, deltaY: i % 6 < 3 ? -100 : 100 }, p.sessionId); await sleep(gap); } };
+const notch = (b, p, deltaY) => b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 683, y: 384, deltaX: 0, deltaY }, p.sessionId);
+// Real two-finger pinches on a touch phone (CDP synthesizes the touch events), in 3 then out 3, `gap` ms apart.
+const pinches = async (b, p, n, gap) => { for (let i = 0; i < n; i++) { const t = Date.now(); await b.send('Input.synthesizePinchGesture', { x: 195 + ((i % 3) - 1) * 60, y: 460 + (i % 2 ? 60 : -60), scaleFactor: i % 6 < 3 ? 2 : 0.5, relativeSpeed: 1200, gestureSourceType: 'touch' }, p.sessionId); await sleep(Math.max(0, gap - (Date.now() - t))); } };
 const setView = (p, lat, lng, z) => p.evaluate(`(function(){var m=${MAP};m.setView([${lat},${lng}],${z},{animate:false});return 1;})()`);
 // Zoom levels of the tile requests in a log slice.
 const levels = log => [...new Set(log.map(x => +(/\/tiles\/(?:satellite\/|hybrid\/)?(\d+)\//.exec(x.url) || [])[1]))].sort((a, b) => a - b);
@@ -99,10 +104,11 @@ const SCENARIOS = [
     run: async p => { await click(p, L_BASE); for (let i = 0; i < 80; i++) { if (i % 10 === 5) await zoomBy(p, i % 20 === 5 ? 1 : -1); else await panBy(p, i % 2 ? -170 : 180, i % 3 ? 70 : -80); await sleep(250); } return waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); },
     expect: s => s.active !== 'osm' },
   { name: 'fast_zoom_normal', note: 'fast wheel (PC) or pinch (mobile) zooming inside the domestic view, every tile fine', answer: () => ({ status: 200, delay: 80 }),
-    run: async (p, b, label) => { await fastZoom(b, p, label); return waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); },
+    // The level the burst stops at loads ZOOM_SETTLE_MS after its last zoom: wait for it before reading the state.
+    run: async (p, b, label) => { await fastZoom(b, p, label); await sleep(900); return waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); },
     expect: s => s.active === 'vworld' && s.reason === 'ready' },
   { name: 'fast_zoom_per_ip_limit', note: 'the Worker per-IP limit (180 tiles per 60 s, 429 beyond it) during fast zooming: VWorld, or OSM with no further request until the one automatic attempt', answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 60000).length > 180 ? 429 : 200, delay: 80 }),
-    run: async (p, b, label) => { await fastZoom(b, p, label); const s = await waitState(p, s => s.reason === 'ready' || s.reason === 'partial_error' || s.active === 'osm', 15000); s.requestsInWindow = p.log.filter(x => Date.now() - x.t < 60000).length;
+    run: async (p, b, label) => { await fastZoom(b, p, label); await sleep(900); const s = await waitState(p, s => s.reason === 'ready' || s.reason === 'partial_error' || s.active === 'osm', 15000); s.requestsInWindow = p.log.filter(x => Date.now() - x.t < 60000).length;
       const n = p.log.length; await panBy(p, 150, 0); await zoomBy(p, 1); await sleep(2500); s.requestsAfter = p.log.length - n; return s; },
     expect: s => s.active !== 'osm' || (s.reason === 'tile_error' && s.requestsAfter === 0) },
   { name: 'limit_window_then_recovery', only: 'pc', note: '429 for every tile during the first 20 s, fine afterwards: OSM, then one automatic attempt after 60 s brings VWorld back', answer: (u, i, log) => ({ status: Date.now() - log[0].t < 20000 ? 429 : 200, delay: 60 }),
@@ -117,7 +123,7 @@ const SCENARIOS = [
   { name: 'slow_lte', note: 'every tile 1.2-2.4 s (slow LTE) while switching types and zooming', answer: (u, i) => ({ status: 200, delay: 1200 + (i % 7) * 200 }),
     run: async (p, b, label) => { await rapid(p, 8, 400); await fastZoom(b, p, label); return waitState(p, applied, 25000); },
     expect: s => s.active !== 'osm' },
-  { name: 'outage_one_recovery_only', only: 'pc', note: 'a lasting outage (502): OSM, exactly one automatic attempt after 60 s, then OSM with no further request', answer: () => ({ status: 502, delay: 60 }),
+  { name: 'outage_recovery_backoff', only: 'pc', note: 'a lasting outage (502): OSM, one automatic attempt after 60 s, then OSM with no further request until the next attempt (120 s later)', answer: () => ({ status: 502, delay: 60 }),
     run: async p => { const o = await waitState(p, s => s.active === 'osm', 15000); const n0 = p.log.length; await sleep(64000); const s = await waitState(p, s => s.active === 'osm', 10000);
       const n1 = p.log.length; await panBy(p, 160, 0); await zoomBy(p, 1); await sleep(3000); s.attemptRequests = n1 - n0; s.requestsAfterSecondFailure = p.log.length - n1; s.firstFallback = o.reason; return s; },
     expect: s => s.firstFallback === 'tile_error' && s.active === 'osm' && s.locked && s.attemptRequests > 0 && s.attemptRequests <= 60 && s.requestsAfterSecondFailure === 0 },
@@ -160,7 +166,40 @@ const SCENARIOS = [
       // The burst handling overrides Leaflet 1.9.3 internals: a Leaflet upgrade must come with a fresh check.
       const leaflet = await p.evaluate("(function(){var t=L.TileLayer.prototype,m=" + MAP + ";return L.version+'/'+['_animateZoom','_resetView','_onMoveEnd','_setView','_setZoomTransforms','onRemove'].every(function(k){return typeof t[k]==='function';})+'/'+(typeof m._animatingZoom==='boolean');})()");
       return { ...s, steps: await p.evaluate('window.__zoomSteps'), levels: levels(p.log.slice(n)), leaflet }; },
-    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) && s.leaflet === '1.9.3/true/true' }
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) && s.leaflet === '1.9.3/true/true' },
+  // Live 10/27: wheel flicks 0.6 s apart were each a lone zoom loading a whole screen (650-700 tiles in 14 s); the
+  // Worker answered 429 and the map switched to OSM. Here the per-IP limit is answered strictly.
+  { name: 'wheel_flicks_per_ip_limit', only: 'pc', note: 'wheel flicks 0.6 s apart for 12 s against the Worker per-IP limit (180 per 60 s, 429 beyond): the levels passed through are not requested, VWorld stays and the level the map rests at is loaded',
+    answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 60000).length > 180 ? 429 : 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 20, 600); await sleep(900); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); return { ...s, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.includes(Math.round(s.zoom)) },
+  { name: 'single_wheel_zoom_loads_at_once', only: 'pc', note: 'one wheel notch from rest: the new level is requested as the zoom starts (no settle pause), as before',
+    answer: () => ({ status: 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length;
+      await p.evaluate(`(function(){var m=${MAP};window.__sharp=null;m.eachLayer(function(l){if(l._url&&/workers\\.dev/.test(l._url))l.once('load',function(){window.__sharp=performance.now();});});window.__t0=performance.now();return 1;})()`);
+      const t0 = Date.now(); await notch(b, p, -100); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 12, 10000);
+      const first = p.log.slice(n)[0]; return { ...s, firstRequestMs: first ? first.t - t0 : null, sharpMs: Math.round(await p.evaluate('window.__sharp-window.__t0')), levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.zoom === 12 && s.firstRequestMs !== null && s.firstRequestMs < 250 && s.levels.join() === '12' },
+  { name: 'slow_wheel_each_level', only: 'pc', note: 'wheel notches 1.5 s apart: every level is loaded as its zoom starts, as before', answer: () => ({ status: 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 4, 1500); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.join() === '12,13,14' },
+  { name: 'wheel_in_and_back_to_start', only: 'pc', note: 'four quick notches in and four back out (0.45 s apart) around one point: back at the start level VWorld stays; only the first level passed through and the start level are requested',
+    answer: () => ({ status: 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length; for (let i = 0; i < 8; i++) { await notch(b, p, i < 4 ? -100 : 100); await sleep(450); }
+      await sleep(900); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.zoom === 11 && s.levels.every(z => z === 11 || z === 12) },
+  // Leaflet ends a batch only when a tile finishes: when the last tiles loading were cancelled (zooming back in onto the
+  // tiles kept under the wider level), the batch stayed open and the 12 s deadline switched a drawn map to OSM (10/27).
+  { name: 'cancelled_batch_closes_without_timeout', only: 'pc', note: 'slow tiles (1.5 s): zoom out one level and back in before its tiles arrive: the cancelled batch closes at once and the drawn map stays VWorld past the 12 s deadline',
+    answer: () => ({ status: 200, delay: 1500 }),
+    run: async p => { await sleep(600); await zoomBy(p, -1); await sleep(450); await zoomBy(p, 1);
+      const early = await waitState(p, s => s.reason === 'ready' && s.zoom === 11, 4000); const pending = await p.evaluate('birdmapBasemap.getState().deadlinePending');
+      await sleep(12500); const s = await p.evaluate(ST); return { ...s, earlyReason: early.reason, deadlinePendingAfterClose: pending }; },
+    expect: s => s.earlyReason === 'ready' && s.deadlinePendingAfterClose === false && s.active === 'vworld' && s.reason === 'ready' },
+  { name: 'real_pinch', only: 'mobile', touch: true, note: 'real two-finger pinches (touch), in 3 and out 3, 0.6 s apart: each pinch end loads its level at once (Leaflet default, unchanged), VWorld stays',
+    answer: () => ({ status: 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length; await pinches(b, p, 12, 600); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.length >= 3 }
 ];
 
 
@@ -208,7 +247,7 @@ try {
     for (const sc of SCENARIOS) {
       if (sc.only && sc.only !== label) continue;
       if (process.env.FAULTS_ONLY && !process.env.FAULTS_ONLY.split(',').includes(sc.name)) continue;
-      const p = await browser.open({ ...size, answer: sc.answer });
+      const p = await browser.open({ ...size, touch: !!sc.touch, answer: sc.answer });
       await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
       await start(p); await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
       const before = p.log.length;
