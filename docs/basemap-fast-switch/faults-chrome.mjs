@@ -164,7 +164,7 @@ const SCENARIOS = [
       for (let i = 0; i < 9; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 640, y: 400, deltaX: 0, deltaY: -120 }, p.sessionId); await sleep(100); }
       await sleep(800); const s = await waitState(p, s => s.reason === 'ready', 15000);
       // The burst handling overrides Leaflet 1.9.3 internals: a Leaflet upgrade must come with a fresh check.
-      const leaflet = await p.evaluate("(function(){var t=L.TileLayer.prototype,m=" + MAP + ";return L.version+'/'+['_animateZoom','_resetView','_onMoveEnd','_setView','_setZoomTransforms','onRemove'].every(function(k){return typeof t[k]==='function';})+'/'+(typeof m._animatingZoom==='boolean');})()");
+      const leaflet = await p.evaluate("(function(){var t=L.TileLayer.prototype,m=" + MAP + ";return L.version+'/'+['_animateZoom','_resetView','_onMoveEnd','_setView','_setZoomTransforms','onRemove','_abortLoading','_removeTile','_noTilesToLoad'].every(function(k){return typeof t[k]==='function';})+'/'+(typeof m._animatingZoom==='boolean');})()");
       return { ...s, steps: await p.evaluate('window.__zoomSteps'), levels: levels(p.log.slice(n)), leaflet }; },
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) && s.leaflet === '1.9.3/true/true' },
   // Live 10/27: wheel flicks 0.6 s apart were each a lone zoom loading a whole screen (650-700 tiles in 14 s); the
