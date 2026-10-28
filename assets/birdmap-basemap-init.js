@@ -45,35 +45,15 @@
   };
 })(window);
 
-/* A small release note beside the existing title. Native disclosure keeps closing local to this control. */
+/* Keep the latest map update in the existing subtitle. */
 (function () {
   'use strict';
-  function initializeUpdateNotice() {
-    var title = document.querySelector('#mapTitleBox b');
-    if (!title || document.getElementById('birdmapUpdateNotice')) return;
-    var notice = document.createElement('details');
-    notice.id = 'birdmapUpdateNotice';
-    var summary = document.createElement('summary');
-    summary.textContent = '업데이트';
-    summary.setAttribute('aria-label', '지도 업데이트 안내');
-    var card = document.createElement('div');
-    card.className = 'birdmap-update-card';
-    var date = document.createElement('time');
-    date.dateTime = '2026-10-28';
-    date.textContent = '2026.10.28';
-    var heading = document.createElement('strong');
-    heading.appendChild(date);
-    heading.appendChild(document.createTextNode(' · VWorld 바탕지도 3차 안정화'));
-    var description = document.createElement('p');
-    description.textContent = 'PC 확대·축소 시 불필요한 지도 타일 요청 감소, 지도 전환·복구 안정성 개선';
-    card.appendChild(heading);
-    card.appendChild(description);
-    notice.appendChild(summary);
-    notice.appendChild(card);
-    title.insertAdjacentElement('afterend', notice);
+  function updateMapSubtitle() {
+    var subtitle = document.querySelector('#mapTitleBox > span');
+    if (subtitle) subtitle.textContent = '최종 업데이트: 2026.10.28 · 브이월드 바탕지도';
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeUpdateNotice);
-  else initializeUpdateNotice();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateMapSubtitle);
+  else updateMapSubtitle();
 })();
 
 /* Mobile overlay presentation. Keep the actual Leaflet popup/content and public read contract intact. */
