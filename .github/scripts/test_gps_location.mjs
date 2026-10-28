@@ -9,18 +9,18 @@ function popup(options={autoPan:true},initialClasses=[]){
  return{options,node,classes,updates:0,getElement(){return this.node;},update(){this.updates++;}};
 }
 function env({secure=true,supported=true,popupOptions={autoPan:true},popupClasses=[]}={}){
- const layers=new Set(),calls=[],messages=[],gps=[],watched=[],cleared=[];let hidden=false;
+ const layers=new Set(),calls=[],messages=[],gps=[],watched=[],cleared=[],collapses=[];let hidden=false;
  const map={hasLayer:l=>layers.has(l),removeLayer:l=>layers.delete(l),distance:()=>1234.5};
  const L={};for(const kind of ['circle','circleMarker','polyline'])L[kind]=(p,options)=>({kind,p,options,addTo(){layers.add(this);return this;},setLatLng(p){this.p=p;return this;},setRadius(r){this.options.radius=r;return this;},bringToFront(){},bindTooltip(t){this.tooltip=t;return this;},openTooltip(){return this;}});
  L.tooltip=()=>({setContent(n){this.content=n;return this;}});
  const document={readyState:'loading',addEventListener(){},createElement:()=>({textContent:''})};
  const w={document};vm.runInNewContext(source,{window:w,Promise,Number,Date});
  const geo={getCurrentPosition(ok,bad,options){gps.push({ok,bad,options});},watchPosition(ok,bad,options){watched.push({ok,bad,options});return watched.length;},clearWatch:id=>cleared.push(id)};
- const api=w.BirdmapLocation.create({map,L,geolocation:supported?geo:null,isSecure:()=>secure,hidden:()=>hidden,notify:s=>messages.push(s),fit:(...a)=>calls.push(a)});
+ const api=w.BirdmapLocation.create({map,L,geolocation:supported?geo:null,isSecure:()=>secure,hidden:()=>hidden,notify:s=>messages.push(s),fit:(...a)=>calls.push(a),collapsePopup:p=>collapses.push(p)});
  const layer={};layers.add(layer);const sourcePopup=popup(popupOptions,popupClasses);layers.add(sourcePopup);let valid=true;
  const target=()=>({layer,point:{lat:36.3,lng:127.3},publicReport:true,label:'출현 지점',valid:()=>valid});
  const position=(extra={})=>({coords:{latitude:37.12345678,longitude:126.23456789,accuracy:25,...extra},timestamp:Date.now()});
- return{api,geo,layers,calls,messages,gps,watched,cleared,layer,popup:sourcePopup,target,position,hide:()=>hidden=true,revoke:()=>valid=false,by:kind=>[...layers].filter(l=>l.kind===kind),distanceText:w.BirdmapLocation.distanceText};
+ return{api,geo,layers,calls,messages,gps,watched,cleared,collapses,layer,popup:sourcePopup,target,position,hide:()=>hidden=true,revoke:()=>valid=false,by:kind=>[...layers].filter(l=>l.kind===kind),distanceText:w.BirdmapLocation.distanceText};
 }
 function popupState(p){return{descriptor:Object.getOwnPropertyDescriptor(p.options,'autoPan'),value:p.options.autoPan,gpsClass:p.classes.has('birdmap-gps-popup')};}
 function restored(p,before,label='popup restored'){
@@ -39,6 +39,18 @@ test('GPS asks only on activation; blue point, accuracy metres and straight dash
  e.gps[0].ok(e.position());await tick();assert.equal(proofs,2);assert.equal(e.by('circleMarker').length,1);assert.equal(e.by('circle')[0].options.radius,25);
  assert.equal(e.by('polyline').length,1);assert.equal(e.by('polyline')[0].options.dashArray,'7 8');assert.match(e.by('polyline')[0].tooltip.content.textContent,/직선거리 1.23 km/);assert.equal(e.calls.length,1);
  assert.equal(e.distanceText(980),'980 m');assert.equal(e.distanceText(12000),'12.0 km');
+});
+test('only a verified guided fix compacts the popup before map fitting',async()=>{
+ const e=env();
+ await e.api.guide(e.target,e.popup);
+ assert.equal(e.collapses.length,0,'do not compact while waiting for GPS');
+ e.gps[0].ok(e.position());await tick();
+ assert.deepEqual(e.collapses,[e.popup]);
+ assert.equal(e.calls.length,1);
+ e.api.locate();e.gps[1].ok(e.position());await tick();
+ assert.equal(e.collapses.length,1,'independent locate keeps the popup unchanged');
+ const f=env();await f.api.guide(()=>null,f.popup);
+ assert.equal(f.collapses.length,0,'unverified target never compacts the sheet');
 });
 test('independent locate recentres and cancels an old guide; no automatic tracking',async()=>{
  const e=env();await e.api.guide(e.target,e.popup);e.api.locate();e.gps[0].ok(e.position());await tick();assert.equal(e.by('circleMarker').length,0);
