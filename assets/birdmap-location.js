@@ -172,10 +172,12 @@
     var more = document.createElement('button'); more.type = 'button'; more.textContent = '⋯'; more.setAttribute('aria-label', '위치 도구 열기'); more.setAttribute('aria-expanded', 'false'); more.hidden = true;
     var actions = document.createElement('div'); actions.className = 'birdmap-gps-actions'; actions.hidden = true;
     var privacy = document.createElement('div'); privacy.className = 'birdmap-gps-privacy'; privacy.hidden = true;
+    var details = document.createElement('div'); details.className = 'birdmap-gps-details'; details.hidden = true;
     privacy.textContent = '위치는 저장하지 않습니다. 주변 지도 요청으로 지도 제공자가 대략적인 위치를 알 수 있습니다. 앱을 전환하면 위치 표시가 지워집니다.';
     function button(text) { var b = document.createElement('button'); b.type = 'button'; b.textContent = text; actions.appendChild(b); return b; }
     var track = button('이동 갱신'), stop = button('안내 종료'), wipe = button('위치 지우기'); track.setAttribute('aria-pressed', 'false');
-    root.appendChild(locate); root.appendChild(more); root.appendChild(status); root.appendChild(actions); root.appendChild(privacy); map.getContainer().appendChild(root);
+    details.appendChild(status); details.appendChild(actions); details.appendChild(privacy);
+    root.appendChild(locate); root.appendChild(more); root.appendChild(details); map.getContainer().appendChild(root);
     global.L.DomEvent.disableClickPropagation(root); global.L.DomEvent.disableScrollPropagation(root);
     function fit(p, destination, popup) {
       if (popup) {
@@ -212,7 +214,7 @@
     var api = global.birdmapLocation = create({ map: map, L: global.L, geolocation: global.navigator.geolocation,
       isSecure: function () { return global.isSecureContext === true; }, hidden: function () { return document.hidden; }, fit: fit,
       notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); if (errorMessage) expanded = false; },
-      changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded ? '280px' : errorMessage ? '260px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; status.hidden = !status.textContent || (!expanded && !errorMessage); track.disabled = !s.located; schedulePlace(); } });
+      changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded ? '280px' : errorMessage ? '260px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; status.hidden = !status.textContent || (!expanded && !errorMessage); details.hidden = status.hidden && actions.hidden && privacy.hidden; track.disabled = !s.located; schedulePlace(); } });
     var startGuide = api.guide;
     function prepareView() {
       if (!global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) return;
@@ -225,13 +227,20 @@
     api.guide = function () { expanded = false; prepareView(); return startGuide.apply(api, arguments); };
     function place() {
       var rect = map.getContainer().getBoundingClientRect();
+      details.style.maxHeight = '';
+      var sheet = document.querySelector('.birdmap-mobile-popup'), sheetLimit = rect.height - 36;
+      if (sheet && sheet.getClientRects().length && global.getComputedStyle(sheet).display !== 'none') {
+        // Keep the header reachable while longer tools scroll above the mobile sheet.
+        sheetLimit = sheet.getBoundingClientRect().top - rect.top - 8;
+        details.style.maxHeight = Math.max(0, sheetLimit - 70 - 44 - 4) + 'px';
+      }
       var boxes = Array.from(document.querySelectorAll(overlaySelector)).filter(function (n) { return n.getClientRects().length && global.getComputedStyle(n).display !== 'none'; }).map(function (n) { return n.getBoundingClientRect(); });
       // Check the complete expanded tool area, including status/actions, against existing overlays.
       var size = root.getBoundingClientRect(), height = size.height || 44, width = size.width || 84;
       var candidates = [Math.round(rect.height * .46), 70, 90, rect.height - 110];
       boxes.forEach(function (r) { candidates.push(r.bottom - rect.top + 8, r.top - rect.top - height - 8); });
       function overlap(position) { return boxes.reduce(function (total, r) { return total + Math.max(0, Math.min(rect.left + position.left + width, r.right) - Math.max(rect.left + position.left, r.left)) * Math.max(0, Math.min(rect.top + position.top + height, r.bottom) - Math.max(rect.top + position.top, r.top)); }, 0); }
-      candidates = candidates.filter(function (top) { return top >= 70 && top + height <= rect.height - 36; });
+      candidates = candidates.filter(function (top) { return top >= 70 && top + height <= Math.min(rect.height - 36, sheetLimit); });
       var positions = [], columns = [10, Math.max(10, rect.width - width - 10)];
       boxes.forEach(function (r) { columns.push(r.right - rect.left + 8, r.left - rect.left - width - 8); });
       columns.filter(function (left) { return left >= 10 && left + width <= rect.width - 10; }).forEach(function (left) { candidates.forEach(function (top) { positions.push({ left: left, top: top }); }); });
@@ -240,7 +249,7 @@
       root.style.top = Math.max(70, position ? position.top : 70) + 'px'; root.style.left = (position ? position.left : 10) + 'px';
     }
     locate.addEventListener('click', function () { expanded = false; map.closePopup(); prepareView(); api.locate(); });
-    more.addEventListener('click', function () { expanded = !expanded; var s = api.state(); root.style.width = expanded ? '280px' : errorMessage ? '260px' : '118px'; status.hidden = !expanded && !errorMessage; actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); schedulePlace(); });
+    more.addEventListener('click', function () { expanded = !expanded; var s = api.state(); root.style.width = expanded ? '280px' : errorMessage ? '260px' : '118px'; status.hidden = !expanded && !errorMessage; actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; details.hidden = status.hidden && actions.hidden && privacy.hidden; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); schedulePlace(); });
     track.addEventListener('click', function () { api.setTracking(track.getAttribute('aria-pressed') !== 'true'); });
     stop.addEventListener('click', function () { expanded = false; api.stopGuide(); }); wipe.addEventListener('click', function () { api.clear(); });
     function staticTarget(kind, id, popup) {

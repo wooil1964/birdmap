@@ -47,13 +47,13 @@ async function snapshot(page) {
   });
 }
 function sameOptions(actual, expected) { return actual.own === expected.own && actual.value === expected.value && JSON.stringify(actual.descriptor) === JSON.stringify(expected.descriptor) && actual.gps === expected.gps; }
-async function openSite(page) {
-  await page.evaluate(() => {
+async function openSite(page, siteId = '195') {
+  await page.evaluate(siteId => {
     birdmapLocation.clear();
-    const s = siteData.find(s => s.id === '195'), marker = window[s.markerVar], map = map_7010a44f6ac2025090f0fe07508ed485;
+    const s = siteData.find(s => s.id === siteId), marker = window[s.markerVar], map = map_7010a44f6ac2025090f0fe07508ed485;
     marker.addTo(map); map.setView(marker.getLatLng(), 13, { animate: false }); marker.openPopup();
     window.__popup = marker.getPopup(); window.__marker = marker;
-  });
+  }, siteId);
   await page.waitForTimeout(450);
 }
 async function start(page, pending = false, position = null) {
@@ -91,6 +91,56 @@ async function desktopBounds(page, name, panel = false) {
   check(bounds.top >= -1 && bounds.bottom <= bounds.height + 1 && bounds.left >= -1 && bounds.right <= bounds.width + 1, name + ' popup stays in viewport', bounds);
   if (panel) check(bounds.panelOverlap <= 1, name + ' popup clears filter panel', bounds);
   check(bounds.toolOverlap <= 1, name + ' GPS tools clear ordinary popup', bounds);
+  return bounds;
+}
+// Pin the original reported route, rather than relying on the general site-195 fixture.
+async function madoRegressions(page, label, width) {
+  if (width !== 1280 && width !== 1024) return;
+  await openSite(page, '114');
+  const destination = await page.evaluate(() => {
+    const site = siteData.find(s => s.id === '114'), node = __popup.getElement(), point = __marker.getLatLng();
+    return { id: site.id, name: site.name, title: node.querySelector('h4')?.textContent, buttonId: node.querySelector('[data-location-site]')?.dataset.locationSite, lat: point.lat, lon: point.lng, expectedLat: site.lat, expectedLon: site.lon };
+  });
+  check(destination.id === '114' && destination.name === '마도' && destination.title === '마도' && destination.buttonId === '114' && destination.lat === destination.expectedLat && destination.lon === destination.expectedLon, label + ' exact Mado 114 destination and marker', destination);
+  await page.evaluate(() => setBirdmapPanelOpen(true));
+  check(await page.locator('#birdmapPanel').isVisible(), label + ' Mado regression filter panel is open');
+  const baseline = await snapshot(page), busan = { latitude: 35.1796, longitude: 129.0756, accuracy: 25 };
+  await start(page, false, busan);
+  await desktopBounds(page, label + ' Busan to Mado guidance', true);
+  await stopButton(page);
+  await restored(page, label + ' Busan to Mado stop', baseline);
+  const stopped = await desktopBounds(page, label + ' Busan to Mado stopped', true);
+  check(stopped.top >= 0, label + ' Busan to Mado stopped top is nonnegative', stopped);
+  await page.screenshot({ path: path.join(OUT, 'stopped-mado-' + label + '.png') });
+  await start(page, false, busan);
+  await page.evaluate(() => { birdmapLocation.setTracking(true); __mock.watches.get(__mock.watchSeq).error({ code: 2 }); });
+  const failed = await desktopBounds(page, label + ' Busan to Mado GPS failure', true);
+  check(failed.top >= 0, label + ' Busan to Mado GPS failure top is nonnegative', failed);
+  await page.evaluate(() => { birdmapLocation.clear(); setBirdmapPanelOpen(false); });
+}
+async function landscapeToolsRegression(page, label, width) {
+  if (width !== 844) return;
+  await openSite(page, '114');
+  await start(page, false, { latitude: 35.1796, longitude: 129.0756, accuracy: 25 });
+  // Clicking the GPS button scrolls the sheet to its route row; reveal its title before hit-testing it.
+  await page.evaluate(() => { __popup.getElement().querySelector('.leaflet-popup-content').scrollTop = 0; });
+  await page.getByRole('button', { name: '위치 도구 열기', exact: true }).click();
+  await page.waitForTimeout(100);
+  const bounds = await page.evaluate(() => {
+    const sheet = __popup.getElement(), title = sheet.querySelector('h4'), t = title.getBoundingClientRect(), g = document.querySelector('#birdmapGps').getBoundingClientRect(), s = sheet.getBoundingClientRect(), details = document.querySelector('.birdmap-gps-details');
+    const hit = document.elementFromPoint(t.left + t.width / 2, t.top + t.height / 2);
+    return { toolTop: g.top, toolBottom: g.bottom, sheetTop: s.top, sheetBottom: s.bottom, title: title.textContent, titleUncovered: title === hit || title.contains(hit), detailsWidth: details.getBoundingClientRect().width, scrollWidth: details.scrollWidth, clientWidth: details.clientWidth, scrollHeight: details.scrollHeight, clientHeight: details.clientHeight, overflow: getComputedStyle(details).overflowY };
+  });
+  check(bounds.toolTop >= 0 && bounds.toolBottom <= bounds.sheetTop - 8 && bounds.sheetBottom <= 390, label + ' expanded GPS tools clear Mado sheet and viewport', bounds);
+  check(bounds.title === '마도' && bounds.titleUncovered, label + ' Mado sheet title remains uncovered', bounds);
+  check(bounds.scrollHeight > bounds.clientHeight && bounds.clientHeight > 0 && bounds.overflow === 'auto', label + ' landscape GPS details have an internal scroll area', bounds);
+  check(bounds.detailsWidth >= 260 && bounds.scrollWidth <= bounds.clientWidth, label + ' landscape GPS details retain full width without horizontal scrolling', bounds);
+  await page.screenshot({ path: path.join(OUT, 'expanded-tools-mado-' + label + '.png') });
+  await page.getByRole('button', { name: '안내 종료', exact: true }).click();
+  check(await page.evaluate(() => !birdmapLocation.state().guiding && !!document.querySelector('.birdmap-gps-dot')), label + ' scrolled stop button ends guide and keeps position');
+  await page.getByRole('button', { name: '위치 도구 열기', exact: true }).click();
+  await page.getByRole('button', { name: '위치 지우기', exact: true }).click();
+  check(await page.evaluate(() => !birdmapLocation.state().located && !document.querySelector('.birdmap-gps-dot')), label + ' scrolled clear button removes position');
 }
 async function followupRegressions(page, label, width) {
   if (width !== 1440 && width !== 1024) return;
@@ -153,7 +203,7 @@ async function followupRegressions(page, label, width) {
   const origin = 'http://127.0.0.1:' + server.address().port;
   browser = await pw.chromium.launch({ executablePath: process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
   const widths = process.env.POPUP_TEST_WIDTHS && process.env.POPUP_TEST_WIDTHS.split(',').map(Number);
-  for (const [width, height, touch] of [[1440, 1000, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
+  for (const [width, height, touch] of [[1440, 1000, false], [1280, 720, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
     const label = width + 'x' + height, page = await browser.newPage({ viewport: { width, height }, isMobile: touch, hasTouch: touch });
     page.on('pageerror', error => errors.push(label + ': ' + error.message));
     await page.addInitScript({ content: '(' + fixture + ')();(' + syntheticReportFixture.toString() + ')();' });
@@ -227,6 +277,8 @@ async function followupRegressions(page, label, width) {
         await layout(page, label + ' resized');
       }
       await followupRegressions(page, label, width);
+      await madoRegressions(page, label, width);
+      await landscapeToolsRegression(page, label, width);
       await page.evaluate(() => { publicationInvalidate(); return publicationRefresh(); });
       const reportOpened = await page.evaluate(() => openPublicReportLocation('popup-report', '직박구리'));
       check(reportOpened, label + ' real report popup opens through synthetic exact-ID proof', reportOpened ? undefined : await page.evaluate(() => ({ state: publicationState, allowed: publicationAllowed(), canonical: reportPublicSpots, index: reportSearchIndex.map(e => ({ ...e, witness: reporterStatsWitnesses.get(e) })), calls: __mock.actions.slice(-12), status: document.querySelector('#birdmapReportLocationStatus')?.textContent })));

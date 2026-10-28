@@ -3,6 +3,8 @@
 #birdmapGps button{pointer-events:auto;box-sizing:border-box;min-height:44px;border:1px solid #a7c0d9;border-radius:8px;background:#fff;color:#124e82;padding:7px 10px;font:inherit;cursor:pointer;box-shadow:0 1px 5px #0002}
 #birdmapGpsLocate{font-weight:bold!important;min-width:70px;padding-left:5px!important;padding-right:5px!important}
 #birdmapGps button[aria-pressed=true]{background:#dceeff;border-color:#1565c0}
+.birdmap-gps-details{grid-column:1/-1;display:grid;gap:4px;width:inherit;overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}
+.birdmap-gps-details>*{max-width:100%}
 #birdmapGpsStatus{grid-column:1/-1;width:260px;box-sizing:border-box;max-width:calc(100vw - 24px);padding:7px 10px;border-radius:8px;background:#fffef3;color:#173e5d;box-shadow:0 1px 7px #0003;pointer-events:none;overflow-wrap:anywhere}
 .birdmap-gps-actions{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap;width:280px;max-width:calc(100vw - 24px);pointer-events:auto}
 .birdmap-gps-privacy{grid-column:1/-1;box-sizing:border-box;width:260px;max-width:calc(100vw - 24px);padding:6px 8px;border-radius:6px;background:#fff;color:#345;font-size:11px;line-height:1.4}
