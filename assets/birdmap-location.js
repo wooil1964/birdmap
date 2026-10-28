@@ -162,7 +162,7 @@
     }
     var api = global.birdmapLocation = create({ map: map, L: global.L, geolocation: global.navigator.geolocation,
       isSecure: function () { return global.isSecureContext === true; }, hidden: function () { return document.hidden; }, fit: fit,
-      notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어/.test(text); },
+      notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); },
       changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded || errorMessage ? '280px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); status.hidden = !status.textContent || (!expanded && !errorMessage); track.disabled = !s.located; place(); } });
     var startGuide = api.guide;
     function prepareView() {

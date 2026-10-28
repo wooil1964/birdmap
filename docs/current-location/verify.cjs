@@ -75,6 +75,7 @@ async function inView(page){return page.evaluate(()=>{
    await page.getByRole('button',{name:'내 위치 찾기',exact:true}).click();await page.waitForFunction(()=>!birdmapLocation.state().guiding);
    check(await page.evaluate(n=>__testGps.once.length===n,gpsBefore),label+' hidden/protected proof never asks for GPS');deny=false;
    if(width===1440){
+    await page.locator('#birdmapGpsLocate').click();await emit(page,'fix',{accuracy:500});check(await page.locator('#birdmapGpsStatus').isVisible()&&(await page.locator('#birdmapGpsStatus').innerText()).includes('오차가 큽니다'),label+' poor accuracy warning is visible with tools collapsed');
     await page.locator('#birdmapGpsLocate').click();await emit(page,'error',{code:1});check((await page.locator('#birdmapGpsStatus').innerText()).includes('권한'),label+' denied error visible');
     await page.locator('#birdmapGpsLocate').click();await emit(page,'error',{code:3});check((await page.locator('#birdmapGpsStatus').innerText()).includes('초과'),label+' timeout visible');
    }
