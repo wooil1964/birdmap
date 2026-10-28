@@ -1,0 +1,22 @@
+/* The GPS button is independent of both map-provider and report menus. */
+#birdmapGps{position:absolute;left:10px;z-index:9991;display:grid;grid-template-columns:70px 44px;gap:4px;font:13px/1.4 Arial,'Malgun Gothic',sans-serif;pointer-events:none;max-width:calc(100% - 20px)}
+#birdmapGps button{pointer-events:auto;box-sizing:border-box;min-height:44px;border:1px solid #a7c0d9;border-radius:8px;background:#fff;color:#124e82;padding:7px 10px;font:inherit;cursor:pointer;box-shadow:0 1px 5px #0002}
+#birdmapGpsLocate{font-weight:bold!important;min-width:70px;padding-left:5px!important;padding-right:5px!important}
+#birdmapGps button[aria-pressed=true]{background:#dceeff;border-color:#1565c0}
+.birdmap-gps-details{grid-column:1/-1;display:grid;gap:4px;width:inherit;overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}
+.birdmap-gps-details>*{max-width:100%}
+#birdmapGpsStatus{grid-column:1/-1;width:260px;box-sizing:border-box;max-width:calc(100vw - 24px);padding:7px 10px;border-radius:8px;background:#fffef3;color:#173e5d;box-shadow:0 1px 7px #0003;pointer-events:none;overflow-wrap:anywhere}
+.birdmap-gps-actions{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap;width:280px;max-width:calc(100vw - 24px);pointer-events:auto}
+.birdmap-gps-privacy{grid-column:1/-1;box-sizing:border-box;width:260px;max-width:calc(100vw - 24px);padding:6px 8px;border-radius:6px;background:#fff;color:#345;font-size:11px;line-height:1.4}
+#birdmapGps [hidden]{display:none!important}
+#birdmapGps button:focus-visible,.birdmap-location-link:focus-visible{outline:3px solid #1565c0;outline-offset:2px}
+.birdmap-location-link{box-sizing:border-box;min-height:44px;border:1px solid #84aed4;border-radius:6px;background:#edf6ff;color:#124e82;cursor:pointer;padding:5px 7px;font:inherit}
+body .spotRouteButtons{display:flex;gap:4px}
+body .spotRouteButtons>a,body .spotRouteButtons>.birdmap-location-link{flex:1;min-width:0;min-height:44px;padding:5px 3px;font-size:12px;white-space:normal;text-align:center;display:flex;align-items:center;justify-content:center}
+.birdmap-gps-distance{background:#fff;border:1px solid #1565c0;color:#124e82;font-weight:bold;white-space:nowrap}
+/* While fitting both endpoints, keep tall desktop details readable within the available map. */
+body .birdmap-gps-popup:not(.birdmap-mobile-popup) .leaflet-popup-content{max-height:min(50vh,480px)!important;overflow-y:auto}
+body.reportPicking #birdmapGps{display:none}
+/* Mobile sheets cover most of the map; their open GPS actions must remain reachable. */
+@media(max-width:700px),(hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px){#birdmapGps{z-index:10010}}
+@media(max-height:500px){#birdmapGpsStatus{max-width:min(320px,calc(100vw - 120px));font-size:12px}#birdmapGps .birdmap-gps-actions button{padding:5px 7px}}

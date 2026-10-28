@@ -168,6 +168,50 @@ test('검색 결과 클릭은 기존 마커만 쓰고 새 마커를 만들지 �
   assert.match(source, /setView\(\[entry\.lat,entry\.lon\]/);
 });
 
+test('고정점 세 곳은 검색·필터·이력 갱신 어느 경로로 처음 만들어도 같은 공개 목적지 버튼을 제공한다', () => {
+  const fixed = JSON.parse(HTML.match(/var siteSpotData=(\[[\s\S]*?\n\]);/)[1]);
+  assert.equal(fixed.length, 3);
+  const names = ['openReportEntry', 'syncSiteSpots', 'refreshFixedSpotPopups', 'birdmapSpotMarker',
+    'spotPopupHtml', 'spotRouteButtonsHtml', 'spotKakaoRouteUrl', 'spotKakaoRouteHtml',
+    'tmapNavigationUrl', 'tmapNavigationLink', 'spotTmapRouteHtml', 'escapeHtml'];
+  function environment() {
+    const layers = new Set(), siteSpotLayers = {}, moves = [];
+    const map = {hasLayer: layer => layers.has(layer), removeLayer: layer => layers.delete(layer),
+      setView: point => moves.push(point), once() {}};
+    const L = {circleMarker(point) {return {point, bindPopup(content) {this.content = content;return this;},
+      bindTooltip() {return this;}, addTo() {layers.add(this);return this;}, openPopup() {this.opened = true;},
+      setPopupContent(content) {this.content = content;}};}};
+    const context = {L, siteSpotData: fixed, siteSpotLayers, reportFixedHistory: {},
+      siteData: [{id: '21', name: '공개 탐조지 21'}, {id: '195', name: '공개 탐조지 195'}],
+      map_7010a44f6ac2025090f0fe07508ed485: map, reportSpotLayers: {},
+      publicationAllowed: () => true, spotSpeciesCoveredByHistory: () => false, spotHistoryHtml: () => ''};
+    const keys = Object.keys(context);
+    const api = new Function(...keys, names.map(functionSource).join('\n') +
+      '\nreturn {openReportEntry,syncSiteSpots,refreshFixedSpotPopups,spotPopupHtml};')(...Object.values(context));
+    return {api, context, moves};
+  }
+  for (const [i, spot] of fixed.entries()) {
+    const search = environment(), filter = environment();
+    const entry = {kind: 'fixed', spotId: spot.id, lat: spot.lat, lon: spot.lon};
+    search.api.openReportEntry(entry, true);
+    filter.api.syncSiteSpots(filter.context.siteData.find(site => site.id === spot.siteId), true);
+    const fromSearch = search.context.siteSpotLayers[i], fromFilter = filter.context.siteSpotLayers[i];
+    assert.equal(fromSearch.content, fromFilter.content, spot.id + ' first-created content');
+    assert.equal(fromSearch.opened, true);
+    assert.deepEqual(fromSearch.point, [spot.lat, spot.lon]);
+    assert.deepEqual(search.moves, [[spot.lat, spot.lon]]);
+    assert.match(fromSearch.content, new RegExp('data-location-fixed="' + spot.id + '"'));
+    assert.ok(fromSearch.content.includes('https://map.kakao.com/link/to/' + encodeURIComponent('출현 지점') + ',' + spot.lat + ',' + spot.lon));
+    assert.ok(fromSearch.content.includes('goalx=' + spot.lon + '&amp;goaly=' + spot.lat));
+    const initial = fromSearch.content;
+    search.api.refreshFixedSpotPopups();
+    assert.equal(fromSearch.content, initial, spot.id + ' refresh preserves routes');
+    const hidden = search.api.spotPopupHtml('위치 보호', [], [], true, true,
+      {lat: spot.lat, lon: spot.lon, fixedSpotId: spot.id});
+    assert.ok(!/spotRouteButtons|data-location-fixed|map\.kakao|tmap:/.test(hidden), 'hidden popup never renders routes');
+  }
+});
+
 test('승인 제보를 다시 받아 오면 검색 목록도 다시 만든다', () => {
   const load = functionSource('loadApprovedReports');
   assert.match(load, /buildReportSearchIndex\(data\.spots\)/,

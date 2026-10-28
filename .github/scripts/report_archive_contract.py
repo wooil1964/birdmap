@@ -58,6 +58,8 @@ def without_species_search(text):
 
 
 def without_approved_basemap(text):
+    from current_location_contract import without_current_location
+    text = without_current_location(text)
     text = without_species_search(text.replace('\r\n', '\n'))
     if not any(signature in text for signature in BASEMAP_SIGNATURES):
         return text

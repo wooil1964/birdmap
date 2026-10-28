@@ -70,6 +70,27 @@
       || Math.abs(point.lat) > 90 || Math.abs(point.lng) > 180 || point.lat !== canonical.lat || point.lng !== canonical.lon) return null;
     return { layer: layer, point: point };
   }
+  // GPS never supplies coordinates to the public API. Reuse the exact-row proof and fresh gate,
+  // both before asking for GPS and after its asynchronous response (including every watched fix).
+  function guideTarget(id, term) {
+    var token = request, generation = global.publicationState.generation, result = null;
+    if (!validId(id) || !global.publicationAllowed()) return Promise.resolve(null);
+    return proof(id, term, token, generation).then(function (verified) {
+      if (!verified || !current(token, generation)) return false;
+      return global.publicationRouteCheck(function () {
+        if (!current(token, generation) || !global.publicationDataAllowed(verified.body)) return false;
+        var target = publicTarget(id, verified.row); if (!target) return false;
+        result = { layer: target.layer, point: { lat: target.point.lat, lng: target.point.lng }, publicReport: true,
+          label: verified.row.target.kind === 'fixed' ? '탐조지 공개 고정 위치' : '출현 지점',
+          valid: function () {
+            if (!current(token, generation) || !global.publicationDataAllowed(verified.body)) return false;
+            var live = publicTarget(id, verified.row);
+            return !!live && live.layer === target.layer && live.point.lat === result.point.lat && live.point.lng === result.point.lng;
+          } };
+        return true;
+      });
+    }).catch(function () { return false; }).then(function (ok) { return ok ? result : null; });
+  }
   function content(row) {
     var root = document.createElement('section'); root.className = 'birdmap-report-location-content';
     root.setAttribute('data-publication-entry', row.id);
@@ -78,12 +99,13 @@
     var who = document.createElement('div'); who.className = 'birdmap-report-location-reporter'; who.appendChild(document.createTextNode('제보자: '));
     who.appendChild(global.reporterStatsElement(row.reporter, { source: 'history', reportId: row.id }, false)); root.appendChild(who);
     var routes = document.createElement('div'); routes.className = 'birdmap-report-location-routes';
-    ['kakao', 'tmap'].forEach(function (app) {
+    ['kakao', 'tmap', 'gps'].forEach(function (app) {
       // No destination URL survives in the DOM. Every activation obtains fresh exact-ID authority.
       var button = document.createElement('button'); button.type = 'button';
       button.setAttribute('data-birdmap-report-route', app); button.setAttribute('data-report-id', row.id);
-      button.textContent = (app === 'kakao' ? '카카오맵' : '티맵') + ' ';
-      var action = document.createElement('span'); action.textContent = '찾아가기'; button.appendChild(action);
+      button.textContent = (app === 'kakao' ? '카카오맵' : app === 'tmap' ? '티맵' : '내 위치') + ' ';
+      var action = document.createElement('span'); action.textContent = app === 'gps' ? '찾기' : '찾아가기'; button.appendChild(action);
+      if (app === 'gps') button.setAttribute('aria-label', '내 위치 찾기');
       if (app === 'tmap') button.title = '티맵 앱이 설치된 스마트폰에서 이용';
       routes.appendChild(button);
     });
@@ -99,6 +121,9 @@
     function live() {
       return selected === card && card && map().hasLayer(card.popup) && card.popup.getContent() === card.root
         && card.root.isConnected !== false && card.root.contains(button) && button.getAttribute('data-report-id') === card.id;
+    }
+    if (app === 'gps' && live() && global.birdmapLocation) {
+      return global.birdmapLocation.guide(function () { return live() ? guideTarget(card.id, card.term) : null; }, card.popup);
     }
     if (!live() || (app !== 'kakao' && app !== 'tmap') || card.busy || !global.publicationAllowed()) return Promise.resolve(false);
     var token = ++request, generation = global.publicationState.generation;
@@ -210,6 +235,7 @@
     var autoPan = global.applyMobilePopupAutoPan;
     global.applyMobilePopupAutoPan = function (popup) { if (popup && popup._birdmapReportLocation) { popup.options.autoPan = false; return; } if (autoPan) return autoPan.apply(this, arguments); };
     global.openPublicReportLocation = open;
+    global.publicReportGuideTarget = guideTarget;
     m.on('layerremove', function (event) { if (selected && event.layer === selected.layer) cancel(); });
     m.on('popupclose', function (event) { if (selected && event.popup === selected.popup) cancel(); });
     m.on('popupopen', function (event) { if (!event.popup._birdmapReportLocation) { request++; forget(); status(''); } });

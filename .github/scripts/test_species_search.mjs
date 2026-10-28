@@ -169,10 +169,10 @@ test('hidden page, expired lease, malformed API and network failure never move',
   ]){const e=environment();change(e);assert.equal(await e.w.openPublicReportLocation('r1','직박구리'),false);assert.equal(e.moves().length,0);}
 });
 
-test('mini card has two coordinate-free buttons; Kakao uses only the current public marker and consumes the click',async()=>{
+test('mini card has three coordinate-free buttons; Kakao uses only the current public marker and consumes the click',async()=>{
   const e=environment();e.fetch=()=>Promise.resolve(page([row('r1',{lat:89,lon:179})]));
   assert.equal(await e.w.openPublicReportLocation('r1','직박구리'),true);
-  assert.deepEqual(e.buttons().map(n=>n.textContent),['카카오맵 찾아가기','티맵 찾아가기']);
+  assert.deepEqual(e.buttons().map(n=>n.textContent),['카카오맵 찾아가기','티맵 찾아가기','내 위치 찾기']);
   for(const b of e.buttons())assert.equal(b.getAttribute('href'),null);
   const requests=e.calls.filter(x=>x[0]==='fetch').length;
   assert.deepEqual(await e.route('kakao'),{stopped:true,prevented:true});
@@ -252,4 +252,26 @@ test('blocked Kakao popup produces an explicit message and no navigation',async(
 
 test('a manually detached popup root cannot activate its retained buttons',async()=>{
   const e=environment();await e.w.openPublicReportLocation('r1','직박구리');e.m._popup.content.isConnected=false;await e.route('kakao');assert.equal(e.opened.length,0);
+});
+
+test('GPS target reuses exact-row proof and fresh public gate; protected and hidden rows never yield coordinates',async()=>{
+  const e=environment();const target=await e.w.publicReportGuideTarget('r1','직박구리');
+  assert.equal(target.point.lat,37);assert.equal(target.point.lng,127);assert.equal(target.valid(),true);
+  e.w.publicationInvalidate('revoked');assert.equal(target.valid(),false);
+  for(const extra of [{locationHidden:true,target:undefined},{target:undefined},{target:{kind:'spot',spotId:'wrong'}}]){
+    const x=environment();x.fetch=()=>Promise.resolve(page([row('r1',extra)]));assert.equal(await x.w.publicReportGuideTarget('r1','직박구리'),null);
+  }
+});
+test('GPS preflight rechecks marker identity and cancels proofs when a card closes or publication changes',async()=>{
+  for(const action of ['close','invalidate','remove']){
+    const e=environment();await e.w.openPublicReportLocation('r1','직박구리');let release;
+    e.fetch=()=>new Promise(r=>release=r);const pending=e.w.publicReportGuideTarget('r1','직박구리');
+    if(action==='close')e.m.closePopup();if(action==='invalidate')e.w.publicationInvalidate('revision');if(action==='remove')e.layers.delete(e.marker);
+    release(page([row('r1')]));assert.equal(await pending,null,action);
+  }
+});
+test('GPS button sends a resolver and its popup to the local controller, never an external URL',async()=>{
+  const e=environment();await e.w.openPublicReportLocation('r1','직박구리');let target,popup;
+  e.w.birdmapLocation={async guide(resolve,p){popup=p;target=await resolve();return true;}};
+  await e.route('gps',e.buttons()[2]);assert.equal(target.point.lat,37);assert.equal(popup,e.m._popup);assert.equal(e.opened.length,0);assert.equal(e.w.location.href,'');
 });

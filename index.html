@@ -69,6 +69,8 @@
     <script src="assets/birdmap-basemap-init.js"></script>
     <link rel="stylesheet" href="assets/birdmap-species-search.css">
     <script src="assets/birdmap-species-search.js"></script>
+    <link rel="stylesheet" href="assets/birdmap-location.css"/>
+    <script src="assets/birdmap-location.js"></script>
 </head>
 <body>
     
@@ -1710,7 +1712,7 @@ function openReportEntry(entry,verified){
       if(!siteSpotLayers[index]){
         var site=siteData.find(function(s){return String(s.id)===String(fixed.siteId);});
         siteSpotLayers[index]=birdmapSpotMarker(fixed.lat,fixed.lon,
-          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true);
+          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true,false,{lat:fixed.lat,lon:fixed.lon,fixedSpotId:fixed.id});
       }
       layer=siteSpotLayers[index];
       // 부모 탐조지가 필터에서 빠져 있어도 클릭한 점은 보여 준다.
@@ -1948,7 +1950,8 @@ function spotTmapRouteHtml(dest){
 function spotRouteButtonsHtml(dest){
   if(dest&&dest.publicationReportId&&!publicationAllowed())return '';
   var kakao=spotKakaoRouteHtml(dest),tmap=spotTmapRouteHtml(dest);
-  var html=kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+'</div>':'';
+  var gps=dest&&(dest.publicationReportId||dest.fixedSpotId)?'<button type="button" class="birdmap-location-link" '+(dest.publicationReportId?'data-location-report="'+escapeHtml(dest.publicationReportId):'data-location-fixed="'+escapeHtml(dest.fixedSpotId))+'">내 위치 찾기</button>':'';
+  var html=kakao||tmap?'<div class="spotRouteButtons">'+kakao+tmap+gps+'</div>':'';
   return dest&&dest.publicationReportId?html.replace(/href="[^"]*"/g,'href="#"').replace(/onclick="[^"]*"/g,'').replace(/class="spotKakaoRoute"/g,'class="spotKakaoRoute" data-publication-app="kakao"').replace(/class="spotTmapRoute"/g,'class="spotTmapRoute" data-publication-app="tmap"').replace(/<a /g,'<a data-publication-report="'+escapeHtml(dest.publicationReportId)+'" '):html;
 }
 function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDest){
@@ -2001,7 +2004,7 @@ function syncSiteSpots(site,show){
     if(!siteSpotLayers[i]){
       // 수동 등록 점에는 관찰일 자료가 없다. 임의로 만들지 않고 '관찰일 미확인'으로 구분한다.
       siteSpotLayers[i]=birdmapSpotMarker(spot.lat,spot.lon,site.name+' 출현 지점',spot.species,
-        reportFixedHistory[spot.id],true);
+        reportFixedHistory[spot.id],true,false,{lat:spot.lat,lon:spot.lon,fixedSpotId:spot.id});
     }
     var layer=siteSpotLayers[i],on=map_7010a44f6ac2025090f0fe07508ed485.hasLayer(layer);
     if(show&&!on)layer.addTo(map_7010a44f6ac2025090f0fe07508ed485);
@@ -2017,7 +2020,7 @@ function refreshFixedSpotPopups(){
     if(!layer||!layer.setPopupContent)return;
     var site=siteData.find(function(s){return String(s.id)===String(spot.siteId);});
     layer.setPopupContent(spotPopupHtml((site?site.name:'')+' 출현 지점',spot.species,
-      reportFixedHistory[spot.id],true));
+      reportFixedHistory[spot.id],true,false,{lat:spot.lat,lon:spot.lon,fixedSpotId:spot.id}));
   });
 }
 
@@ -3101,6 +3104,7 @@ function v23ButtonsFromLegacy(source,site){
       ?link('a.kakao','btn kakao','🟡 카카오 출항지 위치',yubudoKakaoDepartureUrl,true)
       :link('a.kakao','btn kakao','🟡 카카오맵',kakaoUrl,true))
     +(site.country==='대한민국'&&!isGukhwado?tmapNavigationLink(isYubudo?{lat:Number(yubudoDepartureLat),lon:Number(yubudoDepartureLon)}:site,isYubudo?'유부도 출항지':site.name,'btn tmap',isYubudo?'🚙 티맵 출항지':'🚙 티맵 내비'):'')
+    +'<button type="button" class="btn birdmap-location-link" data-location-site="'+escapeHtml(String(site.id))+'">내 위치 찾기</button>'
     +link('a.ebird','btn ebird',ebirdText,ebirdUrl,SHOW_EBIRD_BUTTON)
     +link('a.windy','btn windy','🌬️ Windy',site.windyUrl||'https://www.windy.com/'+site.lat+'/'+site.lon+'?'+site.lat+','+site.lon+',10',true)
     +link('a.ksa','btn ksa','🚢 KSA 섬여객선 예매',site.ksaUrl||'https://island.theksa.co.kr',site.island)

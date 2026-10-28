@@ -272,13 +272,20 @@
     }
     new MutationObserver(syncFilter).observe(filterToggle, { attributes: true, attributeFilter: ['aria-expanded'] });
     syncFilter();
+    function changePopupAutoPan(popup, change) {
+      if (global.birdmapLocation && global.birdmapLocation.changePopupAutoPan) return global.birdmapLocation.changePopupAutoPan(popup, change);
+      return change();
+    }
     function releasePopup(popup) {
       var node = popup && popup.getElement();
       if (!node || !node.classList.contains('birdmap-mobile-popup')) return;
       node.classList.remove('birdmap-mobile-popup');
       node.style.removeProperty('--birdmap-sheet-height');
       var toolbar = node.querySelector('.birdmap-popup-toolbar'); if (toolbar) toolbar.remove();
-      popup.options.autoPan = popup._birdmapSheetAutoPan;
+      changePopupAutoPan(popup, function () {
+        if (popup._birdmapSheetAutoPan) Object.defineProperty(popup.options, 'autoPan', popup._birdmapSheetAutoPan);
+        else delete popup.options.autoPan;
+      });
       if (map.hasLayer(popup)) map.getPane('popupPane').appendChild(node);
     }
     function presentPopup(popup) {
@@ -288,7 +295,9 @@
       // the statistics trigger while its read is pending, so cancel only the mobile positioning settle timer.
       if (popup._birdmapSettleTimer) { global.clearTimeout(popup._birdmapSettleTimer); popup._birdmapSettleTimer = null; }
       if (node.classList.contains('birdmap-mobile-popup')) return;
-      popup._birdmapSheetAutoPan = popup.options.autoPan; popup.options.autoPan = false;
+      changePopupAutoPan(popup, function () {
+        popup._birdmapSheetAutoPan = Object.getOwnPropertyDescriptor(popup.options, 'autoPan'); popup.options.autoPan = false;
+      });
       node.classList.add('birdmap-mobile-popup');
       var toolbar = document.createElement('div'); toolbar.className = 'birdmap-popup-toolbar';
       toolbar.appendChild(dragHandle(node, '탐조지 상세정보 패널', function (height) {
