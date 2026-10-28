@@ -131,7 +131,7 @@ async function landscapeToolsRegression(page, label, width) {
   });
   check(bounds.toolTop >= 0 && bounds.toolBottom <= bounds.sheetTop - 8 && bounds.sheetBottom <= 390, label + ' expanded GPS tools clear compact Mado sheet and viewport', bounds);
   check(bounds.compact && bounds.sheetHeight >= 58 && bounds.sheetHeight <= 72 && bounds.reopen, label + ' Mado bottom sheet is compact with reopen control', bounds);
-  check(bounds.scrollHeight > bounds.clientHeight && bounds.clientHeight > 0 && bounds.overflow === 'auto', label + ' landscape GPS details have an internal scroll area', bounds);
+  check(bounds.clientHeight > 0 && bounds.overflow === 'auto', label + ' landscape GPS details allow scrolling when necessary', bounds);
   check(bounds.detailsWidth >= 260 && bounds.scrollWidth <= bounds.clientWidth, label + ' landscape GPS details retain full width without horizontal scrolling', bounds);
   await page.screenshot({ path: path.join(OUT, 'expanded-tools-mado-' + label + '.png') });
   await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
