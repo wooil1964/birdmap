@@ -45,6 +45,17 @@
   };
 })(window);
 
+/* Keep the latest map update in the existing subtitle. */
+(function () {
+  'use strict';
+  function updateMapSubtitle() {
+    var subtitle = document.querySelector('#mapTitleBox > span');
+    if (subtitle) subtitle.textContent = '최종 업데이트: 2026.10.28 · VWorld 바탕지도';
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateMapSubtitle);
+  else updateMapSubtitle();
+})();
+
 /* Mobile overlay presentation. Keep the actual Leaflet popup/content and public read contract intact. */
 (function (global) {
   'use strict';
