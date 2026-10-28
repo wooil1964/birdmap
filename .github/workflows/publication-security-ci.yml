@@ -63,6 +63,7 @@ jobs:
         shell: bash
         run: |
           python .github/scripts/test_report_archive_contract.py
+          python .github/scripts/test_current_location_contract.py
           python .github/scripts/test_island_nearby_contract.py
           python .github/scripts/test_central_sites.py
           python .github/scripts/test_jeju_sites.py
