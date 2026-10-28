@@ -86,7 +86,11 @@ const wheelZoom = async (b, p, steps, gap) => { for (let i = 0; i < steps; i++) 
 const pinchZoom = async (p, steps, gap) => { for (let i = 0; i < steps; i++) { const dz = [0.7, -0.6, 0.9, -0.8, 0.5, -0.7][i % 6]; await p.evaluate(`(function(){var m=${MAP};m.setZoomAround(L.point(${[120, 260, 195, 220][i % 4]},${[320, 480, 560, 400][i % 4]}),m.getZoom()+${dz});return 1;})()`); await sleep(gap); } };
 const fastZoom = (b, p, label) => label === 'pc' ? wheelZoom(b, p, 24, 140) : pinchZoom(p, 20, 180);
 // Wheel flicks on PC (1366x768): one notch each, `gap` ms apart, three in then three out, inside the domestic view.
-const flicks = async (b, p, n, gap) => { for (let i = 0; i < n; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 683 + ((i % 3) - 1) * 120, y: 384 + (i % 2 ? 60 : -60), deltaX: 0, deltaY: i % 6 < 3 ? -100 : 100 }, p.sessionId); await sleep(gap); } };
+const flicks = async (b, p, n, gap, delta = 100) => { for (let i = 0; i < n; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 683 + ((i % 3) - 1) * 120, y: 384 + (i % 2 ? 60 : -60), deltaX: 0, deltaY: i % 6 < 3 ? -delta : delta }, p.sessionId); await sleep(gap); } };
+// Leaflet 1.9.3 normalizes pixel wheels differently on Windows and Linux Chrome: at DPR 1, raw 100
+// zooms one level on Windows but two on Linux. Use 50 only where exactly one level is required;
+// keep the original 100/120 inputs for burst and rate-limit scenarios.
+const ONE_LEVEL_WHEEL_DELTA = 50;
 const notch = (b, p, deltaY) => b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 683, y: 384, deltaX: 0, deltaY }, p.sessionId);
 // Real two-finger pinches on a touch phone (CDP synthesizes the touch events), in 3 then out 3, `gap` ms apart.
 const pinches = async (b, p, n, gap) => { for (let i = 0; i < n; i++) { const t = Date.now(); await b.send('Input.synthesizePinchGesture', { x: 195 + ((i % 3) - 1) * 60, y: 460 + (i % 2 ? 60 : -60), scaleFactor: i % 6 < 3 ? 2 : 0.5, relativeSpeed: 1200, gestureSourceType: 'touch' }, p.sessionId); await sleep(Math.max(0, gap - (Date.now() - t))); } };
@@ -182,21 +186,21 @@ const SCENARIOS = [
     answer: () => ({ status: 200, delay: 200 }),
     run: async (p, b) => { await sleep(600); const n = p.log.length;
       await p.evaluate(`(function(){var m=${MAP};window.__sharp=null;m.eachLayer(function(l){if(l._url&&/workers\\.dev/.test(l._url))l.once('load',function(){window.__sharp=performance.now();});});window.__t0=performance.now();return 1;})()`);
-      const t0 = Date.now(); await notch(b, p, -100); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 12, 10000);
+      const t0 = Date.now(); await notch(b, p, -ONE_LEVEL_WHEEL_DELTA); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 12, 10000);
       const first = p.log.slice(n)[0]; return { ...s, firstRequestMs: first ? first.t - t0 : null, sharpMs: Math.round(await p.evaluate('window.__sharp-window.__t0')), levels: levels(p.log.slice(n)) }; },
     expect: s => s.active === 'vworld' && s.zoom === 12 && s.firstRequestMs !== null && s.firstRequestMs < 250 && s.levels.join() === '12' },
   { name: 'wheel_right_after_jump_loads_at_once', only: 'pc', note: 'a jump (as to a search result), then one wheel notch 0.3 s later: the jump does not count as a zoom of a run, the new level is requested at once',
     answer: () => ({ status: 200, delay: 200 }),
     run: async (p, b) => { await setView(p, 35.2, 128.9, 11); await waitState(p, s => s.reason === 'ready', 10000); await setView(p, 36.3, 127.6, 10); await sleep(300);
-      const n = p.log.length, t0 = Date.now(); await notch(b, p, -100); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 11, 10000);
+      const n = p.log.length, t0 = Date.now(); await notch(b, p, -ONE_LEVEL_WHEEL_DELTA); const s = await waitState(p, s => s.reason === 'ready' && s.zoom === 11, 10000);
       const first = p.log.slice(n).find(x => /\/tiles\/11\//.test(x.url)); return { ...s, firstRequestMs: first ? first.t - t0 : null }; },
     expect: s => s.active === 'vworld' && s.zoom === 11 && s.firstRequestMs !== null && s.firstRequestMs < 250 },
   { name: 'slow_wheel_each_level', only: 'pc', note: 'wheel notches 1.5 s apart: every level is loaded as its zoom starts, as before', answer: () => ({ status: 200, delay: 200 }),
-    run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 4, 1500); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
+    run: async (p, b) => { await sleep(600); const n = p.log.length; await flicks(b, p, 4, 1500, ONE_LEVEL_WHEEL_DELTA); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.join() === '12,13,14' },
   { name: 'wheel_in_and_back_to_start', only: 'pc', note: 'four quick notches in and four back out (0.45 s apart) around one point: back at the start level VWorld stays; only the first level passed through and the start level are requested',
     answer: () => ({ status: 200, delay: 200 }),
-    run: async (p, b) => { await sleep(600); const n = p.log.length; for (let i = 0; i < 8; i++) { await notch(b, p, i < 4 ? -100 : 100); await sleep(450); }
+    run: async (p, b) => { await sleep(600); const n = p.log.length; for (let i = 0; i < 8; i++) { await notch(b, p, i < 4 ? -ONE_LEVEL_WHEEL_DELTA : ONE_LEVEL_WHEEL_DELTA); await sleep(450); }
       await sleep(900); const s = await waitState(p, s => s.reason === 'ready', 10000); return { ...s, levels: levels(p.log.slice(n)) }; },
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.zoom === 11 && s.levels.every(z => z === 11 || z === 12) },
   // Leaflet ends a batch only when a tile finishes: when the last tiles loading were cancelled (zooming back in onto the
