@@ -22,6 +22,7 @@
       if (!state) return;
       restoreAutoPan(state);
       if (state.node && !state.hadClass) state.node.classList.remove('birdmap-gps-popup');
+      if (options.restorePopup) options.restorePopup(state.popup);
       // Restoring the taller desktop content also needs Leaflet's position/auto-pan pass.
       if (state.node && !state.node.classList.contains('birdmap-mobile-popup') && map.hasLayer(state.popup) && !options.hidden()) state.popup.update();
     }
@@ -223,6 +224,7 @@
     var api = global.birdmapLocation = create({ map: map, L: global.L, geolocation: global.navigator.geolocation,
       isSecure: function () { return global.isSecureContext === true; }, hidden: function () { return document.hidden; }, fit: fit,
       collapsePopup: function (popup) { if (typeof global.birdmapCollapseMobilePopupForGps === 'function') return global.birdmapCollapseMobilePopupForGps(popup); },
+      restorePopup: function (popup) { if (typeof global.birdmapRestoreMobilePopupAfterGps === 'function') return global.birdmapRestoreMobilePopupAfterGps(popup); },
       notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); if (errorMessage) expanded = false; },
       changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded ? '280px' : errorMessage ? '260px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; status.hidden = !status.textContent || (!expanded && !errorMessage); details.hidden = status.hidden && actions.hidden && privacy.hidden; track.disabled = !s.located; schedulePlace(); } });
     var startGuide = api.guide;
