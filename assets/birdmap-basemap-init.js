@@ -310,9 +310,7 @@
       var toggle = button('펼치기', '상세정보 펼치기', function () {
         // Restore the previous height if GPS guidance had compacted this sheet.
         if (node.classList.contains('birdmap-gps-compact')) {
-          node.classList.remove('birdmap-gps-compact');
-          popupHeight = setHeight(node, node._birdmapGpsPreviousHeight || global.innerHeight * .58);
-          delete node._birdmapGpsPreviousHeight;
+          restoreGpsCompact(popup);
           toggle.setAttribute('aria-expanded', 'false');
           toggle.textContent = '펼치기';
           toggle.setAttribute('aria-label', '상세정보 펼치기');
@@ -331,6 +329,15 @@
       setHeight(node, popupHeight || global.innerHeight * .58);
       document.body.classList.add('birdmap-detail-open');
     }
+    function restoreGpsCompact(popup) {
+      var node = popup && popup.getElement();
+      if (!node || !node.classList.contains('birdmap-gps-compact')) return false;
+      node.classList.remove('birdmap-gps-compact');
+      if (node.classList.contains('birdmap-mobile-popup')) popupHeight = setHeight(node, node._birdmapGpsPreviousHeight || global.innerHeight * .58);
+      delete node._birdmapGpsPreviousHeight;
+      return true;
+    }
+    global.birdmapRestoreMobilePopupAfterGps = restoreGpsCompact;
     // Keep the authorized destination popup alive for GPS revalidation, but free the map.
     global.birdmapCollapseMobilePopupForGps = function (popup) {
       if (!media.matches || !popup || popup !== activePopup || !map.hasLayer(popup)) return false;
