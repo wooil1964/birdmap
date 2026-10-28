@@ -5,7 +5,7 @@
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http');
 const assert = require('node:assert/strict'), { createHash } = require('node:crypto');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const ROOT = path.resolve(__dirname, '../..');
+const ROOT = path.resolve(process.env.POPUP_TEST_ROOT || path.join(__dirname, '../..'));
 const OUT = path.resolve(process.env.POPUP_TEST_OUTPUT || path.join(ROOT, '.ci-results/popup-regression'));
 const CACHE = process.env.POPUP_DEPENDENCY_CACHE;
 assert.ok(CACHE && fs.statSync(CACHE).isDirectory(), 'POPUP_DEPENDENCY_CACHE must name an existing URL-hash cache');
@@ -56,12 +56,12 @@ async function openSite(page) {
   });
   await page.waitForTimeout(450);
 }
-async function start(page, pending = false) {
+async function start(page, pending = false, position = null) {
   const before = await page.evaluate(() => __mock.geo.length);
   await page.getByRole('button', { name: '내 위치 찾기', exact: true }).click();
   await page.waitForFunction(n => __mock.geo.length > n, before);
   if (pending) return;
-  await page.evaluate(() => { const p = __popup._source.getLatLng(); __mock.geo.at(-1).ok({ coords: { latitude: p.lat + 0.002, longitude: p.lng + 0.002, accuracy: 25 }, timestamp: Date.now() }); });
+  await page.evaluate(position => { const p = __popup._source.getLatLng(); __mock.geo.at(-1).ok({ coords: position || { latitude: p.lat + 0.002, longitude: p.lng + 0.002, accuracy: 25 }, timestamp: Date.now() }); }, position);
   await page.waitForSelector('.birdmap-gps-guide');
   await page.waitForTimeout(100);
 }
@@ -80,6 +80,73 @@ async function layout(page, name) {
   const state = await snapshot(page);
   if (state.sheet) check(state.top >= -1 && state.bottom <= await page.evaluate(() => innerHeight + 1), name + ' sheet remains within viewport', state);
   check(await page.evaluate(() => { const r = document.querySelector('#birdmapGpsLocate').getBoundingClientRect(); return r.width >= 44 && r.height >= 44 && r.left >= 0 && r.right <= innerWidth; }), name + ' GPS control remains usable');
+}
+async function desktopBounds(page, name, panel = false) {
+  await page.waitForTimeout(450);
+  const bounds = await page.evaluate(() => {
+    const p = __popup.getElement().getBoundingClientRect(), g = document.querySelector('#birdmapGps').getBoundingClientRect(), n = document.querySelector('#birdmapPanel'), r = n.getClientRects().length && getComputedStyle(n).display !== 'none' ? n.getBoundingClientRect() : null;
+    const area = (a, b) => b ? Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)) : 0;
+    return { top: p.top, bottom: p.bottom, left: p.left, right: p.right, width: innerWidth, height: innerHeight, panelOverlap: area(p, r), toolOverlap: area(p, g) };
+  });
+  check(bounds.top >= -1 && bounds.bottom <= bounds.height + 1 && bounds.left >= -1 && bounds.right <= bounds.width + 1, name + ' popup stays in viewport', bounds);
+  if (panel) check(bounds.panelOverlap <= 1, name + ' popup clears filter panel', bounds);
+  check(bounds.toolOverlap <= 1, name + ' GPS tools clear ordinary popup', bounds);
+}
+async function followupRegressions(page, label, width) {
+  if (width !== 1440 && width !== 1024) return;
+  await openSite(page);
+  await page.evaluate(() => setBirdmapPanelOpen(true));
+  const far = { latitude: 35.1796, longitude: 129.0756, accuracy: 25 };
+  await start(page, false, far);
+  await desktopBounds(page, label + ' northwestern destination guidance', true);
+  await stopButton(page);
+  await desktopBounds(page, label + ' far destination stopped', true);
+  await page.screenshot({ path: path.join(OUT, 'stopped-northwest-' + label + '.png') });
+  await start(page, false, far);
+  await page.evaluate(() => { birdmapLocation.setTracking(true); __mock.watches.get(__mock.watchSeq).error({ code: 2 }); });
+  await desktopBounds(page, label + ' far destination GPS failure', true);
+  await page.evaluate(() => { birdmapLocation.clear(); setBirdmapPanelOpen(false); });
+  // Drive the same animated tile style churn as a drag, without real map requests.
+  const work = await page.evaluate(async () => {
+    const m = map_7010a44f6ac2025090f0fe07508ed485, node = m.getContainer(), original = node.getBoundingClientRect;
+    let reads = 0; node.getBoundingClientRect = function () { reads++; return original.call(this); };
+    const tile = document.querySelector('.leaflet-tile') || document.querySelector('.leaflet-tile-pane');
+    for (let i = 0; i < 120; i++) { tile.style.transform = 'translate(' + i + 'px,0)'; await Promise.resolve(); }
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    node.getBoundingClientRect = original;
+    return reads;
+  });
+  check(work <= 4, label + ' tile drag churn does not recalculate GPS placement per mutation', { containerReads: work, tileMutations: 120 });
+  await openSite(page);
+  await page.evaluate(() => {
+    birdmapLocation.locate();
+    __mock.geo.at(-1).ok({ coords: { latitude: 35.1796, longitude: 129.0756, accuracy: 25 }, timestamp: Date.now() });
+    const p = __marker.getLatLng(), target = { layer: __marker, point: { lat: p.lat, lng: p.lng }, label: '합성 공개 목적지' };
+    let first = true;
+    window.__guidePending = birdmapLocation.guide(() => first ? (first = false, new Promise(resolve => window.__releaseDestination = () => resolve(target))) : target, __popup);
+  });
+  await page.waitForFunction(() => typeof __releaseDestination === 'function');
+  await page.evaluate(() => birdmapLocation.setTracking(true));
+  check(await page.evaluate(() => birdmapLocation.state().guiding && !birdmapLocation.state().tracking && /확인이 끝난 뒤/.test(document.querySelector('#birdmapGpsStatus').textContent)), label + ' pending destination tracking gives a wait message without cancelling guide');
+  await page.evaluate(async () => { __releaseDestination(); await __guidePending; __mock.geo.at(-1).ok({ coords: { latitude: 35.1796, longitude: 129.0756, accuracy: 25 }, timestamp: Date.now() }); });
+  await page.waitForSelector('.birdmap-gps-guide');
+  check(await page.evaluate(() => birdmapLocation.state().guiding && !/공개 위치를 확인할 수 없어/.test(document.querySelector('#birdmapGpsStatus').textContent)), label + ' original destination proof completes after tracking race');
+  await page.evaluate(() => birdmapLocation.clear());
+  // Every public fixed point must behave identically when first created by search.
+  await page.evaluate(() => publicationRefresh());
+  await page.waitForFunction(() => publicationAllowed());
+  const fixed = await page.evaluate(() => {
+    map_7010a44f6ac2025090f0fe07508ed485.closePopup();
+    return siteSpotData.map((s, i) => {
+      if (siteSpotLayers[i]) map_7010a44f6ac2025090f0fe07508ed485.removeLayer(siteSpotLayers[i]);
+      delete siteSpotLayers[i];
+      openReportEntry({ kind: 'fixed', spotId: s.id, lat: s.lat, lon: s.lon }, true);
+      const node = siteSpotLayers[i].getPopup().getElement();
+      return { id: s.id, kakao: !!node.querySelector('a[href*="kakao"]'), tmap: !!node.querySelector('a[href*="tmap"]'), gps: !!node.querySelector('[data-location-fixed]'), buttons: node.querySelector('.spotRouteButtons')?.outerHTML };
+    });
+  });
+  for (const row of fixed) check(row.kakao && row.tmap && row.gps, label + ' search-created fixed point has all public destination buttons', row);
+  await openSite(page);
 }
 (async () => {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -159,6 +226,7 @@ async function layout(page, name) {
         check(sameOptions(await snapshot(page), baseline), label + ' round-trip viewport restores original descriptor');
         await layout(page, label + ' resized');
       }
+      await followupRegressions(page, label, width);
       await page.evaluate(() => { publicationInvalidate(); return publicationRefresh(); });
       const reportOpened = await page.evaluate(() => openPublicReportLocation('popup-report', '직박구리'));
       check(reportOpened, label + ' real report popup opens through synthetic exact-ID proof', reportOpened ? undefined : await page.evaluate(() => ({ state: publicationState, allowed: publicationAllowed(), canonical: reportPublicSpots, index: reportSearchIndex.map(e => ({ ...e, witness: reporterStatsWitnesses.get(e) })), calls: __mock.actions.slice(-12), status: document.querySelector('#birdmapReportLocationStatus')?.textContent })));

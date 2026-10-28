@@ -22,6 +22,8 @@
       if (!state) return;
       restoreAutoPan(state);
       if (state.node && !state.hadClass) state.node.classList.remove('birdmap-gps-popup');
+      // Restoring the taller desktop content also needs Leaflet's position/auto-pan pass.
+      if (state.node && !state.node.classList.contains('birdmap-mobile-popup') && map.hasLayer(state.popup) && !options.hidden()) state.popup.update();
     }
     function holdPopup(popup) {
       if (!popup || !popup.options || popupState) return;
@@ -139,6 +141,9 @@
       }).catch(function () { if (token === seq) stopGuide('공개 위치를 확인할 수 없어 안내하지 않습니다.'); return false; });
     }
     function setTracking(value) {
+      // Changing the request token here would cancel an in-flight destination/GPS proof.
+      if (value && provider && (!target || checking || !line)) { say('목적지와 현재 위치 확인이 끝난 뒤 이동 갱신을 켜 주세요.'); return; }
+      if (!value && !tracking) return;
       stopWatch(); tracking = false;
       if (!value) { seq++; checking = false; pendingFix = null; changed(); return; }
       if (!allowed() || !fix || typeof geo.watchPosition !== 'function') { say('먼저 내 위치를 찾은 뒤 이동 갱신을 켜 주세요.'); return; }
@@ -166,13 +171,16 @@
     var expanded = false, errorMessage = false;
     var more = document.createElement('button'); more.type = 'button'; more.textContent = '⋯'; more.setAttribute('aria-label', '위치 도구 열기'); more.setAttribute('aria-expanded', 'false'); more.hidden = true;
     var actions = document.createElement('div'); actions.className = 'birdmap-gps-actions'; actions.hidden = true;
+    var privacy = document.createElement('div'); privacy.className = 'birdmap-gps-privacy'; privacy.hidden = true;
+    privacy.textContent = '위치는 저장하지 않습니다. 주변 지도 요청으로 지도 제공자가 대략적인 위치를 알 수 있습니다. 앱을 전환하면 위치 표시가 지워집니다.';
     function button(text) { var b = document.createElement('button'); b.type = 'button'; b.textContent = text; actions.appendChild(b); return b; }
     var track = button('이동 갱신'), stop = button('안내 종료'), wipe = button('위치 지우기'); track.setAttribute('aria-pressed', 'false');
-    root.appendChild(locate); root.appendChild(more); root.appendChild(status); root.appendChild(actions); map.getContainer().appendChild(root);
+    root.appendChild(locate); root.appendChild(more); root.appendChild(status); root.appendChild(actions); root.appendChild(privacy); map.getContainer().appendChild(root);
     global.L.DomEvent.disableClickPropagation(root); global.L.DomEvent.disableScrollPropagation(root);
     function fit(p, destination, popup) {
       if (popup) {
         if (popup._birdmapSettleTimer) { global.clearTimeout(popup._birdmapSettleTimer); popup._birdmapSettleTimer = null; }
+        if (typeof global.applyMobilePopupAutoPan === 'function') global.applyMobilePopupAutoPan(popup);
         var node = popup.getElement();
         if (node) popup.update();
       }
@@ -180,6 +188,7 @@
       var top = 85, bottom = 65, left = 36, right = 36;
       var popupNode = popup && popup.getElement();
       var mobile = global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches;
+      var popupHalf = popupNode && !mobile ? popupNode.getBoundingClientRect().width / 2 + 12 : 0;
       if (popupNode && !mobile) top = Math.max(top, Math.min(popupNode.getBoundingClientRect().height + 40, h * .65));
       ['#birdmapPanel', '#recentReportsBox', '.birdmap-mobile-popup'].forEach(function (selector) {
         var n = document.querySelector(selector); if (!n || !n.getClientRects().length || global.getComputedStyle(n).display === 'none') return;
@@ -189,14 +198,21 @@
         else right = Math.max(right, container.right - r.left + 20);
       });
       // Reserve a useful map area even in a small landscape viewport.
-      left = Math.min(left, w * .32); right = Math.min(right, w * .28); bottom = Math.min(bottom, h * .58); top = Math.min(top, h - bottom - 100);
+      if (mobile) { left = Math.min(left, w * .32); right = Math.min(right, w * .28); }
+      else {
+        // Only the destination's extreme needs room for its popup; the GPS end is a small dot.
+        if (!destination || destination.lng <= p.lng) left += popupHalf;
+        if (!destination || destination.lng >= p.lng) right += popupHalf;
+      }
+      if (left + right > w - 100) { var scale = (w - 100) / (left + right); left *= scale; right *= scale; }
+      bottom = Math.min(bottom, h * .58); top = Math.min(top, h - bottom - 100);
       if (destination) map.fitBounds(global.L.latLngBounds([p, destination]), { paddingTopLeft: [left, top], paddingBottomRight: [right, bottom], maxZoom: 15, animate: false });
       else map.fitBounds(global.L.latLngBounds([p, p]), { paddingTopLeft: [left, top], paddingBottomRight: [right, bottom], maxZoom: 14, animate: false });
     }
     var api = global.birdmapLocation = create({ map: map, L: global.L, geolocation: global.navigator.geolocation,
       isSecure: function () { return global.isSecureContext === true; }, hidden: function () { return document.hidden; }, fit: fit,
-      notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); },
-      changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded || errorMessage ? '280px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); status.hidden = !status.textContent || (!expanded && !errorMessage); track.disabled = !s.located; place(); } });
+      notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); if (errorMessage) expanded = false; },
+      changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded ? '280px' : errorMessage ? '260px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; status.hidden = !status.textContent || (!expanded && !errorMessage); track.disabled = !s.located; schedulePlace(); } });
     var startGuide = api.guide;
     function prepareView() {
       if (!global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) return;
@@ -208,24 +224,25 @@
     }
     api.guide = function () { expanded = false; prepareView(); return startGuide.apply(api, arguments); };
     function place() {
-      var rect = map.getContainer().getBoundingClientRect(), blockers = ['#mapTitleBox', '#birdmapPanel', '#topBtnRow', '.leaflet-control-zoom', '.birdmap-basemap', '#recentReportsBox', '.birdmap-mobile-popup', '.birdmap-report-location-popup'];
-      var boxes = blockers.map(function (selector) { var n = document.querySelector(selector); return n && n.getClientRects().length && global.getComputedStyle(n).display !== 'none' ? n.getBoundingClientRect() : null; }).filter(Boolean);
+      var rect = map.getContainer().getBoundingClientRect();
+      var boxes = Array.from(document.querySelectorAll(overlaySelector)).filter(function (n) { return n.getClientRects().length && global.getComputedStyle(n).display !== 'none'; }).map(function (n) { return n.getBoundingClientRect(); });
       // Check the complete expanded tool area, including status/actions, against existing overlays.
       var size = root.getBoundingClientRect(), height = size.height || 44, width = size.width || 84;
       var candidates = [Math.round(rect.height * .46), 70, 90, rect.height - 110];
       boxes.forEach(function (r) { candidates.push(r.bottom - rect.top + 8, r.top - rect.top - height - 8); });
       function overlap(position) { return boxes.reduce(function (total, r) { return total + Math.max(0, Math.min(rect.left + position.left + width, r.right) - Math.max(rect.left + position.left, r.left)) * Math.max(0, Math.min(rect.top + position.top + height, r.bottom) - Math.max(rect.top + position.top, r.top)); }, 0); }
       candidates = candidates.filter(function (top) { return top >= 70 && top + height <= rect.height - 36; });
-      var positions = [];
-      [10, Math.max(10, rect.width - width - 10)].forEach(function (left) { candidates.forEach(function (top) { positions.push({ left: left, top: top }); }); });
+      var positions = [], columns = [10, Math.max(10, rect.width - width - 10)];
+      boxes.forEach(function (r) { columns.push(r.right - rect.left + 8, r.left - rect.left - width - 8); });
+      columns.filter(function (left) { return left >= 10 && left + width <= rect.width - 10; }).forEach(function (left) { candidates.forEach(function (top) { positions.push({ left: left, top: top }); }); });
       var position = positions.find(function (p) { return overlap(p) === 0; });
       if (!position) position = positions.sort(function (a, b) { return overlap(a) - overlap(b); })[0];
       root.style.top = Math.max(70, position ? position.top : 70) + 'px'; root.style.left = (position ? position.left : 10) + 'px';
     }
     locate.addEventListener('click', function () { expanded = false; map.closePopup(); prepareView(); api.locate(); });
-    more.addEventListener('click', function () { expanded = !expanded; var s = api.state(); root.style.width = expanded || errorMessage ? '280px' : '118px'; status.hidden = !expanded && !errorMessage; actions.hidden = !expanded || (!s.located && !s.guiding); more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); place(); });
+    more.addEventListener('click', function () { expanded = !expanded; var s = api.state(); root.style.width = expanded ? '280px' : errorMessage ? '260px' : '118px'; status.hidden = !expanded && !errorMessage; actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); schedulePlace(); });
     track.addEventListener('click', function () { api.setTracking(track.getAttribute('aria-pressed') !== 'true'); });
-    stop.addEventListener('click', function () { api.stopGuide(); }); wipe.addEventListener('click', function () { api.clear(); });
+    stop.addEventListener('click', function () { expanded = false; api.stopGuide(); }); wipe.addEventListener('click', function () { api.clear(); });
     function staticTarget(kind, id, popup) {
       var rows = kind === 'site' ? global.siteData : global.siteSpotData;
       var matches = (rows || []).filter(function (s) { return String(s.id) === id; }); if (matches.length !== 1) return null;
@@ -254,18 +271,29 @@
     }, true);
     var invalidate = global.publicationInvalidate;
     if (typeof invalidate === 'function') global.publicationInvalidate = function () { api.invalidate(); return invalidate.apply(this, arguments); };
-    map.on('popupclose', function (e) { api.popupClosed(e.popup); place(); });
-    map.on('popupopen resize', place); map.on('layerremove', function (e) { api.layerRemoved(e.layer); });
-    map.on('moveend zoomend', function () { api.validate(); });
+    map.on('popupclose', function (e) { api.popupClosed(e.popup); schedulePlace(); });
+    map.on('popupopen', function () { observeSizes(); schedulePlace(); });
+    map.on('resize', schedulePlace); map.on('layerremove', function (e) { api.layerRemoved(e.layer); });
+    map.on('moveend zoomend', function () { api.validate(); schedulePlace(); });
     document.addEventListener('visibilitychange', function () { if (document.hidden) api.clear('화면을 떠나 위치 표시와 GPS 갱신을 종료했습니다.'); });
     global.addEventListener('pagehide', function () { api.clear(''); });
-    global.addEventListener('resize', place);
+    global.addEventListener('resize', schedulePlace);
     // Overlay state changes (filter/recent/sheets) must not cover the independent GPS button.
-    var sizes = new global.ResizeObserver(place), observed = new WeakSet();
-    function observeSizes() { document.querySelectorAll('#mapTitleBox,#birdmapPanel,#topBtnRow,.leaflet-control-zoom,.birdmap-basemap,#recentReportsBox,.birdmap-mobile-popup,.birdmap-report-location-popup').forEach(function (node) { if (!observed.has(node)) { observed.add(node); sizes.observe(node); } }); }
-    var observer = new global.MutationObserver(function (records) { if (records.some(function (r) { return !root.contains(r.target); })) { observeSizes(); place(); } });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'hidden', 'style'], childList: true, subtree: true });
-    map.on('unload', function () { observer.disconnect(); sizes.disconnect(); api.destroy(); root.remove(); }); observeSizes(); place();
+    var overlaySelector = '#mapTitleBox,#birdmapPanel,#topBtnRow,#noticePanel,#todayPanel,.leaflet-control-zoom,.birdmap-basemap,#recentReportsBox,.leaflet-popup,.birdmap-mobile-popup,.birdmap-report-location-popup';
+    var placementFrame = null, disposed = false;
+    function schedulePlace() {
+      if (disposed || placementFrame !== null) return;
+      placementFrame = global.requestAnimationFrame(function () { placementFrame = null; if (!disposed) place(); });
+    }
+    var sizes = new global.ResizeObserver(schedulePlace), observed = new WeakSet();
+    var observer = new global.MutationObserver(schedulePlace);
+    function observeSizes() { document.querySelectorAll(overlaySelector).forEach(function (node) { if (!observed.has(node)) {
+      observed.add(node); sizes.observe(node);
+      // Leaflet rewrites popup transforms throughout dragging; moveend handles that position change.
+      observer.observe(node, { attributes: true, attributeFilter: node.classList.contains('leaflet-popup') ? ['class', 'hidden'] : ['class', 'hidden', 'style'] });
+    } }); }
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'hidden'] });
+    map.on('unload', function () { disposed = true; if (placementFrame !== null) global.cancelAnimationFrame(placementFrame); observer.disconnect(); sizes.disconnect(); api.destroy(); root.remove(); }); observeSizes(); schedulePlace();
   }
   if (global.document.readyState === 'loading') global.document.addEventListener('DOMContentLoaded', install); else install();
 })(window);

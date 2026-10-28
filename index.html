@@ -1712,7 +1712,7 @@ function openReportEntry(entry,verified){
       if(!siteSpotLayers[index]){
         var site=siteData.find(function(s){return String(s.id)===String(fixed.siteId);});
         siteSpotLayers[index]=birdmapSpotMarker(fixed.lat,fixed.lon,
-          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true);
+          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true,false,{lat:fixed.lat,lon:fixed.lon,fixedSpotId:fixed.id});
       }
       layer=siteSpotLayers[index];
       // 부모 탐조지가 필터에서 빠져 있어도 클릭한 점은 보여 준다.

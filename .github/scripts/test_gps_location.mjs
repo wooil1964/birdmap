@@ -6,7 +6,7 @@ const source=readFileSync(new URL('../../assets/birdmap-location.js',import.meta
 const tick=()=>new Promise(r=>setImmediate(r));
 function popup(options={autoPan:true},initialClasses=[]){
  const classes=new Set(initialClasses),node={classList:{add:name=>classes.add(name),remove:name=>classes.delete(name),contains:name=>classes.has(name)}};
- return{options,node,classes,getElement(){return this.node;},update(){}};
+ return{options,node,classes,updates:0,getElement(){return this.node;},update(){this.updates++;}};
 }
 function env({secure=true,supported=true,popupOptions={autoPan:true},popupClasses=[]}={}){
  const layers=new Set(),calls=[],messages=[],gps=[],watched=[],cleared=[];let hidden=false;
@@ -219,4 +219,42 @@ test('a guide ended inside a layout callback cannot reacquire popup options or c
  e.api.changePopupAutoPan(e.popup,()=>{assert.equal(e.popup.options.autoPan,true);e.api.stopGuide();e.popup.options.autoPan=true;});
  restored(e.popup,before);assert.equal(e.api.state().guiding,false);
  e.gps[0].ok(e.position());await tick();restored(e.popup,before);
+});
+
+test('ending an open desktop guide updates restored layout once, without changing autoPan',async t=>{
+ for(const autoPan of [true,false])await t.test('original autoPan '+autoPan,async()=>{
+  const e=env({popupOptions:{autoPan}});await startGuide(e);
+  e.popup.update=()=>{e.popup.updates++;assert.equal(e.popup.options.autoPan,autoPan);assert.equal(e.popup.classes.has('birdmap-gps-popup'),false);};
+  e.api.stopGuide();assert.equal(e.popup.updates,1);e.api.stopGuide();assert.equal(e.popup.updates,1);
+ });
+ for(const mode of ['sheet','closed','hidden'])await t.test(mode+' skips desktop layout update',async()=>{
+  const e=env();await startGuide(e);
+  if(mode==='sheet')e.popup.classes.add('birdmap-mobile-popup');
+  if(mode==='closed')e.layers.delete(e.popup);
+  if(mode==='hidden')e.hide();
+  e.api.stopGuide();assert.equal(e.popup.updates,0);assert.equal(e.popup.options.autoPan,true);
+ });
+});
+
+test('tracking during initial destination or GPS proof leaves the guide alive and explains the wait',async t=>{
+ for(const phase of ['destination','GPS','GPS public recheck'])await t.test(phase,async()=>{
+  const e=env();e.api.locate();e.gps[0].ok(e.position());
+  let release,count=0;
+  const resolve=()=>++count===(phase==='destination'?1:phase==='GPS public recheck'?2:-1)?new Promise(r=>release=r):e.target();
+  const pending=e.api.guide(resolve,e.popup);await tick();
+  if(phase==='GPS public recheck'){e.gps.at(-1).ok(e.position());await tick();}
+  e.api.setTracking(true);assert.equal(e.api.state().guiding,true);assert.equal(e.api.state().tracking,false);assert.equal(e.watched.length,0);
+  assert.match(e.messages.at(-1),/확인이 끝난 뒤/);
+  e.api.setTracking(false); // A no-op switch must not cancel a pending proof either.
+  if(release)release(e.target());await pending;await tick();
+  if(phase!=='GPS public recheck')e.gps.at(-1).ok(e.position());await tick();
+  assert.equal(e.by('polyline').length,1);assert.equal(e.api.state().guiding,true);assert.doesNotMatch(e.messages.at(-1),/확인할 수 없어/);
+  e.api.setTracking(true);assert.equal(e.watched.length,1);assert.equal(e.api.state().tracking,true);
+ });
+});
+
+test('waiting for tracking never bypasses destination invalidation or resurrects a cancelled proof',async()=>{
+ const e=env();e.api.locate();e.gps[0].ok(e.position());let release;
+ const pending=e.api.guide(()=>new Promise(r=>release=r),e.popup);await tick();e.api.setTracking(true);
+ e.api.invalidate();release(e.target());assert.equal(await pending,false);assert.equal(e.by('polyline').length,0);assert.equal(e.api.state().guiding,false);assert.equal(e.watched.length,0);
 });

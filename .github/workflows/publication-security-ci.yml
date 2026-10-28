@@ -13,6 +13,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  gps-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PLAYWRIGHT_MODULE: ${{ github.workspace }}/.ci-toolchain/node_modules/playwright-core
+      POPUP_DEPENDENCY_CACHE: ${{ github.workspace }}/.ci-results/gps-dependencies
+      POPUP_TEST_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+      - name: Require installed Chrome
+        shell: bash
+        run: |
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || true)
+          test -n "$chrome"
+          echo "CHROME_PATH=$chrome" >> "$GITHUB_ENV"
+          "$chrome" --version
+      - name: Install pinned browser driver and cache reviewed CDN dependencies
+        run: |
+          npm install --prefix .ci-toolchain --no-save --package-lock=false --no-audit --no-fund playwright-core@1.62.1
+          node .github/scripts/cache_gps_dependencies.mjs
+      - name: GPS popup regression (synthetic API, GPS and tiles; offline browser)
+        run: node docs/current-location/popup-regression.cjs
+      - name: Upload GPS browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gps-browser-diagnostics-${{ github.sha }}
+          path: |
+            .ci-results/gps-browser
+            .ci-results/gps-dependencies/manifest.json
+          retention-days: 14
+          if-no-files-found: ignore
   regression:
     runs-on: ubuntu-latest
     timeout-minutes: 20

@@ -1,6 +1,8 @@
 """Normalize only the exact GPS additions approved for the 2026-10-28 feature."""
 # Each pair includes unchanged context and is unique. No wildcard removes app code.
 GPS_ISLANDS = [
+    ("        siteSpotLayers[index]=birdmapSpotMarker(fixed.lat,fixed.lon,\n          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true);\n",
+     "        siteSpotLayers[index]=birdmapSpotMarker(fixed.lat,fixed.lon,\n          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true,false,{lat:fixed.lat,lon:fixed.lon,fixedSpotId:fixed.id});\n"),
     ('    <script src="assets/birdmap-species-search.js"></script>\n</head>\n',
      '    <script src="assets/birdmap-species-search.js"></script>\n    <link rel="stylesheet" href="assets/birdmap-location.css"/>\n    <script src="assets/birdmap-location.js"></script>\n</head>\n'),
     ('  var kakao=spotKakaoRouteHtml(dest),tmap=spotTmapRouteHtml(dest);\n  var html=kakao||tmap?\'<div class="spotRouteButtons">\'+kakao+tmap+\'</div>\':\'\';\n  return dest&&dest.publicationReportId?html.replace(/href="[^"]*"/g,\'href="#"\').replace(/onclick="[^"]*"/g,\'\').replace(/class="spotKakaoRoute"/g,\'class="spotKakaoRoute" data-publication-app="kakao"\').replace(/class="spotTmapRoute"/g,\'class="spotTmapRoute" data-publication-app="tmap"\').replace(/<a /g,\'<a data-publication-report="\'+escapeHtml(dest.publicationReportId)+\'" \'):html;\n',
