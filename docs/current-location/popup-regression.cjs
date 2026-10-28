@@ -122,20 +122,21 @@ async function landscapeToolsRegression(page, label, width) {
   if (width !== 844) return;
   await openSite(page, '114');
   await start(page, false, { latitude: 35.1796, longitude: 129.0756, accuracy: 25 });
-  // Clicking the GPS button scrolls the sheet to its route row; reveal its title before hit-testing it.
-  await page.evaluate(() => { __popup.getElement().querySelector('.leaflet-popup-content').scrollTop = 0; });
+  // A verified GPS guide should keep the public marker live while reducing the bottom sheet.
   await page.getByRole('button', { name: '위치 도구 열기', exact: true }).click();
   await page.waitForTimeout(100);
   const bounds = await page.evaluate(() => {
-    const sheet = __popup.getElement(), title = sheet.querySelector('h4'), t = title.getBoundingClientRect(), g = document.querySelector('#birdmapGps').getBoundingClientRect(), s = sheet.getBoundingClientRect(), details = document.querySelector('.birdmap-gps-details');
-    const hit = document.elementFromPoint(t.left + t.width / 2, t.top + t.height / 2);
-    return { toolTop: g.top, toolBottom: g.bottom, sheetTop: s.top, sheetBottom: s.bottom, title: title.textContent, titleUncovered: title === hit || title.contains(hit), detailsWidth: details.getBoundingClientRect().width, scrollWidth: details.scrollWidth, clientWidth: details.clientWidth, scrollHeight: details.scrollHeight, clientHeight: details.clientHeight, overflow: getComputedStyle(details).overflowY };
+    const sheet = __popup.getElement(), g = document.querySelector('#birdmapGps').getBoundingClientRect(), s = sheet.getBoundingClientRect(), details = document.querySelector('.birdmap-gps-details'), button = sheet.querySelector('.birdmap-popup-actions button:first-child');
+    return { toolTop: g.top, toolBottom: g.bottom, sheetTop: s.top, sheetBottom: s.bottom, sheetHeight: s.height, compact: sheet.classList.contains('birdmap-gps-compact'), reopen: button && button.textContent === '펼치기', detailsWidth: details.getBoundingClientRect().width, scrollWidth: details.scrollWidth, clientWidth: details.clientWidth, scrollHeight: details.scrollHeight, clientHeight: details.clientHeight, overflow: getComputedStyle(details).overflowY };
   });
-  check(bounds.toolTop >= 0 && bounds.toolBottom <= bounds.sheetTop - 8 && bounds.sheetBottom <= 390, label + ' expanded GPS tools clear Mado sheet and viewport', bounds);
-  check(bounds.title === '마도' && bounds.titleUncovered, label + ' Mado sheet title remains uncovered', bounds);
+  check(bounds.toolTop >= 0 && bounds.toolBottom <= bounds.sheetTop - 8 && bounds.sheetBottom <= 390, label + ' expanded GPS tools clear compact Mado sheet and viewport', bounds);
+  check(bounds.compact && bounds.sheetHeight >= 58 && bounds.sheetHeight <= 72 && bounds.reopen, label + ' Mado bottom sheet is compact with reopen control', bounds);
   check(bounds.scrollHeight > bounds.clientHeight && bounds.clientHeight > 0 && bounds.overflow === 'auto', label + ' landscape GPS details have an internal scroll area', bounds);
   check(bounds.detailsWidth >= 260 && bounds.scrollWidth <= bounds.clientWidth, label + ' landscape GPS details retain full width without horizontal scrolling', bounds);
   await page.screenshot({ path: path.join(OUT, 'expanded-tools-mado-' + label + '.png') });
+  await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
+  check(await page.evaluate(() => !__popup.getElement().classList.contains('birdmap-gps-compact') && birdmapLocation.state().guiding), label + ' manual reopen preserves GPS guide');
+  await page.evaluate(() => birdmapCollapseMobilePopupForGps(__popup));
   await page.getByRole('button', { name: '안내 종료', exact: true }).click();
   check(await page.evaluate(() => !birdmapLocation.state().guiding && !!document.querySelector('.birdmap-gps-dot')), label + ' scrolled stop button ends guide and keeps position');
   await page.getByRole('button', { name: '위치 도구 열기', exact: true }).click();
