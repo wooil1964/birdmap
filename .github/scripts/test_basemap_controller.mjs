@@ -6,6 +6,10 @@ import vm from 'node:vm';
 // In-memory controller regression. No browser, real credentials or network calls.
 const source = readFileSync(new URL('../../assets/birdmap-basemap.js', import.meta.url), 'utf8');
 
+// setTimeout(fn, 0) runs once the outermost event dispatch has returned, as the next turn would in the browser: what a
+// handler defers is not done inside the event itself.
+const nextTurn = [];
+let firing = 0;
 class Events {
   constructor() { this.events = new Map(); }
   on(names, fn) {
@@ -18,7 +22,12 @@ class Events {
     for (const name of names.split(' ')) this.events.set(name, (this.events.get(name) || []).filter(handler => handler !== fn));
     return this;
   }
-  fire(name) { for (const fn of [...(this.events.get(name) || [])]) fn(); return this; }
+  fire(name, data) {
+    firing++;
+    try { for (const fn of [...(this.events.get(name) || [])]) fn(data); } finally { firing--; }
+    while (!firing && nextTurn.length) nextTurn.shift()();
+    return this;
+  }
 }
 class Element {
   constructor(name) { this.name = name; this.children = []; this.attrs = {}; this.listeners = new Map(); this.hidden = false; this.disabled = false; this.textContent = ''; }
@@ -30,7 +39,7 @@ class Element {
 }
 function environment({ stored = null, blockedStorage = false, key = '', tileCreationThrows = false, config = null } = {}) {
   let nextTimer = 1;
-  // The once-per-type 60 s recovery timers are kept apart from the tile deadlines and the switch settle.
+  // The per-type recovery timers (60 s and longer) are kept apart from the tile deadlines and the switch settle.
   const timers = new Map(), recoveries = new Map(), values = new Map(), storageWrites = [], created = [], controls = [];
   if (stored !== null) values.set('birdmap.basemap.preference', stored);
   const map = new Events();
@@ -49,7 +58,7 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
       getItem(name) { if (blockedStorage) throw new Error('storage unavailable'); return values.get(name) || null; },
       setItem(name, value) { if (blockedStorage) throw new Error('storage unavailable'); storageWrites.push([name, value]); values.set(name, value); }
     },
-    setTimeout(fn, ms) { const id = nextTimer++; (ms === 60000 ? recoveries : timers).set(id, { fn, ms }); return id; },
+    setTimeout(fn, ms) { const id = nextTimer++; if (ms === 0) nextTurn.push(fn); else (ms >= 60000 ? recoveries : timers).set(id, { fn, ms }); return id; },
     clearTimeout(id) { timers.delete(id); recoveries.delete(id); },
     L: {
       latLngBounds() { return { contains(v) { return v.s !== undefined ? v.s >= 32.9 && v.n <= 38.75 && v.w >= 124.5 && v.e <= 132 : v.lat >= 32.9 && v.lat <= 38.75 && v.lng >= 124.5 && v.lng <= 132; }, intersects(v) { return v.s <= 38.75 && v.n >= 32.9 && v.w <= 132 && v.e >= 124.5; } }; },
@@ -62,7 +71,10 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
       tileLayer(url, options) {
         if (tileCreationThrows) throw new Error('Tile construction failed');
         const layer = new Events();
-        Object.assign(layer, { options, _url: url, addTo(target) { target.layers.add(this); this.fire('loading'); return this; } });
+        // `unanswered`: tiles of the batch still loading; `view`: the current view's tiles and how many loaded without an
+        // error (set by a test; by default nothing is still loading and the view is whole).
+        Object.assign(layer, { options, _url: url, unanswered: 0, view: { total: 1, loaded: 1 }, _unanswered() { return this.unanswered; }, _viewTiles() { return this.view; },
+          addTo(target) { target.layers.add(this); this.fire('loading'); return this; } });
         created.push(layer); return layer;
       },
       DomEvent: { disableClickPropagation(el) { el.clickPropagationDisabled = true; }, disableScrollPropagation(el) { el.scrollPropagationDisabled = true; } }
@@ -77,6 +89,8 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
     expireLast() { const [id, { fn }] = [...timers.entries()].at(-1); timers.delete(id); fn(); },
     // Fires only the pending switch-settle timer (250 ms), leaving tile deadlines alone.
     settle() { for (const [id, t] of [...timers.entries()]) if (t.ms === 250) { timers.delete(id); t.fn(); } },
+    // Runs `fn` as one turn: what its events defer waits until it returns (other events can come first meanwhile).
+    hold(fn) { firing++; try { fn(); } finally { firing--; } while (!firing && nextTurn.length) nextTurn.shift()(); },
     timerMs: () => [...timers.values()].map(t => t.ms).sort((a, b) => a - b),
     state: () => JSON.parse(JSON.stringify(api.getState())) };
 }
@@ -94,9 +108,10 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
   await t.test('runtime-config-activates-only-tile-layer-preserving-camera', () => {
     const before = { ...e.map.center, zoom: e.map.zoom }; e.api.updateConfig({ vworldKey: testKey });
     assert.equal(e.state().active, 'vworld'); assert.deepEqual({ ...e.map.center, zoom: e.map.zoom }, before);
-    assert.equal(e.map.layers.size, 1); assert.equal(e.map.hasLayer(e.osm), false);
+    assert.equal(e.map.layers.size, 2); assert.equal(e.map.hasLayer(e.osm), true, 'the OSM shown so far stays until the first VWorld batch');
     assert.deepEqual(JSON.parse(JSON.stringify(e.last().options)), { minZoom: 4, minNativeZoom: 6, maxZoom: 19, maxNativeZoom: 19, zIndex: 2, tms: false, detectRetina: false, noWrap: true, attribution: '&copy; <a href="https://www.vworld.kr/">VWorld</a> / 국토교통부' });
-    assert.equal(e.timers.size, 1); e.last().fire('load'); assert.equal(e.timers.size, 0); assert.equal(e.state().reason, 'ready');
+    assert.equal(e.timers.size, 1); e.last().fire('tileload').fire('load'); assert.equal(e.timers.size, 0); assert.equal(e.state().reason, 'ready');
+    assert.equal(e.map.layers.size, 1); assert.equal(e.map.hasLayer(e.osm), false);
   });
   await t.test('coverage-and-zoom-fallback-and-automatic-return', () => {
     const old = e.last(), late = old.events.get('loading')[0];
@@ -117,8 +132,9 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
     assert.ok(e.storageWrites.every(([name, value]) => name === 'birdmap.basemap.preference' && ['osm', 'vworld'].includes(value)));
   });
   await t.test('three-errors-lock-same-key-until-explicit-retry', () => {
-    e.api.setPreference('vworld'); const failing = e.last(); failing.fire('tileerror'); failing.fire('tileerror');
-    assert.equal(e.state().active, 'vworld'); failing.fire('tileerror');
+    // A batch of three tiles answering one by one: decided when the last one fails.
+    e.api.setPreference('vworld'); const failing = e.last(); failing.unanswered = 2; failing.fire('tileerror'); failing.unanswered = 1; failing.fire('tileerror');
+    assert.equal(e.state().active, 'vworld'); failing.unanswered = 0; failing.fire('tileerror');
     assert.equal(e.state().active, 'osm'); assert.equal(e.state().locked, true); assert.equal(e.state().errors, 3); assert.equal(e.timers.size, 0);
     const count = e.created.length;
     e.map.move(36.1, 127.1); e.api.setPreference('osm'); e.api.setPreference('vworld'); e.api.updateConfig({ vworldKey: secondKey });
@@ -138,7 +154,9 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
     e.api.updateConfig({ vworldKey: testKey }); const first = e.last(), oldError = first.events.get('tileerror')[0], oldLoading = first.events.get('loading')[0];
     const oldTimeout = [...e.timers.values()][0].fn;
     for (let i = 0; i < 20; i++) { e.api.setPreference('osm'); e.api.setPreference('vworld'); }
-    const before = e.state(); oldError(); oldLoading(); oldTimeout(); assert.deepEqual(e.state(), before); assert.equal(e.timers.size, 1); assert.equal(e.map.layers.size, 1);
+    // One VWorld layer, with the OSM it came from underneath until its batch loads.
+    const before = e.state(); oldError(); oldLoading(); oldTimeout(); assert.deepEqual(e.state(), before); assert.equal(e.timers.size, 1); assert.equal(e.map.layers.size, 2);
+    e.last().fire('tileload').fire('load'); assert.deepEqual([e.map.layers.size, e.map.hasLayer(e.osm)], [1, false]);
   });
   await t.test('controller-state-and-status-control-DOM-contain-no-credential-or-request-URL', () => {
     const snapshot = JSON.stringify(e.state()) + JSON.stringify(e.controls[0].container, (key, value) => key === 'listeners' ? undefined : value);
@@ -160,14 +178,14 @@ test('basemap controller with in-memory map, storage and timers', async (t) => {
     const broken = environment({ key: testKey, tileCreationThrows: true }); assert.equal(broken.state().active, 'osm'); assert.equal(broken.state().locked, true); assert.equal(broken.state().reason, 'tile_error'); assert.equal(broken.timers.size, 0); broken.api.destroy();
   });
   await t.test('one-tile-fully-failed-batch-falls-back-and-locks', () => {
-    const failed = environment({ key: testKey }); failed.last().fire('tileerror'); failed.last().fire('load');
+    const failed = environment({ key: testKey }); failed.last().fire('tileerror'); failed.last().fire('tileload').fire('load');
     assert.equal(failed.state().active, 'osm'); assert.equal(failed.state().reason, 'tile_error'); assert.equal(failed.state().errors, 1); assert.equal(failed.state().locked, true); assert.equal(failed.timers.size, 0); failed.api.destroy();
   });
   await t.test('two-errors-with-successful-tile-show-partial-status-and-keep-VWorld', () => {
-    const partial = environment({ key: testKey }); partial.last().fire('tileload'); partial.last().fire('tileerror'); partial.last().fire('tileerror'); partial.last().fire('load');
+    const partial = environment({ key: testKey }); partial.last().fire('tileload'); partial.last().fire('tileerror'); partial.last().fire('tileerror'); partial.last().fire('tileload').fire('load');
     assert.equal(partial.state().active, 'vworld'); assert.equal(partial.state().reason, 'partial_error'); assert.equal(partial.state().errors, 2); assert.equal(partial.state().locked, false); assert.equal(partial.state().loading, false); assert.equal(partial.timers.size, 0);
     assert.match(partial.controls[0].container.children[1].textContent, /일부 지도를 불러오지 못/);
-    partial.last().fire('loading'); partial.last().fire('tileload'); partial.last().fire('load'); assert.equal(partial.state().reason, 'ready');
+    partial.last().fire('loading'); partial.last().fire('tileload'); partial.last().fire('tileload').fire('load'); assert.equal(partial.state().reason, 'ready');
     // Errors are counted per batch: two old errors plus one new one is not an outage.
     partial.last().fire('loading'); partial.last().fire('tileerror'); assert.equal(partial.state().active, 'vworld'); assert.equal(partial.state().errors, 1);
     partial.last().fire('tileerror'); partial.last().fire('tileerror'); assert.equal(partial.state().active, 'osm'); assert.equal(partial.state().errors, 3); partial.api.destroy();
@@ -211,19 +229,19 @@ test('Satellite, Hybrid and OSM choices: overlay-only fallback, independent lock
   buttons[1].click(); e.settle();
   const satellite = e.last();
   assert.deepEqual([e.state().active, satellite._url, e.map.layers.size, buttons[1].attrs['aria-pressed']], ['satellite', endpoint + '/satellite/{z}/{x}/{y}.jpeg', 1, 'true']);
-  satellite.fire('load'); assert.equal(status(), '위성영상 표시 중');
+  satellite.fire('tileload').fire('load'); assert.equal(status(), '위성영상 표시 중');
   const count = e.created.length; buttons[2].click(); e.settle();
   const overlay = e.last();
   assert.equal(e.created.length, count + 1, 'Hybrid reuses the loaded satellite layer and adds only the overlay');
   assert.deepEqual([overlay._url, overlay.options.zIndex, e.map.layers.size, e.state().active], [endpoint + '/hybrid/{z}/{x}/{y}.png', 3, 2, 'hybrid']);
   assert.ok(e.map.hasLayer(satellite) && e.map.hasLayer(overlay) && !e.map.hasLayer(e.osm));
-  overlay.fire('tileerror'); overlay.fire('tileerror'); assert.equal(e.state().active, 'hybrid'); overlay.fire('tileerror');
+  overlay.unanswered = 2; overlay.fire('tileerror'); overlay.unanswered = 1; overlay.fire('tileerror'); assert.equal(e.state().active, 'hybrid'); overlay.unanswered = 0; overlay.fire('tileerror');
   assert.deepEqual([e.state().active, e.state().overlay, e.state().overlayLocked, e.state().preference], ['satellite', 'failed', true, 'hybrid']);
   assert.ok(e.map.hasLayer(satellite) && !e.map.hasLayer(overlay) && !e.map.hasLayer(e.osm), 'overlay failure keeps the satellite imagery, not OSM');
   assert.equal(status(), '도로·지명 표시를 불러오지 못해 위성영상만 보여요'); assert.equal(retry.hidden, false);
   e.api.setPreference('satellite'); e.api.setPreference('hybrid'); e.settle(); assert.equal(e.created.length, count + 1, 'a failed overlay is not retried by reselecting');
   e.api.setPreference('hybrid', { retry: true }); assert.equal(e.created.length, count + 2); assert.equal(e.state().active, 'hybrid'); assert.ok(e.map.hasLayer(satellite));
-  const overlay2 = e.last(); overlay2.fire('loading'); overlay2.fire('tileerror'); overlay2.fire('load'); assert.equal(e.state().active, 'satellite', 'a fully failed overlay batch drops the overlay');
+  const overlay2 = e.last(); overlay2.fire('loading'); overlay2.fire('tileerror'); overlay2.fire('tileload').fire('load'); assert.equal(e.state().active, 'satellite', 'a fully failed overlay batch drops the overlay');
   e.api.setPreference('vworld'); e.settle(); assert.deepEqual([e.state().active, e.last()._url, e.map.layers.size], ['vworld', endpoint + '/{z}/{x}/{y}.png', 1]);
   e.api.setPreference('hybrid', { retry: true }); const sat2 = e.created.at(-2), ov3 = e.last();
   assert.deepEqual([sat2._url.endsWith('.jpeg'), ov3._url.endsWith('/hybrid/{z}/{x}/{y}.png'), e.map.layers.size], [true, true, 2]);
@@ -240,7 +258,7 @@ test('Hybrid overlay timeout keeps satellite; satellite timeout falls back to OS
   const endpoint = 'https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev/tiles';
   const h = environment({ stored: 'hybrid', config: { vworldMode: 'worker', vworldTileEndpoint: endpoint } });
   assert.deepEqual([h.state().active, h.map.layers.size, h.timers.size], ['hybrid', 2, 2]);
-  h.created[0].fire('load'); h.expireLast();
+  h.created[0].fire('tileload').fire('load'); h.expireLast();
   assert.deepEqual([h.state().active, h.state().overlay, h.map.layers.size], ['satellite', 'failed', 1]);
   assert.equal(h.timers.size, 0, 'no deadline left once the base batch loaded and the overlay was dropped'); h.api.destroy();
   const t = environment({ stored: 'hybrid', config: { vworldMode: 'worker', vworldTileEndpoint: endpoint } });
@@ -256,7 +274,7 @@ test('Hybrid overlay timeout keeps satellite; satellite timeout falls back to OS
 const WORKER = { vworldMode: 'worker', vworldTileEndpoint: 'https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev/tiles' };
 test('rapid VWorld type taps request tiles only for the choice that stays selected; OSM and retry act at once', () => {
   const e = environment({ config: WORKER });
-  e.last().fire('load'); const shown = e.last(), n = e.created.length;
+  e.last().fire('tileload').fire('load'); const shown = e.last(), n = e.created.length;
   for (const p of ['satellite', 'hybrid', 'vworld', 'satellite', 'hybrid', 'satellite']) e.api.setPreference(p);
   assert.equal(e.created.length, n, 'no tile layer for intermediate taps'); assert.ok(e.map.hasLayer(shown), 'the shown map stays meanwhile');
   assert.deepEqual(e.timerMs(), [250], 'one pending settle, no tile deadline'); assert.equal(e.state().preference, 'satellite');
@@ -271,13 +289,16 @@ test('rapid VWorld type taps request tiles only for the choice that stays select
 test('scattered tile errors across many batches never lock; a batch mostly failing or failing outright does', () => {
   const e = environment({ config: WORKER }); const l = e.last();
   for (let batch = 0; batch < 12; batch++) {
-    l.fire('loading'); for (let i = 0; i < 20; i++) l.fire('tileload'); l.fire('tileerror'); l.fire('tileerror'); l.fire('load');
+    l.fire('loading'); for (let i = 0; i < 20; i++) l.fire('tileload'); l.fire('tileerror'); l.fire('tileerror'); l.fire('tileload').fire('load');
   }
   assert.deepEqual([e.state().active, e.state().reason, e.state().locked], ['vworld', 'partial_error', false], '24 errors spread over 12 batches of 22 tiles');
-  l.fire('loading'); for (let i = 0; i < 20; i++) l.fire('tileload'); for (let i = 0; i < 4; i++) l.fire('tileerror'); l.fire('load');
+  l.fire('loading'); for (let i = 0; i < 20; i++) l.fire('tileload'); for (let i = 0; i < 4; i++) l.fire('tileerror'); l.fire('tileload').fire('load');
   assert.equal(e.state().active, 'vworld', '4 of 24 failing in one batch is partial, not an outage');
-  l.fire('loading'); l.fire('tileload'); l.fire('tileload'); for (let i = 0; i < 5; i++) l.fire('tileerror'); assert.equal(e.state().active, 'vworld', 'decided at the batch end');
-  l.fire('load'); assert.deepEqual([e.state().active, e.state().reason, e.state().locked], ['osm', 'tile_error', true], '5 failing of 7 (errors outnumber successes) falls back');
+  // 5 failing of 7 after 2 loaded: decided once the failures outnumber everything that could still load (the 4th).
+  l.fire('loading'); l.fire('tileload'); l.fire('tileload');
+  for (const left of [4, 3, 2]) { l.unanswered = left; l.fire('tileerror'); }
+  assert.equal(e.state().active, 'vworld', '3 failed, 2 loaded, 2 unanswered: not decided yet');
+  l.unanswered = 1; l.fire('tileerror'); assert.deepEqual([e.state().active, e.state().reason, e.state().locked], ['osm', 'tile_error', true], '4 failed of 7 cannot become a minority: falls back');
   const o = environment({ config: WORKER }); const ol = o.last();
   ol.fire('loading'); ol.fire('tileerror'); ol.fire('tileerror'); ol.fire('tileerror');
   assert.deepEqual([o.state().active, o.state().reason], ['osm', 'tile_error'], 'three failures with no success fall back at once (outage)');
@@ -296,34 +317,144 @@ test('the 12 s deadline restarts on tile progress and still fires when nothing l
   l.fire('tileerror'); e.expire(); assert.deepEqual([e.state().active, e.state().reason, e.state().locked], ['osm', 'tile_timeout', true], 'no progress for 12 s falls back');
   e.api.destroy();
   const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created;
-  sat.fire('load'); assert.deepEqual(h.timerMs(), [12000], 'only the overlay deadline is left');
+  sat.fire('tileload').fire('load'); assert.deepEqual(h.timerMs(), [12000], 'only the overlay deadline is left');
   const k = [...h.timers.keys()][0]; ov.fire('tileload'); assert.notEqual([...h.timers.keys()][0], k, 'overlay progress restarts its deadline');
-  ov.fire('loading'); for (let i = 0; i < 3; i++) ov.fire('tileload'); for (let i = 0; i < 3; i++) ov.fire('tileerror'); ov.fire('load');
+  ov.fire('loading'); for (let i = 0; i < 3; i++) ov.fire('tileload'); for (let i = 0; i < 3; i++) ov.fire('tileerror'); ov.fire('tileload').fire('load');
   assert.equal(h.state().active, 'hybrid', 'overlay with errors not outnumbering successes stays');
   ov.fire('loading'); ov.fire('tileerror'); ov.fire('tileerror'); ov.fire('tileerror');
   assert.deepEqual([h.state().active, h.state().overlay], ['satellite', 'failed'], 'overlay outage still drops only the overlay');
   h.api.destroy();
 });
+// The same tiles answering in another order gave another verdict (10/28, Codex): three failures first fell back, the
+// same failures after a success did not. Now only the counts decide.
+test('a batch verdict depends on how many tiles failed, not on the order they answered in', () => {
+  const verdict = (answers, shown = true) => {
+    const e = environment({ config: WORKER }); const l = e.last();
+    if (shown) l.fire('tileload').fire('load');
+    l.fire('loading'); let left = answers.length;
+    for (const a of answers) { left--; l.unanswered = left; l.fire(a === 'x' ? 'tileerror' : 'tileload'); }
+    if (e.state().active !== 'osm') l.fire('load');
+    const s = e.state(); e.api.destroy(); return s.active + '/' + s.reason;
+  };
+  const batch = (failed, total) => Array.from({ length: total }, (_, i) => i < failed ? 'x' : 'o');
+  for (const [failed, total, expected] of [[3, 24, 'vworld/partial_error'], [11, 24, 'vworld/partial_error'], [13, 24, 'osm/tile_error'], [18, 24, 'osm/tile_error'], [24, 24, 'osm/tile_error'], [2, 2, 'vworld/partial_error']]) {
+    // Interleaved: the same answers permuted (7 is coprime with both totals).
+    const errorsFirst = batch(failed, total), successesFirst = [...errorsFirst].reverse(), interleaved = errorsFirst.map((_, i) => errorsFirst[(i * 7) % total]);
+    for (const order of [errorsFirst, successesFirst, interleaved]) assert.equal(verdict(order), expected, `${failed} of ${total} failing, ${order.slice(0, 4).join('')}…`);
+  }
+  assert.equal(verdict(['x', 'x'], false), 'osm/tile_error', 'a layer that has shown nothing and gets only failures falls back');
+  assert.equal(verdict(['x', 'o'], false), 'vworld/partial_error', 'one of two failing on a new layer is partial');
+});
+// A batch whose last tiles were cancelled (zoom) or dropped (pan) is closed by the layer and judged like any other; only
+// tiles that really loaded show the layer and end a run of recovery attempts (10/28, Codex: a cancelled batch with no
+// tile loaded reset the pauses to 60 s).
+test('a batch closed with no tile loaded neither shows the layer nor resets the recovery pauses', () => {
+  const e = environment({ config: WORKER }); const l = e.last();
+  l.fire('tileload').fire('load'); l.fire('loading'); assert.deepEqual(e.timerMs(), [12000]);
+  l.fire('tileabort'); l.fire('load', { cancelled: true });
+  assert.deepEqual([e.state().active, e.state().reason, e.timerMs()], ['vworld', 'ready', []], 'shown layer, nothing answered: ready, no deadline left');
+  l.fire('loading'); l.unanswered = 3; l.fire('tileerror'); l.unanswered = 0; l.fire('tileabort'); l.fire('load', { cancelled: true });
+  assert.deepEqual([e.state().active, e.state().reason, e.state().locked], ['vworld', 'partial_error', false], 'one failure, the rest cancelled: partial');
+  e.api.destroy();
+  const r = environment({ config: WORKER }); r.last().fire('tileerror');
+  assert.deepEqual([r.state().active, r.state().recoveryAttempts, [...r.recoveries.values()].map(t => t.ms)], ['osm', 1, [60000]]);
+  r.recover(); const a = r.last(); a.fire('tileabort'); a.fire('load', { cancelled: true });
+  assert.deepEqual([r.state().active, r.state().reason, r.state().loading, r.state().deadlinePending, r.state().backdrop, r.state().recoveryAttempts], ['vworld', 'loading', true, false, true, 1],
+    'the attempt\'s batch cancelled before any answer: OSM stays underneath, no deadline, the attempt still counts');
+  a.fire('loading'); a.fire('tileerror');
+  assert.deepEqual([r.state().active, [...r.recoveries.values()].map(t => t.ms)], ['osm', [120000]], 'failing then waits the next pause, not 60 s again');
+  r.recover(); const b = r.last(); b.fire('loading'); b.unanswered = 4; b.fire('tileabort'); r.map.move(36.05, 127.05); b.fire('loading'); b.unanswered = 0; b.fire('tileload').fire('load');
+  assert.deepEqual([r.state().active, r.state().reason, r.state().recoveryAttempts, r.state().backdrop], ['vworld', 'ready', 0, false], 'zoomed and panned during the attempt, a tile loaded: shown, OSM removed, pauses reset');
+  r.api.destroy();
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created; sat.fire('tileload').fire('load'); ov.fire('tileerror');
+  assert.deepEqual([h.state().active, h.state().overlay, [...h.recoveries.values()].map(t => t.ms)], ['satellite', 'failed', [60000]]);
+  h.recover(); const ov2 = h.last(); ov2.fire('tileabort'); ov2.fire('load', { cancelled: true });
+  assert.deepEqual([h.state().active, h.state().overlay], ['hybrid', 'loading'], 'the overlay alike: not ready without a loaded tile');
+  ov2.fire('loading'); ov2.fire('tileerror'); assert.deepEqual([...h.recoveries.values()].map(t => t.ms), [120000]);
+  h.api.destroy();
+});
+// Removing a layer inside its own 'load' threw in Leaflet (GridLayer._tileReady reads this._map._fadeAnimated after
+// firing it; 10/28, Codex). The fallback now runs after the event has returned.
+// A fallback deferred by one batch removed the batch that followed it (10/28, Codex 2nd review): the deferred call now
+// also checks that its batch is still the current one.
+test('a fallback deferred by an earlier batch does not remove the batch that followed it', () => {
+  const fail3 = l => { for (const left of [2, 1, 0]) { l.unanswered = left; l.fire('tileerror'); } l.fire('load'); };
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('tileload').fire('load');
+  e.hold(() => { l.fire('loading'); fail3(l); l.fire('loading'); l.fire('tileload'); l.fire('load'); });
+  assert.deepEqual([e.state().active, e.state().reason, e.map.hasLayer(l), e.state().locked], ['vworld', 'ready', true, false], 'the newer batch loaded: VWorld stays');
+  e.hold(() => { l.fire('loading'); fail3(l); l.fire('loading'); });
+  assert.deepEqual([e.state().active, e.state().loading, e.map.hasLayer(l)], ['vworld', true, true], 'a newer batch still loading is not removed by the older verdict');
+  fail3(l); assert.deepEqual([e.state().active, e.state().reason], ['osm', 'tile_error'], 'its own failures still fall back');
+  e.api.destroy();
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created; sat.fire('tileload').fire('load'); ov.fire('tileload').fire('load');
+  h.hold(() => { ov.fire('loading'); fail3(ov); ov.fire('loading'); ov.fire('tileload'); ov.fire('load'); });
+  assert.deepEqual([h.state().active, h.state().overlay, h.map.hasLayer(ov)], ['hybrid', 'ready', true], 'the overlay alike');
+  h.api.destroy();
+});
+// A recovery counted as done once a single tile loaded (10/28, Codex 2nd review): the pauses now reset only when a batch
+// that ran to its end left the current view loaded, at least 90 % of its tiles without an error.
+test('recovery pauses reset only when a completed batch left the current view loaded', () => {
+  const e = environment({ config: WORKER }); const pending = () => [...e.recoveries.values()].map(t => t.ms);
+  const batch = (l, ok, failed, view) => { l.view = view; l.fire('loading'); for (let i = 0; i < ok; i++) l.fire('tileload'); for (let i = 0; i < failed; i++) l.fire('tileerror'); };
+  e.last().fire('tileerror'); assert.deepEqual([e.state().recoveryAttempts, pending()], [1, [60000]]);
+  e.recover(); const a = e.last(); batch(a, 20, 4, { total: 24, loaded: 20 }); a.fire('load');
+  assert.deepEqual([e.state().active, e.state().reason, e.state().recoveryAttempts], ['vworld', 'partial_error', 1], '20 of 24 loaded (83 %): shown, but not a recovery');
+  batch(a, 0, 3, { total: 24, loaded: 20 }); a.fire('load'); assert.deepEqual([e.state().active, pending()], ['osm', [120000]], 'so a failure waits the next pause');
+  e.recover(); const b = e.last(); batch(b, 1, 0, { total: 24, loaded: 1 }); b.fire('load', { cancelled: true });
+  assert.equal(e.state().recoveryAttempts, 2, 'a batch closed because its last tiles were cancelled is not a recovery');
+  batch(b, 23, 1, { total: 24, loaded: 23 }); b.fire('load');
+  assert.deepEqual([e.state().reason, e.state().recoveryAttempts], ['partial_error', 0], '23 of 24 (96 %) after a batch that ran to its end: recovered');
+  batch(b, 0, 3, { total: 24, loaded: 23 }); b.fire('load'); assert.deepEqual(pending(), [60000], 'a later outage starts again at 60 s');
+  e.api.destroy();
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created; sat.fire('tileload').fire('load'); ov.fire('tileerror');
+  h.recover(); const ov2 = h.last(); batch(ov2, 2, 1, { total: 24, loaded: 2 }); ov2.fire('load');
+  assert.deepEqual([h.state().active, h.state().overlay], ['hybrid', 'ready'], 'labels shown');
+  batch(ov2, 0, 3, { total: 24, loaded: 2 }); ov2.fire('load'); assert.deepEqual([...h.recoveries.values()].map(t => t.ms), [120000], 'but the overlay did not recover either');
+  h.api.destroy();
+});
+test('a failing layer is removed after its own Leaflet event has returned, and its late events change nothing', () => {
+  for (const viaLoad of [false, true]) {
+    const e = environment({ config: WORKER }); const l = e.last(), seen = [];
+    l.on('tileerror load', () => seen.push(e.map.hasLayer(l)));
+    l.unanswered = viaLoad ? 2 : 0; l.fire('tileerror');
+    if (viaLoad) { l.unanswered = 0; l.fire('tileabort'); l.fire('load', { cancelled: true }); }
+    assert.ok(seen.length > 0 && seen.every(Boolean), 'still on the map while its own event runs');
+    assert.deepEqual([e.state().active, e.state().reason, e.map.hasLayer(l), e.timerMs()], ['osm', 'tile_error', false, []], viaLoad ? 'decided at load' : 'decided at the error');
+    const before = e.state(); l.fire('tileerror'); l.fire('tileload'); l.fire('load'); l.fire('loading'); l.fire('tileabort');
+    assert.deepEqual([e.state(), e.timerMs(), e.created.length], [before, [], 1], 'events of the removed layer change nothing');
+    e.api.destroy();
+  }
+});
 test('events of a replaced type or a removed overlay change nothing', () => {
-  const e = environment({ config: WORKER }); const base = e.last(); base.fire('load');
+  const e = environment({ config: WORKER }); const base = e.last(); base.fire('tileload').fire('load');
   const lateError = base.events.get('tileerror')[0], lateLoad = base.events.get('load')[0];
-  e.api.setPreference('satellite'); e.settle(); const sat = e.last(); sat.fire('load');
+  e.api.setPreference('satellite'); e.settle(); const sat = e.last(); sat.fire('tileload').fire('load');
   const before = e.state(); for (let i = 0; i < 5; i++) lateError(); lateLoad(); assert.deepEqual(e.state(), before);
   e.api.setPreference('hybrid'); e.settle(); const ov = e.last(), lateOv = ov.events.get('tileerror')[0];
   e.api.setPreference('satellite'); e.settle(); for (let i = 0; i < 5; i++) lateOv(); assert.deepEqual([e.state().active, e.state().overlay, e.state().overlayLocked], ['satellite', 'off', false]);
   e.api.destroy();
 });
 
-// Fast zooming hit the Worker's per-IP limit (429) and locked OSM until the explicit retry (10/26).
-test('a failed type is tried once more by itself after 60 s; failing again keeps OSM with no further automatic request', () => {
+// Fast zooming hit the Worker's per-IP limit (429) and locked OSM until the explicit retry (10/26); after one automatic
+// attempt per session a later lock stayed OSM (10/27): attempts now repeat at growing pauses and a loaded batch resets them.
+test('a failed type is tried again by itself after 60, 120, 240 and 480 s; then OSM stays with no further automatic request', () => {
   const e = environment({ config: WORKER }); const fail3 = l => { l.fire('tileerror'); l.fire('tileerror'); l.fire('tileerror'); };
-  fail3(e.last()); assert.deepEqual([e.state().active, e.state().locked, e.recoveries.size, [...e.recoveries.values()][0].ms], ['osm', true, 1, 60000]);
+  const pending = () => [...e.recoveries.values()].map(t => t.ms);
+  fail3(e.last()); assert.deepEqual([e.state().active, e.state().locked, pending()], ['osm', true, [60000]]);
   const n = e.created.length; e.map.move(36.2, 127.2); e.api.setPreference('vworld'); assert.equal(e.created.length, n, 'still no request before the delay');
-  e.recover(); assert.deepEqual([e.state().active, e.state().locked, e.created.length], ['vworld', false, n + 1], 'one automatic attempt');
-  fail3(e.last()); assert.deepEqual([e.state().active, e.state().locked, e.recoveries.size], ['osm', true, 0], 'no second automatic attempt in this session');
-  e.map.move(36.3, 127.3); e.api.setPreference('vworld'); assert.equal(e.created.length, n + 1, 'reselecting or moving sends nothing');
-  e.api.setPreference('vworld', { retry: true }); assert.equal(e.created.length, n + 2, 'the explicit retry still works');
+  e.recover(); assert.deepEqual([e.state().active, e.state().locked, e.created.length], ['vworld', false, n + 1], 'first automatic attempt');
+  for (const [i, next] of [[1, [120000]], [2, [240000]], [3, [480000]], [4, []]]) {
+    fail3(e.last()); assert.deepEqual([e.state().active, e.state().locked, pending()], ['osm', true, next], 'failure ' + (i + 1));
+    if (next.length) { e.recover(); assert.equal(e.created.length, n + 1 + i, 'one layer per attempt'); }
+  }
+  e.map.move(36.3, 127.3); e.api.setPreference('vworld'); assert.equal(e.created.length, n + 4, 'after the last pause reselecting or moving sends nothing');
+  e.api.setPreference('vworld', { retry: true }); assert.equal(e.created.length, n + 5, 'the explicit retry still works');
   e.api.destroy();
+  const s = environment({ config: WORKER }); fail3(s.last()); s.recover(); s.last().fire('tileload').fire('load');
+  assert.deepEqual([s.state().active, s.state().reason], ['vworld', 'ready'], 'the attempt loaded');
+  fail3(s.last()); assert.deepEqual([...s.recoveries.values()].map(t => t.ms), [60000], 'a later lock starts again at 60 s');
+  s.recover(); s.last().fire('tileload'); s.last().fire('tileerror'); s.last().fire('tileload').fire('load'); assert.equal(s.state().reason, 'partial_error', 'a partial batch is shown too');
+  s.last().fire('loading'); fail3(s.last()); assert.deepEqual([...s.recoveries.values()].map(t => t.ms), [60000], 'and resets the pauses as well'); s.api.destroy();
   const r = environment({ config: WORKER }); fail3(r.last()); r.api.setPreference('vworld', { retry: true });
   assert.equal(r.recoveries.size, 0, 'an explicit retry cancels the pending automatic one'); r.api.destroy();
   const o = environment({ config: WORKER }); fail3(o.last()); o.api.setPreference('osm'); const k = o.created.length; o.recover();
@@ -331,21 +462,24 @@ test('a failed type is tried once more by itself after 60 s; failing again keeps
   o.api.destroy();
   const d = environment({ config: WORKER }); fail3(d.last()); d.api.destroy(); assert.equal(d.recoveries.size, 0, 'destroy clears the pending attempt');
 });
-test('a failed Hybrid overlay is tried once more after 60 s on the shown satellite imagery', () => {
+test('a failed Hybrid overlay is tried again after 60 s, then 120 s, on the shown satellite imagery; loading resets the pauses', () => {
   const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created;
-  sat.fire('load'); ov.fire('tileerror'); ov.fire('tileerror'); ov.fire('tileerror');
-  assert.deepEqual([h.state().active, h.state().overlay, h.recoveries.size], ['satellite', 'failed', 1]);
+  const pending = () => [...h.recoveries.values()].map(t => t.ms), fail3 = l => { l.fire('tileerror'); l.fire('tileerror'); l.fire('tileerror'); };
+  sat.fire('tileload').fire('load'); fail3(ov);
+  assert.deepEqual([h.state().active, h.state().overlay, pending()], ['satellite', 'failed', [60000]]);
   const n = h.created.length; h.recover(); const ov2 = h.last();
   assert.deepEqual([h.created.length, h.state().active, ov2._url.endsWith('/hybrid/{z}/{x}/{y}.png'), h.map.hasLayer(sat)], [n + 1, 'hybrid', true, true], 'only the overlay is requested again');
-  ov2.fire('tileerror'); ov2.fire('tileerror'); ov2.fire('tileerror'); assert.deepEqual([h.state().active, h.recoveries.size], ['satellite', 0]);
+  fail3(ov2); assert.deepEqual([h.state().active, pending()], ['satellite', [120000]]);
+  h.recover(); const ov3 = h.last(); ov3.fire('tileload').fire('load'); assert.deepEqual([h.state().active, h.state().overlay], ['hybrid', 'ready']);
+  fail3(ov3); assert.deepEqual(pending(), [60000], 'after the overlay loaded a later failure starts again at 60 s');
   h.api.destroy();
 });
 test('the status line is drawn only for notices; the plain "표시 중" stays for screen readers', () => {
   const e = environment({ config: WORKER }); const root = e.controls[0].container;
-  e.last().fire('load'); assert.equal(root.attrs['data-notice'], 'false');
+  e.last().fire('tileload').fire('load'); assert.equal(root.attrs['data-notice'], 'false');
   e.map.move(36, 127, 3); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['zoom_out', 'true']);
   e.map.move(51, 0, 10); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['outside_view', 'true']);
-  e.map.move(36, 127, 10); e.last().fire('tileload'); e.last().fire('tileerror'); e.last().fire('load'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['partial_error', 'true']);
+  e.map.move(36, 127, 10); e.last().fire('tileload'); e.last().fire('tileerror'); e.last().fire('tileload').fire('load'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['partial_error', 'true']);
   e.api.setPreference('osm'); assert.equal(root.attrs['data-notice'], 'false');
   e.api.setPreference('vworld'); e.last().fire('tileerror'); e.last().fire('tileerror'); e.last().fire('tileerror'); assert.deepEqual([e.state().reason, root.attrs['data-notice']], ['tile_error', 'true']);
   e.api.destroy();
@@ -354,7 +488,7 @@ test('the status line is drawn only for notices; the plain "표시 중" stays fo
 
 // Zooming out to 4-5 or reaching the border kept switching the whole map to OSM (10/26).
 test('zoom 4-5: VWorld stays (z6 tiles scaled, no z4/z5 request); OSM fills around Korea only after the VWorld tiles loaded', () => {
-  const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('tileload').fire('load');
   assert.deepEqual([l.options.minZoom, l.options.minNativeZoom, l.options.maxNativeZoom], [4, 6, 19], 'Leaflet asks for z6 tiles below zoom 6');
   e.map.move(36, 127, 5.9); assert.deepEqual([e.state().active, e.state().backdrop, e.created.length, e.map.hasLayer(l)], ['vworld', true, 1, true]);
   e.map.move(36, 127, 4); assert.deepEqual([e.state().active, e.state().reason, e.state().backdrop, e.created.length], ['vworld', 'ready', true, 1]);
@@ -362,22 +496,23 @@ test('zoom 4-5: VWorld stays (z6 tiles scaled, no z4/z5 request); OSM fills arou
   e.map.move(36, 127, 7); assert.deepEqual([e.state().active, e.state().backdrop, e.map.hasLayer(e.osm)], ['vworld', false, false], 'zoom 6+: OSM removed again');
   // While a batch is loading, OSM is not slipped underneath (it would show through over Korea); it comes with the load.
   l.fire('loading'); e.map.move(36, 127, 5); assert.equal(e.state().backdrop, false);
-  l.fire('tileload'); l.fire('load'); assert.equal(e.state().backdrop, true);
+  l.fire('tileload'); l.fire('tileload').fire('load'); assert.equal(e.state().backdrop, true);
   e.api.destroy();
 });
 test('border areas: VWorld while any domestic area is in view, OSM underneath beyond the border, OSM only once the view has left', () => {
-  const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('tileload').fire('load');
   e.map.move(37.97, 124.45, 11); assert.deepEqual([e.state().active, e.state().backdrop, e.created.length], ['vworld', true, 1], '백령도, centre just west of the bound');
   e.map.move(32.85, 126.27, 11); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', true], '마라도, centre just south of the bound');
   e.map.move(37.24, 131.87, 12); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', false], '독도, view inside');
   e.map.move(33.0, 126.5, 10); assert.deepEqual([e.state().active, e.state().backdrop], ['vworld', true], 'south of 제주: centre inside, view past the bound');
   e.map.move(36.5, 127.5, 10); assert.equal(e.state().backdrop, false, 'whole view inside: no OSM');
   e.map.move(31.2, 121.5, 10); assert.deepEqual([e.state().active, e.state().reason], ['osm', 'outside_view'], 'Shanghai: no domestic area in view');
-  e.map.move(36.5, 127.5, 10); assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['vworld', 2, false], 'back inside: VWorld, OSM removed');
+  e.map.move(36.5, 127.5, 10); assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['vworld', 2, true], 'back inside: VWorld over the OSM shown so far');
+  e.last().fire('tileload').fire('load'); assert.equal(e.map.hasLayer(e.osm), false, 'OSM removed once VWorld has loaded');
   e.api.destroy();
 });
 test('an outage at zoom 5 (OSM already underneath): OSM takes over and stays while zooming; the one attempt at 60 s keeps OSM around Korea', () => {
-  const e = environment({ config: WORKER }); const l = e.last(); l.fire('load');
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('tileload').fire('load');
   e.map.move(36, 127, 5); assert.equal(e.state().backdrop, true);
   l.fire('loading'); l.fire('tileerror'); l.fire('tileerror'); l.fire('tileerror');
   assert.deepEqual([e.state().active, e.state().reason, e.state().locked, e.state().backdrop, e.map.hasLayer(e.osm), e.map.hasLayer(l)], ['osm', 'tile_error', true, false, true, false]);
