@@ -169,7 +169,7 @@ const SCENARIOS = [
       for (let i = 0; i < 9; i++) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 640, y: 400, deltaX: 0, deltaY: -120 }, p.sessionId); await sleep(100); }
       await sleep(800); const s = await waitState(p, s => s.reason === 'ready', 15000);
       // The burst handling overrides Leaflet 1.9.3 internals: a Leaflet upgrade must come with a fresh check.
-      const leaflet = await p.evaluate("(function(){var t=L.TileLayer.prototype,m=" + MAP + ";return L.version+'/'+['_animateZoom','_resetView','_onMoveEnd','_setView','_setZoomTransforms','onRemove','_abortLoading','_removeTile','_noTilesToLoad'].every(function(k){return typeof t[k]==='function';})+'/'+(typeof m._animatingZoom==='boolean');})()");
+      const leaflet = await p.evaluate("(function(){var t=L.TileLayer.prototype,m=" + MAP + ";return L.version+'/'+['_animateZoom','_resetView','_onMoveEnd','_setView','_setZoomTransforms','onRemove','_abortLoading','_removeTile','_noTilesToLoad','_pxBoundsToTileRange','_getTiledPixelBounds'].every(function(k){return typeof t[k]==='function';})+'/'+(typeof m._animatingZoom==='boolean');})()");
       return { ...s, steps: await p.evaluate('window.__zoomSteps'), levels: levels(p.log.slice(n)), leaflet }; },
     expect: s => s.active === 'vworld' && s.reason === 'ready' && s.steps >= 3 && s.levels.length < s.steps && s.levels.includes(Math.round(s.zoom)) && s.leaflet === '1.9.3/true/true' },
   // Live 10/27: wheel flicks 0.6 s apart were each a lone zoom loading a whole screen (650-700 tiles in 14 s); the
@@ -232,9 +232,26 @@ const SCENARIOS = [
     run: async p => { await setView(p, 35.2, 128.9, 11); await waitState(p, s => s.active === 'osm', 15000);
       const a = await waitState(p, s => s.active !== 'osm', 70000); await zoomBy(p, 1); await sleep(150); await panBy(p, 160, 60); await sleep(150); await zoomBy(p, -1);
       await sleep(1500); const s = await waitState(p, s => s.reason === 'ready', 10000); s.attemptSeenAs = a.active + '/' + a.reason; s.recoveryAttempts = await p.evaluate('birdmapBasemap.getState().recoveryAttempts'); return s; },
-    expect: s => s.attemptSeenAs === 'vworld/loading' && s.active === 'vworld' && s.reason === 'ready' && s.recoveryAttempts === 0 }
+    expect: s => s.attemptSeenAs === 'vworld/loading' && s.active === 'vworld' && s.reason === 'ready' && s.recoveryAttempts === 0 },
+  // An uneven hand (10/28, Codex 2nd review: 600 ms flicks went to OSM after ~20 s): the pause ran out between two flicks
+  // whenever a gap was longer than 1.25 x the one before, loading a whole screen each time.
+  { name: 'wheel_flicks_uneven_per_ip_limit', only: ['pc', 'wide'], note: 'wheel flicks 450-750 ms apart for 20 s against the Worker per-IP limit (180 per 60 s): the pause does not run out between flicks, VWorld stays',
+    answer: (u, i, log) => ({ status: log.filter(x => Date.now() - x.t < 60000).length > 180 ? 429 : 200, delay: 200 }),
+    run: async (p, b) => { await sleep(600); const n = p.log.length; let r = 12345, i = 0; const t0 = Date.now();
+      while (Date.now() - t0 < 20000) { await b.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 683 + ((i % 3) - 1) * 120, y: 384 + (i % 2 ? 60 : -60), deltaX: 0, deltaY: i % 6 < 3 ? -100 : 100 }, p.sessionId); i++;
+        r = (r * 1103515245 + 12345) % 2147483648; await sleep(450 + Math.round(r / 2147483648 * 300)); }
+      await sleep(1300); const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); return { ...s, flicks: i, levels: levels(p.log.slice(n)) }; },
+    expect: s => s.active === 'vworld' && s.reason === 'ready' && s.levels.includes(Math.round(s.zoom)) },
+  // Failures, zooms and pans overlapping (10/28, Codex 2nd review: a fallback deferred by one batch removed the next): for
+  // 3 s every other tile fails at once while the user zooms and pans every 250 ms, then all tiles are fine. Whatever the
+  // order of events: no page exception, and the end state is either a consistent VWorld or a locked OSM.
+  { name: 'overlapping_failures_zoom_pan', only: 'pc', note: 'every other tile 502 within 40 ms for 3 s while zooming and panning every 250 ms, then fine: no exception, a consistent end state',
+    answer: u => { const m = /\/(\d+)\/(\d+)\/(\d+)\.(png|jpeg)$/.exec(u); const bad = Date.now() - overlapT0 < 3000 && !!m && (+m[2] + +m[3]) % 2 === 0; return { status: bad ? 502 : 200, delay: bad ? 40 : 250 }; },
+    run: async p => { overlapT0 = Date.now(); for (let i = 0; i < 24; i++) { if (i % 3 === 2) await panBy(p, i % 2 ? -140 : 150, 40); else await zoomBy(p, i % 6 < 3 ? 1 : -1); await sleep(250); }
+      await sleep(1500); const s = await waitState(p, s => s.reason === 'ready' || s.reason === 'partial_error' || s.active === 'osm', 15000); s.deadline = await p.evaluate('birdmapBasemap.getState().deadlinePending'); return s; },
+    expect: s => s.active === 'osm' ? s.reason === 'tile_error' && s.locked : s.active === 'vworld' && (s.reason === 'ready' || s.reason === 'partial_error') && !s.deadline }
 ];
-let mixedOn = false;
+let mixedOn = false, overlapT0 = 0;
 
 
 // Layout of the selector at the five checked widths (plus phone landscape): one column, at most 80 px wide, at the left

@@ -71,8 +71,10 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
       tileLayer(url, options) {
         if (tileCreationThrows) throw new Error('Tile construction failed');
         const layer = new Events();
-        // `unanswered`: tiles of the batch still loading (set by a test; none by default).
-        Object.assign(layer, { options, _url: url, unanswered: 0, _unanswered() { return this.unanswered; }, addTo(target) { target.layers.add(this); this.fire('loading'); return this; } });
+        // `unanswered`: tiles of the batch still loading; `view`: the current view's tiles and how many loaded without an
+        // error (set by a test; by default nothing is still loading and the view is whole).
+        Object.assign(layer, { options, _url: url, unanswered: 0, view: { total: 1, loaded: 1 }, _unanswered() { return this.unanswered; }, _viewTiles() { return this.view; },
+          addTo(target) { target.layers.add(this); this.fire('loading'); return this; } });
         created.push(layer); return layer;
       },
       DomEvent: { disableClickPropagation(el) { el.clickPropagationDisabled = true; }, disableScrollPropagation(el) { el.scrollPropagationDisabled = true; } }
@@ -87,6 +89,8 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
     expireLast() { const [id, { fn }] = [...timers.entries()].at(-1); timers.delete(id); fn(); },
     // Fires only the pending switch-settle timer (250 ms), leaving tile deadlines alone.
     settle() { for (const [id, t] of [...timers.entries()]) if (t.ms === 250) { timers.delete(id); t.fn(); } },
+    // Runs `fn` as one turn: what its events defer waits until it returns (other events can come first meanwhile).
+    hold(fn) { firing++; try { fn(); } finally { firing--; } while (!firing && nextTurn.length) nextTurn.shift()(); },
     timerMs: () => [...timers.values()].map(t => t.ms).sort((a, b) => a - b),
     state: () => JSON.parse(JSON.stringify(api.getState())) };
 }
@@ -347,14 +351,14 @@ test('a batch verdict depends on how many tiles failed, not on the order they an
 test('a batch closed with no tile loaded neither shows the layer nor resets the recovery pauses', () => {
   const e = environment({ config: WORKER }); const l = e.last();
   l.fire('tileload').fire('load'); l.fire('loading'); assert.deepEqual(e.timerMs(), [12000]);
-  l.fire('tileabort'); l.fire('load');
+  l.fire('tileabort'); l.fire('load', { cancelled: true });
   assert.deepEqual([e.state().active, e.state().reason, e.timerMs()], ['vworld', 'ready', []], 'shown layer, nothing answered: ready, no deadline left');
-  l.fire('loading'); l.unanswered = 3; l.fire('tileerror'); l.unanswered = 0; l.fire('tileabort'); l.fire('load');
+  l.fire('loading'); l.unanswered = 3; l.fire('tileerror'); l.unanswered = 0; l.fire('tileabort'); l.fire('load', { cancelled: true });
   assert.deepEqual([e.state().active, e.state().reason, e.state().locked], ['vworld', 'partial_error', false], 'one failure, the rest cancelled: partial');
   e.api.destroy();
   const r = environment({ config: WORKER }); r.last().fire('tileerror');
   assert.deepEqual([r.state().active, r.state().recoveryAttempts, [...r.recoveries.values()].map(t => t.ms)], ['osm', 1, [60000]]);
-  r.recover(); const a = r.last(); a.fire('tileabort'); a.fire('load');
+  r.recover(); const a = r.last(); a.fire('tileabort'); a.fire('load', { cancelled: true });
   assert.deepEqual([r.state().active, r.state().reason, r.state().loading, r.state().deadlinePending, r.state().backdrop, r.state().recoveryAttempts], ['vworld', 'loading', true, false, true, 1],
     'the attempt\'s batch cancelled before any answer: OSM stays underneath, no deadline, the attempt still counts');
   a.fire('loading'); a.fire('tileerror');
@@ -364,19 +368,56 @@ test('a batch closed with no tile loaded neither shows the layer nor resets the 
   r.api.destroy();
   const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created; sat.fire('tileload').fire('load'); ov.fire('tileerror');
   assert.deepEqual([h.state().active, h.state().overlay, [...h.recoveries.values()].map(t => t.ms)], ['satellite', 'failed', [60000]]);
-  h.recover(); const ov2 = h.last(); ov2.fire('tileabort'); ov2.fire('load');
+  h.recover(); const ov2 = h.last(); ov2.fire('tileabort'); ov2.fire('load', { cancelled: true });
   assert.deepEqual([h.state().active, h.state().overlay], ['hybrid', 'loading'], 'the overlay alike: not ready without a loaded tile');
   ov2.fire('loading'); ov2.fire('tileerror'); assert.deepEqual([...h.recoveries.values()].map(t => t.ms), [120000]);
   h.api.destroy();
 });
 // Removing a layer inside its own 'load' threw in Leaflet (GridLayer._tileReady reads this._map._fadeAnimated after
 // firing it; 10/28, Codex). The fallback now runs after the event has returned.
+// A fallback deferred by one batch removed the batch that followed it (10/28, Codex 2nd review): the deferred call now
+// also checks that its batch is still the current one.
+test('a fallback deferred by an earlier batch does not remove the batch that followed it', () => {
+  const fail3 = l => { for (const left of [2, 1, 0]) { l.unanswered = left; l.fire('tileerror'); } l.fire('load'); };
+  const e = environment({ config: WORKER }); const l = e.last(); l.fire('tileload').fire('load');
+  e.hold(() => { l.fire('loading'); fail3(l); l.fire('loading'); l.fire('tileload'); l.fire('load'); });
+  assert.deepEqual([e.state().active, e.state().reason, e.map.hasLayer(l), e.state().locked], ['vworld', 'ready', true, false], 'the newer batch loaded: VWorld stays');
+  e.hold(() => { l.fire('loading'); fail3(l); l.fire('loading'); });
+  assert.deepEqual([e.state().active, e.state().loading, e.map.hasLayer(l)], ['vworld', true, true], 'a newer batch still loading is not removed by the older verdict');
+  fail3(l); assert.deepEqual([e.state().active, e.state().reason], ['osm', 'tile_error'], 'its own failures still fall back');
+  e.api.destroy();
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created; sat.fire('tileload').fire('load'); ov.fire('tileload').fire('load');
+  h.hold(() => { ov.fire('loading'); fail3(ov); ov.fire('loading'); ov.fire('tileload'); ov.fire('load'); });
+  assert.deepEqual([h.state().active, h.state().overlay, h.map.hasLayer(ov)], ['hybrid', 'ready', true], 'the overlay alike');
+  h.api.destroy();
+});
+// A recovery counted as done once a single tile loaded (10/28, Codex 2nd review): the pauses now reset only when a batch
+// that ran to its end left the current view loaded, at least 90 % of its tiles without an error.
+test('recovery pauses reset only when a completed batch left the current view loaded', () => {
+  const e = environment({ config: WORKER }); const pending = () => [...e.recoveries.values()].map(t => t.ms);
+  const batch = (l, ok, failed, view) => { l.view = view; l.fire('loading'); for (let i = 0; i < ok; i++) l.fire('tileload'); for (let i = 0; i < failed; i++) l.fire('tileerror'); };
+  e.last().fire('tileerror'); assert.deepEqual([e.state().recoveryAttempts, pending()], [1, [60000]]);
+  e.recover(); const a = e.last(); batch(a, 20, 4, { total: 24, loaded: 20 }); a.fire('load');
+  assert.deepEqual([e.state().active, e.state().reason, e.state().recoveryAttempts], ['vworld', 'partial_error', 1], '20 of 24 loaded (83 %): shown, but not a recovery');
+  batch(a, 0, 3, { total: 24, loaded: 20 }); a.fire('load'); assert.deepEqual([e.state().active, pending()], ['osm', [120000]], 'so a failure waits the next pause');
+  e.recover(); const b = e.last(); batch(b, 1, 0, { total: 24, loaded: 1 }); b.fire('load', { cancelled: true });
+  assert.equal(e.state().recoveryAttempts, 2, 'a batch closed because its last tiles were cancelled is not a recovery');
+  batch(b, 23, 1, { total: 24, loaded: 23 }); b.fire('load');
+  assert.deepEqual([e.state().reason, e.state().recoveryAttempts], ['partial_error', 0], '23 of 24 (96 %) after a batch that ran to its end: recovered');
+  batch(b, 0, 3, { total: 24, loaded: 23 }); b.fire('load'); assert.deepEqual(pending(), [60000], 'a later outage starts again at 60 s');
+  e.api.destroy();
+  const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created; sat.fire('tileload').fire('load'); ov.fire('tileerror');
+  h.recover(); const ov2 = h.last(); batch(ov2, 2, 1, { total: 24, loaded: 2 }); ov2.fire('load');
+  assert.deepEqual([h.state().active, h.state().overlay], ['hybrid', 'ready'], 'labels shown');
+  batch(ov2, 0, 3, { total: 24, loaded: 2 }); ov2.fire('load'); assert.deepEqual([...h.recoveries.values()].map(t => t.ms), [120000], 'but the overlay did not recover either');
+  h.api.destroy();
+});
 test('a failing layer is removed after its own Leaflet event has returned, and its late events change nothing', () => {
   for (const viaLoad of [false, true]) {
     const e = environment({ config: WORKER }); const l = e.last(), seen = [];
     l.on('tileerror load', () => seen.push(e.map.hasLayer(l)));
     l.unanswered = viaLoad ? 2 : 0; l.fire('tileerror');
-    if (viaLoad) { l.unanswered = 0; l.fire('tileabort'); l.fire('load'); }
+    if (viaLoad) { l.unanswered = 0; l.fire('tileabort'); l.fire('load', { cancelled: true }); }
     assert.ok(seen.length > 0 && seen.every(Boolean), 'still on the map while its own event runs');
     assert.deepEqual([e.state().active, e.state().reason, e.map.hasLayer(l), e.timerMs()], ['osm', 'tile_error', false, []], viaLoad ? 'decided at load' : 'decided at the error');
     const before = e.state(); l.fire('tileerror'); l.fire('tileload'); l.fire('load'); l.fire('loading'); l.fire('tileabort');
