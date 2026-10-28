@@ -35,8 +35,11 @@ node --test weather-proxy/test/*.test.mjs
 
 ```sh
 node docs/current-location/verify.cjs
+POPUP_DEPENDENCY_CACHE=/path/to/url-sha256-cache node docs/current-location/popup-regression.cjs
 REPORT_UI_BASE=a810b0341b1a63441fb49f6b2076778556e0eb1a node docs/report-location-20261026/verify.cjs
 node docs/basemap-fast-switch/faults-chrome.mjs . .ci-results/basemap-faults/result.json gps-regression
 ```
 
-새 브라우저 검증은 실제 공개 GET 응답과 합성 GPS를 사용하며 모든 외부 non-GET을 차단한다. 1440×1000, 1024×768, 768×1024, 320×568, 390×844, 844×390을 검사하고 화면과 JSON 결과를 남긴다. 지도 타일은 합성 이미지로 대체한다. 휴대전화 실기기의 OS 권한창·실제 GPS 센서·카카오/티맵 앱 실행은 이 자동 검증의 범위에 포함되지 않는다. main 병합과 배포는 별도 사용자 승인이 필요하다.
+`popup-regression.cjs`는 현재 HTML과 실제 Leaflet·모바일 시트를 사용하고, GPS·공개 API·타일은 모두 합성한다. CDN 의존성은 URL의 SHA-256을 파일명으로 보관한 원본 바이트 캐시에서만 읽으며 누락하면 실패한다. 외부 요청은 전송하지 않는다. `PLAYWRIGHT_MODULE`, `CHROME_PATH`, `POPUP_TEST_OUTPUT`으로 실행 환경과 결과 경로를 지정한다. 같은 6개 화면에서 안내 종료·닫기·취소·오류·페이지 정리와 모바일↔PC 전환 후 원래 팝업 `autoPan` 설정과 CSS 클래스 복원을 확인한다. 이동 갱신만 끄면 안내와 임시 설정은 유지한다.
+
+`verify.cjs`는 실제 공개 GET 응답과 합성 GPS를 사용하며 모든 외부 non-GET을 차단한다. 1440×1000, 1024×768, 768×1024, 320×568, 390×844, 844×390을 검사하고 화면과 JSON 결과를 남긴다. 지도 타일은 합성 이미지로 대체한다. 휴대전화 실기기의 OS 권한창·실제 GPS 센서·카카오/티맵 앱 실행은 이 자동 검증의 범위에 포함되지 않는다. main 병합과 배포는 별도 사용자 승인이 필요하다.

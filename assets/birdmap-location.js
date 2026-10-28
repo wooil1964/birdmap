@@ -6,13 +6,46 @@
   function create(options) {
     var map = options.map, L = options.L, geo = options.geolocation, seq = 0, watch = null, tracking = false;
     var fix = null, target = null, provider = null, sourcePopup = null, dot = null, accuracy = null, line = null, checking = false, pendingFix = null, destroyed = false;
+    var popupState = null;
     var gpsOptions = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
     function say(text) { options.notify(text); changed(); }
     function changed() { if (options.changed) options.changed({ tracking: tracking, guiding: !!provider, located: !!fix }); }
     function remove(layer) { if (layer && map.hasLayer(layer)) map.removeLayer(layer); }
     function eraseLine() { remove(line); line = null; }
     function stopWatch() { if (watch !== null && geo) geo.clearWatch(watch); watch = null; }
+    function restoreAutoPan(state) {
+      if (state.autoPan) Object.defineProperty(state.popup.options, 'autoPan', state.autoPan);
+      else delete state.popup.options.autoPan;
+    }
+    function releasePopup() {
+      var state = popupState; popupState = null;
+      if (!state) return;
+      restoreAutoPan(state);
+      if (state.node && !state.hadClass) state.node.classList.remove('birdmap-gps-popup');
+    }
+    function holdPopup(popup) {
+      if (!popup || !popup.options || popupState) return;
+      var node = popup.getElement && popup.getElement();
+      popupState = { popup: popup, autoPan: Object.getOwnPropertyDescriptor(popup.options, 'autoPan'), node: node,
+        hadClass: !!node && node.classList.contains('birdmap-gps-popup') };
+      popup.options.autoPan = false;
+      if (node) node.classList.add('birdmap-gps-popup');
+    }
+    // Let the mobile sheet change its own temporary setting underneath the GPS hold.
+    function changePopupAutoPan(popup, change) {
+      var state = popupState;
+      if (!state || state.popup !== popup) return change();
+      restoreAutoPan(state);
+      try { return change(); }
+      finally {
+        if (popupState === state) {
+          state.autoPan = Object.getOwnPropertyDescriptor(popup.options, 'autoPan');
+          popup.options.autoPan = false;
+        }
+      }
+    }
     function stopGuide(message) {
+      releasePopup();
       seq++; checking = false; pendingFix = null; eraseLine(); target = provider = sourcePopup = null;
       // Cancel even a pending one-shot; leave only the user's blue point.
       tracking = false; stopWatch(); say(message || '안내를 종료했습니다.');
@@ -29,6 +62,7 @@
     function targetValid(t) { return !!t && point(t.point) && map.hasLayer(t.layer) && (!t.valid || t.valid()) && (!sourcePopup || map.hasLayer(sourcePopup)); }
     function failure(error, token) {
       if (token !== seq || destroyed) return;
+      releasePopup();
       stopWatch(); tracking = false; seq++; checking = false; pendingFix = null;
       eraseLine(); target = provider = sourcePopup = null;
       var messages = { 1: '위치 권한이 거부됐습니다. 브라우저의 위치 권한을 허용한 뒤 다시 눌러 주세요.', 2: '현재 위치를 확인할 수 없습니다. GPS와 기기 위치 설정을 확인해 주세요.', 3: '위치 확인 시간이 초과됐습니다. 하늘이 보이는 곳에서 다시 눌러 주세요.' };
@@ -60,7 +94,7 @@
         text = target.label + ' · 직선거리 ' + distanceText(meters) + ' · 정확도 약 ' + distanceText(next.accuracy) + ' (도로·등산로 안내가 아닙니다)';
       }
       if (next.accuracy > 100) text += ' · 위치 오차가 큽니다. 거리는 참고용입니다.';
-      if (fitView) options.fit(next.point, target && target.point, sourcePopup);
+      if (fitView) { holdPopup(sourcePopup); options.fit(next.point, target && target.point, sourcePopup); }
       say(text);
     }
     function accept(position, token, fitView) {
@@ -113,7 +147,7 @@
       catch (e) { failure(e, token); }
       changed();
     }
-    return { locate: locate, guide: guide, setTracking: setTracking, stopGuide: stopGuide, clear: clear,
+    return { locate: locate, guide: guide, setTracking: setTracking, stopGuide: stopGuide, clear: clear, changePopupAutoPan: changePopupAutoPan,
       invalidate: function () { if (provider && (!target || target.publicReport)) stopGuide('공개 상태가 변경되어 안내를 종료했습니다.'); },
       popupClosed: function (popup) { if (popup === sourcePopup) stopGuide(); },
       layerRemoved: function (layer) { if (target && target.layer === layer) stopGuide('목적지가 지도에서 사라져 안내를 종료했습니다.'); },
@@ -138,10 +172,9 @@
     global.L.DomEvent.disableClickPropagation(root); global.L.DomEvent.disableScrollPropagation(root);
     function fit(p, destination, popup) {
       if (popup) {
-        popup.options.autoPan = false;
         if (popup._birdmapSettleTimer) { global.clearTimeout(popup._birdmapSettleTimer); popup._birdmapSettleTimer = null; }
         var node = popup.getElement();
-        if (node) { node.classList.add('birdmap-gps-popup'); popup.update(); }
+        if (node) popup.update();
       }
       var container = map.getContainer().getBoundingClientRect(), w = container.width, h = container.height;
       var top = 85, bottom = 65, left = 36, right = 36;
@@ -221,7 +254,7 @@
     }, true);
     var invalidate = global.publicationInvalidate;
     if (typeof invalidate === 'function') global.publicationInvalidate = function () { api.invalidate(); return invalidate.apply(this, arguments); };
-    map.on('popupclose', function (e) { var node = e.popup.getElement(); if (node) node.classList.remove('birdmap-gps-popup'); api.popupClosed(e.popup); place(); });
+    map.on('popupclose', function (e) { api.popupClosed(e.popup); place(); });
     map.on('popupopen resize', place); map.on('layerremove', function (e) { api.layerRemoved(e.layer); });
     map.on('moveend zoomend', function () { api.validate(); });
     document.addEventListener('visibilitychange', function () { if (document.hidden) api.clear('화면을 떠나 위치 표시와 GPS 갱신을 종료했습니다.'); });
