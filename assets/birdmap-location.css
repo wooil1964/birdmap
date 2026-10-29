@@ -14,6 +14,13 @@
 body .spotRouteButtons{display:flex;gap:4px}
 body .spotRouteButtons>a,body .spotRouteButtons>.birdmap-location-link{flex:1;min-width:0;min-height:44px;padding:5px 3px;font-size:12px;white-space:normal;text-align:center;display:flex;align-items:center;justify-content:center}
 .birdmap-gps-distance{background:#fff;border:1px solid #1565c0;color:#124e82;font-weight:bold;white-space:nowrap}
+/* Soft sparkle uses only the existing GPS SVG marker; no position data is exchanged. */
+.birdmap-gps-dot{animation:birdmapGpsSparkle 1.5s ease-in-out infinite}
+@keyframes birdmapGpsSparkle{
+  0%,100%{filter:drop-shadow(0 0 1px #68c9ff);fill-opacity:1}
+  50%{filter:drop-shadow(0 0 8px #168cf0);fill-opacity:.55}
+}
+@media(prefers-reduced-motion:reduce){.birdmap-gps-dot{animation:none;filter:drop-shadow(0 0 2px #168cf0)}}
 /* While fitting both endpoints, keep tall desktop details readable within the available map. */
 body .birdmap-gps-popup:not(.birdmap-mobile-popup) .leaflet-popup-content{max-height:min(50vh,480px)!important;overflow-y:auto}
 body.reportPicking #birdmapGps{display:none}

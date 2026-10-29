@@ -15,14 +15,21 @@ const WIDTHS=[320,344,375,768,1024,1440];
 const OSM_TILES=process.env.ISLAND_PILOT_OSM_TILES!=='0';
 const CDN=new Set(['cdn.jsdelivr.net','code.jquery.com','cdnjs.cloudflare.com','netdna.bootstrapcdn.com']);
 const LOCAL=new Set(['/index.html','/weather_today.json','/weather_week.json','/tide_today.json','/tide_month.json','/notices.json','/weather_rules.json']);
+// Exercise the current UI, including the mobile sheet and its overlay handling.
+// The previous JSON-only allowlist silently blocked every local CSS/JS asset.
+for(const [,url]of HTML.matchAll(/<(?:script|link)\b[^>]*(?:src|href)=["']([^"']+)["'][^>]*>/g)){
+ const u=new URL(url,'http://localhost/');
+ if(u.origin==='http://localhost'&&/^\/assets\/[\w.-]+\.(?:css|js)$/.test(u.pathname))LOCAL.add(u.pathname);
+}
 const PILOT=[['어청도','전북 군산 어청도',['1','101','102','103']],['외연도','충남 보령 외연도',['2','104','105','106']],['흑산도','전남 신안 흑산도',['63','127','128','129','130']],['백령도','인천 옹진 백령도',['4','117','118','119']],['소청도','인천 옹진 소청도',['110','111']],['홍도','전남 신안 홍도',['64']]];
-const network={localGet:0,dependencyGet:0,osmGet:0,blocked:0,operatingRequests:0,externalNonGet:0};
+const network={localGet:0,dependencyGet:0,osmGet:0,syntheticTiles:0,blocked:0,operatingRequests:0,externalNonGet:0};
+const TILE='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 const rows=[],browserErrors=[];
 mkdirSync(OUT,{recursive:true});
 const server=createServer((req,res)=>{
  let pathname;try{pathname=new URL(req.url,'http://localhost').pathname;}catch{res.writeHead(400);res.end();return;}
  if(req.method!=='GET'||!LOCAL.has(pathname)){res.writeHead(403);res.end('blocked');return;}
- try{const body=readFileSync(join(ROOT,pathname.slice(1)));res.writeHead(200,{'Content-Type':extname(pathname)==='.html'?'text/html;charset=utf-8':'application/json;charset=utf-8','Cache-Control':'no-store'});res.end(body);}catch{res.writeHead(404);res.end();}
+ try{const body=readFileSync(join(ROOT,pathname.slice(1)));res.writeHead(200,{'Content-Type':({'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json'}[extname(pathname)]||'application/octet-stream')+';charset=utf-8','Cache-Control':'no-store'});res.end(body);}catch{res.writeHead(404);res.end();}
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const origin='http://127.0.0.1:'+server.address().port;
@@ -73,6 +80,10 @@ class CDP{
    if(m.method==='Fetch.requestPaused'){
     const request=m.params.request,u=new URL(request.url),get=request.method==='GET';
     const local=get&&u.origin===origin&&LOCAL.has(u.pathname),dependency=get&&u.protocol==='https:'&&CDN.has(u.hostname),osm=OSM_TILES&&get&&u.protocol==='https:'&&/^(?:[abc]\.)?tile\.openstreetmap\.org$/.test(u.hostname);
+    // Loading the actual basemap UI must not contact its operating tile relay.
+    if(get&&u.protocol==='https:'&&(u.pathname.startsWith('/tiles/')||(!OSM_TILES&&/^(?:[abc]\.)?tile\.openstreetmap\.org$/.test(u.hostname)))){
+     network.syntheticTiles++;await this.send('Fetch.fulfillRequest',{requestId:m.params.requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:'image/png'}],body:TILE},sessionId).catch(()=>{});return;
+    }
     if(u.hostname.endsWith('workers.dev'))network.operatingRequests++;
     if(!get&&u.origin!==origin)network.externalNonGet++;
     if(local||dependency||osm){network[local?'localGet':dependency?'dependencyGet':'osmGet']++;await this.send('Fetch.continueRequest',{requestId:m.params.requestId},sessionId).catch(()=>{});}
@@ -83,7 +94,7 @@ class CDP{
   await this.send('Page.addScriptToEvaluateOnNewDocument',{source:'('+mockBeforeLoad.toString()+')()'},sessionId);
   const evaluate=async expression=>{const r=await this.send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
-  await waitFor(evaluate,"typeof L!=='undefined'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===229&&typeof PINNED_BIRDING_ISSUES!=='undefined'",40000);
+  await waitFor(evaluate,"typeof L!=='undefined'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===229&&typeof PINNED_BIRDING_ISSUES!=='undefined'&&typeof birdmapLocation==='object'",40000);
   await evaluate('Promise.all([loadTideMonth(),loadWeatherWeek(),loadRecommendationWeatherRules()])');
   return {evaluate,sessionId,close:()=>this.send('Target.closeTarget',{targetId})};
  }
@@ -98,6 +109,27 @@ function check(width,name,pass,evidence={}){rows.push({width,name,pass:pass===tr
 async function scenario(page,width,name,fn){try{const value=await fn(page.evaluate);check(width,name,value.pass,value.evidence);}catch(error){check(width,name,false,{error:String(error.stack).slice(0,1600)});}}
 async function key(page){for(const type of ['keyDown','keyUp'])await browser.send('Input.dispatchKeyEvent',{type,key:'Enter',code:'Enter',windowsVirtualKeyCode:13,...type==='keyDown'?{text:'\r',unmodifiedText:'\r'}:{}},page.sessionId);}
 async function screenshot(page,name){const shot=await browser.send('Page.captureScreenshot',{format:'png'},page.sessionId);writeFileSync(join(OUT,name+'.png'),Buffer.from(shot.data,'base64'));}
+
+// scrollIntoView can move the popup while Leaflet is still finishing autoPan or a
+// live-weather update. Dispatch real input only at a stable, uncovered target;
+// a persistent overlay still fails with its actual hit target in the evidence.
+async function actionPoint(page,selector,index=0){
+ return page.evaluate(`(async()=>{
+  const target=document.querySelectorAll(${JSON.stringify(selector)})[${index}];
+  if(!target)throw Error('Missing action target: '+${JSON.stringify(selector)});
+  target.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+  const end=performance.now()+5000;let previous=null,stable=0,last;
+  do{
+   await new Promise(requestAnimationFrame);
+   const r=target.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,hit=document.elementFromPoint(x,y),map=map_7010a44f6ac2025090f0fe07508ed485;
+   last={x,y,width:r.width,height:r.height,reachable:!!hit&&(hit===target||target.contains(hit)),hit:hit?.id||hit?.className||hit?.tagName,panning:!!map._panAnim?._inProgress,mapScrollTop:map.getContainer().scrollTop,mapScrollLeft:map.getContainer().scrollLeft};
+   stable=previous&&Math.abs(x-previous.x)<.5&&Math.abs(y-previous.y)<.5&&r.width===previous.width&&r.height===previous.height?stable+1:0;
+   if(stable>=3&&last.reachable&&!last.panning&&!last.mapScrollTop&&!last.mapScrollLeft&&r.width>0&&r.height>0)return last;
+   previous=last;
+  }while(performance.now()<end);
+  throw Error('Action target did not become stable and uncovered: '+JSON.stringify(last));
+ })()`);
+}
 
 try{
  for(const width of WIDTHS){let page;try{
@@ -117,17 +149,25 @@ try{
    await e("(()=>{const site=siteData.find(s=>s.id==='1'),map=map_7010a44f6ac2025090f0fe07508ed485;map.closePopup();map.setView([site.lat,site.lon],11,{animate:false});window[site.markerVar].addTo(map).openPopup();})()");
    await new Promise(r=>setTimeout(r,750));
    if(width===375||width===1440)await screenshot(page,'island-pilot-collapsed-'+width);
-   const initial=await e("(()=>{const d=document.querySelector('.leaflet-popup .island-nearby-search');d.querySelector('summary').scrollIntoView({block:'center'});return !d.open;})()");
-   const point=await e("(()=>{const r=document.querySelector('.leaflet-popup .island-nearby-search summary').getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};})()");
-   for(const type of ['mousePressed','mouseReleased'])await browser.send('Input.dispatchMouseEvent',{type,...point,button:'left',clickCount:1},page.sessionId);
+   const initial=await e("!document.querySelector('.leaflet-popup .island-nearby-search').open");
+   const point=await actionPoint(page,'.leaflet-popup .island-nearby-search summary');
+   if(width<=700){
+    await browser.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:point.x,y:point.y}]},page.sessionId);
+    await browser.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]},page.sessionId);
+   }else for(const type of ['mousePressed','mouseReleased'])await browser.send('Input.dispatchMouseEvent',{type,x:point.x,y:point.y,button:'left',clickCount:1},page.sessionId);
    const clicked=await e("document.querySelector('.leaflet-popup .island-nearby-search').open");
    await e("document.querySelector('.leaflet-popup .island-nearby-search summary').focus()");await key(page);
    const closedByKeyboard=await e("!document.querySelector('.leaflet-popup .island-nearby-search').open");await key(page);
    const s=await e("(()=>{const site=siteData.find(s=>s.id==='1'),popup=window[site.markerVar].getPopup(),d=popup.getElement().querySelector('.island-nearby-search'),wasOpen=d.open;popup.update();const applied=applyLiveWeatherToPopup(site,popup,__pilotQA.weather('1'),false),links=[...d.querySelectorAll('a')],sizes=[d.querySelector('summary'),...links].map(x=>({width:x.getBoundingClientRect().width,height:x.getBoundingClientRect().height})),content=popup.getElement().querySelector('.leaflet-popup-content');d.scrollIntoView({block:'center'});return {wasOpen,open:d.open,same:d===popup.getElement().querySelector('.island-nearby-search'),applied,sizes,overflow:document.documentElement.scrollWidth>innerWidth,popupOverflow:content.scrollWidth>content.clientWidth+1,links:links.length};})()");
    if(width===375||width===1440)await screenshot(page,'island-pilot-'+width);
-   const hits=await e("(()=>{const root=document.querySelector('.leaflet-popup'),links=[...root.querySelectorAll('.nearby-search-link,a.ksa,a.naver,a.kakao,a.tmap,a.windy')];return links.map(a=>{a.scrollIntoView({block:'center'});const r=a.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {label:a.textContent.trim(),className:a.className,reachable:!!hit&&(hit===a||a.contains(hit)),hit:hit?.id||hit?.className||hit?.tagName};});})()");
+   const links=await e("[...document.querySelectorAll('.leaflet-popup .nearby-search-link,.leaflet-popup a.ksa,.leaflet-popup a.naver,.leaflet-popup a.kakao,.leaflet-popup a.tmap,.leaflet-popup a.windy')].map(a=>({label:a.textContent.trim(),className:a.className}))");
+   const hits=[];
+   for(let i=0;i<links.length;i++){
+    const selector='.leaflet-popup :is(.nearby-search-link,a.ksa,a.naver,a.kakao,a.tmap,a.windy)';
+    hits.push({...links[i],...await actionPoint(page,selector,i)});
+   }
    s.linkHits=hits;s.allLinksReachable=hits.every(x=>x.reachable);
-   return {pass:initial&&clicked&&closedByKeyboard&&s.wasOpen&&s.open&&s.same&&s.applied&&s.links===4&&s.allLinksReachable&&s.sizes.every(x=>x.height>=44&&x.width>=44)&&!s.overflow&&!s.popupOverflow,evidence:{initial,clicked,closedByKeyboard,...s}};
+   return {pass:initial&&clicked&&closedByKeyboard&&s.wasOpen&&s.open&&s.same&&s.applied&&s.links===4&&s.allLinksReachable&&s.sizes.every(x=>x.height>=44&&x.width>=44)&&!s.overflow&&!s.popupOverflow,evidence:{initial,input:width<=700?'touch':'mouse',point,clicked,closedByKeyboard,...s}};
   });
   await scenario(page,width,'search-weekly-tide-and-report-cancel-preserved',async e=>{
    const s=await e("(async()=>{const map=map_7010a44f6ac2025090f0fe07508ed485;map.closePopup();resetFilters();document.getElementById('searchBox').value='어청도';searchSite();const search=document.getElementById('searchResults').textContent.includes('어청도');toggleTodayPanel(true);const weekly=document.getElementById('todayPanel').style.display==='block'&&document.getElementById('todayPanelBody').textContent.length>0;toggleTodayPanel(false);const site=siteData.find(s=>s.id==='14'),marker=window[site.markerVar];map.setView([site.lat,site.lon],11,{animate:false});marker.addTo(map).openPopup();const tide=!!marker.getPopup().getElement().querySelector('.monthTideButton');await openMonthTideModal('14');const month=document.getElementById('monthTideModal').style.display==='flex';closeMonthTideModal();openReportModal();const report=document.getElementById('reportModal').style.display==='flex'&&!!document.getElementById('reportSpecies');closeReportModal();return {search,weekly,tide,month,report,cancel:document.getElementById('reportModal').style.display==='none',writes:__pilotQA.writes,geo:__pilotQA.geo};})()");
