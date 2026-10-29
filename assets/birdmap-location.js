@@ -99,7 +99,7 @@
       if (next.accuracy > 100) text += ' · 위치 오차가 큽니다. 거리는 참고용입니다.';
       if (fitView) {
         holdPopup(sourcePopup);
-        if (target && options.collapsePopup) options.collapsePopup(sourcePopup);
+        if (target && options.collapsePopup) options.collapsePopup(sourcePopup, target);
         options.fit(next.point, target && target.point, sourcePopup);
       }
       say(text);
@@ -149,7 +149,7 @@
     function focusGuide() {
       if (!line || !fix || !target || !popupState || options.hidden()) return false;
       if (!targetValid(target)) { stopGuide('공개 위치를 확인할 수 없어 안내를 종료했습니다.'); return false; }
-      if (options.collapsePopup) options.collapsePopup(sourcePopup);
+      if (options.collapsePopup) options.collapsePopup(sourcePopup, target);
       options.fit(fix.point, target.point, sourcePopup);
       return true;
     }
@@ -203,8 +203,10 @@
       var top = 85, bottom = 65, left = 36, right = 36;
       var popupNode = popup && popup.getElement();
       var mobile = global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches;
-      var popupHalf = popupNode && !mobile ? popupNode.getBoundingClientRect().width / 2 + 12 : 0;
-      if (popupNode && !mobile) top = Math.max(top, Math.min(popupNode.getBoundingClientRect().height + 40, h * .65));
+      // A desktop name tag still reserves its full popup's room, so reopening or stopping keeps the old layout.
+      var popupBox = popupNode && (popup === tagged && tagSize || popupNode.getBoundingClientRect());
+      var popupHalf = popupBox && !mobile ? popupBox.width / 2 + 12 : 0;
+      if (popupBox && !mobile) top = Math.max(top, Math.min(popupBox.height + 40, h * .65));
       ['#birdmapPanel', '#recentReportsBox', '.birdmap-mobile-popup', '.birdmap-report-location-popup.birdmap-gps-compact'].forEach(function (selector) {
         var n = document.querySelector(selector); if (!n || !n.getClientRects().length || global.getComputedStyle(n).display === 'none') return;
         var r = n.getBoundingClientRect();
@@ -229,11 +231,81 @@
       if (destination) map.fitBounds(global.L.latLngBounds([p, destination]), { paddingTopLeft: [left, top], paddingBottomRight: [right, bottom], maxZoom: 15, animate: false });
       else map.fitBounds(global.L.latLngBounds([p, p]), { paddingTopLeft: [left, top], paddingBottomRight: [right, bottom], maxZoom: 14, animate: false });
     }
+    // Desktop: a verified guide shrinks its popup to a name tag. The popup, its proof and close events stay live;
+    // the tag or the destination marker reopens the details, and the marker refolds them.
+    var mobileMedia = global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)');
+    var guided = null, tagged = null, tagOffset = null, tagSize = null;
+    // Size and position only: update() would rebuild string popup content (Leaflet 1.9.3 is pinned).
+    function relayout(popup) { popup._updateLayout(); popup._updatePosition(); }
+    function tag(popup, target) {
+      var node = popup && popup.getElement();
+      if (mobileMedia.matches || !node || !target || !target.name || !map.hasLayer(popup)) return false;
+      if (tagged !== popup) { untag(); tagged = popup; tagOffset = Object.getOwnPropertyDescriptor(popup.options, 'offset'); }
+      var button = node.querySelector('.birdmap-gps-tag-button');
+      if (!button) { button = document.createElement('button'); button.type = 'button'; button.className = 'birdmap-gps-tag-button'; node.appendChild(button); }
+      button.textContent = target.name; button.title = target.name; button.setAttribute('aria-label', target.name + ' 상세정보 보기');
+      var focused = node.contains(document.activeElement);
+      if (!node.classList.contains('birdmap-gps-tag')) { var full = node.getBoundingClientRect(); tagSize = { width: full.width, height: full.height }; }
+      node.classList.add('birdmap-gps-tag'); relayout(popup);
+      if (focused) button.focus({ preventScroll: true });
+      return true;
+    }
+    function untag() {
+      var popup = tagged; tagged = null;
+      if (!popup) return false;
+      if (tagOffset) Object.defineProperty(popup.options, 'offset', tagOffset); else delete popup.options.offset;
+      var node = popup.getElement(), button = node && node.querySelector('.birdmap-gps-tag-button');
+      if (node) node.classList.remove('birdmap-gps-tag');
+      if (button) button.remove();
+      if (map.hasLayer(popup)) relayout(popup);
+      return true;
+    }
+    // Put the tag above, below or beside the destination, whichever stays clear of the line, label and blue point.
+    function placeTag() {
+      var popup = tagged, node = popup && popup.getElement(), source = popup && popup._source, mark = source && source.getElement && source.getElement();
+      var dot = document.querySelector('.birdmap-gps-dot'), label = document.querySelector('.birdmap-gps-distance');
+      if (!node || !mark || !dot || mobileMedia.matches) return;
+      var c = map.getContainer().getBoundingClientRect(), r = node.getBoundingClientRect(), m = mark.getBoundingClientRect(), d = dot.getBoundingClientRect(), t = label && label.getBoundingClientRect();
+      var p = map.latLngToContainerPoint(source.getLatLng()), a = { x: c.left + p.x, y: c.top + p.y }, b = { x: (d.left + d.right) / 2, y: (d.top + d.bottom) / 2 };
+      var cx = (m.left + m.right) / 2, cy = (m.top + m.bottom) / 2, w = r.width, h = r.height;
+      function cost(s) {
+        var box = { left: s[0] - 2, top: s[1] - 2, right: s[0] + w + 2, bottom: s[1] + h + 2 }, n = 0;
+        // ponytail: sampled segment test; ample for a tag tens of pixels wide.
+        for (var i = 0; i <= 40; i++) { var x = a.x + (b.x - a.x) * i / 40, y = a.y + (b.y - a.y) * i / 40; if (x > box.left && x < box.right && y > box.top && y < box.bottom) n++; }
+        [d, t].forEach(function (o) { if (o && o.width && o.right > box.left && o.left < box.right && o.bottom > box.top && o.top < box.bottom) n += 40; });
+        if (box.left < c.left || box.right > c.right || box.top < c.top || box.bottom > c.bottom) n += 100;
+        return n;
+      }
+      var best = [[cx - w / 2, m.top - 6 - h], [cx - w / 2, m.bottom + 6], [m.right + 6, cy - h / 2], [m.left - 6 - w, cy - h / 2]]
+        .reduce(function (best, s) { var k = cost(s); return k < best.k ? { k: k, s: s } : best; }, { k: Infinity }).s;
+      var dx = Math.round(best[0] - r.left), dy = Math.round(best[1] - r.top);
+      if (!dx && !dy) return;
+      var o = global.L.point(popup.options.offset || [0, 7]);
+      popup.options.offset = [o.x + dx, o.y + dy]; relayout(popup);
+    }
+    function tagClick(event) {
+      if (!guided || mobileMedia.matches || (event.type === 'keypress' && event.key !== 'Enter')) return;
+      var source = guided._source, mark = source && source.getElement && source.getElement(), node = guided.getElement();
+      var button = event.target.closest && event.target.closest('.birdmap-gps-tag-button');
+      if (!(button && node && node.contains(button)) && !(mark && mark.contains(event.target))) return;
+      // Stop Leaflet's marker toggle: closing the popup would end the guide.
+      event.preventDefault(); event.stopImmediatePropagation();
+      if (tagged === guided) untag(); else api.focusGuide();
+    }
+    document.addEventListener('click', tagClick, true); document.addEventListener('keypress', tagClick, true);
+    mobileMedia.addEventListener('change', function () { if (mobileMedia.matches) untag(); });
+    global.birdmapExpandGpsTag = function (popup) { return !!popup && popup === tagged && untag(); };
     var api = global.birdmapLocation = create({ map: map, L: global.L, geolocation: global.navigator.geolocation,
       isSecure: function () { return global.isSecureContext === true; }, hidden: function () { return document.hidden; }, fit: fit,
       // Report-ID cards are not mobile sheets; their own module folds them.
-      collapsePopup: function (popup) { var f = popup && popup._birdmapReportLocation ? global.birdmapCollapseReportLocationForGps : global.birdmapCollapseMobilePopupForGps; if (typeof f === 'function') return f(popup); },
-      restorePopup: function (popup) { var f = popup && popup._birdmapReportLocation ? global.birdmapRestoreReportLocationAfterGps : global.birdmapRestoreMobilePopupAfterGps; if (typeof f === 'function') return f(popup); },
+      collapsePopup: function (popup, target) {
+        if (!mobileMedia.matches) { if (!tag(popup, target)) return false; guided = popup; return true; }
+        var f = popup && popup._birdmapReportLocation ? global.birdmapCollapseReportLocationForGps : global.birdmapCollapseMobilePopupForGps; if (typeof f === 'function') return f(popup);
+      },
+      restorePopup: function (popup) {
+        if (popup === guided) guided = null;
+        if (popup === tagged) untag();
+        var f = popup && popup._birdmapReportLocation ? global.birdmapRestoreReportLocationAfterGps : global.birdmapRestoreMobilePopupAfterGps; if (typeof f === 'function') return f(popup); },
       notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); if (errorMessage) expanded = false; },
       changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded ? '280px' : errorMessage ? '260px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; status.hidden = !status.textContent || (!expanded && !errorMessage); details.hidden = status.hidden && actions.hidden && privacy.hidden; track.disabled = !s.located; schedulePlace(); } });
     var startGuide = api.guide;
@@ -247,6 +319,7 @@
     }
     api.guide = function () { expanded = false; prepareView(); return startGuide.apply(api, arguments); };
     function place() {
+      placeTag();
       var rect = map.getContainer().getBoundingClientRect();
       details.style.maxHeight = '';
       var sheet = document.querySelector('.birdmap-mobile-popup,.birdmap-report-location-popup.birdmap-gps-compact'), sheetLimit = rect.height - 36;
@@ -279,7 +352,7 @@
       var row = matches[0], layer = kind === 'site' ? global[row.markerVar] : (global.siteSpotLayers || [])[rows.indexOf(row)];
       var p = layer && layer.getLatLng();
       if (!point(p) || p.lat !== row.lat || p.lng !== row.lon || !map.hasLayer(layer)) return null;
-      return { layer: layer, point: { lat: p.lat, lng: p.lng }, label: row.name || '공개 고정 출현 지점', valid: function () {
+      return { layer: layer, point: { lat: p.lat, lng: p.lng }, label: row.name || '공개 고정 출현 지점', name: kind === 'site' ? row.name : (row.species || []).join(' · '), valid: function () {
         var live = layer.getLatLng(); return map.hasLayer(layer) && map.hasLayer(popup) && live.lat === row.lat && live.lng === row.lon && live.lat === p.lat && live.lng === p.lng;
       } };
     }
