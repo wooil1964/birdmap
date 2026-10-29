@@ -44,10 +44,11 @@ function syntheticReportFixture() {
 async function snapshot(page) {
   return page.evaluate(() => {
     const p = window.__popup, node = p.getElement(), r = node && node.getBoundingClientRect(), descriptor = Object.getOwnPropertyDescriptor(p.options, 'autoPan');
-    return { own: !!descriptor, descriptor: descriptor || null, value: p.options.autoPan, gps: !!node && node.classList.contains('birdmap-gps-popup'), sheet: !!node && node.classList.contains('birdmap-mobile-popup'), width: r && r.width, height: r && r.height, top: r && r.top, bottom: r && r.bottom };
+    return { own: !!descriptor, descriptor: descriptor || null, value: p.options.autoPan, offset: Object.getOwnPropertyDescriptor(p.options, 'offset') || null, tag: !!node && node.classList.contains('birdmap-gps-tag'), gps: !!node && node.classList.contains('birdmap-gps-popup'), sheet: !!node && node.classList.contains('birdmap-mobile-popup'), width: r && r.width, height: r && r.height, top: r && r.top, bottom: r && r.bottom };
   });
 }
-function sameOptions(actual, expected) { return actual.own === expected.own && actual.value === expected.value && JSON.stringify(actual.descriptor) === JSON.stringify(expected.descriptor) && actual.gps === expected.gps; }
+function sameOptions(actual, expected) { return actual.own === expected.own && actual.value === expected.value && JSON.stringify(actual.descriptor) === JSON.stringify(expected.descriptor) && actual.gps === expected.gps
+  && JSON.stringify(actual.offset) === JSON.stringify(expected.offset) && !actual.tag && !expected.tag; }
 async function openSite(page, siteId = '195') {
   await page.evaluate(siteId => {
     birdmapLocation.clear();
@@ -97,12 +98,80 @@ async function guideView(page) {
       guiding: birdmapLocation.state().guiding, line: !!document.querySelector('.birdmap-gps-guide'), dot: !!document.querySelector('.birdmap-gps-dot') };
   });
 }
+// Desktop: the open popup shrinks to the species/site name tag, clear of the line; marker or tag reopens it.
+async function tagView(page) {
+  return page.evaluate(() => {
+    const node = __popup.getElement(), r = node.getBoundingClientRect(), m = map_7010a44f6ac2025090f0fe07508ed485, c = m.getContainer().getBoundingClientRect();
+    const d = document.querySelector('.birdmap-gps-dot').getBoundingClientRect(), p = m.latLngToContainerPoint(__popup._source.getLatLng());
+    const a = { x: c.left + p.x, y: c.top + p.y }, b = { x: (d.left + d.right) / 2, y: (d.top + d.bottom) / 2 };
+    let lineCovered = false;
+    for (let i = 0; i <= 200; i++) { const x = a.x + (b.x - a.x) * i / 200, y = a.y + (b.y - a.y) * i / 200; if (x > r.left && x < r.right && y > r.top && y < r.bottom) lineCovered = true; }
+    const button = node.querySelector('.birdmap-gps-tag-button');
+    return { tagged: node.classList.contains('birdmap-gps-tag'), name: button && getComputedStyle(button).display !== 'none' ? button.textContent : null, width: Math.round(r.width),
+      lineCovered, tagInMap: r.left >= c.left && r.right <= c.right && r.top >= c.top && r.bottom <= c.bottom, geo: __mock.geo.length };
+  });
+}
+async function desktopView(page) { return { ...(await guideView(page)), ...(await tagView(page)) }; }
+function tagClear(v, name) { return v.tagged && v.name === name && v.wrapper === 'none' && v.height <= 40 && v.tagInMap && guideVisible(v) && !v.lineCovered; }
+async function clickMarker(page) {
+  const p = await page.evaluate(() => { const r = __popup._source.getElement().getBoundingClientRect(); return { x: (r.left + r.right) / 2, y: (r.top + r.bottom) / 2 }; });
+  await page.mouse.click(p.x, p.y); await page.waitForTimeout(150);
+}
+async function desktopTag(page, label, name) {
+  let v = await desktopView(page);
+  check(tagClear(v, name), label + ' desktop popup shrinks to the name tag clear of the guide', v);
+  const geo = v.geo;
+  for (let round = 1; round <= 2; round++) {
+    await clickMarker(page); v = await desktopView(page);
+    check(!v.tagged && v.wrapper !== 'none' && v.guiding && v.line, label + ' same marker reopens details during guide #' + round, v);
+    await clickMarker(page); v = await desktopView(page);
+    check(tagClear(v, name), label + ' same marker refolds to the name tag #' + round, v);
+    await page.getByRole('button', { name: name + ' 상세정보 보기', exact: true }).click(); await page.waitForTimeout(150); v = await desktopView(page);
+    check(!v.tagged && v.wrapper !== 'none' && v.guiding && v.line, label + ' name tag click reopens details #' + round, v);
+    await clickMarker(page); v = await desktopView(page);
+    check(tagClear(v, name), label + ' marker refolds after a tag reopen #' + round, v);
+  }
+  check(v.geo === geo, label + ' reopen/refold makes no new GPS request', { before: geo, after: v.geo });
+  await page.screenshot({ path: path.join(OUT, 'desktop-tag-' + label.replace(/\W+/g, '-') + '.png') });
+}
+// Near, just-north and diagonal users; then another marker gets its normal details and ends the guide cleanly.
+async function desktopTagScenarios(page, label) {
+  if (await page.evaluate(() => matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches)) return;
+  for (const [kind, dlat, dlng] of [['near', 0.0003, 0], ['north', 0.004, 0], ['south-east', -0.003, 0.004]]) {
+    await openSite(page); const baseline = await snapshot(page);
+    const name = await page.evaluate(() => siteData.find(s => s.id === '195').name);
+    const position = await page.evaluate(([dlat, dlng]) => { const p = __marker.getLatLng(); return { latitude: p.lat + dlat, longitude: p.lng + dlng, accuracy: 25 }; }, [dlat, dlng]);
+    // A 30 m line is a few pixels long, so wait for it to exist rather than to look visible.
+    await start(page, true); await page.evaluate(position => __mock.geo.at(-1).ok({ coords: position, timestamp: Date.now() }), position);
+    await page.waitForSelector(".birdmap-gps-guide", { state: "attached" }); await page.waitForTimeout(150);
+    const v = await desktopView(page);
+    check(tagClear(v, name), label + ' ' + kind + ' user: tag clears the dot, line and distance', v);
+    await page.screenshot({ path: path.join(OUT, 'desktop-tag-' + kind + '-' + label + '.png') });
+    if (kind !== 'south-east') { await page.evaluate(() => birdmapLocation.clear()); await restored(page, label + ' ' + kind + ' clear', baseline); continue; }
+    const other = await page.evaluate(() => {
+      const old = __popup, marker = window[siteData.find(s => s.id === '114').markerVar], node = old.getElement();
+      marker.openPopup(); const next = marker.getPopup().getElement();
+      return { guiding: birdmapLocation.state().guiding, oldTag: !!node && node.classList.contains('birdmap-gps-tag'), oldButton: !!node && !!node.querySelector('.birdmap-gps-tag-button'),
+        open: map_7010a44f6ac2025090f0fe07508ed485._popup === marker.getPopup(), nextTag: next.classList.contains('birdmap-gps-tag'), nextWrapper: getComputedStyle(next.querySelector('.leaflet-popup-content-wrapper')).display };
+    });
+    check(!other.guiding && !other.oldTag && !other.oldButton && other.open && !other.nextTag && other.nextWrapper !== 'none', label + ' another marker during guide opens its normal details', other);
+    check(sameOptions(await snapshot(page), baseline), label + ' another marker restores the guided popup options');
+    await page.evaluate(() => { birdmapLocation.clear(); map_7010a44f6ac2025090f0fe07508ed485.closePopup(); });
+  }
+}
 function guideVisible(state) { return state.guiding && state.line && state.dot && state.dotIn && state.destIn && !state.dotCovered && !state.destCovered && !state.labelCovered; }
 // Report-ID cards (species links in site history, recent 15) are not mobile sheets; they fold into their own bar.
 async function reportCardFold(page, label) {
   const mobile = await page.evaluate(() => matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches);
   let state = await guideView(page);
-  if (!mobile) { check(!state.compact && state.bar === null && state.guiding, label + ' desktop report card keeps its normal details', state); return; }
+  if (!mobile) {
+    check(!state.compact && state.bar === null, label + ' desktop report card has no mobile bar', state);
+    await desktopTag(page, label + ' report card', '직박구리');
+    check(await page.evaluate(() => openPublicReportLocation('popup-report', '직박구리')), label + ' same report click is handled');
+    const v = await desktopView(page);
+    check(!v.tagged && v.wrapper !== 'none' && v.guiding && v.line, label + ' same report click reopens the card and keeps the guide', v);
+    return;
+  }
   check(state.compact && state.height <= 72 && state.wrapper === 'none' && state.bar === '정보 보기' && !state.recentOverlap, label + ' report card folds into a small bottom bar', state);
   check(guideVisible(state), label + ' report guide endpoints, line and distance stay clear', state);
   for (let round = 1; round <= 2; round++) {
@@ -134,6 +203,7 @@ async function sheetPathFold(page, label, kind) {
   await start(page);
   let state = await guideView(page);
   check(state.compact === baseline.sheet && (baseline.sheet ? state.height === 64 && guideVisible(state) : state.guiding && state.line && state.dotIn && state.destIn), label + ' ' + kind + ' popup folds on mobile and keeps the guide visible', state);
+  if (!baseline.sheet) await desktopTag(page, label + ' ' + kind, await page.evaluate(kind => kind === 'report' ? '직박구리' : siteSpotData[0].species.join(' · '), kind));
   if (baseline.sheet) {
     await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
     await page.getByRole('button', { name: '상세정보 접기', exact: true }).click();
@@ -167,8 +237,8 @@ async function compactAndSparkle(page, label, baseline) {
     check((await guideView(page)).sheetToggle === '접기', label + ' repeated reopen offers 접기 again');
   } else {
     const desktop = await guideView(page);
-    // Desktop popups stay unfolded by design; record (not require) overlap for a user just north of the destination.
-    check(desktop.guiding && desktop.line && desktop.dotIn && desktop.destIn && !desktop.compact, label + ' desktop guide keeps both endpoints on the map with normal details', desktop);
+    check(desktop.guiding && desktop.line && desktop.dotIn && desktop.destIn && !desktop.compact, label + ' desktop guide keeps both endpoints on the map', desktop);
+    await desktopTag(page, label + ' site', await page.evaluate(() => siteData.find(s => s.id === '195').name));
   }
 }
 async function desktopBounds(page, name, panel = false) {
@@ -294,7 +364,7 @@ async function followupRegressions(page, label, width) {
   const origin = 'http://127.0.0.1:' + server.address().port;
   browser = await pw.chromium.launch({ executablePath: process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
   const widths = process.env.POPUP_TEST_WIDTHS && process.env.POPUP_TEST_WIDTHS.split(',').map(Number);
-  for (const [width, height, touch] of [[1440, 1000, false], [1280, 720, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
+  for (const [width, height, touch] of [[1440, 1000, false], [1440, 900, false], [1280, 720, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
     const label = width + 'x' + height, page = await browser.newPage({ viewport: { width, height }, isMobile: touch, hasTouch: touch });
     page.on('pageerror', error => errors.push(label + ': ' + error.message));
     await page.addInitScript({ content: '(' + fixture + ')();(' + syntheticReportFixture.toString() + ')();' });
@@ -322,7 +392,7 @@ async function followupRegressions(page, label, width) {
       check(await page.evaluate(() => L.version === '1.9.3' && siteData.length === 229 && __mock.geo.length === 0), label + ' actual Leaflet, 229 sites and no automatic GPS');
       const desktop = await page.evaluate(() => {
         const p = window[siteData.find(s => s.id === '195').markerVar].getPopup(), d = Object.getOwnPropertyDescriptor(p.options, 'autoPan');
-        return { own: !!d, descriptor: d || null, value: p.options.autoPan, gps: false };
+        return { own: !!d, descriptor: d || null, value: p.options.autoPan, offset: Object.getOwnPropertyDescriptor(p.options, 'offset') || null, tag: false, gps: false };
       });
       await openSite(page); const baseline = await snapshot(page);
       await start(page); let held = await snapshot(page);
@@ -368,6 +438,7 @@ async function followupRegressions(page, label, width) {
         check(sameOptions(await snapshot(page), baseline), label + ' round-trip viewport restores original descriptor');
         await layout(page, label + ' resized');
       }
+      await desktopTagScenarios(page, label);
       await followupRegressions(page, label, width);
       await madoRegressions(page, label, width);
       await landscapeToolsRegression(page, label, width);

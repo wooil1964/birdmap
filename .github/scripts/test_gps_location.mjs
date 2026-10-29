@@ -9,18 +9,18 @@ function popup(options={autoPan:true},initialClasses=[]){
  return{options,node,classes,updates:0,getElement(){return this.node;},update(){this.updates++;}};
 }
 function env({secure=true,supported=true,popupOptions={autoPan:true},popupClasses=[]}={}){
- const layers=new Set(),calls=[],messages=[],gps=[],watched=[],cleared=[],collapses=[];let hidden=false;
+ const layers=new Set(),calls=[],messages=[],gps=[],watched=[],cleared=[],collapses=[],collapseTargets=[];let hidden=false;
  const map={hasLayer:l=>layers.has(l),removeLayer:l=>layers.delete(l),distance:()=>1234.5};
  const L={};for(const kind of ['circle','circleMarker','polyline'])L[kind]=(p,options)=>({kind,p,options,addTo(){layers.add(this);return this;},setLatLng(p){this.p=p;return this;},setRadius(r){this.options.radius=r;return this;},bringToFront(){},bindTooltip(t){this.tooltip=t;return this;},openTooltip(){return this;}});
  L.tooltip=()=>({setContent(n){this.content=n;return this;}});
  const document={readyState:'loading',addEventListener(){},createElement:()=>({textContent:''})};
  const w={document};vm.runInNewContext(source,{window:w,Promise,Number,Date});
  const geo={getCurrentPosition(ok,bad,options){gps.push({ok,bad,options});},watchPosition(ok,bad,options){watched.push({ok,bad,options});return watched.length;},clearWatch:id=>cleared.push(id)};
- const api=w.BirdmapLocation.create({map,L,geolocation:supported?geo:null,isSecure:()=>secure,hidden:()=>hidden,notify:s=>messages.push(s),fit:(...a)=>calls.push(a),collapsePopup:p=>collapses.push(p)});
+ const api=w.BirdmapLocation.create({map,L,geolocation:supported?geo:null,isSecure:()=>secure,hidden:()=>hidden,notify:s=>messages.push(s),fit:(...a)=>calls.push(a),collapsePopup:(p,t)=>{collapseTargets.push(t);return collapses.push(p);}});
  const layer={};layers.add(layer);const sourcePopup=popup(popupOptions,popupClasses);layers.add(sourcePopup);let valid=true;
  const target=()=>({layer,point:{lat:36.3,lng:127.3},publicReport:true,label:'출현 지점',valid:()=>valid});
  const position=(extra={})=>({coords:{latitude:37.12345678,longitude:126.23456789,accuracy:25,...extra},timestamp:Date.now()});
- return{api,geo,layers,calls,messages,gps,watched,cleared,collapses,layer,popup:sourcePopup,target,position,hide:()=>hidden=true,revoke:()=>valid=false,by:kind=>[...layers].filter(l=>l.kind===kind),distanceText:w.BirdmapLocation.distanceText};
+ return{api,geo,layers,calls,messages,gps,watched,cleared,collapses,collapseTargets,layer,popup:sourcePopup,target,position,hide:()=>hidden=true,revoke:()=>valid=false,by:kind=>[...layers].filter(l=>l.kind===kind),distanceText:w.BirdmapLocation.distanceText};
 }
 function popupState(p){return{descriptor:Object.getOwnPropertyDescriptor(p.options,'autoPan'),value:p.options.autoPan,gpsClass:p.classes.has('birdmap-gps-popup')};}
 function restored(p,before,label='popup restored'){
@@ -275,7 +275,9 @@ test('focusGuide refolds and refits only a drawn, still-valid guide without new 
  const e=env();let proofs=0;assert.equal(e.api.focusGuide(),false,'no guide yet');
  await e.api.guide(()=>{proofs++;return e.target();},e.popup);assert.equal(e.api.focusGuide(),false,'not before the verified fix');
  e.gps[0].ok(e.position());await tick();assert.equal(e.collapses.length,1);assert.equal(e.calls.length,1);
- assert.equal(e.api.focusGuide(),true);assert.equal(e.collapses.length,2);assert.equal(e.calls.length,2);assert.equal(proofs,2);assert.equal(e.gps.length,1);
+ assert.equal(e.api.focusGuide(),true);assert.equal(e.collapses.length,2);
+ // The desktop name tag needs the verified destination, not a new lookup.
+ assert.ok(e.collapseTargets.length===2&&e.collapseTargets.every(t=>t&&t.label==="출현 지점"&&t.layer===e.layer),"collapse receives the verified target");assert.equal(e.calls.length,2);assert.equal(proofs,2);assert.equal(e.gps.length,1);
  e.revoke();assert.equal(e.api.focusGuide(),false);assert.equal(e.api.state().guiding,false,'invalid destination ends guide');assert.equal(e.by('polyline').length,0);
  const f=env();await startGuide(f);f.api.stopGuide();assert.equal(f.api.focusGuide(),false,'ended guide stays ended');assert.equal(f.calls.length,1);
 });

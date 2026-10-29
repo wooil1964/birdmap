@@ -81,7 +81,7 @@
         if (!current(token, generation) || !global.publicationDataAllowed(verified.body)) return false;
         var target = publicTarget(id, verified.row); if (!target) return false;
         result = { layer: target.layer, point: { lat: target.point.lat, lng: target.point.lng }, publicReport: true,
-          label: verified.row.target.kind === 'fixed' ? '탐조지 공개 고정 위치' : '출현 지점',
+          label: verified.row.target.kind === 'fixed' ? '탐조지 공개 고정 위치' : '출현 지점', name: verified.row.species.join(' · '),
           valid: function () {
             if (!current(token, generation) || !global.publicationDataAllowed(verified.body)) return false;
             var live = publicTarget(id, verified.row);
@@ -238,7 +238,7 @@
     popup.openOn(m); global.queueMicrotask(present);
     if (global.ResizeObserver) { selected.observer = new global.ResizeObserver(position); selected.observer.observe(popup.getElement()); }
   }
-  function open(id, term) {
+  function openCard(id, term) {
     var token = ++request;
     if (!validId(id) || !global.publicationAllowed()) return Promise.resolve(false);
     var generation = global.publicationState.generation;
@@ -279,6 +279,11 @@
     m.on('popupclose', function (event) { if (selected && event.popup === selected.popup) cancel(); });
     m.on('popupopen', function (event) { if (!event.popup._birdmapReportLocation) { request++; forget(); status(''); } });
     m.on('move zoom resize', position); global.addEventListener('resize', function () { if (selected) present(); });
+  }
+  // The same report while its desktop GPS tag is shown: reopen its details and keep the guide.
+  function open(id, term) {
+    if (selected && selected.id === id && global.birdmapExpandGpsTag && global.birdmapExpandGpsTag(selected.popup)) return Promise.resolve(true);
+    return openCard(id, term);
   }
   document.addEventListener('click', function (event) {
     var target = event.target, routeButton = target && target.closest && target.closest('[data-birdmap-report-route]');
