@@ -280,7 +280,7 @@
       var node = popup && popup.getElement();
       if (!node || !node.classList.contains('birdmap-mobile-popup')) return;
       node.classList.remove('birdmap-mobile-popup', 'birdmap-gps-compact');
-      delete node._birdmapGpsPreviousHeight;
+      delete node._birdmapGpsPreviousHeight; delete node._birdmapGpsReopened;
       node.style.removeProperty('--birdmap-sheet-height');
       var toolbar = node.querySelector('.birdmap-popup-toolbar'); if (toolbar) toolbar.remove();
       changePopupAutoPan(popup, function () {
@@ -302,20 +302,22 @@
       node.classList.add('birdmap-mobile-popup');
       var toolbar = document.createElement('div'); toolbar.className = 'birdmap-popup-toolbar';
       toolbar.appendChild(dragHandle(node, '탐조지 상세정보 패널', function (height) {
-        popupHeight = height;
+        popupHeight = height; delete node._birdmapGpsReopened;
         toggle.setAttribute('aria-expanded', 'false'); toggle.textContent = '펼치기';
         toggle.setAttribute('aria-label', '상세정보 펼치기');
       }));
       var controls = document.createElement('div'); controls.className = 'birdmap-popup-actions';
       var toggle = button('펼치기', '상세정보 펼치기', function () {
-        // Restore the previous height if GPS guidance had compacted this sheet.
+        // Restore the previous height if GPS guidance had compacted this sheet; '접기' then refolds to the guide view.
         if (node.classList.contains('birdmap-gps-compact')) {
-          restoreGpsCompact(popup);
-          toggle.setAttribute('aria-expanded', 'false');
-          toggle.textContent = '펼치기';
-          toggle.setAttribute('aria-label', '상세정보 펼치기');
+          restoreGpsCompact(popup); node._birdmapGpsReopened = true;
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.textContent = '접기';
+          toggle.setAttribute('aria-label', '상세정보 접기');
           return;
         }
+        if (node._birdmapGpsReopened && global.birdmapLocation && global.birdmapLocation.focusGuide()) return;
+        delete node._birdmapGpsReopened;
         var full = toggle.getAttribute('aria-expanded') !== 'true';
         popupHeight = setHeight(node, full ? limits().max : global.innerHeight * .58);
         toggle.setAttribute('aria-expanded', String(full)); toggle.textContent = full ? '접기' : '펼치기';
@@ -337,7 +339,15 @@
       delete node._birdmapGpsPreviousHeight;
       return true;
     }
-    global.birdmapRestoreMobilePopupAfterGps = restoreGpsCompact;
+    global.birdmapRestoreMobilePopupAfterGps = function (popup) {
+      var node = popup && popup.getElement(), toggle = node && node.querySelector('.birdmap-popup-actions button:first-child');
+      // A guide-time '접기' must not outlive the guide.
+      if (node && node._birdmapGpsReopened && toggle) {
+        toggle.setAttribute('aria-expanded', 'false'); toggle.textContent = '펼치기'; toggle.setAttribute('aria-label', '상세정보 펼치기');
+      }
+      if (node) delete node._birdmapGpsReopened;
+      return restoreGpsCompact(popup);
+    };
     // Keep the authorized destination popup alive for GPS revalidation, but free the map.
     global.birdmapCollapseMobilePopupForGps = function (popup) {
       if (!media.matches || !popup || popup !== activePopup || !map.hasLayer(popup)) return false;

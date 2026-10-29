@@ -270,3 +270,12 @@ test('waiting for tracking never bypasses destination invalidation or resurrects
  const pending=e.api.guide(()=>new Promise(r=>release=r),e.popup);await tick();e.api.setTracking(true);
  e.api.invalidate();release(e.target());assert.equal(await pending,false);assert.equal(e.by('polyline').length,0);assert.equal(e.api.state().guiding,false);assert.equal(e.watched.length,0);
 });
+
+test('focusGuide refolds and refits only a drawn, still-valid guide without new GPS or proof',async()=>{
+ const e=env();let proofs=0;assert.equal(e.api.focusGuide(),false,'no guide yet');
+ await e.api.guide(()=>{proofs++;return e.target();},e.popup);assert.equal(e.api.focusGuide(),false,'not before the verified fix');
+ e.gps[0].ok(e.position());await tick();assert.equal(e.collapses.length,1);assert.equal(e.calls.length,1);
+ assert.equal(e.api.focusGuide(),true);assert.equal(e.collapses.length,2);assert.equal(e.calls.length,2);assert.equal(proofs,2);assert.equal(e.gps.length,1);
+ e.revoke();assert.equal(e.api.focusGuide(),false);assert.equal(e.api.state().guiding,false,'invalid destination ends guide');assert.equal(e.by('polyline').length,0);
+ const f=env();await startGuide(f);f.api.stopGuide();assert.equal(f.api.focusGuide(),false,'ended guide stays ended');assert.equal(f.calls.length,1);
+});

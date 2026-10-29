@@ -164,6 +164,12 @@
     var bottom = rect.height - 8;
     if (recent && recent.getClientRects().length && global.getComputedStyle(recent).display !== 'none') bottom = Math.min(bottom, recent.getBoundingClientRect().top - rect.top - 8);
     node.style.setProperty('--birdmap-location-max-height', Math.max(80, bottom - top) + 'px');
+    if (node.classList.contains('birdmap-gps-compact')) {
+      // GPS guide bar: full width just above the recent-report sheet, clear of both endpoints.
+      node.style.setProperty('--birdmap-location-left', '8px');
+      node.style.setProperty('--birdmap-location-top', Math.max(top, bottom - node.getBoundingClientRect().height) + 'px');
+      return;
+    }
     var box = node.getBoundingClientRect(), left = Math.max(8, Math.min(rect.width - box.width - 8, point.x - box.width / 2));
     var candidates = [point.y - box.height - 14, point.y + 14].map(function (y) { return Math.max(top, Math.min(bottom - box.height, y)); });
     var controls = ['#birdmapExploreMenuToggle', '#noticeToggleBtn', '#todayToggleBtn', '#reportToggleBtn', '.birdmap-basemap', '.leaflet-control-zoom'].map(function (selector) {
@@ -184,6 +190,37 @@
     if (global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) map().getContainer().appendChild(node);
     else if (node.parentNode !== map().getPane('popupPane')) { map().getPane('popupPane').appendChild(node); popup.update(); }
     position();
+  }
+  // A verified GPS guide keeps this card open (its proof and close events stay live) but folds it on mobile.
+  function compactForGps(popup) {
+    if (!selected || selected.popup !== popup || !map().hasLayer(popup)) return false;
+    if (!global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches) return false;
+    var node = popup.getElement(); if (!node) return false;
+    var bar = node.querySelector('.birdmap-report-location-bar');
+    if (!bar) {
+      bar = document.createElement('div'); bar.className = 'birdmap-report-location-bar';
+      var label = document.createElement('span'); label.textContent = '위치 안내 중'; bar.appendChild(label);
+      var toggle = document.createElement('button'); toggle.type = 'button'; bar.appendChild(toggle);
+      toggle.addEventListener('click', function () {
+        if (!node.classList.contains('birdmap-gps-compact')) { if (global.birdmapLocation) global.birdmapLocation.focusGuide(); return; }
+        node.classList.remove('birdmap-gps-compact'); barState(node); position();
+      });
+      node.prepend(bar);
+    }
+    node.classList.add('birdmap-gps-compact'); barState(node); position();
+    return true;
+  }
+  function barState(node) {
+    var compact = node.classList.contains('birdmap-gps-compact'), toggle = node.querySelector('.birdmap-report-location-bar button');
+    toggle.textContent = compact ? '정보 보기' : '접기';
+    toggle.setAttribute('aria-expanded', String(!compact));
+    toggle.setAttribute('aria-label', compact ? '제보 위치 정보 보기' : '제보 위치 정보 접기');
+  }
+  function restoreAfterGps(popup) {
+    var node = popup && popup.getElement(); if (!node) return;
+    var bar = node.querySelector('.birdmap-report-location-bar');
+    node.classList.remove('birdmap-gps-compact'); if (bar) bar.remove();
+    if (selected && selected.popup === popup) position();
   }
   function show(row, target) {
     // setView with animate:false stops pending pans itself. map.stop() can start a snapped zoom animation
@@ -236,6 +273,8 @@
     global.applyMobilePopupAutoPan = function (popup) { if (popup && popup._birdmapReportLocation) { popup.options.autoPan = false; return; } if (autoPan) return autoPan.apply(this, arguments); };
     global.openPublicReportLocation = open;
     global.publicReportGuideTarget = guideTarget;
+    global.birdmapCollapseReportLocationForGps = compactForGps;
+    global.birdmapRestoreReportLocationAfterGps = restoreAfterGps;
     m.on('layerremove', function (event) { if (selected && event.layer === selected.layer) cancel(); });
     m.on('popupclose', function (event) { if (selected && event.popup === selected.popup) cancel(); });
     m.on('popupopen', function (event) { if (!event.popup._birdmapReportLocation) { request++; forget(); status(''); } });
