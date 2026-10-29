@@ -145,6 +145,14 @@
         target = next; say('현재 위치를 확인하고 있습니다. 위치는 저장하지 않습니다.'); requestFix(token); return true;
       }).catch(function () { if (token === seq) stopGuide('공개 위치를 확인할 수 없어 안내하지 않습니다.'); return false; });
     }
+    // Fold the source details again and refit the drawn guide; no new GPS or public request.
+    function focusGuide() {
+      if (!line || !fix || !target || !popupState || options.hidden()) return false;
+      if (!targetValid(target)) { stopGuide('공개 위치를 확인할 수 없어 안내를 종료했습니다.'); return false; }
+      if (options.collapsePopup) options.collapsePopup(sourcePopup);
+      options.fit(fix.point, target.point, sourcePopup);
+      return true;
+    }
     function setTracking(value) {
       // Changing the request token here would cancel an in-flight destination/GPS proof.
       if (value && provider && (!target || checking || !line)) { say('목적지와 현재 위치 확인이 끝난 뒤 이동 갱신을 켜 주세요.'); return; }
@@ -157,7 +165,7 @@
       catch (e) { failure(e, token); }
       changed();
     }
-    return { locate: locate, guide: guide, setTracking: setTracking, stopGuide: stopGuide, clear: clear, changePopupAutoPan: changePopupAutoPan,
+    return { locate: locate, guide: guide, setTracking: setTracking, stopGuide: stopGuide, clear: clear, changePopupAutoPan: changePopupAutoPan, focusGuide: focusGuide,
       invalidate: function () { if (provider && (!target || target.publicReport)) stopGuide('공개 상태가 변경되어 안내를 종료했습니다.'); },
       popupClosed: function (popup) { if (popup === sourcePopup) stopGuide(); },
       layerRemoved: function (layer) { if (target && target.layer === layer) stopGuide('목적지가 지도에서 사라져 안내를 종료했습니다.'); },
@@ -197,10 +205,10 @@
       var mobile = global.matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches;
       var popupHalf = popupNode && !mobile ? popupNode.getBoundingClientRect().width / 2 + 12 : 0;
       if (popupNode && !mobile) top = Math.max(top, Math.min(popupNode.getBoundingClientRect().height + 40, h * .65));
-      ['#birdmapPanel', '#recentReportsBox', '.birdmap-mobile-popup'].forEach(function (selector) {
+      ['#birdmapPanel', '#recentReportsBox', '.birdmap-mobile-popup', '.birdmap-report-location-popup.birdmap-gps-compact'].forEach(function (selector) {
         var n = document.querySelector(selector); if (!n || !n.getClientRects().length || global.getComputedStyle(n).display === 'none') return;
         var r = n.getBoundingClientRect();
-        if (selector === '.birdmap-mobile-popup' || (selector === '#recentReportsBox' && r.width > w * .6)) bottom = Math.max(bottom, container.bottom - r.top + 16);
+        if (selector.indexOf('-popup') > 0 || (selector === '#recentReportsBox' && r.width > w * .6)) bottom = Math.max(bottom, container.bottom - r.top + 16);
         else if (selector === '#birdmapPanel') left = Math.max(left, r.right - container.left + 20);
         else right = Math.max(right, container.right - r.left + 20);
       });
@@ -223,8 +231,9 @@
     }
     var api = global.birdmapLocation = create({ map: map, L: global.L, geolocation: global.navigator.geolocation,
       isSecure: function () { return global.isSecureContext === true; }, hidden: function () { return document.hidden; }, fit: fit,
-      collapsePopup: function (popup) { if (typeof global.birdmapCollapseMobilePopupForGps === 'function') return global.birdmapCollapseMobilePopupForGps(popup); },
-      restorePopup: function (popup) { if (typeof global.birdmapRestoreMobilePopupAfterGps === 'function') return global.birdmapRestoreMobilePopupAfterGps(popup); },
+      // Report-ID cards are not mobile sheets; their own module folds them.
+      collapsePopup: function (popup) { var f = popup && popup._birdmapReportLocation ? global.birdmapCollapseReportLocationForGps : global.birdmapCollapseMobilePopupForGps; if (typeof f === 'function') return f(popup); },
+      restorePopup: function (popup) { var f = popup && popup._birdmapReportLocation ? global.birdmapRestoreReportLocationAfterGps : global.birdmapRestoreMobilePopupAfterGps; if (typeof f === 'function') return f(popup); },
       notify: function (text) { status.textContent = text; errorMessage = /권한|HTTPS|지원하지|초과|오류|확인할 수|변경되어|오차가 큽니다/.test(text); if (errorMessage) expanded = false; },
       changed: function (s) { if (!s.located && !s.guiding) expanded = false; track.setAttribute('aria-pressed', String(s.tracking)); stop.hidden = !s.guiding; more.hidden = !s.located && !s.guiding && !errorMessage; root.style.width = expanded ? '280px' : errorMessage ? '260px' : more.hidden ? '70px' : '118px'; more.setAttribute('aria-expanded', String(expanded)); more.setAttribute('aria-label', expanded ? '위치 도구 닫기' : '위치 도구 열기'); actions.hidden = !expanded || (!s.located && !s.guiding); privacy.hidden = !expanded; status.hidden = !status.textContent || (!expanded && !errorMessage); details.hidden = status.hidden && actions.hidden && privacy.hidden; track.disabled = !s.located; schedulePlace(); } });
     var startGuide = api.guide;
@@ -240,7 +249,7 @@
     function place() {
       var rect = map.getContainer().getBoundingClientRect();
       details.style.maxHeight = '';
-      var sheet = document.querySelector('.birdmap-mobile-popup'), sheetLimit = rect.height - 36;
+      var sheet = document.querySelector('.birdmap-mobile-popup,.birdmap-report-location-popup.birdmap-gps-compact'), sheetLimit = rect.height - 36;
       if (sheet && sheet.getClientRects().length && global.getComputedStyle(sheet).display !== 'none') {
         // Keep the header reachable while longer tools scroll above the mobile sheet.
         sheetLimit = sheet.getBoundingClientRect().top - rect.top - 8;

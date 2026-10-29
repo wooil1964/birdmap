@@ -30,11 +30,12 @@ const server = http.createServer((req, res) => {
 function check(value, name, evidence) { assert.ok(value, name + (evidence ? ': ' + JSON.stringify(evidence) : '')); checks.push({ name, ...(evidence ? { evidence } : {}) }); }
 function syntheticReportFixture() {
   const old = window.fetch.bind(window), m = window.__mock;
-  m.approved = [m.spot({ history: [{ id: 'popup-report', species: ['직박구리'], date: new Date().toISOString().slice(0, 10), reporter: '합성검증' }] })];
+  // Real /reports/approved spots use the root report ID, which is also in their history.
+  m.approved = [m.spot({ id: 'popup-report', history: [{ id: 'popup-report', species: ['직박구리'], date: new Date().toISOString().slice(0, 10), reporter: '합성검증' }] })];
   window.fetch = (input, options = {}) => {
     const u = new URL(String(input), location.href);
     if (u.hostname.endsWith('workers.dev') && u.pathname === '/reports/search') {
-      const offset = Number(u.searchParams.get('offset') || 0), reports = offset ? [] : [{ id: 'popup-report', species: ['직박구리'], date: new Date().toISOString().slice(0, 10), reporter: '합성검증', locationHidden: false, target: { kind: 'spot', spotId: 'synthetic-approved' } }];
+      const offset = Number(u.searchParams.get('offset') || 0), reports = offset ? [] : [{ id: 'popup-report', species: ['직박구리'], date: new Date().toISOString().slice(0, 10), reporter: '합성검증', locationHidden: false, target: { kind: 'spot', spotId: 'popup-report' } }];
       return Promise.resolve(new Response(JSON.stringify({ ok: true, serverTime: new Date().toISOString(), offset, limit: 20, total: 1, hasMore: false, reports, publication: { contract: 'publication-v1', epoch: m.epoch, revision: m.revision, projection: 'legacy-public-v1', nonce: u.searchParams.get('nonce') } }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } }));
     }
     return old(input, options);
@@ -81,6 +82,67 @@ async function layout(page, name) {
   if (state.sheet) check(state.top >= -1 && state.bottom <= await page.evaluate(() => innerHeight + 1), name + ' sheet remains within viewport', state);
   check(await page.evaluate(() => { const r = document.querySelector('#birdmapGpsLocate').getBoundingClientRect(); return r.width >= 44 && r.height >= 44 && r.left >= 0 && r.right <= innerWidth; }), name + ' GPS control remains usable');
 }
+// Both GPS endpoints and the distance label must be on the map and outside the folded details.
+async function guideView(page) {
+  return page.evaluate(() => {
+    const node = __popup.getElement(), r = node.getBoundingClientRect(), m = map_7010a44f6ac2025090f0fe07508ed485, c = m.getContainer().getBoundingClientRect();
+    const d = document.querySelector('.birdmap-gps-dot').getBoundingClientRect(), p = m.latLngToContainerPoint(__popup._source.getLatLng()), t = document.querySelector('.birdmap-gps-distance').getBoundingClientRect();
+    const cover = (a, b) => a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
+    const dest = { left: c.left + p.x - 1, right: c.left + p.x + 1, top: c.top + p.y - 1, bottom: c.top + p.y + 1 };
+    const inMap = b => b.left >= c.left && b.right <= c.right && b.top >= c.top && b.bottom <= c.bottom;
+    const recent = document.querySelector('#recentReportsBox'), rr = recent && recent.getClientRects().length && getComputedStyle(recent).display !== 'none' ? recent.getBoundingClientRect() : null;
+    return { compact: node.classList.contains('birdmap-gps-compact'), height: Math.round(r.height), top: r.top, bottom: r.bottom, wrapper: getComputedStyle(node.querySelector('.leaflet-popup-content-wrapper')).display,
+      bar: node.querySelector('.birdmap-report-location-bar button')?.textContent || null, sheetToggle: node.querySelector('.birdmap-popup-actions button:first-child')?.textContent || null,
+      dotIn: inMap(d), destIn: inMap(dest), dotCovered: cover(d, r), destCovered: cover(dest, r), labelCovered: cover(t, r), recentOverlap: !!rr && cover(r, rr) && !node.classList.contains('birdmap-mobile-popup'),
+      guiding: birdmapLocation.state().guiding, line: !!document.querySelector('.birdmap-gps-guide'), dot: !!document.querySelector('.birdmap-gps-dot') };
+  });
+}
+function guideVisible(state) { return state.guiding && state.line && state.dot && state.dotIn && state.destIn && !state.dotCovered && !state.destCovered && !state.labelCovered; }
+// Report-ID cards (species links in site history, recent 15) are not mobile sheets; they fold into their own bar.
+async function reportCardFold(page, label) {
+  const mobile = await page.evaluate(() => matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches);
+  let state = await guideView(page);
+  if (!mobile) { check(!state.compact && state.bar === null && state.guiding, label + ' desktop report card keeps its normal details', state); return; }
+  check(state.compact && state.height <= 72 && state.wrapper === 'none' && state.bar === '정보 보기' && !state.recentOverlap, label + ' report card folds into a small bottom bar', state);
+  check(guideVisible(state), label + ' report guide endpoints, line and distance stay clear', state);
+  for (let round = 1; round <= 2; round++) {
+    await page.getByRole('button', { name: '제보 위치 정보 보기', exact: true }).click();
+    state = await guideView(page);
+    check(!state.compact && state.wrapper !== 'none' && state.bar === '접기' && state.guiding && state.line, label + ' report details reopen during guide #' + round, state);
+    await page.getByRole('button', { name: '제보 위치 정보 접기', exact: true }).click();
+    state = await guideView(page);
+    check(state.compact && state.bar === '정보 보기' && guideVisible(state), label + ' report fold returns to the guide view #' + round, state);
+  }
+  await page.screenshot({ path: path.join(OUT, 'report-guide-' + label + '.png') });
+}
+// Ordinary report spot and fixed red point popups are mobile sheets with the same 64px bar.
+async function sheetPathFold(page, label, kind) {
+  const opened = await page.evaluate(kind => {
+    birdmapLocation.clear(); const m = map_7010a44f6ac2025090f0fe07508ed485; m.closePopup();
+    const s = siteSpotData[0];
+    if (kind === 'fixed' && !siteSpotLayers[0]) { openReportEntry({ kind: 'fixed', spotId: s.id, lat: s.lat, lon: s.lon }, true); m.closePopup(); }
+    const layer = kind === 'report' ? reportSpotLayers['popup-report'] : siteSpotLayers[0];
+    if (!layer) return false;
+    if (!m.hasLayer(layer)) layer.addTo(m);
+    m.setView(layer.getLatLng(), 13, { animate: false }); layer.openPopup();
+    window.__popup = layer.getPopup(); window.__marker = layer;
+    return !!__popup.getElement().querySelector(kind === 'report' ? '[data-location-report]' : '[data-location-fixed]');
+  }, kind);
+  check(opened, label + ' ' + kind + ' popup offers GPS guidance');
+  await page.waitForTimeout(450);
+  const baseline = await snapshot(page);
+  await start(page);
+  let state = await guideView(page);
+  check(state.compact === baseline.sheet && (baseline.sheet ? state.height === 64 && guideVisible(state) : state.guiding && state.line && state.dotIn && state.destIn), label + ' ' + kind + ' popup folds on mobile and keeps the guide visible', state);
+  if (baseline.sheet) {
+    await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
+    await page.getByRole('button', { name: '상세정보 접기', exact: true }).click();
+    state = await guideView(page);
+    check(state.compact && state.height === 64 && guideVisible(state), label + ' ' + kind + ' sheet refolds to the guide view', state);
+  }
+  await stopButton(page); await restored(page, label + ' ' + kind + ' stop', baseline);
+  await page.evaluate(() => { birdmapLocation.clear(); map_7010a44f6ac2025090f0fe07508ed485.closePopup(); });
+}
 async function compactAndSparkle(page, label, baseline) {
   const state = await page.evaluate(() => {
     const sheet = __popup.getElement(), dot = document.querySelector('.birdmap-gps-dot'), toggle = sheet.querySelector('.birdmap-popup-actions button:first-child');
@@ -93,10 +155,20 @@ async function compactAndSparkle(page, label, baseline) {
   check(state.compact === baseline.sheet, label + ' only mobile guidance compacts the sheet', state);
   if (baseline.sheet) {
     check(state.height === 64 && state.reopen === '펼치기', label + ' mobile guide leaves a 64px reopen bar', state);
+    check(guideVisible(await guideView(page)), label + ' site guide endpoints, line and distance stay clear', await guideView(page));
     await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
     const reopened = await snapshot(page);
     check(await page.evaluate(() => !__popup.getElement().classList.contains('birdmap-gps-compact') && birdmapLocation.state().guiding), label + ' user reopen preserves the live guide');
     check(Math.abs(reopened.height - baseline.height) <= 2, label + ' user reopen restores previous sheet height', { before: baseline, after: reopened });
+    await page.getByRole('button', { name: '상세정보 접기', exact: true }).click();
+    const refolded = await guideView(page);
+    check(refolded.compact && refolded.height === 64 && guideVisible(refolded), label + ' site sheet 접기 returns to the guide view', refolded);
+    await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
+    check((await guideView(page)).sheetToggle === '접기', label + ' repeated reopen offers 접기 again');
+  } else {
+    const desktop = await guideView(page);
+    // Desktop popups stay unfolded by design; record (not require) overlap for a user just north of the destination.
+    check(desktop.guiding && desktop.line && desktop.dotIn && desktop.destIn && !desktop.compact, label + ' desktop guide keeps both endpoints on the map with normal details', desktop);
   }
 }
 async function desktopBounds(page, name, panel = false) {
@@ -306,9 +378,17 @@ async function followupRegressions(page, label, width) {
       const reportBefore = await snapshot(page); check(reportBefore.own && reportBefore.value === false, label + ' report popup originally owns false');
       await start(page);
       check(await page.evaluate(() => birdmapLocation.state().guiding), label + ' report guidance remains active', await page.evaluate(() => __popupEvents.slice(-8)));
+      await reportCardFold(page, label);
       await stopButton(page); await restored(page, label + ' report stop preserves false', reportBefore);
+      check(await page.evaluate(() => { const n = __popup.getElement(); return !n.classList.contains('birdmap-gps-compact') && !n.querySelector('.birdmap-report-location-bar') && getComputedStyle(n.querySelector('.leaflet-popup-content-wrapper')).display !== 'none'; }), label + ' report stop restores the full card');
+      await start(page); await page.evaluate(() => birdmapLocation.clear()); await restored(page, label + ' report clear', reportBefore);
+      check(await page.evaluate(() => !__popup.getElement().classList.contains('birdmap-gps-compact') && !__popup.getElement().querySelector('.birdmap-report-location-bar')), label + ' report clear restores the full card');
       await start(page); await page.evaluate(() => publicationInvalidate('synthetic popup regression'));
       check(!await page.evaluate(() => birdmapLocation.state().guiding) && sameOptions(await snapshot(page), reportBefore), label + ' publication invalidation restores report popup');
+      await page.evaluate(() => { publicationInvalidate(); return publicationRefresh(); });
+      await page.waitForFunction(() => publicationAllowed());
+      await sheetPathFold(page, label, 'report');
+      await sheetPathFold(page, label, 'fixed');
       await openSite(page); await start(page); await page.screenshot({ path: path.join(OUT, 'guide-' + label + '.png') });
       await page.evaluate(() => map_7010a44f6ac2025090f0fe07508ed485.remove());
       const unloaded = await snapshot(page);

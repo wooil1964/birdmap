@@ -19,9 +19,17 @@
 .birdmap-report-location-selected{stroke:#8b2500;stroke-width:5px;filter:drop-shadow(0 0 5px #ffb300)}
 #birdmapReportLocationStatus{position:fixed;z-index:11030;left:50%;top:64px;transform:translateX(-50%);box-sizing:border-box;width:max-content;max-width:calc(100vw - 24px);padding:7px 10px;border:1px solid #ccd9df;border-radius:8px;background:#fff;color:#174d6f;font:13px/1.45 Arial,'Malgun Gothic',sans-serif;box-shadow:0 2px 10px #0002;pointer-events:none}
 #birdmapReportLocationStatus[hidden]{display:none}
+.birdmap-report-location-bar{display:none}
 @media (max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px){
   body .leaflet-popup.birdmap-report-location-popup{position:absolute!important;left:var(--birdmap-location-left,8px)!important;top:var(--birdmap-location-top,80px)!important;right:auto!important;bottom:auto!important;transform:none!important;margin:0!important;width:220px!important;max-width:calc(100vw - 16px);z-index:10003}
   body .birdmap-report-location-popup .leaflet-popup-content{box-sizing:border-box;width:auto!important;max-width:none!important;margin:0;padding:12px;max-height:var(--birdmap-location-max-height,240px)}
   body .birdmap-report-location-popup .leaflet-popup-content>div,body .birdmap-report-location-popup .leaflet-popup-content>div>div{width:auto!important}
   body .birdmap-report-location-popup .leaflet-popup-tip-container{display:none}
+  /* GPS guide: the card folds into a small bar; '정보 보기' reopens it and '접기' returns to the guide view. */
+  body .birdmap-report-location-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:56px;box-sizing:border-box;padding:6px 52px 6px 12px;border-radius:12px 12px 0 0;background:#fff;color:#174d6f;font:600 13px/1.4 Arial,'Malgun Gothic',sans-serif}
+  body .birdmap-report-location-bar button{min-height:44px;padding:4px 12px;border:1px solid #84aed4;border-radius:6px;background:#edf6ff;color:#124e82;font:inherit;cursor:pointer}
+  body .birdmap-report-location-bar button:focus-visible{outline:2px solid #1565c0;outline-offset:2px}
+  body .leaflet-popup.birdmap-report-location-popup.birdmap-gps-compact{right:8px!important;width:auto!important;max-width:none;border-radius:12px;box-shadow:0 2px 10px #0003}
+  body .birdmap-report-location-popup.birdmap-gps-compact .birdmap-report-location-bar{border-radius:12px}
+  body .birdmap-report-location-popup.birdmap-gps-compact .leaflet-popup-content-wrapper{display:none}
 }
