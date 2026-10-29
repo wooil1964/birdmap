@@ -81,6 +81,24 @@ async function layout(page, name) {
   if (state.sheet) check(state.top >= -1 && state.bottom <= await page.evaluate(() => innerHeight + 1), name + ' sheet remains within viewport', state);
   check(await page.evaluate(() => { const r = document.querySelector('#birdmapGpsLocate').getBoundingClientRect(); return r.width >= 44 && r.height >= 44 && r.left >= 0 && r.right <= innerWidth; }), name + ' GPS control remains usable');
 }
+async function compactAndSparkle(page, label, baseline) {
+  const state = await page.evaluate(() => {
+    const sheet = __popup.getElement(), dot = document.querySelector('.birdmap-gps-dot'), toggle = sheet.querySelector('.birdmap-popup-actions button:first-child');
+    return { compact: sheet.classList.contains('birdmap-gps-compact'), height: sheet.getBoundingClientRect().height, reopen: toggle?.textContent, animation: getComputedStyle(dot).animationName, running: dot.getAnimations().some(a => a.playState === 'running') };
+  });
+  check(state.animation === 'birdmapGpsSparkle' && state.running, label + ' current location visibly sparkles', state);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  check(await page.evaluate(() => getComputedStyle(document.querySelector('.birdmap-gps-dot')).animationName === 'none'), label + ' reduced motion stops sparkle');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  check(state.compact === baseline.sheet, label + ' only mobile guidance compacts the sheet', state);
+  if (baseline.sheet) {
+    check(state.height === 64 && state.reopen === '펼치기', label + ' mobile guide leaves a 64px reopen bar', state);
+    await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
+    const reopened = await snapshot(page);
+    check(await page.evaluate(() => !__popup.getElement().classList.contains('birdmap-gps-compact') && birdmapLocation.state().guiding), label + ' user reopen preserves the live guide');
+    check(Math.abs(reopened.height - baseline.height) <= 2, label + ' user reopen restores previous sheet height', { before: baseline, after: reopened });
+  }
+}
 async function desktopBounds(page, name, panel = false) {
   await page.waitForTimeout(450);
   const bounds = await page.evaluate(() => {
@@ -237,6 +255,7 @@ async function followupRegressions(page, label, width) {
       await openSite(page); const baseline = await snapshot(page);
       await start(page); let held = await snapshot(page);
       check(held.value === false && held.gps, label + ' guidance temporarily suppresses autoPan and adds GPS class', held);
+      await compactAndSparkle(page, label, baseline);
       await stopButton(page); await restored(page, label + ' stop button', baseline);
       const ended = await snapshot(page);
       check(Math.abs(ended.width - baseline.width) <= 2 && Math.abs(ended.height - baseline.height) <= 2, label + ' original popup dimensions restored', { before: baseline, after: ended });
