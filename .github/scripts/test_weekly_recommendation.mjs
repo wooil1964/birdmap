@@ -630,9 +630,10 @@ test('최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 �
 });
 
 test('물때 mandatory 후보의 이유를 남기고 추천 목록에서만 caution 제외',()=>{
- const date=futureDate(1),s={...SITE,env:'갯벌'};
+ // 가을(9월) 갯벌 물때 시나리오: 날짜·시계·월을 9월로 고정한다(실제 내일이 다른 계절이면 시나리오가 성립하지 않음).
+ const date='2026-09-10',s={...SITE,env:'갯벌'};
  const doc=weekDoc(s.id,{[date]:[sample(`${date} 15:00 KST`,95,{waveM:2.2})]});
- const api=loadApi({siteData:[s],weatherWeek:doc,tideMonth:{sites:{[s.id]:{days:[{date,highTide:'15:00',highTideLevel:'720'}]}}}});
+ const api=loadApi({month:9,now:SEPTEMBER_FIXTURE_NOW,siteData:[s],weatherWeek:doc,tideMonth:{sites:{[s.id]:{days:[{date,highTide:'15:00',highTideLevel:'720'}]}}}});
  // 만조 시각 예보가 위험하면 물때 조건을 충족해도 후보가 아니다. 안전해지면 mandatory 사유와 함께 추천된다.
  assert.equal(api.weeklyRecommendationForSite(s,api.weeklyInfo()),null);
  assert.equal(api.todayRecommendedSites().length,0);
@@ -751,11 +752,12 @@ test('실제 동풍·선상 후보별 gate와 최종 선발 보고',()=>{
 });
 
 test('봄 선상도 최대 1곳이며 전부 gate 탈락하면 다른 후보로 보충',()=>{
- const date=futureDate(1),ships=[{...PELAGIC,id:701},{...PELAGIC,id:702}];
+ // 봄(4월) 선상 시나리오: 날짜·시계·월을 4월로 고정한다(실제 내일이 다른 계절이면 시나리오가 성립하지 않음).
+ const date='2026-04-10',ships=[{...PELAGIC,id:701},{...PELAGIC,id:702}];
  const land=Array.from({length:11},(_,i)=>({...SITE,id:710+i,name:'일반 '+i,env:'산림',seasons:['봄'],birdingFeature:'이동성 조류'}));
  const sites=[...ships,...land],doc={generatedAt:'2020-01-01 00:00 KST',sites:{}};
  for(const s of sites)Object.assign(doc.sites,weekDoc(s.id,{[date]:[sample(date+' 09:00 KST',s.pelagic?95:92,{waveM:0.6})]}).sites);
- const api=loadApi({month:4,siteData:sites,weatherWeek:doc});
+ const api=loadApi({month:4,now:'2026-04-09T12:00:00+09:00',siteData:sites,weatherWeek:doc});
  let top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,1);
  for(const s of ships)doc.sites[s.id].days[date].samples[0].precipitation3h=0.1;
  top=api.todayRecommendedSites();assert.equal(top.length,10);assert.equal(top.filter(e=>e.axes.pelagic).length,0);
