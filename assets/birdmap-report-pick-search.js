@@ -1,32 +1,62 @@
 (function (global) {
   'use strict';
-  // Compact report-location panel: title + ×, then GPS + address/place search (OpenStreetMap Nominatim).
+  // Compact report-location panel: title + ×, then GPS + address/place search (Kakao Maps JavaScript SDK services).
   // A result only moves the map; the report location is still set by a map tap or GPS (existing code paths).
-  // Set to '' to switch search off (Nominatim policy: the operator must be able to stop calls without a code change).
-  var SEARCH_URL = 'https://nominatim.openstreetmap.org/search';
-  var MIN_GAP = 1100, TIMEOUT = 8000, MAX_RESULTS = 3;
-  var document = global.document, cache = {}, last = 0, token = 0;
+  // JavaScript key only (public by design, works only on the domains registered for app 1630711). Never a REST/Admin key.
+  // Set to '' to switch search off; the compact panel, GPS and map picking keep working.
+  var KAKAO_JS_KEY = '';
+  var SDK_URL = 'https://dapi.kakao.com/v2/maps/sdk.js?libraries=services&autoload=false&appkey=';
+  var TIMEOUT = 8000, MAX_RESULTS = 3;
+  var document = global.document, sdk = null, token = 0;
   var input, list, note, panel;
 
   function map() { return global.map_7010a44f6ac2025090f0fe07508ed485; }
   function clean(text) { return String(text || '').replace(/[\u0000-\u001f\u007f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 100); }
-  // "주남저수지, 의창구, 창원시, 경상남도, 51116, 대한민국" -> "경상남도 창원시 의창구"
-  function address(row, name) {
-    var parts = String(row.display_name || '').split(', ').filter(function (part, i) {
-      return part && part !== '대한민국' && !/^\d{5}$/.test(part) && !(i === 0 && part === name);
+
+  // The SDK is loaded on the first search only. A failed load is forgotten so the next Enter retries.
+  function services() {
+    if (sdk) return sdk;
+    sdk = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = SDK_URL + encodeURIComponent(KAKAO_JS_KEY);
+      script.onerror = function () { script.remove(); reject(new Error('sdk')); };
+      script.onload = function () {
+        var kakao = global.kakao;
+        if (!kakao || !kakao.maps || typeof kakao.maps.load !== 'function') { reject(new Error('sdk')); return; }
+        kakao.maps.load(function () { if (kakao.maps.services) resolve(kakao.maps.services); else reject(new Error('services')); });
+      };
+      document.head.appendChild(script);
     });
-    return parts.reverse().join(' ');
+    sdk.catch(function () { sdk = null; });
+    return sdk;
   }
-  function places(rows) {
-    var seen = {}, out = [];
-    (Array.isArray(rows) ? rows : []).forEach(function (row) {
-      var lat = Number(row.lat), lon = Number(row.lon);
-      if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return;
-      var name = clean(row.name) || clean(String(row.display_name || '').split(', ')[0]), addr = address(row, name);
-      if (!name || seen[name + '|' + addr]) return;
-      seen[name + '|' + addr] = true;
-      out.push({ name: name, address: addr, lat: lat, lon: lon });
+  // One Kakao call; ERROR (network, domain, quota 429) and a missing callback both end as {failed: true}.
+  function call(services, owner, method, q) {
+    return new Promise(function (resolve) {
+      new services[owner]()[method](q, function (rows, status) {
+        if (status === services.Status.OK) resolve({ rows: rows || [] });
+        else if (status === services.Status.ZERO_RESULT) resolve({ rows: [] });
+        else resolve({ failed: true });
+      }, { size: 5 });  // a little more than shown, so de-duplication still leaves three (quota counts calls, not rows)
     });
+  }
+  // Addresses first (an exact address beats a nearby place), then places; one entry per point, at most three.
+  function results(addresses, spots) {
+    var seen = {}, out = [];
+    function add(name, sub, x, y) {
+      var lat = Number(y), lon = Number(x);
+      name = clean(name); sub = clean(sub);
+      if (!name || !isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return;
+      var key = lat.toFixed(5) + ',' + lon.toFixed(5);
+      if (seen[key]) return;
+      seen[key] = true;
+      out.push({ name: name, address: sub === name ? '' : sub, lat: lat, lon: lon });
+    }
+    addresses.forEach(function (a) {
+      var road = a.road_address || {}, lot = a.address || {};
+      add(a.address_name, road.building_name || [road.address_name, lot.address_name].filter(function (t) { return t && t !== a.address_name; })[0], a.x, a.y);
+    });
+    spots.forEach(function (p) { add(p.place_name, p.road_address_name || p.address_name, p.x, p.y); });
     return out.slice(0, MAX_RESULTS);
   }
 
@@ -46,7 +76,7 @@
       item.appendChild(button); list.appendChild(item);
     });
     var credit = document.createElement('li');
-    credit.className = 'rpsCredit'; credit.textContent = '© OpenStreetMap';
+    credit.className = 'rpsCredit'; credit.textContent = '검색: 카카오';
     list.appendChild(credit);
     list.hidden = false;
     lift();
@@ -54,32 +84,28 @@
   function choose(place) {
     closeList();
     input.blur();
-    map().setView([place.lat, place.lon], 16, { animate: false });
+    var m = map(), go = function () { m.setView([place.lat, place.lon], 16, { animate: false }); };
+    // Leaflet ignores setView during a zoom animation (~250 ms after a zoom button or pinch): move once it ends.
+    if (m._animatingZoom) m.once('zoomend', go); else go();
     say('지도를 눌러 발견 지점을 지정하세요.', 'hint');
   }
 
+  // Every Enter asks Kakao again: results are shown and dropped, never stored or cached (Kakao policy).
   function search() {
-    var q = clean(input.value), mine = ++token;
+    var q = clean(input.value), mine = ++token, timer;
     if (!q) { reset(false); return; }
-    if (cache[q]) { show(cache[q]); return; }
     closeList(); say('검색 중…');
-    var wait = Math.max(0, last + MIN_GAP - Date.now());
-    global.setTimeout(function () {
+    var late = new Promise(function (resolve) { timer = global.setTimeout(function () { resolve(null); }, TIMEOUT); });
+    var asked = services().then(function (s) {
+      return Promise.all([call(s, 'Geocoder', 'addressSearch', q), call(s, 'Places', 'keywordSearch', q)]);
+    }, function () { return null; });
+    Promise.race([asked, late]).then(function (both) {
+      global.clearTimeout(timer);
       if (mine !== token) return;
-      last = Date.now();
-      var abort = global.AbortController ? new global.AbortController() : null, timer = abort && global.setTimeout(function () { abort.abort(); }, TIMEOUT);
-      var url = SEARCH_URL + '?format=jsonv2&limit=5&countrycodes=kr&accept-language=ko&q=' + encodeURIComponent(q);
-      global.fetch(url, { signal: abort ? abort.signal : undefined, credentials: 'omit' }).then(function (response) {
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        return response.json();
-      }).then(function (rows) {
-        if (mine !== token) return;
-        cache[q] = places(rows);
-        show(cache[q]);
-      }).catch(function () {
-        if (mine === token) say('검색하지 못했습니다. 지도에서 직접 지정해 주세요.', 'error');
-      }).then(function () { if (timer) global.clearTimeout(timer); });
-    }, wait);
+      var found = both ? results(both[0].rows || [], both[1].rows || []) : [];
+      if (found.length || (both && !both[0].failed && !both[1].failed)) show(found);
+      else say('검색하지 못했습니다. 지도에서 직접 지정해 주세요.', 'error');
+    });
   }
 
   // Android Chrome resizes only the visual viewport for the keyboard, so a bottom-fixed panel would sit under it.
@@ -109,7 +135,7 @@
     panel.classList.add('rpsCompact');
     note = document.createElement('div'); note.className = 'rpsNote'; note.setAttribute('role', 'status'); note.setAttribute('aria-live', 'polite');
     list = document.createElement('ul'); list.className = 'rpsResults'; list.hidden = true; list.setAttribute('aria-label', '검색 결과');
-    if (SEARCH_URL && global.fetch) {
+    if (KAKAO_JS_KEY && global.Promise) {
       var form = document.createElement('form');
       form.className = 'rpsForm'; form.setAttribute('role', 'search');
       input = document.createElement('input');
@@ -146,6 +172,5 @@
     gps.textContent = global.reportGpsIdleLabel(gps);
   }
 
-  global.birdmapReportPickSearchPlaces = places;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
 })(window);

@@ -41,7 +41,7 @@ jobs:
           node .github/scripts/cache_gps_dependencies.mjs
       - name: GPS popup regression (synthetic API, GPS and tiles; offline browser)
         run: node docs/current-location/popup-regression.cjs
-      - name: Report-location panel and place search (synthetic API, GPS, Nominatim and keyboard)
+      - name: Report-location panel and place search (synthetic API, GPS, Kakao SDK and keyboard)
         env:
           REPORT_PICK_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/report-pick-search
         run: node docs/report-pick-search/browser.cjs
