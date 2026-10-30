@@ -4,7 +4,7 @@
   // A result only moves the map; the report location is still set by a map tap or GPS (existing code paths).
   // JavaScript key only (public by design, works only on the domains registered for app 1630711). Never a REST/Admin key.
   // Set to '' to switch search off; the compact panel, GPS and map picking keep working.
-  var KAKAO_JS_KEY = '';
+  var KAKAO_JS_KEY = '6c88cf4bb5c55c0b019e72ad7fded007';
   var SDK_URL = 'https://dapi.kakao.com/v2/maps/sdk.js?libraries=services&autoload=false&appkey=';
   var TIMEOUT = 8000, MAX_RESULTS = 3;
   var document = global.document, sdk = null, token = 0;
