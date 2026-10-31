@@ -89,7 +89,7 @@ async function openPage(browser, origin, width, height, touch, before) {
     network.blocked++; return route.abort();
   });
   await page.goto(origin, { waitUntil: 'load' });
-  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 229 && publicationAllowed()
+  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed()
     && document.querySelectorAll('#recentReportsList .recentReportItem').length === 15 && document.querySelector('#recentReportsBox .birdmap-sheet-actions'));
   return { page, label };
 }

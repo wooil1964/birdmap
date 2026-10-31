@@ -21,8 +21,8 @@ class MetroSitesTests(unittest.TestCase):
             path=Path(directory)/'index.html';path.write_text(old,encoding='utf-8');before=load_runtime_sites(path)
         current=load_runtime_sites()
         self.assertEqual(len(before),208);self.assertEqual(current[:208],before)
-        self.assertEqual(current[208:],[r['site'] for r in SOURCE['records']])
-        self.assertEqual([s['id'] for s in current[208:]],NEW);self.assertEqual(len(current),229)
+        self.assertEqual(current[208:229],[r['site'] for r in SOURCE['records']])
+        self.assertEqual([s['id'] for s in current[208:229]],NEW);self.assertEqual(len(current),240)
         def strip(t):
             t=without_report_archive(t)
             t=t.replace('최종 업데이트: 2026.10.19','최종 업데이트: 2026.10.18').replace('수도권 21곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">229','id="mapTitleSiteCount">208')
@@ -31,7 +31,7 @@ class MetroSitesTests(unittest.TestCase):
 
     def test_links_coordinates_source_boundaries_and_unknown_records(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())
-        self.assertEqual(report['commonIdCount'],229)
+        self.assertEqual(report['commonIdCount'],240)
         self.assertFalse(any(v for v in report.values() if isinstance(v,list)),report)
         unknown={'214','217','221','222','223','225','226','227','232','234'}
         self.assertEqual({r['site']['id'] for r in SOURCE['records'] if not r['site']['birds']},unknown)

@@ -1,3 +1,4 @@
+import {execFileSync} from 'node:child_process';
 // Native local D1 (Miniflare) check of append-registry.sql and rollback-registry.sql on the production table shapes.
 // Usage: node docs/metro-sites-20261019/native-registry.mjs <node_modules dir containing miniflare>
 import {createRequire} from 'node:module';import path from 'node:path';
@@ -10,7 +11,7 @@ const sql=fs.readFileSync('docs/metro-sites-20261019/append-registry.sql','utf8'
 const undo=fs.readFileSync('docs/metro-sites-20261019/rollback-registry.sql','utf8');
 const core=fs.readFileSync('docs/long-term-db-phase2e/migrations-main/0001_core.sql','utf8');
 const table=name=>core.match(new RegExp('CREATE TABLE '+name+' \\([\\s\\S]*?\\n\\);'))[0];
-const plan=await prepareSiteSeed(fs.readFileSync('index.html','utf8'),{capturedAt:'2026-10-18T00:00:00+09:00',expectedCount:229});
+const plan=await prepareSiteSeed(execFileSync('git',['show','04eee689ca57db967c80623547fa1b6d8aeb86cd:index.html'],{encoding:'utf8',maxBuffer:20*1024*1024}),{capturedAt:'2026-10-18T00:00:00+09:00',expectedCount:229});
 const NEW=['214','215','216','217','218','219','220','221','222','223','224','225','226','227','228','229','230','231','232','233','234'];
 const old=plan.sites.filter(s=>!NEW.includes(s.site_id)),added=plan.sites.filter(s=>NEW.includes(s.site_id));
 assert.equal(old.length,208);assert.equal(added.length,21);

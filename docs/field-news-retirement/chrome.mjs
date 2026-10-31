@@ -110,7 +110,7 @@ class CDP{
   const evaluate=async expression=>{const r=await this.send('Runtime.evaluate',{expression:'(async function(){var v=await eval('+JSON.stringify(expression)+');try{return JSON.parse(JSON.stringify(v));}catch{return null;}})()',awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw new Error(r.exceptionDetails.text+' '+String(r.exceptionDetails.exception?.description||'').split('\n')[0]);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
   const until=Date.now()+40000;let ready=false;
-  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===229").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
+  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===240").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
   if(!ready)throw new Error('Actual Leaflet/publication page initialization unavailable');
   return {evaluate,sessionId,targetId,close:()=>this.send('Target.closeTarget',{targetId})};
  }
@@ -147,7 +147,7 @@ try{
   await scenario(page,width,'lifecycle-refresh-cannot-revive-retired-feature',async e=>{
    await e("localStorage.setItem('birdmapFieldMine',JSON.stringify(['33333333-3333-4333-8333-000000000001']));window.dispatchEvent(new Event('blur'));window.dispatchEvent(new Event('focus'));window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));__mock.hidden=true;document.dispatchEvent(new Event('visibilitychange'));__mock.hidden=false;document.dispatchEvent(new Event('visibilitychange'));");await e(refresh);await e(settle);
    const s=await e("({requests:__mock.actions.filter(x=>x.path.startsWith('/field-updates')).length,gps:__mock.geo.length,nodes:document.querySelectorAll('[id^=field]').length,reports:__mock.reports.length,sites:siteData.length,unique:new Set(siteData.map(x=>x.id)).size,map:!!map_7010a44f6ac2025090f0fe07508ed485.getContainer()})");
-   return {pass:s.requests===0&&s.gps===0&&s.nodes===0&&s.reports===0&&s.sites===229&&s.unique===229&&s.map,evidence:s};
+   return {pass:s.requests===0&&s.gps===0&&s.nodes===0&&s.reports===0&&s.sites===240&&s.unique===240&&s.map,evidence:s};
   });
   await scenario(page,width,'ordinary-report-cancel-does-not-submit',async e=>{
    await e("openReportModal();closeReportModal()");const s=await e("({reports:__mock.reports.length,fieldLink:!!document.getElementById('reportFieldNotice'),species:!!document.getElementById('reportSpecies')})");return {pass:s.reports===0&&!s.fieldLink&&s.species,evidence:s};

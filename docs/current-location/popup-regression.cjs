@@ -382,14 +382,14 @@ async function followupRegressions(page, label, width) {
     });
     try {
       await page.goto(origin, { waitUntil: 'load' });
-      await page.waitForFunction(() => window.birdmapLocation && window.L && Object.keys(markerRegistry).length === 229 && publicationAllowed());
+      await page.waitForFunction(() => window.birdmapLocation && window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed());
       await page.evaluate(() => {
         window.__popupEvents = [];
         map_7010a44f6ac2025090f0fe07508ed485.on('popupopen popupclose', e => __popupEvents.push({ type: e.type, report: !!e.popup._birdmapReportLocation, at: performance.now() }));
         const status = document.querySelector('#birdmapGpsStatus');
         new MutationObserver(() => __popupEvents.push({ type: 'GPS status', text: status.textContent, at: performance.now() })).observe(status, { childList: true });
       });
-      check(await page.evaluate(() => L.version === '1.9.3' && siteData.length === 229 && __mock.geo.length === 0), label + ' actual Leaflet, 229 sites and no automatic GPS');
+      check(await page.evaluate(() => L.version === '1.9.3' && siteData.length === 240 && __mock.geo.length === 0), label + ' actual Leaflet, 240 sites and no automatic GPS');
       const desktop = await page.evaluate(() => {
         const p = window[siteData.find(s => s.id === '195').markerVar].getPopup(), d = Object.getOwnPropertyDescriptor(p.options, 'autoPan');
         return { own: !!d, descriptor: d || null, value: p.options.autoPan, offset: Object.getOwnPropertyDescriptor(p.options, 'offset') || null, tag: false, gps: false };

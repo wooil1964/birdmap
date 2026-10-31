@@ -13,7 +13,7 @@ vm.createContext(context);vm.runInContext(script,context);
 test('six island groups cover all 20 existing markers, with no other places enabled',()=>{
   const expected=['1','101','102','103','2','104','105','106','63','127','128','129','130','4','117','118','119','110','111','64'].sort();
   assert.equal(context.ISLAND_NEARBY_PILOT.length,6);
-  assert.equal(sites.length,229);
+  assert.equal(sites.length,240);
   assert.deepEqual(sites.filter(s=>context.islandNearbySearchHtml(s)).map(s=>s.id).sort(),expected);
   for(const invalid of [null,{...sites[0],country:'일본'},{...sites[0],island:false},{...sites[0],id:'9999'},{...sites[0],name:'다른 섬'}])assert.equal(context.islandNearbySearchHtml(invalid),'');
 });

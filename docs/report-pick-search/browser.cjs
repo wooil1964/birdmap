@@ -109,7 +109,7 @@ async function openPage(browser, origin, width, height, touch, { sdk = 'ok', key
     network.blocked++; return route.abort();
   });
   await page.goto(origin, { waitUntil: 'load' });
-  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 229 && publicationAllowed() && !document.getElementById('reportToggleBtn').hidden);
+  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed() && !document.getElementById('reportToggleBtn').hidden);
   await page.click('#reportToggleBtn');
   await page.waitForSelector('#reportPickPanel.rpsCompact', { state: 'visible' });
   return { page, label };

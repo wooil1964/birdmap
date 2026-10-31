@@ -38,10 +38,10 @@ class PilotContractTests(unittest.TestCase):
 
     def test_runtime_records_coordinates_and_worker_contract_unchanged(self):
         sites = load_runtime_sites()
-        self.assertEqual(len(sites), 229)
-        self.assertEqual(len({s['id'] for s in sites}), 229)
+        self.assertEqual(len(sites), 240)
+        self.assertEqual(len({s['id'] for s in sites}), 240)
         result = compare_sites(sites, load_worker_sites())
-        self.assertEqual(result['commonIdCount'], 229)
+        self.assertEqual(result['commonIdCount'], 240)
         self.assertFalse(any(v for v in result.values() if isinstance(v, list)), result)
 
 
