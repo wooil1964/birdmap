@@ -1,7 +1,7 @@
 import subprocess
 import unittest
 from pathlib import Path
-from current_location_contract import GPS_ISLANDS, without_current_location
+from current_location_contract import GPS_ISLANDS, REPORT_PICK_SEARCH_HEAD, without_current_location
 
 ROOT = Path(__file__).resolve().parents[2]
 CURRENT = (ROOT / 'index.html').read_text(encoding='utf-8')
@@ -17,6 +17,15 @@ class GpsScopeTests(unittest.TestCase):
             for text in (CURRENT.replace(new, '', 1), CURRENT + new, CURRENT.replace(new, new.replace('birdmap-location', 'wrong-location', 1), 1) if 'birdmap-location' in new else CURRENT.replace(new, new.replace('fixedSpotId', 'wrongId'), 1)):
                 with self.assertRaises(ValueError):
                     without_current_location(text)
+
+    def test_report_pick_search_head_is_exact_and_fail_closed(self):
+        self.assertEqual(CURRENT.count(REPORT_PICK_SEARCH_HEAD), 1)
+        script_only = REPORT_PICK_SEARCH_HEAD.splitlines(True)[1]
+        for text in (CURRENT.replace(REPORT_PICK_SEARCH_HEAD, REPORT_PICK_SEARCH_HEAD * 2, 1),
+                     CURRENT.replace(REPORT_PICK_SEARCH_HEAD, script_only, 1),
+                     CURRENT.replace('</body>', script_only + '</body>', 1)):
+            with self.assertRaises(ValueError):
+                without_current_location(text)
 
     def test_unrelated_security_and_count_edits_remain_visible(self):
         clean = without_current_location(CURRENT)

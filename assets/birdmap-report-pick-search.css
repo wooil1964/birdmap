@@ -1,0 +1,39 @@
+/* Compact report-location panel (assets/birdmap-report-pick-search.js). Scoped to .rpsCompact so the old layout stays if install fails. */
+#reportPickPanel.rpsCompact{width:min(248px,calc(100vw - 16px));padding:6px 8px 8px;font-size:13px}
+.rpsHead{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:32px}
+.rpsHead strong{font-size:13px;color:#8d2418}
+.rpsClose{flex:none;width:32px;height:32px;margin:-4px -6px -4px 0;padding:0;border:0;border-radius:6px;background:transparent;color:#52616b;font:22px/32px Arial,sans-serif;cursor:pointer}
+.rpsClose:hover{background:#f3e6e6;color:#8d2418}
+.rpsRow{display:flex;gap:5px;align-items:stretch}
+#reportPickPanel.rpsCompact #reportGpsPickBtn{flex:none;display:inline-flex;align-items:center;gap:3px;min-height:36px;padding:0 7px 0 5px;border:2px solid #2d6f9f;border-radius:8px;background:#fff;color:#174d6f;font:inherit;font-size:12px;font-weight:bold;white-space:nowrap;cursor:pointer}
+#reportPickPanel.rpsCompact #reportGpsPickBtn::before{content:'';flex:none;width:15px;height:15px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23174d6f' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='6'/%3E%3Ccircle cx='12' cy='12' r='1.6' fill='%23174d6f'/%3E%3Cpath d='M12 2v4M12 18v4M2 12h4M18 12h4'/%3E%3C/svg%3E") center/contain no-repeat}
+#reportPickPanel.rpsCompact #reportGpsPickBtn[disabled]{opacity:.6;cursor:wait}
+.rpsForm{flex:1 1 auto;min-width:0;margin:0}
+.rpsForm input{box-sizing:border-box;width:100%;height:100%;min-height:36px;margin:0;padding:0 6px 0 25px;border:1px solid #9fb3c0;border-radius:8px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2352616b' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E") 7px center/14px no-repeat;color:#1c2226;font:13px Arial,'Malgun Gothic',sans-serif;-webkit-appearance:none;appearance:none}
+.rpsForm input::placeholder{color:#6b7880;font-size:12px}
+.rpsForm input:focus{outline:2px solid #2d6f9f;outline-offset:0;border-color:#2d6f9f}
+.rpsResults{list-style:none;margin:6px 0 0;padding:0;border-top:1px solid #e3e8eb;overflow-y:auto;overscroll-behavior:contain}
+.rpsResults[hidden]{display:none}
+.rpsResults button{display:block;box-sizing:border-box;width:100%;min-height:40px;padding:4px 4px;border:0;border-bottom:1px solid #e3e8eb;background:transparent;text-align:left;font:inherit;color:#1c2226;cursor:pointer}
+.rpsResults button:hover,.rpsResults button:focus-visible{background:#eef6fb}
+.rpsResults b,.rpsResults span{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.rpsResults b{font-size:13px}
+.rpsResults span{font-size:11px;color:#5a666e}
+.rpsCredit{padding-top:2px;font-size:10px;color:#7a868d;text-align:right}
+.rpsNote{margin-top:4px;font-size:12px;line-height:1.4;color:#52616b}
+.rpsNote:empty{display:none}
+.rpsNote.hint{color:#174d6f;font-weight:bold}
+.rpsNote.error{color:#8d2418}
+/* Before a location is chosen the old one-line hint is redundant with the title; it returns once a point is set. */
+#reportPickPanel.rpsCompact:has(#reportConfirmBtn[hidden]) #reportPickStatus{display:none}
+#reportPickPanel.rpsCompact .reportPickPanelBtns{margin-top:6px}
+#reportPickPanel.rpsCompact .reportPickPanelBtns:not(:has(button:not([hidden]))){display:none}
+#reportPickPanel.rpsCompact .reportPickPanelBtns button{min-height:38px;padding:6px 8px}
+@media (pointer:coarse){
+  #reportPickPanel.rpsCompact #reportGpsPickBtn,.rpsForm input{min-height:44px}
+  .rpsClose{width:40px;height:40px;line-height:40px;margin:-6px -8px -6px 0}
+  /* 16px stops iOS from zooming the page on focus; the placeholder stays small to fit. */
+  .rpsForm input{font-size:16px}
+  .rpsResults button{min-height:44px}
+  #reportPickPanel.rpsCompact .reportPickPanelBtns button{min-height:44px}
+}

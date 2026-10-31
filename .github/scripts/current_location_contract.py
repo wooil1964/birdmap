@@ -16,8 +16,28 @@ GPS_ISLANDS = [
 ]
 
 
+# Compact report-location panel with place search (assets/birdmap-report-pick-search.*): one exact head island
+# right before the base-map head. Stripped here because every index.html freeze check routes through this function.
+REPORT_PICK_SEARCH_HEAD = (
+    '    <link rel="stylesheet" href="assets/birdmap-report-pick-search.css"/>\n'
+    '    <script src="assets/birdmap-report-pick-search.js"></script>\n'
+)
+REPORT_PICK_SEARCH_NEXT = '    <!-- Optional base-map configuration has no credential in the reviewed source. -->\n'
+
+
+def without_report_pick_search(text):
+    if 'birdmap-report-pick-search' not in text:
+        return text
+    if text.count(REPORT_PICK_SEARCH_HEAD) != 1 or text.count(REPORT_PICK_SEARCH_HEAD + REPORT_PICK_SEARCH_NEXT) != 1:
+        raise ValueError('Exact report-pick search head must occur once, right before the base-map head')
+    text = text.replace(REPORT_PICK_SEARCH_HEAD, '', 1)
+    if 'birdmap-report-pick-search' in text:
+        raise ValueError('Unexpected report-pick search fragment outside the approved head')
+    return text
+
+
 def without_current_location(text):
-    text = text.replace('\r\n', '\n')
+    text = without_report_pick_search(text.replace('\r\n', '\n'))
     signatures = ('birdmap-location', 'data-location-', 'fixedSpotId')
     if not any(value in text for value in signatures):
         return text
