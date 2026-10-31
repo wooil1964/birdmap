@@ -56,6 +56,31 @@
   else updateMapSubtitle();
 })();
 
+/* One dining note inside site 138 (산이면)'s "탐조지 프로필 보기". Checked 2026-10-31 on Kakao Places: place 23941157,
+   전원식당, 061-532-4320, 전남광주통합특별시 해남군 산이면 비석길 82 (초송리 186-3). */
+(function (global) {
+  'use strict';
+  function addDiningNote() {
+    var build = global.v23PopupContent;
+    if (typeof build !== 'function') return;
+    global.v23PopupContent = function (site) {
+      var root = build.apply(this, arguments);
+      var grid = site && site.id === '138' && root && root.querySelector ? root.querySelector('.popup-profile-info .v24ProfileGrid') : null;
+      if (grid) {
+        var line = document.createElement('div'), link = document.createElement('a');
+        line.className = 'v24ProfileWide birdmap-dining';
+        link.href = 'https://place.map.kakao.com/23941157'; link.target = '_blank'; link.rel = 'noopener noreferrer';
+        link.textContent = '맛집추천 전원식당 061-532-4320';
+        link.setAttribute('aria-label', '맛집추천 전원식당 061-532-4320, 카카오맵에서 보기 (새 창)');
+        line.appendChild(link); grid.appendChild(line);
+      }
+      return root;
+    };
+  }
+  if (document.readyState === 'complete') addDiningNote();
+  else global.addEventListener('load', addDiningNote);
+})(window);
+
 /* Mobile overlay presentation. Keep the actual Leaflet popup/content and public read contract intact. */
 (function (global) {
   'use strict';
@@ -72,6 +97,10 @@
       if (legacyHideFilter) return legacyHideFilter();
     };
     var activePopup = null, recentMode = 'collapsed', recentBeforeClose = 'collapsed', recentHeight = null, popupHeight = null;
+    // PC (900px+, not the phone layout) reuses the same ⌄/×/reopen buttons with its own state, so switching layouts
+    // never carries a phone choice to PC or back. PC starts open on every page load.
+    var desktopMedia = global.matchMedia('(min-width:900px)'), desktopMode = 'expanded', desktopBeforeClose = 'expanded';
+    function desktop() { return desktopMedia.matches && !media.matches; }
 
     function button(text, label, action) {
       var node = document.createElement('button');
@@ -154,22 +183,31 @@
     recent.prepend(recentHandle);
     var actions = document.createElement('div'); actions.className = 'birdmap-sheet-actions';
     var expand = button('⌃', '최근 제보 펼치기', function () {
-      if (recentMode === 'expanded') { recentMode = 'collapsed'; recentHeight = null; syncRecent(); }
+      if (desktop()) { desktopMode = desktopMode === 'expanded' ? 'collapsed' : 'expanded'; syncRecent(); }
+      else if (recentMode === 'expanded') { recentMode = 'collapsed'; recentHeight = null; syncRecent(); }
       else openRecent();
     });
     expand.setAttribute('aria-controls', 'recentReportsList recentContributors');
     actions.appendChild(expand);
-    actions.appendChild(button('×', '최근 제보 패널 닫기', function () {
-      recentBeforeClose = recentMode; recentMode = 'closed'; syncRecent(); reopen.focus();
-    }));
+    var close = button('×', '최근 제보 패널 닫기', function () {
+      if (desktop()) { desktopBeforeClose = desktopMode; desktopMode = 'closed'; }
+      else { recentBeforeClose = recentMode; recentMode = 'closed'; }
+      syncRecent(); reopen.focus();
+    });
+    close.title = '최근 제보 닫기';
+    actions.appendChild(close);
     document.getElementById('recentReportsTitle').appendChild(actions);
     var titleOpen = button('', '최근 출현 제보 펼치기', openRecent);
     titleOpen.className = 'birdmap-recent-title-open'; titleOpen.setAttribute('aria-controls', 'recentReportsList recentContributors');
     titleOpen.setAttribute('aria-describedby', 'recentReportsCount');
     document.getElementById('recentReportsTitle').appendChild(titleOpen);
     var reopen = button('최근 제보', '최근 출현 제보 패널 열기', function () {
-      if (activePopup && activePopup._birdmapReportLocation) map.closePopup(activePopup);
-      recentMode = recentBeforeClose; syncRecent(); expand.focus();
+      if (desktop()) desktopMode = desktopBeforeClose;
+      else {
+        if (activePopup && activePopup._birdmapReportLocation) map.closePopup(activePopup);
+        recentMode = recentBeforeClose;
+      }
+      syncRecent(); expand.focus();
     });
     reopen.id = 'birdmapRecentReopen'; reopen.setAttribute('aria-controls', 'recentReportsBox');
     document.body.appendChild(reopen);
@@ -183,11 +221,17 @@
       recent.classList.toggle('birdmap-sheet-closed', mode === 'closed');
       recent.classList.toggle('birdmap-sheet-collapsed', mode === 'collapsed');
       recent.classList.toggle('birdmap-sheet-expanded', mode === 'expanded');
-      expand.textContent = mode === 'expanded' ? '⌄' : '⌃';
-      expand.setAttribute('aria-expanded', String(mode === 'expanded'));
+      var pc = desktop(), shown = pc ? desktopMode : mode;
+      recent.classList.toggle('birdmap-desktop', pc);
+      recent.classList.toggle('birdmap-desktop-collapsed', pc && shown === 'collapsed');
+      recent.classList.toggle('birdmap-desktop-closed', pc && shown === 'closed');
+      reopen.classList.toggle('birdmap-desktop', pc);
+      expand.textContent = pc ? (shown === 'expanded' ? '−' : '+') : (shown === 'expanded' ? '⌄' : '⌃');
+      expand.setAttribute('aria-expanded', String(shown === 'expanded'));
       titleOpen.setAttribute('aria-expanded', String(mode === 'expanded'));
-      expand.setAttribute('aria-label', mode === 'expanded' ? '최근 제보 접기' : '최근 제보 펼치기');
-      reopen.hidden = mode !== 'closed';
+      expand.setAttribute('aria-label', shown === 'expanded' ? (pc ? '최근 제보 줄이기' : '최근 제보 접기') : '최근 제보 펼치기');
+      expand.title = expand.getAttribute('aria-label');
+      reopen.hidden = shown !== 'closed';
       if (mode === 'expanded' && recentHeight !== null) setHeight(recent, recentHeight);
       else recent.style.removeProperty('--birdmap-sheet-height');
       global.requestAnimationFrame(function () { measureRows(); overlayMetrics(); });

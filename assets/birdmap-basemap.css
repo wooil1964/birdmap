@@ -92,6 +92,24 @@
 .birdmap-basemap-toggle, #birdmapRecentReopen, .birdmap-recent-date,
 .birdmap-recent-anonymous, .birdmap-recent-title-open { display: none; }
 body #topBtnRow #birdmapExploreMenuToggle { display: none; }
+/* PC recent-report box (900px+, flagged by the script only outside the phone layout): − shrinks it to the title row,
+   × hides it, and a small 최근 제보 button in the same corner brings it back. */
+#recentReportsBox.birdmap-desktop #recentReportsTitle { position: relative; padding-right: 70px; }
+#recentReportsBox.birdmap-desktop .birdmap-sheet-actions { display: flex; position: absolute; top: 5px; right: 7px; gap: 4px; }
+#recentReportsBox.birdmap-desktop .birdmap-sheet-actions button { width: 28px; height: 28px; padding: 0; border: 1px solid #cfd6da; border-radius: 6px; background: #fff; color: #2f4f62; font: bold 16px/1 Arial, sans-serif; cursor: pointer; }
+#recentReportsBox.birdmap-desktop .birdmap-sheet-actions button:hover { background: #eef7fb; }
+#recentReportsBox.birdmap-desktop .birdmap-sheet-actions button:focus-visible,
+#birdmapRecentReopen.birdmap-desktop:focus-visible { outline: 2px solid #2d6f9f; outline-offset: 1px; }
+#recentReportsBox.birdmap-desktop-collapsed #recentReportsTitle { border-bottom: 0; }
+#recentReportsBox.birdmap-desktop-collapsed #recentTabs, #recentReportsBox.birdmap-desktop-collapsed #recentReportsList,
+#recentReportsBox.birdmap-desktop-collapsed #recentContributors, #recentReportsBox.birdmap-desktop-collapsed #reportArchiveOpen,
+#recentReportsBox.birdmap-desktop-closed { display: none; }
+#birdmapRecentReopen.birdmap-desktop { display: block; position: fixed; right: 30px; bottom: 60px; z-index: 9990; padding: 6px 12px; border: 1px solid #96aaa5; border-radius: 16px; background: #fff; color: #174d6f; font: bold 13px Arial, 'Malgun Gothic', sans-serif; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.16); }
+#birdmapRecentReopen.birdmap-desktop[hidden], body.rightPanelOpen #birdmapRecentReopen.birdmap-desktop,
+body.reportPicking #birdmapRecentReopen.birdmap-desktop { display: none; }
+/* Site profile dining note (site 138 only). */
+.birdmap-dining { font-size: 12px; }
+.birdmap-dining a { color: #174d6f; text-decoration: underline; text-underline-offset: 2px; }
 @media (max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px) {
   body #topUiWrap { position:fixed; top:8px; left:8px; right:56px; z-index:10001; pointer-events:none; }
   body #mapTitleBox { position:static; pointer-events:auto; width: 100%; max-width: 100%; margin-right: 0; padding: 7px 9px; border: 1px solid #d5dfdb; border-radius: 10px; line-height: 1.35; }
