@@ -1,4 +1,48 @@
-"""Normalize only the exact GPS additions approved for the 2026-10-28 feature."""
+"""Normalize exact reviewed additions before the shared historical HTML freeze checks."""
+# PR #58: only these three literal replacements may differ for the recent-report message.
+# Reconstruct the original text; never discard the surrounding title or style block.
+RECENT_REPORTS_MESSAGE_ISLANDS = (
+    (
+        '  <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span><span id="recentReportsHint">글을 클릭하면 지도에 보입니다.</span></div>\n',
+        '  <div id="recentReportsTitle"><span id="recentReportsLabel">최근 출현 제보<span id="recentReportsCount"></span></span><span id="recentReportsMessage">당신의 제보가 지도가 됩니다!</span><span id="recentReportsHint">글을 클릭하면 지도에 보입니다.</span></div>\n',
+    ),
+    (
+        '#recentReportsBox{display:none;position:fixed;right:30px;bottom:60px;z-index:9990;width:250px;max-height:48vh;\n'
+        '  flex-direction:column;box-sizing:border-box;\n',
+        '#recentReportsBox{display:none;position:fixed;right:30px;bottom:60px;z-index:9990;width:360px;max-height:48vh;\n'
+        '  flex-direction:column;box-sizing:border-box;\n',
+    ),
+    (
+        '#recentReportsTitle{display:flex;flex-wrap:wrap;align-items:baseline}\n',
+        '#recentReportsTitle{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px}\n'
+        '#recentReportsLabel{white-space:nowrap}\n'
+        '#recentReportsMessage{max-width:100%;font-size:12px;font-weight:normal;line-height:1.35;color:#39766f;word-break:keep-all;overflow-wrap:anywhere;cursor:default}\n'
+        '/* 모바일 제목의 펼침 영역 위에 놓아 안내 문구에는 클릭 동작이 없다. */\n'
+        '@media (max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px){\n'
+        '  body #recentReportsTitle{flex-wrap:wrap;align-content:center;row-gap:0;line-height:1.35}\n'
+        '  body #recentReportsMessage{flex-basis:100%;position:relative;z-index:1}\n'
+        '}\n',
+    ),
+)
+RECENT_REPORTS_MESSAGE_SIGNATURES = (
+    'recentReportsLabel', 'recentReportsMessage',
+    'z-index:9990;width:360px;max-height:48vh;',
+)
+
+
+def without_recent_reports_message(text):
+    text = text.replace('\r\n', '\n')
+    if not any(value in text for value in RECENT_REPORTS_MESSAGE_SIGNATURES):
+        return text
+    for old, new in RECENT_REPORTS_MESSAGE_ISLANDS:
+        if text.count(new) != 1 or old in text:
+            raise ValueError('Each exact PR #58 HTML/CSS replacement must occur once, without its old copy')
+        text = text.replace(new, old, 1)
+    if any(value in text for value in RECENT_REPORTS_MESSAGE_SIGNATURES):
+        raise ValueError('Unexpected recent-report message fragment outside the reviewed replacements')
+    return text
+
+
 # Each pair includes unchanged context and is unique. No wildcard removes app code.
 GPS_ISLANDS = [
     ("        siteSpotLayers[index]=birdmapSpotMarker(fixed.lat,fixed.lon,\n          (site?site.name:'')+' 출현 지점',fixed.species,reportFixedHistory[fixed.id],true);\n",
@@ -37,7 +81,8 @@ def without_report_pick_search(text):
 
 
 def without_current_location(text):
-    text = without_report_pick_search(text.replace('\r\n', '\n'))
+    # All archive, basemap, site and GPS HTML freeze checks share this entry point.
+    text = without_report_pick_search(without_recent_reports_message(text))
     signatures = ('birdmap-location', 'data-location-', 'fixedSpotId')
     if not any(value in text for value in signatures):
         return text
