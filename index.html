@@ -150,7 +150,7 @@
 <!-- 승인된 출현종 제보를 최신순으로 훑어보는 목록. PC 화면과 모바일 화면(작은 크기)에서 보인다.
      자료는 마커를 그릴 때 이미 받아 둔 /reports/approved 를 그대로 쓴다(추가 호출 없음). -->
 <div id="recentReportsBox">
-  <div id="recentReportsTitle">최근 출현 제보<span id="recentReportsCount"></span><span id="recentReportsHint">글을 클릭하면 지도에 보입니다.</span></div>
+  <div id="recentReportsTitle"><span id="recentReportsLabel">최근 출현 제보<span id="recentReportsCount"></span></span><span id="recentReportsMessage">당신의 제보가 지도가 됩니다!</span><span id="recentReportsHint">글을 클릭하면 지도에 보입니다.</span></div>
   <div id="recentTabs" role="tablist" aria-label="최근 출현 제보 보기">
     <button id="recentTabReports" type="button" role="tab" aria-selected="true" aria-controls="recentReportsList" onclick="selectRecentTab('reports')">최근 제보</button>
     <button id="recentTabContributors" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="recentContributors" onclick="selectRecentTab('contributors')">이번 달 기여자</button>
@@ -289,14 +289,21 @@ a.ebird,.btn.ebird{display:none !important}
    오른쪽 아래에 두어 왼쪽의 필터 버튼·필터 패널과 완전히 떨어뜨리고,
    Leaflet attribution 위로 띄워 하단 컨트롤도 가리지 않는다.
    z-index 는 이슈·이번주·필터 패널(9999~10000)보다 낮춰, 그 패널을 열면 위를 덮게 둔다. */
-#recentReportsBox{display:none;position:fixed;right:30px;bottom:60px;z-index:9990;width:250px;max-height:48vh;
+#recentReportsBox{display:none;position:fixed;right:30px;bottom:60px;z-index:9990;width:360px;max-height:48vh;
   flex-direction:column;box-sizing:border-box;
   background:rgba(255,255,255,.96);border:1px solid #cfd6da;border-radius:8px;
   box-shadow:0 2px 8px rgba(0,0,0,.16);font-family:Arial,'Malgun Gothic',sans-serif;overflow:hidden}
 #recentReportsTitle{flex:0 0 auto;padding:8px 11px;border-bottom:1px solid #e3e8eb;background:#f6f8f9;font-size:13px;font-weight:bold;color:#2f4f62}
 #recentReportsCount{margin-left:6px;font-weight:normal;font-size:12px;color:#5a7a8c}
 /* 제목 오른쪽 안내. 한 줄에 들어갈 폭이면 제목 옆, 좁으면 제목 아래 줄 오른쪽으로 내려간다. */
-#recentReportsTitle{display:flex;flex-wrap:wrap;align-items:baseline}
+#recentReportsTitle{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px}
+#recentReportsLabel{white-space:nowrap}
+#recentReportsMessage{max-width:100%;font-size:12px;font-weight:normal;line-height:1.35;color:#39766f;word-break:keep-all;overflow-wrap:anywhere;cursor:default}
+/* 모바일 제목의 펼침 영역 위에 놓아 안내 문구에는 클릭 동작이 없다. */
+@media (max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px){
+  body #recentReportsTitle{flex-wrap:wrap;align-content:center;row-gap:0;line-height:1.35}
+  body #recentReportsMessage{flex-basis:100%;position:relative;z-index:1}
+}
 #recentReportsHint{margin-left:auto;padding-left:6px;font-size:10px;font-weight:normal;color:#9aa5ab;white-space:nowrap}
 /* 최근 제보 | 이번 달 기여자 탭. 상자는 그대로 두고 제목 아래 한 줄만 더한다. */
 #recentTabs{flex:0 0 auto;display:flex;border-bottom:1px solid #e3e8eb;background:#fff}
