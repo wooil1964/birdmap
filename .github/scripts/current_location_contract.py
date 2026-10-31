@@ -30,8 +30,82 @@ RECENT_REPORTS_MESSAGE_SIGNATURES = (
 )
 
 
-def without_recent_reports_message(text):
+# A-grade sites (IDs 235-238, 240-245, 247; 239 and 246 reserved): the reviewed records appended to the single concat block and the
+# title text. The records are rebuilt from the reviewed source JSON, so any other change still fails the freezes.
+A_GRADE_TITLE = (
+    '최종 업데이트: 2026.10.19<span class="titleDetail"> · 수도권 21곳 추가</span> · <span id="mapTitleSiteCount">229</span>',
+    '최종 업데이트: 2026.10.31<span class="titleDetail"> · 신규 11곳 추가</span> · <span id="mapTitleSiteCount">240</span>',
+)
+
+
+def without_a_grade_sites(text):
     text = text.replace('\r\n', '\n')
+    if '"id":"235"' not in text and A_GRADE_TITLE[1] not in text:
+        return text
+    import json
+    from pathlib import Path
+    source = json.loads((Path(__file__).resolve().parents[2] / 'data/a-grade-birding-sites-20261031.json').read_text(encoding='utf-8'))
+    rows = [json.dumps(r['site'], ensure_ascii=False, separators=(',', ':')) for r in source['records']]
+    block = ',\n' + ''.join('  ' + row + (',\n' if i < len(rows) - 1 else '\n') for i, row in enumerate(rows)) + ']);\n'
+    if text.count(block) != 1 or text.count(A_GRADE_TITLE[1]) != 1 or A_GRADE_TITLE[0] in text:
+        raise ValueError('Exact A-grade site block and title must each occur once')
+    text = text.replace(block, ']);\n', 1).replace(A_GRADE_TITLE[1], A_GRADE_TITLE[0], 1)
+    if any('"id":"%s"' % r['site']['id'] in text for r in source['records']) or '"id":"239"' in text:
+        raise ValueError('Unexpected A-grade site record outside the reviewed block')
+    for old, new in A_GRADE_ENGINE_ISLANDS:
+        # Each new text contains its old text, so check that exactly one old copy remains after reverting.
+        if text.count(new) != 1:
+            raise ValueError('Each exact A-grade engine change must occur once')
+        text = text.replace(new, old, 1)
+        if text.count(old) != 1:
+            raise ValueError('A-grade engine change must replace its only original copy')
+    if any(value in text for value in A_GRADE_ENGINE_SIGNATURES):
+        raise ValueError('Unexpected A-grade engine fragment outside the reviewed changes')
+    return text
+
+
+# Popup engine changes for the A-grade draft: tide notices that never point at missing monthly data, and
+# evidence-pending records (speciesEvidence/birdingTypeExplicit) that never name species groups. Existing records
+# carry neither field, so their output is unchanged except the monthly hint, now shown only for monthly sites.
+A_GRADE_ENGINE_ISLANDS = (
+    ("function v25EnvironmentLabel(site){\n",
+     "function v25EnvironmentLabel(site){\n"
+     "  // 명시 유형을 가진 레코드는 이름·환경 문구 속 낱말(예: 번식섬)로 유형을 추정하지 않는다.\n"
+     "  if(site.birdingTypeExplicit===true&&site.environmentBirdingLabel)return String(site.environmentBirdingLabel);\n"),
+    ("  if(environment==='갯벌탐조')return '만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.';\n",
+     "  if(environment==='갯벌탐조'&&site.speciesEvidence==='근거 부족')return '만조 전후 갯벌 노출과 물때를 함께 확인하세요.';\n"
+     "  if(environment==='갯벌탐조')return '만조 전후 도요·물떼새 탐조에 좋은 조건인지 확인하세요.';\n"),
+    ("  if(/저수지탐조|호수탐조|습지탐조/.test(environment))return '수면이 안정적이면 물새 관찰에 유리합니다.';\n",
+     "  if(/저수지탐조|호수탐조|습지탐조/.test(environment)&&site.speciesEvidence==='근거 부족')return '수면이 안정적이면 원거리 관찰에 유리합니다.';\n"
+     "  if(/저수지탐조|호수탐조|습지탐조/.test(environment))return '수면이 안정적이면 물새 관찰에 유리합니다.';\n"),
+    ("  if(environment==='갯벌탐조')return '도요·물떼새와 수변 조류를 중심으로 관찰하는 곳입니다.';\n",
+     "  // 날짜 있는 종 기록이 없는 탐조지는 서식지 유형만으로 관찰 조류를 단정하지 않는다.\n"
+     "  if(site.speciesEvidence==='근거 부족')return '최근 종 관찰 기록을 확인하는 중인 곳입니다. 출현종은 현장 관찰 기록으로 확인하세요.';\n"
+     "  if(environment==='갯벌탐조')return '도요·물떼새와 수변 조류를 중심으로 관찰하는 곳입니다.';\n"),
+    ("  var prefix=month+'월 '+season+'철에는 ';\n",
+     "  var prefix=month+'월 '+season+'철에는 ';\n"
+     "  if(site.speciesEvidence==='근거 부족')return prefix+'서식지 특성만 참고하고, 실제 출현종은 최근 관찰 기록으로 확인하세요.';\n"),
+    ("  if(daily)return daily;\n"
+     "  return dailyIsToday?null:{staleDaily:true,staleDailyDate:tideTodayDateText(),monthFallbackMissing:true};\n",
+     "  if(daily)return daily;\n"
+     "  return dailyIsToday?null:{staleDaily:true,staleDailyDate:tideTodayDateText(),monthFallbackMissing:true,siteId:String(site.id)};\n"),
+    ("  return '<div class=\"smallText v26TideFallbackMissing\">오늘 조석자료를 불러오지 못했습니다. 월간 조석표를 확인해 주세요.</div>';\n",
+     "  // 월간 조석표가 있는 탐조지에만 월간 확인을 안내한다(버튼 표시 기준과 같음).\n"
+     "  var month=MONTH_TIDE_SITE_IDS.has(String(tide.siteId))?' 월간 조석표를 확인해 주세요.':'';\n"
+     "  return '<div class=\"smallText v26TideFallbackMissing\">오늘 조석자료를 불러오지 못했습니다.'+month+'</div>';\n"),
+    ("function v24TideHtml(tide){\n",
+     "function v24TideHtml(tide,site){\n"
+     "  // 오늘 일별 파일에 이 탐조지 항목 자체가 없으면(등록 직후 첫 생성 전 등) 준비 중/미제공으로 구분한다.\n"
+     "  if(!tide&&site&&tideTodayIsCurrent()&&tideToday&&tideToday.sites&&!tideToday.sites[String(site.id)])\n"
+     "    return '<div class=\"v24BriefingItem v24ProfileWide\"><b>조석:</b> '+(site.tideUse==='예'?'조석 자료 준비 중':'조석 자료 미제공')+'</div>';\n"),
+    ("  if(site.showTide)typeItems+=v24TideHtml(tide)+monthTideButtonHtml(site);\n",
+     "  if(site.showTide)typeItems+=v24TideHtml(tide,site)+monthTideButtonHtml(site);\n"),
+)
+A_GRADE_ENGINE_SIGNATURES = ('birdingTypeExplicit', 'speciesEvidence', 'tide.siteId', '조석 자료 준비 중', 'v24TideHtml(tide,site)')
+
+
+def without_recent_reports_message(text):
+    text = without_a_grade_sites(text)
     if not any(value in text for value in RECENT_REPORTS_MESSAGE_SIGNATURES):
         return text
     for old, new in RECENT_REPORTS_MESSAGE_ISLANDS:

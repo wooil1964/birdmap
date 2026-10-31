@@ -36,7 +36,7 @@ try{
   });
   const page=await context.newPage();page.on('pageerror',e=>errors.push({width,message:e.message}));
   await page.goto(origin+'/',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>typeof markerRegistry!=='undefined'&&Object.keys(markerRegistry).length===229,{timeout:40000});
+  await page.waitForFunction(()=>typeof markerRegistry!=='undefined'&&Object.keys(markerRegistry).length===240,{timeout:40000});
   const reviewed=JSON.parse(readFileSync(join(ROOT,'data/metro-birding-sites-20261019.json'),'utf8'));
   for(const record of reviewed.records){
    const site=record.site,id=site.id,word=site.name,spring=site.seasons.length===0||site.seasons.includes('봄'),winter=site.seasons.length===0||site.seasons.includes('겨울'),bird=site.birds.split(',')[0];
@@ -55,7 +55,7 @@ try{
    },{id,word});
    await page.waitForFunction(()=>document.querySelector('.leaflet-popup')?.textContent.includes('탐조 팁'));
    result.popup=await page.locator('.leaflet-popup').innerHTML();
-   assert.equal(result.count,229);assert.equal(result.unique,229);
+   assert.equal(result.count,240);assert.equal(result.unique,240);
    assert.deepEqual(result.marker,result.expected);assert.ok(result.search.includes(word));
    assert.equal(result.springVisible,spring,id);assert.equal(result.winterVisible,winter,id);
    assert.ok(result.profile.includes('접근'));if(bird)assert.ok(result.profile.includes(bird),id);

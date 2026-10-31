@@ -1,6 +1,7 @@
 // Runs registry-ops.mjs plan -> apply -> rollback against a local Miniflare D1 by routing its
 // Cloudflare REST calls to the local database. Never contacts Cloudflare.
 // Usage: node docs/metro-sites-20261019/ops-local.mjs <node_modules dir containing miniflare>
+import {execFileSync} from 'node:child_process';
 import {createRequire} from 'node:module';import path from 'node:path';import fs from 'node:fs';import os from 'node:os';
 import assert from 'node:assert/strict';
 import {prepareSiteSeed} from '../../reports-api/tools/sites-seed.mjs';
@@ -14,6 +15,10 @@ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'metro-ops-'));
 // d1-rest reads the Wrangler login from %APPDATA%; give it a dummy token so no real credential is read (and Linux CI works).
 process.env.APPDATA=tmp;fs.mkdirSync(path.join(tmp,'xdg.config/.wrangler/config'),{recursive:true});
 fs.writeFileSync(path.join(tmp,'xdg.config/.wrangler/config/default.toml'),'oauth_token = "local-test-only"\n');
+// The Metro change is a historical 208->229 append; later registrations must not alter its replay input.
+const historicalHtml=execFileSync('git',['show','04eee689ca57db967c80623547fa1b6d8aeb86cd:index.html'],{encoding:'utf8',maxBuffer:20*1024*1024});
+const originalRead=fs.readFileSync;
+fs.readFileSync=function(file,...args){return file==='index.html'?historicalHtml:originalRead.call(this,file,...args);};
 try{
   const db=await mf.getD1Database('DB');
   for(const s of [table('sites'),table('raw_submissions'),table('checklists'),

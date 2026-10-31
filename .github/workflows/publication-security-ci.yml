@@ -114,6 +114,7 @@ jobs:
           python .github/scripts/test_central_sites.py
           python .github/scripts/test_jeju_sites.py
           python .github/scripts/test_metro_sites.py
+          python .github/scripts/test_a_grade_sites.py
           python .github/scripts/test_central_registry_append.py
           python .github/scripts/test_weather.py
           python .github/scripts/test_validator_time_contract.py
@@ -153,6 +154,8 @@ jobs:
           node docs/jeju-sites-20261018/ops-local.mjs "$PWD/.ci-toolchain/node_modules"
           node docs/metro-sites-20261019/native-registry.mjs "$PWD/.ci-toolchain/node_modules"
           node docs/metro-sites-20261019/ops-local.mjs "$PWD/.ci-toolchain/node_modules"
+          node docs/a-grade-sites-20261031/native-registry.mjs "$PWD/.ci-toolchain/node_modules"
+          node docs/a-grade-sites-20261031/ops-local.mjs "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_fence.mjs . .ci-results/native-fence "$PWD/.ci-toolchain/node_modules"
           node docs/p1-paid-deployment/writer-fence-review/native_cas_current.mjs . .ci-results/native-cas "$PWD/.ci-toolchain/node_modules"
           ISSUE28_OUTPUT=.ci-results/issue28-native node docs/issue28/native.mjs "$PWD/.ci-toolchain/node_modules"

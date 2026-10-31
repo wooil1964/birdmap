@@ -41,7 +41,7 @@ async function inView(page){return page.evaluate(()=>{
   try{
    await page.goto(origin,{waitUntil:'load'});await page.waitForFunction(()=>window.birdmapLocation&&document.querySelectorAll('#recentReportsList .recentReportItem').length>=4);await page.waitForTimeout(800);
    check(await page.evaluate(()=>__testGps.once.length===0),label+' no automatic GPS request');
-   check(await page.evaluate(()=>siteData.length===229&&new Set(siteData.map(s=>s.id)).size===229),label+' 229 unique sites');
+   check(await page.evaluate(()=>siteData.length===240&&new Set(siteData.map(s=>s.id)).size===240),label+' 240 unique sites');
    check(await page.evaluate(()=>siteData.every(s=>{const l=window[s.markerVar],root=v23PopupContent(s,l.getPopup()._birdmapDesktopContent||l.getPopup().getContent());return root.querySelectorAll('[data-location-site]').length===1&&root.querySelectorAll('a.kakao').length===1;})),label+' every site profile including 189/190/islands has one GPS and one Kakao');
    check(await page.locator('#recentReportsList .recentReportItem').count()===15,label+' recent 15 retained');
    const control=page.locator('#birdmapGpsLocate'),r=await control.boundingBox();check(r.width>=44&&r.height>=44&&r.x>=0&&r.y>=0&&r.y+r.height<=height,label+' independent edge GPS visible');

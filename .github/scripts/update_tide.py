@@ -50,6 +50,10 @@ ADDITIONAL_TIDE_SITES = (
     {"id": "185", "name": "사천 광포만", "stationName": "삼천포", "stationCode": "DT_0061"},
     {"id": "188", "name": "이천항", "stationName": "부산", "stationCode": "DT_0005", "ruleKey": "pelagic_wave_tide"},
     {"id": "193", "name": "월포리해변", "stationName": "장항", "stationCode": "DT_0024"},
+    {"id": "236", "name": "가로림만·웅도", "stationName": "대산", "stationCode": "DT_0017", "ruleKey": "mudflat_low_tide"},
+    {"id": "242", "name": "거문도", "stationName": "거문도", "stationCode": "DT_0031", "ruleKey": "island_ferry_tide"},
+    {"id": "243", "name": "광양 망덕포구·섬진강 하구", "stationName": "광양", "stationCode": "DT_0049", "ruleKey": "coastal_tide"},
+    {"id": "245", "name": "소매물도", "stationName": "소매물도", "stationCode": "SO_0578", "ruleKey": "island_ferry_tide"},
 )
 FORECAST_STATION_OVERRIDES = {
     "17": ("안흥", "DT_0067"),

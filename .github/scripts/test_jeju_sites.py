@@ -30,13 +30,13 @@ class JejuSitesTests(unittest.TestCase):
         self.assertEqual(sites[:200],old)  # Full records, not selected fields.
         self.assertEqual(sites[200:208],[r['site'] for r in SOURCE['records']])
         self.assertEqual([s['id'] for s in sites[200:208]],NEW_IDS)
-        self.assertEqual(len(sites),229)
+        self.assertEqual(len(sites),240)
         self.assertEqual(len([s for s in sites if s['sido']=='제주']),19)
         for s in sites[200:208]:self.assertEqual(set(s),set(old[-1]))
 
     def test_public_access_coordinates_worker_and_all_map_links(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())
-        self.assertEqual(report['commonIdCount'],229)
+        self.assertEqual(report['commonIdCount'],240)
         self.assertFalse(any(v for v in report.values() if isinstance(v,list)),report)
         expected=[(33.550053,126.69415),(33.24452585,126.5596972),(33.430924,126.595761),(33.282955,126.27152),(33.491318,126.811386),(33.511246,126.898868),(33.473698,126.686472),(33.48976,126.792654)]
         self.assertEqual(len(SOURCE['records']),len(expected))
@@ -127,7 +127,16 @@ class JejuSitesTests(unittest.TestCase):
                      'reports-api/src/site-picker.js','reports-api/tools/sites-seed.mjs']:
             automatic=file.endswith(('today.json','week.json','month.json','notices.json'))
             ref=automatic_data_base(ROOT) if automatic else SOURCE['baselineCommit']
-            self.assertEqual((ROOT/file).read_bytes().replace(b'\r\n',b'\n'),
+            current=(ROOT/file).read_bytes().replace(b'\r\n',b'\n')
+            if file=='tide_station_mapping.json':
+                # A-grade draft: only the four reviewed tide links and their derived counts may differ.
+                current=json.loads(current)
+                for sid in ['236','242','243','245']:
+                    self.assertEqual(current['sites'].pop(sid)['mappingVersion'],2)
+                current.update(siteCount=current['siteCount']-4,mappedCount=current['mappedCount']-4,reviewCount=current['reviewCount']-4)
+                self.assertEqual(current,json.loads(subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT)),file)
+                continue
+            self.assertEqual(current,
               subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT).replace(b'\r\n',b'\n'),file)
         # Everything outside the single literal concat block stays byte-equivalent after newline normalization.
         current=(ROOT/'index.html').read_text(encoding='utf-8')
