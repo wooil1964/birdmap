@@ -45,6 +45,10 @@ jobs:
         env:
           REPORT_PICK_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/report-pick-search
         run: node docs/report-pick-search/browser.cjs
+      - name: PC recent-report minimize/close/reopen, phone sheet and 산이면 dining note (synthetic API)
+        env:
+          RECENT_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/recent-reports-controls
+        run: node docs/recent-reports-controls/browser.cjs
       - name: Upload GPS browser diagnostics
         if: always()
         uses: actions/upload-artifact@v4
