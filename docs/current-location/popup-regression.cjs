@@ -164,7 +164,6 @@ async function desktopTagScenarios(page, label) {
   if (await page.evaluate(() => matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches)) return;
   for (const [kind, dlat, dlng] of [['near', 0.0003, 0], ['north', 0.004, 0], ['south-east', -0.003, 0.004]]) {
     await openSite(page); const baseline = await snapshot(page);
-       await compactSiteSheet(page, label);
     const name = await page.evaluate(() => siteData.find(s => s.id === '195').name);
     const position = await page.evaluate(([dlat, dlng]) => { const p = __marker.getLatLng(); return { latitude: p.lat + dlat, longitude: p.lng + dlng, accuracy: 25 }; }, [dlat, dlng]);
     // A 30 m line is a few pixels long, so wait for it to exist rather than to look visible.
@@ -421,6 +420,7 @@ async function followupRegressions(page, label, width) {
         return { own: !!d, descriptor: d || null, value: p.options.autoPan, offset: Object.getOwnPropertyDescriptor(p.options, 'offset') || null, tag: false, gps: false };
       });
       await openSite(page); const baseline = await snapshot(page);
+      await compactSiteSheet(page, label);
       await start(page); let held = await snapshot(page);
       check(held.value === false && held.gps, label + ' guidance temporarily suppresses autoPan and adds GPS class', held);
       await compactAndSparkle(page, label, baseline);
@@ -434,7 +434,7 @@ async function followupRegressions(page, label, width) {
       const closed = await snapshot(page);
       check(!closed.sheet && sameOptions(closed, desktop), label + ' close releases GPS and mobile-sheet holds', { before: desktop, after: closed });
       await openSite(page); check(sameOptions(await snapshot(page), baseline), label + ' reopening preserves original popup settings');
-       await compactSiteSheet(page, label + ' reopened');
+      await compactSiteSheet(page, label + ' reopened');
       if (width === 1440) {
         await page.evaluate(() => {
           const m = map_7010a44f6ac2025090f0fe07508ed485; m.closePopup();
