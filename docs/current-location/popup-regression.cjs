@@ -58,6 +58,119 @@ async function openSite(page, siteId = '195') {
   }, siteId);
   await page.waitForTimeout(450);
 }
+// Real marker clicks must place the geographic anchor above the measured fixed sheet once,
+// without changing coordinates, zoom, or taking control again after a user pans.
+async function mobileMarkerPanRegression(page, label, width) {
+  if (![320, 360, 390, 844].includes(width)) return;
+  const original = await page.evaluate(() => {
+    birdmapLocation.clear(); map_7010a44f6ac2025090f0fe07508ed485.closePopup(); setBirdmapPanelOpen(false);
+    return ['195', '114'].map(id => {
+      const s = siteData.find(s => s.id === id), m = window[s.markerVar];
+      return { id, point: m.getLatLng(), anchor: m.options.icon.options.iconAnchor };
+    });
+  });
+  async function clickSite(id) {
+    const click = await page.evaluate(id => {
+      const s = siteData.find(s => s.id === id), marker = window[s.markerVar], map = map_7010a44f6ac2025090f0fe07508ed485;
+      marker.addTo(map); map.setView(marker.getLatLng(), 13, { animate: false });
+      const c = map.getContainer().getBoundingClientRect(), sheet = map._popup?.getElement(), r = sheet?.classList.contains('birdmap-mobile-popup') && sheet.getBoundingClientRect();
+      const p = map.latLngToContainerPoint(marker.getLatLng()), target = L.point(map.getSize().x * .63, r ? r.top - c.top - 65 : map.getSize().y * .58);
+      map.panBy(p.subtract(target), { animate: false });
+      const b = marker.getElement().getBoundingClientRect();
+      window.__marker = marker;
+      return { x: (b.left + b.right) / 2, y: (b.top + b.bottom) / 2 };
+    }, id);
+    await page.mouse.click(click.x, click.y);
+    await page.waitForFunction(() => map_7010a44f6ac2025090f0fe07508ed485._popup === __marker.getPopup());
+    await page.evaluate(() => { window.__popup = __marker.getPopup(); });
+    await page.waitForTimeout(150);
+  }
+  async function aligned(name) {
+    const v = await page.evaluate(() => {
+      const map = map_7010a44f6ac2025090f0fe07508ed485, c = map.getContainer().getBoundingClientRect(), r = __popup.getElement().getBoundingClientRect(), p = map.latLngToContainerPoint(__marker.getLatLng());
+      return { x: p.x, y: p.y, targetX: (r.left + r.right) / 2 - c.left, targetY: r.top - c.top - 30,
+        gap: r.top - c.top - p.y, zoom: map.getZoom(), sheet: { left: r.left, top: r.top, right: r.right, height: r.height }, map: { left: c.left, top: c.top, width: c.width, height: c.height } };
+    });
+    check(Math.abs(v.x - v.targetX) <= 2 && Math.abs(v.y - v.targetY) <= 2 && v.zoom === 13,
+      label + ' ' + name + ' marker is centered 30px above the actual sheet without zooming', v);
+    return v;
+  }
+  await clickSite('195'); await aligned('first click');
+  await page.screenshot({ path: path.join(OUT, 'marker-above-sheet-first-' + label + '.png') });
+  const drag = await page.evaluate(() => {
+    const m = map_7010a44f6ac2025090f0fe07508ed485, c = m.getContainer(), r = c.getBoundingClientRect(), s = __popup.getElement().getBoundingClientRect(), p = m.project(m.getCenter(), m.getZoom());
+    const clear = (x, y) => { const n = document.elementFromPoint(x, y); return n && c.contains(n) && !n.closest('.leaflet-control,.leaflet-marker-icon,.leaflet-popup,#topUiWrap,#birdmapPanel,#birdmapGps,.birdmap-basemap'); };
+    for (const y of [s.top - 60, s.top - 95, s.top - 130]) for (const x of [r.left + r.width * .25, r.left + r.width * .65]) {
+      if (clear(x, y) && clear(x + 37, y - 19)) return { x, y, before: { x: p.x, y: p.y } };
+    }
+    return null;
+  });
+  check(!!drag, label + ' an unobstructed map area is available for a real user drag', drag);
+  await page.mouse.move(drag.x, drag.y); await page.mouse.down(); await page.mouse.move(drag.x + 37, drag.y - 19, { steps: 8 }); await page.mouse.up();
+  await page.waitForTimeout(700); // Let Leaflet's normal drag inertia finish before checking for later recentering.
+  const panned = await page.evaluate(() => { const m = map_7010a44f6ac2025090f0fe07508ed485, p = m.project(m.getCenter(), m.getZoom()); return { x: p.x, y: p.y }; });
+  check(Math.hypot(panned.x - drag.before.x, panned.y - drag.before.y) > 8, label + ' real map drag moves away from selection alignment', { before: drag.before, panned });
+  await page.waitForTimeout(850);
+  const afterPan = await page.evaluate(() => { const m = map_7010a44f6ac2025090f0fe07508ed485, p = m.project(m.getCenter(), m.getZoom()); return { x: p.x, y: p.y }; });
+  check(Math.abs(afterPan.x - panned.x) <= 1 && Math.abs(afterPan.y - panned.y) <= 1, label + ' later manual pan is not pulled back', { panned, afterPan });
+  await clickSite('114'); await aligned('another marker click');
+  await page.screenshot({ path: path.join(OUT, 'marker-above-sheet-other-' + label + '.png') });
+  await page.evaluate(() => map_7010a44f6ac2025090f0fe07508ed485.closePopup());
+  await clickSite('114'); await aligned('reopened marker click');
+  await page.screenshot({ path: path.join(OUT, 'marker-above-sheet-reopen-' + label + '.png') });
+  // The sheet schedules its one frame before these microtasks run. A later gesture or GPS
+  // request must cancel/skip that pending pan rather than win the viewport back in the frame.
+  for (const kind of ['input', 'GPS']) {
+    await page.evaluate(kind => {
+      const m = map_7010a44f6ac2025090f0fe07508ed485; m.closePopup();
+      m.once('popupopen', e => queueMicrotask(() => {
+        m.stop();
+        const originalPan = m.panBy, pans = [];
+        m.panBy = function () { pans.push(Array.from(arguments[0])); return originalPan.apply(this, arguments); };
+        if (kind === 'input') m.getContainer().dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Shift' }));
+        else {
+          const p = e.popup._source.getLatLng(), target = { layer: e.popup._source, point: { lat: p.lat, lng: p.lng }, label: '합성 공개 목적지' };
+          birdmapLocation.guide(() => target, e.popup);
+        }
+        const p = m.project(m.getCenter(), m.getZoom());
+        window.__selectionRace = { originalPan, pans, before: { x: p.x, y: p.y }, zoom: m.getZoom() };
+      }));
+    }, kind);
+    await page.evaluate(() => {
+      const m = map_7010a44f6ac2025090f0fe07508ed485, s = siteData.find(s => s.id === '195'), marker = window[s.markerVar];
+      marker.addTo(m); m.setView(marker.getLatLng(), 13, { animate: false }); marker.openPopup();
+      window.__marker = marker; window.__popup = marker.getPopup();
+    });
+    await page.waitForTimeout(150);
+    const race = await page.evaluate(() => {
+      const m = map_7010a44f6ac2025090f0fe07508ed485, r = __selectionRace, p = m.project(m.getCenter(), m.getZoom()); m.panBy = r.originalPan;
+      return { before: r.before, after: { x: p.x, y: p.y }, pans: r.pans, zoomBefore: r.zoom, zoomAfter: m.getZoom(), guiding: birdmapLocation.state().guiding };
+    });
+    check(race.pans.length === 0 && race.zoomBefore === race.zoomAfter && Math.abs(race.before.x - race.after.x) <= 1 && Math.abs(race.before.y - race.after.y) <= 1 && (kind !== 'GPS' || race.guiding),
+      label + ' ' + kind + ' started after sheet layout wins over the pending selection pan', race);
+    await page.evaluate(() => birdmapLocation.clear());
+  }
+  await openSite(page, '114');
+  await start(page);
+  const guide = await page.evaluate(() => {
+    const m = map_7010a44f6ac2025090f0fe07508ed485, p = m.project(m.getCenter(), m.getZoom());
+    window.__selectionGuideMoves = 0; window.__selectionGuideMove = () => __selectionGuideMoves++; m.on('movestart', __selectionGuideMove);
+    return { x: p.x, y: p.y, zoom: m.getZoom() };
+  });
+  await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
+  await page.waitForTimeout(200);
+  const held = await page.evaluate(() => {
+    const m = map_7010a44f6ac2025090f0fe07508ed485, p = m.project(m.getCenter(), m.getZoom()); m.off('movestart', __selectionGuideMove);
+    return { x: p.x, y: p.y, zoom: m.getZoom(), moves: __selectionGuideMoves, guiding: birdmapLocation.state().guiding };
+  });
+  check(held.guiding && held.moves === 0 && held.zoom === guide.zoom && Math.abs(held.x - guide.x) <= 1 && Math.abs(held.y - guide.y) <= 1,
+    label + ' opening details during active GPS makes no selection pan', { guide, held });
+  const unchanged = await page.evaluate(() => ['195', '114'].map(id => {
+    const s = siteData.find(s => s.id === id), m = window[s.markerVar]; return { id, point: m.getLatLng(), anchor: m.options.icon.options.iconAnchor };
+  }));
+  check(JSON.stringify(original) === JSON.stringify(unchanged), label + ' marker coordinates and icon anchors remain unchanged', { original, unchanged });
+  await page.evaluate(() => { birdmapLocation.clear(); map_7010a44f6ac2025090f0fe07508ed485.closePopup(); });
+}
 async function start(page, pending = false, position = null) {
   const before = await page.evaluate(() => __mock.geo.length);
   await page.getByRole('button', { name: '내 위치 찾기', exact: true }).click();
@@ -389,7 +502,7 @@ async function followupRegressions(page, label, width) {
   const origin = 'http://127.0.0.1:' + server.address().port;
   browser = await pw.chromium.launch({ executablePath: process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
   const widths = process.env.POPUP_TEST_WIDTHS && process.env.POPUP_TEST_WIDTHS.split(',').map(Number);
-  for (const [width, height, touch] of [[1440, 1000, false], [1440, 900, false], [1280, 720, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
+  for (const [width, height, touch] of [[1440, 1000, false], [1440, 900, false], [1280, 720, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [360, 800, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
     const label = width + 'x' + height, page = await browser.newPage({ viewport: { width, height }, isMobile: touch, hasTouch: touch });
     page.on('pageerror', error => errors.push(label + ': ' + error.message));
     await page.addInitScript({ content: '(' + fixture + ')();(' + syntheticReportFixture.toString() + ')();' });
@@ -419,6 +532,7 @@ async function followupRegressions(page, label, width) {
         const p = window[siteData.find(s => s.id === '195').markerVar].getPopup(), d = Object.getOwnPropertyDescriptor(p.options, 'autoPan');
         return { own: !!d, descriptor: d || null, value: p.options.autoPan, offset: Object.getOwnPropertyDescriptor(p.options, 'offset') || null, tag: false, gps: false };
       });
+      await mobileMarkerPanRegression(page, label, width);
       await openSite(page); const baseline = await snapshot(page);
       await compactSiteSheet(page, label);
       await start(page); let held = await snapshot(page);
