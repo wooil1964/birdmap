@@ -83,6 +83,31 @@ async function layout(page, name) {
   if (state.sheet) check(state.top >= -1 && state.bottom <= await page.evaluate(() => innerHeight + 1), name + ' sheet remains within viewport', state);
   check(await page.evaluate(() => { const r = document.querySelector('#birdmapGpsLocate').getBoundingClientRect(); return r.width >= 44 && r.height >= 44 && r.left >= 0 && r.right <= innerWidth; }), name + ' GPS control remains usable');
 }
+// Verify a site opens compact, expands, and folds back without hiding its title.
+async function compactSiteSheet(page, label) {
+  const start = await page.evaluate(() => {
+    const node = __popup.getElement(); if (!node.classList.contains('birdmap-mobile-popup')) return null;
+    const vh = visualViewport ? visualViewport.height : innerHeight, title = document.getElementById('mapTitleBox').getBoundingClientRect();
+    const low = Math.min(180, vh * .45), high = Math.max(180, Math.min(vh - 80, vh - title.bottom - 16));
+    const small = Math.min(240, Math.max(180, innerHeight * .30)), button = node.querySelector('.birdmap-popup-actions button:first-child');
+    return { height: node.getBoundingClientRect().height, compact: Math.round(Math.max(low, Math.min(high, small))),
+      max: Math.round(high), label: button.textContent, expanded: button.getAttribute('aria-expanded') };
+  });
+  if (!start) return;
+  check(Math.abs(start.height - start.compact) <= 2 && start.height <= 241 && start.label === '펼치기' && start.expanded === 'false',
+    label + ' initial site popup is compact', start);
+  await page.getByRole('button', { name: '상세정보 펼치기', exact: true }).click();
+  const full = await page.evaluate(() => ({ height: __popup.getElement().getBoundingClientRect().height,
+    label: __popup.getElement().querySelector('.birdmap-popup-actions button:first-child').textContent }));
+  check(Math.abs(full.height - start.max) <= 2 && full.height >= start.height && full.label === '접기', label + ' site popup expands', full);
+  await page.evaluate(() => { const n = __popup.getElement().querySelector('.leaflet-popup-content'); n.scrollTop = n.scrollHeight; });
+  await page.getByRole('button', { name: '상세정보 접기', exact: true }).click();
+  const folded = await page.evaluate(() => ({ height: __popup.getElement().getBoundingClientRect().height,
+    label: __popup.getElement().querySelector('.birdmap-popup-actions button:first-child').textContent,
+    scroll: __popup.getElement().querySelector('.leaflet-popup-content').scrollTop }));
+  check(Math.abs(folded.height - start.compact) <= 2 && folded.label === '펼치기' && folded.scroll === 0,
+    label + ' site popup refolds with top details visible', folded);
+}
 // Both GPS endpoints and the distance label must be on the map and outside the folded details.
 async function guideView(page) {
   return page.evaluate(() => {
@@ -139,6 +164,7 @@ async function desktopTagScenarios(page, label) {
   if (await page.evaluate(() => matchMedia('(max-width:700px), (hover:none) and (pointer:coarse) and (max-width:1023px) and (max-height:500px)').matches)) return;
   for (const [kind, dlat, dlng] of [['near', 0.0003, 0], ['north', 0.004, 0], ['south-east', -0.003, 0.004]]) {
     await openSite(page); const baseline = await snapshot(page);
+       await compactSiteSheet(page, label);
     const name = await page.evaluate(() => siteData.find(s => s.id === '195').name);
     const position = await page.evaluate(([dlat, dlng]) => { const p = __marker.getLatLng(); return { latitude: p.lat + dlat, longitude: p.lng + dlng, accuracy: 25 }; }, [dlat, dlng]);
     // A 30 m line is a few pixels long, so wait for it to exist rather than to look visible.
@@ -408,6 +434,7 @@ async function followupRegressions(page, label, width) {
       const closed = await snapshot(page);
       check(!closed.sheet && sameOptions(closed, desktop), label + ' close releases GPS and mobile-sheet holds', { before: desktop, after: closed });
       await openSite(page); check(sameOptions(await snapshot(page), baseline), label + ' reopening preserves original popup settings');
+       await compactSiteSheet(page, label + ' reopened');
       if (width === 1440) {
         await page.evaluate(() => {
           const m = map_7010a44f6ac2025090f0fe07508ed485; m.closePopup();
