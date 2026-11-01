@@ -73,6 +73,8 @@
     <script src="assets/birdmap-species-search.js"></script>
     <link rel="stylesheet" href="assets/birdmap-location.css"/>
     <script src="assets/birdmap-location.js"></script>
+    <link rel="stylesheet" href="assets/birdmap-markers.css">
+    <script src="assets/birdmap-markers.js"></script>
 </head>
 <body>
     
@@ -1987,8 +1989,9 @@ function spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDes
 }
 
 function birdmapSpotMarker(lat,lon,title,species,history,undatedNote,locationHidden,kakaoDest){
+  if(typeof birdmapMarkers!=='undefined')birdmapMarkers.prepare();
   var names=(species||[]).map(escapeHtml).join(' · ');
-  return L.circleMarker([lat,lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85})
+  return L.circleMarker([lat,lon],{radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85,birdmapMarkerKind:'report',pane:typeof birdmapMarkers!=='undefined'?'birdmap-report-markers':'overlayPane'})
     .bindPopup(spotPopupHtml(title,species,history,undatedNote,locationHidden,kakaoDest),{maxWidth:300})
     .bindTooltip(names,{sticky:true});
 }
@@ -2011,9 +2014,10 @@ function pendingPopupHtml(spot){
 
 /* 황색 점. 승인된 붉은 점과 색·테두리로 구분하고, 기존 탐조지 마커와도 모양이 다르다. */
 function birdmapPendingMarker(spot){
+  if(typeof birdmapMarkers!=='undefined')birdmapMarkers.prepare();
   var names=(spot.species||[]).map(escapeHtml).join(' · ');
   return L.circleMarker([spot.lat,spot.lon],
-    {radius:5,color:'#a4700a',weight:2,fillColor:'#f7c948',fillOpacity:.9})
+    {radius:5,color:'#a4700a',weight:2,fillColor:'#f7c948',fillOpacity:.9,birdmapMarkerKind:'report',pane:typeof birdmapMarkers!=='undefined'?'birdmap-report-markers':'overlayPane'})
     .bindPopup(pendingPopupHtml(spot),{maxWidth:300})
     .bindTooltip(names+' · 승인 대기',{sticky:true});
 }
@@ -2071,23 +2075,7 @@ function scaledMarkerPoint(point,scale){
 }
 
 function applyResponsiveMarkerSizes(){
-  var mobile=window.matchMedia('(max-width: 700px)').matches;
-  siteData.forEach(function(site){
-    var marker=markerRegistry[markerKey(site)],icon=marker&&marker.options.icon;
-    if(!icon)return;
-    if(!icon._birdmapDesktopMetrics){
-      icon._birdmapDesktopMetrics={
-        iconSize:markerPoint(icon.options.iconSize),
-        iconAnchor:markerPoint(icon.options.iconAnchor),
-        popupAnchor:markerPoint(icon.options.popupAnchor)
-      };
-    }
-    var original=icon._birdmapDesktopMetrics;
-    icon.options.iconSize=mobile?scaledMarkerPoint(original.iconSize,.74):markerPoint(original.iconSize);
-    icon.options.iconAnchor=mobile?scaledMarkerPoint(original.iconAnchor,.74):markerPoint(original.iconAnchor);
-    icon.options.popupAnchor=mobile?scaledMarkerPoint(original.popupAnchor,.74):markerPoint(original.popupAnchor);
-    marker.setIcon(icon);
-  });
+  birdmapMarkers.refreshSites();
 }
 
 function popupContentElement(content){

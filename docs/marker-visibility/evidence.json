@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-01 KST",
+  "base": "df900110bb21be678e096fa3ded905359105b7ea",
+  "branch": "codex/marker-visibility-pc-mobile",
+  "matrix": [
+    "1440x900",
+    "1440x1100",
+    "320x568",
+    "360x740",
+    "390x844",
+    "568x320",
+    "740x360",
+    "844x390"
+  ],
+  "maps": [
+    "OSM",
+    "VWorld hybrid"
+  ],
+  "marker": {
+    "passed": 293,
+    "failed": 0,
+    "includes": "real click/tap at an adjacent report inside a site target; reduced-motion; finite 2 pulses; source removal/replacement/invalidation"
+  },
+  "comparison": {
+    "passed": 293,
+    "failed": 0
+  },
+  "realMapCapture": {
+    "passed": 37,
+    "failed": 0,
+    "originalScreenshots": 129,
+    "readOnlyTiles": true,
+    "syntheticReportsAndGPS": true
+  },
+  "existingBrowser": {
+    "gpsPopup": {
+      "passed": 420,
+      "failed": 0
+    },
+    "recentControls": {
+      "passed": 96,
+      "failed": 0
+    }
+  },
+  "fullFrontRegression": {
+    "tests": 609,
+    "passed": 606,
+    "failed": 3,
+    "baselineSameFailures": true
+  },
+  "baselineWeekly": {
+    "tests": 180,
+    "passed": 177,
+    "failed": 3,
+    "sourceLines": [
+      612,
+      1799,
+      1873
+    ],
+    "reason": "fixtures mock autumn month while using real Nov 1 candidate date; same failures at df90011"
+  },
+  "performance": {
+    "cycles": 100,
+    "ms": 166.59999990463257,
+    "beforeLayers": 262,
+    "afterLayers": 262,
+    "rings": 0,
+    "newRequests": 0
+  },
+  "privacy": "Exact-report proof, publication state, report data and route/GPS authorization untouched",
+  "coordinates": "240 site IDs unique; every runtime marker coordinate equals siteData; no siteData/records/Worker/coordinate changes",
+  "deployment": "No main merge or production deployment performed"
+}

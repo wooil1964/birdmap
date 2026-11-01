@@ -49,6 +49,12 @@ jobs:
         env:
           RECENT_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/recent-reports-controls
         run: node docs/recent-reports-controls/browser.cjs
+      - name: PC and phone marker visibility, touch, finite motion and cleanup (synthetic API and tiles)
+        env:
+          MARKER_AFTER_ONLY: '1'
+          MARKER_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/marker-visibility
+          MARKER_SHOTS: ${{ github.workspace }}/.ci-results/gps-browser/marker-visibility/screenshots
+        run: node docs/marker-visibility/browser.cjs
       - name: Upload GPS browser diagnostics
         if: always()
         uses: actions/upload-artifact@v4
