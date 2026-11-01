@@ -114,6 +114,8 @@
       var title = document.getElementById('mapTitleBox').getBoundingClientRect();
       return { min: Math.min(180, height * .45), max: Math.max(180, Math.min(height - 80, height - title.bottom - 16)) };
     }
+    // Start site details with the title and essential lines visible, leaving most of the phone map usable.
+    function compactPopupHeight() { return Math.min(240, Math.max(180, global.innerHeight * .30)); }
     function setHeight(node, height) {
       var bounds = limits();
       if (node === recent) {
@@ -347,8 +349,9 @@
       var toolbar = document.createElement('div'); toolbar.className = 'birdmap-popup-toolbar';
       toolbar.appendChild(dragHandle(node, '탐조지 상세정보 패널', function (height) {
         popupHeight = height; delete node._birdmapGpsReopened;
-        toggle.setAttribute('aria-expanded', 'false'); toggle.textContent = '펼치기';
-        toggle.setAttribute('aria-label', '상세정보 펼치기');
+        var expanded = height > compactPopupHeight() + 20;
+        toggle.setAttribute('aria-expanded', String(expanded)); toggle.textContent = expanded ? '접기' : '펼치기';
+        toggle.setAttribute('aria-label', expanded ? '상세정보 접기' : '상세정보 펼치기');
       }));
       var controls = document.createElement('div'); controls.className = 'birdmap-popup-actions';
       var toggle = button('펼치기', '상세정보 펼치기', function () {
@@ -363,7 +366,8 @@
         if (node._birdmapGpsReopened && global.birdmapLocation && global.birdmapLocation.focusGuide()) return;
         delete node._birdmapGpsReopened;
         var full = toggle.getAttribute('aria-expanded') !== 'true';
-        popupHeight = setHeight(node, full ? limits().max : global.innerHeight * .58);
+        popupHeight = setHeight(node, full ? limits().max : compactPopupHeight());
+        if (!full) { var content = node.querySelector('.leaflet-popup-content'); if (content) content.scrollTop = 0; }
         toggle.setAttribute('aria-expanded', String(full)); toggle.textContent = full ? '접기' : '펼치기';
         toggle.setAttribute('aria-label', full ? '상세정보 접기' : '상세정보 펼치기');
       });
@@ -372,14 +376,14 @@
       toolbar.appendChild(controls); node.prepend(toolbar);
       // Keep details within the map's native fullscreen subtree, outside transformed Leaflet panes.
       map.getContainer().appendChild(node);
-      setHeight(node, popupHeight || global.innerHeight * .58);
+      setHeight(node, popupHeight || compactPopupHeight());
       document.body.classList.add('birdmap-detail-open');
     }
     function restoreGpsCompact(popup) {
       var node = popup && popup.getElement();
       if (!node || !node.classList.contains('birdmap-gps-compact')) return false;
       node.classList.remove('birdmap-gps-compact');
-      if (node.classList.contains('birdmap-mobile-popup')) popupHeight = setHeight(node, node._birdmapGpsPreviousHeight || global.innerHeight * .58);
+      if (node.classList.contains('birdmap-mobile-popup')) popupHeight = setHeight(node, node._birdmapGpsPreviousHeight || compactPopupHeight());
       delete node._birdmapGpsPreviousHeight;
       return true;
     }
@@ -427,7 +431,7 @@
       syncRecent(); measureRows(); overlayMetrics();
       if (activePopup) {
         if (activePopup._birdmapReportLocation) return;
-        if (media.matches) { presentPopup(activePopup); setHeight(activePopup.getElement(), popupHeight || global.innerHeight * .58); }
+        if (media.matches) { presentPopup(activePopup); setHeight(activePopup.getElement(), popupHeight || compactPopupHeight()); }
         else { releasePopup(activePopup); document.body.classList.remove('birdmap-detail-open'); activePopup.update(); }
       }
     }
