@@ -322,7 +322,42 @@
       if (global.birdmapLocation && global.birdmapLocation.changePopupAutoPan) return global.birdmapLocation.changePopupAutoPan(popup, change);
       return change();
     }
+    var cancelSitePan = function () {};
+    function guiding() { return global.birdmapLocation && global.birdmapLocation.state().guiding; }
+    function panSiteAboveSheet(popup) {
+      cancelSitePan();
+      var marker = popup._source;
+      // Only site selections: report/fixed-location cards and an existing GPS guide keep their own map view.
+      if (!media.matches || guiding() || !(global.siteData || []).some(function (site) { return global[site.markerVar] === marker; })) return;
+      var container = map.getContainer(), frame;
+      function cancel() {
+        global.cancelAnimationFrame(frame);
+        ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (type) { container.removeEventListener(type, cancel, true); });
+        map.off('dragstart zoomstart unload', cancel);
+        cancelSitePan = function () {};
+      }
+      cancelSitePan = cancel;
+      // A new gesture wins over this pending selection adjustment; nothing follows later map moves.
+      ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (type) { container.addEventListener(type, cancel, { capture: true, passive: true }); });
+      map.on('dragstart zoomstart unload', cancel);
+      frame = global.requestAnimationFrame(function () {
+        cancel();
+        if (!media.matches || guiding() || activePopup !== popup || !map.hasLayer(popup) || !map.hasLayer(marker)) return;
+        var node = popup.getElement();
+        if (!node || !node.classList.contains('birdmap-mobile-popup')) return;
+        var sheet = node.getBoundingClientRect(), bounds = container.getBoundingClientRect();
+        if (!sheet.width || !sheet.height || !bounds.width || !bounds.height) return;
+        // End Leaflet's opening auto-pan before measuring the marker in the rendered map container.
+        map.stop();
+        var point = map.latLngToContainerPoint(marker.getLatLng());
+        var targetX = (sheet.left + sheet.right) / 2 - bounds.left - container.clientLeft;
+        var targetY = sheet.top - bounds.top - container.clientTop - 30;
+        var dx = point.x - targetX, dy = point.y - targetY;
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) map.panBy([dx, dy], { animate: false });
+      });
+    }
     function releasePopup(popup) {
+      cancelSitePan();
       var node = popup && popup.getElement();
       if (!node || !node.classList.contains('birdmap-mobile-popup')) return;
       node.classList.remove('birdmap-mobile-popup', 'birdmap-gps-compact');
@@ -378,6 +413,7 @@
       map.getContainer().appendChild(node);
       setHeight(node, popupHeight || compactPopupHeight());
       document.body.classList.add('birdmap-detail-open');
+      panSiteAboveSheet(popup);
     }
     function restoreGpsCompact(popup) {
       var node = popup && popup.getElement();
