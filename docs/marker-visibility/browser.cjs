@@ -12,6 +12,8 @@ const CACHE = process.env.POPUP_DEPENDENCY_CACHE;
 assert.ok(CACHE && fs.statSync(CACHE).isDirectory(), 'POPUP_DEPENDENCY_CACHE must name an existing URL-hash cache');
 fs.mkdirSync(OUT, { recursive: true }); if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 const ASSETS = ['/index.html', '/assets/birdmap-species-search.css'];
+// Compare a size-only change against a main that already has diamond markers.
+if (process.env.MARKER_COMPARE_SITE_SIZE) ASSETS.push('/assets/birdmap-markers.css', '/assets/birdmap-markers.js');
 const base = process.env.MARKER_AFTER_ONLY ? {} : Object.fromEntries(ASSETS.map(a => [a, cp.execFileSync('git', ['show', (process.env.MARKER_BASE_REF || 'df900110bb21be678e096fa3ded905359105b7ea') + ':' + a.slice(1)], { cwd: ROOT, maxBuffer: 8*1024*1024 })]));
 const harness = fs.readFileSync(path.join(ROOT, 'docs/p1-publication-final-audit/browser/publication_chrome_final_r4.mjs'), 'utf8');
 const hook = harness.match(/function hook\(\)\{[\s\S]*?\r?\n\}\r?\n\r?\nclass CDP/);
@@ -95,7 +97,16 @@ async function mapTile(route){
   return route.fulfill({status:200,contentType:u.pathname.endsWith('.jpeg')?'image/jpeg':'image/png',body:bytes});
 }
 async function settle(page){await page.waitForTimeout(800);if(process.env.MARKER_REAL_TILES){await page.waitForFunction(()=>[...document.querySelectorAll('.leaflet-tile')].every(n=>n.complete),{},{timeout:25000});}await page.waitForFunction(()=>!map_7010a44f6ac2025090f0fe07508ed485._animatingZoom);}
-async function shot(page,label){if(SHOTS)await page.screenshot({path:path.join(SHOTS,label+'.png')});}
+async function shot(page,label){
+  if(!SHOTS)return;
+  await page.screenshot({path:path.join(SHOTS,label+'.png')});
+  if(process.env.MARKER_CAPTURE_SITE_RING&&label.endsWith('-site-selected')&&page.viewportSize().width<=700){
+    // Pan the real map to expose the selected marker above the existing phone sheet.
+    await page.evaluate(()=>{const m=map_7010a44f6ac2025090f0fe07508ed485,p=m.latLngToContainerPoint(__site.getLatLng());m.panBy([p.x-100,p.y-205],{animate:false});});
+    await settle(page);
+    await page.screenshot({path:path.join(SHOTS,label+'-ring-visible.png')});
+  }
+}
 async function siteView(page){await page.evaluate(()=>{
   const m=map_7010a44f6ac2025090f0fe07508ed485,s=siteData.find(s=>s.id==='195');setBirdmapPanelOpen(false);m.closePopup();m.setView([s.lat,s.lon],14,{animate:false});window.__site=window[s.markerVar];window.__report=reportSpotLayers['synthetic-0'];
 });await settle(page);}
@@ -106,14 +117,38 @@ async function pressSite(page,touch){
   if(touch)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);
   await page.waitForFunction(()=>map_7010a44f6ac2025090f0fe07508ed485._popup?._source===__site);
 }
+async function siteGeometry(page,label,width,selected){
+  const g=await page.evaluate(()=>{
+    const target=__site.getElement(),symbol=target.querySelector('.birdmap-site-symbol'),t=target.getBoundingClientRect(),s=symbol.getBoundingClientRect(),css=getComputedStyle(symbol),dot=getComputedStyle(symbol,'::after'),m=map_7010a44f6ac2025090f0fe07508ed485,p=m.latLngToContainerPoint(__site.getLatLng());
+    const ring=Object.values(m._layers).find(layer=>layer.options.className==='birdmap-marker-ring');
+    return{target:[t.width,t.height],size:[parseFloat(css.width),parseFloat(css.height)],center:[s.x+s.width/2-t.x,s.y+s.height/2-t.y],offset:[parseFloat(css.left),parseFloat(css.top)],dot:[parseFloat(dot.width),parseFloat(dot.height),parseFloat(dot.left),parseFloat(dot.top)],border:[css.borderTopWidth,css.borderTopColor],transform:css.transform,pointerEvents:css.pointerEvents,dotColor:dot.backgroundColor,anchor:__site.options.icon.options.iconAnchor,coordinateError:[t.x+22-p.x,t.y+22-p.y],ringRadius:ring&&ring.getRadius()};
+  });
+  const size=width<=700?12:14,offset=(44-size)/2,dotOffset=(size-8)/2;
+  check(g.target.every(n=>n===44)&&g.anchor.every(n=>n===22)&&g.size.every(n=>n===size)&&g.offset.every(n=>n===offset)&&g.center.every(n=>Math.abs(n-22)<.02)&&g.coordinateError.every(n=>Math.abs(n)<=.51),label+' diamond size, center, coordinate and 44px target',g);
+  check(g.dot[0]===4&&g.dot[1]===4&&g.dot[2]===dotOffset&&g.dot[3]===dotOffset&&g.border[0]==='2px'&&g.border[1]==='rgb(255, 255, 255)'&&g.dotColor==='rgb(255, 255, 255)'&&g.transform.startsWith('matrix(0.707107, 0.707107, -0.707107, 0.707107')&&g.pointerEvents==='none',label+' 45-degree diamond, white border and centered dot',g);
+  if(selected)check(g.ringRadius===(width<=700?12:13.5),label+' site ring follows responsive diamond',g);
+}
 async function testPage(page,label,touch,width,height){
   await siteView(page);
+  await siteGeometry(page,label,width,false);
   check(await page.evaluate(()=>siteData.length===240&&new Set(siteData.map(s=>s.id)).size===240&&siteData.every(s=>window[s.markerVar].getLatLng().lat===s.lat&&window[s.markerVar].getLatLng().lng===s.lon)),label+' all 240 marker coordinates and unique IDs preserved');
   check(await page.evaluate(()=>Object.values(markerRegistry).every(m=>m.getElement()?.classList.contains('birdmap-site-marker')&&m.options.icon.options.iconSize[0]===44)),label+' every original and supplemental site has 44px target');
   check((await ringState(page)).rings===0,label+' no idle ring');await shot(page,label+'-site-idle');
-  await pressSite(page,touch);check((await ringState(page)).rings===1,label+' real click/tap selects site');await shot(page,label+'-site-selected');
-  await page.setViewportSize({width:height,height:width});await settle(page);check((await ringState(page)).rings===1,label+' selection survives orientation resize');
+  // Each edge lies outside the visible diamond but inside the unchanged input box.
+  for(const offset of [[-20,0],[20,0],[0,-20],[0,20]]){
+    const p=await page.evaluate(offset=>{const r=__site.getElement().getBoundingClientRect();return{x:r.x+22+offset[0],y:r.y+22+offset[1]};},offset);
+    if(touch)await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);
+    check(await page.evaluate(()=>map_7010a44f6ac2025090f0fe07508ed485._popup?._source===__site),label+' transparent target edge click/tap '+offset.join(','));
+    await closePopup(page);await siteView(page);
+  }
+  await pressSite(page,touch);check((await ringState(page)).rings===1,label+' real click/tap selects site');await siteGeometry(page,label+' selected',width,true);await shot(page,label+'-site-selected');
+  await page.setViewportSize({width:height,height:width});await settle(page);check((await ringState(page)).rings===1,label+' selection survives orientation resize');await siteGeometry(page,label+' rotated',height,true);
   await page.setViewportSize({width,height});await settle(page);await closePopup(page);check((await ringState(page)).rings===0,label+' site close clears ring');
+  if(label==='390x844-osm'){
+    await siteView(page);await pressSite(page,touch);
+    for(const boundary of [700,701,700,390]){await page.setViewportSize({width:boundary,height});await settle(page);await siteGeometry(page,label+' width '+boundary,boundary,true);}
+    await closePopup(page);
+  }
   await siteView(page);
   await page.evaluate(()=>{const m=map_7010a44f6ac2025090f0fe07508ed485,p=m.latLngToContainerPoint(__site.getLatLng());const point=m.containerPointToLatLng([p.x+12,p.y]);window.__adjacent=birdmapSpotMarker(point.lat,point.lng,'입력 검증',['직박구리'],[],false,false,null).addTo(m);});
   const adjacent=await page.evaluate(()=>{const m=map_7010a44f6ac2025090f0fe07508ed485,p=m.latLngToContainerPoint(__adjacent.getLatLng());return{x:p.x,y:p.y};});

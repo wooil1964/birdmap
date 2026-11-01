@@ -3,6 +3,7 @@
   var selected=null, installed=false;
   var colors={red:'#c83232',orange:'#be590d',green:'#218039',blue:'#176eab',purple:'#7642a0',darkred:'#963333',darkblue:'#214a80',darkgreen:'#23613a',darkpurple:'#57336d',cadetblue:'#376b7d',gray:'#5b6470'};
   function map(){return global.map_7010a44f6ac2025090f0fe07508ed485;}
+  function siteRingRadius(){return global.matchMedia('(max-width:700px)').matches?12:13.5;}
   function clear(){
     var old=selected; selected=null;
     if(!old)return;
@@ -22,7 +23,7 @@
       if(element)element.classList.add('birdmap-report-emphasized');
       if(layer.bringToFront)layer.bringToFront();
     }
-    var radius=report?selected.radius*1.1+6:15;
+    var radius=report?selected.radius*1.1+6:siteRingRadius();
     function ring(className,opacity){
       var ring=global.L.circleMarker(layer.getLatLng(),{radius:radius,color:'#fff3a0',weight:2.5,opacity:opacity,fill:false,interactive:false,bubblingMouseEvents:false,className:className}).addTo(map());
       selected.rings.push(ring); return ring;
@@ -53,6 +54,10 @@
   }
   function refreshSites(){
     install();
+    // Keep an open site's ring in step with the responsive diamond.
+    if(selected&&selected.layer.options.birdmapMarkerKind==='site'){
+      selected.rings.forEach(function(ring){ring.setRadius(siteRingRadius());});
+    }
     (global.siteData||[]).forEach(function(site){
       var marker=(global.markerRegistry||{})[global.markerKey(site)];
       if(!marker||marker.options.birdmapMarkerKind==='site')return;

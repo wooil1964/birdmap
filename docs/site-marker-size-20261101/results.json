@@ -1,0 +1,155 @@
+{
+  "source": "Current checkout assets after root edits; no tracked code edited by verifier",
+  "dependencyReuse": {
+    "playwright": "1.62.1",
+    "cdnFiles": 27,
+    "allManifestHashesMatch": true
+  },
+  "suites": {
+    "marker": {
+      "passed": 529,
+      "failed": 0,
+      "scope": "Offline synthetic API/GPS/tiles",
+      "network": {
+        "local": 306,
+        "cached": 255,
+        "syntheticTiles": 1568,
+        "blocked": 17,
+        "missingCache": []
+      }
+    },
+    "gps": {
+      "passed": 750,
+      "failed": 0,
+      "network": {
+        "local": 144,
+        "cached": 120,
+        "syntheticTiles": 2766,
+        "blocked": 8,
+        "continuedExternal": 0,
+        "missingCache": []
+      }
+    },
+    "pick": {
+      "passed": 296,
+      "failed": 0,
+      "network": {
+        "local": 270,
+        "cached": 233,
+        "syntheticTiles": 914,
+        "kakaoSdk": 17,
+        "blocked": 15,
+        "missingCache": []
+      }
+    },
+    "recent": {
+      "passed": 96,
+      "failed": 0,
+      "network": {
+        "local": 90,
+        "cached": 78,
+        "syntheticTiles": 261,
+        "blocked": 5,
+        "missingCache": []
+      }
+    },
+    "privacy": {
+      "command": "node --test --test-reporter=tap .github/scripts/test_location_protection.mjs .github/scripts/test_publication_visibility_expiry.mjs .github/scripts/test_publication_renewal_margin.mjs .github/scripts/test_location_popup_guard.mjs",
+      "files": [
+        ".github/scripts/test_location_protection.mjs",
+        ".github/scripts/test_publication_visibility_expiry.mjs",
+        ".github/scripts/test_publication_renewal_margin.mjs",
+        ".github/scripts/test_location_popup_guard.mjs"
+      ],
+      "started": "2026-11-01T07:20:38.902Z",
+      "finished": "2026-11-01T07:20:39.283Z",
+      "status": 0,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    }
+  },
+  "performance": {
+    "cycles": 100,
+    "ms": 161.60000002384186,
+    "beforeLayers": 262,
+    "afterLayers": 262,
+    "rings": 0,
+    "newRequests": 0
+  },
+  "environmentNote": "Initial restricted GPS launch failed before checks due localhost ERR_NETWORK_ACCESS_DENIED. Approved local-browser rerun completed all750 checks; all reported suite results are final completed runs.",
+  "baseCommit": "a8f17a42a701b87599f37f7755c4e7ad409c0bbd",
+  "branch": "codex/shrink-site-markers-14-12",
+  "contract": {
+    "passed": 3,
+    "failed": 0
+  },
+  "visual": [
+    {
+      "size": "1440x900",
+      "passed": 9,
+      "failed": 0,
+      "realTileStats": {
+        "downloaded": 0,
+        "cached": 556,
+        "failures": 0
+      },
+      "images": 17
+    },
+    {
+      "size": "320x568",
+      "passed": 9,
+      "failed": 0,
+      "realTileStats": {
+        "downloaded": 0,
+        "cached": 170,
+        "failures": 0
+      },
+      "images": 21
+    },
+    {
+      "size": "360x740",
+      "passed": 9,
+      "failed": 0,
+      "realTileStats": {
+        "downloaded": 0,
+        "cached": 248,
+        "failures": 0
+      },
+      "images": 21
+    },
+    {
+      "size": "390x844",
+      "passed": 9,
+      "failed": 0,
+      "realTileStats": {
+        "downloaded": 0,
+        "cached": 284,
+        "failures": 0
+      },
+      "images": 21
+    }
+  ],
+  "runtime": {
+    "sites": 240,
+    "uniqueIds": 240,
+    "coordinatesPreserved": true,
+    "hitArea": [
+      44,
+      44
+    ],
+    "iconAnchor": [
+      22,
+      22
+    ]
+  },
+  "productionFiles": {
+    "assets/birdmap-markers.css": {
+      "sha256": "0298c1cdff36aa2c6c32186f370325b21bc892fa940717524d5928bac234eea4"
+    },
+    "assets/birdmap-markers.js": {
+      "sha256": "2592814f60e6da8b9dcb25f1777dab7945fe18eb96f71f192bf24a72651881a8"
+    }
+  }
+}

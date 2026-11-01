@@ -1,8 +1,8 @@
 /* Compact site diamonds keep a generous transparent click/touch box. */
 .leaflet-marker-icon.birdmap-site-marker{background:none;border:0;overflow:visible}
-.birdmap-site-symbol{position:absolute;left:14px;top:14px;width:16px;height:16px;box-sizing:border-box;transform:rotate(45deg);border:2px solid #fff;border-radius:3px;background:var(--birdmap-marker-color,#176eab);box-shadow:0 0 0 1px #17384d,0 1px 3px #0006;pointer-events:none}
-.birdmap-site-symbol::after{content:'';position:absolute;left:4px;top:4px;width:4px;height:4px;border-radius:50%;background:#fff}
-@media(max-width:700px){.birdmap-site-symbol{left:15px;top:15px;width:14px;height:14px}.birdmap-site-symbol::after{left:3px;top:3px}}
+.birdmap-site-symbol{position:absolute;left:15px;top:15px;width:14px;height:14px;box-sizing:border-box;transform:rotate(45deg);border:2px solid #fff;border-radius:3px;background:var(--birdmap-marker-color,#176eab);box-shadow:0 0 0 1px #17384d,0 1px 3px #0006;pointer-events:none}
+.birdmap-site-symbol::after{content:'';position:absolute;left:3px;top:3px;width:4px;height:4px;border-radius:50%;background:#fff}
+@media(max-width:700px){.birdmap-site-symbol{left:16px;top:16px;width:12px;height:12px}.birdmap-site-symbol::after{left:2px;top:2px}}
 .birdmap-report-emphasized{stroke:#8b2500;stroke-width:5px}
 .birdmap-marker-ring,.birdmap-marker-pulse{pointer-events:none;filter:drop-shadow(0 0 1px #17384d)}
 .birdmap-marker-pulse{transform-box:fill-box;transform-origin:center;animation:birdmap-marker-pulse 900ms ease-out 2}
