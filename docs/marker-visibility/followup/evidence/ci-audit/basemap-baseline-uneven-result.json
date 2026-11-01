@@ -1,0 +1,63 @@
+{
+  "schema": "basemap-faults/v1",
+  "label": "baseline-uneven",
+  "page": "file:///<local-workspace>/Documents/Codex/2026-11-01/referenced-chatgpt-conversation-this-is-an/work/baseline/index.html",
+  "passed": 1,
+  "failed": 1,
+  "results": [
+    {
+      "size": "pc",
+      "scenario": "wheel_flicks_uneven_per_ip_limit",
+      "ok": true,
+      "note": "wheel flicks 450-750 ms apart for 20 s against the Worker per-IP limit (180 per 60 s): the pause does not run out between flicks, VWorld stays",
+      "tilesRequested": 56,
+      "final": {
+        "active": "vworld",
+        "preference": "vworld",
+        "reason": "ready",
+        "locked": false,
+        "overlay": "off",
+        "errors": 0,
+        "backdrop": false,
+        "zoom": 13,
+        "flicks": 32,
+        "levels": [
+          12,
+          13
+        ]
+      },
+      "exceptions": [],
+      "consoleErrors": [
+        "승인 제보를 불러오지 못했습니다. TypeError: Failed to fetch",
+        "승인 제보를 불러오지 못했습니다. TypeError: Failed to fetch"
+      ]
+    },
+    {
+      "size": "wide",
+      "scenario": "wheel_flicks_uneven_per_ip_limit",
+      "ok": false,
+      "note": "wheel flicks 450-750 ms apart for 20 s against the Worker per-IP limit (180 per 60 s): the pause does not run out between flicks, VWorld stays",
+      "tilesRequested": 129,
+      "final": {
+        "active": "osm",
+        "preference": "vworld",
+        "reason": "tile_error",
+        "locked": true,
+        "overlay": "off",
+        "errors": 33,
+        "backdrop": false,
+        "zoom": 13,
+        "flicks": 32,
+        "levels": [
+          12,
+          13
+        ]
+      },
+      "exceptions": [],
+      "consoleErrors": [
+        "승인 제보를 불러오지 못했습니다. TypeError: Failed to fetch",
+        "승인 제보를 불러오지 못했습니다. TypeError: Failed to fetch"
+      ]
+    }
+  ]
+}

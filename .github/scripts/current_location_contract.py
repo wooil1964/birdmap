@@ -105,6 +105,8 @@ A_GRADE_ENGINE_SIGNATURES = ('birdingTypeExplicit', 'speciesEvidence', 'tide.sit
 
 
 def without_recent_reports_message(text):
+    from marker_visibility_contract import without_marker_visibility
+    text = without_marker_visibility(text)
     text = without_a_grade_sites(text)
     if not any(value in text for value in RECENT_REPORTS_MESSAGE_SIGNATURES):
         return text

@@ -126,7 +126,27 @@ async function testPage(page,label,touch,width,height){
   await page.waitForFunction(()=>__report.getRadius()===5.5);
   let state=await ringState(page);check(state.rings===1&&state.pulses===1&&state.selected,label+' direct report gets dark stroke, bright ring and 10% radius');
   check(await page.evaluate(()=>{const p=document.querySelector('.birdmap-marker-pulse'),c=getComputedStyle(p);return c.animationIterationCount==='2'&&c.animationDuration==='0.9s'&&getComputedStyle(document.querySelector('.birdmap-marker-ring')).pointerEvents==='none';}),label+' exactly 2 compositor pulses and noninteractive ring');
-  await page.waitForTimeout(1900);state=await ringState(page);check(state.pulses===0&&state.rings===1,label+' pulses stop and are removed; persistent ring remains');await shot(page,label+'-report-selected');
+  const motion=await page.evaluate(async()=>{
+    const node=document.querySelector('.birdmap-marker-pulse'),animation=node.getAnimations()[0],events=[],samples=[];
+    node.addEventListener('animationiteration',e=>events.push({type:e.type,elapsed:e.elapsedTime}));
+    node.addEventListener('animationend',e=>events.push({type:e.type,elapsed:e.elapsedTime}));
+    const ended=new Promise(resolve=>node.addEventListener('animationend',()=>requestAnimationFrame(resolve),{once:true}));
+    await animation.ready;
+    const started=animation.startTime;
+    // Observe real elapsed animation time, including the rendered SVG stroke.
+    for(const at of [225,1125]){
+      await new Promise(resolve=>{function frame(){if(document.timeline.currentTime-started>=at)resolve();else requestAnimationFrame(frame);}requestAnimationFrame(frame);});
+      const css=getComputedStyle(node);
+      samples.push({at:document.timeline.currentTime-started,connected:node.isConnected,opacity:Number(css.opacity),strokeOpacity:Number(css.strokeOpacity),bounds:node.getBoundingClientRect().width,sourceBounds:__report.getElement().getBoundingClientRect().width,sourcePath:__report.getElement().getAttribute('d'),sourceEmpty:__report._empty(),transform:css.transform,path:node.getAttribute('d')});
+    }
+    await ended;
+    return{events,samples,removed:!node.isConnected,elapsed:document.timeline.currentTime-started};
+  });
+  // Small landscape's existing popup auto-pan can cull the source and pulse together.
+  // Never excuse a transparent stroke; require expanded geometry whenever the source renders.
+  check(motion.samples.every(s=>s.connected&&s.opacity*s.strokeOpacity>0.05&&Number(s.transform.split('(')[1]?.split(',')[0])>1&&(s.bounds>23||(s.bounds===0&&s.sourceBounds===0&&s.sourceEmpty&&s.sourcePath==='M0 0'&&s.path==='M0 0'))),label+' SVG stroke paints and scales in both cycles; geometry follows rendered source',motion.samples);
+  check(motion.events.length===2&&motion.events[0].type==='animationiteration'&&Math.abs(motion.events[0].elapsed-.9)<.01&&motion.events[1].type==='animationend'&&Math.abs(motion.events[1].elapsed-1.8)<.01,label+' first cycle emits iteration; end occurs only after 1800ms',motion);
+  state=await ringState(page);check(motion.removed&&state.pulses===0&&state.rings===1,label+' pulses stop and are removed; persistent ring remains');await shot(page,label+'-report-selected');
   await page.evaluate(()=>__site.openPopup());check((await ringState(page)).radius===5&&(await ringState(page)).rings===1,label+' other selection restores report');await closePopup(page);
   const expand=page.locator('#recentReportsBox .birdmap-sheet-actions button:first-child');if(await expand.getAttribute('aria-expanded')==='false')await expand.click();
   const first=page.locator('#recentReportsList .recentReportItem').first();await first.locator('.recentReportSpecies').click();await page.waitForFunction(()=>document.querySelector('.birdmap-report-location-selected')&&__report.getRadius()===5.5);

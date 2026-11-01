@@ -29,10 +29,12 @@
     }
     ring('birdmap-marker-ring',1);
     if(report&&!global.matchMedia('(prefers-reduced-motion:reduce)').matches){
-      var pulse=ring('birdmap-marker-pulse',0);
+      // CSS animates element opacity; the SVG stroke must remain paintable.
+      var pulse=ring('birdmap-marker-pulse',1);
       var node=pulse.getElement();
       if(node){
         function removePulse(){if(map().hasLayer(pulse))map().removeLayer(pulse);}
+        // animationiteration marks the first cycle; animationend follows both.
         node.addEventListener('animationend',removePulse,{once:true});
         node.addEventListener('animationcancel',removePulse,{once:true});
       }

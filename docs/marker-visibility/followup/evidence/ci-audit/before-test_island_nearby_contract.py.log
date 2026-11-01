@@ -1,0 +1,20 @@
+E...
+======================================================================
+ERROR: test_exact_baseline_restored_including_legacy_ferry_and_map (__main__.PilotContractTests.test_exact_baseline_restored_including_legacy_ferry_and_map)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_island_nearby_contract.py", line 18, in test_exact_baseline_restored_including_legacy_ferry_and_map
+    self.assertEqual(normalize_basemap(without_island_nearby(CURRENT)), normalize_basemap(before))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 62, in without_approved_basemap
+    text = without_current_location(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\current_location_contract.py", line 165, in without_current_location
+    for old, new in GPS_ISLANDS:
+            ^^^^^^^^^^^^^^^^^^^^^
+ValueError: Exact GPS addition must occur once with its original context
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.235s
+
+FAILED (errors=1)
