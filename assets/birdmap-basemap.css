@@ -198,7 +198,7 @@ body.reportPicking #birdmapRecentReopen.birdmap-desktop { display: none; }
   body.rightPanelOpen #birdmapRecentReopen, body.reportPicking #birdmapRecentReopen,
   body.fieldMode #birdmapRecentReopen, body.fieldGuiding #birdmapRecentReopen { display: none; }
 
-  body .leaflet-popup.birdmap-mobile-popup { position: fixed !important; transform: none !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; width: 100% !important; height: var(--birdmap-sheet-height, 58dvh); max-height: calc(100dvh - 80px); margin: 0 !important; z-index: 10002; display: flex; flex-direction: column; pointer-events: auto; background: #fff; border: 1px solid #d7dfdf; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 22px #152a3c40; padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: border-box; }
+  body .leaflet-popup.birdmap-mobile-popup { position: fixed !important; transform: none !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; width: 100% !important; height: var(--birdmap-sheet-height, 30dvh); max-height: calc(100dvh - 80px); margin: 0 !important; z-index: 10002; display: flex; flex-direction: column; pointer-events: auto; background: #fff; border: 1px solid #d7dfdf; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 22px #152a3c40; padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: border-box; }
   body .birdmap-mobile-popup .birdmap-popup-toolbar { display: flex; flex-direction: column; flex: 0 0 auto; border-bottom: 1px solid #e1e7eb; }
   /* Compact GPS guide: only the sheet toolbar remains, without closing its live popup. */
   body .leaflet-popup.birdmap-mobile-popup.birdmap-gps-compact { height: 64px !important; max-height: 64px !important; }
