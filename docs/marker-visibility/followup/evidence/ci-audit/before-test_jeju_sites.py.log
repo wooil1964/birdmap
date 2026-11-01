@@ -1,0 +1,26 @@
+........E.
+======================================================================
+ERROR: test_old_workbooks_automatic_data_security_and_engine_code_unchanged (__main__.JejuSitesTests.test_old_workbooks_automatic_data_security_and_engine_code_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_jeju_sites.py", line 150, in test_old_workbooks_automatic_data_security_and_engine_code_unchanged
+    self.assertEqual(strip(current),strip(old))
+                     ^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_jeju_sites.py", line 145, in strip
+    t=without_report_archive(t)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 88, in without_report_archive
+    text = without_approved_basemap(text.replace('\r\n', '\n'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 62, in without_approved_basemap
+    text = without_current_location(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\current_location_contract.py", line 165, in without_current_location
+    for old, new in GPS_ISLANDS:
+            ^^^^^^^^^^^^^^^^^^^^^
+ValueError: Exact GPS addition must occur once with its original context
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.332s
+
+FAILED (errors=1)

@@ -1,0 +1,26 @@
+..E.
+======================================================================
+ERROR: test_all_old_records_and_engine_outside_approved_metadata_are_preserved (__main__.MetroSitesTests.test_all_old_records_and_engine_outside_approved_metadata_are_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_metro_sites.py", line 30, in test_all_old_records_and_engine_outside_approved_metadata_are_preserved
+    self.assertEqual(strip((ROOT/'index.html').read_text(encoding='utf-8')),strip(old))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_metro_sites.py", line 27, in strip
+    t=without_report_archive(t)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 88, in without_report_archive
+    text = without_approved_basemap(text.replace('\r\n', '\n'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 62, in without_approved_basemap
+    text = without_current_location(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\current_location_contract.py", line 165, in without_current_location
+    for old, new in GPS_ISLANDS:
+            ^^^^^^^^^^^^^^^^^^^^^
+ValueError: Exact GPS addition must occur once with its original context
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.420s
+
+FAILED (errors=1)

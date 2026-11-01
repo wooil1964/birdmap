@@ -456,8 +456,9 @@ test('선상 추천 3개 기준의 inclusive 경계, 결측과 기존 score rule
 
 const PELAGIC={...SITE,id:74,name:'울산 앞바다 선상',pelagic:true,env:'외해·선상',seasons:['봄','겨울']};
 test('선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서', () => {
-  const a=futureDate(1),b=futureDate(2),week={start:a,end:b,dates:[a,b]};
-  const api=loadApi({weatherWeek:weekDoc(74,{
+  // 가을 선상 시나리오: 실제 오늘 대신 9월 시계·월로 고정한다(봄·여름 실행일이면 선상 정책이 달라진다).
+  const a='2026-09-10',b='2026-09-11',week={start:a,end:b,dates:[a,b]};
+  const api=loadApi({month:9,now:SEPTEMBER_FIXTURE_NOW,weatherWeek:weekDoc(74,{
     [a]:[sample(`${a} 09:00 KST`,92,{waveM:0.6}),sample(`${a} 12:00 KST`,95,{waveM:1.8}),sample(`${a} 15:00 KST`,92,{waveM:0.7})],
     [b]:[sample(`${b} 09:00 KST`,92,{waveM:0.6})]
   })});
@@ -471,7 +472,7 @@ test('선상은 safety 먼저 적용 후 daily/weekly 최고점과 동점 순서
 });
 
 test('선상도 밤/오늘 과거 sample 제외, 다른 날짜 동풍 근거로 위험 sample 승격 금지', () => {
-  const api=loadApi(),today=api.weeklyTodayDateText(),later=futureDate(1);
+  const api=loadApi({month:9,now:SEPTEMBER_FIXTURE_NOW}),today=api.weeklyTodayDateText(),later='2026-09-10';
   const site={...PELAGIC,region:'울산',birdingFeature:'선상'};
   api.setWeek(weekDoc(site.id,{
     [today]:[sample(`${today} 09:00 KST`,100,{waveM:0.5,isPastAtGeneration:true}),sample(`${today} 23:00 KST`,100,{waveM:0.5})],
@@ -508,11 +509,11 @@ test('들판/갯벌/선상 부족 시 다른 유형으로 채우며 선상 0 허
 });
 
 test('weather_week/rules 실패에도 today 일반 추천, 선상만 제외', () => {
-  const today=loadApi().weeklyTodayDateText();
+  const now=SEPTEMBER_FIXTURE_NOW,today=loadApi({month:9,now}).weeklyTodayDateText();
   const sites=[{...SITE,id:15,env:'간척호·농경지'},PELAGIC];
-  const generatedAt=realNowStamp();
+  const generatedAt=realNowStamp(Date.parse(now));
   const weatherToday={sites:Object.fromEntries(sites.map(s=>[s.id,{date:today,generatedAt,forecastTime:today+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:92,wind:'동풍 3m/s',rain:'강수 없음'}]))};
-  const api=loadApi({weatherToday,siteData:sites,rules:null});
+  const api=loadApi({month:9,now,weatherToday,siteData:sites,rules:null});
   const top=api.todayRecommendedSites();
   assert.equal(top.length,1);assert.equal(top[0].site.id,15);assert.equal(top[0].score,92);
 });
@@ -610,11 +611,12 @@ test('다른 시각의 caution 근거 대신 카드 표시 기상만 판단',()=
 });
 
 test('최종 선발 전 caution 제외 후 같은 축 보충, 점수 하한선 없음',()=>{
- const date=loadApi().weeklyTodayDateText();
+ // 가을 갯벌 정원 시나리오: 실제 오늘 대신 9월 시계로 고정한다(월만 9로 두면 11월 실행일 후보가 겨울 정책으로 만들어진다).
+ const now=SEPTEMBER_FIXTURE_NOW,date=loadApi({month:9,now}).weeklyTodayDateText();
  const sites=Array.from({length:13},(_,i)=>({...SITE,id:300+i,name:'후보'+i,env:i<5?'농경지':i<9?'갯벌':'습지'}));
- const generatedAt=realNowStamp();
+ const generatedAt=realNowStamp(Date.parse(now));
  const weatherToday={sites:Object.fromEntries(sites.map((s,i)=>[s.id,{date,generatedAt,forecastTime:date+' 12:00 KST',scoreEligible:true,missingScoreFields:[],score:i===0?65:i===1?95:60,wind:'동풍 3m/s',wave:i<2||i===5?'2.2m':'1.0m',rain:'강수 없음'}]))};
- const api=loadApi({siteData:sites,weatherToday,notices:[{siteId:300},{siteId:305}]});
+ const api=loadApi({month:9,now,siteData:sites,weatherToday,notices:[{siteId:300},{siteId:305}]});
  const original=api.weeklyRecommendationForSite(sites[0],api.weeklyInfo());
  assert.equal(original.isMandatory,true);assert.equal(original.score,65);
  const top=api.todayRecommendedSites();
@@ -1772,10 +1774,10 @@ test('R01 동점 tie-break: rankScore 같으면 더 최근 출현, 그다음 고
 
 test('R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외되고, 큰 감점은 가점으로 뒤집히지 않는다', () => {
   const sites = recentFieldSites(6);
-  const base = loadApi({ month: 10, siteData: sites });
+  const base = loadApi({ month: 10, now: R01_NOW, siteData: sites });
   const weatherToday = todayWeatherFor(base, sites, (s) => (s.id === 401 ? 62 : 92), (s) => (s.id === 400 ? { rain: '3시간 강수 12.0mm' } : {}));
   const recent = { latestDate: recentDaysAgo(base, 0), species: ['a', 'b', 'c', 'd'] };
-  const api = loadApi({ month: 10, siteData: sites, weatherToday, recentSiteSightings: { 400: recent, 401: recent } });
+  const api = loadApi({ month: 10, now: R01_NOW, siteData: sites, weatherToday, recentSiteSightings: { 400: recent, 401: recent } });
   const top = api.todayRecommendedSites();
   assert.ok(!top.some((e) => e.site.id === 400), '폭우(10mm 이상) 장소는 가점이 있어도 제외');
   const rainy = top.find((e) => e.site.id === 401);
@@ -1784,12 +1786,12 @@ test('R01 E 최근 출현이 있어도 폭우·고파고 현장주의는 제외�
 });
 
 test('R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회하지 못한다', () => {
-  const date = futureDate(1);
+  const date = '2026-10-09'; // R01_NOW 다음 날
   const boat = { ...SITE, id: 48, name: '대진항', pelagic: true, env: '외해·선상', lat: 38.5, lon: 128.4 };
-  const recent = { 48: { latestDate: recentDaysAgo(loadApi({ month: 10 }), 1), species: ['슴새', '바다쇠오리', '흰배슴새', '검은바람까마귀'] } };
-  const high = loadApi({ month: 10, siteData: [boat], weatherWeek: weekDoc(48, { [date]: [sample(date + ' 12:00 KST', 92, { windSpeed: 3, waveM: 1.2 })] }), recentSiteSightings: recent });
+  const recent = { 48: { latestDate: recentDaysAgo(loadApi({ month: 10, now: R01_NOW }), 1), species: ['슴새', '바다쇠오리', '흰배슴새', '검은바람까마귀'] } };
+  const high = loadApi({ month: 10, now: R01_NOW, siteData: [boat], weatherWeek: weekDoc(48, { [date]: [sample(date + ' 12:00 KST', 92, { windSpeed: 3, waveM: 1.2 })] }), recentSiteSightings: recent });
   assert.equal(high.weeklyRecommendationForSite(boat, high.weeklyInfo()), null, '파고 1.2m > 0.7m 이면 후보가 아니다');
-  const calm = loadApi({ month: 10, siteData: [boat], weatherWeek: weekDoc(48, { [date]: [sample(date + ' 12:00 KST', 92, { windSpeed: 3, waveM: 0.5 })] }), recentSiteSightings: recent });
+  const calm = loadApi({ month: 10, now: R01_NOW, siteData: [boat], weatherWeek: weekDoc(48, { [date]: [sample(date + ' 12:00 KST', 92, { windSpeed: 3, waveM: 0.5 })] }), recentSiteSightings: recent });
   const entry = calm.weeklyRecommendationForSite(boat, calm.weeklyInfo());
   assert.ok(entry && entry.axes.pelagic);
   assert.equal(entry.score, 92);
@@ -1798,12 +1800,13 @@ test('R01 F 선상 탐조는 출현 가점으로 파고 안전 기준을 우회�
 
 test('R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 점수 + 출현 가점이다', () => {
   const forest = { ...SITE, id: 81, name: '지리산', env: '산림·고산' };
-  const base = loadApi({ month: 10, siteData: [forest] });
+  // 가을(10월) 정책 시나리오: 월과 시계를 함께 고정한다(실제 오늘이 겨울이면 산림 후보 판정이 달라진다).
+  const base = loadApi({ month: 10, now: R01_NOW, siteData: [forest] });
   const weatherToday = todayWeatherFor(base, [forest], () => 92, () => ({ wave: null }));
-  const none = loadApi({ month: 10, siteData: [forest], weatherToday, tideMonth: null });
+  const none = loadApi({ month: 10, now: R01_NOW, siteData: [forest], weatherToday, tideMonth: null });
   const plain = none.weeklyRecommendationForSite(forest, none.weeklyInfo());
   assert.equal(plain.rankScore, 92, '조석 없음 = 0 감점');
-  const api = loadApi({ month: 10, siteData: [forest], weatherToday, tideMonth: null, recentSiteSightings: { 81: { latestDate: recentDaysAgo(base, 8), species: ['들꿩'] } } });
+  const api = loadApi({ month: 10, now: R01_NOW, siteData: [forest], weatherToday, tideMonth: null, recentSiteSightings: { 81: { latestDate: recentDaysAgo(base, 8), species: ['들꿩'] } } });
   const entry = api.weeklyRecommendationForSite(forest, api.weeklyInfo());
   assert.equal(entry.score, 92);
   assert.equal(entry.rankScore, 94);
@@ -1836,20 +1839,21 @@ test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천
 
   // 자료가 비면(=실패 직후) 추천은 출현 가점이 없는 기존 결과와 같다.
   const sites = recentFieldSites(6);
-  const base = loadApi({ month: 10, siteData: sites });
+  const base = loadApi({ month: 10, now: R01_NOW, siteData: sites });
   const weatherToday = todayWeatherFor(base, sites);
-  const plain = loadApi({ month: 10, siteData: sites, weatherToday }).todayRecommendedSites();
+  const plain = loadApi({ month: 10, now: R01_NOW, siteData: sites, weatherToday }).todayRecommendedSites();
   assert.ok(plain.length > 0);
   assert.ok(plain.every((e) => !e.recentReport && e.rankScore === e.score));
 });
 
 /* ── 편집 목록은 순위를 정하지 않는다(R02) ──────────────────────────── */
 function panelFixture(extra = {}, count = 6) {
+  // R02 시나리오는 가을(10월) 정책 기준이므로 월과 시계를 함께 고정한다.
   const sites = recentFieldSites(count);
-  const base = loadApi({ month: 10, siteData: sites });
+  const base = loadApi({ month: 10, now: R01_NOW, siteData: sites });
   const weatherToday = todayWeatherFor(base, sites);
   const ids = (list) => list.map((e) => e.site.id);
-  return { sites, base, weatherToday, ids, api: (state) => loadApi(Object.assign({ month: 10, siteData: sites, weatherToday }, extra, state)) };
+  return { sites, base, weatherToday, ids, api: (state) => loadApi(Object.assign({ month: 10, now: R01_NOW, siteData: sites, weatherToday }, extra, state)) };
 }
 
 test('R02 A·D 편집 목록이 있어도 자동 rankScore 순서이고, 탈락한 편집 장소를 끼워 넣지 않는다', () => {

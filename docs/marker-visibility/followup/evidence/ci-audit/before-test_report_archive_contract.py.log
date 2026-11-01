@@ -1,0 +1,67 @@
+...E.F..EE
+======================================================================
+ERROR: test_original_html_outside_archive_is_exactly_preserved (__main__.ArchiveScopeTests.test_original_html_outside_archive_is_exactly_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_report_archive_contract.py", line 15, in test_original_html_outside_archive_is_exactly_preserved
+    self.assertEqual(without_report_archive(current), before.replace('\r\n', '\n'))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 88, in without_report_archive
+    text = without_approved_basemap(text.replace('\r\n', '\n'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 62, in without_approved_basemap
+    text = without_current_location(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\current_location_contract.py", line 165, in without_current_location
+    for old, new in GPS_ISLANDS:
+            ^^^^^^^^^^^^^^^^^^^^^
+ValueError: Exact GPS addition must occur once with its original context
+
+======================================================================
+ERROR: test_unrelated_changes_survive_scope_normalization (__main__.ArchiveScopeTests.test_unrelated_changes_survive_scope_normalization)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_report_archive_contract.py", line 23, in test_unrelated_changes_survive_scope_normalization
+    self.assertNotEqual(without_report_archive(current.replace(old, new, 1)), without_report_archive(current))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 88, in without_report_archive
+    text = without_approved_basemap(text.replace('\r\n', '\n'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 62, in without_approved_basemap
+    text = without_current_location(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\current_location_contract.py", line 165, in without_current_location
+    for old, new in GPS_ISLANDS:
+            ^^^^^^^^^^^^^^^^^^^^^
+ValueError: Exact GPS addition must occur once with its original context
+
+======================================================================
+ERROR: test_unrelated_html_css_and_relocated_message_remain_frozen (__main__.ArchiveScopeTests.test_unrelated_html_css_and_relocated_message_remain_frozen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_report_archive_contract.py", line 59, in test_unrelated_html_css_and_relocated_message_remain_frozen
+    expected = without_report_archive(current)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 88, in without_report_archive
+    text = without_approved_basemap(text.replace('\r\n', '\n'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\report_archive_contract.py", line 62, in without_approved_basemap
+    text = without_current_location(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\current_location_contract.py", line 165, in without_current_location
+    for old, new in GPS_ISLANDS:
+            ^^^^^^^^^^^^^^^^^^^^^
+ValueError: Exact GPS addition must occur once with its original context
+
+======================================================================
+FAIL: test_recent_reports_message_reverses_only_the_exact_pr58_changes (__main__.ArchiveScopeTests.test_recent_reports_message_reverses_only_the_exact_pr58_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<local-workspace>/Documents\Codex\2026-11-01\referenced-chatgpt-conversation-this-is-an\work\birdmap\.github\scripts\test_report_archive_contract.py", line 28, in test_recent_reports_message_reverses_only_the_exact_pr58_changes
+    self.assertEqual(without_recent_reports_message(current), before)
+AssertionError: '<!DO[4068 chars]pt>\n    <link rel="stylesheet" href="assets/b[1243295 chars]l>\n' != '<!DO[4068 chars]pt>\n</head>\n<body>\n    \n    \n            [1243659 chars]l>\n'
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.551s
+
+FAILED (failures=1, errors=3)

@@ -1,0 +1,72 @@
+{
+  "passed": 10,
+  "failed": 1,
+  "checks": [
+    {
+      "name": "1440x900-osm after active basemap",
+      "evidence": {
+        "preference": "osm",
+        "active": "osm",
+        "overlay": "off",
+        "transport": "worker",
+        "reason": "user_selected",
+        "eligible": true,
+        "loading": false,
+        "errors": 0,
+        "overlayErrors": 0,
+        "locked": false,
+        "overlayLocked": false,
+        "canRetry": false,
+        "backdrop": false,
+        "deadlinePending": false,
+        "recoveryAttempts": 0,
+        "batchTimeoutMs": 12000,
+        "zoom": 14,
+        "destroyed": false
+      }
+    },
+    {
+      "name": "1440x900-osm all 240 marker coordinates and unique IDs preserved"
+    },
+    {
+      "name": "1440x900-osm every original and supplemental site has 44px target"
+    },
+    {
+      "name": "1440x900-osm no idle ring"
+    },
+    {
+      "name": "1440x900-osm real click/tap selects site"
+    },
+    {
+      "name": "1440x900-osm selection survives orientation resize"
+    },
+    {
+      "name": "1440x900-osm site close clears ring"
+    },
+    {
+      "name": "1440x900-osm report inside 44px site target receives real click/tap"
+    },
+    {
+      "name": "1440x900-osm direct report gets dark stroke, bright ring and 10% radius"
+    },
+    {
+      "name": "1440x900-osm exactly 2 compositor pulses and noninteractive ring"
+    }
+  ],
+  "errors": [
+    "AssertionError [ERR_ASSERTION]: 1440x900-osm SVG stroke paints and scales in both cycles; geometry follows rendered source: [{\"at\":232.92700010482258,\"connected\":true,\"opacity\":0.304926,\"strokeOpacity\":0,\"bounds\":30.0863037109375,\"sourceBounds\":12,\"sourcePath\":\"M783,424a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 \",\"sourceEmpty\":false,\"transform\":\"matrix(1.2536, 0, 0, 1.2536, 0, 0)\",\"path\":\"M777,424a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0 \"},{\"at\":1133.8270001048222,\"connected\":true,\"opacity\":0.304247,\"strokeOpacity\":0,\"bounds\":30.1075439453125,\"sourceBounds\":12,\"sourcePath\":\"M783,424a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 \",\"sourceEmpty\":false,\"transform\":\"matrix(1.25448, 0, 0, 1.25448, 0, 0)\",\"path\":\"M777,424a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0 \"}]\n    at check (<local-workspace>/Documents/Codex/2026-11-01/referenced-chatgpt-conversation-this-is-an/work/birdmap/docs/marker-visibility/browser.cjs:31:48)\n    at testPage (<local-workspace>/Documents/Codex/2026-11-01/referenced-chatgpt-conversation-this-is-an/work/birdmap/docs/marker-visibility/browser.cjs:147:3)\n    at async <local-workspace>/Documents/Codex/2026-11-01/referenced-chatgpt-conversation-this-is-an/work/birdmap/docs/marker-visibility/browser.cjs:173:538"
+  ],
+  "network": {
+    "local": 18,
+    "cached": 15,
+    "syntheticTiles": 67,
+    "blocked": 1,
+    "missingCache": []
+  },
+  "realTileStats": {
+    "downloaded": 0,
+    "cached": 0,
+    "failures": 0
+  },
+  "scope": "Offline synthetic API/GPS/tiles"
+}
