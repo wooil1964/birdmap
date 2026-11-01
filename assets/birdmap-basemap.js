@@ -397,13 +397,21 @@
       _restAfterZoom: function () {
         var layer = this;
         global.clearTimeout(layer._zoomRest);
-        layer._zoomRest = global.setTimeout(function () {
+        var id = layer._zoomRest = global.setTimeout(function () {
           var map = layer._map, wheel = map && map.scrollWheelZoom;
           // A zoom animation (250 ms) outlasts the pause, or a wheel notch waits in Leaflet's debounce: wait for the zoom;
           // its end restarts the pause.
           if (map && (map._animatingZoom || (wheel && wheel._startTime))) return layer._restAfterZoom();
-          layer._zoomRest = null;
-          if (map) tileProto._resetView.call(layer);
+          // A notch just out of the debounce starts its zoom on the next animation frame (Leaflet _tryAnimatedZoom); a
+          // pause ending in that frame loaded the level being left (11/01, 1920x1080 uneven flicks: 40 tiles, then 429).
+          // Look once more after that frame: a zoom begun meanwhile has restarted the pause.
+          L.Util.requestAnimFrame(function () {
+            if (layer._zoomRest !== id) return;
+            map = layer._map; wheel = map && map.scrollWheelZoom;
+            if (map && (map._animatingZoom || (wheel && wheel._startTime))) return layer._restAfterZoom();
+            layer._zoomRest = null;
+            if (map) tileProto._resetView.call(layer);
+          });
         }, layer._restMs || ZOOM_SETTLE_MS);
       },
       // The tiles of the current view at the current level: how many there are and how many loaded without an error.
