@@ -44,13 +44,6 @@
     });
     gtag('set', { ads_data_redaction: true, url_passthrough: false });
     gtag('js', new Date());
-    gtag('config', measurementId, {
-      ...page,
-      client_id: event.data.clientId,
-      send_page_view: false,
-      allow_google_signals: false,
-      allow_ad_personalization_signals: false,
-    });
 
     const script = document.createElement('script');
     script.async = true;
@@ -58,12 +51,26 @@
     script.src = 'https://www.googletagmanager.com/gtag/js?id=' + measurementId;
     script.addEventListener('load', () => {
       if (window[disabled]) return;
-      gtag('event', 'page_view', {
-        ...page,
-        send_to: measurementId,
-        event_callback: stop,
-        event_timeout: 1500,
+      window.addEventListener('message', function sendView(message) {
+        if (message.source !== parent || message.origin !== mapOrigin ||
+            message.data !== 'birdmap-ga4-view') return;
+        window.removeEventListener('message', sendView);
+        if (window[disabled]) return;
+        gtag('config', measurementId, {
+          ...page,
+          client_id: event.data.clientId,
+          send_page_view: false,
+          allow_google_signals: false,
+          allow_ad_personalization_signals: false,
+        });
+        gtag('event', 'page_view', {
+          ...page,
+          send_to: measurementId,
+          event_callback: stop,
+          event_timeout: 1500,
+        });
       });
+      parent.postMessage('birdmap-ga4-ready', mapOrigin);
     }, { once: true });
     script.addEventListener('error', stop, { once: true });
     window.setTimeout(stop, 5000);

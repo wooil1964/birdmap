@@ -8,7 +8,7 @@ GA4_HEAD = (
 GA4_HEAD_NEXT = '    <link rel="stylesheet" href="assets/birdmap-report-pick-search.css"/>\n'
 GA4_PANEL_START = '<details class="birdmap-ga4-settings" data-ga4-settings hidden>\n'
 GA4_PANEL_NEXT = '<!-- Cloudflare Web Analytics -->'
-GA4_PANEL_SHA256 = 'bb0dc2cf1cd969491cadc099e856f006f532ac5ef3c5bedff000d0ea3751b3fc'
+GA4_PANEL_SHA256 = '9f0969293231e4b7a174d68452d7082890a722a58ecd8c4a7f95e39d348b82d9'
 GA4_SIGNATURES = ('birdmap-ga4-', 'data-ga4-')
 
 

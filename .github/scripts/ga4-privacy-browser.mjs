@@ -267,6 +267,7 @@ for (const mobile of [false, true]) {
     assert.ok(cookies.length > 0);
     assert.ok(cookies.every(cookie => cookie.path === '/birdmap/'));
     assert.deepEqual(await context.cookies('https://wooil1964.github.io/'), []);
+    assert.deepEqual(await page.evaluate(() => Object.keys(localStorage)), ['birdmap_ga4_choice']);
 
     // A share-link rewrite and changes to the map DOM must not start another view.
     await page.evaluate(value => {
@@ -280,9 +281,13 @@ for (const mobile of [false, true]) {
 test('unconfigured, insecure and same-origin destinations fail closed', { timeout: 25_000 }, async t => {
   for (const configuredOrigin of [null, 'http://metrics-fixture.invalid', 'https://wooil1964.github.io']) {
     const { context, google, page } = await fixture(t, { configuredOrigin });
+    const grant = 'allowed.123.456';
+    await context.addInitScript(value => {
+      if (location.origin === 'https://wooil1964.github.io') localStorage.setItem('birdmap_ga4_choice', value);
+    }, grant);
     await context.addCookies([{
       name: 'birdmap_ga4_choice',
-      value: 'allowed',
+      value: grant,
       domain: 'wooil1964.github.io',
       path: '/birdmap/',
       secure: true,
@@ -385,6 +390,160 @@ test('withdrawal during tag loading cancels the pending view', { timeout: 25_000
   await noFrame(page);
   assert.equal(google.length, 1);
   assert.equal(collectRequests(google).length, 0);
+});
+
+test('renewed consent retries a canceled view and never repeats an authorized view', { timeout: 30_000 }, async t => {
+  const { context, google, page, releaseTag } = await fixture(t, { holdTag: true });
+  const id = async () => (await context.cookies(mapUrl))
+    .find(cookie => cookie.name === 'birdmap_ga4_client')?.value;
+
+  await page.goto(mapUrl);
+  await choose(page, 'allow');
+  const firstTag = await waitForRequest(google, item => item.url === tagUrl);
+  const firstId = await id();
+  assert.ok(firstId);
+  await choose(page, 'deny');
+  await noFrame(page);
+  assert.equal(await id(), undefined);
+
+  await choose(page, 'allow');
+  await waitForRequest(google, item => item !== firstTag && item.url === tagUrl);
+  const renewedId = await id();
+  assert.ok(renewedId && renewedId !== firstId);
+  releaseTag();
+  const view = await firstView(google);
+  const payload = JSON.parse(new URL(view.url).searchParams.get('fixture'));
+  assert.equal(payload.commands.find(command => command[0] === 'config')[2].client_id, renewedId);
+
+  await choose(page, 'deny');
+  await noFrame(page);
+  await choose(page, 'allow');
+  await noFrame(page);
+  const laterId = await id();
+  assert.ok(laterId && laterId !== renewedId);
+  assert.equal(collectRequests(google).length, 1);
+  assert.equal(google.filter(item => item.url === tagUrl).length, 2);
+
+  await page.reload();
+  const laterView = await waitForRequest(google, item => item !== view && item.url.startsWith(collectUrl + '?'));
+  const laterPayload = JSON.parse(new URL(laterView.url).searchParams.get('fixture'));
+  assert.equal(laterPayload.commands.find(command => command[0] === 'config')[2].client_id, laterId);
+});
+
+function failWrites({ cookie, local, noChannel }) {
+  if (noChannel) window.BroadcastChannel = undefined;
+  if (cookie) {
+    const property = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
+    Object.defineProperty(Document.prototype, 'cookie', {
+      ...property,
+      set(value) {
+        if (!value.startsWith('birdmap_ga4_')) property.set.call(this, value);
+      },
+    });
+  }
+  if (local) {
+    for (const method of ['setItem', 'removeItem']) {
+      const original = Storage.prototype[method];
+      Storage.prototype[method] = function (name, ...args) {
+        if (name.startsWith('birdmap_ga4_')) throw new DOMException('Blocked test storage', 'QuotaExceededError');
+        return original.call(this, name, ...args);
+      };
+    }
+  }
+}
+
+test('cookie write failure still revokes in other tabs using storage events', { timeout: 25_000 }, async t => {
+  const { context, google, page, releaseTag } = await fixture(t, { holdTag: true });
+  await context.addInitScript(failWrites, { noChannel: true });
+  await page.goto(mapUrl);
+  await choose(page, 'allow');
+  const firstTag = await waitForRequest(google, item => item.url === tagUrl);
+  const other = await context.newPage();
+  await other.goto(mapUrl);
+  await waitForRequest(google, item => item !== firstTag && item.url === tagUrl);
+
+  await page.evaluate(failWrites, { cookie: true });
+  await choose(page, 'deny');
+  await noFrame(page);
+  await noFrame(other);
+  assert.match((await context.cookies(mapUrl)).find(cookie => cookie.name === 'birdmap_ga4_choice').value, /^allowed\./);
+  assert.equal(await other.evaluate(() => localStorage.getItem('birdmap_ga4_choice')), 'denied');
+  releaseTag();
+
+  await other.reload();
+  await noFrame(other);
+  assert.equal(google.length, 2);
+});
+
+test('local storage write failure still persists denial in the cookie', { timeout: 25_000 }, async t => {
+  const { context, google, page, releaseTag } = await fixture(t, { holdTag: true });
+  await page.goto(mapUrl);
+  await choose(page, 'allow');
+  const firstTag = await waitForRequest(google, item => item.url === tagUrl);
+  const other = await context.newPage();
+  await other.goto(mapUrl);
+  await waitForRequest(google, item => item !== firstTag && item.url === tagUrl);
+
+  await page.evaluate(failWrites, { local: true });
+  await choose(page, 'deny');
+  await noFrame(page);
+  await noFrame(other);
+  assert.equal((await context.cookies(mapUrl)).find(cookie => cookie.name === 'birdmap_ga4_choice').value, 'denied');
+  assert.match(await other.evaluate(() => localStorage.getItem('birdmap_ga4_choice')), /^allowed\./);
+  releaseTag();
+
+  await other.reload();
+  await noFrame(other);
+  assert.equal(google.length, 2);
+});
+
+test('total write failure stops live tabs and stale approval cannot start while writes remain blocked', { timeout: 25_000 }, async t => {
+  const { context, google, page, releaseTag } = await fixture(t, { holdTag: true });
+  await page.goto(mapUrl);
+  await choose(page, 'allow');
+  const firstTag = await waitForRequest(google, item => item.url === tagUrl);
+  const other = await context.newPage();
+  await other.goto(mapUrl);
+  await waitForRequest(google, item => item !== firstTag && item.url === tagUrl);
+
+  const failures = { cookie: true, local: true };
+  await page.evaluate(failWrites, failures);
+  await choose(page, 'deny');
+  await noFrame(page);
+  await noFrame(other);
+  const staleGrant = (await context.cookies(mapUrl)).find(cookie => cookie.name === 'birdmap_ga4_choice').value;
+  assert.match(staleGrant, /^allowed\./);
+  assert.equal(await other.evaluate(() => localStorage.getItem('birdmap_ga4_choice')), staleGrant);
+
+  releaseTag();
+  await context.addInitScript(failWrites, failures);
+  await other.reload();
+  await noFrame(other);
+  assert.match(await other.locator('[data-ga4-status]').textContent(), /저장소에서 설정을 확인하지 못해/);
+  assert.equal(google.length, 2);
+});
+
+test('write permissions lost while the tag loads prevent view authorization', { timeout: 25_000 }, async t => {
+  const { google, page, releaseTag } = await fixture(t, { holdTag: true });
+  await page.goto(mapUrl);
+  await choose(page, 'allow');
+  await waitForRequest(google, item => item.url === tagUrl);
+  await page.evaluate(failWrites, { cookie: true });
+  releaseTag();
+  await noFrame(page);
+  assert.match(await page.locator('[data-ga4-status]').textContent(), /저장소에서 설정을 확인하지 못해/);
+  assert.equal(google.length, 1);
+});
+
+test('a same-document sensitive URL rewrite while the tag loads prevents view authorization', { timeout: 25_000 }, async t => {
+  const { google, page, releaseTag } = await fixture(t, { holdTag: true });
+  await page.goto(mapUrl);
+  await choose(page, 'allow');
+  await waitForRequest(google, item => item.url === tagUrl);
+  await page.evaluate(value => history.replaceState(null, '', '?lat=' + value + '#' + value), sensitive);
+  releaseTag();
+  await noFrame(page);
+  assert.equal(google.length, 1);
 });
 
 test('a blocked Google tag leaves the consent controls available', { timeout: 25_000 }, async t => {
