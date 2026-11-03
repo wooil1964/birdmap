@@ -13,13 +13,13 @@ const tagUrl = 'https://www.googletagmanager.com/gtag/js?id=' + measurementId;
 const collectUrl = 'https://www.google-analytics.com/g/collect';
 const sensitive = 'synthetic-gps-37.123456-reporter-owl-search';
 const sourceReferrer = mapUrl + '?reporter=' + sensitive;
-const consentAsset = 'analytics/ga4-consent.js';
+const consentAsset = 'assets/birdmap-ga4-consent.js';
 const frameOrigin = 'https://metrics-fixture.invalid';
 const frameUrl = frameOrigin + '/ga4-frame.html';
 const frameAsset = 'analytics/ga4-frame.html';
 const localAssets = new Map([
   [consentAsset, 'application/javascript'],
-  ['analytics/ga4-consent.css', 'text/css'],
+  ['assets/birdmap-ga4-consent.css', 'text/css'],
   [frameAsset, 'text/html; charset=utf-8'],
   ['analytics/ga4-frame.js', 'application/javascript'],
 ]);
@@ -30,7 +30,7 @@ const html = read('index.html');
 // The existing gps-browser job exercises the full Leaflet application with synthetic data.
 const fixtureHtml = html
   .replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, script => (
-    /<script\b[^>]*\bsrc=["']\.\/analytics\/ga4-consent\.js["']/i.test(script) ? script : ''
+    /<script\b[^>]*\bsrc=["']\.\/assets\/birdmap-ga4-consent\.js["']/i.test(script) ? script : ''
   ))
   .replace(/<title>[\s\S]*?<\/title>/i, '<title>' + sensitive + '</title>');
 
@@ -184,7 +184,7 @@ async function firstView(google) {
 test('real markup loads only local analytics code and preserves the Cloudflare beacon', () => {
   assert.match(html, /static\.cloudflareinsights\.com\/beacon\.min\.js/);
   assert.doesNotMatch(html, /googletagmanager\.com|google-analytics\.com/);
-  assert.match(fixtureHtml, /src=["']\.\/analytics\/ga4-consent\.js["']/);
+  assert.match(fixtureHtml, /src=["']\.\/assets\/birdmap-ga4-consent\.js["']/);
 });
 
 async function verifyMobileOverlay(page) {
