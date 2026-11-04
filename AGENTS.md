@@ -14,16 +14,27 @@
 
 변경 영향에 해당하는 최소 로컬 검사만 수행한다. 전체 로컬 회귀는 사용자가 명시적으로 요청한 경우에만 수행한다. PR CI를 기본 안전장치로 유지하되 CI가 확인하지 못하는 항목은 별도 검증한다. 로컬 통과·CI 대기·CI 실패를 구분하고 CI 통과 전 정상 완료로 보고하지 않는다.
 
-아래는 현재 존재를 확인한 검사다. 짧은 파일명은 `.github/scripts/` 기준이며 모두 실행하라는 목록이 아니다. 영향 항목을 빠뜨리지 않되, 재편 중인 최소 조합은 **2단계에서 확정**한다.
+아래는 현재 존재를 확인한 검사다. 짧은 파일명은 `.github/scripts/` 기준이며 모두 실행하라는 목록이 아니다. 영향 항목을 빠뜨리지 않는다.
 
 | 변경 영역 | 대응 검사·상태 |
 |---|---|
 | 문서만 | `git diff --check`, `git diff --name-only`, `git status --short`; 링크·우선순위·크기·기록 보존 대조 |
-| 탐조지·좌표·ID | `test_central_sites.py`, `test_jeju_sites.py`, `test_metro_sites.py`, `test_a_grade_sites.py`; 최소 조합은 2단계에서 확정 |
-| 추천 | `test_weekly_recommendation.mjs`, `test_recommendation_contract.mjs`; 고정 비교 적용 범위는 2단계에서 확정 |
+| 탐조지·좌표·ID | `test_central_sites.py`(공통 계약 합성 시험 포함) + 변경 지역 검사(`test_jeju_sites.py`·`test_metro_sites.py`·`test_a_grade_sites.py`), `test_weather.py`(runtime·Worker 정합성). 조석 연결 신규 등록은 `test_jeju_sites.py`의 매핑 확장 검사 포함 |
+| 추천 | `test_weekly_recommendation.mjs`, `test_recommendation_contract.mjs`; CI의 `publication_ci_signatures.mjs` 고정 서명 비교는 범위 재검토 미실시 |
 | 기상·조석 | `test_weather.py`, `test_validator_time_contract.py`, `test_tide.py`, `test_today_weather_midnight.mjs`, `test_tide_fallback.mjs` 중 영향 검사 |
-| Worker·공개 보호 | `weather-proxy/test/*.test.mjs`, `reports-api/test/*.test.mjs`; 최소 조합은 2단계에서 확정 |
-| 지도·팝업 | `test_basemap_controller.mjs` 등 해당 검사; 브라우저 조합은 2단계에서 확정 |
+| Worker·공개 보호 | 변경한 Worker의 `weather-proxy/test/*.test.mjs` 또는 `reports-api/test/*.test.mjs` |
+| 지도·팝업 | `test_basemap_controller.mjs` 등 해당 `test_*.mjs`. `index.html` UI 변경은 아래 C 제약 확인 |
 | SEO·공유 | `build_seo_pages.py --check`, `test_seo_pages.py`, `test_share_pages.py` 중 영향 검사 |
 
-탐조지 개수 고정 검사와 과거 고정 입력·커밋 비교에는 알려진 제약이 있다. 통과가 현재 전체 데이터 검증을 뜻하지 않는다. 테스트를 통과시키려고 임의의 예외·허용 개수·정규화를 추가하지 않는다. 제약과 미검증 범위는 후속 작업으로 보고한다.
+## 탐조지 데이터 검증 (PR #68)
+
+- 공통 검증은 `site_data_contract.py`의 `assert_repository_sites()`다. 고정 개수가 아니라 PR 기준 main의 `siteData`·`weather-proxy/src/sites.js`와 비교해 ID 삭제·중복·순서 변경, lat·lon·pelagic 무승인 변경, runtime·Worker 이름·환경·좌표 불일치, 필드 스키마 변경을 차단한다. 안내문 등 다른 필드 수정은 허용한다.
+- 기준: CI는 runner PR 병합 커밋의 main 부모, 로컬은 `git fetch origin main` 뒤 `merge-base HEAD origin/main`이다.
+- 종 변경·신규 탐조지는 `fixtures/site_data_change_reviews.json`에 근거(`baseCommit`은 main 조상, 종 전후 값·레코드 해시 일치)를 기록한다. 좌표·pelagic 변경 승인(`protectedApprovals`)은 기준 main에 있는 것만 인정되므로 같은 PR에서 추가해도 효력이 없다.
+- 검사는 근거 URL·승인 링크의 **형식**만 확인한다. 실제 근거의 진위는 사람의 검토로 확인한다.
+
+## 알려진 검사 제약
+
+- **C(미해결)**: `assert_engine_matches_base()`가 `siteData` 밖 `index.html` 전체를 기준 main과 비교한다. 정상 UI 변경도 `test_metro_sites.py`·`test_jeju_sites.py`·`test_island_nearby_contract.py`에서 실패할 수 있다.
+- **D(일부 미해결)**: `test_jeju_sites.py`가 `weather_rules.json`, `notices.json`, `reports-api/tools/sites-seed.mjs`를 기준 main과 바이트 비교한다.
+- C·D로 실패해도 테스트를 통과시키려고 임의의 예외·허용 목록·정규화를 추가하지 않는다. 실패 원인과 미검증 범위를 보고하고 별도 승인된 개선 PR로 처리한다. 검사 통과가 전체 데이터·기능 검증을 뜻하지 않는다.
