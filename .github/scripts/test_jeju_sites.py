@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 from report_archive_contract import without_report_archive
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import unquote, urlsplit
 
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
 from site_data_contract import (assert_repository_sites, assert_engine_matches_base,
@@ -20,13 +20,119 @@ ROOT = Path(__file__).resolve().parents[2]
 NEW_IDS = ['206','207','208','209','210','211','212','213']
 SOURCE = json.loads((ROOT/'data/jeju-birding-sites-20261018.json').read_text(encoding='utf-8'))
 
-# site-picker.js has dedicated selection/parser/escaping tests in
-# reports-api/test/site-picker.test.mjs, run by the existing reports-api CI step.
-# Keep the other locks until their actual-file/negative-path contracts are covered.
+# Only generated weather/tide files stay byte-locked to the PR base. The rest are content-checked:
+#   site-picker.js  -> reports-api/test/site-picker.test.mjs (reports-api CI step)
+#   weather_rules.json -> test_weather.py WeatherRulesContractTests
+#   notices.json    -> validate_notices() below
+#   sites-seed.mjs  -> test_jeju_registry.mjs rejection-path tests
 JEJU_BASE_FILE_CONTRACTS = (
     'weather_today.json', 'weather_week.json', 'tide_today.json', 'tide_month.json',
-    'notices.json', 'weather_rules.json', 'reports-api/tools/sites-seed.mjs',
 )
+
+# Fields index.html actually reads from notices.json (noticeCard, activeNotice, noticeLinkedSites,
+# appendNoticeRoutePoints, weeklyEditorialRecommendations). Unknown keys are rejected to catch typos.
+NOTICE_FIELDS = {'title', 'summary', 'content', 'start', 'end', 'published', 'image', 'link', 'linkText',
+                 'siteIds', 'siteId', 'sites', 'site', 'points', 'weeklyRecommendations'}
+NOTICE_DATE = re.compile(r'\d{4}-\d{2}-\d{2}\Z')
+
+
+def _unique_pairs(pairs):
+    keys = [key for key, _ in pairs]
+    if len(keys) != len(set(keys)):
+        raise ValueError('duplicate JSON key')
+    return dict(pairs)
+
+
+def _no_constant(value):
+    raise ValueError('non-finite JSON number')
+
+
+def validate_notices(text, sites, root=ROOT):
+    """Raise ValueError for notices the page would mis-render, silently drop or link unsafely."""
+    from datetime import date
+    ids, names = {str(s['id']) for s in sites}, {s['name'] for s in sites}
+
+    def require(condition, message):
+        if not condition:
+            raise ValueError(message)
+
+    def text_field(notice, key, where, required=False):
+        if key in notice or required:
+            require(isinstance(notice.get(key), str), f'{where}: {key} must be text')
+
+    def coordinate(point, where):
+        require(isinstance(point, dict), where + ': coordinate must be an object')
+        lat, lon = point.get('lat'), point.get('lon')
+        require(type(lat) in (int, float) and type(lon) in (int, float) and -90 <= lat <= 90
+                and -180 <= lon <= 180 and (lat, lon) != (0, 0), where + ': invalid coordinate')
+
+    def site_ref(value, where):
+        require(type(value) in (int, str) and str(value).strip() in ids | names, where + ': unknown site')
+
+    notices = json.loads(text, object_pairs_hook=_unique_pairs, parse_constant=_no_constant)
+    require(isinstance(notices, list), 'notices.json must be a list')
+    weekly_published = 0
+    for index, notice in enumerate(notices):
+        where = f'notice {index}'
+        require(isinstance(notice, dict), where + ': must be an object')
+        require(set(notice) <= NOTICE_FIELDS, where + ': unknown field ' + ', '.join(sorted(set(notice) - NOTICE_FIELDS)))
+        require(isinstance(notice.get('title'), str) and notice['title'].strip(), where + ': title required')
+        text_field(notice, 'content', where, required=True)
+        for key in ('summary', 'linkText', 'image', 'link'):
+            text_field(notice, key, where)
+        require(type(notice.get('published')) is bool, where + ': published must be true/false')
+        days = []
+        for key in ('start', 'end'):
+            if key in notice:
+                value = notice[key]
+                require(isinstance(value, str) and NOTICE_DATE.match(value), f'{where}: {key} must be YYYY-MM-DD')
+                try:
+                    days.append(date.fromisoformat(value))
+                except ValueError:
+                    raise ValueError(f'{where}: {key} is not a real date') from None
+        require(len(days) < 2 or days[0] <= days[1], where + ': start after end')
+        link = notice.get('link', '')
+        if link:  # index.html assigns this straight to <a href>.
+            parts = urlsplit(link)
+            require(parts.scheme in ('http', 'https') and parts.hostname, where + ': link must be http(s)')
+        image = notice.get('image', '')
+        if image.strip():
+            parts = urlsplit(image.strip())
+            if parts.scheme or image.strip().startswith('//'):
+                require(parts.scheme in ('http', 'https') and parts.hostname, where + ': image must be http(s)')
+            else:
+                require('..' not in image and (Path(root) / image.strip().lstrip('/')).is_file(),
+                        where + ': image file missing')
+        for key in ('siteIds', 'sites'):
+            if key in notice:
+                require(isinstance(notice[key], list), f'{where}: {key} must be a list')
+                for value in notice[key]:
+                    site_ref(value, where)
+        for key in ('siteId', 'site'):
+            if notice.get(key) is not None:
+                site_ref(notice[key], where)
+        if 'points' in notice:
+            require(isinstance(notice['points'], list) and notice['points'], where + ': points must be a list')
+            for point in notice['points']:
+                require(isinstance(point, dict) and set(point) <= {'name', 'lat', 'lon', 'access'},
+                        where + ': unknown point field')
+                require(isinstance(point.get('name'), str) and point['name'].strip(), where + ': point name required')
+                coordinate(point, where)
+                if point.get('access') is not None:
+                    coordinate(point['access'], where + ' access')
+        if 'weeklyRecommendations' in notice:
+            entries = notice['weeklyRecommendations']
+            require(isinstance(entries, list), where + ': weeklyRecommendations must be a list')
+            for item in entries:
+                require(isinstance(item, dict) and set(item) <= {'siteId', 'name', 'reason'} and 'siteId' in item,
+                        where + ': invalid weekly recommendation')
+                require(type(item['siteId']) in (int, str) and str(item['siteId']) in ids, where + ': unknown weekly site')
+                for key in ('name', 'reason'):
+                    text_field(item, key, where)
+            weekly_published += notice['published']
+    # weeklyEditorialRecommendations() reads only the first published list; a second one is silently ignored.
+    require(weekly_published <= 1, 'more than one published weeklyRecommendations list')
+    return notices
 
 
 def assert_jeju_base_files(root, ref):
@@ -167,13 +273,13 @@ class JejuFileBoundaryTests(unittest.TestCase):
         target.write_text('/* Synthetic normal picker UI change */', encoding='utf-8')
         assert_jeju_base_files(self.root, 'a' * 40)
 
-    def test_rules_notices_and_seed_remain_locked_pending_complete_contracts(self):
+    def test_rules_notices_and_seed_are_content_checked_not_byte_locked(self):
         for name in ('weather_rules.json', 'notices.json', 'reports-api/tools/sites-seed.mjs'):
             target = self.root / name
-            target.write_bytes(b'synthetic changed payload\n')
-            with self.subTest(file=name), self.assertRaisesRegex(AssertionError, 'Base file contract'):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(b'synthetic normal edit\n')
+            with self.subTest(file=name):
                 assert_jeju_base_files(self.root, 'a' * 40)
-            target.write_bytes(self.contents[name])
 
     def test_generated_weather_and_tide_file_protection_is_unchanged(self):
         for name in ('weather_today.json', 'weather_week.json', 'tide_today.json', 'tide_month.json'):
@@ -182,6 +288,61 @@ class JejuFileBoundaryTests(unittest.TestCase):
             with self.subTest(file=name), self.assertRaisesRegex(AssertionError, 'Base file contract'):
                 assert_jeju_base_files(self.root, 'a' * 40)
             target.write_bytes(self.contents[name])
+
+
+class NoticesContractTests(unittest.TestCase):
+    def setUp(self):
+        self.text = (ROOT / 'notices.json').read_text(encoding='utf-8')
+        self.sites = load_runtime_sites()
+
+    def variant(self, change):
+        notices = json.loads(self.text)
+        change(notices)
+        return json.dumps(notices, ensure_ascii=False)
+
+    def test_current_notices_pass(self):
+        validate_notices(self.text, self.sites)
+
+    def test_normal_notice_edits_are_allowed(self):
+        new = {'title': '새 공지', 'content': '', 'start': '2026-11-05', 'end': '2026-11-30', 'published': True,
+               'summary': '요약', 'link': 'https://example.org/a', 'linkText': '자세히', 'siteIds': [15, '19'],
+               'image': 'https://example.org/p.jpg',
+               'points': [{'name': '지점', 'lat': 37.1, 'lon': 126.7, 'access': {'lat': 37.11, 'lon': 126.71}}]}
+        for change in (lambda n: n[0].update(content='수정된 본문', title='수정된 제목'),
+                       lambda n: n[0].update(published=False, end='2026-12-31'),
+                       lambda n: n.insert(0, new),
+                       lambda n: n.pop(),
+                       lambda n: n[1]['points'][0].update(lat=37.12)):
+            with self.subTest(change=change):
+                validate_notices(self.variant(change), self.sites)
+
+    def test_invalid_notices_fail(self):
+        cases = {
+            'item not an object': lambda n: n.clear() or n.append([]),
+            'missing title': lambda n: n[0].pop('title'),
+            'missing content': lambda n: n[0].pop('content'),
+            'published text': lambda n: n[0].update(published='true'),
+            'published missing': lambda n: n[0].pop('published'),
+            'bad date': lambda n: n[0].update(start='2026/10/17'),
+            'impossible date': lambda n: n[0].update(start='2026-02-30'),
+            'start after end': lambda n: n[3].update(start='2026-11-30'),
+            'typo field': lambda n: n[0].update(pubished=True),
+            'script link': lambda n: n[0].update(link='javascript:alert(1)'),
+            'missing image': lambda n: n[0].update(image='images/no-such-notice.jpg'),
+            'unknown site': lambda n: n[0].update(siteIds=[99999]),
+            'point out of range': lambda n: n[1]['points'][0].update(lat=95),
+            'point zero': lambda n: n[1]['points'][0].update(lat=0, lon=0),
+            'point text coordinate': lambda n: n[1]['points'][0].update(lon='126.7'),
+            'bad access': lambda n: n[1]['points'][0].update(access={'lat': 37.1}),
+            'weekly unknown site': lambda n: n[6]['weeklyRecommendations'].append({'siteId': 99999}),
+            'second weekly list': lambda n: n[0].update(weeklyRecommendations=[{'siteId': 15}]),
+        }
+        for name, change in cases.items():
+            with self.subTest(case=name), self.assertRaises(ValueError):
+                validate_notices(self.variant(change), self.sites)
+        for text in ('[{', '{}', '[{"title":"a","title":"b","content":"","published":true}]'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                validate_notices(text, self.sites)
 
 
 class JejuRegistryAppendTests(unittest.TestCase):

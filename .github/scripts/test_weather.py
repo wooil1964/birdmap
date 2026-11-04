@@ -939,5 +939,118 @@ class TodayWaveFreshnessTests(unittest.TestCase):
                 self.assertEqual(today["missingScoreFields"], sample["missingScoreFields"])
 
 
+# Content contract for weather_rules.json, replacing the byte lock that used to sit in
+# test_jeju_sites.py. Ranges are sanity bounds for update_weather.score_weather(), not tuning.
+RULE_NUMBERS = {"baseScore": (0, 100), "windIdealMax": (0, 40), "windMax": (0, 40), "gustMax": (0, 60),
+                "precip3hMax": (0, 50), "visibilityMinKm": (0, 50), "cloudMaxPct": (0, 100), "waveMaxM": (0, 10)}
+RULE_TEXT = ("label", "targetGroup")
+
+
+def _rejects_duplicate_keys(pairs):
+    keys = [key for key, _ in pairs]
+    if len(keys) != len(set(keys)):
+        raise ValueError("duplicate JSON key")
+    return dict(pairs)
+
+
+def _rejects_constant(value):
+    raise ValueError("non-finite JSON number")
+
+
+def validate_rules(text, site_rule_keys):
+    """Raise ValueError unless every runtime site resolves to a complete, numerically sane rule."""
+    def require(condition, message):
+        if not condition:
+            raise ValueError(message)
+
+    def number(value, name):
+        low, high = RULE_NUMBERS[name]
+        require(type(value) in (int, float) and low <= value <= high, "invalid rule number: " + name)
+
+    def entry(rule, where, complete):
+        require(isinstance(rule, dict), "rule must be an object: " + where)
+        require(set(rule) <= set(RULE_NUMBERS) | set(RULE_TEXT) | {"preferredWindFrom"}, "unknown rule field: " + where)
+        for name in RULE_TEXT:
+            require(isinstance(rule.get(name), str) and rule[name].strip(), "missing rule text: " + where)
+        for name in RULE_NUMBERS:
+            if complete:
+                require(name in rule, "default lacks " + name)
+            if name in rule:
+                number(rule[name], name)
+        if "preferredWindFrom" in rule:
+            pair = rule["preferredWindFrom"]
+            require(isinstance(pair, list) and len(pair) == 2
+                    and all(type(v) in (int, float) and 0 <= v <= 360 for v in pair) and pair[0] <= pair[1],
+                    "invalid preferredWindFrom: " + where)
+
+    config = json.loads(text, object_pairs_hook=_rejects_duplicate_keys, parse_constant=_rejects_constant)
+    require(isinstance(config, dict) and set(config) == {"version", "description", "aliases", "default", "rules"},
+            "unexpected weather_rules.json top level")
+    require(config["version"] == 1 and type(config["version"]) is int, "unsupported rules version")
+    require(isinstance(config["description"], str), "invalid description")
+    entry(config["default"], "default", True)
+    rules = config["rules"]
+    require(isinstance(rules, dict) and "general_birding" in rules, "general_birding fallback rule missing")
+    for key, rule in rules.items():
+        entry(rule, key, False)
+        merged = weather.merge_rule(config, key)[1]
+        require(merged["windIdealMax"] <= merged["windMax"] <= merged["gustMax"], "wind thresholds out of order: " + key)
+    aliases = config["aliases"]
+    require(isinstance(aliases, dict), "invalid aliases")
+    for alias, target in aliases.items():
+        require(isinstance(target, str) and target in rules and alias not in rules, "invalid alias: " + alias)
+    for key in site_rule_keys:
+        require(aliases.get(key, key) in rules, "site weatherRuleKey has no rule: " + str(key))
+    return config
+
+
+class WeatherRulesContractTests(unittest.TestCase):
+    def setUp(self):
+        self.text = weather.RULES_PATH.read_text(encoding="utf-8")
+        self.keys = {str(s.get("weatherRuleKey") or "general_birding") for s in load_runtime_sites()}
+
+    def variant(self, change):
+        config = json.loads(self.text)
+        change(config)
+        return json.dumps(config, ensure_ascii=False)
+
+    def test_current_rules_pass_and_every_site_resolves(self):
+        validate_rules(self.text, self.keys)
+        self.assertIn("coastal_gull", self.keys)  # A real alias in use, so alias resolution is exercised.
+
+    def test_normal_tuning_and_new_rule_are_allowed(self):
+        for change in (lambda c: c["rules"]["winter_waterfowl"].update(windMax=13, visibilityMinKm=5),
+                       lambda c: c["default"].update(baseScore=90),
+                       lambda c: c["rules"].update(dune_plover={"label": "사구", "targetGroup": "물떼새류", "windMax": 12}),
+                       lambda c: c["aliases"].update(shore="mudflat_shorebird")):
+            with self.subTest(change=change):
+                validate_rules(self.variant(change), self.keys)
+
+    def test_invalid_values_and_references_fail(self):
+        cases = {
+            "string number": lambda c: c["rules"]["raptor_migration"].update(windMax="12"),
+            "boolean number": lambda c: c["default"].update(waveMaxM=True),
+            "negative": lambda c: c["rules"]["forest_songbird"].update(precip3hMax=-1),
+            "out of range": lambda c: c["default"].update(cloudMaxPct=150),
+            "ideal above max": lambda c: c["rules"]["island_migrant"].update(windIdealMax=14),
+            "unknown field": lambda c: c["rules"]["island_migrant"].update(windMaxx=13),
+            "missing label": lambda c: c["rules"]["coastal_seabird"].pop("label"),
+            "bad wind range": lambda c: c["rules"]["island_migrant"].update(preferredWindFrom=[337.5, 225]),
+            "default incomplete": lambda c: c["default"].pop("gustMax"),
+            "fallback removed": lambda c: c["rules"].pop("general_birding"),
+            "used rule removed": lambda c: c["rules"].pop("mudflat_shorebird"),
+            "alias to missing rule": lambda c: c["aliases"].update(coastal_gull="gull_rule"),
+            "alias shadows rule": lambda c: c["aliases"].update(general_birding="forest_songbird"),
+            "unknown top level": lambda c: c.update(extra=1),
+        }
+        for name, change in cases.items():
+            with self.subTest(case=name), self.assertRaises(ValueError):
+                validate_rules(self.variant(change), self.keys)
+        for text in ("{", self.text.replace('"windMax": 11', '"windMax": NaN', 1),
+                     self.text.replace('"version": 1,', '"version": 1, "version": 1,', 1)):
+            with self.subTest(text=text[:20]), self.assertRaises(ValueError):
+                validate_rules(text, self.keys)
+
+
 if __name__ == "__main__":
     unittest.main()
