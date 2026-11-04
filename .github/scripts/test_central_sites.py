@@ -582,6 +582,240 @@ class WeatherEventBoundaryTests(unittest.TestCase):
                 self.assertTrue(result.wasSuccessful(), result.errors + result.failures)
 
 
+# ---------------------------------------------------------------------------
+# Strict data block, fixed spots, Worker admin parity and the browser expectation.
+# ---------------------------------------------------------------------------
+import site_data_contract as contract
+
+SITE_A = {'id': '1', 'name': '시험 갯벌', 'lat': 37.1, 'lon': 126.7}
+SITE_B = {'id': '2', 'name': '시험 섬', 'lat': 36.5, 'lon': 126.1}
+SPOTS = [{'id': 'fixed:1:0', 'siteId': '1', 'lat': 37.11, 'lon': 126.71, 'species': ['도요']},
+         {'id': 'fixed:1:1', 'siteId': '1', 'lat': 37.12, 'lon': 126.72, 'species': ['물떼새', '저어새']},
+         {'id': 'fixed:2:0', 'siteId': '2', 'lat': 36.51, 'lon': 126.11, 'species': ['직박구리']}]
+UI_CODE = "function pick(id){return siteData.find(function(s){return s.id===id;});}\n/* 탐조지(siteData) 설명 */\n"
+
+
+def data_page(spots=SPOTS, before_spots='var markerRegistry={};\n/* 수동 점 */\n', after=UI_CODE, head='', initial=None):
+    initial = [SITE_A] if initial is None else initial
+    return (head + '<script type="application/ld+json">{"@type":"Map"}</script>\n<script>\n'
+            + 'var siteData=' + json.dumps(initial, ensure_ascii=False) + ';\n'
+            + 'siteData=siteData.concat([\n  ' + json.dumps(SITE_B, ensure_ascii=False) + '\n]);\n'
+            + before_spots + 'var siteSpotData=' + json.dumps(spots, ensure_ascii=False) + ';\n' + after + '</script>\n')
+
+
+class StrictDataBlockTests(unittest.TestCase):
+    def test_live_page_agrees_with_legacy_and_worker_parsers(self):
+        text = (ROOT / 'index.html').read_text(encoding='utf-8')
+        data = contract.parse_protected_data(text)
+        self.assertEqual(data['sites'], contract.runtime_from_text(text))
+        self.assertEqual(data['sites'], load_runtime_sites())
+        self.assertEqual(len({s['id'] for s in data['sites']}), len(data['sites']))
+        script = ("import {SITE_PICKER_JS} from './reports-api/src/site-picker.js';import {readFileSync} from 'node:fs';"
+                  "const arrays=new Function(SITE_PICKER_JS+'\\nreturn siteDataArrays;')()(readFileSync('index.html','utf8'));"
+                  "process.stdout.write(JSON.stringify(arrays.flatMap(a=>JSON.parse(a))));")
+        worker = json.loads(subprocess.check_output(['node', '--input-type=module', '-e', script], cwd=ROOT))
+        self.assertEqual(worker, data['sites'])  # The reports Worker reads the same records.
+
+    def test_valid_block_with_comments_and_ordinary_ui_code_passes(self):
+        data = contract.parse_protected_data(data_page())
+        self.assertEqual((data['initial'], data['sites'], data['spots']), ([SITE_A], [SITE_A, SITE_B], SPOTS))
+        contract.parse_protected_data(data_page(before_spots='// 한 줄 주석\nvar a={"x":[1,2]};\n', after=''))
+        contract.parse_protected_data(data_page().replace('\n', '\r\n'))
+
+    def test_decoys_duplicates_and_unsupported_forms_fail_closed(self):
+        page = data_page()
+        cases = {
+            'html comment decoy': (data_page(head='<!-- var siteData=[] -->\n'), 'Unexpected siteData declaration'),
+            'js comment decoy': (data_page(after='/* var siteData=[{"id":"9"}]; */\n'), 'Unexpected siteData declaration'),
+            'string decoy': (data_page(after='var s="siteData=[1]";\n'), 'Unexpected siteData assignment'),
+            'commented-out real block': (page.replace('<script>\nvar siteData=', '<script>\n/* */var siteData=', 1),
+                                         'Exactly one inline script'),
+            'second declaration script': (page + '<script>\nvar siteData=[];\n</script>', 'Exactly one inline script'),
+            'later reassignment': (data_page(after='siteData=siteData.filter(Boolean);\n'), 'Unexpected siteData assignment'),
+            'compound assignment': (data_page(after='siteSpotData+=1;\n'), 'Unexpected siteSpotData assignment'),
+            'window property write': (data_page(after='window.siteSpotData=[];\n'), 'Unexpected siteSpotData assignment'),
+            'quoted global access': (data_page(after="window['siteData'].push(1);\n"), 'quoted global name'),
+            'defineProperty by name': (data_page(after='Object.defineProperty(window,"siteData",{value:[]});\n'), 'quoted global name'),
+            'Reflect.set by name': (data_page(after='Reflect.set(globalThis,`siteSpotData`,[]);\n'), 'quoted global name'),
+            'nomodule data block': (data_page().replace('<script>\nvar siteData=', '<script nomodule>\nvar siteData=', 1),
+                                    'Exactly one inline script'),
+            'template data block': ('<template>' + data_page() + '</template>', 'Exactly one inline script'),
+            'textarea data block': ('<textarea>' + data_page() + '</textarea>', 'Exactly one inline script'),
+            'noscript data block': ('<noscript>' + data_page() + '</noscript>', 'Exactly one inline script'),
+            'let redeclaration': (data_page(after='{let siteData=[];}\n'), 'Unexpected siteData declaration'),
+            'expression initializer': (page.replace(';\nsiteData=siteData.concat', '.map(f);\nsiteData=siteData.concat', 1),
+                                       'siteData declaration must end with ;'),
+            'non-literal concat': (page.replace('siteData=siteData.concat([', 'siteData=siteData.concat(extra,[', 1),
+                                   'concat is not a JSON array literal'),
+            'code before spots': (data_page(before_spots='run();\n'), 'Unsupported statement before siteSpotData'),
+            'missing spots': (page.replace('var siteSpotData=', 'var siteSpotDatum=', 1), 'Unsupported statement before siteSpotData'),
+            'duplicate JSON key': (page.replace('"name": "시험 갯벌"', '"name": "시험 갯벌", "name": "x"', 1), 'not a JSON array literal'),
+            'NaN coordinate': (page.replace('"lat": 37.1,', '"lat": NaN,', 1), 'not a JSON array literal'),
+            'non-object record': (data_page(spots=[1]), 'JSON objects'),
+        }
+        for name, (text, message) in cases.items():
+            with self.subTest(case=name), self.assertRaisesRegex(ValueError, message):
+                contract.parse_protected_data(text)
+
+    def test_asset_scripts_may_read_but_not_write_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            assets = Path(directory) / 'assets'
+            assets.mkdir()
+            (assets / 'ok.js').write_text('(global.siteData||[]).forEach(f);var x=global.siteSpotData;', encoding='utf-8')
+            contract.assert_assets_do_not_write_data(directory)
+            for code in ('global.siteData=[];', 'siteSpotData.length=0;siteSpotData=[];', "self['siteData']=[]"):
+                (assets / 'bad.js').write_text(code, encoding='utf-8')
+                with self.subTest(code=code), self.assertRaises(ValueError):
+                    contract.assert_assets_do_not_write_data(directory)
+        contract.assert_assets_do_not_write_data(ROOT)
+
+
+def spot_grant(before, after, **extra):
+    grant = {'action': 'update_spot', 'id': before['id'], 'before': before, 'after': after,
+             'beforeDigest': digest(before), 'reason': '현장 재측정', 'sources': ['https://example.org/evidence'],
+             'userApproval': 'https://github.com/wooil1964/birdmap/issues/1'}
+    grant.update(extra)
+    return grant
+
+
+class FixedSpotContractTests(unittest.TestCase):
+    SITES = {'1', '2'}
+
+    def changed(self, index, **fields):
+        spots = copy.deepcopy(SPOTS)
+        spots[index].update(fields)
+        return spots
+
+    def test_unchanged_and_approved_updates_pass(self):
+        contract.validate_spots(SPOTS, copy.deepcopy(SPOTS), self.SITES)
+        moved = self.changed(1, lat=37.125, species=['물떼새'])
+        contract.validate_spots(SPOTS, moved, self.SITES, [spot_grant(SPOTS[1], moved[1])])
+
+    def test_unapproved_changes_deletion_order_and_new_spots_fail(self):
+        cases = {
+            'coordinate': (self.changed(0, lat=37.2), [], 'without trusted base approval'),
+            'species': (self.changed(2, species=['직박구리', '동박새']), [], 'without trusted base approval'),
+            'parent': (self.changed(2, siteId='1'), [], 'must name its parent'),
+            'delete': (SPOTS[:2], [], 'deleted/renamed'),
+            'rename': (self.changed(2, id='fixed:2:1'), [], 'deleted/renamed'),
+            'reorder': ([SPOTS[1], SPOTS[0], SPOTS[2]], [], 'order changed'),
+            'new spot': (SPOTS + [{'id': 'fixed:2:1', 'siteId': '2', 'lat': 36.52, 'lon': 126.12, 'species': ['A']}], [],
+                         'not enabled'),
+            'duplicate id': (SPOTS + [SPOTS[0]], [], 'Duplicate fixed spot'),
+            'wrong grant target': (self.changed(0, lat=37.2), [spot_grant(SPOTS[0], self.changed(0, lat=37.3)[0])],
+                                   'without trusted base approval'),
+            'stale grant': (self.changed(0, lat=37.2), [spot_grant(SPOTS[0], self.changed(0, lat=37.2)[0], beforeDigest='0' * 64)],
+                            'approval binding'),
+            'grant without user link': (self.changed(0, lat=37.2),
+                                        [spot_grant(SPOTS[0], self.changed(0, lat=37.2)[0], userApproval='https://example.org')],
+                                        'user approval reference'),
+            'grant changes id': (self.changed(0, lat=37.2), [spot_grant(SPOTS[0], {**self.changed(0, lat=37.2)[0], 'id': 'fixed:1:5'})],
+                                 'cannot change an ID'),
+        }
+        for name, (current, grants, message) in cases.items():
+            with self.subTest(case=name), self.assertRaisesRegex(ValueError, message):
+                contract.validate_spots(SPOTS, current, self.SITES, grants)
+
+    def test_invalid_spot_records_fail(self):
+        for name, fields, message in (('latitude', {'lat': 91}, 'coordinate'), ('zero', {'lat': 0, 'lon': 0}, 'coordinate'),
+                                      ('text latitude', {'lat': '37.1'}, 'coordinate'), ('no species', {'species': []}, 'species'),
+                                      ('repeat species', {'species': ['A', 'A']}, 'species'), ('extra field', {'note': 'x'}, 'fields'),
+                                      ('missing parent', {'id': 'fixed:9:0', 'siteId': '9'}, 'parent site missing')):
+            spots = self.changed(0, **fields)
+            with self.subTest(case=name), self.assertRaisesRegex(ValueError, message):
+                contract.validate_spots(spots, spots, self.SITES)
+
+
+class AdminSpotParityTests(unittest.TestCase):
+    def test_live_admin_page_matches_live_spots(self):
+        rows = contract.admin_fixed_spots((ROOT / contract.ADMIN_PAGE).read_text(encoding='utf-8'))
+        spots = contract.parse_protected_data((ROOT / 'index.html').read_text(encoding='utf-8'))['spots']
+        contract.assert_admin_spot_parity(spots, rows)
+
+    def test_admin_drift_and_unsupported_shapes_fail(self):
+        page = ("var FIXED_SPOTS=[\n  {key:'fixed:1:0',label:'A (37.11000, 126.71000)'},\n"
+                "  {key:'fixed:1:1',label:'B (37.12000, 126.72000)'},\n  {key:'fixed:2:0',label:'C (36.51000, 126.11000)'}\n];\n")
+        contract.assert_admin_spot_parity(SPOTS, contract.admin_fixed_spots(page))
+        for name, text, message in (
+                ('order', page.replace("fixed:1:0','label:'A", "x", 0).replace('fixed:1:0', 'fixed:Z').replace('fixed:1:1', 'fixed:1:0')
+                 .replace('fixed:Z', 'fixed:1:1'), 'keys/order'),
+                ('coordinate', page.replace('37.11000', '37.11100'), 'label coordinate'),
+                ('missing', page.replace("  {key:'fixed:2:0',label:'C (36.51000, 126.11000)'}\n", ''), 'keys/order'),
+                ('shape', page.replace("{key:'fixed:1:0'", "{key:`fixed:1:0`"), 'Unsupported admin'),
+                ('declaration', page.replace('var FIXED_SPOTS=[', 'var FIXED=['), 'declaration')):
+            with self.subTest(case=name), self.assertRaisesRegex(ValueError, message):
+                contract.assert_admin_spot_parity(SPOTS, contract.admin_fixed_spots(text))
+
+
+class FixedSpotLedgerTrustTests(unittest.TestCase):
+    """A grant inside the candidate PR never authorises that PR; a grant already on main does."""
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        self.git('init', '--quiet')
+        self.git('config', 'user.email', 'ci@example.invalid')
+        self.git('config', 'user.name', 'CI')
+        (self.root / 'reports-api/src').mkdir(parents=True)
+        (self.root / '.github/scripts/fixtures').mkdir(parents=True)
+        self.admin = "var FIXED_SPOTS=[\n" + ",\n".join(
+            "  {key:'%s',label:'x (%.5f, %.5f)'}" % (s['id'], s['lat'], s['lon']) for s in SPOTS) + "\n];\n"
+        self.write(SPOTS, [])
+        self.git('add', '.')
+        self.git('commit', '--quiet', '-m', 'base')
+        self.git('update-ref', 'refs/remotes/origin/main', 'HEAD')
+        self.local = patch.dict(os.environ, {'GITHUB_ACTIONS': 'false', 'SITE_DATA_BASE_REF': ''})
+
+    def git(self, *args):
+        return subprocess.check_output(['git', *args], cwd=self.root, text=True).strip()
+
+    def write(self, spots, approvals, admin=None):
+        (self.root / 'index.html').write_text(data_page(spots=spots), encoding='utf-8')
+        (self.root / contract.SPOT_REVIEWS).write_text(json.dumps({'version': 1, 'approvals': approvals}), encoding='utf-8')
+        (self.root / contract.ADMIN_PAGE).write_text(admin or self.admin, encoding='utf-8')
+
+    def test_same_pr_grant_is_ignored_and_prior_main_grant_works(self):
+        moved = copy.deepcopy(SPOTS)
+        moved[0]['lat'] = 37.111
+        admin = self.admin.replace('37.11000', '37.11100')
+        self.write(moved, [spot_grant(SPOTS[0], moved[0])], admin)
+        with self.local, self.assertRaisesRegex(ValueError, 'without trusted base approval'):
+            contract.assert_repository_spots(self.root)
+        self.write(SPOTS, [spot_grant(SPOTS[0], moved[0])])
+        self.git('add', '.')
+        self.git('commit', '--quiet', '-m', 'approved grant lands on main first')
+        self.git('update-ref', 'refs/remotes/origin/main', 'HEAD')
+        self.write(moved, [], admin)
+        with self.local:
+            self.assertEqual(contract.assert_repository_spots(self.root)['spots'], moved)
+
+    def test_admin_page_must_follow_an_approved_move(self):
+        moved = copy.deepcopy(SPOTS)
+        moved[0]['lat'] = 37.111
+        self.write(SPOTS, [spot_grant(SPOTS[0], moved[0])])
+        self.git('add', '.')
+        self.git('commit', '--quiet', '-m', 'grant')
+        self.git('update-ref', 'refs/remotes/origin/main', 'HEAD')
+        self.write(moved, [])
+        with self.local, self.assertRaisesRegex(ValueError, 'label coordinate'):
+            contract.assert_repository_spots(self.root)
+
+
+class ExpectedSiteDataTests(unittest.TestCase):
+    def test_live_expectation_is_built_from_validated_data(self):
+        expected = contract.expected_site_data(ROOT)
+        data = contract.parse_protected_data((ROOT / 'index.html').read_text(encoding='utf-8'))
+        self.assertEqual(expected['siteData'], data['sites'])
+        self.assertEqual(expected['siteSpotData'], data['spots'])
+        self.assertEqual(expected['initialCount'], len(data['initial']))
+        self.assertEqual(expected['baseCommit'], baseline_ref(ROOT))
+
+    def test_export_fails_instead_of_writing_unvalidated_data(self):
+        with patch.object(contract, 'assert_repository_spots', side_effect=ValueError('spot contract failed')), \
+                self.assertRaisesRegex(ValueError, 'spot contract failed'):
+            contract.expected_site_data(ROOT)
+
+
 # unittest.main() runs these cases through the existing central-sites CI step.
 if __name__ == '__main__':
     unittest.main()

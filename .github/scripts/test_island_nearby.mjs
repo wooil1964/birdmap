@@ -2,6 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+// Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
+const SITE_COUNT=createRequire(import.meta.url)('../../docs/site-data-guard/guard.cjs').expected().siteData.length;
 
 const html=readFileSync(new URL('../../index.html',import.meta.url),'utf8').replace(/\r\n/g,'\n');
 const initial=JSON.parse(html.match(/var siteData=(\[.*?\]);/s)[1]);
@@ -13,7 +16,7 @@ vm.createContext(context);vm.runInContext(script,context);
 test('six island groups cover all 20 existing markers, with no other places enabled',()=>{
   const expected=['1','101','102','103','2','104','105','106','63','127','128','129','130','4','117','118','119','110','111','64'].sort();
   assert.equal(context.ISLAND_NEARBY_PILOT.length,6);
-  assert.equal(sites.length,240);
+  assert.equal(sites.length,SITE_COUNT);
   assert.deepEqual(sites.filter(s=>context.islandNearbySearchHtml(s)).map(s=>s.id).sort(),expected);
   for(const invalid of [null,{...sites[0],country:'일본'},{...sites[0],island:false},{...sites[0],id:'9999'},{...sites[0],name:'다른 섬'}])assert.equal(context.islandNearbySearchHtml(invalid),'');
 });

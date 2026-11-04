@@ -6,6 +6,8 @@
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http'), cp = require('node:child_process');
 const assert = require('node:assert/strict'), { createHash } = require('node:crypto');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+// Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
+const SITE_COUNT = require('../site-data-guard/guard.cjs').expected().siteData.length;
 const ROOT = path.resolve(path.join(__dirname, '../..'));
 const OUT = path.resolve(process.env.RECENT_OUTPUT || path.join(ROOT, '.ci-results/recent-reports-controls'));
 const SHOTS = process.env.RECENT_SHOTS && path.resolve(process.env.RECENT_SHOTS);
@@ -89,8 +91,8 @@ async function openPage(browser, origin, width, height, touch, before) {
     network.blocked++; return route.abort();
   });
   await page.goto(origin, { waitUntil: 'load' });
-  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed()
-    && document.querySelectorAll('#recentReportsList .recentReportItem').length === 15 && document.querySelector('#recentReportsBox .birdmap-sheet-actions'));
+  await page.waitForFunction(count => window.L && Object.keys(markerRegistry).length === count && publicationAllowed()
+    && document.querySelectorAll('#recentReportsList .recentReportItem').length === 15 && document.querySelector('#recentReportsBox .birdmap-sheet-actions'), SITE_COUNT);
   return { page, label };
 }
 async function shot(page, label, name) { if (SHOTS) await page.screenshot({ path: path.join(SHOTS, label + '-' + name + '.png') }); }

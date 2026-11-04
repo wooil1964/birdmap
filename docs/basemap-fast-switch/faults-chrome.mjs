@@ -7,11 +7,17 @@ import { spawn } from 'node:child_process';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
+import { createRequire } from 'node:module';
 
 const [repo = '.', resultPath = '.ci-results/basemap-faults/result.json', runLabel = 'ci'] = process.argv.slice(2);
 const PAGE = pathToFileURL(join(resolve(repo), 'index.html')).href;
+// Protected site data must survive every engine switch. The expectation is validated against the PR base and
+// approval ledgers first and applies only when this repository's own page is under test.
+const guard = createRequire(import.meta.url)('../site-data-guard/guard.cjs');
+const GUARDED = resolve(repo) === resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+if (GUARDED) guard.expected();
 const ENDPOINT = 'https://birdmap-vworld-tiles.birdmap-vworld-isolated.workers.dev/tiles';
 const CONFIG = `window.BIRDMAP_MAP_CONFIG = { vworldMode: 'worker', vworldTileEndpoint: '${ENDPOINT}' };`;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -61,6 +67,7 @@ class Browser {
     await this.send('Fetch.enable', { patterns: [{ urlPattern: ENDPOINT + '/*', requestStage: 'Request' }] }, sessionId);
     await this.send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile }, sessionId);
     if (touch) await this.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 }, sessionId);
+    if (GUARDED) await this.send('Page.addScriptToEvaluateOnNewDocument', { source: guard.INIT_SCRIPT }, sessionId);
     await this.send('Page.addScriptToEvaluateOnNewDocument', { source: CONFIG + "try{localStorage.removeItem('birdmap.basemap.preference')}catch(e){}" }, sessionId);
     const evaluate = async expression => { const { result, exceptionDetails } = await this.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }, sessionId); if (exceptionDetails) throw Error(exceptionDetails.text); return result.value; };
     await this.send('Page.navigate', { url: PAGE }, sessionId);
@@ -311,8 +318,9 @@ try {
       const tiles = p.log.length - before;
       // Let late timers (deferred fallbacks, Leaflet's prune) run before reading the page's exceptions.
       await sleep(300);
-      const ok = sc.expect(s) && p.exceptions.length === 0;
-      results.push({ size: label, scenario: sc.name, ok, note: sc.note, tilesRequested: tiles, final: s, exceptions: p.exceptions, consoleErrors: p.consoleErrors });
+      const siteData = GUARDED ? guard.compare(await p.evaluate(guard.REPORT)) : { pass: true, skipped: 'other repository' };
+      const ok = sc.expect(s) && p.exceptions.length === 0 && siteData.pass;
+      results.push({ size: label, scenario: sc.name, ok, note: sc.note, tilesRequested: tiles, final: s, siteData, exceptions: p.exceptions, consoleErrors: p.consoleErrors });
       console.log(`${ok ? 'PASS' : 'FAIL'} ${label} ${sc.name} tiles=${tiles} -> ${JSON.stringify(s)}${p.exceptions.length ? ' EXCEPTIONS ' + JSON.stringify(p.exceptions) : ''}`);
       await p.close();
     }

@@ -7,6 +7,10 @@ const assert = require('node:assert/strict'), { createHash } = require('node:cry
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const ROOT = path.resolve(process.env.POPUP_TEST_ROOT || path.join(__dirname, '../..'));
 const OUT = path.resolve(process.env.POPUP_TEST_OUTPUT || path.join(ROOT, '.ci-results/popup-regression'));
+// Validated against the PR base and approval ledgers before any page opens; never read back from the page.
+// POPUP_TEST_ROOT may point at another checkout for manual comparisons; the guard applies to this repository only.
+const guard = require('../site-data-guard/guard.cjs'), GUARDED = ROOT === path.resolve(__dirname, '../..');
+const SITE_COUNT = GUARDED ? guard.expected().siteData.length : 0;
 const CACHE = process.env.POPUP_DEPENDENCY_CACHE;
 assert.ok(CACHE && fs.statSync(CACHE).isDirectory(), 'POPUP_DEPENDENCY_CACHE must name an existing URL-hash cache');
 fs.mkdirSync(OUT, { recursive: true });
@@ -505,6 +509,7 @@ async function followupRegressions(page, label, width) {
   for (const [width, height, touch] of [[1440, 1000, false], [1440, 900, false], [1280, 720, false], [1024, 768, false], [768, 1024, true], [320, 568, true], [360, 800, true], [390, 844, true], [844, 390, true]].filter(([w]) => !widths || widths.includes(w))) {
     const label = width + 'x' + height, page = await browser.newPage({ viewport: { width, height }, isMobile: touch, hasTouch: touch });
     page.on('pageerror', error => errors.push(label + ': ' + error.message));
+    if (GUARDED) await page.addInitScript({ content: guard.INIT_SCRIPT });
     await page.addInitScript({ content: '(' + fixture + ')();(' + syntheticReportFixture.toString() + ')();' });
     await page.route('**/*', async route => {
       const request = route.request(), u = new URL(request.url());
@@ -520,14 +525,16 @@ async function followupRegressions(page, label, width) {
     });
     try {
       await page.goto(origin, { waitUntil: 'load' });
-      await page.waitForFunction(() => window.birdmapLocation && window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed());
+      await page.waitForFunction(count => window.birdmapLocation && window.L && Object.keys(markerRegistry).length === (count || siteData.length) && publicationAllowed(), SITE_COUNT);
       await page.evaluate(() => {
         window.__popupEvents = [];
         map_7010a44f6ac2025090f0fe07508ed485.on('popupopen popupclose', e => __popupEvents.push({ type: e.type, report: !!e.popup._birdmapReportLocation, at: performance.now() }));
         const status = document.querySelector('#birdmapGpsStatus');
         new MutationObserver(() => __popupEvents.push({ type: 'GPS status', text: status.textContent, at: performance.now() })).observe(status, { childList: true });
       });
-      check(await page.evaluate(() => L.version === '1.9.3' && siteData.length === 240 && __mock.geo.length === 0), label + ' actual Leaflet, 240 sites and no automatic GPS');
+      check(await page.evaluate(count => L.version === '1.9.3' && siteData.length === (count || siteData.length) && __mock.geo.length === 0, SITE_COUNT), label + ' actual Leaflet, validated site count and no automatic GPS');
+      if (GUARDED) { const data = guard.compare(await page.evaluate(guard.REPORT)), map = guard.compareMap(await page.evaluate(guard.mapProbe()));
+        check(data.pass && map.pass, label + ' runtime site data and markers equal validated data', { data, map }); }
       const desktop = await page.evaluate(() => {
         const p = window[siteData.find(s => s.id === '195').markerVar].getPopup(), d = Object.getOwnPropertyDescriptor(p.options, 'autoPan');
         return { own: !!d, descriptor: d || null, value: p.options.autoPan, offset: Object.getOwnPropertyDescriptor(p.options, 'offset') || null, tag: false, gps: false };
@@ -602,6 +609,8 @@ async function followupRegressions(page, label, width) {
       await sheetPathFold(page, label, 'report');
       await sheetPathFold(page, label, 'fixed');
       await openSite(page); await start(page); await page.screenshot({ path: path.join(OUT, 'guide-' + label + '.png') });
+      // GPS guidance, popups, directions and sheets have all run: protected data must still be untouched.
+      if (GUARDED) { const data = guard.compare(await page.evaluate(guard.REPORT)); check(data.pass, label + ' protected data unchanged after GPS, popup and directions scenarios', data); }
       await page.evaluate(() => map_7010a44f6ac2025090f0fe07508ed485.remove());
       const unloaded = await snapshot(page);
       check(sameOptions(unloaded, desktop), label + ' map unload releases all popup options', { before: desktop, after: unloaded });

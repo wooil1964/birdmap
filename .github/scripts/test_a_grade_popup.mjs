@@ -4,6 +4,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
+import { createRequire } from 'node:module';
+// Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
+const SITE_COUNT = createRequire(import.meta.url)('../../docs/site-data-guard/guard.cjs').expected().siteData.length;
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -54,7 +57,7 @@ const SPECIES_GROUPS = /도요|물떼새|오리|기러기|갈매기|저어새|�
 test('existing 229 records: labels and generated sentences are identical to the main baseline', () => {
   const now = load(CURRENT), base = load(BASELINE);
   assert.equal(base.siteData.length, 229);
-  assert.equal(now.siteData.length, 240);
+  assert.equal(now.siteData.length, SITE_COUNT);
   for (const site of base.siteData) {
     const cur = now.siteData.find(s => s.id === site.id);
     assert.equal(JSON.stringify(cur), JSON.stringify(site));
