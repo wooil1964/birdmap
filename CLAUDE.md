@@ -1,55 +1,30 @@
 # CLAUDE.md
 
-이 파일은 Claude Code가 이 저장소에서 작업할 때 참고하는 안내 문서입니다.
+Claude Code가 이 저장소에서 분석·독립 리뷰·오류 추적 및 승인된 수정을 할 때 참고하는 안내입니다.
 
-> **중요: 이 문서와 `AI_WORK_RULES.md`가 충돌하면 항상 `AI_WORK_RULES.md`가 우선합니다.**
-> 작업 시작 전 반드시 `AI_WORK_RULES.md` 전문을 읽고 준수하세요.
+> [AI_WORK_RULES.md](AI_WORK_RULES.md)가 최우선입니다. 작업 시작 전 전문을 읽고 준수합니다.
+> 공통 작업 절차·영역별 최소 검사는 [AGENTS.md](AGENTS.md)를 따르며, 충돌 시 AI_WORK_RULES.md가 우선합니다.
 
-## 프로젝트 개요
+## 프로젝트와 문서 탐색
 
-들뫼생태연구회 **전국 탐조지도** 프로젝트입니다.
-GitHub Pages로 서비스되는 단일 페이지 지도 앱이며, 실제 서비스 기준은 **main 브랜치의 `index.html`** 입니다.
+들뫼생태연구회 전국 탐조지도는 GitHub Pages의 단일 페이지 지도 앱입니다. 서비스 코드 기준은 main의 `index.html`이며 내부 `siteData`가 런타임 데이터입니다.
 
-## 저장소 구조
+| 경로 | 용도 |
+|---|---|
+| [AI_WORK_RULES.md](AI_WORK_RULES.md) | 역할·데이터·좌표·ID·안전·검증·보고의 원본 규칙 |
+| [HANDOVER.md](HANDOVER.md) | 현재 상태·진행 중 작업·주의사항 |
+| [docs/decisions/active-decisions.md](docs/decisions/active-decisions.md) | 현재 유효한 결정과 근거 |
+| `data/` | 오프라인 엑셀 DB. 기준 파일은 사용자가 지정 |
+| `weather-proxy/` | 실시간 기상 Worker. `src/sites.js`는 runtime과 대조 필요 |
+| `reports-api/` | 제보·승인·공개 보호 Worker와 D1 관련 코드 |
+| `.github/workflows/` | 기상·조석 자동 갱신 및 PR CI |
+| `weather_today.json`, `weather_week.json`, `tide_today.json`, `tide_month.json` | 자동 생성 데이터 |
+| `notices.json` | 탐조기획 공지 |
+| `tide_station_mapping.json`, `weather_rules.json` | 조석 매핑·탐조 적합도 규칙 |
+| `index_backup_before_v21.html`, `index_v23.html` | 과거 백업. 수정 금지 |
 
-| 경로 | 설명 |
-|------|------|
-| `index.html` | 실제 서비스 핵심 파일(약 8,700줄 이상). 내부 `siteData`가 런타임 탐조지 데이터 |
-| `AI_WORK_RULES.md` | AI 공동 작업 규칙(최우선 문서) |
-| `HANDOVER.md` | AI 간 작업 인수인계 문서 |
-| `data/` | 오프라인 원본 엑셀 DB (기준 엑셀은 사용자가 지정) |
-| `weather-proxy/` | Cloudflare Worker (실시간 기상 프록시) |
-| `weather-proxy/src/sites.js` | Worker용 탐조지 좌표·id 목록 (`siteData`와 수동 이중 관리) |
-| `.github/workflows/` | 기상·조석 자동 갱신 Actions (`update-weather.yml`, `update-tide.yml`, `update-tide-month.yml`) |
-| `weather_today.json` | 자동 생성: 오늘 기상 데이터 |
-| `tide_today.json` | 자동 생성: 오늘 조석 데이터 |
-| `tide_month.json` | 자동 생성: 한 달 조석 데이터 |
-| `notices.json` | 탐조기획 공지 파일 |
-| `tide_station_mapping.json` | 탐조지-조석 관측소 매핑 |
-| `weather_rules.json` | 탐조 적합도 판정 규칙 |
-| `index_backup_before_v21.html`, `index_v23.html` | 과거 버전 백업(수정 금지) |
+## Claude Code 작업 안내
 
-## 핵심 작업 규칙 요약
-
-자세한 내용은 `AI_WORK_RULES.md` 참조. 아래는 요약입니다.
-
-1. **최소 수정**: 요청 범위만 수정하고, 요청받지 않은 리팩터링·기능 삭제·UI 변경을 하지 않는다.
-2. **작업 전**: `git status` 확인 → 최신 main 확인 → `AI_WORK_RULES.md` 준수.
-3. **한 번에 하나의 AI만 수정**: 이전 AI의 commit/push 완료 후 작업한다.
-4. **자동 생성 파일 주의**: `weather_today.json`, `tide_today.json`, `notices.json` 등은 Actions가 덮어쓸 수 있으므로 직접 수정 전 생성 구조를 확인한다.
-5. **이중 관리 주의**: `index.html`의 `siteData`와 `weather-proxy/src/sites.js`는 id·좌표·pelagic 필드가 일치해야 한다. 탐조지 변경 시 양쪽 모두 확인.
-6. **좌표 검증**: 좌표 수정·추가 시 기준 엑셀, `siteData`, 카카오맵, Windy, `sites.js`, 조석 매핑을 대조하고, 임의 보정하지 않는다. 불일치는 수정 전 보고.
-7. **siteData 수정 시**: 수정 전후 탐조지 개체 수와 id 중복 여부를 검증한다.
-8. **보안**: API 키·비밀정보를 코드, 로그, 보고서에 노출하지 않는다.
-9. **보고**: 테스트하지 않은 상태에서 정상 완료라고 보고하지 않는다. 작업 완료 후 `AI_WORK_RULES.md` 12항의 형식으로 보고한다.
-
-## 작업 완료 보고 형식 (AI_WORK_RULES.md 12항)
-
-1. 작업 목적
-2. 변경 파일
-3. 변경 내용
-4. 테스트 결과
-5. 좌표 검증 결과(관련 작업일 경우)
-6. 기존 기능 영향 여부
-7. 발견된 미해결 문제
-8. Commit ID와 Push 여부
+- 독립 리뷰에서는 실제 diff·근거·검증 결과를 대조하고 미확인 사항을 분리합니다. 리뷰가 곧 수정·병합·배포 승인은 아닙니다.
+- 공통 안전 규칙을 이 파일에 복제하지 않습니다. 좌표·종·ID·자동 생성 파일·비밀정보·동시 수정은 AI_WORK_RULES.md 원문을 확인합니다.
+- 완료 보고는 AI_WORK_RULES.md 12항을 따릅니다. 완료 상세는 PR 또는 인수인계 아카이브에 남기고 HANDOVER.md에는 현재 상태만 유지합니다.
