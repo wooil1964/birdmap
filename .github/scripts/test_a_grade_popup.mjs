@@ -54,10 +54,16 @@ function load(html, state = {}) {
 
 const SPECIES_GROUPS = /도요|물떼새|오리|기러기|갈매기|저어새|맹금|바다새|텃새|번식조류|물새|산림성/;
 
-test('existing 229 records: labels and generated sentences are identical to the main baseline', () => {
-  const now = load(CURRENT), base = load(BASELINE);
+// Historical batch fact: the A-grade merge (PR #60, e4c0282) left the 229 earlier records and their
+// sentences untouched. Compared on that merged page, not today's page, so later approved data edits and
+// popup copy changes are not frozen; live records are protected by site_data_contract.py instead.
+const MERGED = execFileSync('git', ['show', 'e4c0282a6b3badd088e02275876f35066cf3ca77:index.html'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+
+test('existing 229 records: the A-grade merge kept labels and generated sentences identical to its baseline', () => {
+  const now = load(MERGED), base = load(BASELINE);
   assert.equal(base.siteData.length, 229);
-  assert.equal(now.siteData.length, SITE_COUNT);
+  assert.equal(now.siteData.length, 240);
+  assert.ok(load(CURRENT).siteData.length === SITE_COUNT);
   for (const site of base.siteData) {
     const cur = now.siteData.find(s => s.id === site.id);
     assert.equal(JSON.stringify(cur), JSON.stringify(site));

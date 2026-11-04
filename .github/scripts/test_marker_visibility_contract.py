@@ -5,7 +5,12 @@ from pathlib import Path
 from marker_visibility_contract import MARKER_VISIBILITY_ISLANDS, without_marker_visibility
 
 ROOT = Path(__file__).resolve().parents[2]
-CURRENT = (ROOT / 'index.html').read_text(encoding='utf-8')
+# These reverse-patch contracts were written for the retired whole-page freeze. They now run against the
+# last page checked under that freeze (C-1 merge a6245a5), so they keep verifying the normalizers without
+# pinning the live page. Live data, markers, routes and external code are guarded by site_data_contract.py
+# and the browser harnesses (docs/site-data-guard/guard.cjs).
+FROZEN = 'a6245a5f18a32430f454955188ec55331b78c7eb'
+CURRENT = subprocess.check_output(['git', 'show', FROZEN + ':index.html'], cwd=ROOT).decode('utf-8')
 
 
 class MarkerVisibilityScopeTests(unittest.TestCase):

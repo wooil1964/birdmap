@@ -130,32 +130,9 @@ def historical_sites(root, ref):
     return runtime_from_text(baseline_bytes(root, ref, 'index.html').decode('utf-8'))
 
 
-def without_site_data(text):
-    """Mask only decoded siteData payloads; keep UI and siteSpotData visible."""
-    text = text.replace('\r\n', '\n')
-    replacements = []
-    for number, (match, end, _) in enumerate(_arrays(text)):
-        if number == 0:
-            replacements.append((match.end(), end, '[]'))
-            continue
-        tail = re.match(r'\s*\)\s*;', text[end:])
-        require(tail is not None, 'Incomplete siteData concat statement')
-        start, finish = match.start(), end + tail.end()
-        line_start, line_end = text.rfind('\n', 0, start) + 1, text.find('\n', finish)
-        if not text[line_start:start].strip() and (line_end < 0 or not text[finish:line_end].strip()):
-            start, finish = line_start, len(text) if line_end < 0 else line_end + 1
-        replacements.append((start, finish, ''))
-    for start, end, replacement in reversed(replacements):
-        text = text[:start] + replacement + text[end:]
-    return text
-
-
-def assert_engine_matches_base(root=ROOT, normalize=lambda text: text):
-    ref = baseline_ref(root)
-    before = baseline_bytes(root, ref, 'index.html').decode('utf-8')
-    current = (Path(root) / 'index.html').read_text(encoding='utf-8')
-    require(without_site_data(normalize(current)) == without_site_data(normalize(before)),
-            'Code/fixed-point changes outside siteData need their own review')
+# The whole-page comparison with the PR base (assert_engine_matches_base) was retired in C-2.
+# Its protections now live in the data contracts below, the runtime guard in the browser
+# harnesses (docs/site-data-guard/guard.cjs) and assert_external_resources().
 
 
 def _id(value):
@@ -729,6 +706,131 @@ def assert_repository_spots(root=ROOT):
     trusted = _spot_ledger(baseline_bytes(root, ref, SPOT_REVIEWS).decode('utf-8'))['approvals'] if exists else []
     validate_spots(base['spots'], current['spots'], site_ids, trusted)
     assert_admin_spot_parity(current['spots'], admin_fixed_spots((root / ADMIN_PAGE).read_text(encoding='utf-8')))
+    return current
+
+
+# ---------------------------------------------------------------------------
+# External origins. With the whole-page freeze gone, a PR could otherwise make the page load code
+# from, or send data to, a new origin with no review. Every host named by an absolute or
+# protocol-relative URL in the code the page runs (index.html outside the data block, every text
+# file under assets/, and every other local file index.html loads) must be on the host allowlist
+# read from the PR BASE (fixtures/external_resources.json); a candidate's own allowlist edit only
+# takes effect after it reaches main, like the approval ledgers. Before the ledger exists on main,
+# the base's own host set is the trusted list. <base>, data:/blob:/javascript: code sources and
+# hosts built from template expressions fail outright.
+# Residual: a host spelt by string concatenation is not visible to this text check.
+# The data block is excluded: site links are data, validated by the data contracts.
+# ---------------------------------------------------------------------------
+EXTERNAL_RESOURCES = '.github/scripts/fixtures/external_resources.json'
+_SLASHES = r'(?:\\?[\\/]){2}'  # //, \\, /\, \/ and JSON-escaped \/\/
+_ABSOLUTE = re.compile(r'(?i)\bhttps?:' + _SLASHES + r"""([^\s'"`<>()\\/?#:]*)""")
+_RELATIVE = re.compile(r"""(?i)['"`=(]\s*""" + _SLASHES + r"""([^\s'"`<>()\\/?#:]+)""")
+_HOSTNAME = re.compile(r'[a-z0-9-]+(?:\.[a-z0-9-]+)+')
+_TEXT_SUFFIXES = {'.js', '.mjs', '.cjs', '.css', '.html', '.htm', '.json', '.svg', '.txt', '.webmanifest', '.xml'}
+_CODE_SOURCES = {'script': 'src', 'iframe': 'src', 'frame': 'src', 'embed': 'src', 'object': 'data', 'link': 'href'}
+
+
+def _page_tags(text):
+    """(tag, attrs) for every start tag, via the stdlib HTML tokenizer."""
+    from html.parser import HTMLParser
+    found = []
+
+    class Parser(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            found.append((tag, dict(attrs)))
+
+        handle_startendtag = handle_starttag
+
+    parser = Parser(convert_charrefs=True)
+    parser.feed(text)
+    parser.close()
+    return found
+
+
+def _without_data_block(text):
+    text = text.replace('\r\n', '\n')
+    start, spots = re.search(r'\bvar\s+siteData\s*=', text), re.search(r'\bvar\s+siteSpotData\s*=\s*', text)
+    if not start or not spots:
+        return text  # No data block (synthetic pages); the strict data contract governs real pages.
+    _, end = _json_at(text, spots.end(), 'siteSpotData is not a JSON array literal')
+    return text[:start.start()] + text[end:]
+
+
+def _local_code_paths(index_text):
+    """Repository paths of the local scripts, stylesheets and frames index.html loads."""
+    paths = set()
+    for tag, attrs in _page_tags(index_text):
+        value = (attrs.get(_CODE_SOURCES.get(tag, '')) or '').strip()
+        if value and not urlsplit(value).scheme and not re.match(r'[\\/]{2}', value):
+            paths.add(urlsplit(value).path.lstrip('/'))
+    return paths
+
+
+def external_hosts(index_text, other_texts=()):
+    """Sorted lower-case hosts named by the page code. Raises on forms that cannot be allowlisted."""
+    for tag, attrs in _page_tags(index_text):
+        require(tag != 'base', '<base> is not allowed: it would re-home every relative script')
+        value = (attrs.get(_CODE_SOURCES.get(tag, '')) or '').strip().lower()
+        require(not value.startswith(('data:', 'blob:', 'javascript:', 'http:')),
+                'Code must not load from data:, blob:, javascript: or http: (' + tag + ')')
+    hosts = set()
+    for text in (_without_data_block(index_text), *other_texts):
+        text = text.replace('\\.', '.').replace('\\/', '/')  # Hosts spelt inside regex literals count too.
+        for pattern in (_ABSOLUTE, _RELATIVE):
+            for host in pattern.findall(text):
+                host = host.lower().rstrip('.')
+                if pattern is _RELATIVE and not _HOSTNAME.fullmatch(host):
+                    continue  # '//' + non-host text (e.g. a regex) is not a URL.
+                if not host:
+                    continue  # A bare 'https://' prefix names no origin.
+                require(_HOSTNAME.fullmatch(host), 'URL host is not a literal hostname: ' + host[:40])
+                hosts.add(host)
+    return sorted(hosts)
+
+
+def _code_texts(read, list_assets, index_text):
+    """Text of every asset file and every other local file the page loads, via the given readers."""
+    names = {n for n in list_assets() if Path(n).suffix.lower() in _TEXT_SUFFIXES}
+    names |= {p for p in _local_code_paths(index_text) if p and p != 'index.html'}
+    texts = []
+    for name in sorted(names):
+        data = read(name)
+        if data is not None:
+            texts.append(data.decode('utf-8', errors='replace'))
+    return texts
+
+
+def _external_ledger(text):
+    value = json_value(text)
+    require(isinstance(value, dict) and set(value) == {'version', 'hosts'} and type(value['version']) is int
+            and value['version'] == 1 and isinstance(value['hosts'], list)
+            and all(isinstance(h, str) and _HOSTNAME.fullmatch(h) and h == h.lower() for h in value['hosts'])
+            and len(set(value['hosts'])) == len(value['hosts']), 'Invalid external host allowlist')
+    return value
+
+
+def assert_external_resources(root=ROOT):
+    root, ref = Path(root), baseline_ref(root)
+    index_text = (root / 'index.html').read_text(encoding='utf-8')
+    def read_current(name):
+        path = root / name
+        return path.read_bytes() if path.is_file() else None
+    def list_current():
+        return [p.relative_to(root).as_posix() for p in (root / 'assets').rglob('*') if p.is_file()]
+    current = external_hosts(index_text, _code_texts(read_current, list_current, index_text))
+    _external_ledger((root / EXTERNAL_RESOURCES).read_text(encoding='utf-8'))  # Syntax only; no authority.
+    if git(root, 'ls-tree', '--name-only', ref, '--', EXTERNAL_RESOURCES).strip():
+        trusted = set(_external_ledger(baseline_bytes(root, ref, EXTERNAL_RESOURCES).decode('utf-8'))['hosts'])
+    else:
+        base_index = baseline_bytes(root, ref, 'index.html').decode('utf-8')
+        tree = set(git(root, 'ls-tree', '-r', '--name-only', ref).split('\n'))
+        def read_base(name):
+            return baseline_bytes(root, ref, name) if name in tree else None
+        def list_base():
+            return [n for n in tree if n.startswith('assets/')]
+        trusted = set(external_hosts(base_index, _code_texts(read_base, list_base, base_index)))
+    unknown = sorted(set(current) - trusted)
+    require(not unknown, 'External host not on the base allowlist: ' + ', '.join(unknown))
     return current
 
 

@@ -127,32 +127,64 @@ function compareMap(observed, data = expected()) {
   return { pass: problems.length === 0, problems: problems.slice(0, 20), evidence: { registry: observed.registry, spotLayers: observed.spots.filter(Boolean).length } };
 }
 
-// Reviewed destination overrides hard-coded in index.html's popup builder (isYubudo / isGukhwado).
-// They are bound to ID and name: renaming the site or moving the destination must update this list
-// in the same PR, so the change is visible to review instead of silently passing.
-const enc = encodeURIComponent;
+// Directions are checked by DESTINATION, not by URL spelling: link format, labels and buttons may change
+// freely, but every Kakao/Tmap destination must be a validated coordinate (or the validated kakaoMapUrl).
+// Reviewed destination overrides hard-coded in index.html's popup builder (isYubudo / isGukhwado) are
+// bound to ID and name; moving them means editing this list in the same PR, visible to review.
 const ROUTE_OVERRIDES = Object.freeze({
-  '19': { name: '유부도', kakao: ['https://map.kakao.com/link/map/' + enc('유부도 출항지') + ',35.97698056,126.60557500'],
-    tmap: 'tmap://route?goalname=' + enc('유부도 출항지') + '&goalx=126.605575&goaly=35.97698056' },
-  '156': { name: '국화도', kakao: ['https://map.kakao.com/link/search/' + enc('장고항')], tmap: null },
+  // Ferry departure point; links to the island itself must still match the validated site coordinate.
+  '19': { name: '유부도', extra: [[35.97698056, 126.605575]] },
+  // Directions go to the Janggo port search; no coordinate link to the island is offered.
+  '156': { name: '국화도', extra: [], noSiteCoordinate: true, kakaoSearch: 'https://map.kakao.com/link/search/' + encodeURIComponent('장고항') },
 });
+const TOLERANCE = 1e-6; // Stored links round to 6 decimals (about 0.1 m).
 
-// Directions and map links a popup may show for a validated site.
-function siteLinks(site) {
+// Coordinate navigation links in a popup: every Kakao /link/map/ or /link/to/ link (any scheme, so http fails
+// later), and every kakaomap:// or tmap:// link. Name searches (/link/search/, nearby-service links) and
+// place pages carry no coordinate and are not destinations.
+const isRouteLink = href => /^(?:[a-z]+:)?\/\/(?:[^/]*\.)?map\.kakao\.com\/link\/(?:map|to)\//i.test(href) || /^(?:kakaomap|tmap):/i.test(href);
+
+function kakaoDestination(href) {
+  try {
+    const u = new URL(href);
+    const m = u.protocol === 'https:' && u.hostname === 'map.kakao.com'
+      && decodeURIComponent(u.pathname).match(/^\/link\/(?:map|to)\/.*,(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$/);
+    return m ? [Number(m[1]), Number(m[2])] : null;
+  } catch { return null; }
+}
+
+function tmapDestination(href) {
+  if (typeof href !== 'string' || !href.startsWith('tmap://route?')) return null;
+  const q = new URLSearchParams(href.slice('tmap://route?'.length));
+  if (q.getAll('goaly').length !== 1 || q.getAll('goalx').length !== 1) return null; // Ambiguous duplicates fail.
+  const lat = Number(q.get('goaly')), lon = Number(q.get('goalx'));
+  return Number.isFinite(lat) && Number.isFinite(lon) ? [lat, lon] : null;
+}
+
+const near = (p, list) => !!p && list.some(d => Math.abs(p[0] - d[0]) <= TOLERANCE && Math.abs(p[1] - d[1]) <= TOLERANCE);
+const destinationOf = href => href.startsWith('tmap:') ? tmapDestination(href) : kakaoDestination(href);
+
+// Problems with the navigation links (all hrefs of the popup) for a validated site; [] = correct.
+function siteRouteProblems(site, hrefs) {
   const override = ROUTE_OVERRIDES[site.id];
-  if (override) {
-    assert.equal(site.name, override.name, 'route override ' + site.id + ' is bound to its reviewed site name');
-    return { kakao: override.kakao.slice(), tmap: override.tmap };
+  if (override) assert.equal(site.name, override.name, 'route override ' + site.id + ' is bound to its reviewed site name');
+  const destinations = [...(override && override.noSiteCoordinate ? [] : [[site.lat, site.lon]]), ...(override ? override.extra : [])];
+  const routes = hrefs.filter(isRouteLink), problems = [];
+  for (const href of routes) {
+    if (!override && href === site.kakaoMapUrl) continue; // Validated data link.
+    if (!near(destinationOf(href), destinations)) problems.push('destination ' + href);
   }
-  const name = encodeURIComponent(site.name);
-  return {
-    kakao: [site.kakaoMapUrl, 'https://map.kakao.com/link/map/' + name + ',' + site.lat + ',' + site.lon].filter(Boolean),
-    tmap: site.country === '대한민국' ? 'tmap://route?goalname=' + name + '&goalx=' + site.lon + '&goaly=' + site.lat : null,
-  };
+  const reviewedSearch = !!(override && override.kakaoSearch && hrefs.includes(override.kakaoSearch));
+  if (site.country === '대한민국' && !routes.length && !reviewedSearch) problems.push('no directions link');
+  return problems;
 }
 
-function spotRoutes(spot) {
-  return { kakao: ',' + spot.lat + ',' + spot.lon, tmap: '&goalx=' + spot.lon + '&goaly=' + spot.lat };
+// Problems with the navigation links of a fixed observation spot popup.
+function spotRouteProblems(spot, hrefs) {
+  const routes = hrefs.filter(isRouteLink), problems = [];
+  for (const href of routes) if (!near(destinationOf(href), [[spot.lat, spot.lon]])) problems.push('route ' + href);
+  if (!routes.length) problems.push('no route link');
+  return problems;
 }
 
-module.exports = { expected, install, INIT_SCRIPT, REPORT, compare, mapProbe, compareMap, siteLinks, spotRoutes, NAMES };
+module.exports = { expected, install, INIT_SCRIPT, REPORT, compare, mapProbe, compareMap, siteRouteProblems, spotRouteProblems, kakaoDestination, tmapDestination, NAMES };

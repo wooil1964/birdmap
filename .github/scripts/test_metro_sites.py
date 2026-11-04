@@ -5,18 +5,17 @@ import sqlite3
 import unittest
 from pathlib import Path
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
-from site_data_contract import assert_repository_sites, assert_engine_matches_base, historical_sites
-from report_archive_contract import without_report_archive
+from site_data_contract import assert_repository_sites, assert_external_resources, historical_sites
 
 ROOT=Path(__file__).resolve().parents[2]
 SOURCE=json.loads((ROOT/'data/metro-birding-sites-20261019.json').read_text(encoding='utf-8'))
 NEW=[str(i) for i in range(214,235)]
 
 class MetroSitesTests(unittest.TestCase):
-    def test_pr_base_records_and_engine_outside_site_data_are_preserved(self):
+    def test_pr_base_records_and_external_code_origins_are_preserved(self):
         assert_repository_sites(ROOT)
         self.assertEqual([r['site']['id'] for r in SOURCE['records']],NEW)
-        assert_engine_matches_base(ROOT, without_report_archive)
+        assert_external_resources(ROOT)
 
     def test_links_coordinates_source_boundaries_and_unknown_records(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())

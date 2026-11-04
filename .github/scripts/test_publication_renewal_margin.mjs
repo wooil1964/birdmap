@@ -10,7 +10,13 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const html = readFileSync(process.env.INDEX_PATH || new URL('../../index.html', import.meta.url), 'utf8');
-const num = (name) => Number(html.match(new RegExp(name + '=(\\d+)'))[1]);
+// Each timing constant must be assigned exactly once (no later `NAME=99999`, `NAME*=`…): with the whole-page
+// freeze retired, this is what keeps the value read below the value the page actually uses.
+const num = (name) => {
+  const writes = html.match(new RegExp('\\b' + name + '\\s*(?:[-+*/%&|^]|\\*\\*|<<|>>>?|\\?\\?|&&|\\|\\|)?=(?!=)', 'g')) || [];
+  assert.equal(writes.length, 1, name + ' is assigned exactly once');
+  return Number(html.match(new RegExp('\\b' + name + '=(\\d+)'))[1]);
+};
 const MAX_AGE = num('PUBLICATION_MAX_AGE'), POLL = num('PUBLICATION_POLL_MS'), MARGIN = num('PUBLICATION_RENEW_MARGIN_MS');
 assert.ok(html.includes('setInterval(publicationRecheck,Math.min(PUBLICATION_POLL_MS,PUBLICATION_MAX_AGE-PUBLICATION_RENEW_MARGIN_MS))'), '실제 주기 계산식');
 const PERIOD = Math.min(POLL, MAX_AGE - MARGIN);

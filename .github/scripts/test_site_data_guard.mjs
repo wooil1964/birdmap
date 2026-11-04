@@ -101,15 +101,36 @@ test('rendered markers and spot layers must sit on validated coordinates', () =>
   assert.match(guard.mapProbe(DATA), /"marker_1","marker_2"/);
 });
 
-test('expected links come from validated records, not from the page', () => {
-  assert.deepEqual(guard.siteLinks(SITES[0]), {
-    kakao: ['https://map.kakao.com/link/map/a,37.1,126.7', 'https://map.kakao.com/link/map/' + encodeURIComponent('시험 갯벌') + ',37.1,126.7'],
-    tmap: 'tmap://route?goalname=' + encodeURIComponent('시험 갯벌') + '&goalx=126.7&goaly=37.1' });
-  assert.equal(guard.siteLinks(SITES[1]).tmap, null);
-  // Reviewed popup destination overrides are bound to the site name.
-  assert.match(guard.siteLinks({ id: '19', name: '유부도', country: '대한민국', lat: 36, lon: 126 }).tmap, /goalx=126\.605575&goaly=35\.97698056$/);
-  assert.throws(() => guard.siteLinks({ id: '19', name: '다른 이름', country: '대한민국', lat: 36, lon: 126 }), /reviewed site name/);
-  assert.deepEqual(guard.spotRoutes(SPOTS[0]), { kakao: ',37.11,126.71', tmap: '&goalx=126.71&goaly=37.11' });
+test('directions are judged by validated destination, not by link spelling', () => {
+  const site = SITES[0], name = encodeURIComponent(site.name);
+  const other = ['https://map.naver.com/v5/search/x', 'https://www.windy.com/37.1/126.7', '#',
+    'https://map.kakao.com/link/search/' + encodeURIComponent('어청도 음식점'), 'https://place.map.kakao.com/1'];
+  // Allowed: stored kakaoMapUrl, map or route links in any wording, tmap with any label, rounded 6-decimal links.
+  assert.deepEqual(guard.siteRouteProblems(site, [site.kakaoMapUrl, 'https://map.kakao.com/link/map/' + name + ',37.1,126.7',
+    'https://map.kakao.com/link/to/' + encodeURIComponent('새 문구') + ',37.1000004,126.7', 'tmap://route?goalname=x&goalx=126.7&goaly=37.1', ...other]), []);
+  assert.deepEqual(guard.siteRouteProblems(SITES[1], other), [], 'no directions are required abroad');
+  // Blocked: moved destination in any link (classed or not), http, unparsed app links, duplicate params; and none.
+  for (const href of ['https://map.kakao.com/link/to/x,37.11,126.7', 'tmap://route?goalname=x&goalx=126.7&goaly=37.2',
+    'http://map.kakao.com/link/map/x,37.1,126.7', '//map.kakao.com/link/to/x,37.1,126.7',
+    'kakaomap://route?ep=37.1,126.7', 'tmap://route?goaly=37.1&goalx=126.7&goaly=38'])
+    assert.equal(guard.siteRouteProblems(site, [site.kakaoMapUrl, href]).length, 1, href);
+  assert.deepEqual(guard.siteRouteProblems(site, other), ['no directions link']);
+  // Reviewed overrides: Yubudo may point at its ferry departure or at its own validated coordinate.
+  const yubudo = { id: '19', name: '유부도', country: '대한민국', lat: 36.0011583333, lon: 126.6050305 };
+  assert.deepEqual(guard.siteRouteProblems(yubudo, ['https://map.kakao.com/link/map/x,35.97698056,126.60557500',
+    'tmap://route?goalname=x&goalx=126.605575&goaly=35.97698056', 'https://map.kakao.com/link/map/y,36.001158,126.605031']), []);
+  assert.equal(guard.siteRouteProblems({ ...yubudo, lat: 36.1 }, ['https://map.kakao.com/link/map/y,36.001158,126.605031']).length, 1,
+    'a stale island link fails once the validated coordinate moves');
+  assert.throws(() => guard.siteRouteProblems({ ...yubudo, name: '다른 이름' }, []), /reviewed site name/);
+  const gukhwado = { id: '156', name: '국화도', country: '대한민국', lat: 37.05, lon: 126.55 };
+  assert.deepEqual(guard.siteRouteProblems(gukhwado, ['https://map.kakao.com/link/search/' + encodeURIComponent('장고항')]), []);
+  assert.equal(guard.siteRouteProblems(gukhwado, ['https://map.kakao.com/link/map/x,37.05,126.55']).length, 1);
+  assert.deepEqual(guard.siteRouteProblems(gukhwado, ['https://map.kakao.com/link/search/x']), ['no directions link']);
+  // Fixed spots: every coordinate route link must reach the spot; a search alone is not a route.
+  assert.deepEqual(guard.spotRouteProblems(SPOTS[0], ['https://map.kakao.com/link/to/a,37.11,126.71', 'tmap://route?goalx=126.71&goaly=37.11', '#']), []);
+  assert.deepEqual(guard.spotRouteProblems(SPOTS[0], ['https://map.kakao.com/link/search/x']), ['no route link']);
+  assert.equal(guard.spotRouteProblems(SPOTS[0], ['https://map.kakao.com/link/to/a,37.12,126.71']).length, 1);
+  assert.deepEqual(guard.spotRouteProblems(SPOTS[0], ['#']), ['no route link']);
 });
 
 test('the repository expectation is produced only by the validating exporter', () => {

@@ -23,7 +23,7 @@
 | 추천 | `test_weekly_recommendation.mjs`, `test_recommendation_contract.mjs`; CI의 `publication_ci_signatures.mjs` 고정 서명 비교는 범위 재검토 미실시 |
 | 기상·조석 | `test_weather.py`, `test_validator_time_contract.py`, `test_tide.py`, `test_today_weather_midnight.mjs`, `test_tide_fallback.mjs` 중 영향 검사 |
 | Worker·공개 보호 | 변경한 Worker의 `weather-proxy/test/*.test.mjs` 또는 `reports-api/test/*.test.mjs` |
-| 지도·팝업 | `test_basemap_controller.mjs` 등 해당 `test_*.mjs`. `index.html` UI 변경은 아래 C 제약 확인 |
+| 지도·팝업 | `test_basemap_controller.mjs` 등 해당 `test_*.mjs`와 영향 받는 `docs/` 브라우저 하네스. index.html 전체 비교는 없다(C-2) |
 | SEO·공유 | `build_seo_pages.py --check`, `test_seo_pages.py`, `test_share_pages.py` 중 영향 검사 |
 
 ## 탐조지 데이터 검증 (PR #68)
@@ -33,8 +33,16 @@
 - 종 변경·신규 탐조지는 `fixtures/site_data_change_reviews.json`에 근거(`baseCommit`은 main 조상, 종 전후 값·레코드 해시 일치)를 기록한다. 좌표·pelagic 변경 승인(`protectedApprovals`)은 기준 main에 있는 것만 인정되므로 같은 PR에서 추가해도 효력이 없다.
 - 검사는 근거 URL·승인 링크의 **형식**만 확인한다. 실제 근거의 진위는 사람의 검토로 확인한다.
 
+## 보호 데이터·외부 코드 (C-1·C-2)
+
+- index.html 전체 비교는 없다. 대신 `site_data_contract.py`가 `siteData`·`siteSpotData` 선언을 엄격 문법으로 추출하고(주석·문자열 속 가짜 선언, 다른 대입·`'siteData'` 같은 이름 문자열, `assets/*.js`의 대입은 실패), 고정점 ID·순서·부모·좌표·종과 Worker `admin-page.js` `FIXED_SPOTS` 정합을 검사한다. 고정점 변경 승인(`fixtures/site_spot_reviews.json`)도 기준 main에 있는 것만 인정하며, 신규 고정점은 기준이 정해질 때까지 차단된다.
+- 브라우저 하네스는 `site_data_contract.py --export`(계약 통과 후에만 생성)를 기대값으로 삼아 `docs/site-data-guard/guard.cjs`로 실행 중 데이터 대입·변경, 마커·고정점 좌표, 팝업 대상, 카카오·티맵 목적지를 비교한다. 페이지 값을 정답으로 쓰지 않는다. 링크 문구·형식은 바꿀 수 있고 목적지 좌표만 검증한다.
+- 페이지 코드(데이터 블록 밖 index.html, `assets/` 아래 모든 텍스트 파일, index.html이 불러오는 다른 로컬 파일)에 나오는 모든 외부 URL의 **호스트**는 기준 main의 `fixtures/external_resources.json` 허용 목록에 있어야 한다. `<base>`, data:/blob:/javascript:/http: 코드 출처, 템플릿으로 만든 호스트는 실패한다. 새 호스트는 허용 목록 PR을 먼저 승인·병합한 뒤 사용한다. 문자열 연결로 쪼갠 호스트는 정적 검사로 보이지 않는다(리뷰로 확인).
+- 공개 보호 시간 상수(`PUBLICATION_MAX_AGE` 등)는 페이지에서 한 번만 대입되어야 한다(`test_publication_renewal_margin.mjs`).
+
 ## 알려진 검사 제약
 
-- **C(미해결)**: `assert_engine_matches_base()`가 `siteData` 밖 `index.html` 전체를 기준 main과 비교한다. 정상 UI 변경도 `test_metro_sites.py`·`test_jeju_sites.py`·`test_island_nearby_contract.py`에서 실패할 수 있다.
-- **D(일부 미해결)**: `test_jeju_sites.py`가 `weather_rules.json`, `notices.json`, `reports-api/tools/sites-seed.mjs`를 기준 main과 바이트 비교한다.
-- C·D로 실패해도 테스트를 통과시키려고 임의의 예외·허용 목록·정규화를 추가하지 않는다. 실패 원인과 미검증 범위를 보고하고 별도 승인된 개선 PR로 처리한다. 검사 통과가 전체 데이터·기능 검증을 뜻하지 않는다.
+- 런타임 감시는 하네스가 실행한 경로만 본다. 정적 문구 검사와 리뷰로 보완한다. 근거 URL·승인 링크는 형식만 검증한다.
+- 탐조지 마커 181개 좌표는 index.html 코드 리터럴로도 존재하며 런타임 마커 비교가 보호한다. 유부도·국화도 길찾기 예외 목적지는 `guard.cjs`의 `ROUTE_OVERRIDES`에 있다.
+- 기상·조석 자동 생성 JSON 4개는 `test_jeju_sites.py`가 기준 main과 바이트 비교한다(의도된 보호). `publication_ci_signatures.mjs`의 추천 결과 고정 커밋 비교는 범위 재검토 미실시다.
+- 실패해도 테스트를 통과시키려고 임의의 예외·허용 목록·정규화를 추가하지 않는다. 실패 원인과 미검증 범위를 보고하고 별도 승인된 개선 PR로 처리한다. 검사 통과가 전체 데이터·기능 검증을 뜻하지 않는다.

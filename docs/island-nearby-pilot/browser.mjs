@@ -146,21 +146,18 @@ try{
   if(width===1440)await scenario(page,width,'popup-targets-and-directions-match-validated-data',async e=>{
    const seen=await e(`(()=>{const map=map_7010a44f6ac2025090f0fe07508ed485,href=(el,sel)=>[...el.querySelectorAll(sel)].map(a=>a.getAttribute('href'));
     const sites=${JSON.stringify(EXPECTED.siteData.map(s=>s.markerVar))}.map(v=>{const m=window[v];m.addTo(map).openPopup();const el=m.getPopup().getElement();
-     const r={text:el.textContent,kakao:href(el,'a.kakao'),tmap:href(el,'a.tmap')};map.closePopup();return r;});
+     const r={text:el.textContent,hrefs:href(el,'a[href]')};map.closePopup();return r;});
     const spots=Array.from({length:${EXPECTED.siteSpotData.length}},(_,i)=>{const l=siteSpotLayers[i];if(!l||!l.getPopup())return null;l.addTo(map).openPopup();
      const el=l.getPopup().getElement(),r={text:el.textContent,hrefs:href(el,'a[href]')};map.closePopup();return r;});
     return {sites,spots};})()`);
    const bad=[];
-   EXPECTED.siteData.forEach((site,i)=>{const got=seen.sites[i],want=guard.siteLinks(site);
+   EXPECTED.siteData.forEach((site,i)=>{const got=seen.sites[i];
     if(!got.text.includes(site.name))bad.push(site.id+': popup does not show '+site.name);
-    if(!got.kakao.length||got.kakao.some(h=>!want.kakao.includes(h)))bad.push(site.id+': kakao '+JSON.stringify(got.kakao));
-    if(want.tmap?JSON.stringify(got.tmap)!==JSON.stringify([want.tmap]):got.tmap.length)bad.push(site.id+': tmap '+JSON.stringify(got.tmap));});
+    for(const p of guard.siteRouteProblems(site,got.hrefs))bad.push(site.id+': '+p);});
    EXPECTED.siteSpotData.forEach((spot,i)=>{const got=seen.spots[i];if(!got){bad.push(spot.id+': fixed spot layer missing');return;}
-    const parent=EXPECTED.siteData.find(s=>s.id===spot.siteId),want=guard.spotRoutes(spot);
+    const parent=EXPECTED.siteData.find(s=>s.id===spot.siteId);
     if(!got.text.includes(parent.name))bad.push(spot.id+': popup does not name parent '+parent.name);
-    const kakao=got.hrefs.filter(h=>h.startsWith('https://map.kakao.com/link/to/')),tmap=got.hrefs.filter(h=>h.startsWith('tmap://'));
-    if(!kakao.length||kakao.some(h=>!h.endsWith(want.kakao)))bad.push(spot.id+': kakao route '+JSON.stringify(kakao));
-    if(!tmap.length||tmap.some(h=>!h.endsWith(want.tmap)))bad.push(spot.id+': tmap route '+JSON.stringify(tmap));});
+    for(const p of guard.spotRouteProblems(spot,got.hrefs))bad.push(spot.id+': '+p);});
    return {pass:bad.length===0,evidence:{checkedSites:seen.sites.length,checkedSpots:seen.spots.filter(Boolean).length,bad:bad.slice(0,20)}};
   });
   await scenario(page,width,'all-validated-real-markers-and-only-20-pilot-records',async e=>{
