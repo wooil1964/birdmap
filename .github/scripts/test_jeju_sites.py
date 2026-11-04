@@ -290,59 +290,117 @@ class JejuFileBoundaryTests(unittest.TestCase):
             target.write_bytes(self.contents[name])
 
 
-class NoticesContractTests(unittest.TestCase):
-    def setUp(self):
-        self.text = (ROOT / 'notices.json').read_text(encoding='utf-8')
-        self.sites = load_runtime_sites()
+SYNTHETIC_SITES = [{'id': '1', 'name': '시험 갯벌'}, {'id': '2', 'name': '시험 섬'}, {'id': '3', 'name': '시험 호수'}]
 
-    def variant(self, change):
-        notices = json.loads(self.text)
-        change(notices)
-        return json.dumps(notices, ensure_ascii=False)
+
+def synthetic_notices():
+    """Self-contained notices by role, so mutation tests never depend on the live list's order or size."""
+    return {
+        'plain': {'title': '일반 공지', 'summary': '요약', 'content': '본문', 'start': '2026-11-01',
+                  'end': '2026-11-30', 'published': True, 'link': 'https://example.org/a', 'linkText': '자세히',
+                  'siteIds': [1, '2']},
+        'spot': {'title': '관찰 지점 공지', 'content': '', 'published': True, 'site': '시험 섬',
+                 'points': [{'name': '지점', 'lat': 37.1, 'lon': 126.7, 'access': {'lat': 37.11, 'lon': 126.71}},
+                            {'name': '접근점 없음', 'lat': 36.0, 'lon': 129.3}]},
+        'weekly': {'title': '주간 추천', 'content': '', 'published': True,
+                   'weeklyRecommendations': [{'siteId': 1, 'name': '시험 갯벌', 'reason': '도요 이동기'}, {'siteId': '3'}]},
+    }
+
+
+class NoticesContractTests(unittest.TestCase):
+    def check(self, notices, root=ROOT):
+        if isinstance(notices, dict):
+            notices = list(notices.values())
+        return validate_notices(json.dumps(notices, ensure_ascii=False), SYNTHETIC_SITES, root)
 
     def test_current_notices_pass(self):
-        validate_notices(self.text, self.sites)
+        text = (ROOT / 'notices.json').read_text(encoding='utf-8')
+        sites = load_runtime_sites()
+        validate_notices(text, sites)
+        live = json.loads(text)
+        extra = {'title': '추가 공지', 'content': '', 'published': False}
+        # Adding, removing and reordering live notices must not trip position-dependent checks.
+        for name, notices in (('reversed', live[::-1]), ('first removed', live[1:]), ('last removed', live[:-1]),
+                              ('added', [extra] + live), ('pretty', live)):
+            with self.subTest(change=name):
+                validate_notices(json.dumps(notices, ensure_ascii=False, indent=2), sites)
 
-    def test_normal_notice_edits_are_allowed(self):
-        new = {'title': '새 공지', 'content': '', 'start': '2026-11-05', 'end': '2026-11-30', 'published': True,
-               'summary': '요약', 'link': 'https://example.org/a', 'linkText': '자세히', 'siteIds': [15, '19'],
-               'image': 'https://example.org/p.jpg',
-               'points': [{'name': '지점', 'lat': 37.1, 'lon': 126.7, 'access': {'lat': 37.11, 'lon': 126.71}}]}
-        for change in (lambda n: n[0].update(content='수정된 본문', title='수정된 제목'),
-                       lambda n: n[0].update(published=False, end='2026-12-31'),
-                       lambda n: n.insert(0, new),
-                       lambda n: n.pop(),
-                       lambda n: n[1]['points'][0].update(lat=37.12)):
-            with self.subTest(change=change):
-                validate_notices(self.variant(change), self.sites)
+    def test_synthetic_baseline_and_normal_edits_are_allowed(self):
+        self.check(synthetic_notices())
+        with tempfile.TemporaryDirectory() as directory:
+            (Path(directory) / 'img').mkdir()
+            (Path(directory) / 'img/n.jpg').write_bytes(b'jpg')
+            local = synthetic_notices()
+            local['plain']['image'] = 'img/n.jpg'
+            self.check(local, directory)
+        changes = {
+            'edit text': lambda d: d['plain'].update(title='수정된 제목', content='수정된 본문', summary=''),
+            'unpublish': lambda d: d['plain'].update(published=False, end='2026-12-31'),
+            'empty link': lambda d: d['plain'].update(link='', linkText=''),
+            'remote image': lambda d: d['spot'].update(image='https://example.org/p.jpg'),
+            'move point': lambda d: d['spot']['points'][0].update(lat=37.12, lon=126.72),
+            'drop access': lambda d: d['spot']['points'][0].pop('access'),
+            'drop dates': lambda d: [d['plain'].pop('start'), d['plain'].pop('end')],
+            'site by id': lambda d: d['spot'].update(site='2', siteId=3),
+            'weekly reason edit': lambda d: d['weekly']['weeklyRecommendations'][0].update(reason='수정 사유'),
+            'remove notice': lambda d: d.pop('plain'),
+        }
+        for name, change in changes.items():
+            notices = synthetic_notices()
+            change(notices)
+            with self.subTest(change=name):
+                self.check(notices)
+        roles = synthetic_notices()
+        for name, order in (('reorder', [roles['weekly'], roles['plain'], roles['spot']]),
+                            ('add', [{'title': '새 공지', 'content': '', 'published': True}, *roles.values()]),
+                            ('empty list', [])):
+            with self.subTest(change=name):
+                self.check(order)
 
     def test_invalid_notices_fail(self):
         cases = {
-            'item not an object': lambda n: n.clear() or n.append([]),
-            'missing title': lambda n: n[0].pop('title'),
-            'missing content': lambda n: n[0].pop('content'),
-            'published text': lambda n: n[0].update(published='true'),
-            'published missing': lambda n: n[0].pop('published'),
-            'bad date': lambda n: n[0].update(start='2026/10/17'),
-            'impossible date': lambda n: n[0].update(start='2026-02-30'),
-            'start after end': lambda n: n[3].update(start='2026-11-30'),
-            'typo field': lambda n: n[0].update(pubished=True),
-            'script link': lambda n: n[0].update(link='javascript:alert(1)'),
-            'missing image': lambda n: n[0].update(image='images/no-such-notice.jpg'),
-            'unknown site': lambda n: n[0].update(siteIds=[99999]),
-            'point out of range': lambda n: n[1]['points'][0].update(lat=95),
-            'point zero': lambda n: n[1]['points'][0].update(lat=0, lon=0),
-            'point text coordinate': lambda n: n[1]['points'][0].update(lon='126.7'),
-            'bad access': lambda n: n[1]['points'][0].update(access={'lat': 37.1}),
-            'weekly unknown site': lambda n: n[6]['weeklyRecommendations'].append({'siteId': 99999}),
-            'second weekly list': lambda n: n[0].update(weeklyRecommendations=[{'siteId': 15}]),
+            'item not an object': (lambda d: d.update(plain=[]), 'must be an object'),
+            'missing title': (lambda d: d['plain'].pop('title'), 'title required'),
+            'blank title': (lambda d: d['plain'].update(title=' '), 'title required'),
+            'missing content': (lambda d: d['plain'].pop('content'), 'content must be text'),
+            'published text': (lambda d: d['plain'].update(published='true'), 'published must be true/false'),
+            'published missing': (lambda d: d['plain'].pop('published'), 'published must be true/false'),
+            'bad date': (lambda d: d['plain'].update(start='2026/11/01'), 'start must be YYYY-MM-DD'),
+            'impossible date': (lambda d: d['plain'].update(end='2026-02-30'), 'end is not a real date'),
+            'start after end': (lambda d: d['plain'].update(start='2026-12-01'), 'start after end'),
+            'typo field': (lambda d: d['plain'].update(pubished=True), 'unknown field pubished'),
+            'script link': (lambda d: d['plain'].update(link='javascript:alert(1)'), 'link must be http'),
+            'relative link': (lambda d: d['plain'].update(link='notices.json'), 'link must be http'),
+            'data image': (lambda d: d['plain'].update(image='data:image/png;base64,AA'), 'image must be http'),
+            'missing image': (lambda d: d['plain'].update(image='img/no-such-notice.jpg'), 'image file missing'),
+            'parent image path': (lambda d: d['plain'].update(image='../secret.jpg'), 'image file missing'),
+            'unknown site id': (lambda d: d['plain'].update(siteIds=[99999]), 'unknown site'),
+            'unknown site name': (lambda d: d['spot'].update(site='없는 탐조지'), 'unknown site'),
+            'siteIds not list': (lambda d: d['plain'].update(siteIds=1), 'siteIds must be a list'),
+            'empty points': (lambda d: d['spot'].update(points=[]), 'points must be a list'),
+            'point out of range': (lambda d: d['spot']['points'][0].update(lat=95), 'invalid coordinate'),
+            'point zero': (lambda d: d['spot']['points'][1].update(lat=0, lon=0), 'invalid coordinate'),
+            'point text coordinate': (lambda d: d['spot']['points'][0].update(lon='126.7'), 'invalid coordinate'),
+            'point unnamed': (lambda d: d['spot']['points'][0].update(name=''), 'point name required'),
+            'point extra field': (lambda d: d['spot']['points'][0].update(species='물수리'), 'unknown point field'),
+            'bad access': (lambda d: d['spot']['points'][0].update(access={'lat': 37.1}), 'access: invalid coordinate'),
+            'weekly unknown site': (lambda d: d['weekly']['weeklyRecommendations'].append({'siteId': 99999}),
+                                    'unknown weekly site'),
+            'weekly missing site': (lambda d: d['weekly']['weeklyRecommendations'].append({'name': 'x'}),
+                                    'invalid weekly recommendation'),
+            'second weekly list': (lambda d: d['plain'].update(weeklyRecommendations=[{'siteId': 1}]),
+                                   'more than one published weeklyRecommendations'),
         }
-        for name, change in cases.items():
-            with self.subTest(case=name), self.assertRaises(ValueError):
-                validate_notices(self.variant(change), self.sites)
-        for text in ('[{', '{}', '[{"title":"a","title":"b","content":"","published":true}]'):
-            with self.subTest(text=text), self.assertRaises(ValueError):
-                validate_notices(text, self.sites)
+        for name, (change, message) in cases.items():
+            notices = synthetic_notices()
+            change(notices)
+            with self.subTest(case=name), self.assertRaisesRegex(ValueError, message):
+                self.check(notices)
+        for name, text, message in (('broken JSON', '[{', 'Expecting'), ('not a list', '{}', 'must be a list'),
+                                    ('duplicate key', '[{"title":"a","title":"b","content":"","published":true}]',
+                                     'duplicate JSON key')):
+            with self.subTest(case=name), self.assertRaisesRegex(ValueError, message):
+                validate_notices(text, SYNTHETIC_SITES)
 
 
 class JejuRegistryAppendTests(unittest.TestCase):
