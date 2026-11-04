@@ -5,9 +5,15 @@ import {fileURLToPath} from 'node:url';
 import {spawn,execFileSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
+import {createRequire} from 'node:module';
 
 const ROOT=resolve(process.env.ISSUE28_ROOT||join(dirname(fileURLToPath(import.meta.url)),'../..'));
 const OUT=resolve(process.env.ISSUE28_OUTPUT||join(ROOT,'.ci-results/issue28-chrome')); const ASSET_ROOT=resolve(process.env.PUBLICATION_TEST_ROOT||ROOT);
+const REPO=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+// Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
+// Another PUBLICATION_TEST_ROOT is a manual comparison; it falls back to that page's own literal count.
+const SITE_COUNT=ASSET_ROOT===REPO?createRequire(import.meta.url)(REPO+'/docs/site-data-guard/guard.cjs').expected().siteData.length:0;
+const SITE_COUNT_JS=SITE_COUNT?String(SITE_COUNT):'siteData.length';
 mkdirSync(OUT,{recursive:true});
 const HTML=process.env.PUBLICATION_TEST_INDEX_REF?execFileSync('git',['show',process.env.PUBLICATION_TEST_INDEX_REF+':index.html'],{cwd:ROOT,encoding:'utf8',maxBuffer:8*1024*1024}):readFileSync(join(ROOT,'index.html'),'utf8');
 const widths=process.env.PUBLICATION_TEST_WIDTHS?process.env.PUBLICATION_TEST_WIDTHS.split(',').map(Number):[344,375,1024,1440];
@@ -110,7 +116,7 @@ class CDP{
   const evaluate=async expression=>{const r=await this.send('Runtime.evaluate',{expression:'(async function(){var v=await eval('+JSON.stringify(expression)+');try{return JSON.parse(JSON.stringify(v));}catch{return null;}})()',awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw new Error(r.exceptionDetails.text+' '+String(r.exceptionDetails.exception?.description||'').split('\n')[0]);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
   const until=Date.now()+40000;let ready=false;
-  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===240").catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
+  while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length==="+SITE_COUNT_JS).catch(()=>false)){ready=true;break;}await new Promise(r=>setTimeout(r,200));}
   if(!ready)throw new Error('Actual Leaflet/publication page initialization unavailable');
   return {evaluate,sessionId,targetId,close:()=>this.send('Target.closeTarget',{targetId})};
  }
@@ -147,7 +153,7 @@ try{
   await scenario(page,width,'lifecycle-refresh-cannot-revive-retired-feature',async e=>{
    await e("localStorage.setItem('birdmapFieldMine',JSON.stringify(['33333333-3333-4333-8333-000000000001']));window.dispatchEvent(new Event('blur'));window.dispatchEvent(new Event('focus'));window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));__mock.hidden=true;document.dispatchEvent(new Event('visibilitychange'));__mock.hidden=false;document.dispatchEvent(new Event('visibilitychange'));");await e(refresh);await e(settle);
    const s=await e("({requests:__mock.actions.filter(x=>x.path.startsWith('/field-updates')).length,gps:__mock.geo.length,nodes:document.querySelectorAll('[id^=field]').length,reports:__mock.reports.length,sites:siteData.length,unique:new Set(siteData.map(x=>x.id)).size,map:!!map_7010a44f6ac2025090f0fe07508ed485.getContainer()})");
-   return {pass:s.requests===0&&s.gps===0&&s.nodes===0&&s.reports===0&&s.sites===240&&s.unique===240&&s.map,evidence:s};
+   return {pass:s.requests===0&&s.gps===0&&s.nodes===0&&s.reports===0&&s.sites===(SITE_COUNT||s.sites)&&s.unique===s.sites&&s.map,evidence:s};
   });
   await scenario(page,width,'ordinary-report-cancel-does-not-submit',async e=>{
    await e("openReportModal();closeReportModal()");const s=await e("({reports:__mock.reports.length,fieldLink:!!document.getElementById('reportFieldNotice'),species:!!document.getElementById('reportSpecies')})");return {pass:s.reports===0&&!s.fieldLink&&s.species,evidence:s};

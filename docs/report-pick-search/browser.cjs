@@ -4,6 +4,8 @@
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http');
 const assert = require('node:assert/strict'), { createHash } = require('node:crypto');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+// Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
+const SITE_COUNT = require('../site-data-guard/guard.cjs').expected().siteData.length;
 const ROOT = path.resolve(path.join(__dirname, '../..'));
 const OUT = path.resolve(process.env.REPORT_PICK_OUTPUT || path.join(ROOT, '.ci-results/report-pick-search'));
 const SHOTS = process.env.REPORT_PICK_SCREENSHOTS && path.resolve(process.env.REPORT_PICK_SCREENSHOTS);
@@ -109,7 +111,7 @@ async function openPage(browser, origin, width, height, touch, { sdk = 'ok', key
     network.blocked++; return route.abort();
   });
   await page.goto(origin, { waitUntil: 'load' });
-  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed() && !document.getElementById('reportToggleBtn').hidden);
+  await page.waitForFunction(count => window.L && Object.keys(markerRegistry).length === count && publicationAllowed() && !document.getElementById('reportToggleBtn').hidden, SITE_COUNT);
   await page.click('#reportToggleBtn');
   await page.waitForSelector('#reportPickPanel.rpsCompact', { state: 'visible' });
   return { page, label };

@@ -7,6 +7,10 @@ import {fileURLToPath} from 'node:url';
 import {spawn} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
+import {createRequire} from 'node:module';
+// Validated against the PR base and approval ledgers before any page is opened; never read back from the page.
+const guard=createRequire(import.meta.url)('../site-data-guard/guard.cjs');
+const EXPECTED=guard.expected(),SITE_COUNT=EXPECTED.siteData.length;
 
 const ROOT=resolve(join(dirname(fileURLToPath(import.meta.url)),'../..'));
 const OUT=resolve(process.env.ISLAND_PILOT_OUTPUT||join(ROOT,'.ci-results/island-pilot'));
@@ -91,10 +95,11 @@ class CDP{
    }
    if(m.method==='Runtime.exceptionThrown')browserErrors.push({width,error:String(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text).split('\n')[0]});
   });
+  await this.send('Page.addScriptToEvaluateOnNewDocument',{source:guard.INIT_SCRIPT},sessionId);
   await this.send('Page.addScriptToEvaluateOnNewDocument',{source:'('+mockBeforeLoad.toString()+')()'},sessionId);
   const evaluate=async expression=>{const r=await this.send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true},sessionId);if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
   await this.send('Page.navigate',{url:origin+'/index.html'},sessionId);
-  await waitFor(evaluate,"typeof L!=='undefined'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===240&&typeof PINNED_BIRDING_ISSUES!=='undefined'&&typeof birdmapLocation==='object'",40000);
+  await waitFor(evaluate,"typeof L!=='undefined'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length==="+SITE_COUNT+"&&typeof PINNED_BIRDING_ISSUES!=='undefined'&&typeof birdmapLocation==='object'",40000);
   await evaluate('Promise.all([loadTideMonth(),loadWeatherWeek(),loadRecommendationWeatherRules()])');
   return {evaluate,sessionId,close:()=>this.send('Target.closeTarget',{targetId})};
  }
@@ -134,16 +139,40 @@ async function actionPoint(page,selector,index=0){
 try{
  for(const width of WIDTHS){let page;try{
   page=await browser.page(width);const e=page.evaluate;
-  await scenario(page,width,'all-240-real-markers-and-only-20-pilot-records',async e=>{
+  await scenario(page,width,'validated-site-data-runtime-guard-after-load',async e=>{
+   const data=guard.compare(await e(guard.REPORT)),map=guard.compareMap(await e(guard.mapProbe()));
+   return {pass:data.pass&&map.pass,evidence:{data,map}};
+  });
+  if(width===1440)await scenario(page,width,'popup-targets-and-directions-match-validated-data',async e=>{
+   const seen=await e(`(()=>{const map=map_7010a44f6ac2025090f0fe07508ed485,href=(el,sel)=>[...el.querySelectorAll(sel)].map(a=>a.getAttribute('href'));
+    const sites=${JSON.stringify(EXPECTED.siteData.map(s=>s.markerVar))}.map(v=>{const m=window[v];m.addTo(map).openPopup();const el=m.getPopup().getElement();
+     const r={text:el.textContent,kakao:href(el,'a.kakao'),tmap:href(el,'a.tmap')};map.closePopup();return r;});
+    const spots=Array.from({length:${EXPECTED.siteSpotData.length}},(_,i)=>{const l=siteSpotLayers[i];if(!l||!l.getPopup())return null;l.addTo(map).openPopup();
+     const el=l.getPopup().getElement(),r={text:el.textContent,hrefs:href(el,'a[href]')};map.closePopup();return r;});
+    return {sites,spots};})()`);
+   const bad=[];
+   EXPECTED.siteData.forEach((site,i)=>{const got=seen.sites[i],want=guard.siteLinks(site);
+    if(!got.text.includes(site.name))bad.push(site.id+': popup does not show '+site.name);
+    if(!got.kakao.length||got.kakao.some(h=>!want.kakao.includes(h)))bad.push(site.id+': kakao '+JSON.stringify(got.kakao));
+    if(want.tmap?JSON.stringify(got.tmap)!==JSON.stringify([want.tmap]):got.tmap.length)bad.push(site.id+': tmap '+JSON.stringify(got.tmap));});
+   EXPECTED.siteSpotData.forEach((spot,i)=>{const got=seen.spots[i];if(!got){bad.push(spot.id+': fixed spot layer missing');return;}
+    const parent=EXPECTED.siteData.find(s=>s.id===spot.siteId),want=guard.spotRoutes(spot);
+    if(!got.text.includes(parent.name))bad.push(spot.id+': popup does not name parent '+parent.name);
+    const kakao=got.hrefs.filter(h=>h.startsWith('https://map.kakao.com/link/to/')),tmap=got.hrefs.filter(h=>h.startsWith('tmap://'));
+    if(!kakao.length||kakao.some(h=>!h.endsWith(want.kakao)))bad.push(spot.id+': kakao route '+JSON.stringify(kakao));
+    if(!tmap.length||tmap.some(h=>!h.endsWith(want.tmap)))bad.push(spot.id+': tmap route '+JSON.stringify(tmap));});
+   return {pass:bad.length===0,evidence:{checkedSites:seen.sites.length,checkedSpots:seen.spots.filter(Boolean).length,bad:bad.slice(0,20)}};
+  });
+  await scenario(page,width,'all-validated-real-markers-and-only-20-pilot-records',async e=>{
    const s=await e(`(()=>{const ids=${JSON.stringify(PILOT.flatMap(x=>x[2]))},sites=siteData;return {sites:sites.length,unique:new Set(sites.map(s=>s.id)).size,markers:sites.filter(s=>window[s.markerVar]&&markerRegistry[markerKey(s)]===window[s.markerVar]).length,pilot:sites.filter(s=>islandNearbySearchHtml(s)).map(s=>s.id).sort(),expected:ids.sort(),overflow:document.documentElement.scrollWidth>innerWidth};})()`);
-   return {pass:s.sites===240&&s.unique===240&&s.markers===240&&JSON.stringify(s.pilot)===JSON.stringify(s.expected)&&!s.overflow,evidence:s};
+   return {pass:s.sites===SITE_COUNT&&s.unique===SITE_COUNT&&s.markers===SITE_COUNT&&JSON.stringify(s.pilot)===JSON.stringify(s.expected)&&!s.overflow,evidence:s};
   });
   await scenario(page,width,'actual-popups-six-islands-four-official-search-links',async e=>{
    const s=await e(`(()=>{const failures=[],checked=[];for(const [name,query,ids]of ${JSON.stringify(PILOT)})for(const id of ids){const site=siteData.find(s=>s.id===id),map=map_7010a44f6ac2025090f0fe07508ed485,marker=window[site.markerVar];map.setView([site.lat,site.lon],11,{animate:false});marker.addTo(map).openPopup();const root=marker.getPopup().getElement(),details=root.querySelector('.island-nearby-search'),links=details?[...details.querySelectorAll('a')]:[],terms=links.map(a=>decodeURIComponent(new URL(a.href).pathname.split('/search/')[1]||''));if(!details||details.open||links.length!==4||terms.filter(t=>t===query+' 음식점').length!==2||terms.filter(t=>t===query+' 숙박').length!==2||links.some(a=>a.target!=='_blank'||!a.rel.includes('noopener'))||root.querySelectorAll('a.ksa').length!==1||root.querySelectorAll('a.kakao').length!==1||root.querySelectorAll('a.naver').length!==1||!root.querySelector('a.tmap')||!root.querySelector('a.windy'))failures.push(id);checked.push(id);}return {checked:checked.length,failures};})()`);
    return {pass:s.checked===20&&s.failures.length===0,evidence:s};
   });
-  if(width===1440)await scenario(page,width,'all-240-actual-popups-preserve-pilot-boundary',async e=>{
-   const s=await e(`(()=>{const ids=new Set(${JSON.stringify(PILOT.flatMap(x=>x[2]))}),bad=[];for(const site of siteData){const marker=window[site.markerVar];marker.addTo(map_7010a44f6ac2025090f0fe07508ed485).openPopup();if(!!marker.getPopup().getElement().querySelector('.island-nearby-search')!==ids.has(site.id))bad.push(site.id);}return {checked:siteData.length,bad};})()`);return {pass:s.checked===240&&!s.bad.length,evidence:s};
+  if(width===1440)await scenario(page,width,'all-validated-actual-popups-preserve-pilot-boundary',async e=>{
+   const s=await e(`(()=>{const ids=new Set(${JSON.stringify(PILOT.flatMap(x=>x[2]))}),bad=[];for(const site of siteData){const marker=window[site.markerVar];marker.addTo(map_7010a44f6ac2025090f0fe07508ed485).openPopup();if(!!marker.getPopup().getElement().querySelector('.island-nearby-search')!==ids.has(site.id))bad.push(site.id);}return {checked:siteData.length,bad};})()`);return {pass:s.checked===SITE_COUNT&&!s.bad.length,evidence:s};
   });
   await scenario(page,width,'native-details-click-keyboard-touch-layout-and-live-update',async e=>{
    await e("(()=>{const site=siteData.find(s=>s.id==='1'),map=map_7010a44f6ac2025090f0fe07508ed485;map.closePopup();map.setView([site.lat,site.lon],11,{animate:false});window[site.markerVar].addTo(map).openPopup();})()");
@@ -172,6 +201,12 @@ try{
   await scenario(page,width,'search-weekly-tide-and-report-cancel-preserved',async e=>{
    const s=await e("(async()=>{const map=map_7010a44f6ac2025090f0fe07508ed485;map.closePopup();resetFilters();document.getElementById('searchBox').value='어청도';searchSite();const search=document.getElementById('searchResults').textContent.includes('어청도');toggleTodayPanel(true);const weekly=document.getElementById('todayPanel').style.display==='block'&&document.getElementById('todayPanelBody').textContent.length>0;toggleTodayPanel(false);const site=siteData.find(s=>s.id==='14'),marker=window[site.markerVar];map.setView([site.lat,site.lon],11,{animate:false});marker.addTo(map).openPopup();const tide=!!marker.getPopup().getElement().querySelector('.monthTideButton');await openMonthTideModal('14');const month=document.getElementById('monthTideModal').style.display==='flex';closeMonthTideModal();openReportModal();const report=document.getElementById('reportModal').style.display==='flex'&&!!document.getElementById('reportSpecies');closeReportModal();return {search,weekly,tide,month,report,cancel:document.getElementById('reportModal').style.display==='none',writes:__pilotQA.writes,geo:__pilotQA.geo};})()");
    return {pass:s.search&&s.weekly&&s.tide&&s.month&&s.report&&s.cancel&&s.writes===0&&s.geo===0,evidence:s};
+  });
+  // After search, popups, keyboard/touch and live-weather updates: still the validated data, no in-place writes.
+  await scenario(page,width,'validated-site-data-runtime-guard-after-scenarios',async e=>{
+   await new Promise(r=>setTimeout(r,500));
+   const data=guard.compare(await e(guard.REPORT)),map=guard.compareMap(await e(guard.mapProbe()));
+   return {pass:data.pass&&map.pass,evidence:{data,map}};
   });
  }catch(error){check(width,'environment-or-harness',false,{error:String(error.stack)});}finally{if(page)await page.close();}}
 }finally{await browser.dispose();await new Promise(r=>server.close(r));}

@@ -21,8 +21,10 @@ jobs:
       POPUP_DEPENDENCY_CACHE: ${{ github.workspace }}/.ci-results/gps-dependencies
       POPUP_TEST_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser
     steps:
+      # Full history: the browser harnesses validate site data against the PR base before using it as expectation.
       - uses: actions/checkout@v6
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@v6
         with:

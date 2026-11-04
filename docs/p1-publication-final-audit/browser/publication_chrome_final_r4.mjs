@@ -5,9 +5,15 @@ import {fileURLToPath} from 'node:url';
 import {spawn,execFileSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
+import {createRequire} from 'node:module';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 const OUT=join(ROOT,process.env.PUBLICATION_TEST_OUTPUT||'docs/p1-publication-final-audit/browser/final-source'); const ASSET_ROOT=resolve(process.env.PUBLICATION_TEST_ROOT||ROOT);
+const REPO=ROOT;
+// Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
+// Another PUBLICATION_TEST_ROOT is a manual comparison; it falls back to that page's own literal count.
+const SITE_COUNT=ASSET_ROOT===REPO?createRequire(import.meta.url)(REPO+'/docs/site-data-guard/guard.cjs').expected().siteData.length:0;
+const SITE_COUNT_JS=SITE_COUNT?String(SITE_COUNT):'siteData.length';
 mkdirSync(OUT,{recursive:true});
 const HTML=process.env.PUBLICATION_TEST_INDEX_REF?execFileSync('git',['show',process.env.PUBLICATION_TEST_INDEX_REF+':index.html'],{cwd:ROOT,encoding:'utf8',maxBuffer:8*1024*1024}):readFileSync(join(ROOT,'index.html'),'utf8');
 const widths=process.env.PUBLICATION_TEST_WIDTHS?process.env.PUBLICATION_TEST_WIDTHS.split(',').map(Number):[344,375,768,1024,1440];
@@ -29,7 +35,7 @@ const origin='http://127.0.0.1:'+server.address().port;
    so both the first load and the reload wait for this same condition (max 40s, then fail). */
 async function pageReady(evaluate){
  const until=Date.now()+40000;
- while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length===240").catch(()=>false))return true;await new Promise(r=>setTimeout(r,200));}
+ while(Date.now()<until){if(await evaluate("typeof L!=='undefined'&&typeof publicationFetch==='function'&&typeof map_7010a44f6ac2025090f0fe07508ed485!=='undefined'&&Object.keys(markerRegistry).length==="+SITE_COUNT_JS).catch(()=>false))return true;await new Promise(r=>setTimeout(r,200));}
  return false;
 }
 // Test-only knob to reproduce a slow CDN (delays allowed dependency GETs). Default 0.
@@ -151,7 +157,7 @@ try{
   try{
    page=await browser.page(width);const e=page.evaluate;
    await e(refresh);
-   await scenario(page,width,'normal-202-sites-leaflet',async e=>({pass:await e("!!L.version&&siteData.length===240&&!!map_7010a44f6ac2025090f0fe07508ed485.getContainer()")}));
+   await scenario(page,width,'normal-202-sites-leaflet',async e=>({pass:await e("!!L.version&&siteData.length==="+SITE_COUNT_JS+"&&!!map_7010a44f6ac2025090f0fe07508ed485.getContainer()")}));
    await scenario(page,width,'normal-approved-kakao-tmap-dom',async e=>{
     const s=await e(routeSnapshot);return {pass:s.exists&&s.kakao&&s.tmap,evidence:s};
    });
@@ -188,7 +194,7 @@ try{
    await scenario(page,width,'unknown-network-removes-all-dynamic-location',async e=>{
     await e(normal+refresh);
     await e("__mock.offline=true;loadApprovedReports()");
-    const pass=await e(noDynamic),statics=await e("siteData.length===240");return {pass:pass&&statics,evidence:{noDynamic:pass,staticSitesRetained:statics,components:await e(dynamicSnapshot)}};
+    const pass=await e(noDynamic),statics=await e("siteData.length==="+SITE_COUNT_JS);return {pass:pass&&statics,evidence:{noDynamic:pass,staticSitesRetained:statics,components:await e(dynamicSnapshot)}};
    });
    await scenario(page,width,'recovery-after-network-error',async e=>{
     await e(normal+refresh);return {pass:await e("!!reportSpotLayers['synthetic-approved']&&publicationAllowed()")};

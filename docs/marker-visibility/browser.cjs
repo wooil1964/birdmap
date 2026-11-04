@@ -5,6 +5,8 @@
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http'), cp = require('node:child_process');
 const assert = require('node:assert/strict'), { createHash } = require('node:crypto');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+// Validated against the PR base and approval ledgers before any page opens; never read back from the page.
+const guard = require('../site-data-guard/guard.cjs'), EXPECTED = guard.expected(), SITE_COUNT = EXPECTED.siteData.length;
 const ROOT = path.resolve(path.join(__dirname, '../..'));
 const OUT = path.resolve(process.env.MARKER_OUTPUT || path.join(ROOT, '.ci-results/marker-visibility'));
 const SHOTS = process.env.MARKER_SHOTS && path.resolve(process.env.MARKER_SHOTS);
@@ -62,6 +64,7 @@ async function openPage(browser, origin, width, height, touch, before) {
   page.on('response',r=>{if(r.status()>=400)console.error('HTTP',r.status(),new URL(r.url()).pathname);});
   
   page.on('pageerror', error => errors.push(label + ': ' + error.message));
+  if (!before) await page.addInitScript({ content: guard.INIT_SCRIPT });
   await page.addInitScript({ content: '(' + fixture + ')();(' + fifteenReports.toString() + ')();' });
   await page.route('**/*', async route => {
     const request = route.request(), u = new URL(request.url());
@@ -77,8 +80,9 @@ async function openPage(browser, origin, width, height, touch, before) {
     network.blocked++; return route.abort();
   });
   await page.goto(origin + '/index.html', { waitUntil: 'load' });
-  await page.waitForFunction(() => window.L && Object.keys(markerRegistry).length === 240 && publicationAllowed()
-    && document.querySelectorAll('#recentReportsList .recentReportItem').length === 15 && document.querySelector('#recentReportsBox .birdmap-sheet-actions')).catch(async error=>{console.error(await page.evaluate(()=>({sites:siteData.length,markers:Object.keys(markerRegistry).length,allowed:publicationAllowed(),items:document.querySelectorAll('#recentReportsList .recentReportItem').length,sheet:!!document.querySelector('#recentReportsBox .birdmap-sheet-actions'),message:document.getElementById('recentReportsList').textContent.slice(0,100),publication:publicationState.status})));await page.screenshot({path:path.join(OUT,'readiness-failure.png')});throw error;});
+  // The pinned 'before' page is a visual baseline only; its own literal count is the readiness signal there.
+  await page.waitForFunction(count => window.L && Object.keys(markerRegistry).length === (count || siteData.length) && publicationAllowed()
+    && document.querySelectorAll('#recentReportsList .recentReportItem').length === 15 && document.querySelector('#recentReportsBox .birdmap-sheet-actions'), before ? 0 : SITE_COUNT).catch(async error=>{console.error(await page.evaluate(()=>({sites:siteData.length,markers:Object.keys(markerRegistry).length,allowed:publicationAllowed(),items:document.querySelectorAll('#recentReportsList .recentReportItem').length,sheet:!!document.querySelector('#recentReportsBox .birdmap-sheet-actions'),message:document.getElementById('recentReportsList').textContent.slice(0,100),publication:publicationState.status})));await page.screenshot({path:path.join(OUT,'readiness-failure.png')});throw error;});
   return { page, label };
 }
 
@@ -131,7 +135,9 @@ async function siteGeometry(page,label,width,selected){
 async function testPage(page,label,touch,width,height){
   await siteView(page);
   await siteGeometry(page,label,width,false);
-  check(await page.evaluate(()=>siteData.length===240&&new Set(siteData.map(s=>s.id)).size===240&&siteData.every(s=>window[s.markerVar].getLatLng().lat===s.lat&&window[s.markerVar].getLatLng().lng===s.lon)),label+' all 240 marker coordinates and unique IDs preserved');
+  const data=guard.compare(await page.evaluate(guard.REPORT)),map=guard.compareMap(await page.evaluate(guard.mapProbe()));
+  check(data.pass,label+' runtime site data equals validated data with no in-place writes',data);
+  check(map.pass,label+' every marker and fixed spot sits on its validated coordinate',map);
   check(await page.evaluate(()=>Object.values(markerRegistry).every(m=>m.getElement()?.classList.contains('birdmap-site-marker')&&m.options.icon.options.iconSize[0]===44)),label+' every original and supplemental site has 44px target');
   check((await ringState(page)).rings===0,label+' no idle ring');await shot(page,label+'-site-idle');
   // Each edge lies outside the visible diamond but inside the unchanged input box.
@@ -206,6 +212,7 @@ async function testPage(page,label,touch,width,height){
       const mapState=await page.evaluate(()=>birdmapBasemap.getState());check(mapState.active===provider,name+' '+(before?'before':'after')+' active basemap',mapState);
       if(before){await shot(page,name+'-before-site-idle');await page.evaluate(()=>__site.openPopup());await settle(page);await shot(page,name+'-before-site-selected');await closePopup(page);await page.evaluate(()=>__report.openPopup());await settle(page);await shot(page,name+'-before-report-selected');await closePopup(page);await page.evaluate(()=>openPublicReportLocation('synthetic-0','왜가리'));await page.waitForSelector('.birdmap-report-location-selected');await settle(page);await shot(page,name+'-before-recent-selected');}
       else if(process.env.MARKER_CAPTURE_ONLY){await shot(page,name+'-site-idle');await page.evaluate(()=>__site.openPopup());await settle(page);await shot(page,name+'-site-selected');await closePopup(page);await page.evaluate(()=>__report.openPopup());await settle(page);await shot(page,name+'-report-selected');await closePopup(page);await page.evaluate(()=>openPublicReportLocation('synthetic-0','왜가리'));await page.waitForSelector('.birdmap-report-location-selected');await settle(page);await shot(page,name+'-recent-selected');}else await testPage(page,name,touch,width,height);
+      if(!before){const data=guard.compare(await page.evaluate(guard.REPORT));check(data.pass,name+' protected data unchanged after basemap, touch and popup scenarios',data);}
       console.log('PASS '+name+' '+(before?'before':'after'));
     }catch(error){await page.screenshot({path:path.join(OUT,'failure-'+name+'.png')}).catch(()=>{});throw error;}finally{await page.close();}
    }
@@ -215,7 +222,8 @@ async function testPage(page,label,touch,width,height){
  await closePopup(page);await page.emulateMedia({reducedMotion:'no-preference'});
  const perf=await page.evaluate(()=>{const m=map_7010a44f6ac2025090f0fe07508ed485,count=Object.keys(m._layers).length,requests=__mock.actions.length,start=performance.now();for(let i=0;i<100;i++){__report.openPopup();m.closePopup();}return{cycles:100,ms:performance.now()-start,beforeLayers:count,afterLayers:Object.keys(m._layers).length,rings:document.querySelectorAll('.birdmap-marker-ring,.birdmap-marker-pulse').length,newRequests:__mock.actions.length-requests};});
  check(perf.beforeLayers===perf.afterLayers&&perf.rings===0&&perf.newRequests===0,'100 rapid selections leave no layers/animations',perf);
- await page.evaluate(()=>{__report.openPopup();publicationInvalidate('marker-test');});check((await ringState(page)).rings===0,'publication invalidation clears emphasis synchronously');await page.close();
+ await page.evaluate(()=>{__report.openPopup();publicationInvalidate('marker-test');});check((await ringState(page)).rings===0,'publication invalidation clears emphasis synchronously');
+ {const data=guard.compare(await page.evaluate(guard.REPORT));check(data.pass,'protected data unchanged after 100 rapid selections and publication invalidation',data);}await page.close();
  check(errors.length===0,'no JavaScript errors',errors);check(network.missingCache.length===0,'no missing dependency',network);
  fs.writeFileSync(path.join(OUT,'performance.json'),JSON.stringify(perf,null,2));
  }finally{await browser.close();}

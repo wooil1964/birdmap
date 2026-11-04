@@ -487,3 +487,259 @@ def assert_repository_sites(root=ROOT):
                                    before, current, changes=reviews['changes'], base_commit=ref,
                                    verified_evidence_bases=verified_bases)
     return result
+
+
+# ---------------------------------------------------------------------------
+# Strict extraction of the runtime data block, fixed observation spots and the
+# validated expectation handed to browser harnesses.
+#
+# The data must be the first statements of one classic inline <script>:
+#   var siteData=<JSON array>;  (siteData=siteData.concat(<JSON array>);)*
+#   (comment | var <name>=<JSON value>;)*  var siteSpotData=<JSON array>;
+# Every token up to the end of the siteSpotData declaration is consumed, so both
+# declarations are proven to be code, not comment or string text. Separately, the
+# whole page may not contain any other declaration/assignment text for either
+# name (comments included), so a decoy or a second writer fails closed.
+# Static text checks cannot see every JavaScript write path; browser harnesses
+# also compare the values actually assigned at runtime with this expectation.
+# ---------------------------------------------------------------------------
+SPOT_REVIEWS = '.github/scripts/fixtures/site_spot_reviews.json'
+ADMIN_PAGE = 'reports-api/src/admin-page.js'
+SPOT_FIELDS = ('id', 'siteId', 'lat', 'lon', 'species')
+SPOT_ID = re.compile(r'fixed:([1-9][0-9]*):(0|[1-9][0-9]*)\Z')
+_ASSIGN = r'\s*(?:=(?!=)|\+=|\|\|=|&&=|\?\?=)'
+_DATA_TEXT = {  # name -> pattern; parse_protected_data() states how often the grammar itself contains each
+    'siteData declaration': re.compile(r'\b(?:var|let|const)\s+siteData\b'),
+    'siteData assignment': re.compile(r'\bsiteData' + _ASSIGN),
+    'siteSpotData declaration': re.compile(r'\b(?:var|let|const)\s+siteSpotData\b'),
+    'siteSpotData assignment': re.compile(r'\bsiteSpotData' + _ASSIGN),
+    'quoted global name': re.compile(r"""\[\s*['"`](?:siteData|siteSpotData)['"`]\s*\]"""),
+}
+
+
+def _inline_classic_scripts(text):
+    """Inline classic script bodies, read with the stdlib HTML tokenizer (script content is raw text)."""
+    from html.parser import HTMLParser
+    found, state = [], {'open': None}
+
+    class Parser(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            if tag == 'script':
+                state['open'] = (dict(attrs), [])
+
+        def handle_data(self, data):
+            if state['open'] is not None:
+                state['open'][1].append(data)
+
+        def handle_endtag(self, tag):
+            if tag == 'script' and state['open'] is not None:
+                found.append(state['open'])
+                state['open'] = None
+
+    parser = Parser(convert_charrefs=False)
+    parser.feed(text)
+    parser.close()
+    return [''.join(parts) for attrs, parts in found
+            if 'src' not in attrs and (attrs.get('type') or 'text/javascript').lower() == 'text/javascript']
+
+
+def _json_at(body, index, message):
+    try:
+        return DECODER.raw_decode(body, index)
+    except ValueError as error:
+        raise ValueError(message) from error
+
+
+def parse_protected_data(text):
+    """Return {'initial', 'sites', 'spots'} or raise; never returns partial or empty-on-error data."""
+    require(isinstance(text, str) and text, 'index.html is empty')
+    text = text.replace('\r\n', '\n')
+    starts = [body for body in _inline_classic_scripts(text) if re.match(r'\s*var\s+siteData\s*=', body)]
+    require(len(starts) == 1, 'Exactly one inline script must start with the siteData declaration')
+    body = starts[0]
+    semicolon, close_concat = re.compile(r'\s*;'), re.compile(r'\s*\)\s*;')
+    index = re.match(r'\s*var\s+siteData\s*=\s*', body).end()
+    initial, index = _json_at(body, index, 'siteData is not a JSON array literal')
+    require(isinstance(initial, list), 'siteData is not a JSON array literal')
+    step = semicolon.match(body, index)
+    require(step is not None, 'siteData declaration must end with ;')
+    index, sites, concats = step.end(), list(initial), 0
+    concat = re.compile(r'\s*siteData\s*=\s*siteData\.concat\(\s*')
+    while (match := concat.match(body, index)) is not None:
+        extra, index = _json_at(body, match.end(), 'siteData concat is not a JSON array literal')
+        require(isinstance(extra, list), 'siteData concat is not a JSON array literal')
+        end = close_concat.match(body, index)
+        require(end is not None, 'siteData concat must end with );')
+        index, concats = end.end(), concats + 1
+        sites.extend(extra)
+    spot_head = re.compile(r'\s*var\s+siteSpotData\s*=\s*')
+    block_comment, line_comment = re.compile(r'\s*/\*'), re.compile(r'\s*//[^\n]*')
+    plain_var = re.compile(r'\s*var\s+[A-Za-z_$][A-Za-z0-9_$]*\s*=\s*')
+    while True:
+        if (match := spot_head.match(body, index)) is not None:
+            spots, index = _json_at(body, match.end(), 'siteSpotData is not a JSON array literal')
+            require(isinstance(spots, list), 'siteSpotData is not a JSON array literal')
+            require(semicolon.match(body, index) is not None, 'siteSpotData declaration must end with ;')
+            break
+        if (match := block_comment.match(body, index)) is not None:
+            close = body.find('*/', match.end())
+            require(close >= 0, 'Unterminated comment before siteSpotData')
+            index = close + 2
+        elif (match := line_comment.match(body, index)) is not None:
+            index = match.end()
+        elif (match := plain_var.match(body, index)) is not None:
+            _, index = _json_at(body, match.end(), 'Unsupported expression before siteSpotData')
+            end = semicolon.match(body, index)
+            require(end is not None, 'Unsupported statement before siteSpotData')
+            index = end.end()
+        else:
+            raise ValueError('Unsupported statement before siteSpotData')
+    allowed = {'siteData declaration': 1, 'siteData assignment': 1 + concats,
+               'siteSpotData declaration': 1, 'siteSpotData assignment': 1, 'quoted global name': 0}
+    for name, pattern in _DATA_TEXT.items():
+        require(len(pattern.findall(text)) == allowed[name], 'Unexpected ' + name + ' text outside the data block')
+    for record in sites + spots:
+        require(isinstance(record, dict), 'Data records must be JSON objects')
+    return {'initial': initial, 'sites': sites, 'spots': spots}
+
+
+def assert_assets_do_not_write_data(root=ROOT):
+    """Asset scripts may read the data but never declare or assign it (text check only)."""
+    for path in sorted((Path(root) / 'assets').glob('*.js')):
+        text = path.read_text(encoding='utf-8')
+        for name, pattern in _DATA_TEXT.items():
+            require(not pattern.search(text), name + ' in assets/' + path.name)
+
+
+def _spot_record(record, site_ids):
+    require(isinstance(record, dict) and set(record) == set(SPOT_FIELDS),
+            'Fixed spot fields must be exactly ' + ', '.join(SPOT_FIELDS))
+    match = SPOT_ID.fullmatch(record['id']) if isinstance(record['id'], str) else None
+    require(match is not None, 'Invalid fixed spot ID')
+    require(isinstance(record['siteId'], str) and record['siteId'] == match.group(1), 'Fixed spot ID must name its parent site')
+    require(record['siteId'] in site_ids, 'Fixed spot parent site missing: ' + record['id'])
+    lat, lon = _number(record['lat'], 90), _number(record['lon'], 180)
+    require((lat, lon) != (0, 0), 'Invalid fixed spot coordinate: ' + record['id'])
+    species = record['species']
+    require(isinstance(species, list) and species and all(isinstance(s, str) and s.strip() for s in species)
+            and len(set(species)) == len(species), 'Invalid fixed spot species: ' + record['id'])
+    return record
+
+
+def _spot_grants(approvals, site_ids):
+    require(isinstance(approvals, list), 'Invalid fixed spot approval ledger')
+    grants = {}
+    for approval in approvals:
+        require(isinstance(approval, dict) and approval.get('action') == 'update_spot'
+                and set(approval) == {'action', 'id', 'before', 'after', 'beforeDigest', 'reason', 'sources', 'userApproval'},
+                'Unknown/incomplete fixed spot approval')
+        before, after = approval['before'], approval['after']
+        _spot_record(before, site_ids)
+        _spot_record(after, site_ids)
+        require(approval['id'] == before['id'] == after['id'], 'Fixed spot approvals cannot change an ID')
+        require(before != after and approval['beforeDigest'] == digest(before), 'Invalid fixed spot approval binding')
+        _reason(approval)
+        _sources(approval['sources'])
+        require(isinstance(approval['userApproval'], str) and re.fullmatch(
+            r'https://github\.com/wooil1964/birdmap/(pull|issues)/[1-9][0-9]*(#[\w-]+)?', approval['userApproval']),
+            'Missing user approval reference; ledger content alone is not approval')
+        key = (approval['id'], approval['beforeDigest'])
+        require(key not in grants, 'Duplicate/conflicting fixed spot approval')
+        grants[key] = after
+    return grants
+
+
+def validate_spots(before, current, site_ids, trusted_approvals=()):
+    """Existing spots keep ID and order; parent, coordinates and species change only with a trusted
+    base grant. New spots stay disabled until a parent-distance and public-location standard exists."""
+    site_ids = set(site_ids)
+
+    def index(spots):
+        require(isinstance(spots, list), 'siteSpotData must be a list')
+        result = {}
+        for record in spots:
+            _spot_record(record, site_ids)
+            require(record['id'] not in result, 'Duplicate fixed spot ID: ' + record['id'])
+            result[record['id']] = record
+        return result
+    old, new = index(before), index(current)
+    require(not (old.keys() - new.keys()), 'Existing fixed spot deleted/renamed')
+    require(not (new.keys() - old.keys()), 'New fixed spots are not enabled until a review standard is approved')
+    require([s['id'] for s in current] == [s['id'] for s in before], 'Existing fixed spot order changed')
+    grants = _spot_grants(list(trusted_approvals), site_ids)
+    for sid, record in new.items():
+        if record != old[sid]:
+            require(grants.get((sid, digest(old[sid]))) == record, 'Fixed spot changed without trusted base approval: ' + sid)
+    return new
+
+
+_ADMIN_SPOT = re.compile(r"\s*\{key:'(fixed:[0-9]+:[0-9]+)',label:'([^'\\\n]*) \((-?[0-9]+\.[0-9]+), (-?[0-9]+\.[0-9]+)\)'\},?\s*")
+
+
+def admin_fixed_spots(text):
+    """Parse the Worker admin page's FIXED_SPOTS list; any other shape fails closed."""
+    text = text.replace('\r\n', '\n')
+    require(text.count('var FIXED_SPOTS=[') == 1, 'Admin FIXED_SPOTS declaration must occur once')
+    body = text.split('var FIXED_SPOTS=[', 1)[1]
+    require('\n];' in body, 'Admin FIXED_SPOTS must end with ];')
+    rows = []
+    for line in body.split('\n];', 1)[0].split('\n'):
+        if not line.strip():
+            continue
+        match = _ADMIN_SPOT.fullmatch(line)
+        require(match is not None, 'Unsupported admin FIXED_SPOTS entry')
+        rows.append({'key': match.group(1), 'label': match.group(2), 'lat': float(match.group(3)), 'lon': float(match.group(4))})
+    return rows
+
+
+def assert_admin_spot_parity(spots, admin_rows):
+    require([r['key'] for r in admin_rows] == [s['id'] for s in spots], 'Admin FIXED_SPOTS keys/order differ from siteSpotData')
+    for spot, row in zip(spots, admin_rows):
+        require(abs(row['lat'] - spot['lat']) <= 5e-6 and abs(row['lon'] - spot['lon']) <= 5e-6,
+                'Admin FIXED_SPOTS label coordinate differs: ' + spot['id'])
+
+
+def _spot_ledger(text):
+    value = json_value(text)
+    require(isinstance(value, dict) and set(value) == {'version', 'approvals'} and type(value['version']) is int
+            and value['version'] == 1 and isinstance(value['approvals'], list), 'Invalid fixed spot review ledger')
+    return value
+
+
+def assert_repository_spots(root=ROOT):
+    """Strict data block, parser agreement, fixed spot contract and Worker admin parity against the PR base."""
+    root, ref = Path(root), baseline_ref(root)
+    current_text = (root / 'index.html').read_text(encoding='utf-8')
+    base = parse_protected_data(baseline_bytes(root, ref, 'index.html').decode('utf-8'))
+    current = parse_protected_data(current_text)
+    require(current['sites'] == runtime_from_text(current_text), 'Strict and legacy siteData parsers disagree')
+    assert_assets_do_not_write_data(root)
+    site_ids = {_id(s.get('id')) for s in current['sites']}
+    _spot_grants(_spot_ledger((root / SPOT_REVIEWS).read_text(encoding='utf-8'))['approvals'], site_ids)  # Syntax only.
+    exists = git(root, 'ls-tree', '--name-only', ref, '--', SPOT_REVIEWS).strip()
+    trusted = _spot_ledger(baseline_bytes(root, ref, SPOT_REVIEWS).decode('utf-8'))['approvals'] if exists else []
+    validate_spots(base['spots'], current['spots'], site_ids, trusted)
+    assert_admin_spot_parity(current['spots'], admin_fixed_spots((root / ADMIN_PAGE).read_text(encoding='utf-8')))
+    return current
+
+
+def expected_site_data(root=ROOT):
+    """Validated expectation for browser harnesses, built only after every data contract passes."""
+    assert_repository_sites(root)
+    data = assert_repository_spots(root)
+    return {'version': 1, 'baseCommit': baseline_ref(root), 'initialCount': len(data['initial']),
+            'siteData': data['sites'], 'siteSpotData': data['spots']}
+
+
+if __name__ == '__main__':
+    import argparse
+    import sys
+    parser = argparse.ArgumentParser(description='Validate site data against the PR base and export the browser expectation.')
+    parser.add_argument('--export', required=True, help="output JSON path, or '-' for stdout")
+    target = parser.parse_args().export
+    payload = json.dumps(expected_site_data(ROOT), ensure_ascii=False, allow_nan=False)
+    if target == '-':
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stdout.write(payload)
+    else:
+        Path(target).write_text(payload, encoding='utf-8')
