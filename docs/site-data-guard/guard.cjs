@@ -49,10 +49,14 @@ function install(target, names) {
     return proxy;
   }
   function plain(value) { return Array.isArray(value) ? value.map(unwrap) : unwrap(value); }
+  var getters = {};
   names.forEach(function (name) {
+    getters[name] = function () { return wrap(values[name], name); };
+    // Non-configurable, like a real `var` global: the accessor cannot be deleted or redefined, so a
+    // defineProperty/delete on window cannot swap the data past the recorder.
     Object.defineProperty(target, name, {
-      configurable: true, enumerable: true,
-      get: function () { return wrap(values[name], name); },
+      configurable: false, enumerable: true,
+      get: getters[name],
       set: function (value) {
         value = plain(value);
         var json = null; try { json = JSON.stringify(value); } catch (error) { json = null; }
@@ -63,9 +67,13 @@ function install(target, names) {
   });
   var api = {
     report: function () {
-      var current = {};
-      names.forEach(function (name) { try { current[name] = JSON.stringify(values[name]); } catch (error) { current[name] = null; } });
-      return { assignments: assignments.map(function (a) { return { name: a.name, json: a.json, stack: a.stack }; }), writes: writes.slice(), current: current };
+      var current = {}, intact = {};
+      names.forEach(function (name) {
+        var d = Object.getOwnPropertyDescriptor(target, name);
+        intact[name] = !!d && d.get === getters[name];
+        try { current[name] = JSON.stringify(values[name]); } catch (error) { current[name] = null; }
+      });
+      return { assignments: assignments.map(function (a) { return { name: a.name, json: a.json, stack: a.stack }; }), writes: writes.slice(), current: current, intact: intact };
     }
   };
   Object.defineProperty(target, '__birdmapSiteDataGuard', { value: api, configurable: false, enumerable: false, writable: false });
@@ -82,6 +90,7 @@ function same(actual, wanted) { try { assert.deepStrictEqual(actual, wanted); re
 function compare(report, data = expected()) {
   const problems = [];
   if (!report) return { pass: false, problems: ['guard not installed before page scripts'], evidence: {} };
+  NAMES.forEach(name => { if (!report.intact || report.intact[name] !== true) problems.push(name + ' accessor was replaced'); });
   const sequence = report.assignments.map(a => a.name);
   if (JSON.stringify(sequence) !== JSON.stringify(['siteData', 'siteData', 'siteSpotData']))
     problems.push('unexpected assignment sequence: ' + sequence.join(','));

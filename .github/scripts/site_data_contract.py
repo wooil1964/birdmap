@@ -513,34 +513,43 @@ _DATA_TEXT = {  # name -> pattern; parse_protected_data() states how often the g
     'siteData assignment': re.compile(r'\bsiteData' + _ASSIGN),
     'siteSpotData declaration': re.compile(r'\b(?:var|let|const)\s+siteSpotData\b'),
     'siteSpotData assignment': re.compile(r'\bsiteSpotData' + _ASSIGN),
-    'quoted global name': re.compile(r"""\[\s*['"`](?:siteData|siteSpotData)['"`]\s*\]"""),
+    # Any quoted occurrence of either name (window['siteData'], defineProperty(window,"siteData",…),
+    # Reflect.set(globalThis,`siteSpotData`,…)) is a dynamic access path the grammar cannot vouch for.
+    'quoted global name': re.compile(r"""['"`](?:siteData|siteSpotData)['"`]"""),
 }
+# Scripts inside these elements are not executed (or not with JavaScript enabled).
+_INERT = frozenset({'template', 'textarea', 'noscript', 'xmp', 'iframe', 'noembed', 'noframes', 'title', 'select', 'option'})
 
 
 def _inline_classic_scripts(text):
-    """Inline classic script bodies, read with the stdlib HTML tokenizer (script content is raw text)."""
+    """Inline classic scripts the browser would execute, read with the stdlib HTML tokenizer."""
     from html.parser import HTMLParser
-    found, state = [], {'open': None}
+    found, state = [], {'open': None, 'inert': 0}
 
     class Parser(HTMLParser):
         def handle_starttag(self, tag, attrs):
-            if tag == 'script':
-                state['open'] = (dict(attrs), [])
+            if tag in _INERT:
+                state['inert'] += 1
+            elif tag == 'script':
+                state['open'] = (dict(attrs), [], state['inert'] > 0)
 
         def handle_data(self, data):
             if state['open'] is not None:
                 state['open'][1].append(data)
 
         def handle_endtag(self, tag):
-            if tag == 'script' and state['open'] is not None:
+            if tag in _INERT and state['inert']:
+                state['inert'] -= 1
+            elif tag == 'script' and state['open'] is not None:
                 found.append(state['open'])
                 state['open'] = None
 
     parser = Parser(convert_charrefs=False)
     parser.feed(text)
     parser.close()
-    return [''.join(parts) for attrs, parts in found
-            if 'src' not in attrs and (attrs.get('type') or 'text/javascript').lower() == 'text/javascript']
+    return [''.join(parts) for attrs, parts, inert in found
+            if not inert and 'src' not in attrs and 'nomodule' not in attrs
+            and (attrs.get('type') or 'text/javascript').lower() == 'text/javascript']
 
 
 def _json_at(body, index, message):

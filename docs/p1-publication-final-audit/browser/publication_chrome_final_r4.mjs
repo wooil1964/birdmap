@@ -11,8 +11,8 @@ const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 const OUT=join(ROOT,process.env.PUBLICATION_TEST_OUTPUT||'docs/p1-publication-final-audit/browser/final-source'); const ASSET_ROOT=resolve(process.env.PUBLICATION_TEST_ROOT||ROOT);
 const REPO=ROOT;
 // Site count comes from the validated expectation (PR base + approval ledgers), never from the page.
-// Another PUBLICATION_TEST_ROOT is a manual comparison; it falls back to that page's own literal count.
-const SITE_COUNT=ASSET_ROOT===REPO?createRequire(import.meta.url)(REPO+'/docs/site-data-guard/guard.cjs').expected().siteData.length:0;
+// Another PUBLICATION_TEST_ROOT or PUBLICATION_TEST_INDEX_REF is a manual comparison; it falls back to that page's own literal count.
+const SITE_COUNT=ASSET_ROOT===REPO&&!process.env.PUBLICATION_TEST_INDEX_REF?createRequire(import.meta.url)(REPO+'/docs/site-data-guard/guard.cjs').expected().siteData.length:0;
 const SITE_COUNT_JS=SITE_COUNT?String(SITE_COUNT):'siteData.length';
 mkdirSync(OUT,{recursive:true});
 const HTML=process.env.PUBLICATION_TEST_INDEX_REF?execFileSync('git',['show',process.env.PUBLICATION_TEST_INDEX_REF+':index.html'],{cwd:ROOT,encoding:'utf8',maxBuffer:8*1024*1024}):readFileSync(join(ROOT,'index.html'),'utf8');

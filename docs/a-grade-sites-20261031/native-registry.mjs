@@ -3,6 +3,9 @@
 import {createRequire} from 'node:module';import path from 'node:path';
 import fs from 'node:fs';import assert from 'node:assert/strict';
 import {prepareSiteSeed} from '../../reports-api/tools/sites-seed.mjs';
+// The registry batch is replayed against the page exactly as merged (PR #60), not today's page,
+// so later approved sites do not change this historical 229 -> 240 replay.
+const BATCH_HTML=(await import('node:child_process')).execFileSync('git',['show','e4c0282a6b3badd088e02275876f35066cf3ca77:index.html'],{encoding:'utf8',maxBuffer:64<<20});
 const require=createRequire(import.meta.url);
 if(!process.argv[2])throw Error('Pass the local Miniflare node_modules directory');
 const {Miniflare,convertV4MiniflareOptions}=require(path.join(path.resolve(process.argv[2]),'miniflare'));
@@ -10,7 +13,7 @@ const sql=fs.readFileSync('docs/a-grade-sites-20261031/append-registry.sql','utf
 const undo=fs.readFileSync('docs/a-grade-sites-20261031/rollback-registry.sql','utf8');
 const core=fs.readFileSync('docs/long-term-db-phase2e/migrations-main/0001_core.sql','utf8');
 const table=name=>core.match(new RegExp('CREATE TABLE '+name+' \\([\\s\\S]*?\\n\\);'))[0];
-const plan=await prepareSiteSeed(fs.readFileSync('index.html','utf8'),{capturedAt:'2026-10-31T00:00:00+09:00',expectedCount:240});
+const plan=await prepareSiteSeed(BATCH_HTML,{capturedAt:'2026-10-31T00:00:00+09:00',expectedCount:240});
 const NEW=['235','236','237','238','240','241','242','243','244','245','247']; // 239 and 246 reserved, never inserted.
 const old=plan.sites.filter(s=>!NEW.includes(s.site_id)),added=plan.sites.filter(s=>NEW.includes(s.site_id));
 assert.equal(old.length,229);assert.equal(added.length,11);assert.ok(!plan.sites.some(s=>['239','246'].includes(s.site_id)));

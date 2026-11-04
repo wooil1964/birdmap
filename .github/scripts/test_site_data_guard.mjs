@@ -65,6 +65,18 @@ test('every in-place write path and reassignment is recorded and fails the compa
   }
 });
 
+test('the recorder cannot be removed or redefined past the comparison', () => {
+  const g = boot();
+  assert.throws(() => Object.defineProperty(g, 'siteData', { value: [{ id: '1', lat: 99 }] }), TypeError);
+  assert.throws(() => { delete g.siteSpotData; }, TypeError); // Strict code; sloppy code gets `false`.
+  assert.equal(Reflect.deleteProperty(g, 'siteData'), false);
+  const report = g.__birdmapSiteDataGuard.report();
+  assert.deepEqual(report.intact, { siteData: true, siteSpotData: true });
+  assert.equal(guard.compare(report, DATA).pass, true, 'failed redefinitions leave the validated data in place');
+  const forged = { ...report, intact: { siteData: false, siteSpotData: true } };
+  assert.match(guard.compare(forged, DATA).problems.join(';'), /siteData accessor was replaced/);
+});
+
 test('a missing guard or a different assigned value fails closed', () => {
   assert.equal(guard.compare(null, DATA).pass, false);
   const g = {};

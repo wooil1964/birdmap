@@ -4,6 +4,9 @@
 import {createRequire} from 'node:module';import path from 'node:path';import fs from 'node:fs';import os from 'node:os';
 import assert from 'node:assert/strict';
 import {prepareSiteSeed} from '../../reports-api/tools/sites-seed.mjs';
+// The registry batch is replayed against the page exactly as merged (PR #60), not today's page,
+// so later approved sites do not change this historical 229 -> 240 replay.
+const BATCH_HTML=(await import('node:child_process')).execFileSync('git',['show','e4c0282a6b3badd088e02275876f35066cf3ca77:index.html'],{encoding:'utf8',maxBuffer:64<<20});
 const require=createRequire(import.meta.url);
 const {Miniflare,convertV4MiniflareOptions}=require(path.join(path.resolve(process.argv[2]),'miniflare'));
 const core=fs.readFileSync('docs/long-term-db-phase2e/migrations-main/0001_core.sql','utf8');
@@ -20,7 +23,7 @@ try{
     "CREATE TABLE system_state (id INTEGER PRIMARY KEY, mode TEXT NOT NULL, generation INTEGER NOT NULL, reason TEXT, updated_at TEXT NOT NULL)",
     "INSERT INTO system_state VALUES (1,'NORMAL',4,'x','2026-10-13T00:00:00Z')",
     "CREATE TABLE reports (id TEXT PRIMARY KEY, site_id TEXT, species TEXT)","INSERT INTO reports VALUES ('keep','59','동박새')"])await db.prepare(s).run();
-  const seed=await prepareSiteSeed(fs.readFileSync('index.html','utf8'),{capturedAt:'2026-10-01T00:00:00Z',expectedCount:240});
+  const seed=await prepareSiteSeed(BATCH_HTML,{capturedAt:'2026-10-01T00:00:00Z',expectedCount:240});
   const old=seed.sites.filter(s=>!['235','236','237','238','240','241','242','243','244','245','247'].includes(s.site_id)),ks=Object.keys(old[0]);
   await db.batch(old.map(s=>db.prepare(`INSERT INTO sites (${ks}) VALUES (${ks.map(()=>'?')})`).bind(...ks.map(k=>s[k]))));
   // Route d1-rest's REST calls into the local D1, reporting rows_written/changed_db like the real API.
