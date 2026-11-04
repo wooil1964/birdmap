@@ -3,14 +3,16 @@ import hashlib
 import json
 import re
 import sqlite3
-import subprocess
 import tempfile
 import unittest
-from report_archive_contract import without_report_archive, automatic_data_base
+from unittest.mock import patch
+from report_archive_contract import without_report_archive
 from pathlib import Path
 from urllib.parse import unquote
 
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
+from site_data_contract import (assert_repository_sites, assert_engine_matches_base,
+                                baseline_ref, baseline_bytes, historical_sites, assert_mapping_extension)
 import build_seo_pages as seo
 import update_weather as weather
 
@@ -18,25 +20,33 @@ ROOT = Path(__file__).resolve().parents[2]
 NEW_IDS = ['206','207','208','209','210','211','212','213']
 SOURCE = json.loads((ROOT/'data/jeju-birding-sites-20261018.json').read_text(encoding='utf-8'))
 
+# site-picker.js has dedicated selection/parser/escaping tests in
+# reports-api/test/site-picker.test.mjs, run by the existing reports-api CI step.
+# Keep the other locks until their actual-file/negative-path contracts are covered.
+JEJU_BASE_FILE_CONTRACTS = (
+    'weather_today.json', 'weather_week.json', 'tide_today.json', 'tide_month.json',
+    'notices.json', 'weather_rules.json', 'reports-api/tools/sites-seed.mjs',
+)
+
+
+def assert_jeju_base_files(root, ref):
+    for file in JEJU_BASE_FILE_CONTRACTS:
+        current = (Path(root) / file).read_bytes().replace(b'\r\n', b'\n')
+        if current != baseline_bytes(root, ref, file).replace(b'\r\n', b'\n'):
+            raise AssertionError('Base file contract changed: ' + file)
+
 
 class JejuSitesTests(unittest.TestCase):
-    def test_exact_original_200_and_only_reviewed_additions(self):
-        baseline = subprocess.check_output(['git','show',SOURCE['baselineCommit']+':index.html'],cwd=ROOT)
-        with tempfile.TemporaryDirectory() as directory:
-            path=Path(directory)/'index.html'; path.write_bytes(baseline)
-            old=load_runtime_sites(path)
-        sites=load_runtime_sites()
-        self.assertEqual(len(old),200)
-        self.assertEqual(sites[:200],old)  # Full records, not selected fields.
-        self.assertEqual(sites[200:208],[r['site'] for r in SOURCE['records']])
-        self.assertEqual([s['id'] for s in sites[200:208]],NEW_IDS)
-        self.assertEqual(len(sites),240)
-        self.assertEqual(len([s for s in sites if s['sido']=='제주']),19)
-        for s in sites[200:208]:self.assertEqual(set(s),set(old[-1]))
+    def test_pr_base_protection_and_historical_reviewed_schema(self):
+        assert_repository_sites(ROOT)
+        old=historical_sites(ROOT,SOURCE['baselineCommit'])
+        reviewed=[r['site'] for r in SOURCE['records']]
+        self.assertEqual([s['id'] for s in reviewed],NEW_IDS)
+        for s in reviewed:self.assertEqual(set(s),set(old[-1]))
 
     def test_public_access_coordinates_worker_and_all_map_links(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())
-        self.assertEqual(report['commonIdCount'],240)
+        self.assertEqual(report['commonIdCount'],len(load_runtime_sites()))
         self.assertFalse(any(v for v in report.values() if isinstance(v,list)),report)
         expected=[(33.550053,126.69415),(33.24452585,126.5596972),(33.430924,126.595761),(33.282955,126.27152),(33.491318,126.811386),(33.511246,126.898868),(33.473698,126.686472),(33.48976,126.792654)]
         self.assertEqual(len(SOURCE['records']),len(expected))
@@ -113,41 +123,17 @@ class JejuSitesTests(unittest.TestCase):
         tip=SOURCE['records'][7]['site']['localBirdingTip']  # 213: winter and the 2025-04 spring record kept apart.
         self.assertIn('모두 2024/25 한 겨울의 기록',tip);self.assertIn('2025년 4월 17일 iNaturalist 관찰 1건은 봄 기록으로 따로',tip)
         sites={s['id']:s for s in load_runtime_sites()}
-        self.assertEqual((sites['59']['lat'],sites['59']['lon']),(33.515,126.715))  # 동백동산 untouched.
-        self.assertEqual(sites['181']['name'],'제주 예래생태공원·논짓물 하천')
+        self.assertTrue({'59','181'} <= sites.keys())  # Field protection is relative to the PR base.
 
     def test_old_workbooks_automatic_data_security_and_engine_code_unchanged(self):
         for book in SOURCE['workbookComparison']:
             self.assertEqual(hashlib.sha256((ROOT/'data'/book['file']).read_bytes()).hexdigest(),book['sha256'])
             self.assertFalse(any(book['matches'].values()))
-        # Actions and editorial posts rewrite these on main. Compare automatic files with
-        # the current PR/main base, retaining the original source baseline for static files.
-        for file in ['weather_today.json','weather_week.json','tide_today.json','tide_month.json','notices.json',
-                     'tide_station_mapping.json','weather_rules.json',
-                     'reports-api/src/site-picker.js','reports-api/tools/sites-seed.mjs']:
-            automatic=file.endswith(('today.json','week.json','month.json','notices.json'))
-            ref=automatic_data_base(ROOT) if automatic else SOURCE['baselineCommit']
-            current=(ROOT/file).read_bytes().replace(b'\r\n',b'\n')
-            if file=='tide_station_mapping.json':
-                # A-grade draft: only the four reviewed tide links and their derived counts may differ.
-                current=json.loads(current)
-                for sid in ['236','242','243','245']:
-                    self.assertEqual(current['sites'].pop(sid)['mappingVersion'],2)
-                current.update(siteCount=current['siteCount']-4,mappedCount=current['mappedCount']-4,reviewCount=current['reviewCount']-4)
-                self.assertEqual(current,json.loads(subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT)),file)
-                continue
-            self.assertEqual(current,
-              subprocess.check_output(['git','show',ref+':'+file],cwd=ROOT).replace(b'\r\n',b'\n'),file)
-        # Everything outside the single literal concat block stays byte-equivalent after newline normalization.
-        current=(ROOT/'index.html').read_text(encoding='utf-8')
-        old=subprocess.check_output(['git','show',SOURCE['baselineCommit']+':index.html'],cwd=ROOT).decode('utf-8')
-        def strip(t):
-            t=without_report_archive(t)
-            t=t.replace('중부권 탐조지 10곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">200','id="mapTitleSiteCount">208')
-            t=t.replace('엑셀 위도·경도 좌표 그대로 반영','탐조지 이름 또는 지역 검색')
-            t=t.replace('수도권 21곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">229','id="mapTitleSiteCount">208').replace('최종 업데이트: 2026.10.19','최종 업데이트: 2026.10.18')
-            return re.sub(r'siteData=siteData\.concat\([\s\S]*?\);','SITE_ARRAY',t.replace('\r\n','\n'),count=1)
-        self.assertEqual(strip(current),strip(old))
+        # Current files follow this PR's exact main base, without historical count exceptions.
+        ref=baseline_ref(ROOT)
+        assert_jeju_base_files(ROOT,ref)
+        assert_mapping_extension(ROOT)
+        assert_engine_matches_base(ROOT,without_report_archive)
 
     def test_missing_wave_fails_closed_but_inland_does_not_require_it(self):
         from datetime import datetime
@@ -160,6 +146,44 @@ class JejuSitesTests(unittest.TestCase):
         self.assertTrue(b['scoreEligible'])
 
 
+class JejuFileBoundaryTests(unittest.TestCase):
+    """Synthetic files exercise delegation without editing runtime or API code."""
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        self.contents = {name: b'synthetic baseline\n' for name in JEJU_BASE_FILE_CONTRACTS}
+        for name, content in self.contents.items():
+            target = self.root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+        self.reader = patch(__name__ + '.baseline_bytes', side_effect=lambda root, ref, name: self.contents[name])
+        self.reader.start()
+        self.addCleanup(self.reader.stop)
+
+    def test_site_picker_code_change_is_delegated_to_its_security_suite(self):
+        target = self.root / 'reports-api/src/site-picker.js'
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('/* Synthetic normal picker UI change */', encoding='utf-8')
+        assert_jeju_base_files(self.root, 'a' * 40)
+
+    def test_rules_notices_and_seed_remain_locked_pending_complete_contracts(self):
+        for name in ('weather_rules.json', 'notices.json', 'reports-api/tools/sites-seed.mjs'):
+            target = self.root / name
+            target.write_bytes(b'synthetic changed payload\n')
+            with self.subTest(file=name), self.assertRaisesRegex(AssertionError, 'Base file contract'):
+                assert_jeju_base_files(self.root, 'a' * 40)
+            target.write_bytes(self.contents[name])
+
+    def test_generated_weather_and_tide_file_protection_is_unchanged(self):
+        for name in ('weather_today.json', 'weather_week.json', 'tide_today.json', 'tide_month.json'):
+            target = self.root / name
+            target.write_bytes(b'synthetic changed generation\n')
+            with self.subTest(file=name), self.assertRaisesRegex(AssertionError, 'Base file contract'):
+                assert_jeju_base_files(self.root, 'a' * 40)
+            target.write_bytes(self.contents[name])
+
+
 class JejuRegistryAppendTests(unittest.TestCase):
     def setUp(self):
         self.db=sqlite3.connect(':memory:')
@@ -169,8 +193,8 @@ class JejuRegistryAppendTests(unittest.TestCase):
           INSERT INTO system_state VALUES(1,'NORMAL',4);
           CREATE TABLE reports(id TEXT,note TEXT);INSERT INTO reports VALUES('synthetic','unchanged');''')
         keys='site_id site_name lat lon registry_source registry_revision source_record_json created_at retired_at'.split()
-        # Exactly the runtime's existing 200 IDs, with synthetic payloads only.
-        self.before=[dict(zip(keys,[s['id'],'Synthetic '+s['id'],36.5,127.5,'synthetic','old','{}','2026-01-01',None])) for s in load_runtime_sites()[:200]]
+        # Historical registration fixture, independent of current registry order/size.
+        self.before=[dict(zip(keys,[s['id'],'Synthetic '+s['id'],36.5,127.5,'synthetic','old','{}','2026-01-01',None])) for s in historical_sites(ROOT,SOURCE['baselineCommit'])]
         self.new=[dict(self.before[0],site_id=i,site_name='Synthetic '+i) for i in NEW_IDS]
         self.db.executemany('INSERT INTO sites VALUES(?,?,?,?,?,?,?,?,?)',[tuple(s[k] for k in keys) for s in self.before])
         self.db.commit()
