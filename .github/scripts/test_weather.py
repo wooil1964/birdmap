@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import update_weather as weather
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
+from site_data_contract import assert_repository_sites
 
 
 class WeatherTests(unittest.TestCase):
@@ -27,11 +28,11 @@ class WeatherTests(unittest.TestCase):
     def test_registry_all_ids_coordinates_and_branches(self):
         runtime, worker = load_runtime_sites(), load_worker_sites()
         report = compare_sites(runtime, worker)
-        self.assertEqual(report["runtimeSiteCount"], 240)
-        self.assertEqual(report["commonIdCount"], 240)
+        assert_repository_sites()
+        self.assertEqual(report["runtimeSiteCount"], len(runtime))
+        self.assertEqual(report["commonIdCount"], len(runtime))
         self.assertFalse(any(v for v in report.values() if isinstance(v, list)))
-        self.assertEqual(worker["188"]["lat"], self.site["lat"])
-        self.assertEqual(worker["14"]["name"], "걸매리")
+        self.assertTrue({'188', '14'} <= worker.keys())  # Protected values follow the PR base/grants.
 
     def test_parser_includes_concat_and_rejects_duplicate(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -83,10 +84,10 @@ class WeatherTests(unittest.TestCase):
             with patch.object(weather, "OUTPUT_PATH", path), patch.object(weather, "WEEK_OUTPUT_PATH", week_path), patch.object(weather, "request_forecast", side_effect=RuntimeError("offline")), patch.object(weather, "process_site", side_effect=RuntimeError("offline")), contextlib.redirect_stdout(io.StringIO()):
                 weather.main()
             output = json.loads(path.read_text(encoding="utf-8"))
-            self.assertEqual(output["siteCount"], 240)
+            self.assertEqual(output["siteCount"], len(load_runtime_sites()))
             self.assertEqual(output["status"], "api_failed_fallback_available")
             self.assertEqual(output["reusedCount"], 1)
-            self.assertEqual(output["unavailableSiteCount"], 239)
+            self.assertEqual(output["unavailableSiteCount"], output["siteCount"] - output["reusedCount"])
             self.assertEqual(output["sites"]["188"]["generatedAt"], "2026-08-25 18:49 KST")
             self.assertFalse(output["sites"]["188"]["scoreEligible"])
             self.assertIsNone(output["sites"]["19"]["score"])
@@ -235,7 +236,7 @@ class WeatherWeekTests(unittest.TestCase):
             today = json.loads(path.read_text(encoding="utf-8"))
             week = json.loads(week_path.read_text(encoding="utf-8"))
         self.assertEqual(today["sites"]["1"]["fallbackSource"], "previous_saved")
-        self.assertEqual(week["siteCount"], 240)
+        self.assertEqual(week["siteCount"], len(load_runtime_sites()))
         self.assertEqual(week["sampleCount"], 0)
         self.assertEqual(week["sites"]["1"]["days"], {})
         self.assertTrue(week["sites"]["1"]["dataUnavailable"])

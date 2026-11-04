@@ -1,12 +1,11 @@
-"""A-grade draft (IDs 235-238, 240-246): exact preservation of 229 sites, fixed points, notices and fail-closed registry SQL."""
+"""PR-relative site protection, reviewed A-grade evidence and historical SQL."""
 import json
 import sqlite3
-import subprocess
-import tempfile
 import unittest
 from pathlib import Path
 
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
+from site_data_contract import assert_repository_sites, historical_sites
 import update_tide
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,35 +20,30 @@ FIXED = {'235': (37.39456841, 126.67584323), '236': (36.92386071, 126.37864557),
 
 
 class AGradeSitesTests(unittest.TestCase):
-    def test_original_229_records_are_byte_equal_and_only_reviewed_records_follow(self):
-        old = subprocess.check_output(['git', 'show', SOURCE['baselineCommit'] + ':index.html'], cwd=ROOT)
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'index.html'
-            path.write_bytes(old)
-            before = load_runtime_sites(path)
+    def test_pr_base_protection_and_historical_reviewed_batch(self):
+        assert_repository_sites(ROOT)
+        before = historical_sites(ROOT, SOURCE['baselineCommit'])
         current = load_runtime_sites()
-        self.assertEqual(len(before), 229)
-        self.assertEqual(current[:229], before)
-        self.assertEqual(current[229:], [r['site'] for r in SOURCE['records']])
-        self.assertEqual([s['id'] for s in current[229:]], NEW)
-        self.assertEqual(len(current), 240)
+        reviewed = [r['site'] for r in SOURCE['records']]
+        self.assertEqual([s['id'] for s in reviewed], NEW)
         ids = [s['id'] for s in current]
         self.assertNotIn('239', ids)
         self.assertNotIn('246', ids)  # Reserved: access not confirmed.
         for retired in ('161', '166', '171', '177', '184'):
             self.assertNotIn(retired, ids)
-        self.assertFalse(any('삽교' in s['name'] or '동림' in s['name'] or '이포' in s['name'] or '마동' in s['name'] for s in current[229:]))
-        new_names = [s['name'] for s in current[229:]]
+        old_ids = {s['id'] for s in before}
+        self.assertFalse(any('삽교' in s['name'] or '동림' in s['name'] or '이포' in s['name'] or '마동' in s['name'] for s in current if s['id'] not in old_ids))
+        new_names = [s['name'] for s in reviewed]
         self.assertEqual(len(new_names), len(set(new_names)))
         self.assertFalse(set(new_names) & {s['name'] for s in before})
-        for s in current[229:]:
+        for s in reviewed:
             self.assertEqual(list(s), list(before[-1]) + ['birdingTypeExplicit', 'speciesEvidence'])
             self.assertEqual((s['birdingTypeExplicit'], s['speciesEvidence']), (True, '근거 부족'))
-        self.assertFalse(any('birdingTypeExplicit' in s or 'speciesEvidence' in s for s in current[:229]))
+        self.assertFalse(any('birdingTypeExplicit' in s or 'speciesEvidence' in s for s in before))
 
     def test_fixed_points_links_and_worker_contract(self):
         report = compare_sites(load_runtime_sites(), load_worker_sites())
-        self.assertEqual(report['commonIdCount'], 240)
+        self.assertEqual(report['commonIdCount'], len(load_runtime_sites()))
         self.assertFalse(any(v for v in report.values() if isinstance(v, list)), report)
         for r in SOURCE['records']:
             s, c = r['site'], r['coordinateReview']
@@ -155,9 +149,9 @@ class AGradeSitesTests(unittest.TestCase):
             else:
                 self.assertFalse(s['showTide'])
                 self.assertNotIn(sid, mapping['sites'])
-        self.assertEqual(mapping['siteCount'], 104)
+        self.assertEqual(mapping['siteCount'], len(mapping['sites']))
         resolved, _ = update_tide.resolve_tide_sites(update_tide.load_tide_sites(), mapping['sites'])
-        self.assertEqual(len(resolved), 104)
+        self.assertEqual({s['id'] for s in resolved}, set(mapping['sites']))
         self.assertEqual({s['id']: s['stationCode'] for s in resolved if s['id'] in TIDE}, TIDE)
         html = (ROOT / 'index.html').read_text(encoding='utf-8')
         month = html.split("var MONTH_TIDE_SITE_IDS=new Set([", 1)[1].split("])", 1)[0]
@@ -172,7 +166,7 @@ class AGradeRegistrySqlTests(unittest.TestCase):
           CREATE TABLE reports(id TEXT,site_id TEXT,note TEXT);INSERT INTO reports VALUES('keep','14','unchanged');
           CREATE TABLE checklists(id TEXT,site_id TEXT);''')
         self.keys = 'site_id site_name lat lon registry_source registry_revision source_record_json created_at retired_at'.split()
-        self.old = [dict(zip(self.keys, [s['id'], 'Synthetic ' + s['id'], 36.5, 127.5, 'synthetic', 'old', '{}', '2026-01-01', None])) for s in load_runtime_sites()[:229]]
+        self.old = [dict(zip(self.keys, [s['id'], 'Synthetic ' + s['id'], 36.5, 127.5, 'synthetic', 'old', '{}', '2026-01-01', None])) for s in historical_sites(ROOT, SOURCE['baselineCommit'])]
         self.new = [dict(self.old[0], site_id=r['site']['id'], site_name=r['site']['name'], lat=r['site']['lat'], lon=r['site']['lon']) for r in SOURCE['records']]
         self.db.executemany('INSERT INTO sites VALUES(?,?,?,?,?,?,?,?,?)', [tuple(s[k] for k in self.keys) for s in self.old])
         self.db.commit()

@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 from island_nearby_contract import without_island_nearby, HOOK, FOLLOWING
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
+from site_data_contract import assert_repository_sites, assert_engine_matches_base, without_site_data
 import report_archive_contract as archive_contract
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -15,8 +16,10 @@ class PilotContractTests(unittest.TestCase):
         before = subprocess.check_output(['git', 'show', BASE + ':index.html'], cwd=ROOT).decode().replace('\r\n', '\n')
         # PR #40 has its own exact basemap normalization. Compose it if that PR is merged.
         normalize_basemap = getattr(archive_contract, 'without_approved_basemap', lambda value: value)
-        self.assertEqual(normalize_basemap(without_island_nearby(CURRENT)), normalize_basemap(before))
-        self.assertEqual(normalize_basemap(without_island_nearby(CURRENT.replace('\n', '\r\n'))), normalize_basemap(before))
+        normalize = lambda text: normalize_basemap(without_island_nearby(text))
+        assert_engine_matches_base(ROOT, normalize)
+        self.assertEqual(without_site_data(normalize(CURRENT.replace('\n', '\r\n'))),
+                         without_site_data(normalize(CURRENT)))
         self.assertEqual(without_island_nearby(before), before)
 
     def test_partial_duplicate_or_modified_additions_are_rejected(self):
@@ -38,10 +41,10 @@ class PilotContractTests(unittest.TestCase):
 
     def test_runtime_records_coordinates_and_worker_contract_unchanged(self):
         sites = load_runtime_sites()
-        self.assertEqual(len(sites), 240)
-        self.assertEqual(len({s['id'] for s in sites}), 240)
+        assert_repository_sites(ROOT)
+        self.assertEqual(len({s['id'] for s in sites}), len(sites))
         result = compare_sites(sites, load_worker_sites())
-        self.assertEqual(result['commonIdCount'], 240)
+        self.assertEqual(result['commonIdCount'], len(sites))
         self.assertFalse(any(v for v in result.values() if isinstance(v, list)), result)
 
 

@@ -1,13 +1,11 @@
-"""Preserve all 208 records and fail closed on incomplete or drifted registry appends."""
+"""PR-relative site protection and fail-closed historical registry appends."""
 import hashlib
 import json
-import re
 import sqlite3
-import subprocess
-import tempfile
 import unittest
 from pathlib import Path
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
+from site_data_contract import assert_repository_sites, assert_engine_matches_base, historical_sites
 from report_archive_contract import without_report_archive
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -15,23 +13,14 @@ SOURCE=json.loads((ROOT/'data/metro-birding-sites-20261019.json').read_text(enco
 NEW=[str(i) for i in range(214,235)]
 
 class MetroSitesTests(unittest.TestCase):
-    def test_all_old_records_and_engine_outside_approved_metadata_are_preserved(self):
-        old=subprocess.check_output(['git','show',SOURCE['baselineCommit']+':index.html'],cwd=ROOT).decode('utf-8')
-        with tempfile.TemporaryDirectory() as directory:
-            path=Path(directory)/'index.html';path.write_text(old,encoding='utf-8');before=load_runtime_sites(path)
-        current=load_runtime_sites()
-        self.assertEqual(len(before),208);self.assertEqual(current[:208],before)
-        self.assertEqual(current[208:229],[r['site'] for r in SOURCE['records']])
-        self.assertEqual([s['id'] for s in current[208:229]],NEW);self.assertEqual(len(current),240)
-        def strip(t):
-            t=without_report_archive(t)
-            t=t.replace('최종 업데이트: 2026.10.19','최종 업데이트: 2026.10.18').replace('수도권 21곳 추가','중부권 10곳·제주 8곳 추가').replace('id="mapTitleSiteCount">229','id="mapTitleSiteCount">208')
-            return re.sub(r'siteData=siteData\.concat\([\s\S]*?\);','SITE_ARRAY',t.replace('\r\n','\n'),count=1)
-        self.assertEqual(strip((ROOT/'index.html').read_text(encoding='utf-8')),strip(old))
+    def test_pr_base_records_and_engine_outside_site_data_are_preserved(self):
+        assert_repository_sites(ROOT)
+        self.assertEqual([r['site']['id'] for r in SOURCE['records']],NEW)
+        assert_engine_matches_base(ROOT, without_report_archive)
 
     def test_links_coordinates_source_boundaries_and_unknown_records(self):
         report=compare_sites(load_runtime_sites(),load_worker_sites())
-        self.assertEqual(report['commonIdCount'],240)
+        self.assertEqual(report['commonIdCount'],len(load_runtime_sites()))
         self.assertFalse(any(v for v in report.values() if isinstance(v,list)),report)
         unknown={'214','217','221','222','223','225','226','227','232','234'}
         self.assertEqual({r['site']['id'] for r in SOURCE['records'] if not r['site']['birds']},unknown)
@@ -59,7 +48,7 @@ class MetroAppendTests(unittest.TestCase):
           CREATE TABLE system_state(id INTEGER PRIMARY KEY,mode TEXT,generation INTEGER);INSERT INTO system_state VALUES(1,'NORMAL',4);
           CREATE TABLE reports(id TEXT,note TEXT);INSERT INTO reports VALUES('keep','unchanged');''')
         self.keys='site_id site_name lat lon registry_source registry_revision source_record_json created_at retired_at'.split()
-        self.old=[dict(zip(self.keys,[s['id'],'Synthetic '+s['id'],36.5,127.5,'synthetic','old','{}','2026-01-01',None])) for s in load_runtime_sites()[:208]]
+        self.old=[dict(zip(self.keys,[s['id'],'Synthetic '+s['id'],36.5,127.5,'synthetic','old','{}','2026-01-01',None])) for s in historical_sites(ROOT,SOURCE['baselineCommit'])]
         self.new=[dict(self.old[0],site_id=i,site_name='Synthetic '+i) for i in NEW]
         self.db.executemany('INSERT INTO sites VALUES(?,?,?,?,?,?,?,?,?)',[tuple(s[k] for k in self.keys) for s in self.old]);self.db.commit()
         self.sql=(ROOT/'docs/metro-sites-20261019/append-registry.sql').read_text(encoding='utf-8')
