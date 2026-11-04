@@ -3,7 +3,9 @@ import hashlib
 import json
 import re
 import sqlite3
+import tempfile
 import unittest
+from unittest.mock import patch
 from report_archive_contract import without_report_archive
 from pathlib import Path
 from urllib.parse import unquote
@@ -17,6 +19,21 @@ import update_weather as weather
 ROOT = Path(__file__).resolve().parents[2]
 NEW_IDS = ['206','207','208','209','210','211','212','213']
 SOURCE = json.loads((ROOT/'data/jeju-birding-sites-20261018.json').read_text(encoding='utf-8'))
+
+# site-picker.js has dedicated selection/parser/escaping tests in
+# reports-api/test/site-picker.test.mjs, run by the existing reports-api CI step.
+# Keep the other locks until their actual-file/negative-path contracts are covered.
+JEJU_BASE_FILE_CONTRACTS = (
+    'weather_today.json', 'weather_week.json', 'tide_today.json', 'tide_month.json',
+    'notices.json', 'weather_rules.json', 'reports-api/tools/sites-seed.mjs',
+)
+
+
+def assert_jeju_base_files(root, ref):
+    for file in JEJU_BASE_FILE_CONTRACTS:
+        current = (Path(root) / file).read_bytes().replace(b'\r\n', b'\n')
+        if current != baseline_bytes(root, ref, file).replace(b'\r\n', b'\n'):
+            raise AssertionError('Base file contract changed: ' + file)
 
 
 class JejuSitesTests(unittest.TestCase):
@@ -114,11 +131,7 @@ class JejuSitesTests(unittest.TestCase):
             self.assertFalse(any(book['matches'].values()))
         # Current files follow this PR's exact main base, without historical count exceptions.
         ref=baseline_ref(ROOT)
-        for file in ['weather_today.json','weather_week.json','tide_today.json','tide_month.json','notices.json',
-                     'weather_rules.json',
-                     'reports-api/src/site-picker.js','reports-api/tools/sites-seed.mjs']:
-            current=(ROOT/file).read_bytes().replace(b'\r\n',b'\n')
-            self.assertEqual(current,baseline_bytes(ROOT,ref,file).replace(b'\r\n',b'\n'),file)
+        assert_jeju_base_files(ROOT,ref)
         assert_mapping_extension(ROOT)
         assert_engine_matches_base(ROOT,without_report_archive)
 
@@ -131,6 +144,44 @@ class JejuSitesTests(unittest.TestCase):
         self.assertFalse(a['scoreEligible'])
         self.assertIn('wave',a['missingScoreFields'])
         self.assertTrue(b['scoreEligible'])
+
+
+class JejuFileBoundaryTests(unittest.TestCase):
+    """Synthetic files exercise delegation without editing runtime or API code."""
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        self.contents = {name: b'synthetic baseline\n' for name in JEJU_BASE_FILE_CONTRACTS}
+        for name, content in self.contents.items():
+            target = self.root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+        self.reader = patch(__name__ + '.baseline_bytes', side_effect=lambda root, ref, name: self.contents[name])
+        self.reader.start()
+        self.addCleanup(self.reader.stop)
+
+    def test_site_picker_code_change_is_delegated_to_its_security_suite(self):
+        target = self.root / 'reports-api/src/site-picker.js'
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('/* Synthetic normal picker UI change */', encoding='utf-8')
+        assert_jeju_base_files(self.root, 'a' * 40)
+
+    def test_rules_notices_and_seed_remain_locked_pending_complete_contracts(self):
+        for name in ('weather_rules.json', 'notices.json', 'reports-api/tools/sites-seed.mjs'):
+            target = self.root / name
+            target.write_bytes(b'synthetic changed payload\n')
+            with self.subTest(file=name), self.assertRaisesRegex(AssertionError, 'Base file contract'):
+                assert_jeju_base_files(self.root, 'a' * 40)
+            target.write_bytes(self.contents[name])
+
+    def test_generated_weather_and_tide_file_protection_is_unchanged(self):
+        for name in ('weather_today.json', 'weather_week.json', 'tide_today.json', 'tide_month.json'):
+            target = self.root / name
+            target.write_bytes(b'synthetic changed generation\n')
+            with self.subTest(file=name), self.assertRaisesRegex(AssertionError, 'Base file contract'):
+                assert_jeju_base_files(self.root, 'a' * 40)
+            target.write_bytes(self.contents[name])
 
 
 class JejuRegistryAppendTests(unittest.TestCase):

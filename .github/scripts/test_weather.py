@@ -10,7 +10,6 @@ from unittest.mock import patch
 
 import update_weather as weather
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
-from site_data_contract import assert_repository_sites
 
 
 class WeatherTests(unittest.TestCase):
@@ -28,11 +27,10 @@ class WeatherTests(unittest.TestCase):
     def test_registry_all_ids_coordinates_and_branches(self):
         runtime, worker = load_runtime_sites(), load_worker_sites()
         report = compare_sites(runtime, worker)
-        assert_repository_sites()
         self.assertEqual(report["runtimeSiteCount"], len(runtime))
         self.assertEqual(report["commonIdCount"], len(runtime))
         self.assertFalse(any(v for v in report.values() if isinstance(v, list)))
-        self.assertTrue({'188', '14'} <= worker.keys())  # Protected values follow the PR base/grants.
+        self.assertTrue({'188', '14'} <= worker.keys())  # PR change protection stays in registration tests.
 
     def test_parser_includes_concat_and_rejects_duplicate(self):
         with tempfile.TemporaryDirectory() as directory:

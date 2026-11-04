@@ -328,13 +328,13 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
     def command(self, *args):
         return subprocess.check_output(['git', *args], cwd=self.root, stderr=subprocess.PIPE).decode().strip()
 
-    def write_candidate(self, grants):
+    def write_candidate(self, grants, changes=()):
         for site in self.current:
             self.update_links(site)
         files = {'index.html': 'var siteData=' + json.dumps(self.current) + ';\nvar siteSpotData=[1];\nrun();',
                  'weather-proxy/src/sites.js': 'export const SITES=Object.freeze(' + json.dumps(self.worker(self.current)) + ');',
                  'weather_rules.json': json.dumps({'rules': {'general_birding': {}}}),
-                 REVIEWS: json.dumps(dict(version=1, changes=[], protectedApprovals=grants))}
+                 REVIEWS: json.dumps(dict(version=1, changes=list(changes), protectedApprovals=grants))}
         for name, content in files.items():
             target = self.root / name
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -348,6 +348,110 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
 
     def local(self):
         return patch.dict(os.environ, {'GITHUB_ACTIONS': 'false', 'SITE_DATA_BASE_REF': ''})
+
+    def pr(self):
+        event = self.root / 'runner-event.json'
+        event.write_text(json.dumps({'pull_request': {'base': {
+            'ref': 'main', 'sha': self.ref, 'repo': {'full_name': 'wooil1964/birdmap'}}}}), encoding='utf-8')
+        return patch.dict(os.environ, {'GITHUB_ACTIONS': 'true', 'GITHUB_EVENT_NAME': 'pull_request',
+                                      'GITHUB_EVENT_PATH': str(event), 'GITHUB_REPOSITORY': 'wooil1964/birdmap',
+                                      'SITE_DATA_BASE_REF': ''})
+
+    def advance_automatic_main(self, name):
+        (self.root / name).write_text(json.dumps({'syntheticAutomaticUpdate': name}), encoding='utf-8')
+        self.command('add', '--', name)  # Candidate data and the runner event stay outside this main commit.
+        self.command('commit', '--quiet', '-m', 'Synthetic automatic main update')
+        self.ref = self.command('rev-parse', 'HEAD')
+        self.command('update-ref', 'refs/remotes/origin/main', self.ref)
+
+    def test_evidence_survives_weather_and_tide_main_advances(self):
+        origin = self.ref
+        self.current[0]['birds'] += ',쇠오리'
+        changes = [self.species_review(), self.new_site()]
+        self.write_candidate([], changes)
+        with self.pr():
+            assert_repository_sites(self.root)
+        for name in ('weather_today.json', 'tide_today.json'):
+            self.advance_automatic_main(name)
+            self.assertTrue(all(review['baseCommit'] == origin for review in changes))
+            self.assertNotEqual(self.ref, origin)
+            with self.pr():
+                self.assertEqual(assert_repository_sites(self.root)['addedIds'], ['902'])
+
+    def test_unrelated_candidate_and_noncommit_evidence_bases_fail(self):
+        self.current[0]['birds'] += ',쇠오리'
+        review = self.species_review()
+        self.write_candidate([], [review])
+        self.command('checkout', '--quiet', '-b', 'synthetic-candidate')
+        self.command('add', '--', 'index.html', 'weather-proxy/src/sites.js', REVIEWS)
+        self.command('commit', '--quiet', '-m', 'Synthetic candidate data')
+        candidate = self.command('rev-parse', 'HEAD')
+        unrelated = self.command('commit-tree', self.command('rev-parse', 'HEAD^{tree}'), '-m', 'Unrelated identical tree')
+        blob = self.command('rev-parse', 'HEAD:index.html')
+        for origin in (candidate, unrelated, blob, 'f' * 40, 'not-a-sha'):
+            self.write_candidate([], [dict(review, baseCommit=origin)])
+            with self.subTest(origin=origin), self.pr(), self.assertRaisesRegex(ValueError, 'Evidence|evidence'):
+                assert_repository_sites(self.root)
+
+    def test_ancestor_proof_does_not_accept_tampered_species_or_record_hash(self):
+        self.current[0]['birds'] += ',쇠오리'
+        species, new_site = self.species_review(), self.new_site()
+        self.write_candidate([], [species, new_site])
+        self.advance_automatic_main('weather_week.json')
+        for reviews in ([dict(species, before='다른 종'), new_site],
+                        [dict(species, after='다른 종'), new_site],
+                        [species, dict(new_site, recordDigest='0' * 64)]):
+            self.write_candidate([], reviews)
+            with self.subTest(reviews=reviews), self.pr(), self.assertRaisesRegex(ValueError, 'exact old/new|payload mismatch'):
+                assert_repository_sites(self.root)
+
+    def test_actual_main_species_drift_invalidates_old_evidence(self):
+        self.current[0]['birds'] += ',쇠오리'
+        review, candidate = self.species_review(), copy.deepcopy(self.current)
+        self.current = copy.deepcopy(self.before)
+        self.current[0]['birds'] = '흰뺨검둥오리'
+        self.write_candidate([])
+        self.commit_base()  # A genuine data change, not an automatic weather-only commit.
+        self.current = candidate
+        self.write_candidate([], [review])
+        with self.pr(), self.assertRaisesRegex(ValueError, 'exact old/new'):
+            assert_repository_sites(self.root)
+
+    def test_old_evidence_cannot_revive_revoked_main_approval(self):
+        self.current[0]['lat'] += 0.1
+        grant = self.grant()
+        self.current = copy.deepcopy(self.before)
+        self.write_candidate([grant])
+        self.commit_base()
+        self.current[0]['birds'] += ',쇠오리'
+        review = self.species_review()
+        self.current = copy.deepcopy(self.before)
+        self.write_candidate([])
+        self.commit_base()  # The latest trusted main has revoked the older grant.
+        self.current[0]['lat'] += 0.1
+        self.current[0]['birds'] += ',쇠오리'
+        self.write_candidate([grant], [review])
+        with self.pr(), self.assertRaisesRegex(ValueError, 'without trusted base approval'):
+            assert_repository_sites(self.root)
+
+    def test_pr_gate_keeps_id_coordinate_and_pelagic_protection_after_main_advance(self):
+        self.advance_automatic_main('weather_today.json')
+        for change in ('delete', 'duplicate', 'coordinate', 'pelagic', 'worker'):
+            self.current = copy.deepcopy(self.before)
+            if change == 'delete':
+                self.current = []
+            elif change == 'duplicate':
+                self.current.append(copy.deepcopy(self.current[0]))
+            elif change == 'coordinate':
+                self.current[0]['lat'] += 0.1
+            elif change == 'pelagic':
+                self.current[0]['pelagic'] = True
+            self.write_candidate([])
+            if change == 'worker':
+                target = self.root / 'weather-proxy/src/sites.js'
+                target.write_text('Object.freeze({});', encoding='utf-8')
+            with self.subTest(change=change), self.pr(), self.assertRaises(ValueError):
+                assert_repository_sites(self.root)
 
     def test_same_pr_approval_file_cannot_authorize_protected_changes(self):
         self.current[0]['lat'] += 0.1
@@ -416,6 +520,19 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
         self.assertEqual(baseline_ref(self.root, {}), self.ref)
         with self.assertRaises(ValueError):
             baseline_ref(self.root, {'SITE_DATA_BASE_REF': 'HEAD'})
+
+
+class WeatherEventBoundaryTests(unittest.TestCase):
+    def test_scheduled_and_push_weather_registry_checks_do_not_consult_pr_state(self):
+        import test_weather
+        for event in ('schedule', 'push'):
+            env = {'GITHUB_ACTIONS': 'true', 'GITHUB_EVENT_NAME': event,
+                   'GITHUB_EVENT_PATH': 'missing-synthetic-event.json', 'SITE_DATA_BASE_REF': 'invalid'}
+            with self.subTest(event=event), patch.dict(os.environ, env), patch(
+                    'site_data_contract.baseline_ref', side_effect=AssertionError('Weather consulted PR state')):
+                result = unittest.TestResult()
+                test_weather.WeatherTests('test_registry_all_ids_coordinates_and_branches').run(result)
+                self.assertTrue(result.wasSuccessful(), result.errors + result.failures)
 
 
 # unittest.main() runs these cases through the existing central-sites CI step.

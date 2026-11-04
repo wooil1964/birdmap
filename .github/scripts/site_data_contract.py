@@ -230,11 +230,31 @@ def _species_sources(record, species):
         _sources(sources)
 
 
-def _review(changes, kind, sid, ref):
+def _verified_evidence_bases(root, ref, changes):
+    """Only repository ancestry can grant this capability, never the manifest."""
+    verified = {ref}
+    for record in changes:
+        require(isinstance(record, dict), 'Invalid change review')
+        origin = record.get('baseCommit')
+        require(isinstance(origin, str) and SHA.fullmatch(origin), 'Invalid evidence commit SHA')
+        if origin in verified:
+            continue
+        try:
+            require(git(root, 'cat-file', '-t', origin).strip() == 'commit', 'Evidence must name a commit')
+            git(root, 'merge-base', '--is-ancestor', origin, ref)
+        except ValueError as error:
+            raise ValueError('Evidence commit is not in verified main ancestry') from error
+        verified.add(origin)
+    return frozenset(verified)
+
+
+def _review(changes, kind, sid, ref, verified_evidence_bases=()):
     matches = [r for r in changes if r.get('kind') == kind and r.get('id') == sid]
     require(len(matches) == 1, 'Missing/duplicate change evidence: ' + sid)
     record = matches[0]
-    require(record.get('baseCommit') == ref, 'Stale/incorrect evidence baseline')
+    origin = record.get('baseCommit')
+    require(isinstance(origin, str) and SHA.fullmatch(origin)
+            and (origin == ref or origin in verified_evidence_bases), 'Unverified evidence main ancestry')
     _reason(record)
     _sources(record.get('sources'))
     return record
@@ -305,7 +325,8 @@ def _grants(approvals):
     return grants
 
 
-def validate_sites(before, current, worker, *, base_commit, changes=(), trusted_approvals=(), weather_rule_keys=None):
+def validate_sites(before, current, worker, *, base_commit, changes=(), trusted_approvals=(), weather_rule_keys=None,
+                   verified_evidence_bases=()):
     """Pure validation for isolated fixtures; caller must establish grant trust."""
     old, new = _runtime_index(before), assert_parity(current, worker)
     require(not (old.keys() - new.keys()), 'Existing site ID deleted/renamed')
@@ -337,14 +358,14 @@ def validate_sites(before, current, worker, *, base_commit, changes=(), trusted_
                 if any(previous[field] != site[field] for field in ('lat', 'lon')):
                     _map_links(site)
             if _species(previous['birds']) != _species(site['birds']):
-                review = _review(changes, 'species', sid, base_commit)
+                review = _review(changes, 'species', sid, base_commit, verified_evidence_bases)
                 require(review.get('before') == previous['birds'] and review.get('after') == site['birds'],
                         'Species evidence does not match exact old/new values')
                 _species_sources(review, _species(previous['birds']) ^ _species(site['birds']))
         else:
             require(required_fields <= set(site), 'New site schema incomplete')
             _map_links(site)
-            review = _review(changes, 'new_site', sid, base_commit)
+            review = _review(changes, 'new_site', sid, base_commit, verified_evidence_bases)
             require(review.get('recordDigest') == digest(site), 'New site evidence payload mismatch')
             checks = review.get('coordinateChecks')
             require(isinstance(checks, dict) and set(checks) == {'source', 'excel', 'kakao', 'windy', 'worker'},
@@ -365,7 +386,8 @@ def validate_sites(before, current, worker, *, base_commit, changes=(), trusted_
     return {'baseSiteCount': len(old), 'siteCount': len(new), 'addedIds': sorted(new.keys() - old.keys())}
 
 
-def validate_mapping_extension(before, current, old_sites, new_sites, *, changes=(), base_commit=None):
+def validate_mapping_extension(before, current, old_sites, new_sites, *, changes=(), base_commit=None,
+                               verified_evidence_bases=()):
     """Keep old tide links exact; admit complete links only for reviewed additions."""
     old_ids, new_ids = {s['id'] for s in old_sites}, {s['id']: s for s in new_sites}
     old, new = before['sites'], current['sites']
@@ -378,7 +400,7 @@ def validate_mapping_extension(before, current, old_sites, new_sites, *, changes
     require(added == expected, 'Missing/unreviewed new tide mapping')
     for sid in added:
         row, site = new[sid], new_ids[sid]
-        review = _review(changes, 'new_site', sid, base_commit)
+        review = _review(changes, 'new_site', sid, base_commit, verified_evidence_bases)
         _sources(review.get('tideSources'))
         require(review.get('tideMappingDigest') == digest(row), 'Tide mapping evidence payload mismatch')
         require(site.get('showTide') is True and row.get('name') == site['name'], 'Tide mapping site mismatch')
@@ -407,11 +429,13 @@ def validate_mapping_extension(before, current, old_sites, new_sites, *, changes
 def assert_mapping_extension(root=ROOT):
     root, ref = Path(root), baseline_ref(root)
     assert_repository_sites(root)  # Establish new-site evidence before admitting any mapping.
+    changes = _manifest((root / REVIEWS).read_text(encoding='utf-8'))['changes']
     validate_mapping_extension(json_value(baseline_bytes(root, ref, 'tide_station_mapping.json')),
                                json_value((root / 'tide_station_mapping.json').read_text(encoding='utf-8')),
                                historical_sites(root, ref),
                                runtime_from_text((root / 'index.html').read_text(encoding='utf-8')),
-                               changes=_manifest((root / REVIEWS).read_text(encoding='utf-8'))['changes'], base_commit=ref)
+                               changes=changes, base_commit=ref,
+                               verified_evidence_bases=_verified_evidence_bases(root, ref, changes))
 
 
 def _manifest(text):
@@ -434,6 +458,7 @@ def assert_repository_sites(root=ROOT):
     old_worker = worker(baseline_bytes(root, ref, 'weather-proxy/src/sites.js').decode('utf-8'))
     assert_parity(before, old_worker)
     reviews = _manifest((root / REVIEWS).read_text(encoding='utf-8'))
+    verified_bases = _verified_evidence_bases(root, ref, reviews['changes'])
     _grants(reviews['protectedApprovals'])  # Validate candidate syntax without granting authority.
     exists = git(root, 'ls-tree', '--name-only', ref, '--', REVIEWS).strip()
     trusted = _manifest(baseline_bytes(root, ref, REVIEWS).decode('utf-8')) if exists else {'protectedApprovals': []}
@@ -441,9 +466,11 @@ def assert_repository_sites(root=ROOT):
     result = validate_sites(before, current, worker((root / 'weather-proxy/src/sites.js').read_text(encoding='utf-8')),
                             base_commit=ref, changes=reviews['changes'],
                             trusted_approvals=trusted['protectedApprovals'],
-                            weather_rule_keys=json_value(baseline_bytes(root, ref, 'weather_rules.json'))['rules'])
+                            weather_rule_keys=json_value(baseline_bytes(root, ref, 'weather_rules.json'))['rules'],
+                            verified_evidence_bases=verified_bases)
     if any(s['id'] in result['addedIds'] and s.get('showTide') for s in current):
         validate_mapping_extension(json_value(baseline_bytes(root, ref, 'tide_station_mapping.json')),
                                    json_value((root / 'tide_station_mapping.json').read_text(encoding='utf-8')),
-                                   before, current, changes=reviews['changes'], base_commit=ref)
+                                   before, current, changes=reviews['changes'], base_commit=ref,
+                                   verified_evidence_bases=verified_bases)
     return result
