@@ -1,6 +1,7 @@
 """PR-relative site protection and historical public-area evidence."""
 import json
 import copy
+import contextlib
 import os
 import subprocess
 import tempfile
@@ -11,7 +12,8 @@ from unittest.mock import patch
 
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
 from site_data_contract import (assert_repository_sites, assert_engine_matches_base, baseline_ref,
-                                digest, protected, validate_sites, validate_mapping_extension, without_site_data, REVIEWS)
+                                baseline_bytes, digest, protected, validate_sites,
+                                validate_mapping_extension, without_site_data, REVIEWS)
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = json.loads((ROOT / 'data/central-birding-sites-20261018.json').read_text(encoding='utf-8'))
@@ -349,13 +351,32 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
     def local(self):
         return patch.dict(os.environ, {'GITHUB_ACTIONS': 'false', 'SITE_DATA_BASE_REF': ''})
 
-    def pr(self):
+    @contextlib.contextmanager
+    def pr(self, snapshot=None, main_parent=None, candidate=None):
+        original = self.command('rev-parse', 'HEAD')
+        tree = self.command('rev-parse', 'HEAD^{tree}')
+        if candidate is None:
+            candidate = (original if original != self.ref else
+                         self.command('commit-tree', tree, '-p', self.ref, '-m', 'Synthetic PR head'))
+        merge = self.command('commit-tree', tree, '-p', main_parent or self.ref,
+                             '-p', candidate, '-m', 'Synthetic runner merge')
         event = self.root / 'runner-event.json'
-        event.write_text(json.dumps({'pull_request': {'base': {
-            'ref': 'main', 'sha': self.ref, 'repo': {'full_name': 'wooil1964/birdmap'}}}}), encoding='utf-8')
-        return patch.dict(os.environ, {'GITHUB_ACTIONS': 'true', 'GITHUB_EVENT_NAME': 'pull_request',
-                                      'GITHUB_EVENT_PATH': str(event), 'GITHUB_REPOSITORY': 'wooil1964/birdmap',
-                                      'SITE_DATA_BASE_REF': ''})
+        event.write_text(json.dumps({'number': 1, 'pull_request': {'base': {
+            'ref': 'main', 'sha': snapshot or self.ref, 'repo': {'full_name': 'wooil1964/birdmap'}},
+            'head': {'sha': candidate}}}), encoding='utf-8')
+        # commit-tree never stages candidate data. Detach/restore HEAD directly so
+        # neither the main branch nor the fixture index is changed by this context.
+        branch = self.command('symbolic-ref', 'HEAD')
+        self.command('update-ref', '--no-deref', 'HEAD', merge, original)
+        try:
+            with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true', 'GITHUB_EVENT_NAME': 'pull_request',
+                                        'GITHUB_EVENT_PATH': str(event), 'GITHUB_REPOSITORY': 'wooil1964/birdmap',
+                                        'GITHUB_REF': 'refs/pull/1/merge', 'GITHUB_SHA': merge,
+                                        'SITE_DATA_BASE_REF': ''}):
+                yield
+        finally:
+            self.command('update-ref', '--no-deref', 'HEAD', original, merge)
+            self.command('symbolic-ref', 'HEAD', branch)
 
     def advance_automatic_main(self, name):
         (self.root / name).write_text(json.dumps({'syntheticAutomaticUpdate': name}), encoding='utf-8')
@@ -377,6 +398,26 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
             self.assertNotEqual(self.ref, origin)
             with self.pr():
                 self.assertEqual(assert_repository_sites(self.root)['addedIds'], ['902'])
+
+    def test_stale_event_snapshot_uses_verified_tested_main_parent(self):
+        snapshot = self.ref
+        candidate = self.command('commit-tree', self.command('rev-parse', 'HEAD^{tree}'),
+                                 '-p', self.ref, '-m', 'Candidate before bot advance')
+        self.current[0]['birds'] += ',쇠오리'
+        changes = [self.species_review(), self.new_site()]
+        self.write_candidate([], changes)
+        self.advance_automatic_main('weather_today.json')
+        with self.pr(snapshot=snapshot, candidate=candidate):
+            self.assertEqual(baseline_ref(self.root), self.ref)
+            self.assertEqual(baseline_bytes(self.root, baseline_ref(self.root), 'weather_today.json'),
+                             (self.root / 'weather_today.json').read_bytes())
+            self.assertEqual(assert_repository_sites(self.root)['addedIds'], ['902'])
+
+    def test_candidate_cannot_pose_as_merge_main_parent(self):
+        candidate = self.command('commit-tree', self.command('rev-parse', 'HEAD^{tree}'),
+                                 '-p', self.ref, '-m', 'Untrusted main parent')
+        with self.pr(main_parent=candidate), self.assertRaises(ValueError):
+            baseline_ref(self.root)
 
     def test_unrelated_candidate_and_noncommit_evidence_bases_fail(self):
         self.current[0]['birds'] += ',쇠오리'
@@ -431,7 +472,7 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
         self.current[0]['lat'] += 0.1
         self.current[0]['birds'] += ',쇠오리'
         self.write_candidate([grant], [review])
-        with self.pr(), self.assertRaisesRegex(ValueError, 'without trusted base approval'):
+        with self.pr(snapshot=review['baseCommit']), self.assertRaisesRegex(ValueError, 'without trusted base approval'):
             assert_repository_sites(self.root)
 
     def test_pr_gate_keeps_id_coordinate_and_pelagic_protection_after_main_advance(self):
@@ -497,20 +538,26 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
             assert_repository_sites(self.root)
 
     def test_ci_event_baseline_is_main_and_overrides_fail_closed(self):
-        event = self.root / 'event.json'
-        document = {'pull_request': {'base': {'ref': 'main', 'sha': self.ref,
-                                             'repo': {'full_name': 'wooil1964/birdmap'}}}}
-        event.write_text(json.dumps(document), encoding='utf-8')
-        env = dict(GITHUB_ACTIONS='true', GITHUB_EVENT_NAME='pull_request', GITHUB_EVENT_PATH=str(event),
-                   GITHUB_REPOSITORY='wooil1964/birdmap')
-        self.assertEqual(baseline_ref(self.root, env), self.ref)
-        for extra in ({'SITE_DATA_BASE_REF': 'HEAD'}, {'GITHUB_EVENT_NAME': 'push'}):
-            with self.subTest(env=extra), self.assertRaises(ValueError):
-                baseline_ref(self.root, dict(env, **extra))
-        document['pull_request']['base']['ref'] = 'feature'
-        event.write_text(json.dumps(document), encoding='utf-8')
-        with self.assertRaisesRegex(ValueError, 'base must be main'):
-            baseline_ref(self.root, env)
+        with self.pr():
+            env = dict(os.environ)
+            self.assertEqual(baseline_ref(self.root, env), self.ref)
+            for extra in ({'SITE_DATA_BASE_REF': 'HEAD'}, {'GITHUB_EVENT_NAME': 'push'},
+                          {'GITHUB_SHA': self.ref}, {'GITHUB_REF': 'refs/pull/1/head'},
+                          {'GITHUB_REF': 'refs/pull/2/merge'}):
+                with self.subTest(env=extra), self.assertRaises(ValueError):
+                    baseline_ref(self.root, dict(env, **extra))
+            event = self.root / 'runner-event.json'
+            document = json.loads(event.read_text(encoding='utf-8'))
+            candidate = document['pull_request']['head']['sha']
+            document['pull_request']['head']['sha'] = self.ref
+            event.write_text(json.dumps(document), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'runner PR merge commit'):
+                baseline_ref(self.root, env)
+            document['pull_request']['head']['sha'] = candidate
+            document['pull_request']['base']['ref'] = 'feature'
+            event.write_text(json.dumps(document), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'base must be main'):
+                baseline_ref(self.root, env)
 
     def test_local_candidate_cannot_be_selected_as_its_own_main_baseline(self):
         self.current[0]['localBirdingTip'] = 'Candidate edit'

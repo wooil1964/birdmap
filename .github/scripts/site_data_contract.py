@@ -60,13 +60,26 @@ def baseline_ref(root=ROOT, environ=None):
         name = env.get('GITHUB_EVENT_NAME')
         if name == 'pull_request':
             event = json_value(Path(env['GITHUB_EVENT_PATH']).read_text(encoding='utf-8'))
-            base = event.get('pull_request', {}).get('base', {})
+            pr = event.get('pull_request', {})
+            base = pr.get('base', {})
             require(base.get('ref') == 'main', 'PR base must be main')
             ref = base.get('sha', '')
             require(isinstance(ref, str) and SHA.fullmatch(ref), 'Missing exact PR base SHA')
+            require(git(root, 'cat-file', '-t', ref).strip() == 'commit', 'PR base snapshot must name a commit')
             expected_repo = env.get('GITHUB_REPOSITORY')
             if expected_repo:
                 require(base.get('repo', {}).get('full_name') == expected_repo, 'Wrong base repository')
+            number, candidate = event.get('number'), pr.get('head', {}).get('sha')
+            require(type(number) is int and number > 0 and env.get('GITHUB_REF') == f'refs/pull/{number}/merge',
+                    'PR requires the runner merge-ref context')
+            require(isinstance(candidate, str) and SHA.fullmatch(candidate), 'Missing PR head SHA')
+            parents = git(root, 'rev-list', '--parents', '-n', '1', 'HEAD').split()
+            require(len(parents) == 3 and env.get('GITHUB_SHA') == parents[0] and parents[2] == candidate,
+                    'Checkout is not the runner PR merge commit')
+            # The event's base snapshot may predate a bot update. The checked-out
+            # merge's main parent is the actual data/approval baseline under test.
+            git(root, 'merge-base', '--is-ancestor', ref, parents[1])
+            ref = parents[1]
         else:
             require(name == 'workflow_dispatch' and env.get('GITHUB_REF') == 'refs/heads/main',
                     'CI requires a PR event or an explicit main dispatch')
