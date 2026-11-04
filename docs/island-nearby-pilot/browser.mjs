@@ -146,14 +146,14 @@ try{
   if(width===1440)await scenario(page,width,'popup-targets-and-directions-match-validated-data',async e=>{
    const seen=await e(`(()=>{const map=map_7010a44f6ac2025090f0fe07508ed485,href=(el,sel)=>[...el.querySelectorAll(sel)].map(a=>a.getAttribute('href'));
     const sites=${JSON.stringify(EXPECTED.siteData.map(s=>s.markerVar))}.map(v=>{const m=window[v];m.addTo(map).openPopup();const el=m.getPopup().getElement();
-     const r={text:el.textContent,kakao:href(el,'a.kakao'),tmap:href(el,'a.tmap')};map.closePopup();return r;});
+     const r={text:el.textContent,hrefs:href(el,'a[href]')};map.closePopup();return r;});
     const spots=Array.from({length:${EXPECTED.siteSpotData.length}},(_,i)=>{const l=siteSpotLayers[i];if(!l||!l.getPopup())return null;l.addTo(map).openPopup();
      const el=l.getPopup().getElement(),r={text:el.textContent,hrefs:href(el,'a[href]')};map.closePopup();return r;});
     return {sites,spots};})()`);
    const bad=[];
    EXPECTED.siteData.forEach((site,i)=>{const got=seen.sites[i];
     if(!got.text.includes(site.name))bad.push(site.id+': popup does not show '+site.name);
-    for(const p of guard.siteRouteProblems(site,got.kakao,got.tmap))bad.push(site.id+': '+p);});
+    for(const p of guard.siteRouteProblems(site,got.hrefs))bad.push(site.id+': '+p);});
    EXPECTED.siteSpotData.forEach((spot,i)=>{const got=seen.spots[i];if(!got){bad.push(spot.id+': fixed spot layer missing');return;}
     const parent=EXPECTED.siteData.find(s=>s.id===spot.siteId);
     if(!got.text.includes(parent.name))bad.push(spot.id+': popup does not name parent '+parent.name);

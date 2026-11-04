@@ -37,7 +37,8 @@
 
 - index.html 전체 비교는 없다. 대신 `site_data_contract.py`가 `siteData`·`siteSpotData` 선언을 엄격 문법으로 추출하고(주석·문자열 속 가짜 선언, 다른 대입·`'siteData'` 같은 이름 문자열, `assets/*.js`의 대입은 실패), 고정점 ID·순서·부모·좌표·종과 Worker `admin-page.js` `FIXED_SPOTS` 정합을 검사한다. 고정점 변경 승인(`fixtures/site_spot_reviews.json`)도 기준 main에 있는 것만 인정하며, 신규 고정점은 기준이 정해질 때까지 차단된다.
 - 브라우저 하네스는 `site_data_contract.py --export`(계약 통과 후에만 생성)를 기대값으로 삼아 `docs/site-data-guard/guard.cjs`로 실행 중 데이터 대입·변경, 마커·고정점 좌표, 팝업 대상, 카카오·티맵 목적지를 비교한다. 페이지 값을 정답으로 쓰지 않는다. 링크 문구·형식은 바꿀 수 있고 목적지 좌표만 검증한다.
-- 외부 script·stylesheet·frame과 `.js/.css` 외부 URL은 기준 main의 `fixtures/external_resources.json` 허용 목록에 있어야 한다. 새 외부 출처는 허용 목록 PR을 먼저 승인·병합한 뒤 사용한다.
+- 페이지 코드(데이터 블록 밖 index.html, `assets/` 아래 모든 텍스트 파일, index.html이 불러오는 다른 로컬 파일)에 나오는 모든 외부 URL의 **호스트**는 기준 main의 `fixtures/external_resources.json` 허용 목록에 있어야 한다. `<base>`, data:/blob:/javascript:/http: 코드 출처, 템플릿으로 만든 호스트는 실패한다. 새 호스트는 허용 목록 PR을 먼저 승인·병합한 뒤 사용한다. 문자열 연결로 쪼갠 호스트는 정적 검사로 보이지 않는다(리뷰로 확인).
+- 공개 보호 시간 상수(`PUBLICATION_MAX_AGE` 등)는 페이지에서 한 번만 대입되어야 한다(`test_publication_renewal_margin.mjs`).
 
 ## 알려진 검사 제약
 
