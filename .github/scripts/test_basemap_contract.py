@@ -6,22 +6,28 @@ from report_archive_contract import without_approved_basemap as without_basemap,
 ROOT = Path(__file__).resolve().parents[2]
 # main before the base-map selector (PR #40); its index.html is the pre-selector page.
 BASE = 'ff3949a1d3ce867c26d62111e8f0963b2b518eab'
+# These reverse-patch contracts were written for the retired whole-page freeze. They now run against the
+# last page checked under that freeze (C-1 merge a6245a5), so they keep verifying the normalizers without
+# pinning the live page. Live data, markers, routes and external code are guarded by site_data_contract.py
+# and the browser harnesses (docs/site-data-guard/guard.cjs).
+FROZEN = 'a6245a5f18a32430f454955188ec55331b78c7eb'
+SNAPSHOT = subprocess.check_output(['git', 'show', FROZEN + ':index.html'], cwd=ROOT).decode('utf-8')
 
 
 class BasemapScopeTests(unittest.TestCase):
     def test_only_the_two_hooks_differ_from_main_before_the_selector(self):
         before = subprocess.check_output(['git', 'show', BASE + ':index.html'], cwd=ROOT).decode('utf-8').replace('\r\n', '\n')
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         self.assertEqual(without_basemap(current), before)
 
     def test_unrelated_changes_survive_scope_normalization(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         for old, new in [('var RECENT_REPORT_LIMIT=15;', 'var RECENT_REPORT_LIMIT=99;'), ("PUBLICATION_MAX_AGE=5000", "PUBLICATION_MAX_AGE=99999")]:
             self.assertIn(old, current)
             self.assertNotEqual(without_basemap(current.replace(old, new, 1)), without_basemap(current))
 
     def test_duplicate_or_missing_hooks_fail_closed(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8').replace('\r\n', '\n')
+        current = SNAPSHOT.replace('\r\n', '\n')
         for literal in (HEAD, INIT):
             for modified in (current.replace(literal, '', 1), current + literal):
                 with self.assertRaises(ValueError):

@@ -3,11 +3,16 @@ import unittest
 from pathlib import Path
 from island_nearby_contract import without_island_nearby, HOOK, FOLLOWING
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
-from site_data_contract import assert_repository_sites, assert_engine_matches_base, without_site_data
+from site_data_contract import assert_repository_sites
 import report_archive_contract as archive_contract
 
 ROOT = Path(__file__).resolve().parents[2]
-CURRENT = (ROOT / 'index.html').read_text(encoding='utf-8')
+# These reverse-patch contracts were written for the retired whole-page freeze. They now run against the
+# last page checked under that freeze (C-1 merge a6245a5), so they keep verifying the normalizers without
+# pinning the live page. Live data, markers, routes and external code are guarded by site_data_contract.py
+# and the browser harnesses (docs/site-data-guard/guard.cjs).
+FROZEN = 'a6245a5f18a32430f454955188ec55331b78c7eb'
+CURRENT = subprocess.check_output(['git', 'show', FROZEN + ':index.html'], cwd=ROOT).decode('utf-8')
 BASE = 'e7dbdc8'
 
 
@@ -17,9 +22,7 @@ class PilotContractTests(unittest.TestCase):
         # PR #40 has its own exact basemap normalization. Compose it if that PR is merged.
         normalize_basemap = getattr(archive_contract, 'without_approved_basemap', lambda value: value)
         normalize = lambda text: normalize_basemap(without_island_nearby(text))
-        assert_engine_matches_base(ROOT, normalize)
-        self.assertEqual(without_site_data(normalize(CURRENT.replace('\n', '\r\n'))),
-                         without_site_data(normalize(CURRENT)))
+        self.assertEqual(normalize(CURRENT.replace('\n', '\r\n')), normalize(CURRENT))
         self.assertEqual(without_island_nearby(before), before)
 
     def test_partial_duplicate_or_modified_additions_are_rejected(self):

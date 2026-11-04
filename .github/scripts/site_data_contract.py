@@ -130,32 +130,9 @@ def historical_sites(root, ref):
     return runtime_from_text(baseline_bytes(root, ref, 'index.html').decode('utf-8'))
 
 
-def without_site_data(text):
-    """Mask only decoded siteData payloads; keep UI and siteSpotData visible."""
-    text = text.replace('\r\n', '\n')
-    replacements = []
-    for number, (match, end, _) in enumerate(_arrays(text)):
-        if number == 0:
-            replacements.append((match.end(), end, '[]'))
-            continue
-        tail = re.match(r'\s*\)\s*;', text[end:])
-        require(tail is not None, 'Incomplete siteData concat statement')
-        start, finish = match.start(), end + tail.end()
-        line_start, line_end = text.rfind('\n', 0, start) + 1, text.find('\n', finish)
-        if not text[line_start:start].strip() and (line_end < 0 or not text[finish:line_end].strip()):
-            start, finish = line_start, len(text) if line_end < 0 else line_end + 1
-        replacements.append((start, finish, ''))
-    for start, end, replacement in reversed(replacements):
-        text = text[:start] + replacement + text[end:]
-    return text
-
-
-def assert_engine_matches_base(root=ROOT, normalize=lambda text: text):
-    ref = baseline_ref(root)
-    before = baseline_bytes(root, ref, 'index.html').decode('utf-8')
-    current = (Path(root) / 'index.html').read_text(encoding='utf-8')
-    require(without_site_data(normalize(current)) == without_site_data(normalize(before)),
-            'Code/fixed-point changes outside siteData need their own review')
+# The whole-page comparison with the PR base (assert_engine_matches_base) was retired in C-2.
+# Its protections now live in the data contracts below, the runtime guard in the browser
+# harnesses (docs/site-data-guard/guard.cjs) and assert_external_resources().
 
 
 def _id(value):
@@ -729,6 +706,76 @@ def assert_repository_spots(root=ROOT):
     trusted = _spot_ledger(baseline_bytes(root, ref, SPOT_REVIEWS).decode('utf-8'))['approvals'] if exists else []
     validate_spots(base['spots'], current['spots'], site_ids, trusted)
     assert_admin_spot_parity(current['spots'], admin_fixed_spots((root / ADMIN_PAGE).read_text(encoding='utf-8')))
+    return current
+
+
+# ---------------------------------------------------------------------------
+# External code origins. With the whole-page freeze gone, a PR could otherwise add a third-party
+# script or stylesheet with no review. Every external script/stylesheet/frame URL in index.html
+# tags, and every external .js/.css URL literal in index.html or assets/, must be on the allowlist
+# read from the PR BASE (fixtures/external_resources.json). A candidate's own allowlist edit only
+# takes effect after it reaches main, like the approval ledgers. Before the ledger exists on main,
+# the base page's own external set is the trusted list.
+# ---------------------------------------------------------------------------
+EXTERNAL_RESOURCES = '.github/scripts/fixtures/external_resources.json'
+_CODE_URL = re.compile(r"""(?:https?:)?//[A-Za-z0-9.-]+\.[A-Za-z]{2,}/[^\s'"`<>()\\]*?\.(?:m?js|css)(?=[?#'"`\s)<>\\]|$)""")
+
+
+def _tag_urls(text):
+    from html.parser import HTMLParser
+    found = []
+
+    class Parser(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            for name in {'script': ('src',), 'link': ('href',), 'iframe': ('src',), 'embed': ('src',),
+                         'object': ('data',)}.get(tag, ()):
+                if attrs.get(name):
+                    found.append(attrs[name].strip())
+
+    parser = Parser(convert_charrefs=True)
+    parser.feed(text)
+    parser.close()
+    return found
+
+
+def external_resources(index_text, asset_texts=()):
+    """Sorted external code URLs (fragment removed) referenced by the page and its assets."""
+    urls = set()
+    for url in _tag_urls(index_text):
+        parts = urlsplit(url)
+        if parts.scheme or url.startswith('//'):
+            require(parts.scheme in ('https', '') and parts.hostname, 'External resource must be https: ' + url)
+            urls.add(url.split('#', 1)[0])
+    for text in (index_text, *asset_texts):
+        for url in _CODE_URL.findall(text):
+            require(not url.startswith('http:'), 'External resource must be https: ' + url)
+            urls.add('https:' + url if url.startswith('//') else url)
+    return sorted(urls)
+
+
+def _external_ledger(text):
+    value = json_value(text)
+    require(isinstance(value, dict) and set(value) == {'version', 'allowed'} and type(value['version']) is int
+            and value['version'] == 1 and isinstance(value['allowed'], list)
+            and all(isinstance(u, str) and u.startswith('https://') for u in value['allowed'])
+            and len(set(value['allowed'])) == len(value['allowed']), 'Invalid external resource allowlist')
+    return value
+
+
+def assert_external_resources(root=ROOT):
+    root, ref = Path(root), baseline_ref(root)
+    assets = [p.read_text(encoding='utf-8') for p in sorted((root / 'assets').glob('*.js'))]
+    current = external_resources((root / 'index.html').read_text(encoding='utf-8'), assets)
+    _external_ledger((root / EXTERNAL_RESOURCES).read_text(encoding='utf-8'))  # Syntax only; no authority.
+    if git(root, 'ls-tree', '--name-only', ref, '--', EXTERNAL_RESOURCES).strip():
+        trusted = set(_external_ledger(baseline_bytes(root, ref, EXTERNAL_RESOURCES).decode('utf-8'))['allowed'])
+    else:
+        names = [n for n in git(root, 'ls-tree', '--name-only', ref, '--', 'assets/').split('\n') if n.endswith('.js')]
+        trusted = set(external_resources(baseline_bytes(root, ref, 'index.html').decode('utf-8'),
+                                         [baseline_bytes(root, ref, n).decode('utf-8') for n in names]))
+    unknown = sorted(set(current) - trusted)
+    require(not unknown, 'External resource not on the base allowlist: ' + ', '.join(unknown))
     return current
 
 

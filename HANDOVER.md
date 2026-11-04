@@ -13,9 +13,9 @@
 
 ## 진행 중·보류·확인 필요
 
-- **검사 잔여 제약 C — 미해결**: `site_data_contract.py`의 `assert_engine_matches_base()`가 `siteData` 밖 `index.html` 전체를 PR 기준 main과 비교한다. 팝업·검색·마커·CSS 등 정상 UI 변경도 실패할 수 있다. 개선 시 `siteSpotData` 보호와 JavaScript를 통한 동적 데이터 변경 우회 차단을 유지해야 한다.
-- **검사 잔여 제약 D — 일부 미해결**: `test_jeju_sites.py`가 `weather_rules.json`, `notices.json`, `reports-api/tools/sites-seed.mjs`를 기준 main과 바이트 비교한다(`site-picker.js`는 PR #68에서 전용 검사로 이관). 각 기능의 독립 검사를 확인·보강한 뒤에만 고정 비교를 푼다.
-- C·D로 실패할 때 통과용 예외·허용 목록·정규화를 임의 추가하지 않는다. 개선은 별도 승인된 PR로 한다.
+- **검사 구조**: index.html 전체 비교(C)와 기상 규칙·공지·seed 바이트 비교(D)는 제거됐다. 보호는 데이터 계약·실행 중 감시·외부 출처 허용 목록이 맡는다([AGENTS.md](AGENTS.md) "보호 데이터·외부 코드"). 남은 제약: 런타임 감시는 실행 경로만 보며, 추천 결과 고정 커밋 비교(`publication_ci_signatures.mjs`)는 재검토 미실시다.
+- 검사 실패 시 통과용 예외·허용 목록·정규화를 임의 추가하지 않는다. 개선은 별도 승인된 PR로 한다.
+- **CI 환경**: regression 작업의 의존성 설치(apt 글꼴) 단계가 일시적으로 21분 멈춰 30분 제한에 걸린 적이 있다(PR #72 첫 실행). 재실행으로 해소됐다.
 - **미착수·미실시**: 빠른 탐조지 조회 도구 미착수. 실제 AI 사용량(토큰·시간) 감소 측정 미실시이므로 개선율을 보고하지 않는다. GitHub 브랜치 보호 개선 미착수(공개 API상 main 보호·Ruleset 미적용, 관리자 설정은 미확인). 자동 갱신의 main 직접 커밋 구조를 고려하지 않고 보호를 켜지 않는다.
 - **등록 보류**: 삽교호 제외, 동림저수지 239 번호 예약, 마동호 246 등록 보류를 유지한다. 공식 접근 근거 없이 보류를 해제하지 않는다. [유효 결정·현재 자료](docs/decisions/active-decisions.md) 참조.
 - **기상**: KMA timeout 8초 유지·관찰 결정이 남아 있다. 현재 장애 발생 여부는 재측정하지 않았다. 과거 403·응답 식별 불일치의 해결 기록을 현재 장애와 혼동하지 않는다.
@@ -46,6 +46,6 @@
 
 ## 최근 완료 작업
 
-- 1단계 [PR #67](https://github.com/wooil1964/birdmap/pull/67) 병합(`2f10a20f`): AGENTS.md 신설, 규칙·CLAUDE.md 간소화, HANDOVER 축소, 유효 결정 기록 신설.
-- 2단계 [PR #68](https://github.com/wooil1964/birdmap/pull/68) 병합(`49122824`): 고정 개수·과거 커밋 비교를 PR 기준 main 비교(`site_data_contract.py`)로 개편. ID·좌표·pelagic·runtime·Worker 보호 유지. 병합 후 push 기상 갱신 성공(실행 `41808015850`, 자동 커밋 `7fc90402`; 실행 보고상 Windy 429로 Open-Meteo 대체 경로 사용). 병합 후 schedule 실행 결과는 이 기록 시점에 없었다.
+- 1·2단계 [PR #67](https://github.com/wooil1964/birdmap/pull/67)(`2f10a20f`)·[PR #68](https://github.com/wooil1964/birdmap/pull/68)(`49122824`): 문서 정비, PR 기준 main 데이터 계약(`site_data_contract.py`). D [PR #70](https://github.com/wooil1964/birdmap/pull/70)(`ae0d4e8`): 기상 규칙·공지·seed 내용 검사. [PR #71](https://github.com/wooil1964/birdmap/pull/71)(`b75f4a2`): regression 제한 30분.
+- C-1 [PR #72](https://github.com/wooil1964/birdmap/pull/72)(`a6245a5`): 엄격 데이터 파서, 고정점·관리자 화면 계약, 검증된 기대값과 실행 중 감시, 탐조지 수 고정 제거. C-2(HTML 전체·과거 고정 커밋 비교 제거, 외부 출처 허용 목록)의 병합 여부는 해당 PR에서 확인한다.
 - 정비 전 HANDOVER 전체 원문은 [기준 커밋 아카이브](docs/handover-archive/HANDOVER-before-phase1-c40ba6e.md)에 보존했다. 이 아카이브는 당시 기록이며 현재 지침이 아니다.

@@ -6,16 +6,22 @@ from report_archive_contract import without_report_archive, automatic_data_base,
 from current_location_contract import without_recent_reports_message, RECENT_REPORTS_MESSAGE_ISLANDS
 
 ROOT = Path(__file__).resolve().parents[2]
+# These reverse-patch contracts were written for the retired whole-page freeze. They now run against the
+# last page checked under that freeze (C-1 merge a6245a5), so they keep verifying the normalizers without
+# pinning the live page. Live data, markers, routes and external code are guarded by site_data_contract.py
+# and the browser harnesses (docs/site-data-guard/guard.cjs).
+FROZEN = 'a6245a5f18a32430f454955188ec55331b78c7eb'
+SNAPSHOT = subprocess.check_output(['git', 'show', FROZEN + ':index.html'], cwd=ROOT).decode('utf-8')
 
 
 class ArchiveScopeTests(unittest.TestCase):
     def test_original_html_outside_archive_is_exactly_preserved(self):
         before = subprocess.check_output(['git', 'show', '850b038f486db3ef32fe944daa8f8cf025b71ca1:index.html'], cwd=ROOT).decode('utf-8')
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         self.assertEqual(without_report_archive(current), before.replace('\r\n', '\n'))
 
     def test_unrelated_changes_survive_scope_normalization(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         for old, new in [('var RECENT_REPORT_LIMIT=15;', 'var RECENT_REPORT_LIMIT=99;'),
                          ('var loadedNotices=[];', 'var loadedNotices=["tampered"];'),
                          ("PUBLICATION_MAX_AGE=5000", "PUBLICATION_MAX_AGE=99999")]:
@@ -24,13 +30,13 @@ class ArchiveScopeTests(unittest.TestCase):
 
     def test_recent_reports_message_reverses_only_the_exact_pr58_changes(self):
         before = subprocess.check_output(['git', 'show', '4c4988aef79df02484821ccfa39ef6c12a5e4660:index.html'], cwd=ROOT).decode('utf-8').replace('\r\n', '\n')
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         self.assertEqual(without_recent_reports_message(current), before)
         self.assertEqual(without_recent_reports_message(current.replace('\n', '\r\n')), before)
         self.assertEqual(without_recent_reports_message(before), before)
 
     def test_recent_reports_message_partial_duplicate_or_old_copy_fails_closed(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         for old, new in RECENT_REPORTS_MESSAGE_ISLANDS:
             for modified in (current.replace(new, '', 1), current + new, current + old):
                 with self.subTest(fragment=new[:60], modified_length=len(modified)):
@@ -38,7 +44,7 @@ class ArchiveScopeTests(unittest.TestCase):
                         without_report_archive(modified)
 
     def test_recent_reports_message_tampered_html_or_css_fails_closed(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         changes = (
             ('당신의 제보가 지도가 됩니다!', '당신의 제보가 지도가 됩니다?'),
             ('color:#39766f;', 'color:#ffffff;'),
@@ -55,7 +61,7 @@ class ArchiveScopeTests(unittest.TestCase):
                     without_report_archive(current.replace(old, new, 1))
 
     def test_unrelated_html_css_and_relocated_message_remain_frozen(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         expected = without_report_archive(current)
         changes = (
             ('id="recentTabs" role="tablist"', 'id="recentTabs" role="tablist" hidden'),
@@ -72,14 +78,14 @@ class ArchiveScopeTests(unittest.TestCase):
         self.assertNotEqual(without_report_archive(current.replace(title, '', 1) + title), expected)
 
     def test_duplicate_or_missing_boundaries_fail_closed(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         for literal in [BUTTON, HOOK] + [value for block in BLOCKS for value in block]:
             for modified in [current.replace(literal, '', 1), current + literal]:
                 with self.assertRaises(ValueError):
                     without_report_archive(modified)
 
     def test_species_search_head_is_exact_and_fail_closed(self):
-        current = (ROOT / 'index.html').read_text(encoding='utf-8')
+        current = SNAPSHOT
         self.assertEqual(current.count(SPECIES_SEARCH_HEAD), 1)
         script_only = SPECIES_SEARCH_HEAD.splitlines(True)[1]
         for modified in [current.replace(SPECIES_SEARCH_HEAD, SPECIES_SEARCH_HEAD * 2, 1),

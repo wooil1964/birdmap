@@ -6,12 +6,11 @@ import sqlite3
 import tempfile
 import unittest
 from unittest.mock import patch
-from report_archive_contract import without_report_archive
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
-from site_data_contract import (assert_repository_sites, assert_engine_matches_base,
+from site_data_contract import (assert_repository_sites, assert_external_resources,
                                 baseline_ref, baseline_bytes, historical_sites, assert_mapping_extension)
 import build_seo_pages as seo
 import update_weather as weather
@@ -239,7 +238,7 @@ class JejuSitesTests(unittest.TestCase):
         ref=baseline_ref(ROOT)
         assert_jeju_base_files(ROOT,ref)
         assert_mapping_extension(ROOT)
-        assert_engine_matches_base(ROOT,without_report_archive)
+        assert_external_resources(ROOT)
 
     def test_missing_wave_fails_closed_but_inland_does_not_require_it(self):
         from datetime import datetime

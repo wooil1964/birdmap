@@ -11,9 +11,9 @@ from urllib.parse import unquote
 from unittest.mock import patch
 
 from site_data import load_runtime_sites, load_worker_sites, compare_sites
-from site_data_contract import (assert_repository_sites, assert_engine_matches_base, baseline_ref,
+from site_data_contract import (assert_repository_sites, baseline_ref,
                                 baseline_bytes, digest, protected, validate_sites,
-                                validate_mapping_extension, without_site_data, REVIEWS)
+                                validate_mapping_extension, REVIEWS)
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = json.loads((ROOT / 'data/central-birding-sites-20261018.json').read_text(encoding='utf-8'))
@@ -232,19 +232,6 @@ class SiteDataChangeContractTests(_SiteDataFixture, unittest.TestCase):
         review['recordDigest'] = digest(self.current[-1])
         with self.assertRaisesRegex(ValueError, 'schema incomplete'):
             self.validate(changes=[review])
-
-    def test_literal_mask_is_lossless_outside_all_runtime_arrays(self):
-        self.new_site()
-        before = 'var siteData=' + json.dumps(self.before) + ';\nvar siteSpotData=[1];\nrun();'
-        after = 'var siteData=' + json.dumps(self.current[:1]) + ';\nsiteData=siteData.concat(' + json.dumps(self.current[1:]) + ');\nvar siteSpotData=[1];\nrun();'
-        self.assertEqual(without_site_data(before), without_site_data(after))
-        self.assertEqual(without_site_data(after), without_site_data(after.replace('\n', '\r\n')))
-        self.assertNotEqual(without_site_data(after.replace('siteSpotData=[1]', 'siteSpotData=[2]')),
-                            without_site_data(before))
-        self.assertNotEqual(without_site_data(after.replace('run();', 'other();')), without_site_data(before))
-        tricky = copy.deepcopy(self.before)
-        tricky[0]['localBirdingTip'] = 'siteData=siteData.concat([ strings ]); ] }'
-        self.assertEqual(without_site_data('var siteData=' + json.dumps(tricky) + ';'), 'var siteData=[];')
 
     def test_new_site_field_types_and_existing_list_elements_fail_closed(self):
         review = self.new_site()
@@ -518,17 +505,6 @@ class SiteDataBaselineTrustTests(_SiteDataFixture, unittest.TestCase):
         self.write_candidate([self.grant()])
         with self.local(), self.assertRaisesRegex(ValueError, 'without trusted base approval'):
             assert_repository_sites(self.root)
-
-    def test_current_base_engine_comparison_allows_data_edits_but_blocks_code(self):
-        self.current[0]['localBirdingTip'] = 'Updated guidance'
-        self.write_candidate([])
-        with self.local():
-            assert_repository_sites(self.root)
-            assert_engine_matches_base(self.root)
-        target = self.root / 'index.html'
-        target.write_text(target.read_text(encoding='utf-8').replace('run();', 'other();'), encoding='utf-8')
-        with self.local(), self.assertRaisesRegex(ValueError, 'outside siteData'):
-            assert_engine_matches_base(self.root)
 
     def test_duplicate_worker_json_keys_fail(self):
         target = self.root / 'weather-proxy/src/sites.js'
@@ -814,6 +790,74 @@ class ExpectedSiteDataTests(unittest.TestCase):
         with patch.object(contract, 'assert_repository_spots', side_effect=ValueError('spot contract failed')), \
                 self.assertRaisesRegex(ValueError, 'spot contract failed'):
             contract.expected_site_data(ROOT)
+
+
+class ExternalResourceAllowlistTests(unittest.TestCase):
+    """Replaces the whole-page freeze's control over third-party code: new origins need a base allowlist."""
+    CDN = 'https://cdn.example.org/lib@1.0.0/lib.min.js'
+    NEW = 'https://other.example.net/tracker.js'
+
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        self.git('init', '--quiet')
+        self.git('config', 'user.email', 'ci@example.invalid')
+        self.git('config', 'user.name', 'CI')
+        (self.root / 'assets').mkdir()
+        (self.root / '.github/scripts/fixtures').mkdir(parents=True)
+        self.write('<script src="%s"></script><style>a{}</style>' % self.CDN, 'var x=1;', [self.CDN])
+        self.git('add', '.')
+        self.git('commit', '--quiet', '-m', 'base')
+        self.git('update-ref', 'refs/remotes/origin/main', 'HEAD')
+        self.local = patch.dict(os.environ, {'GITHUB_ACTIONS': 'false', 'SITE_DATA_BASE_REF': ''})
+
+    def git(self, *args):
+        return subprocess.check_output(['git', *args], cwd=self.root, text=True).strip()
+
+    def write(self, page, asset, allowed):
+        (self.root / 'index.html').write_text(page, encoding='utf-8')
+        (self.root / 'assets/app.js').write_text(asset, encoding='utf-8')
+        (self.root / contract.EXTERNAL_RESOURCES).write_text(json.dumps({'version': 1, 'allowed': allowed}), encoding='utf-8')
+
+    def test_live_page_uses_only_allowlisted_origins(self):
+        self.assertIn('https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js', contract.assert_external_resources(ROOT))
+
+    def test_ui_edits_and_removed_resources_pass(self):
+        for page, asset in (('<script src="%s"></script><style>a{color:red}</style><div class="new">UI</div>' % self.CDN, 'var x=2;'),
+                            ('<p>no external code</p>', 'var x=1;')):
+            self.write(page, asset, [self.CDN])
+            with self.subTest(page=page), self.local:
+                contract.assert_external_resources(self.root)
+
+    def test_new_origins_and_same_pr_allowlist_fail(self):
+        cases = {
+            'new script tag': ('<script src="%s"></script><script src="%s"></script>' % (self.CDN, self.NEW), 'var x=1;'),
+            'new stylesheet': ('<link rel="stylesheet" href="https://other.example.net/s.css">', 'var x=1;'),
+            'protocol-relative': ('<script src="//other.example.net/a.js"></script>', 'var x=1;'),
+            'dynamic loader in asset': ('<p></p>', "var s=document.createElement('script');s.src='%s';" % self.NEW),
+            'insecure http': ('<script src="http://cdn.example.org/lib.js"></script>', 'var x=1;'),
+            'frame': ('<iframe src="https://other.example.net/embed"></iframe>', 'var x=1;'),
+        }
+        for name, (page, asset) in cases.items():
+            self.write(page, asset, [self.CDN, self.NEW, 'https://other.example.net/s.css', 'https://other.example.net/embed'])
+            with self.subTest(case=name), self.local, self.assertRaisesRegex(ValueError, 'base allowlist|must be https'):
+                contract.assert_external_resources(self.root)
+
+    def test_allowlist_merged_first_then_use_passes(self):
+        self.write('<script src="%s"></script>' % self.CDN, 'var x=1;', [self.CDN, self.NEW])
+        self.git('add', '.')
+        self.git('commit', '--quiet', '-m', 'approved allowlist lands on main first')
+        self.git('update-ref', 'refs/remotes/origin/main', 'HEAD')
+        self.write('<script src="%s"></script><script src="%s"></script>' % (self.CDN, self.NEW), 'var x=1;', [self.CDN, self.NEW])
+        with self.local:
+            self.assertEqual(contract.assert_external_resources(self.root), sorted([self.CDN, self.NEW]))
+
+    def test_invalid_candidate_allowlist_fails(self):
+        for allowed in (['http://x.example/a.js'], [self.CDN, self.CDN], 'x'):
+            (self.root / contract.EXTERNAL_RESOURCES).write_text(json.dumps({'version': 1, 'allowed': allowed}), encoding='utf-8')
+            with self.subTest(allowed=allowed), self.local, self.assertRaisesRegex(ValueError, 'allowlist'):
+                contract.assert_external_resources(self.root)
 
 
 # unittest.main() runs these cases through the existing central-sites CI step.

@@ -127,32 +127,54 @@ function compareMap(observed, data = expected()) {
   return { pass: problems.length === 0, problems: problems.slice(0, 20), evidence: { registry: observed.registry, spotLayers: observed.spots.filter(Boolean).length } };
 }
 
-// Reviewed destination overrides hard-coded in index.html's popup builder (isYubudo / isGukhwado).
-// They are bound to ID and name: renaming the site or moving the destination must update this list
-// in the same PR, so the change is visible to review instead of silently passing.
-const enc = encodeURIComponent;
+// Directions are checked by DESTINATION, not by URL spelling: link format, labels and buttons may change
+// freely, but every Kakao/Tmap destination must be a validated coordinate (or the validated kakaoMapUrl).
+// Reviewed destination overrides hard-coded in index.html's popup builder (isYubudo / isGukhwado) are
+// bound to ID and name; moving them means editing this list in the same PR, visible to review.
 const ROUTE_OVERRIDES = Object.freeze({
-  '19': { name: '유부도', kakao: ['https://map.kakao.com/link/map/' + enc('유부도 출항지') + ',35.97698056,126.60557500'],
-    tmap: 'tmap://route?goalname=' + enc('유부도 출항지') + '&goalx=126.605575&goaly=35.97698056' },
-  '156': { name: '국화도', kakao: ['https://map.kakao.com/link/search/' + enc('장고항')], tmap: null },
+  '19': { name: '유부도', destinations: [[35.97698056, 126.605575], [36.001158, 126.605031]] }, // ferry departure, island
+  '156': { name: '국화도', destinations: [], kakaoSearch: 'https://map.kakao.com/link/search/' + encodeURIComponent('장고항') },
 });
+const TOLERANCE = 1e-6; // Stored links round to 6 decimals (about 0.1 m).
 
-// Directions and map links a popup may show for a validated site.
-function siteLinks(site) {
+function kakaoDestination(href) {
+  try {
+    const u = new URL(href);
+    const m = u.hostname === 'map.kakao.com' && decodeURIComponent(u.pathname).match(/^\/link\/(?:map|to)\/.*,(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$/);
+    return m ? [Number(m[1]), Number(m[2])] : null;
+  } catch { return null; }
+}
+
+function tmapDestination(href) {
+  if (typeof href !== 'string' || !href.startsWith('tmap://route?')) return null;
+  const q = new URLSearchParams(href.slice('tmap://route?'.length)), lat = Number(q.get('goaly')), lon = Number(q.get('goalx'));
+  return q.has('goaly') && q.has('goalx') && Number.isFinite(lat) && Number.isFinite(lon) ? [lat, lon] : null;
+}
+
+const near = (p, list) => !!p && list.some(d => Math.abs(p[0] - d[0]) <= TOLERANCE && Math.abs(p[1] - d[1]) <= TOLERANCE);
+
+// Problems with the Kakao/Tmap links a popup shows for a validated site (empty array = correct).
+function siteRouteProblems(site, kakao, tmap) {
   const override = ROUTE_OVERRIDES[site.id];
-  if (override) {
-    assert.equal(site.name, override.name, 'route override ' + site.id + ' is bound to its reviewed site name');
-    return { kakao: override.kakao.slice(), tmap: override.tmap };
+  if (override) assert.equal(site.name, override.name, 'route override ' + site.id + ' is bound to its reviewed site name');
+  const destinations = override ? override.destinations : [[site.lat, site.lon]], problems = [];
+  for (const href of kakao) {
+    if (override ? href === override.kakaoSearch : href === site.kakaoMapUrl) continue;
+    if (!near(kakaoDestination(href), destinations)) problems.push('kakao destination ' + href);
   }
-  const name = encodeURIComponent(site.name);
-  return {
-    kakao: [site.kakaoMapUrl, 'https://map.kakao.com/link/map/' + name + ',' + site.lat + ',' + site.lon].filter(Boolean),
-    tmap: site.country === '대한민국' ? 'tmap://route?goalname=' + name + '&goalx=' + site.lon + '&goaly=' + site.lat : null,
-  };
+  for (const href of tmap) if (!near(tmapDestination(href), destinations)) problems.push('tmap destination ' + href);
+  if (site.country === '대한민국' && kakao.length + tmap.length === 0) problems.push('no directions link');
+  return problems;
 }
 
-function spotRoutes(spot) {
-  return { kakao: ',' + spot.lat + ',' + spot.lon, tmap: '&goalx=' + spot.lon + '&goaly=' + spot.lat };
+// Problems with the route links of a fixed observation spot popup.
+function spotRouteProblems(spot, hrefs) {
+  const kakao = hrefs.filter(h => /^https:\/\/map\.kakao\.com\/link\/(?:map|to)\//.test(h)), tmap = hrefs.filter(h => h.startsWith('tmap://'));
+  const problems = [];
+  for (const href of kakao) if (!near(kakaoDestination(href), [[spot.lat, spot.lon]])) problems.push('kakao route ' + href);
+  for (const href of tmap) if (!near(tmapDestination(href), [[spot.lat, spot.lon]])) problems.push('tmap route ' + href);
+  if (!kakao.length && !tmap.length) problems.push('no route link');
+  return problems;
 }
 
-module.exports = { expected, install, INIT_SCRIPT, REPORT, compare, mapProbe, compareMap, siteLinks, spotRoutes, NAMES };
+module.exports = { expected, install, INIT_SCRIPT, REPORT, compare, mapProbe, compareMap, siteRouteProblems, spotRouteProblems, kakaoDestination, tmapDestination, NAMES };
