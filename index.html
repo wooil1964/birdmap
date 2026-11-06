@@ -62,6 +62,8 @@
         
     <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <link rel="stylesheet" href="./assets/birdmap-ga4-consent.css">
+    <script src="./assets/birdmap-ga4-consent.js" defer></script>
     <link rel="stylesheet" href="assets/birdmap-report-pick-search.css"/>
     <script src="assets/birdmap-report-pick-search.js"></script>
     <!-- Optional base-map configuration has no credential in the reviewed source. -->
@@ -5932,6 +5934,20 @@ window.addEventListener('resize',function(){
 
 
 
+<details class="birdmap-ga4-settings" data-ga4-settings hidden>
+  <summary>통계·쿠키 설정</summary>
+  <div class="birdmap-ga4-panel">
+    <p>선택 동의하면 전국 탐조지도의 방문 통계를 위해 고정 페이지 주소와 브라우저별 임의 식별자를 Google Analytics로 보냅니다. Google은 접속 IP와 브라우저·기기 정보도 처리할 수 있습니다. 지도 검색과 제보 내용은 이 통계에 포함하지 않습니다.</p>
+    <p>선택과 임의 식별자는 이 지도 경로의 쿠키에 최대 180일간 저장됩니다. 동의와 제외 설정을 확인하는 사본은 이 사이트의 브라우저 저장소에도 저장됩니다. 언제든 여기서 거부하거나 동의를 철회할 수 있으며, 지도는 계속 이용할 수 있습니다. 기존 Cloudflare Web Analytics는 별도로 작동합니다.</p>
+    <p><a href="https://support.google.com/analytics/answer/6004245?hl=ko" target="_blank" rel="noopener noreferrer">Google Analytics 데이터 안내</a></p>
+    <p data-ga4-status role="status"></p>
+    <div class="birdmap-ga4-actions">
+      <button type="button" data-ga4-allow>통계 동의</button>
+      <button type="button" data-ga4-deny>거부·동의 철회</button>
+    </div>
+    <label class="birdmap-ga4-exclude"><input type="checkbox" data-ga4-exclude> 이 브라우저를 관리자·테스트로 제외</label>
+  </div>
+</details>
 <!-- Cloudflare Web Analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"534f29db425b4b24b8ee2371b62f6e72"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 <script>

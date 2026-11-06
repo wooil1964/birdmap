@@ -1,4 +1,33 @@
 """Reverse only the four exact reviewed PR #62 index.html marker changes for historical freezes."""
+from hashlib import sha256
+
+GA4_HEAD = (
+    '    <link rel="stylesheet" href="./assets/birdmap-ga4-consent.css">\n'
+    '    <script src="./assets/birdmap-ga4-consent.js" defer></script>\n'
+)
+GA4_HEAD_NEXT = '    <link rel="stylesheet" href="assets/birdmap-report-pick-search.css"/>\n'
+GA4_PANEL_START = '<details class="birdmap-ga4-settings" data-ga4-settings hidden>\n'
+GA4_PANEL_NEXT = '<!-- Cloudflare Web Analytics -->'
+GA4_PANEL_SHA256 = '9f0969293231e4b7a174d68452d7082890a722a58ecd8c4a7f95e39d348b82d9'
+GA4_SIGNATURES = ('birdmap-ga4-', 'data-ga4-')
+
+
+def without_ga4(text):
+    # Historical HTML comparisons may ignore only these two GA4 additions.
+    if not any(signature in text for signature in GA4_SIGNATURES):
+        return text
+    if (text.count(GA4_HEAD) != 1 or text.count(GA4_HEAD + GA4_HEAD_NEXT) != 1
+            or text.count(GA4_PANEL_START) != 1):
+        raise ValueError('Exact GA4 head and consent panel must each occur once')
+    before, panel_start = text.split(GA4_PANEL_START, 1)
+    panel_body, boundary, after = panel_start.partition(GA4_PANEL_NEXT)
+    panel = GA4_PANEL_START + panel_body
+    if not boundary or sha256(panel.encode('utf-8')).hexdigest() != GA4_PANEL_SHA256:
+        raise ValueError('GA4 consent panel must match its reviewed markup')
+    text = (before + boundary + after).replace(GA4_HEAD, '', 1)
+    if any(signature in text for signature in GA4_SIGNATURES):
+        raise ValueError('Unexpected GA4 fragment outside the reviewed additions')
+    return text
 
 MARKER_VISIBILITY_ISLANDS = (
     (
@@ -70,7 +99,7 @@ MARKER_VISIBILITY_SIGNATURES = ('birdmapMarkers', 'birdmap-markers', 'birdmapMar
 
 
 def without_marker_visibility(text):
-    text = text.replace('\r\n', '\n')
+    text = without_ga4(text.replace('\r\n', '\n'))
     if not any(signature in text for signature in MARKER_VISIBILITY_SIGNATURES):
         return text
     for old, new in MARKER_VISIBILITY_ISLANDS:
