@@ -3343,7 +3343,11 @@ function publicationJson(path,options){
  var controller=new AbortController(),timer;
  return new Promise(function(resolve,reject){
   timer=setTimeout(function(){controller.abort();reject(new Error('publication timeout'));},PUBLICATION_TIMEOUT);
-  fetch(REPORTS_API_URL+path,Object.assign({},options||{},{cache:'no-store',signal:controller.signal})).then(function(r){if(!r.ok)throw new Error('publication '+r.status);return r.json();}).then(resolve,reject);
+  fetch(REPORTS_API_URL+path,Object.assign({},options||{},{cache:'no-store',signal:controller.signal})).then(function(r){
+   if(r.ok)return r.json();
+   // Keep only the server error code; the body carries no public data.
+   return Promise.resolve().then(function(){return r.json();}).catch(function(){return null;}).then(function(body){var error=new Error('publication '+r.status);error.code=body&&body.error&&body.error.code;throw error;});
+  }).then(resolve,reject);
  }).then(function(body){clearTimeout(timer);return body;},function(error){clearTimeout(timer);throw error;});
 }
 function publicationValidate(body,nonce){
@@ -3394,7 +3398,12 @@ function publicationFetch(path,options){
     publicationState.ready=true;if(!publicationRenew(after))throw new Error('publication expired');body.publicationCheckedAt=after.serverTime;return body;
    });
   });
- }).catch(function(error){if(generation===publicationState.generation)publicationInvalidate('data unverified');throw error;});
+ }).catch(function(error){
+  // The server checks the requested authority before the bounded site-history refusal and
+  // returns no history with it. Fail only that history; other data keep their unchanged lease.
+  var historyOnly=error&&error.code==='SITE_HISTORY_UNAVAILABLE'&&path.indexOf('/reports/site/')===0;
+  if(generation===publicationState.generation&&!historyOnly)publicationInvalidate('data unverified');throw error;
+ });
  requests[key]=pending;
  function clear(){if(requests[key]===pending)delete requests[key];}
  pending.then(clear,clear);return pending;
