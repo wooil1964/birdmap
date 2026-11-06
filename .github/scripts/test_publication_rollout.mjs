@@ -75,6 +75,20 @@ test('new frontend history refusal after an authority change still closes public
  const e=env(CURRENT,'nonbreeding-location-v2');e.seed();e.authority.revision='2';e.queue.push((u,make)=>Promise.resolve(make()),historyRefusal);
  await assert.rejects(e.c.publicationFetch('/reports/site/big'));assert.ok(e.closed());
 });
+const readsClosed=()=>Promise.resolve({ok:false,status:503,json:async()=>({ok:false,error:{code:'PUBLIC_READS_CLOSED',message:'synthetic'}})});
+test('new frontend emergency closure on a site-history payload still closes all public data',async()=>{
+ const e=env(CURRENT,'nonbreeding-location-v2');e.seed();e.queue.push((u,make)=>Promise.resolve(make()),readsClosed);
+ await assert.rejects(e.c.publicationFetch('/reports/site/big'));assert.ok(e.closed());
+});
+for(const [version,html,projection] of [['old',PREVIOUS,'legacy-public-v1'],['new',CURRENT,'nonbreeding-location-v2']]){
+ test(version+' frontend emergency read closure clears everything, stays closed, and recovers only with fresh permission',async()=>{
+  const e=env(html,projection);e.seed();
+  e.queue.push(readsClosed);await assert.rejects(e.c.publicationHead(true));assert.ok(e.closed());
+  e.queue.push(readsClosed);assert.equal(await e.c.publicationRecheck(),false);assert.ok(e.closed());assert.equal(e.c.cachedSiteHistory('synthetic'),null);
+  const body=await e.c.publicationFetch('/reports/approved');assert.equal(e.c.publicationDataAllowed(body),true);
+  assert.equal(e.c.reportPublicSpots.cached,undefined,'closed data is not revived by reopening');assert.equal(e.c.cachedSiteHistory('synthetic'),null);
+ });
+}
 for(const [version,html,projection,other] of [['old',PREVIOUS,'legacy-public-v1','nonbreeding-location-v2'],['new',CURRENT,'nonbreeding-location-v2','legacy-public-v1']]){
  test(version+' frontend accepts matching API and uses no-store for all checks',async()=>{
   const e=env(html,projection),body=await e.c.publicationFetch('/reports/approved');assert.equal(e.c.publicationDataAllowed(body),true);assert.equal(e.calls.length,3);assert.ok(e.calls.every(call=>call.cache==='no-store'));

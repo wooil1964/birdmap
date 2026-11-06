@@ -16,6 +16,9 @@ preview_urls = false
 FIELD_NEWS_RETIRED = "true"
 # Strict publication contract. Deploy only after local migration and approved coordinated rollout.
 REPORTS_PUBLICATION_REQUIRED = "true"
+# 긴급 공개 읽기 차단. "true"면 위치·이력·검색·통계와 공개 권한 확인까지 503(no-store)으로 닫고
+# 제보 접수·접수 상태·관리자 확인은 유지한다. 평소에는 "false". 차단판은 --var 로만 올린다.
+REPORTS_PUBLIC_READS_CLOSED = "false"
 ENVIRONMENT = "production"
 REPORTS_WRITE_MODE = "CANONICAL_DUAL_WRITE"
 REPORTS_DUAL_WRITE_ENABLED = "true"

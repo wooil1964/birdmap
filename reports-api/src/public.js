@@ -42,8 +42,17 @@ import { handlePublicationRead } from "./publication.js";
 import { locationEvidenceColumns } from "./location-evidence.js";
 import { siteHistoryStatement, boundedSiteHistoryPayload } from "./site-history.js";
 
+// Emergency switch (deploy-time var): close every public read, including the
+// permission head, while submissions, receipts/status, capability and the admin
+// peer check stay open. Open pages lose their permission and clear on the next check.
+export function assertPublicReadsOpen(env,request,url) {
+ if(env.REPORTS_PUBLIC_READS_CLOSED!=='true')return;
+ const p=url.pathname,open=(request.method==='POST'&&p==='/reports')||(request.method==='GET'&&(p==='/reports/capabilities'||/^\/reports\/[0-9a-f-]{36}\/status$/.test(p)));
+ if(open)return;
+ const error=new WorkerError('PUBLIC_READS_CLOSED','공개 자료를 잠시 닫았습니다. 잠시 후 다시 시도해 주세요.',503);error.retryAfter=60;throw error;
+}
 function reportReceipt(request,env,body,status=201) {
- if(env.REPORTS_PUBLICATION_REQUIRED==='true'){body={...body};delete body.spot;}
+ if(env.REPORTS_PUBLICATION_REQUIRED==='true'||env.REPORTS_PUBLIC_READS_CLOSED==='true'){body={...body};delete body.spot;}
  return jsonResponse(request,env,body,status);
 }
 const MAX_BODY_BYTES = 4096;
@@ -434,6 +443,7 @@ export async function handleLegacyRequest(request, env, ctx) {
       return preflightResponse(request, env, "GET, POST, OPTIONS");
     }
     const url = new URL(request.url);
+    assertPublicReadsOpen(env, request, url);
     assertFieldServiceActive(env, url.pathname);
     const publicationResponse=await handlePublicationRead(request,env,url);
     if(publicationResponse)return publicationResponse;
