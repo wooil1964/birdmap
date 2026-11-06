@@ -10,7 +10,6 @@ import { strictWriterDb } from './writer-fence.js';
 import {
   WorkerError,
   approximateCoordinate,
-  siteHistoryPayload,
   isLocationRestricted,
   LOCATION_HIDDEN_SQL,
   isSensitiveReport,
@@ -41,6 +40,7 @@ import { handleFieldUpdates } from "./field-updates.js";
 import { assertFieldServiceActive } from './field-retirement.js';
 import { handlePublicationRead } from "./publication.js";
 import { locationEvidenceColumns } from "./location-evidence.js";
+import { siteHistoryStatement, boundedSiteHistoryPayload } from "./site-history.js";
 
 function reportReceipt(request,env,body,status=201) {
  if(env.REPORTS_PUBLICATION_REQUIRED==='true'){body={...body};delete body.spot;}
@@ -265,10 +265,8 @@ async function handleSiteHistory(request, env, siteId, url) {
   );
   const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
   // Filter location associations before counts and pagination, including hidden locations.
-  const {results}=await db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,
-    ${locationEvidenceColumns(env)},observed_on,reporter,name_public FROM reports
-    WHERE status='approved' AND site_id=?1 ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(siteId).all();
-  return jsonResponse(request,env,{ok:true,siteId,...siteHistoryPayload(results,limit,offset)},200,{'Cache-Control':'no-store'});
+  const {results}=await siteHistoryStatement(db,env,siteId).all();
+  return jsonResponse(request,env,{ok:true,siteId,...boundedSiteHistoryPayload(results,limit,offset)},200,{'Cache-Control':'no-store'});
 }
 
 // 제보자가 접수 번호로 자기 제보의 처리 상태만 확인한다.

@@ -1,10 +1,11 @@
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,pendingPayload,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH,siteHistoryPayload} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,pendingPayload,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
 import {reportSearchPlan} from './report-search.js';
 import {locationEvidenceColumns} from './location-evidence.js';
+import {siteHistoryStatement,boundedSiteHistoryPayload} from './site-history.js';
 export const PUBLICATION_CONTRACT='publication-v1';
 export const PUBLICATION_PROJECTION='nonbreeding-location-v2';
 export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
@@ -175,7 +176,7 @@ function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  if(path.startsWith('/reports/site/')) {
   const siteId=decodeURIComponent(path.slice('/reports/site/'.length));if(!/^[0-9A-Za-z_-]{1,16}$/.test(siteId))fail('SITE_ID_INVALID','탐조지 ID 형식이 아닙니다.',400);
   const limit=Math.min(50,Math.max(1,Number(url.searchParams.get('limit'))||5)),offset=Math.max(0,Number(url.searchParams.get('offset'))||0);
-  return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,${evidence},observed_on,reporter,name_public FROM reports WHERE status='approved' AND site_id=?1 ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(siteId)],build:s=>({ok:true,siteId,...siteHistoryPayload(s[0].results||[],limit,offset)})};
+  return {statements:[siteHistoryStatement(db,env,siteId)],build:s=>({ok:true,siteId,...boundedSiteHistoryPayload(s[0].results||[],limit,offset)})};
  }
  const raw=url.searchParams.get('month'),month=raw===null?kstDateString(now).slice(0,7):raw;
  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))fail('INVALID_MONTH','월 형식이 유효하지 않습니다.',400);
