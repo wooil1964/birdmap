@@ -243,7 +243,8 @@
         <label for="reportNote">참고 설명 <span class="reportOptionalTag">선택</span></label>
         <textarea id="reportNote" name="note" maxlength="500" rows="3"></textarea>
       </div>
-      <label id="reportNonBreedingRow" class="reportConsent" style="display:none"><input type="checkbox" id="reportNonBreedingConfirmed"> 이 제보는 둥지·포란·육추·번식지 등 번식 관련 관찰이 아닙니다.</label>
+      <label id="reportNonBreedingRow" class="reportConsent" style="display:none"><input type="checkbox" id="reportNonBreedingConfirmed"> 이 제보는 둥지·새끼·포란·육추·번식지 등 번식 관련 관찰이 아님을 확인했습니다.</label>
+      <div class="reportConsentNote">매 등 보호종도 비번식이 명시적으로 확인되면 기존 공개 조건에 따라 위치를 표시합니다. 둥지·새끼·번식 관련 제보와 번식 여부가 미확인인 보호종의 위치는 비공개입니다. 위치 가리기와 이름 공개 동의는 그대로 적용됩니다.</div>
       <div id="reportCaptcha" class="reportCaptcha"></div>
       <div id="reportMessage" class="reportMessage" role="status" aria-live="polite"></div>
       <div class="reportActions">
@@ -3274,7 +3275,7 @@ function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
    삭제·공개 취소·위치 가림이 반영된 뒤 늦게 도착한 옛 응답이 마커를 되살리지 못하게 한다. */
 /* Public location permission: source authority, not response/request timestamps.
    Conservative local defaults; production cadence remains a separate operating approval. */
-var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='legacy-public-v1';
+var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='nonbreeding-location-v2';
 var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
 // Renew before the request-start lease boundary; the 5s safety cap is unchanged.
 // The margin is the time a renewal response (network + timer delay) may take: 250ms expired in
@@ -5873,7 +5874,7 @@ function submitReport(event){
       setReportMessage('접수 결과를 확인했습니다. 접수 번호: '+String(result.body.id||'')+' · 현재 상태: '+String(result.body.status||''),'ok');
     }else{
       setReportMessage('제보가 접수되었습니다. 민감한 관찰지로 분류되어 지도에는 바로 표시되지 않으며, '
-        +'관리자 확인 후 반영됩니다. 접수 번호: '+String(result.body.id||''),'ok');
+        +'번식 관련 제보와 번식 여부 미확인 보호종의 위치는 비공개입니다. 접수 번호: '+String(result.body.id||''),'ok');
     }
     reportSubmissionAttempt=null;
     document.getElementById('reportForm').reset();

@@ -31,12 +31,12 @@ function source(name) {
 async function run({ rtt = 75, pollJitter = 0, until = 65000 }) {
   let mono = 0, id = 0, nonceSequence = 0;
   const wallStart = Date.parse('2026-10-14T00:00:00+09:00'), timers = new Map(), calls = [], invalidations = [], renewals = [];
-  const anchor = { contract: 'publication-v1', projection: 'legacy-public-v1', epoch: 'a'.repeat(32), revision: '100' };
+  const anchor = { contract: 'publication-v1', projection: 'nonbreeding-location-v2', epoch: 'a'.repeat(32), revision: '100' };
   const schedule = (fn, ms) => { const n = ++id; timers.set(n, { at: mono + ms, fn }); return n; };
   const ctx = {
     Promise, BigInt, Number, Error, Date: class extends Date { static now() { return wallStart + mono; } }, performance: { now: () => mono },
     setTimeout: schedule, clearTimeout: (n) => timers.delete(n), AbortController,
-    PUBLICATION_CONTRACT: 'publication-v1', PUBLICATION_PROJECTION: 'legacy-public-v1', PUBLICATION_MAX_AGE: MAX_AGE, PUBLICATION_TIMEOUT: 4000, REPORTS_API_URL: 'https://synthetic.invalid',
+    PUBLICATION_CONTRACT: 'publication-v1', PUBLICATION_PROJECTION: 'nonbreeding-location-v2', PUBLICATION_MAX_AGE: MAX_AGE, PUBLICATION_TIMEOUT: 4000, REPORTS_API_URL: 'https://synthetic.invalid',
     publicationHeadPromise: null, publicationExpiryTimer: 0, publicationRefreshPromise: null,
     publicationState: { generation: 2, ready: true, anchor: { ...anchor, nonce: 'b'.repeat(32) }, until: wallStart + MAX_AGE, checkedMono: 0 },
     document: { hidden: false, getElementById: () => ({ hidden: true }), querySelectorAll: () => [] },

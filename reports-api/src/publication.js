@@ -1,11 +1,12 @@
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,pendingPayload,historyEntry,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,pendingPayload,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH,siteHistoryPayload} from './shared.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
 import {reportSearchPlan} from './report-search.js';
+import {locationEvidenceColumns} from './location-evidence.js';
 export const PUBLICATION_CONTRACT='publication-v1';
-export const PUBLICATION_PROJECTION='legacy-public-v1';
+export const PUBLICATION_PROJECTION='nonbreeding-location-v2';
 export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
 const MAX_REV=9223372036854775807n;
 export function publicationRevision(value,minimum=0n) {
@@ -152,16 +153,17 @@ function contributorsAllPlan(db,url) {
   contributors:(s[2].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}))})};
 }
 
-function readPlan(db,url,now,fieldInput={viewer:null}) {
+function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
+ const evidence=locationEvidenceColumns(env);
  const path=url.pathname;
- if(path==='/reports/search')return reportSearchPlan(db,url);
+ if(path==='/reports/search')return reportSearchPlan(db,url,evidence);
  const draft=/^\/field-updates\/([0-9a-f-]{36})\/report-draft$/.exec(path);
  if(draft)return fieldDraftPlan(db,draft[1],fieldInput.owner,now);
  if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url);
  if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url);
  if(path==='/contributors/all')return contributorsAllPlan(db,url);
- if(path==='/reports/approved')return {statements:[db.prepare("SELECT id,species,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC")],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
- if(path==='/reports/pending')return {statements:[db.prepare(`SELECT id,species,observed_on,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,${LOCATION_HIDDEN_SQL} AS location_hidden FROM reports WHERE status='pending' AND pending_public=1 AND approx_lat IS NOT NULL AND approx_lon IS NOT NULL ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),spots:pendingPayload(s[0].results||[])})};
+ if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
+ if(path==='/reports/pending')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,${evidence},observed_on,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,${LOCATION_HIDDEN_SQL} AS location_hidden FROM reports WHERE status='pending' AND pending_public=1 AND approx_lat IS NOT NULL AND approx_lon IS NOT NULL ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),spots:pendingPayload(s[0].results||[])})};
  if(path==='/reports/recent-sites') {
   const days=Math.min(30,Math.max(1,Math.floor(Number(url.searchParams.get('days'))||14))),today=kstDateString(now),since=kstDateString(new Date(now.getTime()-days*86400000));
   return {statements:[db.prepare(`SELECT site_id,species,observed_on,note FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{
@@ -173,7 +175,7 @@ function readPlan(db,url,now,fieldInput={viewer:null}) {
  if(path.startsWith('/reports/site/')) {
   const siteId=decodeURIComponent(path.slice('/reports/site/'.length));if(!/^[0-9A-Za-z_-]{1,16}$/.test(siteId))fail('SITE_ID_INVALID','탐조지 ID 형식이 아닙니다.',400);
   const limit=Math.min(50,Math.max(1,Number(url.searchParams.get('limit'))||5)),offset=Math.max(0,Number(url.searchParams.get('offset'))||0);
-  return {statements:[db.prepare("SELECT id,species,observed_on,reporter,name_public FROM reports WHERE status='approved' AND site_id=?1 ORDER BY observed_on DESC,received_at DESC,id DESC LIMIT ?2 OFFSET ?3").bind(siteId,limit,offset),db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved' AND site_id=?1").bind(siteId)],build:s=>({ok:true,siteId,total:Number(s[1].results?.[0]?.n||0),limit,offset,history:(s[0].results||[]).map(historyEntry)})};
+  return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,${evidence},observed_on,reporter,name_public FROM reports WHERE status='approved' AND site_id=?1 ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(siteId)],build:s=>({ok:true,siteId,...siteHistoryPayload(s[0].results||[],limit,offset)})};
  }
  const raw=url.searchParams.get('month'),month=raw===null?kstDateString(now).slice(0,7):raw;
  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))fail('INVALID_MONTH','월 형식이 유효하지 않습니다.',400);
@@ -194,7 +196,7 @@ export async function handlePublicationRead(request,env,url) {
  const fieldInput=(url.pathname==='/field-updates'||fieldPost)?await fieldReadInput(request,env):{viewer:null};
  try {
   const db=primary(binding),slots=guardLookupHints.get(binding)||null;
-  let plan=readPlan(db,url,now,fieldInput);
+  let plan=readPlan(db,url,now,fieldInput,env);
   let sets=await db.batch([publicationStateStatement(db,slots),...plan.statements]);
   if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
   let row=sets[0].results?.[0],usedSlots=slots;
@@ -202,7 +204,7 @@ export async function handlePublicationRead(request,env,url) {
    // Never bless the first payload using a later schema-only check. Reread
    // state and every payload statement together from the primary instead.
    guardLookupHints.delete(binding);usedSlots=null;
-   const recoveryDb=primary(binding);plan=readPlan(recoveryDb,url,now,fieldInput);
+   const recoveryDb=primary(binding);plan=readPlan(recoveryDb,url,now,fieldInput,env);
    sets=await recoveryDb.batch([publicationStateStatement(recoveryDb),...plan.statements]);
    if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
    row=sets[0].results?.[0];
