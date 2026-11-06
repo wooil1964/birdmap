@@ -1,0 +1,159 @@
+{
+  "runtime": "v24.18.0",
+  "sqlite": "node:sqlite",
+  "repetitions": 3,
+  "statistic": "median",
+  "candidateBudget": 1000,
+  "caveat": "Local SQLite + JS only; excludes D1/Worker serialization, network, CPU limits and actual meta.rows_read. Heap delta includes local JSON size measurement; not peak isolate memory.",
+  "queryPlan": [
+    "SEARCH reports USING INDEX reports_site_history (site_id=? AND status=?)",
+    "CORRELATED SCALAR SUBQUERY 1",
+    "SEARCH location_raw USING INDEX sqlite_autoindex_raw_submissions_3 (source_type=? AND source_id=?)",
+    "SEARCH location_checklist USING INDEX sqlite_autoindex_checklists_1 (checklist_id=?)",
+    "CORRELATED SCALAR SUBQUERY 2",
+    "SEARCH location_raw USING INDEX sqlite_autoindex_raw_submissions_3 (source_type=? AND source_id=?)",
+    "SEARCH location_checklist USING INDEX sqlite_autoindex_checklists_1 (checklist_id=?)"
+  ],
+  "measurements": [
+    {
+      "profile": "legacy-unknown",
+      "candidates": 1000,
+      "query": "baseline",
+      "queryMs": 1.576,
+      "policyMs": 3.162,
+      "rowsReturned": 1000,
+      "resultBytes": 220001,
+      "loadedHeapBytes": 1726896,
+      "outcome": "ok",
+      "visibleTotal": 0
+    },
+    {
+      "profile": "legacy-unknown",
+      "candidates": 1000,
+      "query": "bounded",
+      "queryMs": 1.462,
+      "policyMs": 1.937,
+      "rowsReturned": 1000,
+      "resultBytes": 220001,
+      "loadedHeapBytes": 1723840,
+      "outcome": "ok",
+      "visibleTotal": 0
+    },
+    {
+      "profile": "legacy-unknown",
+      "candidates": 10000,
+      "query": "baseline",
+      "queryMs": 14.587,
+      "policyMs": 21.338,
+      "rowsReturned": 10000,
+      "resultBytes": 2200001,
+      "loadedHeapBytes": 17187368,
+      "outcome": "ok",
+      "visibleTotal": 0
+    },
+    {
+      "profile": "legacy-unknown",
+      "candidates": 10000,
+      "query": "bounded",
+      "queryMs": 1.431,
+      "policyMs": 0.019,
+      "rowsReturned": 1001,
+      "resultBytes": 220221,
+      "loadedHeapBytes": 1721816,
+      "outcome": "SITE_HISTORY_UNAVAILABLE"
+    },
+    {
+      "profile": "legacy-unknown",
+      "candidates": 100000,
+      "query": "baseline",
+      "queryMs": 182.185,
+      "policyMs": 229.625,
+      "rowsReturned": 100000,
+      "resultBytes": 22000001,
+      "loadedHeapBytes": 171671536,
+      "outcome": "ok",
+      "visibleTotal": 0
+    },
+    {
+      "profile": "legacy-unknown",
+      "candidates": 100000,
+      "query": "bounded",
+      "queryMs": 1.598,
+      "policyMs": 0.017,
+      "rowsReturned": 1001,
+      "resultBytes": 220221,
+      "loadedHeapBytes": 1721576,
+      "outcome": "SITE_HISTORY_UNAVAILABLE"
+    },
+    {
+      "profile": "native-long-note",
+      "candidates": 1000,
+      "query": "baseline",
+      "queryMs": 14.25,
+      "policyMs": 13.732,
+      "rowsReturned": 1000,
+      "resultBytes": 3245001,
+      "loadedHeapBytes": 6087128,
+      "outcome": "ok",
+      "visibleTotal": 1000
+    },
+    {
+      "profile": "native-long-note",
+      "candidates": 1000,
+      "query": "bounded",
+      "queryMs": 14.3,
+      "policyMs": 13.63,
+      "rowsReturned": 1000,
+      "resultBytes": 3245001,
+      "loadedHeapBytes": 6087128,
+      "outcome": "ok",
+      "visibleTotal": 1000
+    },
+    {
+      "profile": "native-long-note",
+      "candidates": 10000,
+      "query": "baseline",
+      "queryMs": 147.566,
+      "policyMs": 151.213,
+      "rowsReturned": 10000,
+      "resultBytes": 32450001,
+      "loadedHeapBytes": 60858088,
+      "outcome": "ok",
+      "visibleTotal": 10000
+    },
+    {
+      "profile": "native-long-note",
+      "candidates": 10000,
+      "query": "bounded",
+      "queryMs": 14.726,
+      "policyMs": 0.027,
+      "rowsReturned": 1001,
+      "resultBytes": 3248246,
+      "loadedHeapBytes": 6093264,
+      "outcome": "SITE_HISTORY_UNAVAILABLE"
+    },
+    {
+      "profile": "native-long-note",
+      "candidates": 100000,
+      "query": "baseline",
+      "queryMs": 1693.924,
+      "policyMs": 1355.778,
+      "rowsReturned": 100000,
+      "resultBytes": 324500001,
+      "loadedHeapBytes": 586272824,
+      "outcome": "ok",
+      "visibleTotal": 100000
+    },
+    {
+      "profile": "native-long-note",
+      "candidates": 100000,
+      "query": "bounded",
+      "queryMs": 15.52,
+      "policyMs": 0.038,
+      "rowsReturned": 1001,
+      "resultBytes": 3248246,
+      "loadedHeapBytes": 6093264,
+      "outcome": "SITE_HISTORY_UNAVAILABLE"
+    }
+  ]
+}

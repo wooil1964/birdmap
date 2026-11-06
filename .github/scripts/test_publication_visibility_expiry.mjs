@@ -8,7 +8,7 @@ assert.ok(block.includes('function publicationFetch('));
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 function env(){
  let wall=1_000_000,mono=0;const events={},calls=[],queue=[],removed=[];
- const authority={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'1'};
+ const authority={contract:'publication-v1',projection:'nonbreeding-location-v2',epoch:'a'.repeat(32),revision:'1'};
  const doc={hidden:false,addEventListener(name,fn){(events[name]||(events[name]=[])).push(fn);},getElementById(){return {hidden:false,style:{}};},querySelectorAll(){return [];}};
  const c={Date:class extends Date{static now(){return wall;}},performance:{now:()=>mono},Promise,BigInt,Number,Uint8Array,URL,crypto:{getRandomValues(b){for(let i=0;i<b.length;i++)b[i]=(calls.length+i)%256;}},AbortController,
  document:doc,window:{addEventListener(name,fn){(events[name]||(events[name]=[])).push(fn);}},setTimeout:()=>1,clearTimeout(){},setInterval:()=>1,
@@ -38,3 +38,10 @@ test('late old HEAD failure cannot invalidate newer visible recovered state',asy
 test('visibility barrier releases old in-flight references for normal recovery',async()=>{const e=env();e.seed();const d=deferred();e.queue.push(make=>d.promise.then(make));const old=e.c.publicationHead();e.hide();e.doc.hidden=false;const fresh=await Promise.race([e.c.publicationHead(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Fresh visible recovery must not wait for the old context')),150))]).finally(()=>d.resolve());assert.equal(fresh._publicationGeneration,e.c.publicationState.generation);await assert.rejects(old);assert.equal(e.c.publicationState.anchor.revision,'1');});
 test('new primary authority is accepted through fresh payload and postflight',async()=>{const e=env();e.seed();e.authority.revision='2';const data=await e.c.publicationFetch('/reports/approved');assert.equal(data.publication.revision,'2');assert.equal(e.c.publicationState.anchor.revision,'2');assert.equal(e.c.publicationDataAllowed(data),true);assert.equal(e.calls.length,3);});
 test('renewal must match current epoch/revision and generation',()=>{const e=env();e.seed();const h={publication:{...e.authority,revision:'0'},_publicationStartedMono:0,_publicationGeneration:e.c.publicationState.generation,serverTime:new Date().toISOString()};assert.equal(e.c.publicationRenew(h),false);assert.ok(closed(e));});
+
+test('policy projection mismatch clears cached coordinates even at the same epoch and revision',async()=>{
+ const e=env();e.seed();e.authority.projection='legacy-public-v1';
+ await assert.rejects(e.c.publicationHead(true));assert.ok(closed(e));
+ const old=env();old.seed();old.c.PUBLICATION_PROJECTION='legacy-public-v1';old.c.publicationState.anchor.projection='legacy-public-v1';
+ await assert.rejects(old.c.publicationHead(true));assert.ok(closed(old));
+});

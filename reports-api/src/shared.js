@@ -317,16 +317,50 @@ export const SENSITIVE_SPECIES = [
 // 원문은 바꾸지 않고 판정에만 쓴다.
 const PROTECTED_QUANTITY = /^(.+?)\s*\d+\s*(?:마리|개체)?$/;
 const PROTECTION_SPLIT = /[,;·/\r\n]+/;
+const PEREGRINE_ALIAS = /^(?:falco\s+peregrinus|peregrine\s+falcon|매\s*\(\s*falco\s+peregrinus\s*\)|falco\s+peregrinus\s*\(\s*매\s*\))$/i;
 function isProtectedSpeciesToken(token) {
   const text = token.normalize('NFC').trim();
-  if (SENSITIVE_SPECIES.includes(text)) return true;
+  if (SENSITIVE_SPECIES.includes(text) || PEREGRINE_ALIAS.test(text)) return true;
   const match = PROTECTED_QUANTITY.exec(text);
-  return !!match && SENSITIVE_SPECIES.includes(match[1].trim());
+  return !!match && (SENSITIVE_SPECIES.includes(match[1].trim()) || PEREGRINE_ALIAS.test(match[1].trim()));
+}
+
+export function hasBreedingEvidence(report) {
+  // A literal non-breeding statement is not positive breeding evidence, and never confirms by itself.
+  const haystack = [report?.note || '', report?.speciesText || report?.species || ''].join(' ').normalize('NFC')
+    .replace(/비번식|\bnon[- ]breeding\b/gi, '');
+  return SENSITIVE_KEYWORDS.some(word => haystack.includes(word)) || /\b(nest(?:ing|s)?|breed(?:ing)?|chicks?|nestlings?|fledglings?|incubat(?:e|ing|ion))\b/i.test(haystack);
+}
+
+// Three states: missing/invalid evidence is unknown, never a non-breeding declaration.
+// Confirmation belongs to the original observation; edits to its identity invalidate it.
+export function reportBreedingStatus(row) {
+  let input;
+  try { input = JSON.parse(row.location_input); } catch {}
+  if (hasBreedingEvidence(row) || hasBreedingEvidence(input)) return 'breeding';
+  if (row.non_breeding_confirmed !== 1 || input?.non_breeding_confirmed !== true) return 'unknown';
+  try {
+    const original = validateReport({...input, birdCount:null});
+    if (original.speciesText === row.species && original.lat === row.lat && original.lon === row.lon &&
+        original.observedOn === row.observed_on && original.note === (row.note ?? null)) return 'non_breeding';
+  } catch {}
+  return 'unknown';
+}
+
+export function isLocationRestricted(row) {
+  const status = reportBreedingStatus(row);
+  return status === 'breeding' || (status !== 'non_breeding' && isSensitiveReport({
+    note: row.note, speciesText: row.species, species: splitSpecies(row.species),
+  }));
+}
+
+export function siteHistoryPayload(rows, limit, offset) {
+  const visible = (rows || []).filter(row => !isLocationRestricted(row) && !isLocationHidden(row));
+  return { total: visible.length, limit, offset, history: visible.slice(offset, offset + limit).map(historyEntry) };
 }
 
 export function isSensitiveReport(report) {
-  const haystack = [report?.note || '', report?.speciesText || ''].join(' ');
-  if (SENSITIVE_KEYWORDS.some((word) => haystack.includes(word))) return true;
+  if (hasBreedingEvidence(report)) return true;
   // 과거 저장 자료에는 구분자(슬래시·줄바꿈 등)가 남아 있을 수 있어 읽기 판정에서도 다시 나눈다.
   const names = report?.species || [];
   return names.some((name) => String(name).split(PROTECTION_SPLIT).some(isProtectedSpeciesToken));
@@ -336,7 +370,7 @@ export function isSensitiveReport(report) {
 // 제보자·개체수·설명·실제 좌표·관리자 메모는 어떤 경우에도 넣지 않는다.
 export function pendingPayload(rows) {
   return (rows || [])
-    .filter((row) => Number.isFinite(row.approx_lat) && Number.isFinite(row.approx_lon))
+    .filter((row) => !isLocationRestricted(row) && Number.isFinite(row.approx_lat) && Number.isFinite(row.approx_lon))
     .map((row) => {
       const spot = {
         id: row.id,
@@ -590,7 +624,7 @@ function newestFirst(a, b) {
 // spot_key 가 없는 제보는 자기 점을 갖고, 있는 제보는 그 지점의 이력으로만 붙는다.
 // 원본 행을 고쳐 쓰지 않으므로 개별 이력 조회와 공개 취소가 그대로 가능하다.
 export function publicPayload(rows) {
-  const all = rows || [];
+  const all = (rows || []).filter(row => !isLocationRestricted(row) && (!row.spot_key || !isLocationHidden(row)));
   const byKey = new Map();
   for (const row of all) {
     if (!row.spot_key) continue;

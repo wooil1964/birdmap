@@ -294,7 +294,7 @@ test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async
     // 공개가 허용된 대기 제보.
     {
       id: "new-pending",
-      species: "넓적부리도요",
+      species: "흰물떼새",
       lat: 37.2,
       lon: 126.5,
       approx_lat: 37.23,
@@ -308,7 +308,7 @@ test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async
     {
       id: "approved-one",
       status: "approved",
-      species: "저어새",
+      species: "청둥오리",
       lat: 37.3,
       lon: 126.6,
       pending_public: 1,
@@ -323,7 +323,7 @@ test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async
   assert.equal(spot.status, "pending");
   assert.equal(spot.approximate, true);
   assert.equal(spot.lat, 37.23);
-  assert.deepEqual(spot.species, ["넓적부리도요"]);
+  assert.deepEqual(spot.species, ["흰물떼새"]);
 
   // 실제 좌표·제보자·개체수·메모는 어떤 경우에도 나가지 않는다.
   const raw = JSON.stringify(body);
@@ -336,8 +336,8 @@ test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async
 
 test("승인된 제보 목록에는 대기 제보가 섞이지 않는다", async () => {
   const db = fakeDb([
-    { id: "new-pending", species: "넓적부리도요", lat: 37.2, lon: 126.5, approx_lat: 37.23, approx_lon: 126.53, pending_public: 1 },
-    { id: "approved-one", status: "approved", species: "저어새", lat: 37.3, lon: 126.6 },
+    { id: "new-pending", species: "흰물떼새", lat: 37.2, lon: 126.5, approx_lat: 37.23, approx_lon: 126.53, pending_public: 1 },
+    { id: "approved-one", status: "approved", species: "청둥오리", lat: 37.3, lon: 126.6 },
   ]);
   const response = await handleRequest(approvedRequest(), publicEnv(db));
   const body = await response.json();
@@ -394,8 +394,8 @@ function siteRequest(siteId, query = "") {
 function siteRows() {
   return [
     // 같은 탐조지(19), 서로 다른 좌표
-    { id: "s19-a", status: "approved", site_id: "19", species: "넓적부리도요", lat: 36.001, lon: 126.601, observed_on: "2026-09-21", received_at: "2026-09-21T01:00:00Z", reporter: "홍길동", name_public: 1, dedupe_hash: "d1" },
-    { id: "s19-b", status: "approved", site_id: "19", species: "저어새 · 알락꼬리마도요", lat: 36.050, lon: 126.650, observed_on: "2026-09-20", received_at: "2026-09-20T01:00:00Z", reporter: "비공개희망", name_public: 0, dedupe_hash: "d2" },
+    { id: "s19-a", status: "approved", site_id: "19", species: "흰물떼새", lat: 36.001, lon: 126.601, observed_on: "2026-09-21", received_at: "2026-09-21T01:00:00Z", reporter: "홍길동", name_public: 1, dedupe_hash: "d1" },
+    { id: "s19-b", status: "approved", site_id: "19", species: "청둥오리 · 알락꼬리마도요", lat: 36.050, lon: 126.650, observed_on: "2026-09-20", received_at: "2026-09-20T01:00:00Z", reporter: "비공개희망", name_public: 0, dedupe_hash: "d2" },
     // 같은 날짜 두 건(정렬 안정성 확인)
     { id: "s19-c", status: "approved", site_id: "19", species: "청다리도요사촌", lat: 36.060, lon: 126.660, observed_on: "2026-09-21", received_at: "2026-09-21T00:00:00Z", dedupe_hash: "d3" },
     // 다른 탐조지
@@ -416,8 +416,8 @@ test("탐조지별 이력은 그 지역에 연결된 승인 제보만 최신순�
   assert.equal(body.total, 3);
   // 관찰일 최신순, 같은 날짜는 접수 시각 역순으로 고정된다.
   assert.deepEqual(body.history.map((h) => h.id), ["s19-a", "s19-c", "s19-b"]);
-  assert.deepEqual(body.history[0].species, ["넓적부리도요"]);
-  assert.deepEqual(body.history[2].species, ["저어새", "알락꼬리마도요"]);
+  assert.deepEqual(body.history[0].species, ["흰물떼새"]);
+  assert.deepEqual(body.history[2].species, ["청둥오리", "알락꼬리마도요"]);
 
   // 다른 지역·대기·반려·미연결 제보는 섞이지 않는다.
   const ids = body.history.map((h) => h.id).join(",");
@@ -499,7 +499,7 @@ test("과거 자료를 넣어도 최근 출현이 뒤로 밀리지 않는다", a
   // 나중에 접수했지만 관찰일은 2017년인 자료를 섞는다.
   const rows = siteRows().concat([
     {
-      id: "old-2017", status: "approved", species: "재두루미",
+      id: "old-2017", status: "approved", species: "알락오리",
       lat: 36.0, lon: 126.6, site_id: "19",
       observed_on: "2017-05-03",
       received_at: "2026-09-22T00:00:00.000Z", // 접수는 가장 최근
@@ -518,9 +518,9 @@ test("과거 자료를 넣어도 최근 출현이 뒤로 밀리지 않는다", a
 
 test("과거 자료가 섞여도 '더 보기' 페이지가 어긋나지 않는다", async () => {
   const rows = siteRows().concat([
-    { id: "old-2017", status: "approved", species: "재두루미", lat: 36, lon: 126.6,
+    { id: "old-2017", status: "approved", species: "알락오리", lat: 36, lon: 126.6,
       site_id: "19", observed_on: "2017-05-03", received_at: "2026-09-22T00:00:00.000Z" },
-    { id: "old-2020", status: "approved", species: "흑두루미", lat: 36, lon: 126.6,
+    { id: "old-2020", status: "approved", species: "큰기러기", lat: 36, lon: 126.6,
       site_id: "19", observed_on: "2020-01-01", received_at: "2026-09-22T00:00:01.000Z" },
   ]);
   const db = fakeDb(rows);

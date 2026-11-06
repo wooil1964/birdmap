@@ -10,7 +10,7 @@ import { strictWriterDb } from './writer-fence.js';
 import {
   WorkerError,
   approximateCoordinate,
-  historyEntry,
+  isLocationRestricted,
   LOCATION_HIDDEN_SQL,
   isSensitiveReport,
   kstDateString,
@@ -39,9 +39,20 @@ import { notifyNewReport } from "./notify.js";
 import { handleFieldUpdates } from "./field-updates.js";
 import { assertFieldServiceActive } from './field-retirement.js';
 import { handlePublicationRead } from "./publication.js";
+import { locationEvidenceColumns } from "./location-evidence.js";
+import { siteHistoryStatement, boundedSiteHistoryPayload } from "./site-history.js";
 
+// Emergency switch (deploy-time var): close every public read, including the
+// permission head, while submissions, receipts/status, capability and the admin
+// peer check stay open. Open pages lose their permission and clear on the next check.
+export function assertPublicReadsOpen(env,request,url) {
+ if(env.REPORTS_PUBLIC_READS_CLOSED!=='true')return;
+ const p=url.pathname,open=(request.method==='POST'&&p==='/reports')||(request.method==='GET'&&(p==='/reports/capabilities'||/^\/reports\/[0-9a-f-]{36}\/status$/.test(p)));
+ if(open)return;
+ const error=new WorkerError('PUBLIC_READS_CLOSED','공개 자료를 잠시 닫았습니다. 잠시 후 다시 시도해 주세요.',503);error.retryAfter=60;throw error;
+}
 function reportReceipt(request,env,body,status=201) {
- if(env.REPORTS_PUBLICATION_REQUIRED==='true'){body={...body};delete body.spot;}
+ if(env.REPORTS_PUBLICATION_REQUIRED==='true'||env.REPORTS_PUBLIC_READS_CLOSED==='true'){body={...body};delete body.spot;}
  return jsonResponse(request,env,body,status);
 }
 const MAX_BODY_BYTES = 4096;
@@ -229,7 +240,7 @@ async function handlePending(request, env) {
   const db = database(env);
   const { results } = await db
     .prepare(
-      `SELECT id, species, observed_on, approx_lat, approx_lon,
+      `SELECT id, species, note, lat, lon, ${locationEvidenceColumns(env)}, observed_on, approx_lat, approx_lon,
               (approx_lat <> lat OR approx_lon <> lon) AS approx_offset,
               ${LOCATION_HIDDEN_SQL} AS location_hidden
          FROM reports
@@ -262,48 +273,9 @@ async function handleSiteHistory(request, env, siteId, url) {
     Math.max(1, Number(url.searchParams.get("limit")) || SITE_HISTORY_DEFAULT),
   );
   const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
-  // 건수와 목록을 한 번에 가져온다. COUNT(*) OVER() 는 WHERE 를 거친 전체 행을 세고
-  // LIMIT 은 그 뒤에 걸리므로, 따로 COUNT 질의를 보내던 때와 같은 값이 나온다.
-  // D1 왕복이 둘에서 하나로 줄어 팝업이 이력을 더 빨리 받는다.
-  // 정렬과 내보내는 항목은 예전 그대로다(같은 관찰일이면 접수 시각과 id 로 고정).
-  const { results } = await db
-    .prepare(
-      `SELECT id, species, observed_on, reporter, name_public,
-              COUNT(*) OVER () AS total_count
-         FROM reports
-        WHERE status = 'approved' AND site_id = ?1
-        ORDER BY observed_on DESC, received_at DESC, id DESC
-        LIMIT ?2 OFFSET ?3`,
-    )
-    .bind(siteId, limit, offset)
-    .all();
-  const rows = results || [];
-  // 가져온 행이 없으면 창 함수도 값을 주지 못한다. offset 이 끝을 넘어선 경우에만
-  // 건수를 따로 물어본다(첫 페이지가 비면 그냥 0건이다).
-  let total = rows.length ? Number(rows[0].total_count) : 0;
-  if (!rows.length && offset > 0) {
-    const counted = await db
-      .prepare(
-        `SELECT COUNT(*) AS n FROM reports WHERE status = 'approved' AND site_id = ?1`,
-      )
-      .bind(siteId)
-      .first();
-    total = Number(counted?.n || 0);
-  }
-  return jsonResponse(
-    request,
-    env,
-    {
-      ok: true,
-      siteId,
-      total,
-      limit,
-      offset,
-      history: rows.map(historyEntry),
-    },
-    200,
-    { "Cache-Control": "no-store" },
-  );
+  // Filter location associations before counts and pagination, including hidden locations.
+  const {results}=await siteHistoryStatement(db,env,siteId).all();
+  return jsonResponse(request,env,{ok:true,siteId,...boundedSiteHistoryPayload(results,limit,offset)},200,{'Cache-Control':'no-store'});
 }
 
 // 제보자가 접수 번호로 자기 제보의 처리 상태만 확인한다.
@@ -312,7 +284,7 @@ async function handleStatus(request, env, id) {
   const db = database(env);
   const row = await db
     .prepare(
-      `SELECT status, pending_public, received_at, decided_at
+      `SELECT id, species, note, lat, lon, observed_on, ${locationEvidenceColumns(env)}, status, pending_public, received_at, decided_at
          FROM reports WHERE id = ?1`,
     )
     .bind(id)
@@ -321,7 +293,9 @@ async function handleStatus(request, env, id) {
     throw new WorkerError("NOT_FOUND", "접수 번호를 찾을 수 없습니다.", 404);
   }
   const visibility =
-    row.status === "approved"
+    isLocationRestricted(row) && row.status !== "rejected"
+      ? "withheld"
+      : row.status === "approved"
       ? "approved"
       : row.status === "rejected"
         ? "not_published"
@@ -349,7 +323,7 @@ async function handleApproved(request, env) {
   const { results } = await db
     .prepare(
       // spot_key 가 있는 행은 다른 지점의 이력으로만 붙고 자기 점을 갖지 않는다.
-      `SELECT id, species, lat, lon, public_lat, public_lon,
+      `SELECT id, species, note, lat, lon, public_lat, public_lon, ${locationEvidenceColumns(env)},
               observed_on, reporter, name_public, spot_key
          FROM reports WHERE status = 'approved'
         ORDER BY observed_on DESC, received_at DESC`,
@@ -469,6 +443,7 @@ export async function handleLegacyRequest(request, env, ctx) {
       return preflightResponse(request, env, "GET, POST, OPTIONS");
     }
     const url = new URL(request.url);
+    assertPublicReadsOpen(env, request, url);
     assertFieldServiceActive(env, url.pathname);
     const publicationResponse=await handlePublicationRead(request,env,url);
     if(publicationResponse)return publicationResponse;

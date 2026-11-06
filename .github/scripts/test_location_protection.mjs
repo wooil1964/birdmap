@@ -26,7 +26,7 @@ function functionSource(name) {
 const line = (re) => HTML.match(re)[0];
 
 const NOW = Date.parse('2026-10-08T10:00:00+09:00');
-const AUTHORITY={contract:'publication-v1',projection:'legacy-public-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
+const AUTHORITY={contract:'publication-v1',projection:'nonbreeding-location-v2',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
 const iso = (minAgo) => new Date(NOW - minAgo * 60000).toISOString();
 const upd = (id, extra = {}) => Object.assign({ id, species: 's' + id, status: 'visible', lat: 36.6, lon: 126.4, updatedAt: iso(5),
   firstSeenAt: iso(5), lastConfirmedAt: null, history: [],rowRevision:'1',expiresAt:new Date(NOW+8*3600000).toISOString() }, extra);

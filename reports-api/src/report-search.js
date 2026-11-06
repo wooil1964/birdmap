@@ -1,4 +1,4 @@
-import { WorkerError, historyEntry, splitSpecies, isSensitiveReport, isLocationHidden } from './shared.js';
+import { WorkerError, historyEntry, isLocationRestricted, isLocationHidden } from './shared.js';
 
 export const REPORT_SEARCH_PAGE = 20;
 const normalize = value => String(value || '').normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
@@ -14,7 +14,7 @@ function input(url) {
   return { q: normalize(q), offset: Number(rawOffset) };
 }
 function invalid() { throw new WorkerError('REPORT_SEARCH_INVALID', '검색 요청 형식이 유효하지 않습니다.', 400); }
-const restricted = row => !row || isLocationHidden(row) || isSensitiveReport({ note: row.note, speciesText: row.species, species: splitSpecies(row.species) });
+const restricted = row => !row || isLocationHidden(row) || isLocationRestricted(row);
 
 // Project before searching/counting/paging: private fields must not become a match oracle.
 // The approved rows, registry and publication anchor all come from the same primary batch.
@@ -41,10 +41,10 @@ export function reportSearchPayload(rows, sites, { q, offset }) {
     hasMore: offset + REPORT_SEARCH_PAGE < reports.length, reports: reports.slice(offset, offset + REPORT_SEARCH_PAGE) };
 }
 
-export function reportSearchPlan(db, url) {
+export function reportSearchPlan(db, url, evidence = 'NULL AS non_breeding_confirmed, NULL AS location_input') {
   const request = input(url);
   return { statements: [
-    db.prepare("SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,site_id,spot_key FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC,id DESC"),
+    db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,site_id,spot_key,${evidence} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC,id DESC`),
     db.prepare("SELECT site_id,site_name,COALESCE(NULLIF(json_extract(source_record_json,'$.region'),''),TRIM(COALESCE(json_extract(source_record_json,'$.sido'),'')||' '||COALESCE(json_extract(source_record_json,'$.sigungu'),''))) AS region FROM sites WHERE retired_at IS NULL AND registry_source='index.html:siteData'"),
   ], build: sets => reportSearchPayload(sets[0].results || [], sets[1].results || [], request) };
 }
