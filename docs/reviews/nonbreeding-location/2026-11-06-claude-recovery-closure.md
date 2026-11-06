@@ -3,7 +3,7 @@
 - 작성: 2026-11-06, Claude Code (Opus 5.5)
 - 코드 기준: `94115bdc2633a75e119b8b47d26211c3fe7ae727` (차단 스위치 추가)
 - 앞선 보고서: [2026-11-06-claude-predeploy-final.md](2026-11-06-claude-predeploy-final.md)
-- 실행하지 않은 것: Worker 버전 업로드(트래픽 0% 포함), 운영 트래픽 변경, Draft 해제, main 병합, Pages 배포, D1·좌표·스키마 변경
+- 실행하지 않은 것(3.2의 승인된 비활성 업로드 2건 제외): 운영 트래픽 변경, Draft 해제, main 병합, Pages 배포, D1·좌표·스키마 변경
 
 사용자 지시에 따라 **트래픽 0% 업로드도 운영 계정 변경이므로 하지 않았다.** 그래서 Cloudflare 버전 ID는 아직 없다. 대신 업로드될 번들을 로컬 dry-run으로 만들어 해시로 고정했다.
 
@@ -97,7 +97,42 @@ Wrangler 4.149.0 `versions upload --dry-run`, 소스 `94115bd`:
 - 주의: 업로드 뒤 대시보드나 `versions deploy` 대화형 선택에서 새 버전이 "최신"으로 먼저 보인다. 반드시 ID를 지정하고 `-y` 자동 선택에 기대지 않는다. `wrangler deploy`(업로드+즉시 배포)는 쓰지 않는다.
 - 등록 전후 확인: `deployments status`가 `a174e570` 100%로 같아야 한다. `versions view a174e570… --json`의 vars가 위 표와 같아야 한다.
 
+## 3.2 비활성 버전 등록 결과 (2026-11-06 13:13~13:14Z, 사용자 승인)
+
+승인 범위는 `versions upload`뿐이다. `versions deploy`·`deploy`·`rollback`은 실행하지 않았다. 업로드 원본은 `git archive 86e3b7b89ee61976016f8959d89a5193d7e60e1c`(LF)이고, 업로드 직전 dry-run 해시가 3절과 같았다.
+
+| 구분 | 버전 ID | 태그 | Cloudflare etag | 모듈 SHA-256(내려받아 확인) |
+|---|---|---|---|---|
+| 정상 v2 (`V2_ID`) | `b81169aa-9af6-4c21-9bc4-b994ddf305af` | `nbl-v2-86e3b7b` | `c14a870ab82b814990d1e14722b3c976fea5fb21c8fe672ceed5e43c256355a0` | `56a8f3fddd525b8c0520d5a16d8b89ecb8aa5764076cfac6b8cc1c548f70a88a` |
+| 차단판 (`CLOSED_ID`) | `04448faf-2885-4205-92b6-025c99042ea0` | `nbl-closed-86e3b7b` | 같음 | 같음 |
+| 운영(참고) | `a174e570-7fb4-48cd-954a-086fa469f703` | `search-4a76b41` | `ff9952d6…764f` | (v1, 비교 대상 아님) |
+
+비교 검증(`versions view --json`, 시크릿은 이름만, 이메일 값은 해시로만 비교):
+
+| 항목 | 결과 |
+|---|---|
+| 모듈 | 두 버전 모두 Cloudflare에서 내려받은 `public.js`가 로컬 dry-run 번들과 바이트 단위로 같음. 차단 스위치와 `nonbreeding-location-v2` 포함 |
+| 환경변수 | 두 버전 차이는 `REPORTS_PUBLIC_READS_CLOSED`(`false`/`true`)뿐. 운영 `a174e570`과의 차이도 이 변수 추가뿐(이메일 2개 포함 나머지 15개 값 일치) |
+| D1 | 세 버전 모두 `REPORTS_DB` = `b48201cc-0abd-4a64-bb61-9dd2a7813d21` |
+| 서비스 | 세 버전 모두 `REPORTS_PEER` = `birdmap-reports-admin` |
+| 시크릿 이름 | 세 버전 모두 `REPORTS_GATE_TOKEN`, `REPORT_IP_SALT`, `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY` |
+| 런타임 | compatibility_date `2026-07-03`, 플래그·사용자 CPU 상한 없음, usage_model `standard`, handler `fetch` — 세 버전 같음 |
+
+트래픽·노출 확인:
+
+| 시점 | 결과 |
+|---|---|
+| 업로드 전 | `a174e570` 100% (배포 2026-10-21T01:23:06Z) |
+| 정상 v2 업로드 직후 | `a174e570` 100% |
+| 차단판 업로드 직후 | `a174e570` 100%. 최신 배포도 10/21 그대로(새 배포 없음) |
+| Preview URL | `workers.dev` 사용 `enabled: true`, `previews_enabled: false` — 두 버전에 외부에서 닿는 미리보기 주소 없음 |
+| 실서비스 응답 | 허용 Origin으로 `/reports/public-state` 1회: 200, projection `legacy-public-v1`(운영 v1 그대로) |
+
+`versions list`는 최근 10개만 보여 준다. 새 두 버전이 목록 끝에 있다.
+
 ## 4. 승인 후 절차 (실행하지 않음)
+
+아래의 `V2_ID`는 `b81169aa-9af6-4c21-9bc4-b994ddf305af`, `CLOSED_ID`는 `04448faf-2885-4205-92b6-025c99042ea0`이다. 4.1은 3.2에서 완료했다.
 
 공통: `cd reports-api`, `CLOUDFLARE_ACCOUNT_ID`는 `docs/long-term-db-phase2e/targets/production.json`에서 넣는다. Wrangler 4.149.0만 쓴다.
 
