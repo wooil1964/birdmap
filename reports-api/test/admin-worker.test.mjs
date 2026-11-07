@@ -417,17 +417,17 @@ test("반려하면 황색 마커 공개도 함께 꺼진다", async () => {
   assert.equal(db.rows[0].pending_public, 0);
 });
 
-test("관리자는 대기 제보의 황색 공개를 켜고 끌 수 있다", async () => {
+test("관리자도 대기 제보를 공개할 수 없고 비공개 조치는 유지된다", async () => {
   const db = fakeDb([pendingRow()]);
   const id = db.rows[0].id;
 
-  const open = await actAsAdmin(db, id, { action: "visibility", public: true });
-  assert.equal(open.status, 200);
-  assert.equal(db.rows[0].pending_public, 1);
-  assert.equal(db.rows[0].status, "pending");
-  // 대략 좌표가 없던 기존 자료라도 켤 때 한 번 만들어 둔다.
-  assert.ok(Number.isFinite(db.rows[0].approx_lat));
-  assert.notEqual(db.rows[0].approx_lat, db.rows[0].lat);
+  const before = JSON.stringify(db.rows[0]);
+  for (const value of [true, 1]) {
+    const open = await actAsAdmin(db, id, { action: "visibility", public: value });
+    assert.equal(open.status, 400);
+    assert.equal((await open.json()).error.code, "PENDING_PUBLICATION_DISABLED");
+    assert.equal(JSON.stringify(db.rows[0]), before);
+  }
 
   const close = await actAsAdmin(db, id, { action: "visibility", public: false });
   assert.equal(close.status, 200);

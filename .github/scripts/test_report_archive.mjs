@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 const html=readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 function source(name){const start=html.indexOf('function '+name+'(');assert.ok(start>=0,name);const stop=html.indexOf('\nfunction ',start+1),candidate=html.slice(start,stop<0?undefined:stop),end=candidate.indexOf('\n}');return end<0?candidate:candidate.slice(0,end+2);}
-const anchor={contract:'publication-v1',epoch:'a'.repeat(32),revision:'1',projection:'nonbreeding-location-v2'};
+const anchor={contract:'publication-v1',epoch:'a'.repeat(32),revision:'1',projection:'nonbreeding-location-v2-pending-withheld-v1'};
 const row=(id,extra={})=>({id,species:['까치'],date:'2020-01-01',locationHidden:false,target:{kind:'spot',spotId:id},...extra});
 function page(reports,total=reports.length,offset=0,publication=anchor){return {ok:true,reports,total,offset,limit:20,hasMore:offset+reports.length<total,publication};}
 function fixture(){

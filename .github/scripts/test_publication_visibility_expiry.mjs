@@ -8,7 +8,7 @@ assert.ok(block.includes('function publicationFetch('));
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 function env(){
  let wall=1_000_000,mono=0;const events={},calls=[],queue=[],removed=[];
- const authority={contract:'publication-v1',projection:'nonbreeding-location-v2',epoch:'a'.repeat(32),revision:'1'};
+ const authority={contract:'publication-v1',projection:'nonbreeding-location-v2-pending-withheld-v1',epoch:'a'.repeat(32),revision:'1'};
  const doc={hidden:false,addEventListener(name,fn){(events[name]||(events[name]=[])).push(fn);},getElementById(){return {hidden:false,style:{}};},querySelectorAll(){return [];}};
  const c={Date:class extends Date{static now(){return wall;}},performance:{now:()=>mono},Promise,BigInt,Number,Uint8Array,URL,crypto:{getRandomValues(b){for(let i=0;i<b.length;i++)b[i]=(calls.length+i)%256;}},AbortController,
  document:doc,window:{addEventListener(name,fn){(events[name]||(events[name]=[])).push(fn);}},setTimeout:()=>1,clearTimeout(){},setInterval:()=>1,

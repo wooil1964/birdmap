@@ -38,7 +38,7 @@ async function adminList(s) {
   return (await res.json()).reports;
 }
 
-test("A. 위치 공개(기본): 클릭 = DB 실제 = 황색 = 승인 후 붉은 마커", async (t) => {
+test("A. 위치 공개(기본): 클릭 = DB 실제 = 승인 후 붉은 마커, 승인 전 비공개", async (t) => {
   const s = await setup(); t.after(s.restore);
   const body = input(101, CLICK);
   const res = await post(s.pub, body), accepted = await res.json();
@@ -46,15 +46,15 @@ test("A. 위치 공개(기본): 클릭 = DB 실제 = 황색 = 승인 후 붉은 
   const r = row(s.db, body.request_id);
   assert.deepEqual([r.lat, r.lon, r.public_lat, r.public_lon], [CLICK.lat, CLICK.lon, null, null]);
   assert.equal(checklist(s.db, body.request_id).coordinate_policy, "actual");
-  assert.deepEqual([accepted.spot.lat, accepted.spot.lon, accepted.spot.approximate, "locationHidden" in accepted.spot], [CLICK.lat, CLICK.lon, false, false]);
-  const yellow = (await get(s.pub, "/reports/pending")).body.spots.find((x) => x.id === body.request_id);
-  assert.deepEqual([yellow.lat, yellow.lon, "locationHidden" in yellow], [CLICK.lat, CLICK.lon, false]);
+  assert.equal(accepted.spot, undefined);
+  assert.equal(accepted.publicVisibility, "withheld");
+  assert.deepEqual((await get(s.pub, "/reports/pending")).body.spots, []);
   await approve(s, body.request_id, 102);
   const red = (await get(s.pub, "/reports/approved")).body.spots.find((x) => x.id === body.request_id);
   assert.deepEqual([red.lat, red.lon, "locationHidden" in red], [CLICK.lat, CLICK.lon, false]);
 });
 
-test("B·C·D. 위치 가리기: 실제 좌표 보존, 승인 전·후 모두 같은 대략 좌표만 공개, 공개 API 에 실제 좌표 없음", async (t) => {
+test("B·C·D. 위치 가리기: 실제 좌표 보존, 승인 전 비공개, 승인 후 저장한 대략 좌표만 공개, 공개 API 에 실제 좌표 없음", async (t) => {
   const s = await setup(); t.after(s.restore);
   const body = input(111, { ...CLICK, hideLocation: true });
   const res = await post(s.pub, body), receiptText = await res.clone().text(), accepted = await res.json();
@@ -73,17 +73,16 @@ test("B·C·D. 위치 가리기: 실제 좌표 보존, 승인 전·후 모두 �
   const raw = JSON.parse(s.db.sqlite.prepare("SELECT payload_json FROM raw_submissions WHERE request_id=?").get(body.request_id).payload_json);
   assert.equal(raw.input.hideLocation, true);
 
-  // 접수 응답과 황색 마커: 대략 좌표 + locationHidden
-  assert.deepEqual([accepted.spot.lat, accepted.spot.lon, accepted.spot.approximate, accepted.spot.locationHidden], [r.public_lat, r.public_lon, true, true]);
+  // 접수·대기 조회·재전송에서는 대략 좌표도 반환하지 않는다.
+  assert.equal(accepted.spot, undefined);
+  assert.equal(accepted.publicVisibility, "withheld");
   const pending = await get(s.pub, "/reports/pending");
   assertNoActual(pending.text);
-  const yellow = pending.body.spots.find((x) => x.id === body.request_id);
-  assert.deepEqual([yellow.lat, yellow.lon, yellow.locationHidden], [r.public_lat, r.public_lon, true]);
-  assert.deepEqual(Object.keys(yellow).sort(), ["approximate", "date", "id", "lat", "locationHidden", "lon", "species", "status"]);
-
-  // 같은 요청 재전송: 같은 대략 좌표(새 점을 만들지 않는다)
+  assert.deepEqual(pending.body.spots, []);
   const again = await (await post(s.pub, body)).json();
-  assert.deepEqual([again.spot.lat, again.spot.lon, again.spot.locationHidden], [r.public_lat, r.public_lon, true]);
+  assert.equal(again.spot, undefined);
+  assert.equal(again.publicVisibility, "withheld");
+  assert.equal(row(s.db, body.request_id).public_lat, r.public_lat);
 
   // C. 승인 후에도 붉은 마커는 같은 대략 좌표
   await approve(s, body.request_id, 112);

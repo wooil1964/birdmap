@@ -111,7 +111,7 @@ try {
     assert.equal((await first(db,'SELECT shared_bird_count FROM checklists WHERE checklist_id=?',uuid(110))).shared_bird_count,7);
   });
   const target=uuid(120);assert.equal((await post(env.pub,input(120))).status,201);
-  const actions=[['approve',{species:'검토합성종',siteId:'1',publicLat:null,namePublic:false}],['reject',{}],['unpublish',{}],['visibility',{public:true}],['site',{siteId:'2'}],['consent',{namePublic:true}],['link',{spotKey:target}],['unlink',{}]];
+  const actions=[['approve',{species:'검토합성종',siteId:'1',publicLat:null,namePublic:false}],['reject',{}],['unpublish',{}],['visibility',{public:false}],['site',{siteId:'2'}],['consent',{namePublic:true}],['link',{spotKey:target}],['unlink',{}]];
   let actionNo=200;
   for(const [action,extra] of actions)await check('admin '+action+' preserves legacy meaning and canonical projection',async()=>{
     const id=uuid(103),before=await first(db,'SELECT * FROM reports WHERE id=?',id);
@@ -126,7 +126,7 @@ try {
   });
   await check('quick replay respects reject, unpublish and pending visibility withdrawal',async()=>{
     for(const [n,action,extra] of [[130,'reject',{}],[131,'unpublish',{}],[132,'visibility',{public:false}]]) {
-      const body=input(n);assert((await(await post(env.pub,body)).json()).spot);
+      const body=input(n);assert.equal((await(await post(env.pub,body)).json()).spot,undefined);
       assert.equal((await adminPost(env.admin,auth.token,uuid(n),{request_id:uuid(n+1000),expected_revision:1,action,...extra})).status,200);
       await unchanged(async()=>{const response=await post(env.pub,body);assert.equal(response.status,201);const receipt=await response.json();assert.equal(receipt.spot,undefined);assert.equal(receipt.status,action==='reject'?'rejected':'pending');assert.notEqual(receipt.publicVisibility,'approximate');});
     }

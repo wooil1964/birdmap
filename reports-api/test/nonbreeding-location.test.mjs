@@ -51,14 +51,13 @@ test('three states: only matching immutable explicit evidence confirms nonbreedi
   for (const value of [undefined, null, false, 1, 'true']) assert.throws(() => quickInput({...original,non_breeding_confirmed:value}), {code:'NON_BREEDING_CONFIRMATION_REQUIRED'});
 });
 
-test('confirmed 매 / Falco peregrinus: pending and approved public coordinates, consent and strict snapshots', async t => {
+test('confirmed 매 / Falco peregrinus: pending withheld; approved v2 coordinates, consent and strict snapshots', async t => {
   const s = await setup(t);
   for (const [i,species] of ['매', 'Falco peregrinus', '매, 청둥오리'].entries()) {
     const body = input(410+i, {species, lat:Number((37.512345+i/100).toFixed(6)), lon:127.054321, note:'먹이활동', namePublic:false});
     assert.equal((await post(s.pub,body)).status,201);
     for (const strict of [false,true]) {
-      const yellow = (await get(s.pub,'/reports/pending',strict)).body.spots.find(x=>x.id===body.request_id);
-      assert.equal(yellow.lat,body.lat); assert.equal(yellow.lon,body.lon);
+      assert.deepEqual((await get(s.pub,'/reports/pending',strict)).body.spots,[]);
     }
     await approve(s,body,420+i);
     for (const strict of [false,true]) {
@@ -74,15 +73,18 @@ test('confirmed 매 / Falco peregrinus: pending and approved public coordinates,
   assert.equal(await schemaReady(s.db),true,'canonical schema hash unchanged');
 });
 
-test('confirmed protected hideLocation: stable masked point remains masked before and after approval', async t => {
+test('confirmed protected hideLocation: pending withheld and stable masked point after approval', async t => {
   const s = await setup(t), body = input(430, {species:'매', hideLocation:true, note:'이동 관찰', lat:37.512345,lon:127.054321});
   const receipt = await (await post(s.pub,body)).json();
-  assert.notEqual(receipt.spot.lat,body.lat);
-  for (const strict of [false,true]) assert.equal((await get(s.pub,'/reports/pending',strict)).body.spots[0].lat,receipt.spot.lat);
+  assert.equal(receipt.spot,undefined);
+  assert.equal(receipt.publicVisibility,'withheld');
+  const stored = s.db.sqlite.prepare('SELECT public_lat FROM reports WHERE id=?').get(body.request_id);
+  assert.notEqual(stored.public_lat,body.lat);
+  for (const strict of [false,true]) assert.deepEqual((await get(s.pub,'/reports/pending',strict)).body.spots,[]);
   await approve(s,body,431);
   for (const strict of [false,true]) {
     const red = (await get(s.pub,'/reports/approved',strict)).body.spots[0];
-    assert.equal(red.lat,receipt.spot.lat); assert.equal(red.locationHidden,true);
+    assert.equal(red.lat,stored.public_lat); assert.equal(red.locationHidden,true);
     assert.ok(!JSON.stringify(red).includes(String(body.lat)));
   }
   const result = (await get(s.pub,'/reports/search?q='+encodeURIComponent('매'),true)).body.reports[0];

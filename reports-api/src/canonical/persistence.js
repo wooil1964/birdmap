@@ -1,4 +1,4 @@
-import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted } from '../shared.js';
+import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload } from '../shared.js';
 import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
 import { locationEvidenceColumns } from '../location-evidence.js';
 
@@ -24,12 +24,8 @@ export async function replayQuick(db,id,input) {
   const c=await first(db,'SELECT raw_id FROM checklists WHERE checklist_id=?',id);
   const live=await first(db,'SELECT id,note,lat,lon,'+locationEvidenceColumns({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})+',status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,'+LOCATION_HIDDEN_SQL+' AS location_hidden,species,observed_on FROM reports WHERE id=?',id);
   if(c?.raw_id!==raw.raw_id||!live)fail('IDEMPOTENCY_STATE_INVALID','저장 결과가 불완전합니다.');
-  // Replay the successful receipt, subject to current publication consent. Never resurrect a withdrawn marker.
-  const restricted=isLocationRestricted(live);
-  const accepted={...saved.accepted,status:live.status,publicVisibility:live.status==='rejected'?'not_published':restricted?'withheld':live.status==='approved'?'approved':Number(live.pending_public)===1?'approximate':'withheld'};
-  delete accepted.spot;
-  if(!restricted&&live.status==='pending'&&Number(live.pending_public)===1&&live.approx_lat!==null&&live.approx_lon!==null)accepted.spot={id,status:'pending',lat:live.approx_lat,lon:live.approx_lon,approximate:Number(live.approx_offset)===1,species:splitSpecies(live.species),date:live.observed_on,...(Number(live.location_hidden)===1?{locationHidden:true}:{})};
-  return accepted;
+  // Recompute the current status; never replay historical pending coordinates.
+  return receiptPayload({...saved.accepted,status:live.status,publicVisibility:live.status==='rejected'?'not_published':isLocationRestricted(live)?'withheld':live.status==='approved'?'approved':'withheld'});
 }
 // Redemptions older than this are removed in the same batch (tokens themselves expire after 300 s).
 export const REDEMPTION_RETENTION_MS=60*60*1000;
