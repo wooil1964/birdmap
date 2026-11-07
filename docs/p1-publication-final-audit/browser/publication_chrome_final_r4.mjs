@@ -48,7 +48,7 @@ function hook(){
  const spot=(extra={})=>Object.assign({id:'synthetic-approved',lat:37,lon:127,species:['직박구리'],history:[{species:['직박구리'],date:new Date().toISOString().slice(0,10),reporter:'합성검증'}],locationHidden:false},extra);
  const m=window.__mock={
    id,upd,spot,revision:'1',epoch:'11111111111141118111111111111111',field:[upd()],approved:[spot()],
-   pendingSpots:[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리'],date:new Date().toISOString().slice(0,10)}],
+   pendingSpots:[],
    actions:[],geo:[],watches:new Map(),watchSeq:0,offline:false,
    headOverride:null,headHangs:false,dataApprovedOverride:null,dataFieldOverride:null,
    headAfterData:null,deferApproved:false,deferredApproved:[],deferField:false,deferredField:[],
@@ -145,7 +145,7 @@ const browser=new CDP(proc,ws,profile);
 function check(width,id,pass,evidence={}){rows.push({width,id,pass:pass===true,evidence});}
 const tick="new Promise(r=>setTimeout(r,80))";
 const refresh="Promise.all([loadApprovedReports(),loadPendingReports(),loadRecentSiteSightings()])";
-const normal="__mock.headDelayMs=0;__mock.deferHead=false;__mock.deferredHead=[];__mock.offline=false;__mock.headHangs=false;__mock.headOverride=null;__mock.dataApprovedOverride=null;__mock.dataFieldOverride=null;__mock.headAfterData=null;__mock.deferApproved=false;__mock.deferField=false;__mock.deferredApproved=[];__mock.deferredField=[];__mock.id='11111111-1111-4111-8111-'+String((__mock.testIdSequence||0)+1).padStart(12,'0');__mock.testIdSequence=(__mock.testIdSequence||0)+1;__mock.field=[__mock.upd()];__mock.approved=[__mock.spot()];__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리'],date:new Date().toISOString().slice(0,10)}];__mock.revision=String(BigInt(__mock.revision)+1n);publicationInvalidate();";
+const normal="__mock.headDelayMs=0;__mock.deferHead=false;__mock.deferredHead=[];__mock.offline=false;__mock.headHangs=false;__mock.headOverride=null;__mock.dataApprovedOverride=null;__mock.dataFieldOverride=null;__mock.headAfterData=null;__mock.deferApproved=false;__mock.deferField=false;__mock.deferredApproved=[];__mock.deferredField=[];__mock.id='11111111-1111-4111-8111-'+String((__mock.testIdSequence||0)+1).padStart(12,'0');__mock.testIdSequence=(__mock.testIdSequence||0)+1;__mock.field=[__mock.upd()];__mock.approved=[__mock.spot()];__mock.pendingSpots=[];__mock.revision=String(BigInt(__mock.revision)+1n);publicationInvalidate();";
 const noDynamic="Object.keys(reportSpotLayers).length===0&&Object.keys(reportPendingLayers).length===0&&Object.keys(reportPublicSpots).length===0&&reportSearchIndex.length===0&&!document.querySelector('a[data-publication-report]')&&!document.querySelector('a.spotKakaoRoute')";
 const noApproved="Object.keys(reportSpotLayers).length===0&&reportSearchIndex.length===0";
 const dynamicSnapshot="({approved:Object.keys(reportSpotLayers),pending:Object.keys(reportPendingLayers),publicSpots:Object.keys(reportPublicSpots),search:reportSearchIndex.length,anchors:Array.from(document.querySelectorAll('a[data-publication-report]')).map(x=>({id:x.dataset.publicationReport,visible:!!x.offsetParent,href:x.getAttribute('href'),parent:x.parentElement?.className,popup:!!x.closest('.leaflet-popup')})),state:{ready:publicationState.ready,generation:publicationState.generation,until:publicationState.until},allowed:publicationAllowed()})";
@@ -166,7 +166,11 @@ try{
     return {pass:s.kakao&&s.tmap,evidence:s};
    });
 
-   await scenario(page,width,'pending-coordinates-ignored',async e=>({pass:await e("Object.keys(reportPendingLayers).length===0")}));
+   await scenario(page,width,'pending-coordinates-ignored',async e=>{
+    const rejected=await e("__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리']}];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
+    const recovered=await e("__mock.pendingSpots=[];loadPendingReports()");
+    return {pass:rejected.ok===false&&rejected.pending.length===0&&recovered===true,evidence:rejected};
+   });
    await scenario(page,width,'V03-protected-then-later-old-approved-cache',async e=>{
     await e(normal+"__mock.approved=[__mock.spot({locationHidden:true,lat:36.9,lon:126.9})];"+refresh);
     const oldRevision=await e("String(BigInt(__mock.revision)-1n)");
