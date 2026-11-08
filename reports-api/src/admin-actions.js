@@ -21,7 +21,7 @@ export async function planAction(db,body,row,admin,now) {
   }
   if(action==='visibility') {
     const open=body.public===true||body.public===1?1:0;
-    if(open&&row.status!=='pending')throw new WorkerError('ACTION_INVALID','승인 대기 중인 제보만 황색 마커로 공개할 수 있습니다.',400);
+    if(open)throw new WorkerError('PENDING_PUBLICATION_DISABLED','승인 전 제보는 공개할 수 없습니다. 기존 승인 절차를 이용해 주세요.',400);
     const approx=open&&(row.approx_lat==null||row.approx_lon==null)?approximateCoordinate(row.lat,row.lon):{lat:row.approx_lat,lon:row.approx_lon};
     return {patch:{pending_public:open,approx_lat:approx.lat,approx_lon:approx.lon,admin_note},result:{...base,pendingPublic:open}};
   }

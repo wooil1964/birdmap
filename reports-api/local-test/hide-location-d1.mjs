@@ -22,13 +22,13 @@ try {
 
   const pending = await get(pub, '/reports/pending');
   assert.ok(!pending.includes('37.512345') && !pending.includes('127.054321'));
-  assert.ok(JSON.parse(pending).spots.find(s => s.id === body.request_id).locationHidden);
+  assert.deepEqual(JSON.parse(pending).spots, []);
   const res = await adminPost(admin, auth.token, body.request_id, { action: 'approve', request_id: '53000000-0000-4000-8000-000000000951', expected_revision: await rev(body.request_id) });
   assert.equal(res.status, 200, await res.clone().text());
   const approved = await get(pub, '/reports/approved'), red = JSON.parse(approved).spots.find(s => s.id === body.request_id);
   assert.ok(!approved.includes('37.512345') && !approved.includes('127.054321'));
   assert.deepEqual([red.lat, red.lon, red.locationHidden], [row.public_lat, row.public_lon, true]);
-  pass('pending and approved public APIs: offset point only, no actual coordinate in response text');
+  pass('pending withheld; approved API: stable offset point, no actual coordinate in response text');
 
   const list = await (await adminHandler(new Request('https://admin.example/admin/api/reports?status=all', { headers: { 'Cf-Access-Jwt-Assertion': auth.token } }), admin)).json();
   const seen = list.reports.find(r => r.id === body.request_id);

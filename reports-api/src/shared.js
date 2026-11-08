@@ -366,25 +366,19 @@ export function isSensitiveReport(report) {
   return names.some((name) => String(name).split(PROTECTION_SPLIT).some(isProtectedSpeciesToken));
 }
 
-// 승인 전 공개 목록. 종·관찰일·대략 좌표만 내보낸다.
-// 제보자·개체수·설명·실제 좌표·관리자 메모는 어떤 경우에도 넣지 않는다.
-export function pendingPayload(rows) {
-  return (rows || [])
-    .filter((row) => !isLocationRestricted(row) && Number.isFinite(row.approx_lat) && Number.isFinite(row.approx_lon))
-    .map((row) => {
-      const spot = {
-        id: row.id,
-        status: 'pending',
-        lat: row.approx_lat,
-        lon: row.approx_lon,
-        // approx_offset: 공개 좌표가 실제 좌표와 다른지만 계산한 값(실제 좌표는 내보내지 않는다). 없으면 대략으로 본다.
-        approximate: row.approx_offset === undefined || row.approx_offset === null ? true : Number(row.approx_offset) === 1,
-        species: splitSpecies(row.species),
-        date: row.observed_on,
-      };
-      if (Number(row.location_hidden) === 1) spot.locationHidden = true;
-      return spot;
-    });
+// 승인 전 제보는 공개하지 않는다. 과거 pending_public/approx_* 값도 공개 허가가 아니다.
+export function pendingPayload() {
+  return [];
+}
+
+// 저장된 과거 접수증의 spot까지 제거한다. 불변 원자료 자체는 수정하지 않는다.
+export function receiptPayload(body) {
+  return {
+    ok: body.ok,
+    id: body.id,
+    status: body.status,
+    publicVisibility: body.status === 'pending' ? 'withheld' : body.publicVisibility,
+  };
 }
 
 /* ── 위치 가리기 ────────────────────────────────────────────────────── */

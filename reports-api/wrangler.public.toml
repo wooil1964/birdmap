@@ -27,8 +27,8 @@ REPORTS_SCHEMA_VERSION = "phase2a-0001"
 REPORTS_ACTIVATION_ID = "phase2e-cutover-1"
 REPORTS_RELEASE_ID = "public-phase2e-1"
 REPORTS_PEER_RELEASE_ID = "admin-phase2e-1"
-# 비번식 확인을 거친 신규 대기 제보의 대략 좌표 마커 공개(운영자 결정 2026-09-27). 기존 자료 원값은 그대로.
-REPORTS_PENDING_PUBLIC = "1"
+# 승인 전 공개는 코드에서도 차단한다. 기존 자료와 승인 절차는 유지한다.
+REPORTS_PENDING_PUBLIC = "0"
 REPORTS_REMOTE_VERIFIED = "true"
 # 새 제보 관리자 메일 알림(src/notify.js). RESEND_API_KEY 시크릿이 없으면 보내지 않고 건너뛴다.
 # 도메인 인증 전에는 보내는 주소가 onboarding@resend.dev, 받는 주소는 Resend 계정 이메일만 가능하다.

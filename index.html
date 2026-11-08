@@ -231,7 +231,7 @@
       </div>
       <div id="reportHideLocationBox" style="display:none">
         <label class="reportConsent" for="reportHideLocation"><input type="checkbox" id="reportHideLocation"> 위치 가리기</label>
-        <div class="reportConsentNote">체크하면 정확한 위치는 공개되지 않고 주변의 대략적인 위치만 표시됩니다. 실제 관찰 위치는 관리자 확인용으로만 저장됩니다.</div>
+        <div class="reportConsentNote">체크하면 승인 후에도 정확한 위치는 공개되지 않고 주변의 대략적인 위치만 표시됩니다. 실제 관찰 위치는 관리자 확인용으로만 저장됩니다.</div>
       </div>
       <div class="reportOptional">
         <label for="reportReporter">제보자 이름 또는 닉네임 <span class="reportOptionalTag">선택</span></label>
@@ -3275,7 +3275,7 @@ function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
    삭제·공개 취소·위치 가림이 반영된 뒤 늦게 도착한 옛 응답이 마커를 되살리지 못하게 한다. */
 /* Public location permission: source authority, not response/request timestamps.
    Conservative local defaults; production cadence remains a separate operating approval. */
-var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='nonbreeding-location-v2';
+var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='nonbreeding-location-v2-pending-withheld-v1';
 var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
 // Renew before the request-start lease boundary; the 5s safety cap is unchanged.
 // The margin is the time a renewal response (network + timer delay) may take: 250ms expired in
@@ -5518,7 +5518,8 @@ function loadPendingReports(){
     if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('pending invalid');
     if(!reportResponseCurrent('pending',seq))return false;
-    renderPendingReports(data.spots);
+    renderPendingReports([]);
+    if(data.spots.length)throw new Error('pending publication disabled');
     return true;
   }).catch(function(){return false;});
 }
@@ -5526,34 +5527,18 @@ function loadPendingReports(){
 function removePendingLayer(id){
   var layer=reportPendingLayers[id];
   if(!layer)return;
-  map_7010a44f6ac2025090f0fe07508ed485.removeLayer(layer);
+  publicationForgetLayer(layer,map_7010a44f6ac2025090f0fe07508ed485);
   delete reportPendingLayers[id];
 }
 
 function showPendingSpot(spot){
-  if(!publicationAllowed())return;
-  if(!spot||!isFinite(spot.lat)||!isFinite(spot.lon))return;
-  var id=String(spot.id||'');
-  if(!id)return;
-  removePendingLayer(id);
-  // 이미 승인되어 붉은 점이 있는 제보는 황색으로 다시 그리지 않는다.
-  if(reportSpotLayers[id])return;
-  reportPendingLayers[id]=birdmapPendingMarker(spot).addTo(map_7010a44f6ac2025090f0fe07508ed485);
-  reportPendingLayers[id].options.publicationDynamic=true;
+  // 승인 전 좌표는 구버전·지연 응답에서도 표시하지 않는다.
+  if(spot&&spot.id)removePendingLayer(String(spot.id));
 }
 
 function renderPendingReports(spots){
-  var seen={};
-  spots.forEach(function(spot){
-    var id=String(spot&&spot.id||'');
-    if(!id)return;
-    seen[id]=true;
-    showPendingSpot(spot);
-  });
-  // 승인·반려·공개 취소된 제보는 목록에서 빠지므로 여기서 지도에서도 사라진다.
-  Object.keys(reportPendingLayers).forEach(function(id){
-    if(!seen[id])removePendingLayer(id);
-  });
+  // 서버가 잘못 보낸 대기 마커도 무시하고 이전 레이어를 모두 제거한다.
+  Object.keys(reportPendingLayers).forEach(removePendingLayer);
 }
 
 /* ── 위치 선택 ─────────────────────────────────────────────────────────── */
@@ -5873,18 +5858,9 @@ function submitReport(event){
       if(result.body&&result.body.error&&result.body.error.code==='NON_BREEDING_CONFIRMATION_REQUIRED')refreshReportCapabilities();
       throw new Error(message||'제보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     }
-    // 서버가 공개를 허용한 건만 좌표를 함께 내려보낸다. 보류된 건은 마커를 만들지 않는다.
-    if(result.body.spot){
-      loadPendingReports();
-      setReportMessage(result.body.spot.locationHidden
-        ?'제보가 접수되었습니다. 위치 가리기에 따라 대략적인 위치에 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.'
-        :'제보가 접수되었습니다. 황색 마커로 표시되며, 관리자 확인 후 붉은색으로 변경됩니다.','ok');
-    }else if(REPORTS_CANONICAL_UI_ENABLED){
-      setReportMessage('접수 결과를 확인했습니다. 접수 번호: '+String(result.body.id||'')+' · 현재 상태: '+String(result.body.status||''),'ok');
-    }else{
-      setReportMessage('제보가 접수되었습니다. 민감한 관찰지로 분류되어 지도에는 바로 표시되지 않으며, '
-        +'번식 관련 제보와 번식 여부 미확인 보호종의 위치는 비공개입니다. 접수 번호: '+String(result.body.id||''),'ok');
-    }
+    setReportMessage('접수 결과를 확인했습니다. 접수 번호: '+String(result.body.id||'')
+      +' · 현재 상태: '+String(result.body.status||'')
+      +(result.body.status==='pending'?' · 관리자 검토 대기(승인 전 지도 비공개)':''),'ok');
     reportSubmissionAttempt=null;
     document.getElementById('reportForm').reset();
     resetReportCaptcha();

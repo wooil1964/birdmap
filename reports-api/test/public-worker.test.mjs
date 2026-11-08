@@ -250,16 +250,16 @@ test("접수하면 대략 좌표를 만들어 저장하고 실제 좌표는 공�
     handleRequest(submitRequest(validBody()), publicEnv(db)),
   );
   const body = await response.json();
-  assert.equal(body.publicVisibility, "approximate");
-  assert.equal(body.spot.approximate, true);
+  assert.equal(body.publicVisibility, "withheld");
+  assert.equal(body.spot, undefined);
 
   const row = db.rows[0];
-  assert.equal(row.pending_public, 1);
+  assert.equal(row.pending_public, 0);
   assert.notEqual(row.approx_lat, row.lat);
   assert.notEqual(row.approx_lon, row.lon);
   // 응답에도 실제 좌표는 들어가지 않는다.
-  assert.equal(body.spot.lat, row.approx_lat);
-  assert.equal(body.spot.lon, row.approx_lon);
+  assert.equal(JSON.stringify(body).includes(String(row.approx_lat)), false);
+  assert.equal(JSON.stringify(body).includes(String(row.approx_lon)), false);
   assert.equal(JSON.stringify(body).includes(String(row.lat)), false);
 
   // 실제 지점에서 1.5km 이상 떨어져 있다.
@@ -287,7 +287,7 @@ test("둥지·번식 제보와 보호종은 승인 전 공개를 보류한다", 
   }
 });
 
-test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async () => {
+test("과거 공개 플래그가 있어도 대기 목록은 비어 있다", async () => {
   const db = fakeDb([
     // 이 기능 이전에 쌓인 대기 제보. pending_public 기본값 0 이라 공개되지 않는다.
     { id: "old-pending", species: "흰물떼새", lat: 37.1, lon: 126.4 },
@@ -317,13 +317,7 @@ test("대기 목록은 공개가 허용된 대기 제보만 내보낸다", async
   const response = await handleRequest(pendingListRequest(), publicEnv(db));
   assert.equal(response.status, 200);
   const body = await response.json();
-  assert.deepEqual(body.spots.map((spot) => spot.id), ["new-pending"]);
-
-  const spot = body.spots[0];
-  assert.equal(spot.status, "pending");
-  assert.equal(spot.approximate, true);
-  assert.equal(spot.lat, 37.23);
-  assert.deepEqual(spot.species, ["흰물떼새"]);
+  assert.deepEqual(body.spots, []);
 
   // 실제 좌표·제보자·개체수·메모는 어떤 경우에도 나가지 않는다.
   const raw = JSON.stringify(body);

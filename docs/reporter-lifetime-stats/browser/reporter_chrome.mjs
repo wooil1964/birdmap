@@ -43,7 +43,7 @@ function hook(){
    headAfterData:null,deferApproved:false,deferredApproved:[],deferField:false,deferredField:[],
  };
  try{const preset=JSON.parse(sessionStorage.getItem('publication-test-preset')||'null');if(preset)Object.assign(m,preset);}catch{}
- const pub=(u,override)=>Object.assign({contract:'publication-v1',epoch:m.epoch,revision:m.revision,projection:'nonbreeding-location-v2',nonce:u.searchParams.get('nonce')},override||{});
+ const pub=(u,override)=>Object.assign({contract:'publication-v1',epoch:m.epoch,revision:m.revision,projection:'nonbreeding-location-v2-pending-withheld-v1',nonce:u.searchParams.get('nonce')},override||{});
  const reply=(body,status=200)=>Promise.resolve(new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}}));
  const data=(u,body,override)=>Object.assign({ok:true,serverTime:new Date().toISOString()},body,{publication:pub(u,override)});
  window.fetch=(input,options={})=>{

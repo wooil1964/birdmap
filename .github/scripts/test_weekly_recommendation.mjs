@@ -1816,7 +1816,7 @@ test('R01 G 산림 탐조지는 조석 자료가 없어도 감점 없이 기상 
 });
 
 test('R01 H recent-sites 실패·이상 응답이면 가점 없이 기존 추천 그대로', async () => {
-  const authority={contract:'publication-v1',projection:'nonbreeding-location-v2',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
+  const authority={contract:'publication-v1',projection:'nonbreeding-location-v2-pending-withheld-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
   const loader = ['publicationAllowed','publicationSame','publicationDataAllowed','reportRequestStart','reportResponseCurrent','loadRecentSiteSightings'].map(functionSource).join('\n');
   async function run(fetchImpl, previous) {
     const box = { sightings: previous, refreshed: 0, warned: 0 };

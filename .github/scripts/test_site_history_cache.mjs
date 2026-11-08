@@ -10,7 +10,7 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const HTML = readFileSync(join(ROOT, 'index.html'), 'utf8');
 const BS = String.fromCharCode(92);
-const AUTHORITY={contract:'publication-v1',projection:'nonbreeding-location-v2',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
+const AUTHORITY={contract:'publication-v1',projection:'nonbreeding-location-v2-pending-withheld-v1',epoch:'a'.repeat(32),revision:'1',nonce:'b'.repeat(32)};
 
 function functionSource(name) {
   const start = HTML.indexOf('function ' + name + '(');

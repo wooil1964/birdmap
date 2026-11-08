@@ -14,7 +14,7 @@ import { shadowRead } from '../src/canonical/shadow.js';
 
 const ORIGIN = 'https://wooil1964.github.io';
 const CONTRACT = 'publication-v1';
-const PROJECTION = 'nonbreeding-location-v2';
+const PROJECTION = 'nonbreeding-location-v2-pending-withheld-v1';
 const NONCE = 'a'.repeat(32);
 const DEVICE_A = 'publication-owner-aaaaaaaa';
 const DEVICE_B = 'publication-reader-bbbbbbbb';
@@ -177,7 +177,10 @@ for (const path of ['/reports/approved', '/reports/pending', '/reports/recent-si
     db.calls.length = 0; const result = await current(env, path);
     assert.equal(result.status, 200, JSON.stringify(result.body)); assert.equal(result.headers.get('Cache-Control'), 'no-store');
     assert.equal(result.body.publication.revision, revision(sqlite)); assert.equal(result.body.publication.nonce, NONCE);
-    assert.ok(db.calls.some(c => c.mode === 'batch' && c.sql.some(s => /public_publication_state/.test(s)) && c.sql.some(s => /\bFROM (reports|field_updates)\b/.test(s))), 'Authority and projection must be read in one transaction');
+    assert.ok(db.calls.some(c => c.mode === 'batch' && c.sql.some(s => /public_publication_state/.test(s)) &&
+      (path === '/reports/pending' ? c.sql.length === 1 : c.sql.some(s => /\bFROM (reports|field_updates)\b/.test(s)))),
+      'Authority and projection must be read in one transaction; withheld pending needs no report SELECT');
+    if (path === '/reports/pending') assert.deepEqual(result.body.spots, []);
     assert.equal(db.calls.some(c => ['all', 'first'].includes(c.mode) && /\bFROM (reports|field_updates)\b/.test(c.sql)), false, 'No split projection SELECT outside snapshot');
   });
 }
