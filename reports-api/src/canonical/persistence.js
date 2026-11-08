@@ -1,4 +1,4 @@
-import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload, parseSpeciesItems, sightingValues } from '../shared.js';
+import { WorkerError, validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload, parseSpeciesItems, sightingValues } from '../shared.js';
 import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, nativeSightings, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
 import { locationEvidenceColumns } from '../location-evidence.js';
 import { AUTO_DECISION_SQL, unverifiedPayload, unverifiedReadsEnabled } from '../autopublic.js';
@@ -31,7 +31,7 @@ export async function replayQuick(db,id,input,env={}) {
 }
 // Redemptions older than this are removed in the same batch (tokens themselves expire after 300 s).
 export const REDEMPTION_RETENTION_MS=60*60*1000;
-export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},review=null}={}) {
+export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},review=null,cap=null}={}) {
   const db=applicationDb(binding), id=requestId(row.id), now=row.received_at;
   const previous=await replayQuick(db,id,input,env);if(previous)return previous;
   const payload={input,accepted};
@@ -42,13 +42,21 @@ export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},
     db.prepare('DELETE FROM captcha_redemptions WHERE redeemed_at<?').bind(cutoff),insert(db,'captcha_redemptions',{token_hash:tokenHash,request_id:id,redeemed_at:now}),
     insert(db,'reports',row),insert(db,'raw_submissions',raw),insert(db,'checklists',checklistFromReport(row,raw.raw_id,now,true)),...nativeSightings(row,now).map(s=>insert(db,'sightings',s)),
     // 자동 공개 판정 기록은 같은 batch 에 넣는다. 판정만 남거나 저장만 남는 경우는 없다.
-    ...(review?[insert(db,'reviews',review)]:[])];
+    ...(review?[insert(db,'reviews',review)]:[]),
+    // 자동 공개로 판정된 접수만: 방금 넣은 판정 기록까지 센 오늘 건수가 한도 이하일 때만 batch 전체가 확정된다.
+    // D1 batch 는 한 트랜잭션이라, 동시에 먼저 확정된 접수가 있으면 여기서 실패하고 아무것도 남지 않는다.
+    ...(cap?[assertion(db,`autocap:${id}`,cap.condition,cap.values),clearAssertion(db,`autocap:${id}`)]:[])];
   try {await db.batch(statements);} catch(error) {
     rethrowIfFrozen(error);
     const replay=await replayQuick(db,id,input,env);if(replay)return replay;
     // Another logical request already redeemed this token (whole batch rolled back, nothing stored).
     if(await first(db,'SELECT 1 AS used FROM captcha_redemptions WHERE token_hash=? AND request_id<>?',tokenHash,id))fail('CAPTCHA_REUSED','이미 사용된 자동 등록 방지 확인입니다. 다시 확인해 주세요.',403);
     if(await first(db,'SELECT id FROM reports WHERE dedupe_hash=? OR id=?',row.dedupe_hash,id))fail('DUPLICATE_REPORT','같은 종·위치·날짜의 제보가 이미 접수되어 있습니다.');
+    // 한도 경합: 호출한 쪽이 같은 요청을 검토 대기로 한 번 다시 저장한다(제보를 버리거나 거절하지 않는다).
+    if(cap) {
+      const reached=await first(db,cap.reachedSql,...cap.values),holdReasons=['rate_review','global_cap'].filter(k=>Number(reached?.[k])===1);
+      if(holdReasons.length){const race=new WorkerError('AUTO_PUBLIC_CAP_RACE','오늘 자동 공개 한도에 도달해 검토 대기로 접수합니다.',409);race.holdReasons=holdReasons;throw race;}
+    }
     fail('WRITE_FAILED','제보를 저장하지 못했습니다. 같은 요청으로 다시 시도해 주세요.',503);
   }
   return accepted;

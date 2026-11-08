@@ -146,7 +146,7 @@ test('흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복
 
 test('관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거 플래그·재판정·만료는 공개되지 않는다', async t => {
   const s = await setup(t);
-  const a = await submit(s, { species: '직박구리' }), b = await submit(s, { species: '멧비둘기' }), c = await submit(s, { species: '물까치' }), d = await submit(s, { species: '노랑턱멧새' });
+  const a = await submit(s, { species: '직박구리' }), b = await submit(s, { species: '멧비둘기' }), c = await submit(s, { species: '물까치' }), d = await submit(s, { species: '쇠딱다구리' });
   assert.equal((await pending(s)).length, 4);
   // 확인 완료(승인) → 승인 자료로 이동, 미검증 목록에서 빠짐
   assert.equal((await act(s, a.body.request_id, 'approve')).status, 200);
@@ -170,7 +170,7 @@ test('관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거
   s.db.sqlite.prepare("UPDATE reports SET species='매' WHERE id=?").run(d.body.request_id);
   assert.deepEqual(await pending(s), []);
   assert.equal((await adminList(s, 'pending')).find(x => x.id === d.body.request_id).display_state, 'auto_stopped');
-  s.db.sqlite.prepare("UPDATE reports SET species='노랑턱멧새' WHERE id=?").run(d.body.request_id);
+  s.db.sqlite.prepare("UPDATE reports SET species='쇠딱다구리' WHERE id=?").run(d.body.request_id);
   assert.equal((await pending(s)).length, 1);
   // 14일 넘게 확인되지 않으면 내려간다
   s.db.sqlite.prepare('UPDATE reports SET received_at=? WHERE id=?').run(new Date(Date.now() - 15 * 86400000).toISOString(), d.body.request_id);

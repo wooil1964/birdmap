@@ -5832,7 +5832,7 @@ function resetReportCaptcha(){
 /* ── 전송 ──────────────────────────────────────────────────────────────── */
 
 // 접수 결과 안내. 자동 공개(미검증)를 관리자 승인으로 오해하지 않게 구분해서 알린다.
-var REPORT_HOLD_TEXT={protected:'보호종 위치 보호',breeding:'번식 관련 위치 보호',rare_review:'희귀종·혼동종 동정 확인',
+var REPORT_HOLD_TEXT={protected:'보호종 위치 보호',location_sensitive:'위치 민감종 보호',breeding:'번식 관련 위치 보호',rare_review:'희귀종·혼동종 동정 확인',
   name_unconfirmed:'종명 확인 필요',species_parse:'종명·개체수 구분 확인 필요',count_anomaly:'개체수 확인 필요',stale_observation:'관찰일 확인 필요',
   possible_duplicate:'중복 제보 확인',rate_review:'제보량 확인',global_cap:'오늘 자동 공개 한도 도달',note_review:'설명 내용 확인'};
 function reportReceiptMessage(body,hidden){

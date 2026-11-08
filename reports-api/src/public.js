@@ -41,7 +41,7 @@ import { assertFieldServiceActive } from './field-retirement.js';
 import { handlePublicationRead } from "./publication.js";
 import { locationEvidenceColumns } from "./location-evidence.js";
 import { siteHistoryStatement, boundedSiteHistoryPayload } from "./site-history.js";
-import { AUTO_DECISION_SQL, autoPublicEnabled, classifySubmission, submissionReview, unverifiedPayload, unverifiedReadsEnabled, unverifiedStatement } from "./autopublic.js";
+import { AUTO_DECISION_SQL, HOLD_REASONS, autoPublicEnabled, capGuard, classifySubmission, submissionReview, unverifiedPayload, unverifiedReadsEnabled, unverifiedStatement } from "./autopublic.js";
 
 // Emergency switch (deploy-time var): close every public read, including the
 // permission head, while submissions, receipts/status, capability and the admin
@@ -131,14 +131,30 @@ async function handleCanonicalSubmit(request,env,ctx) {
   // 승인 전 공개는 자동 판정(일반종 허용 목록 등)을 통과한 경우뿐이다. 스위치가 꺼져 있으면 현행과 같다(전부 비공개).
   // 가림점은 접수 때 한 번 만들고, 자동 공개·승인 후 공개 모두 그 점만 쓴다.
   const id=body.request_id,hide=report.hideLocation,approx=hide?approximateCoordinate(report.lat,report.lon):{lat:report.lat,lon:report.lon};
-  const auto=autoPublicEnabled(env)?await classifySubmission(db,env,report,hash,now):null;
-  const open=!!auto?.eligible;
-  const accepted={ok:true,id,status:'pending',publicVisibility:open&&unverifiedReadsEnabled(env)?'public_unverified':'withheld',...(auto&&!open?{holdReasons:auto.reasons}:{})};
-  const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:hide?approx.lat:null,public_lon:hide?approx.lon:null,
-    approx_lat:approx.lat,approx_lon:approx.lon,pending_public:open?1:0,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
-    bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:await dedupeHash(report)};
+  const dedupe=await dedupeHash(report),tokenHash=await sha256Hex(body.turnstileToken);
+  // 판정 결과 하나로 접수증·reports·판정 기록을 함께 만든다(셋이 항상 같은 판정을 담는다).
+  const build=auto=>{
+    const open=!!auto?.eligible;
+    const accepted={ok:true,id,status:'pending',publicVisibility:open&&unverifiedReadsEnabled(env)?'public_unverified':'withheld',...(auto&&!open?{holdReasons:auto.reasons}:{})};
+    const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:hide?approx.lat:null,public_lon:hide?approx.lon:null,
+      approx_lat:approx.lat,approx_lon:approx.lon,pending_public:open?1:0,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
+      bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:dedupe};
+    return {accepted,row,options:{env,review:auto?submissionReview(id,row.received_at,auto):null,cap:open?capGuard(env,hash,now):null}};
+  };
+  let auto=autoPublicEnabled(env)?await classifySubmission(db,env,report,hash,now):null;
+  let {accepted,row,options}=build(auto),result;
   // Only the hash of the verified token reaches the database (redemption guard, same batch as the write).
-  const result=await persistQuick(binding,row,input,accepted,await sha256Hex(body.turnstileToken),{env,review:auto?submissionReview(id,row.received_at,auto):null});
+  try {
+    result=await persistQuick(binding,row,input,accepted,tokenHash,options);
+  } catch(error) {
+    if(error?.code!=='AUTO_PUBLIC_CAP_RACE')throw error;
+    // 동시 접수로 하루 한도가 먼저 찼다: 앞선 batch 는 통째로 롤백됐으므로 같은 요청을 검토 대기로 한 번만 다시 저장한다.
+    // 사유 = 다시 판정한 사유 + 저장 실패 시점에 DB 에서 확인한 한도 사유(가장 정확한 쪽을 함께 남긴다).
+    const again=await classifySubmission(db,env,report,hash,now),reasons=new Set([...again.reasons,...error.holdReasons]);
+    auto={eligible:false,reasons:HOLD_REASONS.filter(r=>reasons.has(r))};
+    ({accepted,row,options}=build(auto));
+    result=await persistQuick(binding,row,input,accepted,tokenHash,options);
+  }
   // persistQuick returns this same object only when this call committed the row; replays build a new object.
   // So the admin alert fires once per report id, after the save, and never delays or fails the receipt.
   if(result===accepted) {
