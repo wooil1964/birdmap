@@ -14,7 +14,7 @@ import { shadowRead } from '../src/canonical/shadow.js';
 
 const ORIGIN = 'https://wooil1964.github.io';
 const CONTRACT = 'publication-v1';
-const PROJECTION = 'nonbreeding-location-v2-pending-withheld-v1';
+const PROJECTION = 'nonbreeding-location-v2-autopublic-v1';
 const NONCE = 'a'.repeat(32);
 const DEVICE_A = 'publication-owner-aaaaaaaa';
 const DEVICE_B = 'publication-reader-bbbbbbbb';

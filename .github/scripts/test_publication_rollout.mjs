@@ -10,6 +10,7 @@ const ROOT=fileURLToPath(new URL('../../',import.meta.url));
 const OLD_REF='e05f725557986934aea8fe167b766f7e82f6a948';
 const CURRENT=readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 const PRIOR_V2=execFileSync('git',['show','29e88cbac9d3537a37028db08e872c9f2866f46b:index.html'],{cwd:ROOT,encoding:'utf8',maxBuffer:8*1024*1024});
+const WITHHELD=execFileSync('git',['show','b2fe508f723dba94df07254fed9366b080dbc363:index.html'],{cwd:ROOT,encoding:'utf8',maxBuffer:8*1024*1024});
 const PREVIOUS=execFileSync('git',['show',OLD_REF+':index.html'],{cwd:ROOT,encoding:'utf8',maxBuffer:8*1024*1024});
 function block(html){const start=html.indexOf('var PUBLICATION_CONTRACT='),end=html.indexOf('/* publication:end */');assert.ok(start>=0&&end>start);return html.slice(start,end);}
 function source(html,name){
@@ -65,26 +66,26 @@ function env(html,projection){
 }
 const historyRefusal=()=>Promise.resolve({ok:false,status:503,json:async()=>({ok:false,error:{code:'SITE_HISTORY_UNAVAILABLE',message:'synthetic'}})});
 test('new frontend bounded site-history 503 fails only that history and keeps the unchanged lease',async()=>{
- const e=env(CURRENT,'nonbreeding-location-v2-pending-withheld-v1');e.seed();const generation=e.c.publicationState.generation;
+ const e=env(CURRENT,'nonbreeding-location-v2-autopublic-v1');e.seed();const generation=e.c.publicationState.generation;
  e.queue.push((u,make)=>Promise.resolve(make()),historyRefusal);
  assert.equal(await e.c.fetchSiteHistory({id:'big'},0),null);assert.equal(e.calls.length,2);
  assert.equal(e.c.publicationState.generation,generation);assert.equal(e.c.publicationAllowed(),true);assert.ok(e.c.reportPublicSpots.cached);assert.equal(e.c.siteHistoryCache.big,undefined);
  e.advance(5000);assert.equal(e.c.publicationAllowed(),false);assert.ok(e.closed());
 });
 test('new frontend history refusal code on another endpoint still closes public data',async()=>{
- const e=env(CURRENT,'nonbreeding-location-v2-pending-withheld-v1');e.seed();e.queue.push((u,make)=>Promise.resolve(make()),historyRefusal);
+ const e=env(CURRENT,'nonbreeding-location-v2-autopublic-v1');e.seed();e.queue.push((u,make)=>Promise.resolve(make()),historyRefusal);
  await assert.rejects(e.c.publicationFetch('/reports/approved'));assert.ok(e.closed());
 });
 test('new frontend history refusal after an authority change still closes public data',async()=>{
- const e=env(CURRENT,'nonbreeding-location-v2-pending-withheld-v1');e.seed();e.authority.revision='2';e.queue.push((u,make)=>Promise.resolve(make()),historyRefusal);
+ const e=env(CURRENT,'nonbreeding-location-v2-autopublic-v1');e.seed();e.authority.revision='2';e.queue.push((u,make)=>Promise.resolve(make()),historyRefusal);
  await assert.rejects(e.c.publicationFetch('/reports/site/big'));assert.ok(e.closed());
 });
 const readsClosed=()=>Promise.resolve({ok:false,status:503,json:async()=>({ok:false,error:{code:'PUBLIC_READS_CLOSED',message:'synthetic'}})});
 test('new frontend emergency closure on a site-history payload still closes all public data',async()=>{
- const e=env(CURRENT,'nonbreeding-location-v2-pending-withheld-v1');e.seed();e.queue.push((u,make)=>Promise.resolve(make()),readsClosed);
+ const e=env(CURRENT,'nonbreeding-location-v2-autopublic-v1');e.seed();e.queue.push((u,make)=>Promise.resolve(make()),readsClosed);
  await assert.rejects(e.c.publicationFetch('/reports/site/big'));assert.ok(e.closed());
 });
-for(const [version,html,projection] of [['old',PREVIOUS,'legacy-public-v1'],['v2',PRIOR_V2,'nonbreeding-location-v2'],['new',CURRENT,'nonbreeding-location-v2-pending-withheld-v1']]){
+for(const [version,html,projection] of [['old',PREVIOUS,'legacy-public-v1'],['v2',PRIOR_V2,'nonbreeding-location-v2'],['withheld',WITHHELD,'nonbreeding-location-v2-pending-withheld-v1'],['new',CURRENT,'nonbreeding-location-v2-autopublic-v1']]){
  test(version+' frontend emergency read closure clears everything, stays closed, and recovers only with fresh permission',async()=>{
   const e=env(html,projection);e.seed();
   e.queue.push(readsClosed);await assert.rejects(e.c.publicationHead(true));assert.ok(e.closed());
@@ -93,7 +94,7 @@ for(const [version,html,projection] of [['old',PREVIOUS,'legacy-public-v1'],['v2
   assert.equal(e.c.reportPublicSpots.cached,undefined,'closed data is not revived by reopening');assert.equal(e.c.cachedSiteHistory('synthetic'),null);
  });
 }
-for(const [version,html,projection,other] of [['old',PREVIOUS,'legacy-public-v1','nonbreeding-location-v2-pending-withheld-v1'],['v2',PRIOR_V2,'nonbreeding-location-v2','nonbreeding-location-v2-pending-withheld-v1'],['new',CURRENT,'nonbreeding-location-v2-pending-withheld-v1','nonbreeding-location-v2']]){
+for(const [version,html,projection,other] of [['old',PREVIOUS,'legacy-public-v1','nonbreeding-location-v2-autopublic-v1'],['v2',PRIOR_V2,'nonbreeding-location-v2','nonbreeding-location-v2-autopublic-v1'],['withheld',WITHHELD,'nonbreeding-location-v2-pending-withheld-v1','nonbreeding-location-v2-autopublic-v1'],['new',CURRENT,'nonbreeding-location-v2-autopublic-v1','nonbreeding-location-v2-pending-withheld-v1']]){
  test(version+' frontend accepts matching API and uses no-store for all checks',async()=>{
   const e=env(html,projection),body=await e.c.publicationFetch('/reports/approved');assert.equal(e.c.publicationDataAllowed(body),true);assert.equal(e.calls.length,3);assert.ok(e.calls.every(call=>call.cache==='no-store'));
  });
@@ -125,9 +126,9 @@ for(const [version,html,projection,other] of [['old',PREVIOUS,'legacy-public-v1'
  });
 }
 
-test('new frontend discards nonempty pending DTOs and direct marker calls while keeping approved data',async()=>{
- const e=env(CURRENT,'nonbreeding-location-v2-pending-withheld-v1');e.seed();const popup=e.c.map_7010a44f6ac2025090f0fe07508ed485._popup;
- vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(CURRENT,name)).join('\n'),e.c);
+test('withheld (PR #78) frontend discards nonempty pending DTOs and direct marker calls while keeping approved data',async()=>{
+ const e=env(WITHHELD,'nonbreeding-location-v2-pending-withheld-v1');e.seed();const popup=e.c.map_7010a44f6ac2025090f0fe07508ed485._popup;
+ vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(WITHHELD,name)).join('\n'),e.c);
  e.c.reportRequestStart=()=>1;e.c.reportResponseCurrent=()=>true;e.c.publicationDataAllowed=()=>true;
  e.c.publicationFetch=async()=>({ok:true,spots:[{id:'unexpected',lat:37.512345,lon:127.054321}]});
  assert.equal(await e.c.loadPendingReports(),false);
@@ -137,7 +138,22 @@ test('new frontend discards nonempty pending DTOs and direct marker calls while 
  assert.equal(Object.keys(e.c.reportPendingLayers).length,0);
  assert.ok(e.c.reportSpotLayers.cached,'approved marker is unchanged');
 });
+test('new frontend draws only verified:false pending DTOs, never over an approved spot, and removes them when the list drops them',async()=>{
+ const e=env(CURRENT,'nonbreeding-location-v2-autopublic-v1');e.seed();
+ vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(CURRENT,name)).join('\n'),e.c);
+ const added=[];e.c.birdmapPendingMarker=spot=>({spot,options:{},addTo(){added.push(spot.id);return this;}});
+ e.c.reportRequestStart=()=>1;e.c.reportResponseCurrent=()=>true;e.c.publicationDataAllowed=()=>true;
+ const spots=[{id:'u1',verified:false,lat:37.1,lon:127.1,species:['참새']},{id:'legacy',lat:37.2,lon:127.2,species:['매']},{id:'cached',verified:false,lat:37.3,lon:127.3,species:['까치']},{id:'bad',verified:false,lat:'x',lon:127.4}];
+ e.c.publicationFetch=async()=>({ok:true,spots});
+ assert.equal(await e.c.loadPendingReports(),true);
+ assert.deepEqual(Object.keys(e.c.reportPendingLayers),['u1'],'only verified:false with finite coordinates and no approved layer');
+ e.c.publicationFetch=async()=>({ok:true,spots:[]});
+ assert.equal(await e.c.loadPendingReports(),true);
+ assert.equal(Object.keys(e.c.reportPendingLayers).length,0,'rejected/withdrawn reports disappear on the next list');
+ e.c.publicationAllowed=()=>false;e.c.showPendingSpot(spots[0]);
+ assert.equal(Object.keys(e.c.reportPendingLayers).length,0,'no drawing without fresh public permission');
+});
 test('v2 frontend BFCache restore purges retained pending coordinates before any new reads',()=>{
- const e=env(PRIOR_V2,'nonbreeding-location-v2');e.seed();e.authority.projection='nonbreeding-location-v2-pending-withheld-v1';
+ const e=env(PRIOR_V2,'nonbreeding-location-v2');e.seed();e.authority.projection='nonbreeding-location-v2-autopublic-v1';
  e.restore();assert.ok(e.closed());
 });

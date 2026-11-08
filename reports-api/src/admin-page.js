@@ -52,6 +52,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;padding:14p
 .badge.pending{background:#fff7e6;border-color:#d99b16;color:#8a5f00}
 .badge.approved{background:#eefbf1;border-color:#2f7d4f;color:#1d5c37}
 .badge.rejected{background:#fdecec;border-color:#c0392b;color:#8d2418}
+.actions select.f-reason{width:auto;min-width:130px}
 label{display:block;font-size:12px;color:#5a666e;margin:8px 0 2px}
 input,textarea,select{width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #bcc6cc;border-radius:6px;font:inherit;font-size:13px}
 textarea{min-height:52px;resize:vertical}
@@ -103,7 +104,8 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <span class="who" id="who"></span>
 </header>
 <nav>
-  <button type="button" data-status="pending" aria-pressed="true">승인 대기 <b id="pendingCount">-</b>건</button>
+  <button type="button" data-status="unverified" aria-pressed="false">자동 공개 · 미검증 <b id="unverifiedCount">-</b>건</button>
+  <button type="button" data-status="pending" aria-pressed="true">검토 대기 <b id="pendingCount">-</b>건</button>
   <button type="button" data-status="approved" aria-pressed="false">승인됨</button>
   <button type="button" data-status="rejected" aria-pressed="false">반려됨</button>
   <button type="button" data-status="all" aria-pressed="false">전체</button>
@@ -264,20 +266,36 @@ function historyHtml(r){
   return '<div class="histBox"><h3>이 지점의 출현 이력 '+list.length+'건 (최근순)</h3><ul>'+items+'</ul></div>';
 }
 
+// 화면 표시만 바꾼다. 실제 상태값(pending/approved/rejected)은 그대로다. 승인 전에는 지도에 공개하지 않는다.
+// 화면 표시 상태(display_state)는 서버가 계산한다. 실제 상태값(pending/approved/rejected)은 그대로다.
+var DISPLAY_LABEL={unverified:'자동 공개 · 미검증',auto_stopped:'자동 공개 중지(재검사 불통과)',review:'검토 대기 · 비공개',
+  withdrawn:'공개 취소',approved:'확인 완료',rejected:'반려 · 비공개',pending:'검토 대기 · 비공개'};
+var HOLD_LABEL={auto_public_disabled:'자동 공개 꺼짐',breeding:'번식',protected:'보호종',rare_review:'희귀종·혼동종',name_unconfirmed:'종명 확인',
+  species_parse:'종명·개체수 확인',count_anomaly:'개체수',stale_observation:'관찰일',possible_duplicate:'중복 의심',rate_review:'제보량',global_cap:'일일 한도',note_review:'설명 내용'};
+var REJECT_LABEL=[['misidentification','오동정'],['location_error','위치 오류'],['duplicate','중복'],['inappropriate','부적절한 내용'],['sensitive_location','민감 위치'],['other','기타(메모 필수)']];
+// 종별 관찰 요약: 같은 종은 1종으로, 개체수는 입력된 단일 종 값만 더한다(미입력·중복·불확실은 더하지 않음).
+function sightingsHtml(r){
+  var list=[];try{list=JSON.parse(r.sightings_json||'[]');}catch(e){}
+  if(!list.length)return '';
+  var names={},total=0,counted=false;
+  var parts=list.map(function(x){names[x.name]=1;var ok=x.state==='single'&&x.count!=null;if(ok){total+=Number(x.count);counted=true;}
+    return esc(x.name)+' '+(x.state!=='single'?'(개체수 확인 필요)':x.count==null?'(개체수 미입력)':esc(x.count)+'개체');});
+  return '<br>종별: '+parts.join(' · ')+' — '+Object.keys(names).length+'종'+(counted?', 개체수 '+total+'(입력분)':'');
+}
 function cardHtml(r){
   var linkOptions=approved.filter(function(a){return a.id!==r.id&&!a.spot_key;})
     .map(function(a){return '<option value="'+esc(a.id)+'">'+esc(a.species)+' ('+Number(a.lat).toFixed(4)+', '+Number(a.lon).toFixed(4)+')</option>';}).join('');
   var fixedOptions=FIXED_SPOTS.map(function(f){return '<option value="'+esc(f.key)+'">'+esc(f.label)+'</option>';}).join('');
   return '<div class="card" data-id="'+esc(r.id)+'">'
-    +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(r.status)+'</span>'
+    +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(DISPLAY_LABEL[r.display_state||r.status]||r.status)+'</span>'
     +(r.merged_into?' <span class="badge approved">다른 지점에 합침</span>':'')
-    +(r.status==='pending'?' <span class="badge '+(Number(r.pending_public)===1?'approved':'rejected')+'">'
-      +(Number(r.pending_public)===1?'황색 마커 공개 중':'공개 보류')+'</span>':'')
     +' <span class="badge '+(r.site_id?'approved':'rejected')+'">'
       +(r.site_id?'탐조 지역: '+esc(siteLabel(r.site_id)):'탐조 지역 미연결')+'</span></h2>'
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
     +locationHtml(r)
-    +(r.approx_lat!=null?'<br>승인 전 공개 좌표(대략) '+Number(r.approx_lat).toFixed(5)+', '+Number(r.approx_lon).toFixed(5):'')
+    +sightingsHtml(r)
+    +(r.species_review_required?'<br><b>공식 국명 확인 필요 · 관리자 검토 대상(원문 유지)</b>: '+(r.unconfirmed_species||[]).map(esc).join(' · '):'')
+    +((r.hold_reasons||[]).length?'<br>자동 공개 보류 사유: '+r.hold_reasons.map(function(x){return esc(HOLD_LABEL[x]||x);}).join(', '):'')
     +(r.bird_count?'<br>개체수 '+esc(r.bird_count):'')
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')
     +(r.note?'<br>설명 '+esc(r.note):'')+'</div>'
@@ -297,14 +315,14 @@ function cardHtml(r){
     +duplicateHint(r)
     +historyHtml(r)
     +'<div class="actions">'
-    +'<button type="button" class="approve" data-act="approve">승인</button>'
+    +'<button type="button" class="approve" data-act="approve">'+(r.display_state==='unverified'?'확인 완료(승인)':'승인')+'</button>'
+    +(r.display_state==='unverified'?'<button type="button" class="unpublish" data-act="visibility" data-public="0">공개 중지</button>':'')
+    +'<select class="f-reason" aria-label="반려 사유"><option value="">반려 사유 선택</option>'
+    +REJECT_LABEL.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>';}).join('')+'</select>'
     +'<button type="button" class="reject" data-act="reject">반려</button>'
     +(r.status==='approved'?'<button type="button" class="unpublish" data-act="unpublish">공개 취소</button>':'')
     +'<button type="button" class="merge" data-act="link">선택 지점에 연결</button>'
     +(r.spot_key?'<button type="button" class="merge" data-act="unlink">연결 해제</button>':'')
-    +(r.status==='pending'?(Number(r.pending_public)===1
-      ?'<button type="button" class="unpublish" data-act="visibility" data-public="0">황색 마커 내리기</button>'
-      :'<button type="button" class="merge" data-act="visibility" data-public="1">황색 마커로 공개</button>'):'')
     +(locationHidden(r)
       ?'<button type="button" class="merge" data-act="hide" data-hide="0">위치 공개로 되돌리기</button>'
       :'<button type="button" class="unpublish" data-act="hide" data-hide="1">위치 가리기</button>')
@@ -342,6 +360,10 @@ async function load(){
       }catch(e){pending=null;}
     }
     if(pending)document.getElementById('pendingCount').textContent=pending.length;
+    try{
+      var unverifiedBody=currentStatus==='unverified'?{ok:true,reports:reports}:await (await fetch('/admin/api/reports?status=unverified',{cache:'no-store'})).json();
+      if(unverifiedBody.ok)document.getElementById('unverifiedCount').textContent=unverifiedBody.reports.length;
+    }catch(e){}
   }catch(error){
     document.getElementById('list').innerHTML='<div class="empty">'+esc(error.message)+'</div>';
   }
@@ -360,7 +382,7 @@ function doneMessage(act,payload){
   }
   var labels={reject:'반려했습니다.',unpublish:'공개를 취소했습니다.',
     link:'선택한 지점에 연결했습니다.',unlink:'연결을 해제했습니다.',
-    consent:'이름 공개 설정을 반영했습니다.',visibility:'황색 마커 공개 설정을 반영했습니다.',
+    consent:'이름 공개 설정을 반영했습니다.',visibility:'공개를 중지했습니다. 지도에서 내려갑니다.',
     hide:payload.hide?'위치를 가렸습니다. 지도에는 대략 좌표만 표시됩니다.':'위치 가리기를 해제했습니다. 실제 좌표가 공개됩니다.'};
   return labels[act]||('처리했습니다: '+act);
 }
@@ -389,9 +411,11 @@ document.getElementById('list').addEventListener('click',async function(event){
   if(act==='consent'){
     payload.namePublic=card.querySelector('.f-consent').checked;
   }
-  if(act==='visibility'){
-    payload.public=button.dataset.public==='1';
+  if(act==='reject'){
+    payload.reasonCode=card.querySelector('.f-reason').value;
+    if(!payload.reasonCode){toast('반려 사유를 선택해 주세요.',false);return;}
   }
+  if(act==='visibility')payload.public=false;
   if(act==='hide'){
     payload.hide=button.dataset.hide==='1';
     if(!payload.hide&&!confirm('위치 가리기를 해제하면 실제 관찰 좌표가 공개 지도에 표시됩니다. 계속할까요?'))return;
@@ -541,7 +565,7 @@ function drillFor(view,r){
 
 function renderCards(s,basis){
   var cards=[['총 제보',s.total],['승인',s.approved],['반려',s.rejected],['승인 대기',s.pending],
-    ['등록 종수 ('+basis+')',s.species],['참여 제보자 수',s.reporters,'이름 미입력 '+s.anonymous_reports+'건 별도'],['최근 30일 접수',s.recent30,'KST 기준']];
+    ['등록 종수 ('+basis+')',s.species],['관찰 개체수 ('+basis+')',s.individuals==null?0:s.individuals,'신규 구조화 제보 '+(s.counted_reports||0)+'건의 입력분만'],['참여 제보자 수',s.reporters,'이름 미입력 '+s.anonymous_reports+'건 별도'],['최근 30일 접수',s.recent30,'KST 기준']];
   document.getElementById('statsCards').innerHTML=cards.map(function(c){
     return '<div class="scard"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b>'+(c[2]?'<span>'+esc(c[2])+'</span>':'')+'</div>';
   }).join('');

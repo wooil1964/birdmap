@@ -40,7 +40,7 @@ function syntheticReportFixture() {
     const u = new URL(String(input), location.href);
     if (u.hostname.endsWith('workers.dev') && u.pathname === '/reports/search') {
       const offset = Number(u.searchParams.get('offset') || 0), reports = offset ? [] : [{ id: 'popup-report', species: ['직박구리'], date: new Date().toISOString().slice(0, 10), reporter: '합성검증', locationHidden: false, target: { kind: 'spot', spotId: 'popup-report' } }];
-      return Promise.resolve(new Response(JSON.stringify({ ok: true, serverTime: new Date().toISOString(), offset, limit: 20, total: 1, hasMore: false, reports, publication: { contract: 'publication-v1', epoch: m.epoch, revision: m.revision, projection: 'nonbreeding-location-v2-pending-withheld-v1', nonce: u.searchParams.get('nonce') } }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } }));
+      return Promise.resolve(new Response(JSON.stringify({ ok: true, serverTime: new Date().toISOString(), offset, limit: 20, total: 1, hasMore: false, reports, publication: { contract: 'publication-v1', epoch: m.epoch, revision: m.revision, projection: 'nonbreeding-location-v2-autopublic-v1', nonce: u.searchParams.get('nonce') } }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } }));
     }
     return old(input, options);
   };

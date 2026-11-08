@@ -1,3 +1,4 @@
+import { OFFICIAL_BIRD_NAMES } from './official-bird-names.js';
 // 공개 접수 Worker 와 관리자 Worker 가 함께 쓰는 검증·응답·인증 헬퍼.
 // 기존 weather-proxy Worker 의 응답 형식(ok/error 봉투, Origin 허용 목록)을 그대로 따른다.
 
@@ -372,13 +373,109 @@ export function pendingPayload() {
 }
 
 // 저장된 과거 접수증의 spot까지 제거한다. 불변 원자료 자체는 수정하지 않는다.
+/* ── 종명·개체수 분리 ───────────────────────────────────────────────── */
+// 토큰마다 '국명' 또는 '국명+숫자(마리|개체)'만 인정한다: 동박새3 = 동박새 3 = 동박새 3마리 = 동박새 3개체.
+// 숫자는 1 이상(앞자리 0 없음)이어야 하고, 숫자가 없으면 개체수는 미입력(null)이다(1로 보지 않는다).
+// 하나라도 이 꼴이 아니면 clean=false: 구조화하지 않고 자동 공개도 하지 않는다(관리자 검토).
+const SPECIES_ITEM = /^([가-힣]{1,30})(?:\s*([1-9][0-9]{0,5})\s*(?:마리|개체)?)?$/;
+export function parseSpeciesItems(tokens) {
+  const items = [];
+  let clean = (tokens || []).length > 0;
+  for (const raw of tokens || []) {
+    const original = String(raw || '').normalize('NFC').trim();
+    const m = SPECIES_ITEM.exec(original);
+    const count = m && m[2] !== undefined ? Number(m[2]) : null;
+    if (!m || (count !== null && count > MAX_BIRD_COUNT)) { clean = false; items.push({ original, name: null, count: null }); continue; }
+    items.push({ original, name: m[1], count });
+  }
+  const names = items.map(i => i.name).filter(Boolean);
+  const duplicates = [...new Set(names.filter((n, i) => names.indexOf(n) !== i))];
+  return { clean, items, duplicates, species: [...new Set(names)] };
+}
+
+// 정본 sightings 에 넣을 종별 값. 같은 종이 두 번이면 합산하지 않고 불확실로 둔다.
+// 한 종만 쓰고 숫자를 생략했다면 접수 양식의 개체수를 그 종의 개체수로 쓴다(기존 규칙). 둘이 다르면 불확실.
+export function sightingValues(parsed, birdCount) {
+  const single = parsed.items.length === 1;
+  return parsed.items.map(item => {
+    const conflict = single && item.count !== null && birdCount !== null && birdCount !== undefined && item.count !== birdCount;
+    const ambiguous = parsed.duplicates.includes(item.name) || conflict;
+    const count = ambiguous ? null : (item.count ?? (single ? (birdCount ?? null) : null));
+    return { species_original: item.original, species_identified: item.name, interpretation: ambiguous ? 'unknown' : 'single', taxon_id: null,
+      count_value: count, count_accuracy: 'unknown', count_source: ambiguous ? 'ambiguous_group' : count === null ? 'not_recorded' : 'reported',
+      interpretation_note: parsed.duplicates.includes(item.name) ? 'duplicate_species' : conflict ? 'count_conflict' : null };
+  });
+}
+
+// 기존 자료는 공식 국명 전체가 맞는 경우만 읽기 단계에서 해석한다. 원문·정본 DB는 수정하지 않는다.
+const officialBirdNames = new Set(OFFICIAL_BIRD_NAMES);
+export function legacySpeciesItems(text) {
+  const tokens = String(text || '').split(/[·,;\n/]+/).map(s => s.trim()).filter(Boolean);
+  const items = tokens.map(token => {
+    const parsed = parseSpeciesItems([token]);
+    const item = parsed.items[0];
+    return parsed.clean && officialBirdNames.has(item.name)
+      ? { name: item.name, count: item.count, countStatus: item.count === null ? 'not_recorded' : 'reported' }
+      : { name: token, count: null, countStatus: 'uncertain' };
+  });
+  return groupPublicSightings(items);
+}
+function groupPublicSightings(items) {
+  const groups = new Map();
+  for (const item of items) {
+    if (groups.has(item.name)) groups.set(item.name, { name: item.name, count: null, countStatus: 'uncertain' });
+    else groups.set(item.name, item);
+  }
+  return [...groups.values()];
+}
+export function publicSightingsOf(row) {
+  let rows;
+  try { rows = JSON.parse(row?.public_sightings || 'null'); } catch {}
+  if (!Array.isArray(rows) || !rows.length) {
+    const legacy = legacySpeciesItems(row?.species);
+    return /[0-9]/.test(row?.species || '') && legacy.some(i => officialBirdNames.has(i.name)) ? legacy : [];
+  }
+  return groupPublicSightings(rows.filter(r => typeof r?.name === 'string' && r.name).map(r => {
+    const known = r.state === 'single' && Number.isSafeInteger(r.count) && r.count > 0 && r.count <= MAX_BIRD_COUNT;
+    return { name: r.name, count: known ? r.count : null,
+      countStatus: r.state !== 'single' ? 'uncertain' : known ? 'reported' : 'not_recorded' };
+  }));
+}
+// 통계·검색·지도에서 구조화된 식별 국명을 우선한다. 과거 원문은 공식 국명 정확 일치만 분리한다.
+export function speciesNamesOf(row) {
+  let identified = [];
+  try { identified = typeof row?.identified_species === 'string' ? JSON.parse(row.identified_species) : []; } catch {}
+  const names = Array.isArray(identified) ? identified.filter(n => typeof n === 'string' && n) : [];
+  return names.length ? [...new Set(names)] : legacySpeciesItems(row?.species).map(i => i.name);
+}
+// 국명 미확정은 읽기 전용 검토 표시로만 분류한다. 승인 상태·원문·정본에는 쓰지 않는다.
+export function unconfirmedSpeciesOf(row) {
+  return speciesNamesOf(row).filter(name => !officialBirdNames.has(name));
+}
+export function identifiedSpeciesSql(env, withCounts = false) {
+  const canonical = env?.REPORTS_WRITE_MODE === 'CANONICAL_DUAL_WRITE';
+  const names = canonical
+    ? "(SELECT json_group_array(species_identified) FROM (SELECT species_identified FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS identified_species"
+    : 'NULL AS identified_species';
+  if (!withCounts) return names;
+  const counts = canonical
+    ? "(SELECT json_group_array(json_object('name',species_identified,'count',count_value,'state',interpretation)) FROM (SELECT species_identified,count_value,interpretation FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS public_sightings"
+    : 'NULL AS public_sightings';
+  return names + ',' + counts;
+}
+
+// 대기 제보는 서버가 자동 공개(public_unverified)라고 계산한 경우만 그렇게 알리고, 나머지는 withheld 다.
+// 보류 사유는 코드만 담는다. 좌표·종·메모는 어떤 경우에도 넣지 않는다.
 export function receiptPayload(body) {
-  return {
+  const out = {
     ok: body.ok,
     id: body.id,
     status: body.status,
-    publicVisibility: body.status === 'pending' ? 'withheld' : body.publicVisibility,
+    publicVisibility: body.status === 'pending' ? (body.publicVisibility === 'public_unverified' ? 'public_unverified' : 'withheld') : body.publicVisibility,
   };
+  const reasons = Array.isArray(body.holdReasons) ? body.holdReasons.filter(r => typeof r === 'string' && /^[a-z_]{1,32}$/.test(r)) : [];
+  if (body.status === 'pending' && out.publicVisibility === 'withheld' && reasons.length) out.holdReasons = reasons;
+  return out;
 }
 
 /* ── 위치 가리기 ────────────────────────────────────────────────────── */
@@ -604,8 +701,10 @@ export function historyEntry(row) {
   const entry = {
     id: row.id,
     date: row.observed_on,
-    species: splitSpecies(row.species),
+    species: speciesNamesOf(row),
   };
+  const sightings = publicSightingsOf(row);
+  if (sightings.length) entry.sightings = sightings;
   if (Number(row.name_public) === 1 && row.reporter) entry.reporter = row.reporter;
   return entry;
 }
@@ -631,9 +730,9 @@ export function publicPayload(rows) {
     .map((row) => {
       const attached = byKey.get(row.id) || [];
       // 연결된 제보의 종을 뒤에 더한다. 기존 종은 지우지 않는다.
-      const species = splitSpecies(row.species);
+      const species = speciesNamesOf(row);
       for (const extra of attached) {
-        for (const name of splitSpecies(extra.species)) {
+        for (const name of speciesNamesOf(extra)) {
           if (!species.includes(name)) species.push(name);
         }
       }

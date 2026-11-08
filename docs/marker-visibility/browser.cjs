@@ -46,12 +46,12 @@ function fifteenReports() {
     if (u.hostname.endsWith('workers.dev') && u.pathname === '/reports/search') {
       const offset = Number(u.searchParams.get('offset') || 0), reports = offset ? [] : Array.from({ length: 15 }, (_, i) => Object.assign(row(i), { locationHidden: false, target: { kind: 'spot', spotId: 'synthetic-' + i } }));
       return Promise.resolve(new Response(JSON.stringify({ ok: true, serverTime: new Date().toISOString(), offset, limit: 20, total: 15, hasMore: false, reports,
-        publication: { contract: 'publication-v1', epoch: __mock.epoch, revision: __mock.revision, projection: 'nonbreeding-location-v2-pending-withheld-v1', nonce: u.searchParams.get('nonce') } }),
+        publication: { contract: 'publication-v1', epoch: __mock.epoch, revision: __mock.revision, projection: 'nonbreeding-location-v2-autopublic-v1', nonce: u.searchParams.get('nonce') } }),
         { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } }));
     }
     if (u.hostname.endsWith('workers.dev') && u.pathname === '/reports/reporter-stats') {
       return Promise.resolve(new Response(JSON.stringify({ speciesCount: 2, reportCount: 4, serverTime: new Date().toISOString(),
-        publication: { contract: 'publication-v1', epoch: __mock.epoch, revision: __mock.revision, projection: 'nonbreeding-location-v2-pending-withheld-v1', nonce: u.searchParams.get('nonce') } }),
+        publication: { contract: 'publication-v1', epoch: __mock.epoch, revision: __mock.revision, projection: 'nonbreeding-location-v2-autopublic-v1', nonce: u.searchParams.get('nonce') } }),
         { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } }));
     }
     return fixtureFetch(input, options);

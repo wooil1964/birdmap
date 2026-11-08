@@ -17,7 +17,7 @@ class Element{
   getBoundingClientRect(){return{x:0,y:0,top:0,left:0,bottom:1000,right:1440,width:1440,height:1000};}
   getClientRects(){return this.hidden?[]:[this.getBoundingClientRect()];}
 }
-const anchor=revision=>({contract:'publication-v1',epoch:'11111111111141118111111111111111',revision,projection:'nonbreeding-location-v2-pending-withheld-v1'});
+const anchor=revision=>({contract:'publication-v1',epoch:'11111111111141118111111111111111',revision,projection:'nonbreeding-location-v2-autopublic-v1'});
 const row=(id,extra={})=>({id,date:'2026-10-26',species:['직박구리'],reporter:'새 공개 이름',locationHidden:false,target:{kind:'spot',spotId:'root'},...extra});
 const page=(reports,{offset=0,total=reports.length,publication=anchor('1')}={})=>({ok:true,offset,limit:20,total,hasMore:offset+reports.length<total,reports,publication});
 function environment(){

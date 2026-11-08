@@ -5,6 +5,7 @@ import { strictWriterDb } from './writer-fence.js';
 
 import {
   WorkerError,
+  unconfirmedSpeciesOf,
   errorResponse,
   jsonResponse,
   parseAdminEmails,
@@ -17,6 +18,8 @@ import { adminUsage } from "./admin-usage.js";
 import { assertWriteGate, internalCapability, capability, writeMode } from "./canonical/control.js";
 import { adminIdentity, replayAdmin, persistAdmin } from "./canonical/persistence.js";
 import { applicationDb, first } from "./canonical/data.js";
+import { locationEvidenceColumns } from "./location-evidence.js";
+import { AUTO_DECISION_SQL, holdReasonsOf, unverifiedState } from "./autopublic.js";
 
 // link  : 이 제보의 이력을 다른 지점에 붙인다(종 목록은 읽을 때 합치므로 원본을 고쳐 쓰지 않는다).
 // unlink: 연결을 끊어 다시 자기 점을 갖게 한다.
@@ -62,7 +65,10 @@ async function listReports(request, env, url) {
   if(writeMode(env)!=='NORMAL') {
     const exists=await first(db,"SELECT name FROM sqlite_schema WHERE type='table' AND name='checklists'");
     // hide_requested: 제보자가 접수 때 위치 가리기를 체크했는지(변경되지 않는 원자료 기준). 관리자 지정과 구분해 보여 준다.
-    selection=exists?"reports.*,(SELECT revision FROM checklists WHERE checklist_id=reports.id) AS revision,(SELECT json_extract(payload_json,'$.input.hideLocation') FROM raw_submissions WHERE raw_id='raw:'||reports.id) AS hide_requested":'reports.*,NULL AS revision';
+    selection=exists?"reports.*,(SELECT revision FROM checklists WHERE checklist_id=reports.id) AS revision,(SELECT json_extract(payload_json,'$.input.hideLocation') FROM raw_submissions WHERE raw_id='raw:'||reports.id) AS hide_requested,"
+      +locationEvidenceColumns(env)+','+AUTO_DECISION_SQL+",(SELECT reason_code FROM reviews WHERE checklist_id=reports.id ORDER BY sequence DESC LIMIT 1) AS last_reason"
+      // 종별 관찰(신규 구조화 자료만): 식별 국명·개체수·해석 상태.
+      +",(SELECT json_group_array(json_object('name',species_identified,'count',count_value,'state',interpretation)) FROM (SELECT species_identified,count_value,interpretation FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS sightings_json":'reports.*,NULL AS revision';
   }
   const status = url.searchParams.get("status") || "pending";
   const species = (url.searchParams.get("species") || "").trim();
@@ -78,7 +84,7 @@ async function listReports(request, env, url) {
       )
       .bind(species)
       .all();
-    return jsonResponse(request, env, { ok: true, reports: results || [] });
+    return jsonResponse(request, env, { ok: true, reports: withDisplay(results) });
   }
 
   // 지점별 이력: 그 지점에 붙은 제보와 지점 자신을 함께 본다.
@@ -90,7 +96,7 @@ async function listReports(request, env, url) {
       )
       .bind(spotKey)
       .all();
-    return jsonResponse(request, env, { ok: true, reports: results || [] });
+    return jsonResponse(request, env, { ok: true, reports: withDisplay(results) });
   }
   const statement =
     status === "all"
@@ -103,9 +109,33 @@ async function listReports(request, env, url) {
           .prepare(
             `SELECT ${selection} FROM reports WHERE status = ?1 ORDER BY received_at DESC`,
           )
-          .bind(status);
+          .bind(status==='unverified'?'pending':status);
   const { results } = await statement.all();
-  return jsonResponse(request, env, { ok: true, reports: results || [] });
+  let reports=withDisplay(results);
+  // 미검증 탭: 오래된 것부터(사후 확인이 밀리지 않게). 검토 대기 탭에서는 미검증을 뺀다.
+  if(status==='unverified')reports=reports.filter(r=>r.display_state==='unverified').reverse();
+  else if(status==='pending')reports=reports.filter(r=>r.display_state!=='unverified');
+  return jsonResponse(request, env, { ok: true, reports });
+}
+
+// 화면 표시 상태. DB 상태(pending/approved/rejected)와 섞지 않고 계산만 한다.
+function displayState(row,now) {
+  if(row.status!=='pending')return row.status;
+  const auto=unverifiedState(row,now);
+  if(auto==='public')return 'unverified';
+  if(auto==='stopped')return 'auto_stopped';
+  if(auto==='withdrawn'||row.last_reason==='unpublish')return 'withdrawn';
+  return 'review';
+}
+function withDisplay(rows) {
+  const now=new Date();
+  return (rows||[]).map(row=>{
+    let list=[];try{list=JSON.parse(row.sightings_json||'[]');}catch{}
+    const names=Array.isArray(list)?list.map(s=>s.name).filter(n=>typeof n==='string'&&n):[];
+    const unconfirmed=unconfirmedSpeciesOf({...row,identified_species:JSON.stringify(names)});
+    return {...row,display_state:displayState(row,now),hold_reasons:holdReasonsOf(row.auto_decision),
+      ...(unconfirmed.length?{species_review_required:true,unconfirmed_species:unconfirmed}:{})};
+  });
 }
 async function applyAction(request,env,id,admin,dual) {
   const binding=database(env),db=dual?applicationDb(binding):binding;

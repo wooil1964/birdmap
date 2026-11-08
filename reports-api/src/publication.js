@@ -1,13 +1,14 @@
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,pendingPayload,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,splitSpecies,speciesNamesOf,identifiedSpeciesSql,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {unverifiedPayload,unverifiedReadsEnabled,unverifiedStatement} from './autopublic.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
 import {reportSearchPlan} from './report-search.js';
 import {locationEvidenceColumns} from './location-evidence.js';
 import {siteHistoryStatement,boundedSiteHistoryPayload} from './site-history.js';
 export const PUBLICATION_CONTRACT='publication-v1';
-export const PUBLICATION_PROJECTION='nonbreeding-location-v2-pending-withheld-v1';
+export const PUBLICATION_PROJECTION='nonbreeding-location-v2-autopublic-v1';
 export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
 const MAX_REV=9223372036854775807n;
 export function publicationRevision(value,minimum=0n) {
@@ -96,7 +97,7 @@ function reporterStatsRequest(url) {
 }
 export function reporterLifetimeCounts(rows) {
  const species=new Set();
- for(const row of rows)for(const name of splitSpecies(row.species))species.add(name);
+ for(const row of rows)for(const name of speciesNamesOf(row))species.add(name);
  return {speciesCount:species.size,reportCount:rows.length};
 }
 const REPORTER_ELIGIBLE="status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND reporter=?1 COLLATE BINARY";
@@ -106,10 +107,10 @@ function reporterWitness(input) {
  const params=input.source==='history'?[input.reporter,input.reportId]:input.source==='monthly'?[input.reporter,input.start,input.end]:[input.reporter];
  return {where:`${REPORTER_ELIGIBLE} AND EXISTS(SELECT 1 FROM reports WHERE ${witness})`,params};
 }
-function reporterStatsPlan(db,url) {
+function reporterStatsPlan(db,url,env={}) {
  const {where,params}=reporterWitness(reporterStatsRequest(url));
  // No coordinates, names, IDs or notes are selected or returned by the statistic.
- const statement=db.prepare(`SELECT species FROM reports WHERE ${where}`);
+ const statement=db.prepare(`SELECT species,${identifiedSpeciesSql(env)} FROM reports WHERE ${where}`);
  return {statements:[statement.bind(...params)],build:sets=>{
   const rows=sets[0].results||[];
   if(!rows.length)fail('REPORTER_STATS_UNAVAILABLE','공개 통계를 확인할 수 없습니다.',404);
@@ -122,16 +123,16 @@ function reporterStatsPlan(db,url) {
 export function reporterSpeciesNames(rows) {
  const names=new Set();let restricted=false;
  for(const row of rows){
-  const species=splitSpecies(row.species);
+  const species=speciesNamesOf(row);
   if(Number(row.location_hidden)===1||isSensitiveReport({note:row.note,speciesText:row.species,species})){restricted=true;continue;}
   for(const name of species)names.add(name);
  }
  // Code-point order is 가나다 order for Hangul syllables and needs no locale data.
  return {species:[...names].sort((a,b)=>a<b?-1:a>b?1:0),restricted};
 }
-function reporterSpeciesPlan(db,url) {
+function reporterSpeciesPlan(db,url,env={}) {
  const {where,params}=reporterWitness(reporterStatsRequest(url));
- const statement=db.prepare(`SELECT species,note,${LOCATION_HIDDEN_SQL} AS location_hidden FROM reports WHERE ${where}`);
+ const statement=db.prepare(`SELECT species,note,${LOCATION_HIDDEN_SQL} AS location_hidden,${identifiedSpeciesSql(env)} FROM reports WHERE ${where}`);
  return {statements:[statement.bind(...params)],build:sets=>{
   const rows=sets[0].results||[];
   if(!rows.length)fail('REPORTER_STATS_UNAVAILABLE','공개 통계를 확인할 수 없습니다.',404);
@@ -157,18 +158,18 @@ function contributorsAllPlan(db,url) {
 function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  const evidence=locationEvidenceColumns(env);
  const path=url.pathname;
- if(path==='/reports/search')return reportSearchPlan(db,url,evidence);
+ if(path==='/reports/search')return reportSearchPlan(db,url,evidence,env,now);
  const draft=/^\/field-updates\/([0-9a-f-]{36})\/report-draft$/.exec(path);
  if(draft)return fieldDraftPlan(db,draft[1],fieldInput.owner,now);
- if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url);
- if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url);
+ if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url,env);
+ if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url,env);
  if(path==='/contributors/all')return contributorsAllPlan(db,url);
- if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
-  if(path==='/reports/pending')return {statements:[],build:()=>({ok:true,generatedAt:now.toISOString(),spots:pendingPayload()})};
+ if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence},${identifiedSpeciesSql(env, true)} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
+  if(path==='/reports/pending')return {statements:unverifiedReadsEnabled(env)?[unverifiedStatement(db,evidence)]:[],build:s=>({ok:true,generatedAt:now.toISOString(),spots:unverifiedPayload(s[0]?.results||[],env,now)})};
  if(path==='/reports/recent-sites') {
   const days=Math.min(30,Math.max(1,Math.floor(Number(url.searchParams.get('days'))||14))),today=kstDateString(now),since=kstDateString(new Date(now.getTime()-days*86400000));
-  return {statements:[db.prepare(`SELECT site_id,species,observed_on,note FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{
-   const bySite=new Map();for(const row of s[0].results||[]){const species=splitSpecies(row.species);if(isSensitiveReport({note:row.note,speciesText:row.species,species}))continue;const siteId=String(row.site_id);if(!bySite.has(siteId))bySite.set(siteId,{siteId,latestDate:row.observed_on,species:[]});for(const name of species)if(!bySite.get(siteId).species.includes(name))bySite.get(siteId).species.push(name);}
+  return {statements:[db.prepare(`SELECT site_id,species,observed_on,note,${identifiedSpeciesSql(env)} FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{
+   const bySite=new Map();for(const row of s[0].results||[]){const species=speciesNamesOf(row);if(isSensitiveReport({note:row.note,speciesText:row.species,species}))continue;const siteId=String(row.site_id);if(!bySite.has(siteId))bySite.set(siteId,{siteId,latestDate:row.observed_on,species:[]});for(const name of species)if(!bySite.get(siteId).species.includes(name))bySite.get(siteId).species.push(name);}
    return {ok:true,days,since,today,sites:[...bySite.values()]};
   }};
  }
