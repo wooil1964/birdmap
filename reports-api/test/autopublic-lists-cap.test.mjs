@@ -427,12 +427,50 @@ test('위치 정책 v2: 19종은 국명·학명·영명 어느 쪽으로 적어�
 
 import { readFileSync } from 'node:fs';
 
+test('한국 목록의 별개 종은 국제목록의 합병 때문에 같은 종으로 판정되지 않는다(598종 key 모두 다르고 별칭도 겹치지 않음)', () => {
+  const keys = new Set(), owner = new Map();
+  for (const [ko] of BIRD_NAME_TABLE) {
+    const r = identifyBird(ko); assert.equal(r.key, ko); keys.add(r.key);
+    for (const a of r.aliases) { assert.ok(!owner.has(a) || owner.get(a) === ko, a + ' 가 ' + owner.get(a) + ' 와 ' + ko + ' 에 모두 대응'); owner.set(a, ko); }
+  }
+  assert.equal(keys.size, BIRD_NAME_TABLE.length);
+  // AviList v2026 이 합친 종: 한국 목록의 구분을 유지한다.
+  const pairs = [['미국쇠오리', 'Anas carolinensis', 'Green-winged Teal', '쇠오리', 'Anas crecca'], ['쇠칼새', 'Apus nipalensis', 'House Swift', null, 'Apus affinis'], ['검은딱새', 'Saxicola stejnegeri', null, null, 'Saxicola maurus']];
+  for (const [ko, sci, eng, other, otherSci] of pairs) {
+    assert.equal(identifyBird(sci).key, ko); if (eng) assert.equal(identifyBird(eng).key, ko);
+    assert.notEqual(identifyBird(otherSci).key, ko, otherSci + ' 는 ' + ko + ' 가 아니다');
+    if (other) assert.notEqual(identifyBird(otherSci).key, identifyBird(sci).key);
+    assert.ok(!identifyBird(ko).aliases.includes(otherSci.toLowerCase()), ko + ' 별칭에 ' + otherSci + ' 가 섞이면 안 된다');
+  }
+});
+
+test('모호한 이름(한 이름이 서로 다른 여러 종에 대응)은 임의로 합치지 않는다', async () => {
+  const report = JSON.parse(readFileSync(new URL('../../docs/report-autopublish-20261108/ambiguous-taxa.json', import.meta.url), 'utf8'));
+  const names = [...Object.keys(report.synonym), ...Object.keys(report.english), ...Object.keys(report.avilist_english)];
+  assert.ok(names.length >= 2, '탐지된 모호 사례가 기록되어 있어야 한다');
+  for (const n of names) {
+    const r = identifyBird(n);
+    const targets = report.synonym[n] || report.english[n] || report.avilist_english[n];
+    assert.ok(!r || !targets.includes(r.key), n + ' 은 후보 중 하나로 임의 병합되면 안 된다 (' + (r && r.key) + ')');
+  }
+  assert.equal(identifyBird('tangara cyanoptera'), null);
+  assert.equal(identifyBird('Rufous-fronted Greenlet'), null);
+  // 그래도 후보 종 자체는 각각 식별되고 서로 다른 key 이다.
+  assert.notEqual(identifyBird('Stilpnia cyanoptera').key, identifyBird('Thraupis cyanoptera')?.key ?? 'x');
+  // 생성 자료에 임의 병합이 남아 있지 않은지: 동의어 쪽 이름이 두 번 나오면 안 된다.
+  const syn = INTL.AVI_SYNONYMS.split(';').map(x => x.split('>')[0]);
+  assert.equal(new Set(syn).size, syn.length);
+  const eng = INTL.ENGLISH_ALIASES.split(NL).map(x => x.split('>')[0]);
+  assert.equal(new Set(eng).size, eng.length);
+});
+
 test('생성 자료의 출처·버전 표시와 번들에 들어가는 자료 크기', () => {
   const read = f => readFileSync(new URL('../' + f, import.meta.url), 'utf8');
   const head = read('src/intl-taxa.js').split(NL).slice(0, 3).join(NL);
-  assert.ok(head.includes('AviList v2026') && head.includes('10.2173/avilist.v2026') && head.includes('IOC World Bird List v15.2') && head.includes('CC BY 4.0'));
+  assert.ok(head.includes('AviList Core Team. 2026. AviList: The Global Avian Checklist, v2026') && head.includes('10.2173/avilist.v2026') && head.includes('IOC World Bird List v15.2') && head.includes('CC BY 4.0'));
   assert.ok(INTL.INTL_VERSION.includes('AviList v2026'));
-  assert.ok(read('DATA_SOURCES.md').includes('AviList v2026'));
+  const src = read('DATA_SOURCES.md');
+  assert.ok(src.includes('AviList v2026') && src.includes('CC BY 4.0') && src.includes('Recommended citation') && src.includes('10.2173/avilist.v2026'));
   // 분류자료는 한 파일에만 둔다(IOC·AviList 중복 저장 금지). 합계 1 MB 미만을 감시한다.
   const size = Buffer.byteLength(read('src/intl-taxa.js'));
   assert.ok(size < 1_000_000, String(size));

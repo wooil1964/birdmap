@@ -17,10 +17,11 @@ import * as INTL from './intl-taxa.js'; // 번들에는 한 번만 들어간다
 let intlData = null;
 function intl() {
   if (intlData) return intlData;
+  const ambiguousEnglish = new Set(INTL.AMBIGUOUS_ENGLISH.split(';')); // 영명이 둘 이상의 종에 쓰이면 영명으로 연결하지 않는다
   const species = new Map(), english = new Map(), synonyms = new Map(), synonymsOf = new Map(), legacy = new Set(INTL.LEGACY_SPECIES.split(';'));
   for (const line of INTL.AVI_SPECIES.split(NL)) {
     const [genus, ...rest] = line.split(TAB), g = genus.toLowerCase();
-    for (const item of rest) { const [epithet, eng] = item.split('~'), bin = g + ' ' + epithet; species.set(bin, eng); if (eng) english.set(eng.toLowerCase(), bin); }
+    for (const item of rest) { const [epithet, eng] = item.split('~'), bin = g + ' ' + epithet; species.set(bin, eng); if (eng && !ambiguousEnglish.has(eng.toLowerCase())) english.set(eng.toLowerCase(), bin); }
   }
   // 한국 목록이 별개 종으로 구분하는 이름(예: 미국쇠오리 Anas carolinensis)은 국제목록이 합쳤어도 합치지 않는다.
   for (const pair of INTL.AVI_SYNONYMS.split(';')) { const [syn, canon] = pair.split('>'); if (byScientific.has(syn)) continue; synonyms.set(syn, canon); synonymsOf.set(canon, [...(synonymsOf.get(canon) || []), syn]); }

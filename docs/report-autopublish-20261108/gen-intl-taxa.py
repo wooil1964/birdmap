@@ -1,6 +1,6 @@
 # 국제 분류목록 자료 생성: AviList v2026(기준) + IOC 15.2(+ 다른 목록 대응표)의 학명·영명을 AviList v2026 종에 연결해
 # reports-api/src/intl-taxa.js 하나로 만든다(자료 중복 없음). 표준 라이브러리만 사용.
-# 사용: python -I gen-intl-taxa.py <AviList-v2026 extended.xlsx> <master_ioc_list_v15.2.xlsx> <IOC_15.2_vs_other_lists.xlsx> <out.js>
+# 사용: python -I gen-intl-taxa.py <AviList-v2026 extended.xlsx> <master_ioc_list_v15.2.xlsx> <IOC_15.2_vs_other_lists.xlsx> <out.js> [ambiguous.json]
 import sys, json, zipfile, re, xml.etree.ElementTree as ET
 M = '{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
 def sheet(path, n=1):
@@ -31,7 +31,9 @@ ioc, genus = {}, None
 for d in sheet(sys.argv[2]):
     if d.get('F') and not d.get('G'): genus = d['F'].strip()
     elif d.get('G') and genus and not d.get('I'): ioc[(genus + ' ' + d['G'].strip()).lower()] = (genus + ' ' + d['G'].strip(), norm(d.get('K', '')))
-syn, legacy, eng = {}, {}, {}  # 동의어→AviList 학명(소문자) / AviList에 없는 인정 학명→출처 / 영명 별칭→AviList 학명
+syn_c, legacy, eng_c = {}, {}, {}  # 동의어→{AviList 학명 후보} / AviList에 없는 인정 학명→출처 / 영명 별칭→{AviList 학명 후보}
+syn = {}  # 모호하지 않은 것만 아래에서 채운다
+add_syn = lambda k, c: syn_c.setdefault(k, set()).add(c)
 def canon_of_ioc(b):
     if b in avi: return b
     e = ioc.get(b, ('', ''))[1].lower()
@@ -39,7 +41,7 @@ def canon_of_ioc(b):
 for b, (name, e) in ioc.items():
     if b in avi: continue
     c = canon_of_ioc(b)
-    if c: syn[b] = c
+    if c: add_syn(b, c)
     else: legacy[b] = 'I'
 # 3. 다른 목록 대응표(AviList v2025·Clements v2025·HBW/BirdLife·H&M·Peters)
 SRC = {'E': 'A', 'G': 'C', 'H': 'B', 'J': 'M', 'L': 'P'}
@@ -51,22 +53,34 @@ for r in sheet(sys.argv[3])[1:]:
     for col, n in names.items():
         k = n.lower()
         if k in avi or k in ioc or k == base: continue  # 다른 분류목록의 이름이 AviList·IOC에서는 별개의 종이면 합치지 않는다
-        if c: syn.setdefault(k, c)
-        elif base and base in legacy: syn.setdefault(k, base)
-        elif k not in syn and k not in legacy and k not in ioc: legacy[k] = SRC[col]
-syn = {k: v for k, v in syn.items() if k not in avi and k != v}
+        if c: add_syn(k, c)
+        elif base and base in legacy: add_syn(k, base)
+        elif k not in syn_c and k not in legacy and k not in ioc: legacy[k] = SRC[col]
+# 한 이름이 서로 다른 여러 종에 대응하면(분할 등) 임의로 합치지 않고 제외한다. 목록은 ambiguous 에 남겨 보고한다.
+ambiguous = {'synonym': {}, 'english': {}, 'avilist_english': {}}
+for k, v in syn_c.items():
+    if len(v) > 1: ambiguous['synonym'][k] = sorted(v)
+    elif k not in avi and k not in v: syn[k] = next(iter(v))
 legacy = {k: v for k, v in legacy.items() if k not in avi and k not in syn}
 # 4. 영명 별칭(AviList 영명과 다른 IOC·Clements·BirdLife 영명)
+by_eng = {}
+for b, (_, e, _) in avi.items():
+    if e: by_eng.setdefault(e.lower(), []).append(b)
+dup_avi_eng = {e for e, v in by_eng.items() if len(v) > 1}  # AviList 영명 자체가 둘 이상의 종에 쓰이면 영명으로는 연결하지 않는다
+for e in dup_avi_eng: ambiguous['avilist_english'][e] = sorted(by_eng[e])
+eng = {}
 def add_eng(e, b):
     k = norm(e).lower()
-    if not k or k in avi_eng or (k in eng and eng[k] != b): return
-    eng[k] = b
+    if not k or k in avi_eng or k in dup_avi_eng: return
+    eng_c.setdefault(k, set()).add(b)
 for b, (_, e, others) in avi.items():
     for x in others: add_eng(x, b)
 for b, (_, e) in ioc.items():
     c = b if b in avi else syn.get(b)
     if c and e: add_eng(e, c)
-amb = {k for k in eng if k in avi_eng}
+for k, v in eng_c.items():
+    if len(v) > 1: ambiguous['english'][k] = sorted(v)
+    else: eng[k] = next(iter(v))
 # 5. 출력
 T, N = '\t', chr(10)
 genera = {}
@@ -75,7 +89,8 @@ for b, (name, e, _) in sorted(avi.items()):
 for line in [e for v in genera.values() for e in v]: assert T not in line and N not in line
 cites = [x for x in sheet(sys.argv[1], 3) if x][:6]
 out = ['// 자동 생성: gen-intl-taxa.py. 수정하지 말고 생성기로 다시 만든다. 출처·라이선스는 reports-api/DATA_SOURCES.md.',
-       '// 기준: AviList v2026 (2026-10-20, doi:10.2173/avilist.v2026) 현존 종 %d개. 연결: IOC World Bird List v15.2 (doi:10.14344/IOC.ML.15.2, CC BY 4.0)와 그 다른 목록 대응표.' % len(avi),
+       '// 기준: AviList Core Team. 2026. AviList: The Global Avian Checklist, v2026. https://doi.org/10.2173/avilist.v2026 (CC BY 4.0, (c) 2026 AviList Core Team) 현존 종 %d개.' % len(avi),
+       '// 연결: Gill, Donsker & Rasmussen (Eds). 2026. IOC World Bird List v15.2, doi:10.14344/IOC.ML.15.2 (CC BY 4.0)와 그 다른 목록 대응표. 변형·가공(종명 연결·압축)을 했다.',
        "export const INTL_VERSION = 'AviList v2026 + IOC 15.2';",
        '// 속<탭>종소명~영명<탭>… (AviList v2026 종, 줄바꿈 구분)',
        'export const AVI_SPECIES = ' + json.dumps(N.join(g + T + T.join(v) for g, v in genera.items()), ensure_ascii=False) + ';',
@@ -84,6 +99,10 @@ out = ['// 자동 생성: gen-intl-taxa.py. 수정하지 말고 생성기로 다
        '// AviList v2026에는 없지만 IOC 15.2 또는 다른 목록이 인정하는 종(분할 전 이름 등)',
        'export const LEGACY_SPECIES = ' + json.dumps(';'.join(sorted(legacy)), ensure_ascii=False) + ';',
        '// 영명 별칭>AviList 학명 (줄바꿈 구분)',
-       'export const ENGLISH_ALIASES = ' + json.dumps(N.join(k + '>' + v for k, v in sorted(eng.items())), ensure_ascii=False) + ';']
+       'export const ENGLISH_ALIASES = ' + json.dumps(N.join(k + '>' + v for k, v in sorted(eng.items())), ensure_ascii=False) + ';',
+       '// 영명이 둘 이상의 AviList 종에 쓰여 영명으로는 연결하지 않는 이름(소문자)',
+       'export const AMBIGUOUS_ENGLISH = ' + json.dumps(';'.join(sorted(dup_avi_eng)), ensure_ascii=False) + ';']
+if len(sys.argv) > 5: json.dump(ambiguous, open(sys.argv[5], 'w', encoding='utf-8', newline=None), ensure_ascii=False, indent=1, sort_keys=True)
+print({k: len(v) for k, v in ambiguous.items()})
 open(sys.argv[4], 'w', encoding='utf-8', newline='\n').write(N.join(out) + N)
 print(len(avi), len(ioc), len(syn), len(legacy), len(eng))
