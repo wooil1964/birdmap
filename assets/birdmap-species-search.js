@@ -294,8 +294,13 @@
     if (!item || target.closest('.reporterStatsLink')) return;
     event.preventDefault(); event.stopImmediatePropagation();
     var items = Array.from(document.querySelectorAll('#recentReportsList .recentReportItem'));
-    var entries = (global.reportSearchIndex || []).filter(function (entry) { return entry.date && entry.date >= global.kstDateTextBefore(global.RECENT_REPORT_DAYS); }).slice(0, global.RECENT_REPORT_LIMIT);
-    var entry = entries[items.indexOf(item)], id = entry && global.reporterStatsWitnesses.get(entry);
+    // 최근 목록은 승인 제보와 자동 공개 제보를 합쳐 그린다. 같은 합친 순서의 항목으로 찾는다.
+    var source = typeof global.recentReportEntries === 'function' ? global.recentReportEntries() : (global.reportSearchIndex || []);
+    var entries = source.filter(function (entry) { return entry.date && entry.date >= global.kstDateTextBefore(global.RECENT_REPORT_DAYS); }).slice(0, global.RECENT_REPORT_LIMIT);
+    var entry = entries[items.indexOf(item)];
+    // 자동 공개 제보는 승인 제보 번호가 없으므로 기존 지도 이동(마커로 이동 + 팝업)으로 연다.
+    if (entry && entry.kind === 'pending') { global.openReportEntry(entry); return; }
+    var id = entry && global.reporterStatsWitnesses.get(entry);
     if (validId(id)) open(id, (entry.species || [])[0]);
   }, true);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install); else install();
