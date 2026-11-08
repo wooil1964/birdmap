@@ -2,6 +2,7 @@
 // 원칙: 허용 목록에 정확히 있는 종만 자동 공개한다. 모르는 것은 전부 보류(fail-closed).
 // 상태값은 새로 만들지 않는다: pending + pending_public=1 + reviews(submitted, system:auto-public, auto_public:<정책>)
 // 세 가지를 모두 갖추고, 읽는 시점에 아래 판정을 다시 통과해야만 공개된다.
+import { LEGAL_PROTECTED_NAMES, MAP_LOCATION_SENSITIVE } from './protected-birds.js';
 import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, publicSightingsOf, identifiedSpeciesSql } from './shared.js';
 
 export const AUTO_PUBLIC_POLICY = 'auto-public-v1';
@@ -15,35 +16,32 @@ export const IP_DAILY_MAX = 5;
 export const GLOBAL_DAILY_MAX_DEFAULT = 50;
 const DEFAULT_COUNT_MAX = 300;
 
-// 시범 허용 일반종 18종(관리자 승인 2026-11-08 "권장안으로 착수"). 이름은 한국 조류 목록 국명과 정확히 일치해야 한다.
+// 시범 허용 후보 15종(2026-11-08 공식 자료 대조: docs/reviews/report-autopublish-design/2026-11-08-claude-pilot18-review.md).
+// 허용 "후보"일 뿐 확정 정책이 아니다. 자동 공개 스위치는 별도 승인 전까지 OFF. 이름은 2025 한국조류목록 국명과 정확히 일치해야 한다.
+// 시범 18종 중 제외: 집비둘기(2025 목록에 없음, 같은 속 낭비둘기=법정 II급), 왜가리(지정 번식지), 노랑턱멧새(같은 속 법정 II급 3종).
 export const COMMON_SPECIES = Object.freeze({
-  '참새': {}, '까치': {}, '직박구리': {}, '멧비둘기': {}, '집비둘기': {}, '박새': {},
-  '붉은머리오목눈이': {}, '물까치': {}, '큰부리까마귀': {}, '노랑턱멧새': {}, '딱새': {}, '동박새': {},
+  '참새': {}, '까치': {}, '직박구리': {}, '멧비둘기': {}, '박새': {},
+  '붉은머리오목눈이': {}, '물까치': {}, '큰부리까마귀': {}, '딱새': {}, '동박새': {},
   '청둥오리': { countMax: 3000 }, '흰뺨검둥오리': { countMax: 3000 }, '쇠오리': { countMax: 3000 },
-  '왜가리': {}, '민물가마우지': {}, '쇠딱다구리': {},
+  '민물가마우지': {}, '쇠딱다구리': {},
 });
 
-// 법정 보호종(멸종위기 I·II급, 천연기념물 조류) + 위치 정책 v2의 19종. 자동 공개 관문 전용이며 v2 판정은 바꾸지 않는다.
-// ponytail: 잠정 목록이다. 공식 고시와 대조가 끝나지 않았다. 안전성은 허용 목록이 보장하고 이 목록은 사유 표시·겹침 검사용이다.
-export const PROTECTED_SPECIES = new Set([
-  '저어새', '노랑부리저어새', '노랑부리백로', '황새', '먹황새', '따오기', '두루미', '재두루미', '흑두루미', '검은목두루미',
-  '검독수리', '참수리', '흰꼬리수리', '독수리', '흰죽지수리', '항라머리검독수리', '매', '참매', '새매', '붉은배새매', '조롱이',
-  '솔개', '벌매', '잿빛개구리매', '알락개구리매', '개구리매', '큰말똥가리', '털발말똥가리', '황조롱이',
-  '수리부엉이', '올빼미', '긴점박이올빼미', '소쩍새', '큰소쩍새', '솔부엉이', '쇠부엉이',
-  '팔색조', '뿔쇠오리', '넓적부리도요', '청다리도요사촌', '알락꼬리마도요', '붉은어깨도요', '검은머리물떼새', '흰목물떼새',
-  '고니', '큰고니', '혹고니', '개리', '큰기러기', '흑기러기', '흰이마기러기', '원앙', '호사비오리',
-  '크낙새', '까막딱다구리', '흑비둘기', '검은머리갈매기', '고대갈매기', '쇠검은머리쑥새', '큰덤불해오라기', '섬개개비', '긴꼬리딱새', '느시',
-]);
-
+// 법정 보호 조류(멸종위기 I·II급, 천연기념물 종 지정, 해양보호생물 + 법령명↔국명 연결). 출처와 목록은 protected-birds.js.
+// 자동 공개 관문 전용이며 위치 정책 v2 판정은 바꾸지 않는다. 안전성은 허용 목록이 보장하고, 이 목록은 사유 표시·겹침 검사용이다.
+export const PROTECTED_SPECIES = LEGAL_PROTECTED_NAMES;
+// 탐조지도 자체 위치 민감종(법정 보호종 아님). 사유 'location_sensitive' 로 따로 보류한다.
+export const MAP_SENSITIVE_SPECIES = new Set(Object.keys(MAP_LOCATION_SENSITIVE));
 // 희귀종·혼동종 검토 목록: 허용 종과 이름·외형이 헷갈리거나 동정 확인이 필요한 종.
+// 집비둘기·노랑턱멧새는 시범 18종 검토에서 보류(혼동·국명 근거)로 옮겼다.
 export const RARE_REVIEW_SPECIES = new Set([
+  '집비둘기', '노랑턱멧새',
   '말똥가리', '쇠백로', '중대백로', '넓적부리', '양비둘기', '염주비둘기', '떼까마귀', '갈까마귀', '까마귀',
   '검은머리쑥새', '청다리도요', '흰뺨오리', '가창오리', '아메리카홍머리오리', '쇠가마우지', '가마우지',
 ]);
 
 export const SYNONYMS = Object.freeze({}); // 관습명 → 국명. 지정한 것만 인정한다(부분·유사 일치 없음).
 
-export const HOLD_REASONS = ['auto_public_disabled', 'breeding', 'protected', 'rare_review', 'name_unconfirmed', 'species_parse', 'count_anomaly',
+export const HOLD_REASONS = ['auto_public_disabled', 'breeding', 'protected', 'location_sensitive', 'rare_review', 'name_unconfirmed', 'species_parse', 'count_anomaly',
   'stale_observation', 'possible_duplicate', 'rate_review', 'global_cap', 'note_review'];
 
 const QUANTITY = /^(.+?)\s*(\d+)\s*(?:마리|개체)?$/;
@@ -73,6 +71,7 @@ export function contentReasons(report) {
     if (UNCERTAIN.test(token)) { reasons.add('name_unconfirmed'); continue; }
     const item = parsed.items[i], name = item?.name || speciesName(token);
     if (PROTECTED_SPECIES.has(name)) reasons.add('protected');
+    if (MAP_SENSITIVE_SPECIES.has(name)) reasons.add('location_sensitive');
     if (RARE_REVIEW_SPECIES.has(name)) reasons.add('rare_review');
     const common = item?.name && Object.hasOwn(COMMON_SPECIES, name) ? COMMON_SPECIES[name] : null;
     if (!common) { reasons.add('name_unconfirmed'); continue; }
@@ -97,8 +96,27 @@ function meters(a, b) {
   return 2 * r * Math.asin(Math.sqrt(h));
 }
 
+// 하루 자동 공개 건수: 같은 날(KST) "자동 공개"로 판정되어 저장된 접수 판정 기록(reviews seq 1)을 센다.
+// 관리자가 뒤에 공개 중지·승인·반려해도 줄지 않는 누적값이다. 판정과 저장 batch 확인이 같은 정의를 쓴다.
+const AUTO_COUNT = `SELECT COUNT(*) FROM reviews AS rv WHERE rv.sequence=1 AND rv.decision='submitted' AND rv.actor_id='${AUTO_PUBLIC_ACTOR}' AND rv.reason_code='${AUTO_PUBLIC_REASON}' AND rv.created_at>=?`;
+const AUTO_COUNT_IP = `${AUTO_COUNT} AND EXISTS (SELECT 1 FROM reports AS r WHERE r.id=rv.checklist_id AND r.ip_hash=?)`;
+function dailyCap(env) {
+  const cap = Number(env?.REPORTS_AUTO_PUBLIC_DAILY_MAX);
+  return Number.isSafeInteger(cap) && cap >= 0 ? cap : GLOBAL_DAILY_MAX_DEFAULT;
+}
+// 저장 batch 안에서 확인할 조건(방금 넣은 판정 기록 포함 건수 <= 한도)과, 실패 뒤 "한도 때문인지" 확인할 조건.
+// 두 SQL 의 자리표시자 순서는 같다(values 를 그대로 쓴다).
+export function capGuard(env, ipHash, now = new Date()) {
+  const dayStart = kstDayStartIso(now), cap = dailyCap(env);
+  return {
+    condition: `(${AUTO_COUNT}) <= ? AND (${AUTO_COUNT_IP}) <= ?`,
+    values: [dayStart, cap, dayStart, ipHash, IP_DAILY_MAX],
+    reachedSql: `SELECT CASE WHEN (${AUTO_COUNT}) >= ? THEN 1 ELSE 0 END AS global_cap, CASE WHEN (${AUTO_COUNT_IP}) >= ? THEN 1 ELSE 0 END AS rate_review`,
+  };
+}
+
 // 접수 판정. 내용 판정 + 접수 시점에만 의미 있는 판정(관찰일, 중복, 상한).
-// ponytail: 상한은 판정 시점의 개수 조회라 동시 접수로 1~2건 넘을 수 있다. 문제가 되면 batch assertion으로 묶는다.
+// 상한은 여기서 한 번 보고, 동시 접수는 persistQuick 의 batch 조건(capGuard)으로 다시 막는다.
 export async function classifySubmission(db, env, report, ipHash, now = new Date()) {
   if (!autoPublicEnabled(env)) return { eligible: false, reasons: ['auto_public_disabled'] };
   const reasons = contentReasons(report);
@@ -107,10 +125,9 @@ export async function classifySubmission(db, env, report, ipHash, now = new Date
   const sameDay = (await db.prepare("SELECT species,lat,lon FROM reports WHERE observed_on=?1 AND status<>'rejected'").bind(report.observedOn).all()).results || [];
   if (sameDay.some(r => splitSpecies(r.species).some(t => names.has(speciesName(t))) && meters(r, report) <= DUPLICATE_METERS)) reasons.add('possible_duplicate');
   const dayStart = kstDayStartIso(now);
-  const counts = await db.prepare('SELECT SUM(CASE WHEN ip_hash=?1 THEN 1 ELSE 0 END) AS ip, COUNT(*) AS total FROM reports WHERE received_at>=?2 AND pending_public=1').bind(ipHash, dayStart).first();
+  const counts = await db.prepare(`SELECT (${AUTO_COUNT}) AS total, (${AUTO_COUNT_IP}) AS ip`).bind(dayStart, dayStart, ipHash).first();
   if (Number(counts?.ip || 0) >= IP_DAILY_MAX) reasons.add('rate_review');
-  const cap = Number(env.REPORTS_AUTO_PUBLIC_DAILY_MAX);
-  if (Number(counts?.total || 0) >= (Number.isSafeInteger(cap) && cap >= 0 ? cap : GLOBAL_DAILY_MAX_DEFAULT)) reasons.add('global_cap');
+  if (Number(counts?.total || 0) >= dailyCap(env)) reasons.add('global_cap');
   const ordered = HOLD_REASONS.filter(r => reasons.has(r));
   return { eligible: ordered.length === 0, reasons: ordered };
 }
