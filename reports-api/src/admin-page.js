@@ -264,20 +264,19 @@ function historyHtml(r){
   return '<div class="histBox"><h3>이 지점의 출현 이력 '+list.length+'건 (최근순)</h3><ul>'+items+'</ul></div>';
 }
 
+// 화면 표시만 바꾼다. 실제 상태값(pending/approved/rejected)은 그대로다. 승인 전에는 지도에 공개하지 않는다.
+var CARD_STATUS_LABEL={pending:'승인 대기 · 지도 비공개',approved:'승인 완료',rejected:'반려'};
 function cardHtml(r){
   var linkOptions=approved.filter(function(a){return a.id!==r.id&&!a.spot_key;})
     .map(function(a){return '<option value="'+esc(a.id)+'">'+esc(a.species)+' ('+Number(a.lat).toFixed(4)+', '+Number(a.lon).toFixed(4)+')</option>';}).join('');
   var fixedOptions=FIXED_SPOTS.map(function(f){return '<option value="'+esc(f.key)+'">'+esc(f.label)+'</option>';}).join('');
   return '<div class="card" data-id="'+esc(r.id)+'">'
-    +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(r.status)+'</span>'
+    +'<h2>'+esc(r.species)+' <span class="badge '+esc(r.status)+'">'+esc(CARD_STATUS_LABEL[r.status]||r.status)+'</span>'
     +(r.merged_into?' <span class="badge approved">다른 지점에 합침</span>':'')
-    +(r.status==='pending'?' <span class="badge '+(Number(r.pending_public)===1?'approved':'rejected')+'">'
-      +(Number(r.pending_public)===1?'황색 마커 공개 중':'공개 보류')+'</span>':'')
     +' <span class="badge '+(r.site_id?'approved':'rejected')+'">'
       +(r.site_id?'탐조 지역: '+esc(siteLabel(r.site_id)):'탐조 지역 미연결')+'</span></h2>'
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
     +locationHtml(r)
-    +(r.approx_lat!=null?'<br>승인 전 공개 좌표(대략) '+Number(r.approx_lat).toFixed(5)+', '+Number(r.approx_lon).toFixed(5):'')
     +(r.bird_count?'<br>개체수 '+esc(r.bird_count):'')
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')
     +(r.note?'<br>설명 '+esc(r.note):'')+'</div>'
@@ -302,9 +301,6 @@ function cardHtml(r){
     +(r.status==='approved'?'<button type="button" class="unpublish" data-act="unpublish">공개 취소</button>':'')
     +'<button type="button" class="merge" data-act="link">선택 지점에 연결</button>'
     +(r.spot_key?'<button type="button" class="merge" data-act="unlink">연결 해제</button>':'')
-    +(r.status==='pending'?(Number(r.pending_public)===1
-      ?'<button type="button" class="unpublish" data-act="visibility" data-public="0">황색 마커 내리기</button>'
-      :'<button type="button" class="merge" data-act="visibility" data-public="1">황색 마커로 공개</button>'):'')
     +(locationHidden(r)
       ?'<button type="button" class="merge" data-act="hide" data-hide="0">위치 공개로 되돌리기</button>'
       :'<button type="button" class="unpublish" data-act="hide" data-hide="1">위치 가리기</button>')
@@ -360,7 +356,7 @@ function doneMessage(act,payload){
   }
   var labels={reject:'반려했습니다.',unpublish:'공개를 취소했습니다.',
     link:'선택한 지점에 연결했습니다.',unlink:'연결을 해제했습니다.',
-    consent:'이름 공개 설정을 반영했습니다.',visibility:'황색 마커 공개 설정을 반영했습니다.',
+    consent:'이름 공개 설정을 반영했습니다.',
     hide:payload.hide?'위치를 가렸습니다. 지도에는 대략 좌표만 표시됩니다.':'위치 가리기를 해제했습니다. 실제 좌표가 공개됩니다.'};
   return labels[act]||('처리했습니다: '+act);
 }
@@ -388,9 +384,6 @@ document.getElementById('list').addEventListener('click',async function(event){
   }
   if(act==='consent'){
     payload.namePublic=card.querySelector('.f-consent').checked;
-  }
-  if(act==='visibility'){
-    payload.public=button.dataset.public==='1';
   }
   if(act==='hide'){
     payload.hide=button.dataset.hide==='1';
