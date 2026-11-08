@@ -1,4 +1,4 @@
-import { WorkerError, siteHistoryPayload } from './shared.js';
+import { WorkerError, siteHistoryPayload, identifiedSpeciesSql } from './shared.js';
 import { locationEvidenceColumns } from './location-evidence.js';
 
 // Exact safe totals require evaluating every approved candidate in one snapshot.
@@ -7,7 +7,7 @@ import { locationEvidenceColumns } from './location-evidence.js';
 export const SITE_HISTORY_SCAN_MAX = 1000;
 export function siteHistoryStatement(db, env, siteId) {
   return db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,
-    ${locationEvidenceColumns(env)},observed_on,reporter,name_public FROM reports
+    ${locationEvidenceColumns(env)},observed_on,reporter,name_public,${identifiedSpeciesSql(env)} FROM reports
     WHERE status='approved' AND site_id=?1
     ORDER BY observed_on DESC,received_at DESC,id DESC LIMIT ${SITE_HISTORY_SCAN_MAX + 1}`).bind(siteId);
 }

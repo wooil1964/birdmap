@@ -65,7 +65,9 @@ async function listReports(request, env, url) {
     const exists=await first(db,"SELECT name FROM sqlite_schema WHERE type='table' AND name='checklists'");
     // hide_requested: 제보자가 접수 때 위치 가리기를 체크했는지(변경되지 않는 원자료 기준). 관리자 지정과 구분해 보여 준다.
     selection=exists?"reports.*,(SELECT revision FROM checklists WHERE checklist_id=reports.id) AS revision,(SELECT json_extract(payload_json,'$.input.hideLocation') FROM raw_submissions WHERE raw_id='raw:'||reports.id) AS hide_requested,"
-      +locationEvidenceColumns(env)+','+AUTO_DECISION_SQL+",(SELECT reason_code FROM reviews WHERE checklist_id=reports.id ORDER BY sequence DESC LIMIT 1) AS last_reason":'reports.*,NULL AS revision';
+      +locationEvidenceColumns(env)+','+AUTO_DECISION_SQL+",(SELECT reason_code FROM reviews WHERE checklist_id=reports.id ORDER BY sequence DESC LIMIT 1) AS last_reason"
+      // 종별 관찰(신규 구조화 자료만): 식별 국명·개체수·해석 상태.
+      +",(SELECT json_group_array(json_object('name',species_identified,'count',count_value,'state',interpretation)) FROM (SELECT species_identified,count_value,interpretation FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS sightings_json":'reports.*,NULL AS revision';
   }
   const status = url.searchParams.get("status") || "pending";
   const species = (url.searchParams.get("species") || "").trim();

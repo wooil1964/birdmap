@@ -2,7 +2,7 @@
 // 원칙: 허용 목록에 정확히 있는 종만 자동 공개한다. 모르는 것은 전부 보류(fail-closed).
 // 상태값은 새로 만들지 않는다: pending + pending_public=1 + reviews(submitted, system:auto-public, auto_public:<정책>)
 // 세 가지를 모두 갖추고, 읽는 시점에 아래 판정을 다시 통과해야만 공개된다.
-import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString } from './shared.js';
+import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, identifiedSpeciesSql } from './shared.js';
 
 export const AUTO_PUBLIC_POLICY = 'auto-public-v1';
 export const AUTO_PUBLIC_ACTOR = 'system:auto-public';
@@ -43,7 +43,7 @@ export const RARE_REVIEW_SPECIES = new Set([
 
 export const SYNONYMS = Object.freeze({}); // 관습명 → 국명. 지정한 것만 인정한다(부분·유사 일치 없음).
 
-export const HOLD_REASONS = ['auto_public_disabled', 'breeding', 'protected', 'rare_review', 'name_unconfirmed', 'count_anomaly',
+export const HOLD_REASONS = ['auto_public_disabled', 'breeding', 'protected', 'rare_review', 'name_unconfirmed', 'species_parse', 'count_anomaly',
   'stale_observation', 'possible_duplicate', 'rate_review', 'global_cap', 'note_review'];
 
 const QUANTITY = /^(.+?)\s*(\d+)\s*(?:마리|개체)?$/;
@@ -63,21 +63,24 @@ export function contentReasons(report) {
   const tokens = (report.species || []).map(t => String(t || '').normalize('NFC').trim()).filter(Boolean);
   if (hasBreedingEvidence({ note: report.note, speciesText: report.speciesText || tokens.join(' · ') })) reasons.add('breeding');
   if (!tokens.length || tokens.length > MAX_SPECIES) reasons.add('name_unconfirmed');
+  // 종명·개체수를 확실히 나눌 수 없거나(꼴 불일치), 같은 종이 두 번이거나, 양식 개체수와 다르면 보류.
+  const parsed = parseSpeciesItems(tokens);
+  if (!parsed.clean || parsed.duplicates.length) reasons.add('species_parse');
+  const count = report.birdCount;
+  if (parsed.items.length === 1 && parsed.items[0].count !== null && count !== null && count !== undefined && parsed.items[0].count !== count) reasons.add('species_parse');
   let countMax = Infinity;
-  for (const token of tokens) {
+  for (const [i, token] of tokens.entries()) {
     if (UNCERTAIN.test(token)) { reasons.add('name_unconfirmed'); continue; }
-    const name = speciesName(token);
+    const item = parsed.items[i], name = item?.name || speciesName(token);
     if (PROTECTED_SPECIES.has(name)) reasons.add('protected');
     if (RARE_REVIEW_SPECIES.has(name)) reasons.add('rare_review');
-    const common = Object.hasOwn(COMMON_SPECIES, name) ? COMMON_SPECIES[name] : null;
+    const common = item?.name && Object.hasOwn(COMMON_SPECIES, name) ? COMMON_SPECIES[name] : null;
     if (!common) { reasons.add('name_unconfirmed'); continue; }
     const limit = common.countMax || DEFAULT_COUNT_MAX;
     countMax = Math.min(countMax, limit);
     // 종명 뒤 수량 표기("참새 5000마리")도 그 종의 상한을 넘으면 보류한다.
-    const written = QUANTITY.exec(token);
-    if (written && Number(written[2]) > limit) reasons.add('count_anomaly');
+    if (item.count !== null && item.count > limit) reasons.add('count_anomaly');
   }
-  const count = report.birdCount;
   if (count !== null && count !== undefined && !(Number.isSafeInteger(count) && count >= 0 && count <= countMax)) reasons.add('count_anomaly');
   if (report.note && CONTACT.test(String(report.note))) reasons.add('note_review');
   return reasons;
@@ -127,7 +130,7 @@ export const AUTO_DECISION_SQL = `(SELECT reason_code FROM reviews WHERE checkli
 
 // 공개 읽기 후보: 자동 공개 표시가 남은 대기 행만. 최종 판정은 unverifiedPayload 가 한다.
 export function unverifiedStatement(db, evidence) {
-  return db.prepare(`SELECT id,status,species,note,lat,lon,public_lat,public_lon,observed_on,bird_count,received_at,pending_public,${evidence},${AUTO_DECISION_SQL}
+  return db.prepare(`SELECT id,status,species,note,lat,lon,public_lat,public_lon,observed_on,bird_count,received_at,pending_public,${evidence},${AUTO_DECISION_SQL},${identifiedSpeciesSql({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})}
     FROM reports WHERE status='pending' AND pending_public=1 ORDER BY observed_on DESC,received_at DESC,id DESC`);
 }
 
@@ -146,7 +149,7 @@ export function unverifiedPayload(rows, env, now = new Date()) {
   if (!unverifiedReadsEnabled(env)) return [];
   return (rows || []).filter(row => unverifiedState(row, now) === 'public').map(row => {
     const spot = { id: row.id, status: 'pending', verified: false, lat: row.public_lat ?? row.lat, lon: row.public_lon ?? row.lon,
-      species: splitSpecies(row.species), date: row.observed_on };
+      species: speciesNamesOf(row), date: row.observed_on };
     if (isLocationHidden(row)) { spot.locationHidden = true; spot.approximate = true; }
     return spot;
   });

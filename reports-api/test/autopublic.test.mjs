@@ -23,7 +23,7 @@ test('분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류'
   assert.deepEqual(reasons(['참새 300마리', '청둥오리 3000개체']), [], '종별 상한 이내');
   assert.deepEqual(reasons(['동박새3', '박새2', '직박구리1']), [], '수량 붙은 복수 일반종은 3종으로 인식해 적격');
   assert.deepEqual(reasons(['동박새3', '박새2', '매1']), ['name_unconfirmed', 'protected'], '보호종 혼합은 보류');
-  assert.deepEqual(reasons(['동박새3', '박새?2']), ['name_unconfirmed'], '불확실 종명 혼합은 보류');
+  assert.deepEqual(reasons(['동박새3', '박새?2']), ['name_unconfirmed', 'species_parse'], '불확실 종명 혼합은 보류');
   assert.deepEqual(reasons(['매']), ['name_unconfirmed', 'protected']);
   assert.deepEqual(reasons(['말똥가리']), ['name_unconfirmed', 'rare_review']);
   assert.deepEqual(reasons(['처음보는새']), ['name_unconfirmed']);
@@ -33,7 +33,7 @@ test('분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류'
   assert.deepEqual(reasons(['참새'], { note: '자세한 건 https://example.com' }), ['note_review']);
   assert.deepEqual(reasons(['참새'], { note: '연락 010-1234-5678' }), ['note_review']);
   assert.deepEqual(reasons(['참새'], { note: '둥지 근처' }), ['breeding']);
-  assert.deepEqual(reasons([]), ['name_unconfirmed']);
+  assert.deepEqual(reasons([]), ['name_unconfirmed', 'species_parse']);
 });
 
 test('분류: 같은 IP 하루 자동 공개 5건, 전체 한도, 스위치 끔', async () => {

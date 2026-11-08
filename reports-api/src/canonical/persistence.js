@@ -1,5 +1,5 @@
-import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload } from '../shared.js';
-import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
+import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload, parseSpeciesItems, sightingValues } from '../shared.js';
+import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, nativeSightings, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
 import { locationEvidenceColumns } from '../location-evidence.js';
 import { AUTO_DECISION_SQL, unverifiedPayload, unverifiedReadsEnabled } from '../autopublic.js';
 
@@ -40,7 +40,7 @@ export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},
   const key=`submit:${id}`,cutoff=new Date(Date.parse(now)-REDEMPTION_RETENTION_MS).toISOString();
   const statements=[assertion(db,key,"NOT EXISTS (SELECT 1 FROM audit_log WHERE action='forbidden_content_purged' AND target_id=?)",[id]),clearAssertion(db,key),
     db.prepare('DELETE FROM captcha_redemptions WHERE redeemed_at<?').bind(cutoff),insert(db,'captcha_redemptions',{token_hash:tokenHash,request_id:id,redeemed_at:now}),
-    insert(db,'reports',row),insert(db,'raw_submissions',raw),insert(db,'checklists',checklistFromReport(row,raw.raw_id,now,true)),insert(db,'sightings',initialSighting(row,now,true)),
+    insert(db,'reports',row),insert(db,'raw_submissions',raw),insert(db,'checklists',checklistFromReport(row,raw.raw_id,now,true)),...nativeSightings(row,now).map(s=>insert(db,'sightings',s)),
     // 자동 공개 판정 기록은 같은 batch 에 넣는다. 판정만 남거나 저장만 남는 경우는 없다.
     ...(review?[insert(db,'reviews',review)]:[])];
   try {await db.batch(statements);} catch(error) {
@@ -104,8 +104,17 @@ export async function persistAdmin(binding,{id,body,actor,identity,plan,before,n
   const decision=body.action==='reject'?'rejected':body.action==='unpublish'?'unpublished':['approve','link'].includes(body.action)?(before.status==='rejected'?'reapproved':'approved'):'corrected';
   const events=[{decision,sighting_id:null,validated_taxon_id:null,validated_count:null,validated_count_accuracy:null,from_status:before.status,to_status:after.status,actor_id:actor,reason_code:body.action==='reject'&&body.reasonCode?'reject:'+body.reasonCode:body.action,event_index:0}];
   const sightings=await rows(db,'SELECT * FROM sightings WHERE checklist_id=? ORDER BY source_ordinal',id);
-  const changed=new Map();
-  if(after.species!==before.species) {
+  const changed=new Map(),added=[];
+  const parsed=after.species!==before.species?parseSpeciesItems(splitSpecies(after.species)):null;
+  if(parsed?.clean) {
+    // 관리자 종명·개체수 정정: 종별 행을 순서대로 다시 맞춘다. 원문(species_original)은 바꾸지 않고, 모자라면 행을 더하고 남으면 무효로 둔다.
+    const values=sightingValues(parsed,after.bird_count??null);
+    let ordinal=Math.max(0,...sightings.map(s=>s.source_ordinal));
+    values.forEach((v,i)=>{const {species_original,...rest}=v;
+      if(sightings[i])changed.set(sightings[i].sighting_id,rest);
+      else {ordinal++;added.push({sighting_id:`sighting:${id}:${ordinal}`,checklist_id:id,source_ordinal:ordinal,...v,created_at:now,updated_at:now});}});
+    for(const s of sightings.slice(values.length))changed.set(s.sighting_id,{species_identified:null,interpretation:'unknown',taxon_id:null,count_value:null,count_accuracy:'unknown',count_source:'ambiguous_group',interpretation_note:'superseded'});
+  } else if(parsed) {
     const single=sightings.length===1&&!/[·,;\n/]/.test(after.species);
     for(const s of sightings)changed.set(s.sighting_id,{species_identified:single?after.species:null,interpretation:single?'single':sightings.length===1?'unparsed_multiple':'unknown',taxon_id:null,
       count_value:single&&s.interpretation==='single'?s.count_value:null,count_accuracy:single&&s.interpretation==='single'?s.count_accuracy:'unknown',
@@ -127,6 +136,10 @@ export async function persistAdmin(binding,{id,body,actor,identity,plan,before,n
     const values=changed.get(s.sighting_id), value={...s,...values};
     statements.push(db.prepare(`UPDATE sightings SET ${Object.keys(values).map(k=>k+'=?').join(',')},updated_at=? WHERE checklist_id=? AND sighting_id=?`).bind(...Object.values(values),now,id,s.sighting_id),assertion(db,key+':sighting'),clearAssertion(db,key+':sighting'));
     events.push({decision:'corrected',sighting_id:s.sighting_id,validated_taxon_id:value.taxon_id,validated_count:value.count_value,validated_count_accuracy:value.count_accuracy,from_status:before.status,to_status:after.status,actor_id:actor,reason_code:body.action,event_index:events.length});
+  }
+  for(const s of added) {
+    statements.push(insert(db,'sightings',s));
+    events.push({decision:'corrected',sighting_id:s.sighting_id,validated_taxon_id:null,validated_count:s.count_value,validated_count_accuracy:s.count_accuracy,from_status:before.status,to_status:after.status,actor_id:actor,reason_code:body.action,event_index:events.length});
   }
   const receipt=stable({version:1,result:plan.result,events});
   for(const event of events)statements.push(insert(db,'reviews',{review_id:`review:${identity.request_id}:${event.event_index}`,checklist_id:id,sequence:sequence+event.event_index+1,...event,request_id:identity.request_id,note:event.event_index===0?receipt:null,created_at:now}));

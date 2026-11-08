@@ -372,6 +372,54 @@ export function pendingPayload() {
 }
 
 // 저장된 과거 접수증의 spot까지 제거한다. 불변 원자료 자체는 수정하지 않는다.
+/* ── 종명·개체수 분리 ───────────────────────────────────────────────── */
+// 토큰마다 '국명' 또는 '국명+숫자(마리|개체)'만 인정한다: 동박새3 = 동박새 3 = 동박새 3마리 = 동박새 3개체.
+// 숫자는 1 이상(앞자리 0 없음)이어야 하고, 숫자가 없으면 개체수는 미입력(null)이다(1로 보지 않는다).
+// 하나라도 이 꼴이 아니면 clean=false: 구조화하지 않고 자동 공개도 하지 않는다(관리자 검토).
+const SPECIES_ITEM = /^([가-힣]{1,30})(?:\s*([1-9][0-9]{0,5})\s*(?:마리|개체)?)?$/;
+export function parseSpeciesItems(tokens) {
+  const items = [];
+  let clean = (tokens || []).length > 0;
+  for (const raw of tokens || []) {
+    const original = String(raw || '').normalize('NFC').trim();
+    const m = SPECIES_ITEM.exec(original);
+    const count = m && m[2] !== undefined ? Number(m[2]) : null;
+    if (!m || (count !== null && count > MAX_BIRD_COUNT)) { clean = false; items.push({ original, name: null, count: null }); continue; }
+    items.push({ original, name: m[1], count });
+  }
+  const names = items.map(i => i.name).filter(Boolean);
+  const duplicates = [...new Set(names.filter((n, i) => names.indexOf(n) !== i))];
+  return { clean, items, duplicates, species: [...new Set(names)] };
+}
+
+// 정본 sightings 에 넣을 종별 값. 같은 종이 두 번이면 합산하지 않고 불확실로 둔다.
+// 한 종만 쓰고 숫자를 생략했다면 접수 양식의 개체수를 그 종의 개체수로 쓴다(기존 규칙). 둘이 다르면 불확실.
+export function sightingValues(parsed, birdCount) {
+  const single = parsed.items.length === 1;
+  return parsed.items.map(item => {
+    const conflict = single && item.count !== null && birdCount !== null && birdCount !== undefined && item.count !== birdCount;
+    const ambiguous = parsed.duplicates.includes(item.name) || conflict;
+    const count = ambiguous ? null : (item.count ?? (single ? (birdCount ?? null) : null));
+    return { species_original: item.original, species_identified: item.name, interpretation: ambiguous ? 'unknown' : 'single', taxon_id: null,
+      count_value: count, count_accuracy: 'unknown', count_source: ambiguous ? 'ambiguous_group' : count === null ? 'not_recorded' : 'reported',
+      interpretation_note: parsed.duplicates.includes(item.name) ? 'duplicate_species' : conflict ? 'count_conflict' : null };
+  });
+}
+
+// 통계·검색·지도에 쓰는 종명. 신규 구조화 제보는 식별 국명(숫자 없음), 그 밖(기존 자료)은 저장 원문을 그대로 나눈다.
+// 기존 자료를 다시 분류하지 않기 위해 identified_species 가 비어 있으면 예전 방식 그대로다.
+export function speciesNamesOf(row) {
+  let identified = [];
+  try { identified = typeof row?.identified_species === 'string' ? JSON.parse(row.identified_species) : []; } catch {}
+  const names = Array.isArray(identified) ? identified.filter(n => typeof n === 'string' && n) : [];
+  return names.length ? [...new Set(names)] : splitSpecies(row?.species);
+}
+export function identifiedSpeciesSql(env) {
+  return env?.REPORTS_WRITE_MODE === 'CANONICAL_DUAL_WRITE'
+    ? "(SELECT json_group_array(species_identified) FROM (SELECT species_identified FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS identified_species"
+    : 'NULL AS identified_species';
+}
+
 // 대기 제보는 서버가 자동 공개(public_unverified)라고 계산한 경우만 그렇게 알리고, 나머지는 withheld 다.
 // 보류 사유는 코드만 담는다. 좌표·종·메모는 어떤 경우에도 넣지 않는다.
 export function receiptPayload(body) {
@@ -609,7 +657,7 @@ export function historyEntry(row) {
   const entry = {
     id: row.id,
     date: row.observed_on,
-    species: splitSpecies(row.species),
+    species: speciesNamesOf(row),
   };
   if (Number(row.name_public) === 1 && row.reporter) entry.reporter = row.reporter;
   return entry;
@@ -636,9 +684,9 @@ export function publicPayload(rows) {
     .map((row) => {
       const attached = byKey.get(row.id) || [];
       // 연결된 제보의 종을 뒤에 더한다. 기존 종은 지우지 않는다.
-      const species = splitSpecies(row.species);
+      const species = speciesNamesOf(row);
       for (const extra of attached) {
-        for (const name of splitSpecies(extra.species)) {
+        for (const name of speciesNamesOf(extra)) {
           if (!species.includes(name)) species.push(name);
         }
       }

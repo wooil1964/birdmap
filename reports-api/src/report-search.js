@@ -1,4 +1,4 @@
-import { WorkerError, historyEntry, isLocationRestricted, isLocationHidden } from './shared.js';
+import { WorkerError, historyEntry, isLocationRestricted, isLocationHidden, identifiedSpeciesSql } from './shared.js';
 import { unverifiedPayload, unverifiedReadsEnabled, unverifiedStatement } from './autopublic.js';
 
 export const REPORT_SEARCH_PAGE = 20;
@@ -50,7 +50,7 @@ export function reportSearchPayload(rows, sites, { q, offset }, unverified = [])
 export function reportSearchPlan(db, url, evidence = 'NULL AS non_breeding_confirmed, NULL AS location_input', env = {}, now = new Date()) {
   const request = input(url), withUnverified = unverifiedReadsEnabled(env);
   return { statements: [
-    db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,site_id,spot_key,${evidence} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC,id DESC`),
+    db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,site_id,spot_key,${evidence},${identifiedSpeciesSql(env)} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC,id DESC`),
     db.prepare("SELECT site_id,site_name,COALESCE(NULLIF(json_extract(source_record_json,'$.region'),''),TRIM(COALESCE(json_extract(source_record_json,'$.sido'),'')||' '||COALESCE(json_extract(source_record_json,'$.sigungu'),''))) AS region FROM sites WHERE retired_at IS NULL AND registry_source='index.html:siteData'"),
     ...(withUnverified ? [unverifiedStatement(db, evidence)] : []),
   ], build: sets => reportSearchPayload(sets[0].results || [], sets[1].results || [], request,

@@ -1,4 +1,4 @@
-import { WorkerError, sha256Hex } from '../shared.js';
+import { WorkerError, sha256Hex, parseSpeciesItems, sightingValues, splitSpecies } from '../shared.js';
 
 export const SCHEMA_VERSION = 'phase2a-0001';
 export const TRANSFORM_VERSION = 'phase2b-legacy-v1';
@@ -60,6 +60,12 @@ export function initialSighting(r,capturedAt,native=false) {
   return {sighting_id:`sighting:${r.id}:1`,checklist_id:r.id,source_ordinal:1,species_original:r.species,species_identified:null,
     interpretation:multiple?'unparsed_multiple':'single',taxon_id:null,count_value:multiple?null:r.bird_count,count_accuracy:'unknown',
     count_source:multiple?'ambiguous_group':r.bird_count===null?'not_recorded':native?'reported':'legacy_single',interpretation_note:null,created_at:capturedAt,updated_at:capturedAt};
+}
+// 신규 접수: 종명·개체수를 확실히 나눌 수 있으면 종마다 한 행, 아니면 기존처럼 원문 한 행(관리자 검토).
+export function nativeSightings(r,capturedAt) {
+  const parsed=parseSpeciesItems(splitSpecies(r.species));
+  if(!parsed.clean)return [initialSighting(r,capturedAt,true)];
+  return sightingValues(parsed,r.bird_count).map((v,i)=>({sighting_id:`sighting:${r.id}:${i+1}`,checklist_id:r.id,source_ordinal:i+1,...v,created_at:capturedAt,updated_at:capturedAt}));
 }
 export const canonicalProjection = `SELECT ${REPORT_COLUMNS.map(k=>(FIELD_MAP[k]||k)+(FIELD_MAP[k]?` AS ${k}`:'')).join(',')} FROM checklists WHERE record_mode IN ('legacy_report','quick_report') AND actual_lat IS NOT NULL AND actual_lon IS NOT NULL`;
 export function canonicalReadDb(db) {

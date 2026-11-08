@@ -59,9 +59,9 @@ test("종별: 승인만, ' · ' 로 나눠 종마다 세고 날짜는 observed_o
   const { rows } = await stats(seeded(), "view=species");
   const m = byKey(rows, "species");
   assert.deepEqual(Object.keys(m).sort(), ["민물도요", "큰노랑발도요", "흰죽지"]);
-  assert.deepEqual(m["큰노랑발도요"], { species: "큰노랑발도요", total: 2, approved: 2, first_observed: "2026-08-15", last_observed: "2026-09-20", sites: 2, reporters: 1 });
-  assert.deepEqual(m["민물도요"], { species: "민물도요", total: 2, approved: 2, first_observed: "2025-01-10", last_observed: "2026-08-15", sites: 1, reporters: 1 });
-  assert.deepEqual(m["흰죽지"], { species: "흰죽지", total: 1, approved: 1, first_observed: "2025-01-11", last_observed: "2025-01-11", sites: 1, reporters: 0 });
+  assert.deepEqual(m["큰노랑발도요"], { species: "큰노랑발도요", total: 2, approved: 2, first_observed: "2026-08-15", last_observed: "2026-09-20", sites: 2, reporters: 1, individuals: null });
+  assert.deepEqual(m["민물도요"], { species: "민물도요", total: 2, approved: 2, first_observed: "2025-01-10", last_observed: "2026-08-15", sites: 1, reporters: 1, individuals: null });
+  assert.deepEqual(m["흰죽지"], { species: "흰죽지", total: 1, approved: 1, first_observed: "2025-01-11", last_observed: "2025-01-11", sites: 1, reporters: 0, individuals: null });
 });
 
 test("상태 필터를 고르면 그 상태만으로 다시 센다", async () => {
@@ -102,11 +102,11 @@ test("월별·연도별은 observed_on 기준(승인만)", async () => {
 test("제보자별: 건수는 모든 상태, 종수·지역 수는 승인만, 이름은 정확히 같은 값끼리", async () => {
   const { rows } = await stats(seeded(), "view=reporters");
   const m = byKey(rows, "reporter");
-  assert.deepEqual(m["홍길동"], { reporter: "홍길동", total: 3, approved: 2, rejected: 1, pending: 0, species: 2, sites: 2, last_observed: "2026-09-20" });
-  assert.deepEqual(m["홍길동 "], { reporter: "홍길동 ", total: 1, approved: 0, rejected: 0, pending: 1, species: 0, sites: 0, last_observed: "2025-12-31" });
-  assert.deepEqual(m["김철수"], { reporter: "김철수", total: 1, approved: 0, rejected: 1, pending: 0, species: 0, sites: 0, last_observed: "2026-09-02" });
+  assert.deepEqual(m["홍길동"], { reporter: "홍길동", total: 3, approved: 2, rejected: 1, pending: 0, species: 2, sites: 2, individuals: null, last_observed: "2026-09-20" });
+  assert.deepEqual(m["홍길동 "], { reporter: "홍길동 ", total: 1, approved: 0, rejected: 0, pending: 1, species: 0, sites: 0, individuals: null, last_observed: "2025-12-31" });
+  assert.deepEqual(m["김철수"], { reporter: "김철수", total: 1, approved: 0, rejected: 1, pending: 0, species: 0, sites: 0, individuals: null, last_observed: "2026-09-02" });
   // 이름 없는 2건(NULL, 공백뿐)은 한 줄로만 나온다.
-  assert.deepEqual(m["(null)"], { reporter: null, total: 2, approved: 2, rejected: 0, pending: 0, species: 2, sites: 1, last_observed: "2025-01-11" });
+  assert.deepEqual(m["(null)"], { reporter: null, total: 2, approved: 2, rejected: 0, pending: 0, species: 2, sites: 1, individuals: null, last_observed: "2025-01-11" });
   assert.equal(rows.length, 4);
   assert.equal(rows.at(-1).reporter, null, "(이름 미입력)은 마지막 줄");
 });

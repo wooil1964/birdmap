@@ -271,8 +271,17 @@ function historyHtml(r){
 var DISPLAY_LABEL={unverified:'자동 공개 · 미검증',auto_stopped:'자동 공개 중지(재검사 불통과)',review:'검토 대기 · 비공개',
   withdrawn:'공개 취소',approved:'확인 완료',rejected:'반려 · 비공개',pending:'검토 대기 · 비공개'};
 var HOLD_LABEL={auto_public_disabled:'자동 공개 꺼짐',breeding:'번식',protected:'보호종',rare_review:'희귀종·혼동종',name_unconfirmed:'종명 확인',
-  count_anomaly:'개체수',stale_observation:'관찰일',possible_duplicate:'중복 의심',rate_review:'제보량',global_cap:'일일 한도',note_review:'설명 내용'};
+  species_parse:'종명·개체수 확인',count_anomaly:'개체수',stale_observation:'관찰일',possible_duplicate:'중복 의심',rate_review:'제보량',global_cap:'일일 한도',note_review:'설명 내용'};
 var REJECT_LABEL=[['misidentification','오동정'],['location_error','위치 오류'],['duplicate','중복'],['inappropriate','부적절한 내용'],['sensitive_location','민감 위치'],['other','기타(메모 필수)']];
+// 종별 관찰 요약: 같은 종은 1종으로, 개체수는 입력된 단일 종 값만 더한다(미입력·중복·불확실은 더하지 않음).
+function sightingsHtml(r){
+  var list=[];try{list=JSON.parse(r.sightings_json||'[]');}catch(e){}
+  if(!list.length)return '';
+  var names={},total=0,counted=false;
+  var parts=list.map(function(x){names[x.name]=1;var ok=x.state==='single'&&x.count!=null;if(ok){total+=Number(x.count);counted=true;}
+    return esc(x.name)+' '+(x.state!=='single'?'(개체수 확인 필요)':x.count==null?'(개체수 미입력)':esc(x.count)+'개체');});
+  return '<br>종별: '+parts.join(' · ')+' — '+Object.keys(names).length+'종'+(counted?', 개체수 '+total+'(입력분)':'');
+}
 function cardHtml(r){
   var linkOptions=approved.filter(function(a){return a.id!==r.id&&!a.spot_key;})
     .map(function(a){return '<option value="'+esc(a.id)+'">'+esc(a.species)+' ('+Number(a.lat).toFixed(4)+', '+Number(a.lon).toFixed(4)+')</option>';}).join('');
@@ -284,6 +293,7 @@ function cardHtml(r){
       +(r.site_id?'탐조 지역: '+esc(siteLabel(r.site_id)):'탐조 지역 미연결')+'</span></h2>'
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
     +locationHtml(r)
+    +sightingsHtml(r)
     +((r.hold_reasons||[]).length?'<br>자동 공개 보류 사유: '+r.hold_reasons.map(function(x){return esc(HOLD_LABEL[x]||x);}).join(', '):'')
     +(r.bird_count?'<br>개체수 '+esc(r.bird_count):'')
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')
@@ -554,7 +564,7 @@ function drillFor(view,r){
 
 function renderCards(s,basis){
   var cards=[['총 제보',s.total],['승인',s.approved],['반려',s.rejected],['승인 대기',s.pending],
-    ['등록 종수 ('+basis+')',s.species],['참여 제보자 수',s.reporters,'이름 미입력 '+s.anonymous_reports+'건 별도'],['최근 30일 접수',s.recent30,'KST 기준']];
+    ['등록 종수 ('+basis+')',s.species],['관찰 개체수 ('+basis+')',s.individuals==null?0:s.individuals,'신규 구조화 제보 '+(s.counted_reports||0)+'건의 입력분만'],['참여 제보자 수',s.reporters,'이름 미입력 '+s.anonymous_reports+'건 별도'],['최근 30일 접수',s.recent30,'KST 기준']];
   document.getElementById('statsCards').innerHTML=cards.map(function(c){
     return '<div class="scard"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b>'+(c[2]?'<span>'+esc(c[2])+'</span>':'')+'</div>';
   }).join('');
