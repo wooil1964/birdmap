@@ -7,12 +7,14 @@ import { handleRequest } from '../src/public.js';
 import adminWorker from '../src/admin.js';
 import { quickInput, persistQuick } from '../src/canonical/persistence.js';
 import { dedupeHash, sha256Hex, kstDateString } from '../src/shared.js';
-import { classifySubmission, contentReasons, COMMON_SPECIES, PROTECTED_SPECIES, RARE_REVIEW_SPECIES, AUTO_PUBLIC_REASON } from '../src/autopublic.js';
+import { classifySubmission, contentReasons, AUTO_PUBLIC_REASON } from '../src/autopublic.js';
+import { OFFICIAL_BIRD_NAMES } from '../src/official-bird-names.js';
+import { LEGAL_PROTECTED_NAMES } from '../src/protected-birds.js';
 
 const TODAY = kstDateString(new Date());
 const reasons = (species, extra = {}) => [...contentReasons({ species, speciesText: species.join(' · '), birdCount: null, note: null, ...extra })].sort();
 
-test('분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류', () => {
+test('분류: 식별 가능한 이름은 종류와 상관없이 적격, 식별 불가·불확실·나눌 수 없는 입력은 보류', () => {
   assert.deepEqual(reasons(['참새']), []);
   assert.deepEqual(reasons(['참새 30마리', '까치']), []);
   assert.deepEqual(reasons(['청둥오리'], { birdCount: 3000 }), []);
@@ -22,14 +24,23 @@ test('분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류'
   assert.deepEqual(reasons(['참새301']), ['count_anomaly']);
   assert.deepEqual(reasons(['참새 300마리', '청둥오리 3000개체']), [], '종별 상한 이내');
   assert.deepEqual(reasons(['동박새3', '박새2', '직박구리1']), [], '수량 붙은 복수 일반종은 3종으로 인식해 적격');
-  assert.deepEqual(reasons(['동박새3', '박새2', '매1']), ['name_unconfirmed', 'protected'], '보호종 혼합은 보류');
+  assert.deepEqual(reasons(['동박새3', '박새2', '매1']), [], '보호종이 섞여도 이름만으로는 보류하지 않음(위치 보호는 v2·위치 가리기가 담당)');
   assert.deepEqual(reasons(['동박새3', '박새?2']), ['name_unconfirmed', 'species_parse'], '불확실 종명 혼합은 보류');
-  assert.deepEqual(reasons(['매']), ['name_unconfirmed', 'protected']);
-  assert.deepEqual(reasons(['말똥가리']), ['name_unconfirmed', 'rare_review']);
+  assert.deepEqual(reasons(['매']), [], '보호종도 종 이름만으로 보류하지 않음');
+  assert.deepEqual(reasons(['말똥가리']), []);
+  assert.deepEqual(reasons(['Calidris pygmaea']), [], '학명(2025 목록)으로 식별');
+  assert.deepEqual(reasons(['Anser fabalis middendorffii']), [], '목록 밖 학명 꼴(미조·미기록 가능종 포함)은 원문 보존 + 공개');
+  assert.deepEqual(reasons(["Ross's Gull"]), [], '2025 목록 밖이라도 IOC 영명이면 식별(미조 즉시 공개)');
+  assert.deepEqual(reasons(['Rhodostethia rosea']), [], 'IOC 학명');
+  assert.deepEqual(reasons(['Larus imaginarius']), ['name_unconfirmed'], '속만 맞고 종소명이 어느 목록에도 없으면 실존 종으로 판정하지 않고 관리자 검토');
+  assert.deepEqual(reasons(['Accipiter haplochrous']), [], '다른 분류목록(AviList 등)의 동의어는 근거가 있으므로 식별');
+  assert.deepEqual(reasons(['Zzzzus abcdef']), ['name_unconfirmed'], '속명이 IOC 에도 없으면 라틴어 꼴이어도 보류');
+  assert.deepEqual(reasons(['Imaginary Warbler']), ['name_unconfirmed'], 'IOC 에 없는 영명은 보류');
   assert.deepEqual(reasons(['처음보는새']), ['name_unconfirmed']);
   for (const doubt of ['참새?', '참새 추정', '참새류', '참새 또는 까치'])assert.ok(reasons([doubt]).includes('name_unconfirmed'), doubt);
   assert.deepEqual(reasons(['참새', '까치', '박새', '딱새', '동박새', '물까치']), ['name_unconfirmed'], '6종은 보류');
-  assert.deepEqual(reasons(['참새', '매']), ['name_unconfirmed', 'protected'], '하나라도 보호종이면 전체 보류');
+  assert.deepEqual(reasons(['참새', '매']), [], '보호종이 섞여도 보류하지 않음');
+  assert.deepEqual(reasons(['참새', '처음보는새']), ['name_unconfirmed'], '하나라도 식별할 수 없으면 전체 보류');
   assert.deepEqual(reasons(['참새'], { note: '자세한 건 https://example.com' }), ['note_review']);
   assert.deepEqual(reasons(['참새'], { note: '연락 010-1234-5678' }), ['note_review']);
   assert.deepEqual(reasons(['참새'], { note: '둥지 근처' }), ['breeding']);
@@ -47,13 +58,10 @@ test('분류: 같은 IP 하루 자동 공개 5건, 전체 한도, 스위치 끔'
   assert.deepEqual(await classifySubmission(stub(0, 0), { ...env, REPORTS_WRITE_MODE: 'NORMAL' }, report, 'h'), { eligible: false, reasons: ['auto_public_disabled'] }, '정본 모드에서만');
 });
 
-test('분류 목록: 허용 목록은 보호종·희귀종 목록과 겹치지 않는다', () => {
-  for (const name of Object.keys(COMMON_SPECIES)) {
-    assert.ok(!PROTECTED_SPECIES.has(name), name + ' 보호종과 겹침');
-    assert.ok(!RARE_REVIEW_SPECIES.has(name), name + ' 희귀종과 겹침');
-  }
-  for (const name of ['저어새', '매', '참매', '흰꼬리수리', '수리부엉이', '넓적부리도요', '팔색조', '두루미', '황새'])
-    assert.ok(PROTECTED_SPECIES.has(name), name + ' (v2 19종 포함)');
+test('전체 조류: 2025 한국조류목록 598종과 법정 보호 조류 전부가 이름만으로는 보류되지 않는다', () => {
+  assert.equal(OFFICIAL_BIRD_NAMES.length, 598);
+  for (const name of OFFICIAL_BIRD_NAMES) assert.deepEqual(reasons([name]), [], name);
+  for (const name of LEGAL_PROTECTED_NAMES) if (OFFICIAL_BIRD_NAMES.includes(name)) assert.deepEqual(reasons([name]), [], name + ' (법정 보호종)');
 });
 
 const ON = { REPORTS_AUTO_PUBLIC: '1', REPORTS_UNVERIFIED_READS: '1' };
@@ -108,8 +116,8 @@ test('흐름: 일반종은 즉시 미검증 공개, 재전송·상태·검색이
   assert.equal((await adminList(s, 'pending')).length, 0, '검토 대기 탭에서는 빠진다');
 });
 
-test('흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다', async t => {
-  const s = await setup(t, { ...ON, REPORTS_AUTO_PUBLIC_DAILY_MAX: '2' });
+test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·오래된 관찰은 보류하고 가린 제보의 실제 좌표는 어디에도 내보내지 않는다', async t => {
+  const s = await setup(t, { ...ON, REPORTS_AUTO_PUBLIC_DAILY_MAX: '4' });
   const hidden = await submit(s, { species: '까치', lat: 36.5, lon: 127.5, hideLocation: true });
   assert.equal(hidden.receipt.publicVisibility, 'public_unverified');
   const spot = (await pending(s)).find(x => x.id === hidden.body.request_id);
@@ -117,31 +125,37 @@ test('흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복
   assert.ok(spot.lat !== 36.5 || spot.lon !== 127.5, '가림 점');
   const r = row(s, hidden.body.request_id); assert.equal(spot.lat, r.public_lat); assert.equal(spot.lon, r.public_lon);
 
-  const protectedOne = await submit(s, { species: '매, 참새', lat: 36.987654, lon: 126.876543, note: '비행' });
-  assert.deepEqual(protectedOne.receipt.holdReasons, ['protected', 'name_unconfirmed']);
-  assert.equal(protectedOne.receipt.publicVisibility, 'withheld');
-  assert.equal(row(s, protectedOne.body.request_id).pending_public, 0);
+  // 보호종도 종 이름만으로는 보류하지 않는다. 제보자가 위치를 가리면 대략점만, 가리지 않으면 위치 정책 v2(비번식 확인)대로 공개된다.
+  const protectedHidden = await submit(s, { species: '매, 참새', lat: 36.987654, lon: 126.876543, note: '비행', hideLocation: true });
+  assert.equal(protectedHidden.receipt.publicVisibility, 'public_unverified');
+  const protectedOpen = await submit(s, { species: '저어새', lat: 35.123456, lon: 126.234567 });
+  assert.equal(protectedOpen.receipt.publicVisibility, 'public_unverified');
   const unknown = await submit(s, { species: '처음보는새' });
   assert.deepEqual(unknown.receipt.holdReasons, ['name_unconfirmed']);
   const dup = await submit(s, { species: '까치', lat: 36.5005, lon: 127.5005 });
   assert.deepEqual(dup.receipt.holdReasons, ['possible_duplicate']);
-  const second = await submit(s, { species: '박새' });
-  assert.equal(second.receipt.publicVisibility, 'public_unverified');
+  const vagrant = await submit(s, { species: 'Anser fabalis middendorffii', lat: 34.5, lon: 128.5 });
+  assert.equal(vagrant.receipt.publicVisibility, 'public_unverified', '목록 밖 학명 꼴(미조·미기록 가능종)도 공개');
   const capped = await submit(s, { species: '딱새' });
   assert.deepEqual(capped.receipt.holdReasons, ['global_cap']);
   const stale = await submit(s, { species: '참새', observedOn: '2026-09-20' });
   assert.ok(stale.receipt.holdReasons.includes('stale_observation'));
-  assert.deepEqual((await pending(s)).map(x => x.id).sort(), [hidden.body.request_id, second.body.request_id].sort());
-  // 보호종 제보 좌표는 공개 GET 어디에도 없다.
+  const ids = [hidden, protectedHidden, protectedOpen, vagrant].map(x => x.body.request_id).sort();
+  assert.deepEqual((await pending(s)).map(x => x.id).sort(), ids);
+  const shownHidden = (await pending(s)).find(x => x.id === protectedHidden.body.request_id);
+  assert.equal(shownHidden.locationHidden, true);
+  const shownOpen = (await pending(s)).find(x => x.id === protectedOpen.body.request_id);
+  assert.equal(shownOpen.lat, 35.123456, '가리지 않은 보호종은 v2(승인 후 공개와 같은 범위)대로 공개');
+  // 가린 보호종 제보의 실제 좌표는 공개 GET 어디에도 없다.
   const paths = ['/reports/pending', '/reports/approved', '/reports/search?q=' + encodeURIComponent('매'), '/reports/search?q=', '/reports/recent-sites?days=30',
-    '/reports/' + protectedOne.body.request_id + '/status', '/contributors/monthly', '/contributors/all'];
+    '/reports/' + protectedHidden.body.request_id + '/status', '/contributors/monthly', '/contributors/all'];
   for (const strict of [false, true]) for (const p of paths) {
     s.pub.REPORTS_PUBLICATION_REQUIRED = String(strict);
     const text = JSON.stringify((await get(s.pub, p, strict)).body);
     for (const d of ['36.98765', '126.87654', '36.9877', '126.8765']) assert.ok(!text.includes(d), `${p} strict=${strict} leaked ${d}`);
   }
-  const held = (await adminList(s, 'pending')).find(x => x.id === protectedOne.body.request_id);
-  assert.equal(held.display_state, 'review'); assert.deepEqual(held.hold_reasons, ['protected', 'name_unconfirmed']);
+  const held = (await adminList(s, 'pending')).find(x => x.id === unknown.body.request_id);
+  assert.equal(held.display_state, 'review'); assert.deepEqual(held.hold_reasons, ['name_unconfirmed']);
 });
 
 test('관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거 플래그·재판정·만료는 공개되지 않는다', async t => {

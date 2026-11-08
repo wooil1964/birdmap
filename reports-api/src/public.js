@@ -139,7 +139,7 @@ async function handleCanonicalSubmit(request,env,ctx) {
     const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:hide?approx.lat:null,public_lon:hide?approx.lon:null,
       approx_lat:approx.lat,approx_lon:approx.lon,pending_public:open?1:0,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
       bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:dedupe};
-    return {accepted,row,options:{env,review:auto?submissionReview(id,row.received_at,auto):null,cap:open?capGuard(env,hash,now):null}};
+    return {accepted,row,options:{env,review:auto?submissionReview(id,row.received_at,auto):null,cap:open?capGuard(env,hash,now,report,id):null}};
   };
   let auto=autoPublicEnabled(env)?await classifySubmission(db,env,report,hash,now):null;
   let {accepted,row,options}=build(auto),result;

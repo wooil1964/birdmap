@@ -170,6 +170,8 @@ jobs:
           ISSUE28_OUTPUT=.ci-results/issue28-native node docs/issue28/native.mjs "$PWD/.ci-toolchain/node_modules"
           # 하루 자동 공개 한도: 실제 D1 에서 24건 동시 접수(한도 3) → 정확히 3건 공개, 나머지 검토 대기(약 8초)
           node docs/report-autopublish-20261108/cap-native.mjs "$PWD/.ci-toolchain/node_modules" "$PWD/reports-api" 24 3
+          # 같은 날·같은 종·200 m 이내 동시 접수: 자동 공개 최대 1건(실제 D1 11개 시나리오, 약 23초)
+          node docs/report-autopublish-20261108/duplicate-native.mjs "$PWD/.ci-toolchain/node_modules" "$PWD/reports-api"
       - name: Prepare protective Pages rollback artifact
         run: node .github/scripts/package_protected_pages.mjs .ci-results/protected-pages
       - name: Upload protective standby artifact (no deployment)

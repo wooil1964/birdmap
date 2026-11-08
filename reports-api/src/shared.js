@@ -1,3 +1,4 @@
+import { identifyBird, isListedBirdName } from './bird-names.js';
 import { OFFICIAL_BIRD_NAMES } from './official-bird-names.js';
 // 공개 접수 Worker 와 관리자 Worker 가 함께 쓰는 검증·응답·인증 헬퍼.
 // 기존 weather-proxy Worker 의 응답 형식(ok/error 봉투, Origin 허용 목록)을 그대로 따른다.
@@ -11,7 +12,8 @@ export const LON_MIN = 124.0;
 export const LON_MAX = 132.0;
 
 export const MAX_SPECIES = 10;
-export const MAX_SPECIES_LENGTH = 30;
+// 학명·영명(최대 33자)과 수량 표기를 담기 위해 30 → 40. 화면 입력칸 전체 제한(200자)은 그대로다.
+export const MAX_SPECIES_LENGTH = 40;
 export const MAX_REPORTER_LENGTH = 40;
 export const MAX_NOTE_LENGTH = 500;
 export const MAX_BIRD_COUNT = 100000;
@@ -323,7 +325,10 @@ function isProtectedSpeciesToken(token) {
   const text = token.normalize('NFC').trim();
   if (SENSITIVE_SPECIES.includes(text) || PEREGRINE_ALIAS.test(text)) return true;
   const match = PROTECTED_QUANTITY.exec(text);
-  return !!match && (SENSITIVE_SPECIES.includes(match[1].trim()) || PEREGRINE_ALIAS.test(match[1].trim()));
+  if (match && (SENSITIVE_SPECIES.includes(match[1].trim()) || PEREGRINE_ALIAS.test(match[1].trim()))) return true;
+  // 학명·영명으로 적어도 같은 종이다(정책의 19종 목록은 그대로, 이름 해석만 넓힌다).
+  const id = identifyBird((match ? match[1] : text).trim());
+  return !!id && SENSITIVE_SPECIES.includes(id.key);
 }
 
 export function hasBreedingEvidence(report) {
@@ -377,16 +382,17 @@ export function pendingPayload() {
 // 토큰마다 '국명' 또는 '국명+숫자(마리|개체)'만 인정한다: 동박새3 = 동박새 3 = 동박새 3마리 = 동박새 3개체.
 // 숫자는 1 이상(앞자리 0 없음)이어야 하고, 숫자가 없으면 개체수는 미입력(null)이다(1로 보지 않는다).
 // 하나라도 이 꼴이 아니면 clean=false: 구조화하지 않고 자동 공개도 하지 않는다(관리자 검토).
-const SPECIES_ITEM = /^([가-힣]{1,30})(?:\s*([1-9][0-9]{0,5})\s*(?:마리|개체)?)?$/;
+// 이름은 한글 국명 또는 학명·영명 꼴(영문자·'.-·공백, 단어 5개까지). 영문 이름 뒤 숫자도 개체수다(Calidris pygmaea 3).
+const SPECIES_ITEM = /^([가-힣]{1,30}|[A-Za-z][A-Za-z'.-]*(?: [A-Za-z'.-]+){0,4})(?:\s*([1-9][0-9]{0,5})\s*(?:마리|개체)?)?$/;
 export function parseSpeciesItems(tokens) {
   const items = [];
   let clean = (tokens || []).length > 0;
   for (const raw of tokens || []) {
     const original = String(raw || '').normalize('NFC').trim();
-    const m = SPECIES_ITEM.exec(original);
+    const m = SPECIES_ITEM.exec(original.replace(/\s+/g, ' ')); // 원문(original)은 그대로 두고 비교만 공백을 정리한다
     const count = m && m[2] !== undefined ? Number(m[2]) : null;
     if (!m || (count !== null && count > MAX_BIRD_COUNT)) { clean = false; items.push({ original, name: null, count: null }); continue; }
-    items.push({ original, name: m[1], count });
+    items.push({ original, name: m[1].replace(/\s+/g, ' '), count });
   }
   const names = items.map(i => i.name).filter(Boolean);
   const duplicates = [...new Set(names.filter((n, i) => names.indexOf(n) !== i))];
@@ -450,7 +456,8 @@ export function speciesNamesOf(row) {
 }
 // 국명 미확정은 읽기 전용 검토 표시로만 분류한다. 승인 상태·원문·정본에는 쓰지 않는다.
 export function unconfirmedSpeciesOf(row) {
-  return speciesNamesOf(row).filter(name => !officialBirdNames.has(name));
+  // 2025 목록의 국명·학명·영명으로 확인되면 확인된 이름이다. 목록 밖 학명 꼴·그 밖의 이름은 사후 검토 표시 대상이다.
+  return speciesNamesOf(row).filter(name => !isListedBirdName(name));
 }
 export function identifiedSpeciesSql(env, withCounts = false) {
   const canonical = env?.REPORTS_WRITE_MODE === 'CANONICAL_DUAL_WRITE';

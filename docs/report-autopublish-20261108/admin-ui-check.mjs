@@ -21,7 +21,7 @@ Object.assign(envs.pub,{REPORTS_AUTO_PUBLIC:'1',REPORTS_UNVERIFIED_READS:'1'});
 const ids={};
 const seed=async(k,n,patch)=>{const b=input(n,{observedOn:TODAY,lat:36.5+n/1e3,lon:126.5+n/1e3,...patch});ids[k]=b.request_id;const r=await post(envs.pub,b);if(r.status!==201)throw Error('seed '+k+' '+r.status);return r.json();};
 const u1=await seed('u1',701,{species:'참새'}),u2=await seed('u2',702,{species:'까치',hideLocation:true}),u3=await seed('u3',703,{species:'박새'});
-const held=await seed('held',704,{species:'매',note:'비행'}),unk=await seed('unknown',705,{species:'처음보는새'});
+const held=await seed('held',704,{species:'낯선새',note:'비행'}),unk=await seed('unknown',705,{species:'처음보는새'});
 const multi=await seed('multi',707,{species:'동박새3, 박새2, 쇠딱다구리'}),dupl=await seed('dupl',708,{species:'동박새3, 동박새5'});
 if(multi.publicVisibility!=='public_unverified'||dupl.publicVisibility!=='withheld')throw Error('seed multi receipts');
 if(u1.publicVisibility!=='public_unverified'||held.publicVisibility!=='withheld')throw Error('seed receipts');
@@ -58,7 +58,7 @@ for(const [label,vp,mobile] of [['mobile',{width:390,height:844},true],['pc',{wi
   {const m=await page.locator(`.card[data-id="${ids.dupl}"] .meta`).first().innerText();ok(label+': 같은 종 중복 카드 종별 표시(1종, 합산 안 함)·보류 사유',m.includes('종별: 동박새 (개체수 확인 필요) · 동박새 (개체수 확인 필요) — 1종')&&!m.includes('개체수 8')&&m.includes('종명·개체수 확인'),m);}
   ok(label+': 공식 국명 미확인 기록은 원문 유지·관리자 검토 안내',/공식 국명 확인 필요.*관리자 검토 대상/.test(await page.locator(`.card[data-id="${ids.unknown}"] .meta`).first().innerText()));
   ok(label+': 보호종 배지 검토 대기 · 비공개',(await badge(ids.held))==='검토 대기 · 비공개');
-  ok(label+': 보류 사유 표시',/자동 공개 보류 사유: 보호종/.test(await page.locator(`.card[data-id="${ids.held}"] .meta`).first().innerText()));
+  ok(label+': 보류 사유 표시',/자동 공개 보류 사유: 종명 확인/.test(await page.locator(`.card[data-id="${ids.held}"] .meta`).first().innerText()));
   ok(label+': 과거 플래그는 검토 대기(공개 아님)',(await badge(ids.legacy))==='검토 대기 · 비공개');
   ok(label+': 황색·수동 공개 버튼 없음',!/황색/.test(await page.locator('#list').innerText())&&(await page.locator('button[data-public="1"]').count())===0);
   ok(label+': 가로 스크롤 없음',await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1));
