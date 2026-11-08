@@ -31,6 +31,10 @@ const CASES = [
 ];
 const coord = i => ({ lat: Number((35.1 + i * 0.0137).toFixed(6)), lon: Number((126.3 + i * 0.0173).toFixed(6)) });
 const needles = c => [String(c.lat), String(c.lon), c.lat.toFixed(4), c.lon.toFixed(4)];
+// 짧은 좌표(예: 35.1)가 시각 문자열("...:35.123Z")의 일부와 우연히 겹치면 거짓 경보가 난다(초가 35이고 밀리초가 1로 시작할 때만 실패하던 간헐 실패의 원인).
+// 시각 문자열을 먼저 빼고, 앞뒤가 숫자·소수점이 아닌 독립된 수일 때만 노출로 센다. 두 번째 원인: 초.밀리초가 좌표 전체(35.237)와 같아질 때도 있었다. 실제 좌표 값(JSON 수)은 그대로 잡힌다.
+const ISO_TIME = /\d{4}-\d\d-\d\dT[0-9:.]+Z/g;
+const hasNumber = (text, d) => new RegExp('(?<![0-9.])' + d.replace(/\./g, '\\.') + '(?![0-9])').test(text.replace(ISO_TIME, '""'));
 
 async function build(t, flags) {
   const auth = await installAuthStubs(); t.after(auth.restore);
@@ -81,7 +85,7 @@ for (const [label, flags] of [['ON', { REPORTS_AUTO_PUBLIC: '1', REPORTS_UNVERIF
     const dump = await publicDump(s);
     const text = JSON.stringify(dump);
     for (const r of s.rows.filter(r => !r.key.startsWith('positive')))
-      for (const d of needles(r.p)) assert.ok(!text.includes(d), `${label}: ${r.key} 좌표 ${d} 노출`);
+      for (const d of needles(r.p)) assert.ok(!hasNumber(text, d), `${label}: ${r.key} 좌표 ${d} 노출`);
     for (const r of s.rows.filter(r => !r.key.startsWith('positive')))
       for (const strict of [false, true])
         assert.notEqual(dump.find(x => x.path === 'status:' + r.key && x.strict === strict).body.publicVisibility, 'public_unverified', r.key);
@@ -102,7 +106,17 @@ for (const [label, flags] of [['ON', { REPORTS_AUTO_PUBLIC: '1', REPORTS_UNVERIF
     } else {
       // 스위치 OFF: PR #78 과 같이 대기 제보는 전부 비공개.
       for (const ids of pending) assert.deepEqual(ids, []);
-      for (const r of positives) for (const d of needles(r.p)) assert.ok(!text.includes(d), 'OFF 에서는 대조군(' + r.key + ')도 비공개');
+      for (const r of positives) for (const d of needles(r.p)) assert.ok(!hasNumber(text, d), 'OFF 에서는 대조군(' + r.key + ')도 비공개');
     }
   });
 }
+
+test('좌표 노출 검사 보조: 시각 문자열 속 우연한 일치는 세지 않고 실제 좌표 수는 잡는다(간헐 실패 회귀)', () => {
+  assert.equal(hasNumber('{"received_at":"2026-11-08T08:43:35.123Z"}', '35.1'), false);
+  assert.equal(hasNumber('{"received_at":"2026-11-08T08:44:35.237Z"}', '35.237'), false, '밀리초까지 같은 경우');
+  assert.equal(JSON.stringify({ at: '2026-11-08T08:43:35.123Z' }).includes('35.1'), true, '예전 검사는 여기서 거짓 경보');
+  assert.equal(hasNumber('{"lat":35.1,"lon":127.2}', '35.1'), true);
+  assert.equal(hasNumber('{"lat":35.1234}', '35.1'), false);
+  assert.equal(hasNumber('{"lat":35.1234}', '35.1234'), true);
+  assert.equal(hasNumber('[35.1]', '35.1'), true);
+});

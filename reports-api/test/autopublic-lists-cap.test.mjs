@@ -391,7 +391,7 @@ test('같은 종 판정: 598종 모두 국명·학명·영명(대소문자 무�
 
   assert.equal(checked, lines.length);
 
-  // 속만 맞는 이름은 식별은 되지만 IOC 확인 종으로 취급하지 않는다. 속도 모르면 식별 불가.
+  // 속만 맞는 이름은 식별은 되지만 실존 종으로 취급하지 않는다(호출 쪽에서 검토 보류). 속도 모르면 식별 불가.
 
   assert.equal(identifyBird('Larus imaginarius').kind, 'scientific_genus_only');
 
@@ -412,4 +412,35 @@ test('위치 정책 v2: 19종은 국명·학명·영명 어느 쪽으로 적어�
   }
   for (const n of ['참새', 'Passer montanus', 'Eurasian Tree Sparrow', 'Larus crassirostris', "Ross's Gull", 'Larus imaginarius'])
     assert.equal(isSensitiveReport({ note: null, speciesText: n, species: [n] }), false, n);
+});
+
+import { CROSSWALK_SYNONYMS, CROSSWALK_EXTRA } from '../src/ioc-crosswalk.js';
+
+test('분류목록 대응표: 모든 동의어가 IOC 학명과 같은 종으로 묶이고 서로의 별칭이 된다', () => {
+  const pairs = CROSSWALK_SYNONYMS.split(';').map(x => x.split('>'));
+  assert.ok(pairs.length > 3000);
+  // 동의어가 그 자체로 IOC 종이면(철자 이명 등) 모호하므로 IOC 쪽 판정을 따른다. 그런 항목은 소수여야 한다.
+  const ambiguous = pairs.filter(([syn]) => !['synonym_scientific', 'scientific'].includes(identifyBird(syn)?.kind));
+  assert.ok(ambiguous.length < 60, String(ambiguous.length));
+  for (const [syn, canon] of pairs.filter(p => !ambiguous.includes(p))) {
+    const a = identifyBird(syn), b = identifyBird(canon);
+    assert.ok(a && b, syn);
+    assert.equal(a.key, b.key, syn + ' → ' + canon);
+    assert.ok(a.aliases.includes(syn) && a.aliases.includes(canon), syn + ' 별칭');
+  }
+  const extra = CROSSWALK_EXTRA.split(';').map(x => x.split('>')[0]);
+  assert.ok(extra.filter(n => identifyBird(n)?.kind === 'other_list_scientific').length > 400, 'IOC 에는 없고 다른 목록에만 있는 종');
+});
+
+import { readFileSync } from 'node:fs';
+
+test('생성 자료의 출처·버전 표시와 번들에 들어가는 자료 크기', () => {
+  const read = f => readFileSync(new URL('../' + f, import.meta.url), 'utf8');
+  assert.ok(read('src/ioc-taxa.js').split(String.fromCharCode(10))[0].includes('IOC World Bird List v15.2'));
+  assert.ok(read('src/ioc-taxa.js').split(String.fromCharCode(10))[0].includes('10.14344/IOC.ML.15.2'));
+  assert.ok(read('src/ioc-crosswalk.js').split(String.fromCharCode(10))[0].includes('CC BY 4.0'));
+  assert.ok(read('DATA_SOURCES.md').includes('CC BY 4.0'));
+  // 번들 크기 감시: 두 생성 자료가 합쳐 1 MB 를 넘으면 구조를 다시 생각한다.
+  const size = ['src/ioc-taxa.js', 'src/ioc-crosswalk.js'].reduce((n, f) => n + Buffer.byteLength(read(f)), 0);
+  assert.ok(size < 1_000_000, String(size));
 });

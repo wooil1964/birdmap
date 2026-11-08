@@ -58,10 +58,10 @@ async function scenario(name, flags, fn) {
   results.push({ name, pass: checks.every(c => c.pass), checks });
 }
 const P = [36.5, 127.5], Q = [37.2, 128.2], R = [35.4, 126.4], S = [34.8, 127.9], T = [37.9, 127.2], U = [36.0, 129.0];
-const UNLISTED = 'Larus imaginarius';
+const UNLISTED = 'Pterodroma feae';
 
 await scenario('1. 일반종·희귀종·미조·미기록 가능 학명이 모두 자동 공개되고 원문이 보존된다', {}, async ({ q, burst, get }, check) => {
-  check('시험 전제: 대상 학명은 속만 IOC 에 있는 이름', identifyBird(UNLISTED)?.kind === 'scientific_genus_only', JSON.stringify(identifyBird(UNLISTED)));
+  check('시험 전제: 대상 학명은 2025 한국 목록 밖의 IOC 종', identifyBird(UNLISTED)?.kind === 'ioc_scientific', JSON.stringify(identifyBird(UNLISTED)));
   const specs = [{ species: '참새 3', ...at(...P) }, { species: '말똥가리', ...at(...Q) }, { species: 'Calidris pygmaea 2', ...at(...R) },
     { species: UNLISTED, ...at(...S) }, { species: 'Spoon-billed Sandpiper', ...at(...T) }, { species: '저어새 4', ...at(...U) }];
   const rs = await burst(specs);
@@ -109,7 +109,7 @@ await scenario('4. 같은 종을 국명·학명·영명으로 달리 적어도 �
   check('자동 공개 정확히 1건, 나머지 possible_duplicate', open(rs).length === 1 && held(rs, 'possible_duplicate').length === 4);
   const far = await burst([{ species: 'Calidris pygmaea', ...at(...Q, 0, 0) }, { species: '넓적부리도요', ...at(...Q, 201, 0) }]);
   check('201 m 밖이면 둘 다 공개', open(far).length === 2);
-  const lat = await burst([{ species: UNLISTED, ...at(...R, 0, 0) }, { species: 'Larus imaginarius', ...at(...R, 90, 0) }]);
+  const lat = await burst([{ species: UNLISTED, ...at(...R, 0, 0) }, { species: "Fea's Petrel", ...at(...R, 90, 0) }]);
   check('목록 밖 학명끼리도 같은 종(같은 날·200 m)으로 1건', open(lat).length === 1 && held(lat, 'possible_duplicate').length === 1);
   check('일치', await consistent(q, [...rs, ...far, ...lat]));
 });
@@ -168,18 +168,23 @@ await scenario('8. 기존 보호 유지: CAPTCHA 재사용·같은 IP 스팸 제
   check('정확히 같은 내용(종·좌표 4자리·날짜)은 기존대로 409', exact.status === 409 && (await exact.json()).error?.code === 'DUPLICATE_REPORT');
 });
 
-await scenario('9. 국제 분류목록(IOC 15.2) 대조: 목록 밖 미조의 학명·영명은 같은 종, 속만 맞는 이름은 공개+확인 표시, 속도 없으면 보류', {}, async ({ q, burst, get, env, local }, check) => {
+await scenario('9. 국제 분류목록(IOC 15.2) 대조: 목록 밖 미조의 학명·영명은 같은 종, 속만 맞는 이름·속도 없는 이름은 보류', {}, async ({ q, burst, get, env, local }, check) => {
   const rs = await burst([{ species: "Ross's Gull", ...at(...P, 0, 0) }, { species: 'Rhodostethia rosea', ...at(...P, 50, 0) }, { species: "ROSS'S GULL 2", ...at(...P, 0, 80) },
     { species: 'Pterodroma feae', ...at(...Q) }, { species: 'Larus imaginarius', ...at(...R) }, { species: 'Zzzzus abcdef', ...at(...S) }, { species: 'Imaginary Warbler', ...at(...T) }]);
   check('7건 모두 접수', rs.every(r => r.status === 201), rs.map(r => r.status).join());
   const gull = rs.slice(0, 3);
   check("Ross's Gull = Rhodostethia rosea: 200 m 안 동시 3건 중 자동 공개 정확히 1건", open(gull).length === 1 && held(gull, 'possible_duplicate').length === 2);
-  check('IOC 에만 있는 종(Pterodroma feae)과 속만 맞는 이름(Larus imaginarius)은 공개', open([rs[3], rs[4]]).length === 2);
+  check('IOC 에만 있는 종(Pterodroma feae)은 공개, 속만 맞는 이름(Larus imaginarius)은 실존 종으로 판정하지 않고 name_unconfirmed 보류', open([rs[3]]).length === 1 && held([rs[4]], 'name_unconfirmed').length === 1 && open([rs[4]]).length === 0);
   check('속명도 IOC 에 없는 라틴어 꼴·IOC 에 없는 영명은 name_unconfirmed 보류', held([rs[5], rs[6]], 'name_unconfirmed').length === 2 && open([rs[5], rs[6]]).length === 0);
   const names = (await q('SELECT species_original, species_identified FROM sightings')).map(x => x.species_original);
   check('원문 보존(식별 이름으로 바꾸지 않음)', ["Ross's Gull", 'Rhodostethia rosea', 'Larus imaginarius'].every(n => names.includes(n)));
   const kos = await burst([{ species: 'Calidris pygmaea', ...at(...U, 0, 0) }, { species: 'Spoon-billed Sandpiper', ...at(...U, 40, 0) }, { species: 'calidris pygmaea 3', ...at(...U, 0, 60) }, { species: 'SPOON-BILLED SANDPIPER', ...at(...U, 60, 60) }]);
   check('2025 목록 종을 학명·영명으로만(국명 없이) 적은 동시 4건도 자동 공개 1건', open(kos).length === 1 && held(kos, 'possible_duplicate').length === 3, kos.map(r => r.receipt.publicVisibility).join());
+  const syn = await burst([{ species: 'Tachyspiza haplochroa', ...at(...T, 0, 0) }, { species: 'Accipiter haplochrous', ...at(...T, 50, 0) }, { species: 'Tachyspiza haplochrous', ...at(...T, 0, 70) }, { species: 'White-bellied Goshawk', ...at(...T, 60, 60) }]);
+  check('다른 분류목록의 동의어 학명(AviList·Clements 등)도 같은 종: 동시 4건 중 자동 공개 1건', open(syn).length === 1 && held(syn, 'possible_duplicate').length === 3, syn.map(r => r.receipt.publicVisibility).join());
+  const syn2 = await burst([{ species: 'Accipiter haplochrous', ...at(...U, 0, 0) }, { species: 'Tachyspiza haplochrous', ...at(...U, 80, 0) }, { species: 'Accipiter haplochrous', ...at(...U, 0, 90) }]);
+  check('동의어끼리만(IOC 학명·영명 없이) 적은 동시 3건도 자동 공개 1건', open(syn2).length === 1 && held(syn2, 'possible_duplicate').length === 2, syn2.map(r => r.receipt.publicVisibility + ':' + r.status).join());
+  check('일치(동의어)', await consistent(q, syn));
   check('일치', await consistent(q, rs));
 });
 

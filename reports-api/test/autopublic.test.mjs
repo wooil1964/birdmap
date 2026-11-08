@@ -32,7 +32,8 @@ test('분류: 식별 가능한 이름은 종류와 상관없이 적격, 식별 �
   assert.deepEqual(reasons(['Anser fabalis middendorffii']), [], '목록 밖 학명 꼴(미조·미기록 가능종 포함)은 원문 보존 + 공개');
   assert.deepEqual(reasons(["Ross's Gull"]), [], '2025 목록 밖이라도 IOC 영명이면 식별(미조 즉시 공개)');
   assert.deepEqual(reasons(['Rhodostethia rosea']), [], 'IOC 학명');
-  assert.deepEqual(reasons(['Larus imaginarius']), [], '속은 IOC 에 있으나 종소명이 없으면: 공개하되 관리자 화면에서 확인(원문 보존)');
+  assert.deepEqual(reasons(['Larus imaginarius']), ['name_unconfirmed'], '속만 맞고 종소명이 어느 목록에도 없으면 실존 종으로 판정하지 않고 관리자 검토');
+  assert.deepEqual(reasons(['Accipiter haplochrous']), [], '다른 분류목록(AviList 등)의 동의어는 근거가 있으므로 식별');
   assert.deepEqual(reasons(['Zzzzus abcdef']), ['name_unconfirmed'], '속명이 IOC 에도 없으면 라틴어 꼴이어도 보류');
   assert.deepEqual(reasons(['Imaginary Warbler']), ['name_unconfirmed'], 'IOC 에 없는 영명은 보류');
   assert.deepEqual(reasons(['처음보는새']), ['name_unconfirmed']);

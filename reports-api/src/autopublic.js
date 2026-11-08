@@ -58,7 +58,7 @@ export function contentReasons(report) {
     const item = parsed.items[i];
     // 식별(공식 국명·학명·영명, 목록 밖 학명 꼴) 가능한 이름이면 종류와 상관없이 통과한다. 식별할 수 없으면 관리자 검토.
     const id = item?.name ? identifyBird(item.name) : null;
-    if (!id) { reasons.add('name_unconfirmed'); continue; }
+    if (!id || id.kind === 'scientific_genus_only') { reasons.add('name_unconfirmed'); continue; } // 속만 맞는 학명은 실존 종으로 판정하지 않고 관리자 검토
     const limit = FLOCK_LIMITS[id.key] || DEFAULT_COUNT_MAX;
     countMax = Math.min(countMax, limit);
     // 종명 뒤 수량 표기("참새 5000마리")도 그 종의 상한을 넘으면 보류한다.
@@ -99,7 +99,7 @@ const METERS_PER_DEGREE = 6371000 * Math.PI / 180;
 export function duplicateGuard(report, selfId) {
   const ids = (report.species || []).map(t => identifyBird(speciesName(t)));
   const names = [...new Set(ids.flatMap(id => id ? id.aliases : []))];
-  if (!ids.length || ids.some(id => !id) || names.some(n => !/^[가-힣A-Za-z][가-힣A-Za-z' .-]{0,39}$/.test(n)) || ![report.lat, report.lon].every(Number.isFinite)) {
+  if (!ids.length || ids.some(id => !id || id.kind === 'scientific_genus_only') || names.some(n => !/^[가-힣A-Za-z][가-힣A-Za-z' .-]{0,39}$/.test(n)) || ![report.lat, report.lon].every(Number.isFinite)) {
     return { condition: '0=1', values: [], reachedSql: 'SELECT 1 AS possible_duplicate' };
   }
   const cos = Math.cos(report.lat * Math.PI / 180);
