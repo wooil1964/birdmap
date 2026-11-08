@@ -30,7 +30,11 @@ test('분류: 식별 가능한 이름은 종류와 상관없이 적격, 식별 �
   assert.deepEqual(reasons(['말똥가리']), []);
   assert.deepEqual(reasons(['Calidris pygmaea']), [], '학명(2025 목록)으로 식별');
   assert.deepEqual(reasons(['Anser fabalis middendorffii']), [], '목록 밖 학명 꼴(미조·미기록 가능종 포함)은 원문 보존 + 공개');
-  assert.deepEqual(reasons(["Ross's Gull"]), ['name_unconfirmed'], '목록 밖 영명은 식별할 수 없어 관리자 검토');
+  assert.deepEqual(reasons(["Ross's Gull"]), [], '2025 목록 밖이라도 IOC 영명이면 식별(미조 즉시 공개)');
+  assert.deepEqual(reasons(['Rhodostethia rosea']), [], 'IOC 학명');
+  assert.deepEqual(reasons(['Larus imaginarius']), [], '속은 IOC 에 있으나 종소명이 없으면: 공개하되 관리자 화면에서 확인(원문 보존)');
+  assert.deepEqual(reasons(['Zzzzus abcdef']), ['name_unconfirmed'], '속명이 IOC 에도 없으면 라틴어 꼴이어도 보류');
+  assert.deepEqual(reasons(['Imaginary Warbler']), ['name_unconfirmed'], 'IOC 에 없는 영명은 보류');
   assert.deepEqual(reasons(['처음보는새']), ['name_unconfirmed']);
   for (const doubt of ['참새?', '참새 추정', '참새류', '참새 또는 까치'])assert.ok(reasons([doubt]).includes('name_unconfirmed'), doubt);
   assert.deepEqual(reasons(['참새', '까치', '박새', '딱새', '동박새', '물까치']), ['name_unconfirmed'], '6종은 보류');

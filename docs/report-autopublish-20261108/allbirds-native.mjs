@@ -61,7 +61,7 @@ const P = [36.5, 127.5], Q = [37.2, 128.2], R = [35.4, 126.4], S = [34.8, 127.9]
 const UNLISTED = 'Larus imaginarius';
 
 await scenario('1. 일반종·희귀종·미조·미기록 가능 학명이 모두 자동 공개되고 원문이 보존된다', {}, async ({ q, burst, get }, check) => {
-  check('시험 전제: 대상 학명은 2025 목록 밖의 학명 꼴', identifyBird(UNLISTED)?.kind === 'scientific_unlisted', JSON.stringify(identifyBird(UNLISTED)));
+  check('시험 전제: 대상 학명은 속만 IOC 에 있는 이름', identifyBird(UNLISTED)?.kind === 'scientific_genus_only', JSON.stringify(identifyBird(UNLISTED)));
   const specs = [{ species: '참새 3', ...at(...P) }, { species: '말똥가리', ...at(...Q) }, { species: 'Calidris pygmaea 2', ...at(...R) },
     { species: UNLISTED, ...at(...S) }, { species: 'Spoon-billed Sandpiper', ...at(...T) }, { species: '저어새 4', ...at(...U) }];
   const rs = await burst(specs);
@@ -96,7 +96,7 @@ await scenario('3. 번식·둥지 입력은 접수 단계에서 거절(저장 �
   const r1 = await post(bad, '198.19.0.1'); check('번식 입력 400(BREEDING_REPORT_NOT_ALLOWED), 저장 0건', r1.status === 400 && (await q('SELECT COUNT(*) n FROM reports'))[0].n === 0);
   const bad2 = input(nextId(), { species: '저어새 번식', observedOn: today, ...at(...P) });
   const r2 = await post(bad2, '198.19.0.2'); check('종명에 번식 표현도 400', r2.status === 400);
-  const rs = await burst([{ species: '처음보는새', ...at(...Q) }, { species: "Ross's Gull", ...at(...R) }, { species: 'Calidris sp.', ...at(...S) }, { species: '참새 같음', ...at(...T) }, { species: 'Zosterops 3쌍', ...at(...U) }]);
+  const rs = await burst([{ species: '처음보는새', ...at(...Q) }, { species: 'Imaginary Warbler', ...at(...R) }, { species: 'Calidris sp.', ...at(...S) }, { species: '참새 같음', ...at(...T) }, { species: 'Zzzzus abcdef', ...at(...U) }]);
   check('5건 모두 접수(201)·자동 공개 0건', rs.every(r => r.status === 201) && open(rs).length === 0);
   check('사유: name_unconfirmed 또는 species_parse', rs.every(r => (r.receipt.holdReasons || []).some(x => ['name_unconfirmed', 'species_parse'].includes(x))));
   check('일치', await consistent(q, rs));
@@ -166,6 +166,40 @@ await scenario('8. 기존 보호 유지: CAPTCHA 재사용·같은 IP 스팸 제
   await post(dupBody, '198.19.7.1');
   const exact = await post({ ...dupBody, request_id: input(nextId()).request_id, turnstileToken: 'synthetic-other' }, '198.19.7.2');
   check('정확히 같은 내용(종·좌표 4자리·날짜)은 기존대로 409', exact.status === 409 && (await exact.json()).error?.code === 'DUPLICATE_REPORT');
+});
+
+await scenario('9. 국제 분류목록(IOC 15.2) 대조: 목록 밖 미조의 학명·영명은 같은 종, 속만 맞는 이름은 공개+확인 표시, 속도 없으면 보류', {}, async ({ q, burst, get, env, local }, check) => {
+  const rs = await burst([{ species: "Ross's Gull", ...at(...P, 0, 0) }, { species: 'Rhodostethia rosea', ...at(...P, 50, 0) }, { species: "ROSS'S GULL 2", ...at(...P, 0, 80) },
+    { species: 'Pterodroma feae', ...at(...Q) }, { species: 'Larus imaginarius', ...at(...R) }, { species: 'Zzzzus abcdef', ...at(...S) }, { species: 'Imaginary Warbler', ...at(...T) }]);
+  check('7건 모두 접수', rs.every(r => r.status === 201), rs.map(r => r.status).join());
+  const gull = rs.slice(0, 3);
+  check("Ross's Gull = Rhodostethia rosea: 200 m 안 동시 3건 중 자동 공개 정확히 1건", open(gull).length === 1 && held(gull, 'possible_duplicate').length === 2);
+  check('IOC 에만 있는 종(Pterodroma feae)과 속만 맞는 이름(Larus imaginarius)은 공개', open([rs[3], rs[4]]).length === 2);
+  check('속명도 IOC 에 없는 라틴어 꼴·IOC 에 없는 영명은 name_unconfirmed 보류', held([rs[5], rs[6]], 'name_unconfirmed').length === 2 && open([rs[5], rs[6]]).length === 0);
+  const names = (await q('SELECT species_original, species_identified FROM sightings')).map(x => x.species_original);
+  check('원문 보존(식별 이름으로 바꾸지 않음)', ["Ross's Gull", 'Rhodostethia rosea', 'Larus imaginarius'].every(n => names.includes(n)));
+  const kos = await burst([{ species: 'Calidris pygmaea', ...at(...U, 0, 0) }, { species: 'Spoon-billed Sandpiper', ...at(...U, 40, 0) }, { species: 'calidris pygmaea 3', ...at(...U, 0, 60) }, { species: 'SPOON-BILLED SANDPIPER', ...at(...U, 60, 60) }]);
+  check('2025 목록 종을 학명·영명으로만(국명 없이) 적은 동시 4건도 자동 공개 1건', open(kos).length === 1 && held(kos, 'possible_duplicate').length === 3, kos.map(r => r.receipt.publicVisibility).join());
+  check('일치', await consistent(q, rs));
+});
+
+await scenario('10. [조사] 위치 정책 v2 19종: 가리지 않은 제보의 실제 좌표가 나가는 공개 경로, 가린 제보는 어디에도 없음', { REPORTS_AUTO_PUBLIC_DAILY_MAX: '50' }, async ({ q, burst, get }, check) => {
+  const { SENSITIVE_SPECIES } = await load('src/shared.js');
+  const specs = SENSITIVE_SPECIES.flatMap((name, i) => [{ species: name, ...at(34 + i * 0.1, 126 + i * 0.1) }, { species: name, ...at(34.05 + i * 0.1, 126.05 + i * 0.1), hideLocation: true }]);
+  const rs = await burst(specs);
+  check('38건 모두 자동 공개', rs.every(r => r.status === 201) && open(rs).length === 38, rs.map(r => r.status + ':' + r.receipt.publicVisibility).join().slice(0, 120));
+  const paths = ['/reports/pending', '/reports/approved', '/reports/recent-sites?days=30', '/reports/search?q=', '/contributors/monthly', '/contributors/all'];
+  const nums = o => (typeof o === 'number' ? [o] : o && typeof o === 'object' ? Object.values(o).flatMap(nums) : []);
+  const bodies = Object.fromEntries(await Promise.all(paths.map(async p => [p, nums(await get(p))])));
+  const exposure = {};
+  rs.forEach((r, i) => { const s = specs[i], key = s.hideLocation ? 'hidden' : 'exact';
+    for (const p of paths) if (bodies[p].some(n => Math.abs(n - s.lat) < 1e-5) && bodies[p].some(n => Math.abs(n - s.lon) < 1e-5)) exposure[key + ' ' + p] = (exposure[key + ' ' + p] || 0) + 1; });
+  console.log('   EXPOSURE ' + JSON.stringify(exposure));
+  check('가리지 않은 19건의 실제 좌표 노출 경로가 있다(조사 기록)', Object.keys(exposure).some(k => k.startsWith('exact')));
+  check('가린 19건의 실제 좌표는 어떤 공개 응답에도 없다', !Object.keys(exposure).some(k => k.startsWith('hidden')), JSON.stringify(exposure));
+  const spots = (await get('/reports/pending')).spots;
+  const off = specs.filter(s => s.hideLocation).map((s, i) => spots.find(x => x.locationHidden && Math.abs(x.lat - s.lat) < 0.5 && Math.abs(x.lon - s.lon) < 0.5));
+  check('가린 19건은 대략점(최소 1 km 이동)으로만 표시', off.length === 19 && off.every(Boolean));
 });
 
 auth.restore();

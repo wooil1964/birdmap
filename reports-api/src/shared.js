@@ -1,4 +1,4 @@
-import { isListedBirdName } from './bird-names.js';
+import { identifyBird, isListedBirdName } from './bird-names.js';
 import { OFFICIAL_BIRD_NAMES } from './official-bird-names.js';
 // 공개 접수 Worker 와 관리자 Worker 가 함께 쓰는 검증·응답·인증 헬퍼.
 // 기존 weather-proxy Worker 의 응답 형식(ok/error 봉투, Origin 허용 목록)을 그대로 따른다.
@@ -325,7 +325,10 @@ function isProtectedSpeciesToken(token) {
   const text = token.normalize('NFC').trim();
   if (SENSITIVE_SPECIES.includes(text) || PEREGRINE_ALIAS.test(text)) return true;
   const match = PROTECTED_QUANTITY.exec(text);
-  return !!match && (SENSITIVE_SPECIES.includes(match[1].trim()) || PEREGRINE_ALIAS.test(match[1].trim()));
+  if (match && (SENSITIVE_SPECIES.includes(match[1].trim()) || PEREGRINE_ALIAS.test(match[1].trim()))) return true;
+  // 학명·영명으로 적어도 같은 종이다(정책의 19종 목록은 그대로, 이름 해석만 넓힌다).
+  const id = identifyBird((match ? match[1] : text).trim());
+  return !!id && SENSITIVE_SPECIES.includes(id.key);
 }
 
 export function hasBreedingEvidence(report) {
