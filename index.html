@@ -217,7 +217,7 @@
   <div class="monthTideDialog reportDialog">
     <div class="monthTideHeader"><strong id="reportTitle">출현종 제보</strong><button type="button" onclick="closeReportModal()">닫기</button></div>
     <form id="reportForm" class="reportBody" onsubmit="return submitReport(event)">
-      <p class="reportHint">제보하신 내용은 접수 즉시 지도에 표시될 수 있습니다. 번식 관련 제보이거나 확인이 필요한 제보는 관리자 확인 뒤에 공개됩니다.</p>
+      <p class="reportHint">제보하신 내용은 접수 즉시 지도에 표시될 수 있습니다. 확인이 필요한 제보는 관리자 검토 후 공개됩니다. 둥지·번식 관련 제보는 접수할 수 없습니다.</p>
       <label for="reportSpecies">출현종 <span class="reportRequired">필수</span></label>
       <input id="reportSpecies" name="species" required maxlength="200" placeholder="예: 동박새, 큰유리새" autocomplete="off">
       <label for="reportObservedOn">관찰 날짜 <span class="reportRequired">필수</span></label>
@@ -1212,14 +1212,14 @@ function renderRecentReports(){
     return;
   }
   if(!entries.length){
-    list.innerHTML='<div class="recentReportEmpty">최근 승인된 제보가 없습니다.</div>';
+    list.innerHTML='<div class="recentReportEmpty">최근 출현 제보가 없습니다.</div>';
     return;
   }
   // 실제 관찰일 기준으로 최근 기간만 남긴다(등록일·승인일이 아니다).
   var cutoff=kstDateTextBefore(RECENT_REPORT_DAYS);
   var recent=entries.filter(function(entry){return entry.date&&entry.date>=cutoff;});
   if(!recent.length){
-    list.innerHTML='<div class="recentReportEmpty">최근 '+RECENT_REPORT_DAYS+'일간 승인된 제보가 없습니다.</div>';
+    list.innerHTML='<div class="recentReportEmpty">최근 '+RECENT_REPORT_DAYS+'일간 출현 제보가 없습니다.</div>';
     return;
   }
   // entries 는 실제 관찰일 최신순(승인 + 자동 공개)이라 자른 뒤에도 순서가 그대로다.

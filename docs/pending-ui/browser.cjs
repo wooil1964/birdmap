@@ -183,6 +183,18 @@ async function scenario(page, label, touch) {
   await page.evaluate(async () => { __mock.pendingSpots = []; __mock.revision = String(BigInt(__mock.revision) + 1n); await loadApprovedReports(); await loadPendingReports(); });
   const rest = await page.evaluate(() => ({ pending: Object.keys(reportPendingLayers).length, items: document.querySelectorAll('#recentReportsList .recentReportItem').length }));
   check(rest.pending === 0 && rest.items === 4, label + ' 자동 공개가 모두 내려가면 승인 건만 남는다', rest);
+  // 7) 빈 목록 안내: '승인된'이 아니라 '출현 제보'로 안내한다(자동 공개 제보도 목록에 들어가므로).
+  const empty = await page.evaluate(async () => {
+    __mock.approved = []; __mock.pendingSpots = []; __mock.revision = String(BigInt(__mock.revision) + 1n); await loadApprovedReports(); await loadPendingReports();
+    const none = document.getElementById('recentReportsList').textContent.trim();
+    __mock.approved = [__mock.spot({ id: 'old-1', lat: 34.9, lon: 126.9, species: ['흰꼬리수리'], history: [{ id: 'old-h', species: ['흰꼬리수리'], date: '2020-01-02', reporter: '' }] })];
+    __mock.revision = String(BigInt(__mock.revision) + 1n); await loadApprovedReports(); await loadPendingReports();
+    return { none, old: document.getElementById('recentReportsList').textContent.trim() };
+  });
+  check(empty.none === '최근 출현 제보가 없습니다.' && empty.old === '최근 ' + 60 + '일간 출현 제보가 없습니다.' && !/승인된/.test(empty.none + empty.old), label + ' 빈 목록 안내 문구', empty);
+  // 8) 제보 입력창 안내: 번식 관련 제보는 접수할 수 없음을 알리고 관리자 검토 대기로 설명하지 않는다.
+  const hint = await page.evaluate(() => document.querySelector('.reportHint').textContent.trim());
+  check(hint === '제보하신 내용은 접수 즉시 지도에 표시될 수 있습니다. 확인이 필요한 제보는 관리자 검토 후 공개됩니다. 둥지·번식 관련 제보는 접수할 수 없습니다.', label + ' 제보 입력창 안내 문구', hint);
 }
 
 (async () => {
