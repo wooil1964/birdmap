@@ -1,0 +1,365 @@
+{
+  "testedHead": "47f2a8d814333c97a8ae61672dafd20c5e293c5b",
+  "scope": "Local copies/in-memory native D1 only; no operational data writes or deployments",
+  "mutations": {
+    "baselinePass": true,
+    "variants": [
+      {
+        "id": "M1-provenance",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 8 - 흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다",
+              "not ok 10 - 과거 pending_public=1(자동 판정 기록 없음)과 스위치 끔은 현행 사전 승인제와 같다"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 8 - 흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다",
+              "not ok 10 - 과거 pending_public=1(자동 판정 기록 없음)과 스위치 끔은 현행 사전 승인제와 같다"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M2-read-recheck",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M3-expiry",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 9 - 관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거 플래그·재판정·만료는 공개되지 않는다"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 9 - 관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거 플래그·재판정·만료는 공개되지 않는다"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M4-withdrawn",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 9 - 관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거 플래그·재판정·만료는 공개되지 않는다"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 9 - 관리자: 확인 완료·공개 중지·반려(사유)·재승인, 과거 플래그·재판정·만료는 공개되지 않는다"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M5-hidden-coordinates",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 8 - 흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다",
+              "not ok 18 - 공개 개체수 DTO: 미검증·승인 상세에서 종별 값, 미입력·위치 보호·관리자 정정 유지"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 8 - 흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다",
+              "not ok 18 - 공개 개체수 DTO: 미검증·승인 상세에서 종별 값, 미입력·위치 보호·관리자 정정 유지"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M6-name-allowlist",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 4 - 분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류",
+              "not ok 8 - 흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다",
+              "not ok 14 - 자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기마다 상한, 혼합·불확실·중복은 보류",
+              "not ok 15 - 저장: 한 제보 ID 안에 종별 sightings, 원문 보존, 미입력·중복 구분, 재전송은 중복 저장 없음"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 4 - 분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류",
+              "not ok 8 - 흐름: 위치 가리기는 대략점만, 보호종·모르는 종·중복·한도는 보류하고 좌표를 어디에도 내보내지 않는다",
+              "not ok 14 - 자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기마다 상한, 혼합·불확실·중복은 보류",
+              "not ok 15 - 저장: 한 제보 ID 안에 종별 sightings, 원문 보존, 미입력·중복 구분, 재전송은 중복 저장 없음"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M7-per-species-cap",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 4 - 분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류",
+              "not ok 14 - 자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기마다 상한, 혼합·불확실·중복은 보류"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 4 - 분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류",
+              "not ok 14 - 자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기마다 상한, 혼합·불확실·중복은 보류"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M8-parse-duplicate",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 4 - 분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류",
+              "not ok 14 - 자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기마다 상한, 혼합·불확실·중복은 보류",
+              "not ok 15 - 저장: 한 제보 ID 안에 종별 sightings, 원문 보존, 미입력·중복 구분, 재전송은 중복 저장 없음"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 4 - 분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류",
+              "not ok 14 - 자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기마다 상한, 혼합·불확실·중복은 보류",
+              "not ok 15 - 저장: 한 제보 ID 안에 종별 sightings, 원문 보존, 미입력·중복 구분, 재전송은 중복 저장 없음"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "M9-auto-switch",
+        "syntaxValid": true,
+        "detected": true,
+        "trials": [
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 2 - 보안 행렬(스위치 OFF): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 5 - 분류: 같은 IP 하루 자동 공개 5건, 전체 한도, 스위치 끔",
+              "not ok 10 - 과거 pending_public=1(자동 판정 기록 없음)과 스위치 끔은 현행 사전 승인제와 같다"
+            ]
+          },
+          {
+            "exit": 1,
+            "assertionFailure": true,
+            "failedTests": [
+              "not ok 1 - 보안 행렬(스위치 ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 2 - 보안 행렬(스위치 OFF): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 3 - 보안 행렬(스위치 reads-only-ON): 근거 없는·보호·번식·희귀·미확인·만료·중지·반려 대기 제보는 좌표가 어디에도 없다",
+              "not ok 5 - 분류: 같은 IP 하루 자동 공개 5건, 전체 한도, 스위치 끔",
+              "not ok 10 - 과거 pending_public=1(자동 판정 기록 없음)과 스위치 끔은 현행 사전 승인제와 같다"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "miniflareVersion": "5.20261006.1-alpha",
+  "nativeTasks": [
+    {
+      "name": "central-registry",
+      "exitCode": 0
+    },
+    {
+      "name": "jeju-registry",
+      "exitCode": 0
+    },
+    {
+      "name": "jeju-ops",
+      "exitCode": 0
+    },
+    {
+      "name": "metro-registry",
+      "exitCode": 0
+    },
+    {
+      "name": "metro-ops",
+      "exitCode": 0
+    },
+    {
+      "name": "a-grade-registry",
+      "exitCode": 0
+    },
+    {
+      "name": "a-grade-ops",
+      "exitCode": 0
+    },
+    {
+      "name": "writer-fence",
+      "exitCode": 0
+    },
+    {
+      "name": "writer-cas",
+      "exitCode": 0
+    },
+    {
+      "name": "field-security",
+      "exitCode": 0
+    },
+    {
+      "name": "hide-location",
+      "exitCode": 0
+    }
+  ],
+  "fence": {
+    "pass": 14,
+    "fail": 0,
+    "skip": 0
+  },
+  "cas": {
+    "pass": 10,
+    "fail": 0,
+    "skip": 0
+  },
+  "autopublic": {
+    "scope": "Native in-memory D1 only; all external fetches prohibited by auth stub",
+    "miniflare": "5.20261006.1-alpha",
+    "checks": [
+      {
+        "name": "OFF 접수·공개 목록은 현재 사전 승인제와 동일",
+        "pass": true
+      },
+      {
+        "name": "ON 일반종 복수 종은 미검증 공개",
+        "pass": true
+      },
+      {
+        "name": "사전 검토 차단 매1",
+        "pass": true
+      },
+      {
+        "name": "사전 검토 차단 말똥가리1",
+        "pass": true
+      },
+      {
+        "name": "사전 검토 차단 처음보는새1",
+        "pass": true
+      },
+      {
+        "name": "번식 관련 정보는 접수 단계에서 400 차단",
+        "pass": true
+      },
+      {
+        "name": "차단된 번식 입력은 저장되지 않음",
+        "pass": true
+      },
+      {
+        "name": "실제 D1 JSON 종별 조회: 3종·입력 6개체",
+        "pass": true
+      },
+      {
+        "name": "가림 좌표만 공개",
+        "pass": true
+      },
+      {
+        "name": "보호·희귀·번식·미확인 기록은 공개 DTO에 없음",
+        "pass": true
+      },
+      {
+        "name": "읽기 OFF 즉시 비공개",
+        "pass": true
+      },
+      {
+        "name": "OFF 재전송도 비공개",
+        "pass": true
+      },
+      {
+        "name": "OFF 관리자 확인은 유지",
+        "pass": true
+      },
+      {
+        "name": "승인 후 정본 개체수 6 유지",
+        "pass": true
+      }
+    ],
+    "pass": 14,
+    "fail": 0
+  }
+}
