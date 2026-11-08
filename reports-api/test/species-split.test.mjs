@@ -33,7 +33,7 @@ test('분리: 동박새3, 박새2, 직박구리1 → 3종 6개체 / 쇠딱다구
 });
 
 test('분리 실패(관리자 검토): 종명 미확정·숫자 오인식·형식 밖 입력', () => {
-  for (const t of ['3동박새', '동박새 3 5', '동박새 03', '동박새 0', '동박새3마리2', '동박새?3', '동3박새', 'Zosterops 3', '동박새 3쌍', '동박새 1000000'])
+  for (const t of ['3동박새', '동박새 3 5', '동박새 03', '동박새 0', '동박새3마리2', '동박새?3', '동3박새', 'Zosterops japonicus 3쌍', '동박새 3쌍', '동박새 1000000'])
     assert.equal(parseSpeciesItems([t]).clean, false, t);
 });
 
@@ -43,8 +43,8 @@ test('자동 공개 판정: 복수 종은 모두 적격이어야, 수량 표기�
   assert.deepEqual(reasons('동박새3, 박새2, 직박구리1'), []);
   assert.deepEqual(reasons('동박새3, 박새2, 쇠딱다구리'), []);
   assert.deepEqual(reasons('동박새3, 동박새5'), ['species_parse'], '같은 종 두 번은 보류');
-  assert.deepEqual(reasons('동박새3, 박새2, 매1'), ['name_unconfirmed', 'protected']);
-  assert.deepEqual(reasons('동박새3, 말똥가리1'), ['name_unconfirmed', 'rare_review']);
+  assert.deepEqual(reasons('동박새3, 박새2, 매1'), [], '보호종이 섞여도 이름만으로는 보류하지 않음');
+  assert.deepEqual(reasons('동박새3, 말똥가리1'), [], '희귀종도 이름만으로는 보류하지 않음');
   assert.deepEqual(reasons('동박새 3 5'), ['name_unconfirmed', 'species_parse']);
   assert.deepEqual(reasons('동박새 301'), ['count_anomaly']);
   assert.deepEqual(reasons('동박새3, 박새301'), ['count_anomaly'], '복수 종의 각 수량에 같은 상한');
@@ -87,8 +87,8 @@ test('저장: 한 제보 ID 안에 종별 sightings, 원문 보존, 미입력·�
   const d = await submit(s, { species: '동박새 3 5', lat: 35.2, lon: 128.2 });
   assert.ok(d.receipt.holdReasons.includes('species_parse'));
   assert.deepEqual(sightings(s, d.body.request_id).map(r => [r.species_identified, r.interpretation]), [[null, 'single']], '분리 실패는 기존처럼 원문 한 행');
-  const e = await submit(s, { species: '동박새3, 박새2, 매1', lat: 35.3, lon: 128.3 });
-  assert.deepEqual(e.receipt.holdReasons, ['protected', 'name_unconfirmed']);
+  const e = await submit(s, { species: '동박새3, 박새2, 처음보는새1', lat: 35.3, lon: 128.3 });
+  assert.deepEqual(e.receipt.holdReasons, ['name_unconfirmed']);
   // 재전송: 같은 결과, sightings 중복 없음
   for (let i = 0; i < 2; i++) assert.equal((await (await post(s.pub, a.body)).json()).publicVisibility, 'public_unverified');
   assert.equal(sightings(s, a.body.request_id).length, 3);

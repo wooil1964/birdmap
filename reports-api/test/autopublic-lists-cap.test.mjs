@@ -1,49 +1,43 @@
-// 자동 공개 목록(시범 15종·법정 보호 조류·지도 위치 민감종)과 하루 한도 동시성.
+// 자동 공개: 허용 목록 없이 전체 조류, 법정 보호 조류 목록 자료 무결성, 하루 한도 동시성.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { canonicalDb } from './helpers.mjs';
 import { environments, installAuthStubs, input, ORIGIN } from '../local-test/helpers.mjs';
 import { handleRequest } from '../src/public.js';
-import { contentReasons, COMMON_SPECIES, PROTECTED_SPECIES, MAP_SENSITIVE_SPECIES, RARE_REVIEW_SPECIES, AUTO_PUBLIC_REASON } from '../src/autopublic.js';
-import { ENDANGERED_I, ENDANGERED_II, NATURAL_MONUMENT_BIRDS, MARINE_PROTECTED_BIRDS, LEGAL_NAME_LINKS, PENDING_DESIGNATIONS } from '../src/protected-birds.js';
+import { contentReasons, AUTO_PUBLIC_REASON } from '../src/autopublic.js';
+import { ENDANGERED_I, ENDANGERED_II, NATURAL_MONUMENT_BIRDS, MARINE_PROTECTED_BIRDS, LEGAL_NAME_LINKS, PENDING_DESIGNATIONS, LEGAL_PROTECTED_NAMES, MAP_LOCATION_SENSITIVE } from '../src/protected-birds.js';
 import { OFFICIAL_BIRD_NAMES } from '../src/official-bird-names.js';
 import { SENSITIVE_SPECIES, kstDateString } from '../src/shared.js';
 
 const reasons = name => [...contentReasons({ species: [name], speciesText: name, birdCount: null, note: null })].sort();
 const official = new Set(OFFICIAL_BIRD_NAMES);
 
-test('시범 목록: 허용 후보 15종, 집비둘기·왜가리·노랑턱멧새는 보류', () => {
-  assert.deepEqual(Object.keys(COMMON_SPECIES).sort(), ['까치', '동박새', '딱새', '멧비둘기', '물까치', '민물가마우지', '박새', '붉은머리오목눈이', '쇠딱다구리', '쇠오리', '직박구리', '참새', '청둥오리', '큰부리까마귀', '흰뺨검둥오리'].sort());
-  assert.deepEqual(reasons('집비둘기'), ['name_unconfirmed', 'rare_review']);
-  assert.deepEqual(reasons('노랑턱멧새'), ['name_unconfirmed', 'rare_review']);
-  assert.deepEqual(reasons('왜가리'), ['location_sensitive', 'name_unconfirmed']);
-  for (const name of Object.keys(COMMON_SPECIES)) {
-    assert.ok(official.has(name), name + ' 공식 국명');
-    for (const [label, set] of [['법정', PROTECTED_SPECIES], ['지도 민감', MAP_SENSITIVE_SPECIES], ['희귀·혼동', RARE_REVIEW_SPECIES]]) assert.ok(!set.has(name), `${name} ${label} 목록과 겹침`);
-  }
+test('허용 목록 폐지: 15종 제한 없이 이전에 보류하던 종도 이름만으로는 보류하지 않는다', () => {
+  for (const name of ['집비둘기'].filter(n => official.has(n))) assert.fail(name + ' 은 공식 목록에 없어야 이 시험의 전제가 맞다');
+  for (const name of ['노랑턱멧새', '왜가리', '털발말똥가리', '말똥가리', '쇠백로', '중대백로', '가창오리', '쇠가마우지']) assert.deepEqual(reasons(name), [], name);
+  // 공식 목록에 없는 한글 이름은 식별할 수 없으므로 여전히 관리자 검토(집비둘기 등).
+  assert.deepEqual(reasons('집비둘기'), ['name_unconfirmed']);
+  // 지도 자체 위치 민감 목록은 자료로만 남기고 더 이상 보류 사유가 아니다(위치 보호는 위치 가리기·번식 입력 차단·정책 v2가 담당).
+  for (const name of Object.keys(MAP_LOCATION_SENSITIVE)) assert.ok(!reasons(name).includes('location_sensitive'), name);
 });
 
-test('법정 보호 조류: 출처별 건수, 공식 국명 일치, 법령명↔국명 연결, 기존 누락 14종 보완', () => {
+test('법정 보호 조류 자료: 출처별 건수, 공식 국명 일치, 법령명↔국명 연결(학명 근거), 지정 예정종 분리', () => {
   assert.equal(ENDANGERED_I.length, 16); assert.equal(ENDANGERED_II.length, 53);
   assert.equal(MARINE_PROTECTED_BIRDS.length, 16); assert.equal(NATURAL_MONUMENT_BIRDS.length, 44);
   for (const name of [...ENDANGERED_I, ...ENDANGERED_II, ...NATURAL_MONUMENT_BIRDS, ...MARINE_PROTECTED_BIRDS])
     assert.ok(official.has(name) || Object.hasOwn(LEGAL_NAME_LINKS, name), name + ' 은 2025 국명이거나 연결된 법령명이어야 함');
   assert.ok(!official.has('양비둘기') && official.has('낭비둘기'));
   for (const [law, link] of Object.entries(LEGAL_NAME_LINKS)) {
-    assert.ok(PROTECTED_SPECIES.has(law), law);
-    for (const kos of link.kos) { assert.ok(official.has(kos), kos + ' 공식 국명'); assert.ok(PROTECTED_SPECIES.has(kos), kos + ' 보호'); }
+    assert.ok(LEGAL_PROTECTED_NAMES.has(law), law);
+    for (const kos of link.kos) { assert.ok(official.has(kos), kos + ' 공식 국명'); assert.ok(LEGAL_PROTECTED_NAMES.has(kos), kos + ' 보호'); }
   }
-  for (const name of ['뿔제비갈매기', '검은머리촉새', '뜸부기', '무당새', '물수리', '붉은가슴흰죽지', '붉은해오라기', '뿔종다리', '새호리기', '쇠제비갈매기', '시베리아흰두루미', '양비둘기', '청호반새', '큰뒷부리도요'])
-    assert.ok(reasons(name).includes('protected'), name + ' 보호종 사유');
-  for (const name of ['낭비둘기', '큰부리큰기러기', '바다쇠오리', '슴새', '아비', '칡부엉이', '호사도요']) assert.ok(reasons(name).includes('protected'), name);
-  // 지정 예정종은 현행 법정 목록과 구분한다(예정만으로는 'protected' 가 아니다). 허용 목록 밖이라 어차피 보류된다.
-  assert.ok(!PROTECTED_SPECIES.has('붉은갯도요') && reasons('붉은갯도요').includes('name_unconfirmed'));
-  assert.ok(Object.hasOwn(PENDING_DESIGNATIONS, '붉은갯도요') && PROTECTED_SPECIES.has('붉은어깨도요'), '붉은어깨도요는 현행 II급');
-  // 법정 보호종과 지도 자체 민감종은 겹치지 않게 따로 관리한다.
-  for (const name of MAP_SENSITIVE_SPECIES) assert.ok(!PROTECTED_SPECIES.has(name), name);
+  // 보호종·희귀종·미조라는 이유만으로는 보류되지 않는다(공식 국명인 법정 보호종 전부).
+  for (const name of LEGAL_PROTECTED_NAMES) if (official.has(name)) assert.deepEqual(reasons(name), [], name);
+  // 지정 예정종은 현행 법정 목록과 구분한다.
+  assert.ok(!LEGAL_PROTECTED_NAMES.has('붉은갯도요') && Object.hasOwn(PENDING_DESIGNATIONS, '붉은갯도요') && LEGAL_PROTECTED_NAMES.has('붉은어깨도요'), '붉은어깨도요는 현행 II급');
   // 위치 정책 v2 의 19종은 이번 변경과 무관하게 그대로다.
   assert.equal(SENSITIVE_SPECIES.length, 19);
-  for (const name of SENSITIVE_SPECIES) assert.ok(PROTECTED_SPECIES.has(name), 'v2 ' + name + ' 은 법정 목록에도 있음');
+  for (const name of SENSITIVE_SPECIES) assert.ok(LEGAL_PROTECTED_NAMES.has(name), 'v2 ' + name + ' 은 법정 목록에도 있음');
 });
 
 const TODAY = kstDateString(new Date());

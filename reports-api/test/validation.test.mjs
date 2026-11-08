@@ -37,9 +37,12 @@ test("종명 개수와 길이에 상한이 있다", () => {
   assert.throws(() => normalizeSpecies(Array(11).fill("동박새아").join(",")), {
     code: "SPECIES_TOO_MANY",
   });
-  assert.throws(() => normalizeSpecies("가".repeat(31)), {
+  // 상한은 학명·영명(최대 33자)을 받기 위해 30자에서 40자로 올렸다. 상한 자체는 그대로 있다.
+  assert.equal(normalizeSpecies("가".repeat(40)).length, 1);
+  assert.throws(() => normalizeSpecies("가".repeat(41)), {
     code: "SPECIES_INVALID",
   });
+  assert.equal(normalizeSpecies("Middendorff's Grasshopper Warbler")[0].length, 33);
 });
 
 test("국내 범위를 벗어난 좌표를 거부한다", () => {

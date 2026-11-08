@@ -153,12 +153,11 @@ await scenario('9. 자동 공개 OFF: 기존 사전 승인제 유지', { REPORTS
   check('reports 공개 플래그 0, 판정 기록 0', (await q('SELECT COUNT(*) n FROM reports WHERE pending_public=1'))[0].n === 0 && (await q('SELECT COUNT(*) n FROM reviews'))[0].n === 0);
 });
 
-await scenario('10. 보호종·희귀종·미확인종 사전 검토 유지', {}, async ({ q, burst }, check) => {
+await scenario('10. 보호종·희귀종·일반종은 모두 자동 공개, 식별 불가 이름만 검토 유지', {}, async ({ q, burst }, check) => {
   const rs = await burst([{ species: '참새', ...at(...A, 0, 0) }, { species: '매', ...at(...B, 0, 0) }, { species: '말똥가리', ...at(...C, 0, 0) }, { species: '처음보는새', ...at(...D, 0, 0) }, { species: '왜가리', ...at(...A, 5000, 0) }]);
-  check('일반종만 자동 공개', open(rs).length === 1 && open(rs)[0].body.species === '참새');
+  check('일반·보호·희귀·왜가리 4건 자동 공개', open(rs).length === 4 && !open(rs).some(r => r.body.species === '처음보는새'));
   const by = Object.fromEntries(rs.map(r => [r.body.species, r.receipt.holdReasons || []]));
-  check('보호종 protected', by['매'].includes('protected')); check('희귀종 rare_review', by['말똥가리'].includes('rare_review'));
-  check('미확인종 name_unconfirmed', by['처음보는새'].includes('name_unconfirmed')); check('위치 민감종 location_sensitive', by['왜가리'].includes('location_sensitive'));
+  check('식별 불가 이름만 name_unconfirmed', by['처음보는새'].includes('name_unconfirmed') && ['매', '말똥가리', '왜가리', '참새'].every(k => by[k].length === 0));
   check('일치', await consistent(q, rs));
 });
 
