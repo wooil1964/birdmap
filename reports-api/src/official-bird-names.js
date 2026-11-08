@@ -1,4 +1,5 @@
 // 한국조류학회 「2025 한국조류목록」 개정판 v2.1, 분류목록 Species 598종(아종·보류 목록 제외).
+// 기록 기준일: 2025-05-31, 발행: 2025-06, 출처 확인일: 2026-11-08.
 // Source: https://sites.google.com/khu.ac.kr/korornsoc/%EC%95%8C%EB%A6%BC%EB%A7%88%EB%8B%B9/%EC%9E%90%EB%A3%8C%EC%8B%A4
 // XLSX: https://drive.google.com/file/d/1VlTTkz0FQqqT0vnqhAxaLZ7iHvLeGNOp/view
 // XLSX SHA-256: b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a

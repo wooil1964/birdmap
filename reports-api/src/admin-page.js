@@ -294,6 +294,7 @@ function cardHtml(r){
     +'<div class="meta">관찰일 '+esc(r.observed_on)+' · 접수 '+esc(String(r.received_at).slice(0,16).replace('T',' '))+' UTC'
     +locationHtml(r)
     +sightingsHtml(r)
+    +(r.species_review_required?'<br><b>공식 국명 확인 필요 · 관리자 검토 대상(원문 유지)</b>: '+(r.unconfirmed_species||[]).map(esc).join(' · '):'')
     +((r.hold_reasons||[]).length?'<br>자동 공개 보류 사유: '+r.hold_reasons.map(function(x){return esc(HOLD_LABEL[x]||x);}).join(', '):'')
     +(r.bird_count?'<br>개체수 '+esc(r.bird_count):'')
     +(r.reporter?'<br>제보자 '+esc(r.reporter):'')

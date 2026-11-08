@@ -448,6 +448,10 @@ export function speciesNamesOf(row) {
   const names = Array.isArray(identified) ? identified.filter(n => typeof n === 'string' && n) : [];
   return names.length ? [...new Set(names)] : legacySpeciesItems(row?.species).map(i => i.name);
 }
+// 국명 미확정은 읽기 전용 검토 표시로만 분류한다. 승인 상태·원문·정본에는 쓰지 않는다.
+export function unconfirmedSpeciesOf(row) {
+  return speciesNamesOf(row).filter(name => !officialBirdNames.has(name));
+}
 export function identifiedSpeciesSql(env, withCounts = false) {
   const canonical = env?.REPORTS_WRITE_MODE === 'CANONICAL_DUAL_WRITE';
   const names = canonical

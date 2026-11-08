@@ -52,3 +52,18 @@ test('sightings가 없는 이전 스키마도 공식 국명 읽기 집계·종 �
  assert.equal(result.summary.species,1);assert.equal(result.summary.individuals,3);assert.equal(result.rows[0].total,2);
  sqlite.close();
 });
+
+test('공식 국명 미확인 과거 승인 기록은 상태·원문을 유지하며 관리자 검토 대상으로 표시',async t=>{
+ const {environments,installAuthStubs}=await import('../local-test/helpers.mjs');const auth=await installAuthStubs();t.after(auth.restore);
+ const admin=(await import('../src/admin.js')).default;const db=canonicalDb();
+ const insert=db.sqlite.prepare("INSERT INTO reports(id,status,species,lat,lon,observed_on,received_at,bird_count,ip_hash,dedupe_hash) VALUES (?,'approved',?,37,127,'2020-01-01','2020-01-02',?, 's',?)");
+ insert.run('review-original','힝등새1',7,'review-original');insert.run('known-original','고니3',3,'known-original');
+ const before=JSON.stringify(db.sqlite.prepare('SELECT * FROM reports ORDER BY id').all());const changes=db.sqlite.prepare('SELECT total_changes() n').get().n;
+ const response=await admin.fetch(new Request('https://admin.example/admin/api/reports?status=approved',{headers:{'Cf-Access-Jwt-Assertion':auth.token}}),environments(db).admin);
+ const rows=(await response.json()).reports;assert.equal(response.status,200);
+ const unknown=rows.find(r=>r.id==='review-original'),known=rows.find(r=>r.id==='known-original');
+ assert.equal(unknown.status,'approved');assert.equal(unknown.species,'힝등새1');assert.equal(unknown.bird_count,7);assert.equal(unknown.species_review_required,true);assert.deepEqual(unknown.unconfirmed_species,['힝등새1']);
+ assert.equal(known.species_review_required,undefined);assert.equal(known.species,'고니3');
+ assert.equal(JSON.stringify(db.sqlite.prepare('SELECT * FROM reports ORDER BY id').all()),before);assert.equal(db.sqlite.prepare('SELECT total_changes() n').get().n,changes);
+ const {ADMIN_PAGE}=await import('../src/admin-page.js');assert.ok(ADMIN_PAGE.includes('공식 국명 확인 필요 · 관리자 검토 대상(원문 유지)'));
+});

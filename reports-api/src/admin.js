@@ -5,6 +5,7 @@ import { strictWriterDb } from './writer-fence.js';
 
 import {
   WorkerError,
+  unconfirmedSpeciesOf,
   errorResponse,
   jsonResponse,
   parseAdminEmails,
@@ -128,7 +129,13 @@ function displayState(row,now) {
 }
 function withDisplay(rows) {
   const now=new Date();
-  return (rows||[]).map(row=>({...row,display_state:displayState(row,now),hold_reasons:holdReasonsOf(row.auto_decision)}));
+  return (rows||[]).map(row=>{
+    let list=[];try{list=JSON.parse(row.sightings_json||'[]');}catch{}
+    const names=Array.isArray(list)?list.map(s=>s.name).filter(n=>typeof n==='string'&&n):[];
+    const unconfirmed=unconfirmedSpeciesOf({...row,identified_species:JSON.stringify(names)});
+    return {...row,display_state:displayState(row,now),hold_reasons:holdReasonsOf(row.auto_decision),
+      ...(unconfirmed.length?{species_review_required:true,unconfirmed_species:unconfirmed}:{})};
+  });
 }
 async function applyAction(request,env,id,admin,dual) {
   const binding=database(env),db=dual?applicationDb(binding):binding;

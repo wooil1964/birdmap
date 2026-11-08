@@ -56,6 +56,7 @@ for(const [label,vp,mobile] of [['mobile',{width:390,height:844},true],['pc',{wi
   ok(label+': 미검증 건수 배지 4',(await page.locator('#unverifiedCount').innerText())==='4');
   ok(label+': 검토 대기 탭 = 보류 3 + 과거 플래그 1',(await page.locator('.card').count())===4);
   {const m=await page.locator(`.card[data-id="${ids.dupl}"] .meta`).first().innerText();ok(label+': 같은 종 중복 카드 종별 표시(1종, 합산 안 함)·보류 사유',m.includes('종별: 동박새 (개체수 확인 필요) · 동박새 (개체수 확인 필요) — 1종')&&!m.includes('개체수 8')&&m.includes('종명·개체수 확인'),m);}
+  ok(label+': 공식 국명 미확인 기록은 원문 유지·관리자 검토 안내',/공식 국명 확인 필요.*관리자 검토 대상/.test(await page.locator(`.card[data-id="${ids.unknown}"] .meta`).first().innerText()));
   ok(label+': 보호종 배지 검토 대기 · 비공개',(await badge(ids.held))==='검토 대기 · 비공개');
   ok(label+': 보류 사유 표시',/자동 공개 보류 사유: 보호종/.test(await page.locator(`.card[data-id="${ids.held}"] .meta`).first().innerText()));
   ok(label+': 과거 플래그는 검토 대기(공개 아님)',(await badge(ids.legacy))==='검토 대기 · 비공개');
