@@ -5,7 +5,7 @@ import { canonicalDb } from './helpers.mjs';
 import { environments, installAuthStubs, input, ORIGIN } from '../local-test/helpers.mjs';
 import { handleRequest } from '../src/public.js';
 import { contentReasons, COMMON_SPECIES, PROTECTED_SPECIES, MAP_SENSITIVE_SPECIES, RARE_REVIEW_SPECIES, AUTO_PUBLIC_REASON } from '../src/autopublic.js';
-import { ENDANGERED_I, ENDANGERED_II, NATURAL_MONUMENT_BIRDS, MARINE_PROTECTED_BIRDS, LEGAL_NAME_LINKS } from '../src/protected-birds.js';
+import { ENDANGERED_I, ENDANGERED_II, NATURAL_MONUMENT_BIRDS, MARINE_PROTECTED_BIRDS, LEGAL_NAME_LINKS, PENDING_DESIGNATIONS } from '../src/protected-birds.js';
 import { OFFICIAL_BIRD_NAMES } from '../src/official-bird-names.js';
 import { SENSITIVE_SPECIES, kstDateString } from '../src/shared.js';
 
@@ -36,6 +36,9 @@ test('법정 보호 조류: 출처별 건수, 공식 국명 일치, 법령명↔
   for (const name of ['뿔제비갈매기', '검은머리촉새', '뜸부기', '무당새', '물수리', '붉은가슴흰죽지', '붉은해오라기', '뿔종다리', '새호리기', '쇠제비갈매기', '시베리아흰두루미', '양비둘기', '청호반새', '큰뒷부리도요'])
     assert.ok(reasons(name).includes('protected'), name + ' 보호종 사유');
   for (const name of ['낭비둘기', '큰부리큰기러기', '바다쇠오리', '슴새', '아비', '칡부엉이', '호사도요']) assert.ok(reasons(name).includes('protected'), name);
+  // 지정 예정종은 현행 법정 목록과 구분한다(예정만으로는 'protected' 가 아니다). 허용 목록 밖이라 어차피 보류된다.
+  assert.ok(!PROTECTED_SPECIES.has('붉은갯도요') && reasons('붉은갯도요').includes('name_unconfirmed'));
+  assert.ok(Object.hasOwn(PENDING_DESIGNATIONS, '붉은갯도요') && PROTECTED_SPECIES.has('붉은어깨도요'), '붉은어깨도요는 현행 II급');
   // 법정 보호종과 지도 자체 민감종은 겹치지 않게 따로 관리한다.
   for (const name of MAP_SENSITIVE_SPECIES) assert.ok(!PROTECTED_SPECIES.has(name), name);
   // 위치 정책 v2 의 19종은 이번 변경과 무관하게 그대로다.
