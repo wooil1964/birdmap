@@ -166,10 +166,12 @@ try{
     return {pass:s.kakao&&s.tmap,evidence:s};
    });
 
-   await scenario(page,width,'pending-coordinates-ignored',async e=>{
-    const rejected=await e("__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리']}];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
-    const recovered=await e("__mock.pendingSpots=[];loadPendingReports()");
-    return {pass:rejected.ok===false&&rejected.pending.length===0&&recovered===true,evidence:rejected};
+   // 대기 DTO는 서버가 verified:false 로 표시한 자동 공개분만 그린다. 길찾기 없이 '미검증' 팝업만, 목록에서 빠지면 지운다.
+   await scenario(page,width,'pending-unverified-only',async e=>{
+    const ignored=await e("__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리']}];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
+    const drawn=await e("__mock.pendingSpots=[{id:'synthetic-unverified',verified:false,lat:37.02,lon:127.02,species:['직박구리'],date:'2026-11-08'}];loadPendingReports().then(ok=>{var l=reportPendingLayers['synthetic-unverified'];var html=l?String(l.getPopup().getContent()):'';return {ok,pending:Object.keys(reportPendingLayers),ll:l?[l.getLatLng().lat,l.getLatLng().lng]:null,unverified:html.includes('미검증 제보'),routes:/카카오맵|티맵|내 위치/.test(html)};})");
+    const removed=await e("__mock.pendingSpots=[];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
+    return {pass:ignored.ok===true&&ignored.pending.length===0&&drawn.ok===true&&drawn.pending.join()==='synthetic-unverified'&&drawn.ll&&drawn.ll[0]===37.02&&drawn.unverified&&!drawn.routes&&removed.ok===true&&removed.pending.length===0,evidence:{ignored,drawn,removed}};
    });
    await scenario(page,width,'V03-protected-then-later-old-approved-cache',async e=>{
     await e(normal+"__mock.approved=[__mock.spot({locationHidden:true,lat:36.9,lon:126.9})];"+refresh);

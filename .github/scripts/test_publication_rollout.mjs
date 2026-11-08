@@ -128,8 +128,7 @@ for(const [version,html,projection,other] of [['old',PREVIOUS,'legacy-public-v1'
 
 test('withheld (PR #78) frontend discards nonempty pending DTOs and direct marker calls while keeping approved data',async()=>{
  const e=env(WITHHELD,'nonbreeding-location-v2-pending-withheld-v1');e.seed();const popup=e.c.map_7010a44f6ac2025090f0fe07508ed485._popup;
- vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(WITHHELD,name)).join('
-'),e.c);
+ vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(WITHHELD,name)).join('\n'),e.c);
  e.c.reportRequestStart=()=>1;e.c.reportResponseCurrent=()=>true;e.c.publicationDataAllowed=()=>true;
  e.c.publicationFetch=async()=>({ok:true,spots:[{id:'unexpected',lat:37.512345,lon:127.054321}]});
  assert.equal(await e.c.loadPendingReports(),false);
@@ -141,8 +140,7 @@ test('withheld (PR #78) frontend discards nonempty pending DTOs and direct marke
 });
 test('new frontend draws only verified:false pending DTOs, never over an approved spot, and removes them when the list drops them',async()=>{
  const e=env(CURRENT,'nonbreeding-location-v2-autopublic-v1');e.seed();
- vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(CURRENT,name)).join('
-'),e.c);
+ vm.runInContext(['removePendingLayer','showPendingSpot','renderPendingReports','loadPendingReports'].map(name=>source(CURRENT,name)).join('\n'),e.c);
  const added=[];e.c.birdmapPendingMarker=spot=>({spot,options:{},addTo(){added.push(spot.id);return this;}});
  e.c.reportRequestStart=()=>1;e.c.reportResponseCurrent=()=>true;e.c.publicationDataAllowed=()=>true;
  const spots=[{id:'u1',verified:false,lat:37.1,lon:127.1,species:['참새']},{id:'legacy',lat:37.2,lon:127.2,species:['매']},{id:'cached',verified:false,lat:37.3,lon:127.3,species:['까치']},{id:'bad',verified:false,lat:'x',lon:127.4}];

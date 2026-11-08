@@ -18,6 +18,12 @@ test('분류: 허용 목록 일반종만 적격, 모르는 것은 전부 보류'
   assert.deepEqual(reasons(['청둥오리'], { birdCount: 3000 }), []);
   assert.deepEqual(reasons(['참새'], { birdCount: 301 }), ['count_anomaly']);
   assert.deepEqual(reasons(['청둥오리', '참새'], { birdCount: 301 }), ['count_anomaly'], '여러 종이면 가장 낮은 상한');
+  assert.deepEqual(reasons(['참새 5000마리']), ['count_anomaly'], '종명 뒤 수량도 상한 검사');
+  assert.deepEqual(reasons(['참새301']), ['count_anomaly']);
+  assert.deepEqual(reasons(['참새 300마리', '청둥오리 3000개체']), [], '종별 상한 이내');
+  assert.deepEqual(reasons(['동박새3', '박새2', '직박구리1']), [], '수량 붙은 복수 일반종은 3종으로 인식해 적격');
+  assert.deepEqual(reasons(['동박새3', '박새2', '매1']), ['name_unconfirmed', 'protected'], '보호종 혼합은 보류');
+  assert.deepEqual(reasons(['동박새3', '박새?2']), ['name_unconfirmed'], '불확실 종명 혼합은 보류');
   assert.deepEqual(reasons(['매']), ['name_unconfirmed', 'protected']);
   assert.deepEqual(reasons(['말똥가리']), ['name_unconfirmed', 'rare_review']);
   assert.deepEqual(reasons(['처음보는새']), ['name_unconfirmed']);
@@ -185,6 +191,7 @@ test('과거 pending_public=1(자동 판정 기록 없음)과 스위치 끔은 �
   s.pub.REPORTS_UNVERIFIED_READS = '0';
   assert.deepEqual(await pending(s), []);
   assert.equal((await get(s.pub, '/reports/' + fresh.body.request_id + '/status')).body.publicVisibility, 'withheld');
+  assert.equal((await (await post(s.pub, fresh.body)).json()).publicVisibility, 'withheld', '재전송 접수증도 읽기 스위치를 따른다');
   // 자동 공개 끔: 접수증·DB·검토 이력 모두 현행과 같다
   s.pub.REPORTS_AUTO_PUBLIC = '0';
   const off = await submit(s, { species: '참새', lat: 35.1, lon: 128.1 });

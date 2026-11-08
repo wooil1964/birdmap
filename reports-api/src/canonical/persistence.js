@@ -1,7 +1,7 @@
 import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload } from '../shared.js';
 import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
 import { locationEvidenceColumns } from '../location-evidence.js';
-import { AUTO_DECISION_SQL, unverifiedPayload } from '../autopublic.js';
+import { AUTO_DECISION_SQL, unverifiedPayload, unverifiedReadsEnabled } from '../autopublic.js';
 
 const INPUT_KEYS=['species','lat','lon','observedOn','birdCount','reporter','namePublic','note','non_breeding_confirmed','hideLocation'];
 export function quickInput(body) {
@@ -23,7 +23,7 @@ export async function replayQuick(db,id,input,env={}) {
   if(raw.source_type!=='native_submission'||raw.source_id!==id||await fingerprint(saved.input)!==await fingerprint(input))fail('IDEMPOTENCY_CONFLICT','같은 요청 식별자에 다른 내용이 전송되었습니다.');
   if(raw.source_fingerprint!==await fingerprint(saved)||!saved.accepted)fail('IDEMPOTENCY_STATE_INVALID','저장된 요청을 검증할 수 없습니다.');
   const c=await first(db,'SELECT raw_id FROM checklists WHERE checklist_id=?',id);
-  const live=await first(db,'SELECT id,note,lat,lon,public_lat,public_lon,'+locationEvidenceColumns({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})+',status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,'+LOCATION_HIDDEN_SQL+' AS location_hidden,species,observed_on,bird_count,received_at,'+AUTO_DECISION_SQL+' FROM reports WHERE id=?',id);
+  const live=await first(db,'SELECT id,note,lat,lon,public_lat,public_lon,'+locationEvidenceColumns({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})+',status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,'+LOCATION_HIDDEN_SQL+' AS location_hidden,species,observed_on,bird_count,received_at,'+(unverifiedReadsEnabled(env)?AUTO_DECISION_SQL:'NULL AS auto_decision')+' FROM reports WHERE id=?',id);
   if(c?.raw_id!==raw.raw_id||!live)fail('IDEMPOTENCY_STATE_INVALID','저장 결과가 불완전합니다.');
   // Recompute the current status; never replay historical pending coordinates.
   const visible=live.status==='pending'&&unverifiedPayload([live],env).length===1;

@@ -46,7 +46,7 @@ export const SYNONYMS = Object.freeze({}); // 관습명 → 국명. 지정한 �
 export const HOLD_REASONS = ['auto_public_disabled', 'breeding', 'protected', 'rare_review', 'name_unconfirmed', 'count_anomaly',
   'stale_observation', 'possible_duplicate', 'rate_review', 'global_cap', 'note_review'];
 
-const QUANTITY = /^(.+?)\s*\d+\s*(?:마리|개체)?$/;
+const QUANTITY = /^(.+?)\s*(\d+)\s*(?:마리|개체)?$/;
 const UNCERTAIN = /[?？]|추정|미확인|아마|같음|비슷|류$|\bsp\.?$|\bspp\.?$|또는|\bor\b/i;
 const CONTACT = /https?:\/\/|www\.|[^\s@]+@[^\s@]+\.[^\s@]+|\b0\d{1,2}[-.\s]?\d{3,4}[-.\s]?\d{4}\b/i;
 
@@ -71,7 +71,11 @@ export function contentReasons(report) {
     if (RARE_REVIEW_SPECIES.has(name)) reasons.add('rare_review');
     const common = Object.hasOwn(COMMON_SPECIES, name) ? COMMON_SPECIES[name] : null;
     if (!common) { reasons.add('name_unconfirmed'); continue; }
-    countMax = Math.min(countMax, common.countMax || DEFAULT_COUNT_MAX);
+    const limit = common.countMax || DEFAULT_COUNT_MAX;
+    countMax = Math.min(countMax, limit);
+    // 종명 뒤 수량 표기("참새 5000마리")도 그 종의 상한을 넘으면 보류한다.
+    const written = QUANTITY.exec(token);
+    if (written && Number(written[2]) > limit) reasons.add('count_anomaly');
   }
   const count = report.birdCount;
   if (count !== null && count !== undefined && !(Number.isSafeInteger(count) && count >= 0 && count <= countMax)) reasons.add('count_anomaly');
