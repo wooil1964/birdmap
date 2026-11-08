@@ -369,36 +369,47 @@ import { identifyBird } from '../src/bird-names.js';
 
 import { BIRD_NAME_TABLE } from '../src/official-bird-aliases.js';
 
-import { IOC_SPECIES, IOC_ENGLISH, IOC_VERSION } from '../src/ioc-taxa.js';
+import * as INTL from '../src/intl-taxa.js';
+const NL = String.fromCharCode(10), TAB = String.fromCharCode(9);
 
-
-
-test('같은 종 판정: 598종 모두 국명·학명·영명(대소문자 무관)이 같은 key, IOC 전 종의 학명↔영명도 같은 key', () => {
-
+test('같은 종 판정: 598종 모두 국명·학명·영명(대소문자 무관)이 같은 key, AviList v2026 전 종의 학명↔영명이 같은 key', () => {
   for (const [ko, sci, eng] of BIRD_NAME_TABLE) for (const n of [ko, sci, eng, sci.toUpperCase(), eng.toLowerCase()])
-
     assert.equal(identifyBird(n)?.key, ko, ko + ' / ' + n);
-
-  const lines = IOC_ENGLISH.split(String.fromCharCode(10));
-
-  assert.ok(lines.length > 10000 && IOC_VERSION);
-
-  let checked = 0;
-
-  for (const line of lines) { const [eng, bin] = line.split('|'); const a = identifyBird(eng), b = identifyBird(bin);
-
-    assert.ok(a && b, line); assert.equal(a.key, b.key, line); checked++; }
-
-  assert.equal(checked, lines.length);
-
-  // 속만 맞는 이름은 식별은 되지만 실존 종으로 취급하지 않는다(호출 쪽에서 검토 보류). 속도 모르면 식별 불가.
-
-  assert.equal(identifyBird('Larus imaginarius').kind, 'scientific_genus_only');
-
+  let checked = 0, korean = 0;
+  for (const line of INTL.AVI_SPECIES.split(NL)) {
+    const [genus, ...items] = line.split(TAB);
+    for (const item of items) {
+      const [epithet, eng] = item.split('~'), bin = genus + ' ' + epithet, a = identifyBird(bin);
+      assert.ok(a, bin); checked++;
+      if (a.kind !== 'avilist_scientific') korean++;
+      const b = eng && identifyBird(eng);
+      if (b && b.key === a.key) continue; // 영명이 다른 종에도 쓰이면(중복 영명) 영명 쪽 key 가 다를 수 있다
+      assert.ok(!b || ['avilist_english', 'english'].includes(b.kind), bin + ' / ' + eng);
+    }
+  }
+  assert.ok(checked > 10900 && korean >= 500, checked + ' ' + korean);
+  assert.equal(identifyBird('Larus imaginarius'), null, '속만 맞는 학명은 식별하지 않는다(관리자 검토)');
   assert.equal(identifyBird('Zzzzus abcdef'), null);
+});
 
-  assert.ok(IOC_SPECIES.length > 100000);
-
+test('분류목록 연결: 동의어·영명 별칭·인정 학명이 AviList 종과 같은 key 이고 서로의 별칭이 된다', () => {
+  const pairs = INTL.AVI_SYNONYMS.split(';').map(x => x.split('>'));
+  assert.ok(pairs.length > 3000);
+  const koreanSci = new Set(BIRD_NAME_TABLE.map(r => r[1].toLowerCase()));
+  for (const [syn, canon] of pairs.filter(([syn]) => !koreanSci.has(syn))) { // 한국 목록이 별개 종으로 구분하는 이름은 합치지 않는다
+    const a = identifyBird(syn), b = identifyBird(canon);
+    assert.ok(a && b, syn + ' → ' + canon);
+    assert.equal(a.key, b.key, syn + ' → ' + canon);
+    assert.ok(a.aliases.includes(syn) && a.aliases.includes(canon), syn + ' 별칭');
+  }
+  const koreanEng = new Set(BIRD_NAME_TABLE.map(r => r[2].toLowerCase()));
+  for (const line of INTL.ENGLISH_ALIASES.split(NL)) { const [eng, bin] = line.split('>'); if (!koreanEng.has(eng)) assert.equal(identifyBird(eng)?.key, identifyBird(bin)?.key, eng); }
+  assert.notEqual(identifyBird('Anas carolinensis').key, identifyBird('Anas crecca').key, '국내 구분(미국쇠오리/쇠오리)은 유지');
+  const legacy = INTL.LEGACY_SPECIES.split(';');
+  assert.ok(legacy.length > 500 && legacy.every(n => identifyBird(n)?.kind === 'legacy_scientific' || identifyBird(n)), 'IOC 등이 인정하는 분할 전 이름');
+  // 한국 목록 학명과 AviList 학명이 다른 종은 같은 종으로 이어진다(Charadrius dubius ↔ Thinornis dubius).
+  assert.equal(identifyBird('Thinornis dubius').key, '꼬마물떼새');
+  assert.equal(identifyBird('Tachyspiza haplochrous').key, identifyBird('Accipiter haplochrous').key);
 });
 
 import { isSensitiveReport, isLocationRestricted } from '../src/shared.js';
@@ -414,33 +425,16 @@ test('위치 정책 v2: 19종은 국명·학명·영명 어느 쪽으로 적어�
     assert.equal(isSensitiveReport({ note: null, speciesText: n, species: [n] }), false, n);
 });
 
-import { CROSSWALK_SYNONYMS, CROSSWALK_EXTRA } from '../src/ioc-crosswalk.js';
-
-test('분류목록 대응표: 모든 동의어가 IOC 학명과 같은 종으로 묶이고 서로의 별칭이 된다', () => {
-  const pairs = CROSSWALK_SYNONYMS.split(';').map(x => x.split('>'));
-  assert.ok(pairs.length > 3000);
-  // 동의어가 그 자체로 IOC 종이면(철자 이명 등) 모호하므로 IOC 쪽 판정을 따른다. 그런 항목은 소수여야 한다.
-  const ambiguous = pairs.filter(([syn]) => !['synonym_scientific', 'scientific'].includes(identifyBird(syn)?.kind));
-  assert.ok(ambiguous.length < 60, String(ambiguous.length));
-  for (const [syn, canon] of pairs.filter(p => !ambiguous.includes(p))) {
-    const a = identifyBird(syn), b = identifyBird(canon);
-    assert.ok(a && b, syn);
-    assert.equal(a.key, b.key, syn + ' → ' + canon);
-    assert.ok(a.aliases.includes(syn) && a.aliases.includes(canon), syn + ' 별칭');
-  }
-  const extra = CROSSWALK_EXTRA.split(';').map(x => x.split('>')[0]);
-  assert.ok(extra.filter(n => identifyBird(n)?.kind === 'other_list_scientific').length > 400, 'IOC 에는 없고 다른 목록에만 있는 종');
-});
-
 import { readFileSync } from 'node:fs';
 
 test('생성 자료의 출처·버전 표시와 번들에 들어가는 자료 크기', () => {
   const read = f => readFileSync(new URL('../' + f, import.meta.url), 'utf8');
-  assert.ok(read('src/ioc-taxa.js').split(String.fromCharCode(10))[0].includes('IOC World Bird List v15.2'));
-  assert.ok(read('src/ioc-taxa.js').split(String.fromCharCode(10))[0].includes('10.14344/IOC.ML.15.2'));
-  assert.ok(read('src/ioc-crosswalk.js').split(String.fromCharCode(10))[0].includes('CC BY 4.0'));
-  assert.ok(read('DATA_SOURCES.md').includes('CC BY 4.0'));
-  // 번들 크기 감시: 두 생성 자료가 합쳐 1 MB 를 넘으면 구조를 다시 생각한다.
-  const size = ['src/ioc-taxa.js', 'src/ioc-crosswalk.js'].reduce((n, f) => n + Buffer.byteLength(read(f)), 0);
+  const head = read('src/intl-taxa.js').split(NL).slice(0, 3).join(NL);
+  assert.ok(head.includes('AviList v2026') && head.includes('10.2173/avilist.v2026') && head.includes('IOC World Bird List v15.2') && head.includes('CC BY 4.0'));
+  assert.ok(INTL.INTL_VERSION.includes('AviList v2026'));
+  assert.ok(read('DATA_SOURCES.md').includes('AviList v2026'));
+  // 분류자료는 한 파일에만 둔다(IOC·AviList 중복 저장 금지). 합계 1 MB 미만을 감시한다.
+  const size = Buffer.byteLength(read('src/intl-taxa.js'));
   assert.ok(size < 1_000_000, String(size));
+  assert.throws(() => readFileSync(new URL('../src/ioc-taxa.js', import.meta.url)));
 });

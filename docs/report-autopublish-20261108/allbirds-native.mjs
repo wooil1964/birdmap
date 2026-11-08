@@ -61,7 +61,7 @@ const P = [36.5, 127.5], Q = [37.2, 128.2], R = [35.4, 126.4], S = [34.8, 127.9]
 const UNLISTED = 'Pterodroma feae';
 
 await scenario('1. 일반종·희귀종·미조·미기록 가능 학명이 모두 자동 공개되고 원문이 보존된다', {}, async ({ q, burst, get }, check) => {
-  check('시험 전제: 대상 학명은 2025 한국 목록 밖의 IOC 종', identifyBird(UNLISTED)?.kind === 'ioc_scientific', JSON.stringify(identifyBird(UNLISTED)));
+  check('시험 전제: 대상 학명은 2025 한국 목록 밖의 IOC 종', identifyBird(UNLISTED)?.kind === 'avilist_scientific', JSON.stringify(identifyBird(UNLISTED)));
   const specs = [{ species: '참새 3', ...at(...P) }, { species: '말똥가리', ...at(...Q) }, { species: 'Calidris pygmaea 2', ...at(...R) },
     { species: UNLISTED, ...at(...S) }, { species: 'Spoon-billed Sandpiper', ...at(...T) }, { species: '저어새 4', ...at(...U) }];
   const rs = await burst(specs);
@@ -205,6 +205,15 @@ await scenario('10. [조사] 위치 정책 v2 19종: 가리지 않은 제보의 
   const spots = (await get('/reports/pending')).spots;
   const off = specs.filter(s => s.hideLocation).map((s, i) => spots.find(x => x.locationHidden && Math.abs(x.lat - s.lat) < 0.5 && Math.abs(x.lon - s.lon) < 0.5));
   check('가린 19건은 대략점(최소 1 km 이동)으로만 표시', off.length === 19 && off.every(Boolean));
+});
+
+await scenario('11. AviList v2026 에서 새로 생긴·분할된 종(IOC 15.2 이전 목록에 없음)도 학명·영명 어느 쪽이든 자동 공개되고 동일종 중복은 1건', {}, async ({ q, burst }, check) => {
+  const rs = await burst([{ species: 'Tringa inornata', ...at(...P, 0, 0) }, { species: 'Prairie Willet', ...at(...P, 60, 0) }, { species: 'prairie willet 2', ...at(...P, 0, 80) },
+    { species: 'Muscicapa tyrrhenica', ...at(...Q) }, { species: 'Mediterranean Flycatcher', ...at(...R) }, { species: 'Hierococcyx tiganada', ...at(...S) }]);
+  check('6건 모두 접수', rs.every(r => r.status === 201), rs.map(r => r.status).join());
+  check('Tringa inornata = Prairie Willet: 동시 3건 중 자동 공개 1건', open(rs.slice(0, 3)).length === 1 && held(rs.slice(0, 3), 'possible_duplicate').length === 2);
+  check('Muscicapa tyrrhenica·Mediterranean Flycatcher(다른 장소)·신종 Hierococcyx tiganada 공개', open(rs.slice(3)).length === 3);
+  check('일치', await consistent(q, rs));
 });
 
 auth.restore();
