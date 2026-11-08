@@ -251,7 +251,9 @@
     document.getElementById('topBtnRow').appendChild(menuToggle);
     // Annotate existing metadata; desktop text and reporter statistics buttons stay in place.
     function annotateReports() {
-      var entries = (global.reportSearchIndex || []).filter(function (entry) {
+      // 최근 목록은 승인 제보와 자동 공개 제보를 합쳐 그리므로, 같은 합친 순서의 항목으로 날짜·이름 줄을 붙인다.
+      var source = typeof global.recentReportEntries === 'function' ? global.recentReportEntries() : (global.reportSearchIndex || []);
+      var entries = source.filter(function (entry) {
         return entry.date && entry.date >= global.kstDateTextBefore(global.RECENT_REPORT_DAYS);
       }).slice(0, global.RECENT_REPORT_LIMIT);
       recent.querySelectorAll('#recentReportsList .recentReportItem').forEach(function (item, index) {

@@ -217,7 +217,7 @@
   <div class="monthTideDialog reportDialog">
     <div class="monthTideHeader"><strong id="reportTitle">출현종 제보</strong><button type="button" onclick="closeReportModal()">닫기</button></div>
     <form id="reportForm" class="reportBody" onsubmit="return submitReport(event)">
-      <p class="reportHint">관리자 확인을 거친 뒤에만 지도에 표시됩니다. 확인되지 않은 내용은 공개되지 않습니다.</p>
+      <p class="reportHint">제보하신 내용은 접수 즉시 지도에 표시될 수 있습니다. 확인이 필요한 제보는 관리자 검토 후 공개됩니다. 둥지·번식 관련 제보는 접수할 수 없습니다.</p>
       <label for="reportSpecies">출현종 <span class="reportRequired">필수</span></label>
       <input id="reportSpecies" name="species" required maxlength="200" placeholder="예: 동박새, 큰유리새" autocomplete="off">
       <label for="reportObservedOn">관찰 날짜 <span class="reportRequired">필수</span></label>
@@ -231,7 +231,7 @@
       </div>
       <div id="reportHideLocationBox" style="display:none">
         <label class="reportConsent" for="reportHideLocation"><input type="checkbox" id="reportHideLocation"> 위치 가리기</label>
-        <div class="reportConsentNote">체크하면 승인 후에도 정확한 위치는 공개되지 않고 주변의 대략적인 위치만 표시됩니다. 실제 관찰 위치는 관리자 확인용으로만 저장됩니다.</div>
+        <div class="reportConsentNote">체크하면 정확한 위치는 공개되지 않고 주변의 대략적인 위치만 표시됩니다. 실제 관찰 위치는 관리자 확인용으로만 저장됩니다.</div>
       </div>
       <div class="reportOptional">
         <label for="reportReporter">제보자 이름 또는 닉네임 <span class="reportOptionalTag">선택</span></label>
@@ -1088,6 +1088,19 @@ function siteMatchesTerm(site,term){
    민감 관찰지의 실제 좌표는 이 목록에도, 화면에도 들어오지 않는다.
    승인 대기·반려 제보는 이 API 에 아예 나오지 않으므로 검색에도 잡히지 않는다. */
 var reportSearchIndex=[];
+/* 자동 공개(미검증) 제보의 최근 목록용 항목. 검색 색인(reportSearchIndex)에는 넣지 않는다. 서버가 /reports/pending 으로 내려준 공개 자료만 쓰고,
+   이름은 서버가 공개에 동의한 제보에만 실어 보낸다(없으면 비워 두어 익명으로 표시한다). */
+var reportPendingIndex=[];
+function recentReportEntries(){
+  // 같은 id 가 이미 확인 완료된 제보(붉은 점)이면 중복으로 넣지 않는다.
+  var pending=reportPendingIndex.filter(function(entry){return !reportSpotLayers[entry.spotId]&&!reportPublicSpots[entry.spotId];});
+  var all=reportSearchIndex.concat(pending);
+  all.sort(function(a,b){
+    var byDate=String(b.date).localeCompare(String(a.date));
+    return byDate!==0?byDate:String(a.species.join()).localeCompare(String(b.species.join()));
+  });
+  return all;
+}
 
 function buildReportSearchIndex(spots){
   var out=[];
@@ -1192,23 +1205,24 @@ function renderRecentReports(){
   list.innerHTML='';
   if(count)count.textContent='';
   if(!allowed){list.innerHTML='<div class="recentReportEmpty">공개 제보의 최신 상태를 확인할 수 없습니다.</div>';return;}
-  if(recentReportsFailed&&!reportSearchIndex.length){
+  var entries=recentReportEntries();
+  if(recentReportsFailed&&!entries.length){
     // 자료가 없는 것과 못 불러온 것을 구분한다. 원인은 콘솔에 남겨 둔다.
     list.innerHTML='<div class="recentReportEmpty">제보 목록을 불러오지 못했습니다.</div>';
     return;
   }
-  if(!reportSearchIndex.length){
-    list.innerHTML='<div class="recentReportEmpty">최근 승인된 제보가 없습니다.</div>';
+  if(!entries.length){
+    list.innerHTML='<div class="recentReportEmpty">최근 출현 제보가 없습니다.</div>';
     return;
   }
   // 실제 관찰일 기준으로 최근 기간만 남긴다(등록일·승인일이 아니다).
   var cutoff=kstDateTextBefore(RECENT_REPORT_DAYS);
-  var recent=reportSearchIndex.filter(function(entry){return entry.date&&entry.date>=cutoff;});
+  var recent=entries.filter(function(entry){return entry.date&&entry.date>=cutoff;});
   if(!recent.length){
-    list.innerHTML='<div class="recentReportEmpty">최근 '+RECENT_REPORT_DAYS+'일간 승인된 제보가 없습니다.</div>';
+    list.innerHTML='<div class="recentReportEmpty">최근 '+RECENT_REPORT_DAYS+'일간 출현 제보가 없습니다.</div>';
     return;
   }
-  // reportSearchIndex 는 이미 실제 관찰일 최신순이라 자른 뒤에도 순서가 그대로다.
+  // entries 는 실제 관찰일 최신순(승인 + 자동 공개)이라 자른 뒤에도 순서가 그대로다.
   var shown=recent.slice(0,RECENT_REPORT_LIMIT);
   if(count)count.textContent=shown.length+'건';
   shown.forEach(function(entry){
@@ -1723,11 +1737,13 @@ function closeContributorsModal(){
 
 /* 새 마커를 만들지 않고 이미 지도에 있는 점을 그대로 연다. */
 function openReportEntry(entry,verified){
-  if(!verified){publicationRouteCheck(function(){var latest=reportSearchIndex.find(function(item){return item.kind===entry.kind&&item.spotId===entry.spotId&&item.date===entry.date;});if(latest)openReportEntry(latest,true);});return;}
+  if(!verified){publicationRouteCheck(function(){var latest=recentReportEntries().find(function(item){return item.kind===entry.kind&&item.spotId===entry.spotId&&item.date===entry.date;});if(latest)openReportEntry(latest,true);});return;}
   if(!publicationAllowed())return;
   var map=map_7010a44f6ac2025090f0fe07508ed485,layer=null;
   if(entry.kind==='spot'){
     layer=reportSpotLayers[entry.spotId];
+  }else if(entry.kind==='pending'){
+    layer=reportPendingLayers[entry.spotId];
   }else{
     var index=-1;
     siteSpotData.forEach(function(spot,i){if(spot.id===entry.spotId)index=i;});
@@ -2012,29 +2028,28 @@ function birdmapSpotMarker(lat,lon,title,species,history,undatedNote,locationHid
 }
 
 /* 승인 대기 제보 팝업. 관리자가 확인하기 전이므로 기상·조석을 근거로 출현을 확인했다는
-   표현을 쓰지 않는다. 종별 입력 개체수만 표시하고 미검증 상태를 명시한다. */
+   표현을 쓰지 않는다. 종별 입력 개체수만 표시하고 관리자 확인 여부 문구는 넣지 않는다(내부 상태는 관리자 화면에서만 구분). */
 function pendingPopupHtml(spot){
   var names=spot.sightings&&spot.sightings.length?reportSpeciesCountsHtml(spot):(spot.species||[]).map(escapeHtml).join(' · ');
   var date=String(spot.date||'').replace(/-/g,'.');
   return '<div class="spotPopup pendingPopup" style="width:min(240px,calc(100vw - 72px))">'
-    +'<b>미검증 제보 · 관리자 확인 전</b>'
+    +'<b>출현 제보</b>'
     +'<div class="pendingRow">출현종: '+names+'</div>'
     +'<div class="pendingRow">관찰일: '+escapeHtml(date)+'</div>'
-    +'<div class="pendingRow">상태: 자동 공개(미검증)</div>'
     +(spot.locationHidden?'<div class="spotHiddenNote">위치 보호 요청으로 대략적인 위치만 표시됩니다.</div>'
       :spot.approximate?'<div class="pendingRow">위치: 대략적인 위치</div>':'')
-    +'<div class="pendingNote">※ 이 정보는 제보자가 등록한 내용으로, 아직 관리자가 확인하지 않았습니다.</div>'
     +'</div>';
 }
 
-/* 황색 점. 승인된 붉은 점과 색·테두리로 구분하고, 기존 탐조지 마커와도 모양이 다르다. */
+/* 자동 공개 제보 점. 승인된 제보와 같은 붉은 출현 점으로 그린다(색만 바꾼 것이 아니라 서버가 공개 대상으로 내려준 제보만 그린다).
+   기존 탐조지 마커와는 모양이 다르다. 상세 팝업은 그대로 자동 공개 상태를 밝힌다. */
 function birdmapPendingMarker(spot){
   if(typeof birdmapMarkers!=='undefined')birdmapMarkers.prepare();
   var names=(spot.species||[]).map(escapeHtml).join(' · ');
   return L.circleMarker([spot.lat,spot.lon],
-    {radius:5,color:'#a4700a',weight:2,fillColor:'#f7c948',fillOpacity:.9,birdmapMarkerKind:'report',pane:typeof birdmapMarkers!=='undefined'?'birdmap-report-markers':'overlayPane'})
+    {radius:5,color:'#d32f2f',weight:2,fillColor:'#d32f2f',fillOpacity:.85,birdmapMarkerKind:'report',pane:typeof birdmapMarkers!=='undefined'?'birdmap-report-markers':'overlayPane'})
     .bindPopup(pendingPopupHtml(spot),{maxWidth:300})
-    .bindTooltip(names+' · 미검증',{sticky:true});
+    .bindTooltip(names,{sticky:true});
 }
 
 /* 부모 탐조지가 필터를 통과할 때만 그 탐조지의 출현 지점을 표시한다. */
@@ -3329,7 +3344,7 @@ function publicationInvalidate(reason){
  var currentPopup=map&&map._popup,dynamicPopup=currentPopup&&currentPopup._source&&currentPopup._source.options&&currentPopup._source.options.publicationDynamic;
  [typeof reportSpotLayers==='undefined'?{}:reportSpotLayers,typeof reportPendingLayers==='undefined'?{}:reportPendingLayers].forEach(function(layers){Object.keys(layers).forEach(function(id){publicationForgetLayer(layers[id],map);delete layers[id];});});
  document.querySelectorAll('a[data-publication-report]').forEach(function(node){var popup=node.closest('.leaflet-popup');if(popup)popup.remove();else node.remove();});
- reportPublicSpots={};reportSearchIndex=[];reportFixedHistory={};recentSiteSightings={};
+ reportPublicSpots={};reportSearchIndex=[];reportPendingIndex=[];reportFixedHistory={};recentSiteSightings={};
  document.querySelectorAll('[data-publication-entry]').forEach(function(item){item.remove();});
  if(typeof clearRenderedSiteHistories==='function')clearRenderedSiteHistories();
  if(typeof clearSiteHistoryCache==='function')clearSiteHistoryCache();
@@ -5421,7 +5436,7 @@ function scheduleBirdmapRefresh(){
    REPORTS_API_URL 또는 사이트키가 비어 있으면 버튼도 만들지 않고 요청도 보내지 않는다.
    기상·조석·추천·공지 코드는 이 블록과 공유하지 않는다. */
 var reportSpotLayers={};          // 승인된 제보 점 (id -> circleMarker)
-var reportPendingLayers={};       // 승인 대기 제보 점 (id -> 황색 circleMarker)
+var reportPendingLayers={};       // 자동 공개 제보 점 (id -> 붉은 circleMarker)
 var reportPickMarker=null;        // 제보 모드의 임시 점. 지도에 저장하지 않는다.
 var reportPicked=null;            // {lat,lon}
 var reportPicking=false;
@@ -5568,6 +5583,11 @@ function renderPendingReports(spots){
   });
   // 반려·공개 중지·확인 완료된 제보는 목록에서 빠지므로 지도에서도 사라진다.
   Object.keys(reportPendingLayers).forEach(function(id){if(!seen[id])removePendingLayer(id);});
+  // 최근 목록용 항목: 지도에 실제로 그려진 자동 공개 제보만(같은 응답, 같은 공개 좌표).
+  reportPendingIndex=(spots||[]).filter(function(spot){return spot&&reportPendingLayers[String(spot.id)];}).map(function(spot){
+    return {kind:'pending',spotId:String(spot.id),date:String(spot.date||''),species:(spot.species||[]).slice(),reporter:typeof spot.reporter==='string'?spot.reporter.trim().slice(0,40):'',lat:spot.lat,lon:spot.lon};
+  });
+  if(typeof renderRecentReports==='function')renderRecentReports();
 }
 
 /* ── 위치 선택 ─────────────────────────────────────────────────────────── */

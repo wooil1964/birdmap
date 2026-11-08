@@ -57,6 +57,10 @@ jobs:
           MARKER_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/marker-visibility
           MARKER_SHOTS: ${{ github.workspace }}/.ci-results/gps-browser/marker-visibility/screenshots
         run: node docs/marker-visibility/browser.cjs
+      - name: Auto-public report marker, recent list and click-through, PC and phone (synthetic API)
+        env:
+          PENDING_UI_OUTPUT: ${{ github.workspace }}/.ci-results/gps-browser/pending-ui
+        run: node docs/pending-ui/browser.cjs
       - name: Upload GPS browser diagnostics
         if: always()
         uses: actions/upload-artifact@v4
