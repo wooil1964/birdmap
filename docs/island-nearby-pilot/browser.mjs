@@ -49,7 +49,7 @@ function mockBeforeLoad(){
   if(u.hostname.endsWith('workers.dev')){
    qa.actions.push({path:u.pathname,method});
    if(method!=='GET'){qa.writes++;return reply({ok:false,error:{code:'QA_WRITE_BLOCKED'}},403);}
-   const publication={contract:'publication-v1',epoch:'11111111111141118111111111111111',revision:'1',projection:'nonbreeding-location-v2-pending-withheld-v1',nonce:u.searchParams.get('nonce')};
+   const publication={contract:'publication-v1',epoch:'11111111111141118111111111111111',revision:'1',projection:'nonbreeding-location-v2-autopublic-v1',nonce:u.searchParams.get('nonce')};
    const body={ok:true,serverTime:new Date().toISOString(),publication};
    if(u.pathname==='/weather')return reply(qa.weather(u.searchParams.get('siteId')));
    if(u.pathname==='/reports/public-state')return reply(body);

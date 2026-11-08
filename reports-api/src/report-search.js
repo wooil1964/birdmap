@@ -1,4 +1,5 @@
 import { WorkerError, historyEntry, isLocationRestricted, isLocationHidden } from './shared.js';
+import { unverifiedPayload, unverifiedReadsEnabled, unverifiedStatement } from './autopublic.js';
 
 export const REPORT_SEARCH_PAGE = 20;
 const normalize = value => String(value || '').normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
@@ -18,7 +19,7 @@ const restricted = row => !row || isLocationHidden(row) || isLocationRestricted(
 
 // Project before searching/counting/paging: private fields must not become a match oracle.
 // The approved rows, registry and publication anchor all come from the same primary batch.
-export function reportSearchPayload(rows, sites, { q, offset }) {
+export function reportSearchPayload(rows, sites, { q, offset }, unverified = []) {
   const byId = new Map(rows.map(row => [row.id, row]));
   const registry = new Map(sites.map(site => [String(site.site_id), site]));
   const reports = rows.map(row => {
@@ -36,15 +37,22 @@ export function reportSearchPayload(rows, sites, { q, offset }) {
       entry.target = { kind: fixed ? 'fixed' : 'spot', spotId: fixed ? row.spot_key : root.id };
     }
     return entry;
-  }).filter(entry => !q || [...entry.species, entry.reporter, entry.siteName, entry.region].some(value => value && normalize(value).includes(q)));
+  }).concat(unverified.map(spot => {
+    // 미검증(자동 공개) 제보: 이름·지역·지점 이동 없이 종·날짜만, 미검증 표시. 지도 마커는 /reports/pending 에서 그린다.
+    const entry = { id: spot.id, date: spot.date, species: spot.species, verified: false };
+    if (spot.locationHidden) entry.locationHidden = true;
+    return entry;
+  })).sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))).filter(entry => !q || [...entry.species, entry.reporter, entry.siteName, entry.region].some(value => value && normalize(value).includes(q)));
   return { ok: true, total: reports.length, offset, limit: REPORT_SEARCH_PAGE,
     hasMore: offset + REPORT_SEARCH_PAGE < reports.length, reports: reports.slice(offset, offset + REPORT_SEARCH_PAGE) };
 }
 
-export function reportSearchPlan(db, url, evidence = 'NULL AS non_breeding_confirmed, NULL AS location_input') {
-  const request = input(url);
+export function reportSearchPlan(db, url, evidence = 'NULL AS non_breeding_confirmed, NULL AS location_input', env = {}, now = new Date()) {
+  const request = input(url), withUnverified = unverifiedReadsEnabled(env);
   return { statements: [
     db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,site_id,spot_key,${evidence} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC,id DESC`),
     db.prepare("SELECT site_id,site_name,COALESCE(NULLIF(json_extract(source_record_json,'$.region'),''),TRIM(COALESCE(json_extract(source_record_json,'$.sido'),'')||' '||COALESCE(json_extract(source_record_json,'$.sigungu'),''))) AS region FROM sites WHERE retired_at IS NULL AND registry_source='index.html:siteData'"),
-  ], build: sets => reportSearchPayload(sets[0].results || [], sets[1].results || [], request) };
+    ...(withUnverified ? [unverifiedStatement(db, evidence)] : []),
+  ], build: sets => reportSearchPayload(sets[0].results || [], sets[1].results || [], request,
+    withUnverified ? unverifiedPayload(sets[2].results || [], env, now) : []) };
 }

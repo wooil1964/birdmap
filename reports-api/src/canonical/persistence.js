@@ -1,6 +1,7 @@
 import { validateReport, MAX_BIRD_COUNT, splitSpecies, rethrowIfFrozen, LOCATION_HIDDEN_SQL, hasBreedingEvidence, isLocationRestricted, receiptPayload } from '../shared.js';
 import { applicationDb, assertion, clearAssertion, checklistFromReport, initialSighting, insert, first, rows, stable, fingerprint, requestId, revision, assertNotPurged, fail, projectChecklist, FIELD_MAP } from './data.js';
 import { locationEvidenceColumns } from '../location-evidence.js';
+import { AUTO_DECISION_SQL, unverifiedPayload } from '../autopublic.js';
 
 const INPUT_KEYS=['species','lat','lon','observedOn','birdCount','reporter','namePublic','note','non_breeding_confirmed','hideLocation'];
 export function quickInput(body) {
@@ -14,7 +15,7 @@ export function quickInput(body) {
   report.birdCount=n===undefined||n===null||n===''?null:n;
   return {report,input:Object.fromEntries(INPUT_KEYS.filter(k=>body[k]!==undefined).map(k=>[k,body[k]]))};
 }
-export async function replayQuick(db,id,input) {
+export async function replayQuick(db,id,input,env={}) {
   await assertNotPurged(db,id);
   const raw=await first(db,'SELECT * FROM raw_submissions WHERE request_id=?',id);
   if(!raw)return null;
@@ -22,26 +23,29 @@ export async function replayQuick(db,id,input) {
   if(raw.source_type!=='native_submission'||raw.source_id!==id||await fingerprint(saved.input)!==await fingerprint(input))fail('IDEMPOTENCY_CONFLICT','같은 요청 식별자에 다른 내용이 전송되었습니다.');
   if(raw.source_fingerprint!==await fingerprint(saved)||!saved.accepted)fail('IDEMPOTENCY_STATE_INVALID','저장된 요청을 검증할 수 없습니다.');
   const c=await first(db,'SELECT raw_id FROM checklists WHERE checklist_id=?',id);
-  const live=await first(db,'SELECT id,note,lat,lon,'+locationEvidenceColumns({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})+',status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,'+LOCATION_HIDDEN_SQL+' AS location_hidden,species,observed_on FROM reports WHERE id=?',id);
+  const live=await first(db,'SELECT id,note,lat,lon,public_lat,public_lon,'+locationEvidenceColumns({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})+',status,pending_public,approx_lat,approx_lon,(approx_lat<>lat OR approx_lon<>lon) AS approx_offset,'+LOCATION_HIDDEN_SQL+' AS location_hidden,species,observed_on,bird_count,received_at,'+AUTO_DECISION_SQL+' FROM reports WHERE id=?',id);
   if(c?.raw_id!==raw.raw_id||!live)fail('IDEMPOTENCY_STATE_INVALID','저장 결과가 불완전합니다.');
   // Recompute the current status; never replay historical pending coordinates.
-  return receiptPayload({...saved.accepted,status:live.status,publicVisibility:live.status==='rejected'?'not_published':isLocationRestricted(live)?'withheld':live.status==='approved'?'approved':'withheld'});
+  const visible=live.status==='pending'&&unverifiedPayload([live],env).length===1;
+  return receiptPayload({...saved.accepted,status:live.status,publicVisibility:live.status==='rejected'?'not_published':visible?'public_unverified':isLocationRestricted(live)?'withheld':live.status==='approved'?'approved':'withheld'});
 }
 // Redemptions older than this are removed in the same batch (tokens themselves expire after 300 s).
 export const REDEMPTION_RETENTION_MS=60*60*1000;
-export async function persistQuick(binding,row,input,accepted,tokenHash) {
+export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},review=null}={}) {
   const db=applicationDb(binding), id=requestId(row.id), now=row.received_at;
-  const previous=await replayQuick(db,id,input);if(previous)return previous;
+  const previous=await replayQuick(db,id,input,env);if(previous)return previous;
   const payload={input,accepted};
   const raw={raw_id:`raw:${id}`,source_type:'native_submission',source_id:id,request_id:id,payload_json:stable(payload),submitted_at:now,submitted_by:null,schema_version:'quick-v1',captured_at:now,source_fingerprint:await fingerprint(payload),non_breeding_confirmed:1,policy_version:'non-breeding-v1'};
   if(typeof tokenHash!=='string'||!/^[0-9a-f]{64}$/.test(tokenHash))fail('CAPTCHA_REQUIRED','자동 등록 방지 확인을 완료해 주세요.',400);
   const key=`submit:${id}`,cutoff=new Date(Date.parse(now)-REDEMPTION_RETENTION_MS).toISOString();
   const statements=[assertion(db,key,"NOT EXISTS (SELECT 1 FROM audit_log WHERE action='forbidden_content_purged' AND target_id=?)",[id]),clearAssertion(db,key),
     db.prepare('DELETE FROM captcha_redemptions WHERE redeemed_at<?').bind(cutoff),insert(db,'captcha_redemptions',{token_hash:tokenHash,request_id:id,redeemed_at:now}),
-    insert(db,'reports',row),insert(db,'raw_submissions',raw),insert(db,'checklists',checklistFromReport(row,raw.raw_id,now,true)),insert(db,'sightings',initialSighting(row,now,true))];
+    insert(db,'reports',row),insert(db,'raw_submissions',raw),insert(db,'checklists',checklistFromReport(row,raw.raw_id,now,true)),insert(db,'sightings',initialSighting(row,now,true)),
+    // 자동 공개 판정 기록은 같은 batch 에 넣는다. 판정만 남거나 저장만 남는 경우는 없다.
+    ...(review?[insert(db,'reviews',review)]:[])];
   try {await db.batch(statements);} catch(error) {
     rethrowIfFrozen(error);
-    const replay=await replayQuick(db,id,input);if(replay)return replay;
+    const replay=await replayQuick(db,id,input,env);if(replay)return replay;
     // Another logical request already redeemed this token (whole batch rolled back, nothing stored).
     if(await first(db,'SELECT 1 AS used FROM captcha_redemptions WHERE token_hash=? AND request_id<>?',tokenHash,id))fail('CAPTCHA_REUSED','이미 사용된 자동 등록 방지 확인입니다. 다시 확인해 주세요.',403);
     if(await first(db,'SELECT id FROM reports WHERE dedupe_hash=? OR id=?',row.dedupe_hash,id))fail('DUPLICATE_REPORT','같은 종·위치·날짜의 제보가 이미 접수되어 있습니다.');
@@ -49,7 +53,7 @@ export async function persistQuick(binding,row,input,accepted,tokenHash) {
   }
   return accepted;
 }
-const ADMIN_KEYS=['action','expected_revision','adminNote','species','lat','lon','publicLat','publicLon','siteId','observedOn','namePublic','public','hide','spotKey','sightingReviews'];
+const ADMIN_KEYS=['action','expected_revision','adminNote','reasonCode','species','lat','lon','publicLat','publicLon','siteId','observedOn','namePublic','public','hide','spotKey','sightingReviews'];
 export async function adminIdentity(body,id,actor) {
   requestId(body.request_id);revision(body.expected_revision);
   const input=Object.fromEntries(ADMIN_KEYS.filter(k=>body[k]!==undefined).map(k=>[k,body[k]]));
@@ -98,7 +102,7 @@ export async function persistAdmin(binding,{id,body,actor,identity,plan,before,n
   statements.push(db.prepare(`UPDATE reports SET ${Object.keys(plan.patch).map(k=>k+'=?').join(',')} WHERE id=?`).bind(...Object.values(plan.patch),id),assertion(db,key+':report'),clearAssertion(db,key+':report'));
   const sequence=Number((await first(db,'SELECT COALESCE(MAX(sequence),0) AS n FROM reviews WHERE checklist_id=?',id)).n);
   const decision=body.action==='reject'?'rejected':body.action==='unpublish'?'unpublished':['approve','link'].includes(body.action)?(before.status==='rejected'?'reapproved':'approved'):'corrected';
-  const events=[{decision,sighting_id:null,validated_taxon_id:null,validated_count:null,validated_count_accuracy:null,from_status:before.status,to_status:after.status,actor_id:actor,reason_code:body.action,event_index:0}];
+  const events=[{decision,sighting_id:null,validated_taxon_id:null,validated_count:null,validated_count_accuracy:null,from_status:before.status,to_status:after.status,actor_id:actor,reason_code:body.action==='reject'&&body.reasonCode?'reject:'+body.reasonCode:body.action,event_index:0}];
   const sightings=await rows(db,'SELECT * FROM sightings WHERE checklist_id=? ORDER BY source_ordinal',id);
   const changed=new Map();
   if(after.species!==before.species) {

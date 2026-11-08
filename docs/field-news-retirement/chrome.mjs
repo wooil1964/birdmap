@@ -38,7 +38,7 @@ function hook(){
  m.nativeMedia=query=>fine(query).matches;
  try{const preset=JSON.parse(sessionStorage.getItem('publication-test-preset')||'null');if(preset?.blockStorage)Object.defineProperty(window,'localStorage',{configurable:true,get:()=>{throw Error('Synthetic storage denied');}});}catch{}
  m.all=mk('11111111-1111-4111-8111-111111111111','all',{species:'참새'});m.near=mk('22222222-2222-4222-8222-222222222222','10',{species:'박새'});m.fields=[m.all,m.near];
- const pub=u=>({contract:'publication-v1',epoch:m.epoch,revision:m.revision,projection:'nonbreeding-location-v2-pending-withheld-v1',nonce:u.searchParams.get('nonce')});
+ const pub=u=>({contract:'publication-v1',epoch:m.epoch,revision:m.revision,projection:'nonbreeding-location-v2-autopublic-v1',nonce:u.searchParams.get('nonce')});
  const reply=(body,status=200)=>Promise.resolve(new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}}));
  const data=(u,body)=>Object.assign({ok:true,serverTime:new Date().toISOString(),publication:pub(u)},body);
  m.fix=(accuracy=15,age=0)=>({coords:{latitude:37.1,longitude:127.1,accuracy},timestamp:Date.now()-age});

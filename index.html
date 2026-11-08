@@ -1319,7 +1319,7 @@ function renderReportArchive(){
       if(name.tagName==='BUTTON'){name.type='button';name.classList.add('reporterMapOpen');name.onclick=function(){openReportArchiveEntry(row.id);};name.setAttribute('aria-label',name.textContent+' 지도에서 보기');}
       item.appendChild(name);
       var detail=document.createElement('div');detail.className='recentReportMeta';
-      detail.textContent=[row.date,row.reporter||'익명 제보',row.siteName,row.region,row.locationHidden?'위치 비공개':''].filter(Boolean).join(' · ');
+      detail.textContent=[row.verified===false?'미검증':'',row.date,row.reporter||'익명 제보',row.siteName,row.region,row.locationHidden?'위치 비공개':''].filter(Boolean).join(' · ');
       item.appendChild(detail);content.insertBefore(item,view.more);
     });
     if(!keep&&!data.reports.length)note(reportArchiveQuery?'검색 결과가 없습니다.':'승인된 제보가 없습니다.');
@@ -2003,10 +2003,10 @@ function pendingPopupHtml(spot){
   var names=(spot.species||[]).map(escapeHtml).join(' · ');
   var date=String(spot.date||'').replace(/-/g,'.');
   return '<div class="spotPopup pendingPopup" style="width:min(240px,calc(100vw - 72px))">'
-    +'<b>[관리자 확인 전 제보]</b>'
+    +'<b>미검증 제보 · 관리자 확인 전</b>'
     +'<div class="pendingRow">출현종: '+names+'</div>'
     +'<div class="pendingRow">관찰일: '+escapeHtml(date)+'</div>'
-    +'<div class="pendingRow">상태: 승인 대기</div>'
+    +'<div class="pendingRow">상태: 자동 공개(미검증)</div>'
     +(spot.locationHidden?'<div class="spotHiddenNote">위치 보호 요청으로 대략적인 위치만 표시됩니다.</div>'
       :spot.approximate?'<div class="pendingRow">위치: 대략적인 위치</div>':'')
     +'<div class="pendingNote">※ 이 정보는 제보자가 등록한 내용으로, 아직 관리자가 확인하지 않았습니다.</div>'
@@ -2020,7 +2020,7 @@ function birdmapPendingMarker(spot){
   return L.circleMarker([spot.lat,spot.lon],
     {radius:5,color:'#a4700a',weight:2,fillColor:'#f7c948',fillOpacity:.9,birdmapMarkerKind:'report',pane:typeof birdmapMarkers!=='undefined'?'birdmap-report-markers':'overlayPane'})
     .bindPopup(pendingPopupHtml(spot),{maxWidth:300})
-    .bindTooltip(names+' · 승인 대기',{sticky:true});
+    .bindTooltip(names+' · 미검증',{sticky:true});
 }
 
 /* 부모 탐조지가 필터를 통과할 때만 그 탐조지의 출현 지점을 표시한다. */
@@ -3275,7 +3275,7 @@ function clearSiteHistoryCache(){siteHistoryCache={};siteHistoryGen++;}
    삭제·공개 취소·위치 가림이 반영된 뒤 늦게 도착한 옛 응답이 마커를 되살리지 못하게 한다. */
 /* Public location permission: source authority, not response/request timestamps.
    Conservative local defaults; production cadence remains a separate operating approval. */
-var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='nonbreeding-location-v2-pending-withheld-v1';
+var PUBLICATION_CONTRACT='publication-v1',PUBLICATION_PROJECTION='nonbreeding-location-v2-autopublic-v1';
 var PUBLICATION_MAX_AGE=5000,PUBLICATION_POLL_MS=5000,PUBLICATION_TIMEOUT=4000;
 // Renew before the request-start lease boundary; the 5s safety cap is unchanged.
 // The margin is the time a renewal response (network + timer delay) may take: 250ms expired in
@@ -5518,8 +5518,7 @@ function loadPendingReports(){
     if(!publicationDataAllowed(data))return false;
     if(!data||data.ok!==true||!Array.isArray(data.spots))throw new Error('pending invalid');
     if(!reportResponseCurrent('pending',seq))return false;
-    renderPendingReports([]);
-    if(data.spots.length)throw new Error('pending publication disabled');
+    renderPendingReports(data.spots);
     return true;
   }).catch(function(){return false;});
 }
@@ -5531,14 +5530,30 @@ function removePendingLayer(id){
   delete reportPendingLayers[id];
 }
 
+// 자동 공개된 일반종 제보(미검증)만 그린다. 서버가 verified:false 로 표시한 것만 받고,
+// 그 밖의 대기 DTO(과거 정책·잘못 온 응답)는 무시한다. 공개 권한이 없으면 그리지 않는다.
 function showPendingSpot(spot){
-  // 승인 전 좌표는 구버전·지연 응답에서도 표시하지 않는다.
-  if(spot&&spot.id)removePendingLayer(String(spot.id));
+  var id=spot&&spot.id?String(spot.id):'';
+  if(!id)return;
+  removePendingLayer(id);
+  if(!publicationAllowed()||spot.verified!==false)return;
+  if(typeof spot.lat!=='number'||typeof spot.lon!=='number'||!isFinite(spot.lat)||!isFinite(spot.lon))return;
+  // 이미 확인 완료(붉은 점)된 제보는 다시 그리지 않는다.
+  if(reportSpotLayers[id])return;
+  reportPendingLayers[id]=birdmapPendingMarker(spot).addTo(map_7010a44f6ac2025090f0fe07508ed485);
+  reportPendingLayers[id].options.publicationDynamic=true;
 }
 
 function renderPendingReports(spots){
-  // 서버가 잘못 보낸 대기 마커도 무시하고 이전 레이어를 모두 제거한다.
-  Object.keys(reportPendingLayers).forEach(removePendingLayer);
+  var seen={};
+  (spots||[]).forEach(function(spot){
+    var id=String(spot&&spot.id||'');
+    if(!id)return;
+    seen[id]=true;
+    showPendingSpot(spot);
+  });
+  // 반려·공개 중지·확인 완료된 제보는 목록에서 빠지므로 지도에서도 사라진다.
+  Object.keys(reportPendingLayers).forEach(function(id){if(!seen[id])removePendingLayer(id);});
 }
 
 /* ── 위치 선택 ─────────────────────────────────────────────────────────── */
@@ -5802,6 +5817,22 @@ function resetReportCaptcha(){
 
 /* ── 전송 ──────────────────────────────────────────────────────────────── */
 
+// 접수 결과 안내. 자동 공개(미검증)를 관리자 승인으로 오해하지 않게 구분해서 알린다.
+var REPORT_HOLD_TEXT={protected:'보호종 위치 보호',breeding:'번식 관련 위치 보호',rare_review:'희귀종·혼동종 동정 확인',
+  name_unconfirmed:'종명 확인 필요',count_anomaly:'개체수 확인 필요',stale_observation:'관찰일 확인 필요',
+  possible_duplicate:'중복 제보 확인',rate_review:'제보량 확인',global_cap:'오늘 자동 공개 한도 도달',note_review:'설명 내용 확인'};
+function reportReceiptMessage(body,hidden){
+  var no=' 접수 번호: '+String(body&&body.id||'');
+  var where=hidden?' 위치 가리기를 선택해 대략적인 위치만 표시됩니다.':'';
+  if(body&&body.status==='pending'&&body.publicVisibility==='public_unverified')
+    return '지도에 바로 표시되었습니다. 관리자가 아직 확인하지 않은 미검증 제보로 표시되며, 확인 후 확인 완료로 바뀝니다.'+where+no;
+  if(body&&body.status==='pending'){
+    var reasons=(Array.isArray(body.holdReasons)?body.holdReasons:[]).map(function(r){return REPORT_HOLD_TEXT[r];}).filter(Boolean);
+    return '접수되었습니다. 관리자 검토 후 지도에 공개됩니다.'+(reasons.length?' (검토 사유: '+reasons.join(', ')+')':'')+where+no;
+  }
+  return '접수 결과를 확인했습니다. 현재 상태: '+String(body&&body.status||'')+no;
+}
+
 function submitReport(event){
   if(event)event.preventDefault();
   if(!reportsConfigured()||reportSubmitting)return false;
@@ -5858,9 +5889,8 @@ function submitReport(event){
       if(result.body&&result.body.error&&result.body.error.code==='NON_BREEDING_CONFIRMATION_REQUIRED')refreshReportCapabilities();
       throw new Error(message||'제보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     }
-    setReportMessage('접수 결과를 확인했습니다. 접수 번호: '+String(result.body.id||'')
-      +' · 현재 상태: '+String(result.body.status||'')
-      +(result.body.status==='pending'?' · 관리자 검토 대기(승인 전 지도 비공개)':''),'ok');
+    setReportMessage(reportReceiptMessage(result.body,document.getElementById('reportHideLocation').checked),'ok');
+    if(result.body.publicVisibility==='public_unverified')loadPendingReports();
     reportSubmissionAttempt=null;
     document.getElementById('reportForm').reset();
     resetReportCaptcha();

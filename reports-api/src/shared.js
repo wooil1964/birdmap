@@ -372,13 +372,18 @@ export function pendingPayload() {
 }
 
 // 저장된 과거 접수증의 spot까지 제거한다. 불변 원자료 자체는 수정하지 않는다.
+// 대기 제보는 서버가 자동 공개(public_unverified)라고 계산한 경우만 그렇게 알리고, 나머지는 withheld 다.
+// 보류 사유는 코드만 담는다. 좌표·종·메모는 어떤 경우에도 넣지 않는다.
 export function receiptPayload(body) {
-  return {
+  const out = {
     ok: body.ok,
     id: body.id,
     status: body.status,
-    publicVisibility: body.status === 'pending' ? 'withheld' : body.publicVisibility,
+    publicVisibility: body.status === 'pending' ? (body.publicVisibility === 'public_unverified' ? 'public_unverified' : 'withheld') : body.publicVisibility,
   };
+  const reasons = Array.isArray(body.holdReasons) ? body.holdReasons.filter(r => typeof r === 'string' && /^[a-z_]{1,32}$/.test(r)) : [];
+  if (body.status === 'pending' && out.publicVisibility === 'withheld' && reasons.length) out.holdReasons = reasons;
+  return out;
 }
 
 /* ── 위치 가리기 ────────────────────────────────────────────────────── */

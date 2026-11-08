@@ -1,6 +1,8 @@
 // Pure action plan extracted from the existing admin handler. Both writers share it.
 import { WorkerError, approximateCoordinate, hiddenCoordinate, normalizeCoordinate, normalizeObservedOn, normalizeSpecies } from './shared.js';
 export const ACTIONS=['approve','reject','unpublish','link','unlink','consent','visibility','site','hide'];
+// 반려 사유. 감사 이력(reviews.reason_code)에 'reject:<코드>'로 남는다. 지정하지 않으면 예전과 같이 'reject'.
+export const REJECT_REASONS=['misidentification','location_error','duplicate','inappropriate','sensitive_location','other'];
 export async function loadReport(db,id) {
   const row=await db.prepare('SELECT * FROM reports WHERE id = ?1').bind(id).first();
   if(!row)throw new WorkerError('NOT_FOUND','제보를 찾을 수 없습니다.',404);
@@ -11,6 +13,10 @@ export async function planAction(db,body,row,admin,now) {
   if(!ACTIONS.includes(action))throw new WorkerError('ACTION_INVALID','알 수 없는 처리입니다.',400);
   const admin_note=body.adminNote===undefined?row.admin_note:String(body.adminNote||'').slice(0,1000);
   const base={ok:true,id};
+  if(action==='reject'&&body.reasonCode!==undefined) {
+    if(!REJECT_REASONS.includes(body.reasonCode))throw new WorkerError('REASON_INVALID','반려 사유를 선택해 주세요.',400);
+    if(body.reasonCode==='other'&&!String(admin_note||'').trim())throw new WorkerError('REASON_NOTE_REQUIRED','기타 사유는 관리자 메모에 내용을 적어 주세요.',400);
+  }
   if(action==='reject'||action==='unpublish') {
     const status=action==='reject'?'rejected':'pending';
     return {patch:{status,pending_public:0,decided_at:now,admin_note},result:{...base,status}};

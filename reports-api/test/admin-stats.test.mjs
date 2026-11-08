@@ -153,7 +153,7 @@ test("통계 응답에는 좌표·해시·관리자 메모·관리자 이메일�
 });
 
 test("관리자 화면: 통계 탭은 상태 탭과 분리되고 배지·기존 탭은 그대로다", () => {
-  assert.match(ADMIN_PAGE, /<button type="button" data-status="pending" aria-pressed="true">승인 대기 <b id="pendingCount">-<\/b>건<\/button>/);
+  assert.match(ADMIN_PAGE, /<button type="button" data-status="pending" aria-pressed="true">검토 대기 <b id="pendingCount">-<\/b>건<\/button>/);
   for (const s of ["approved", "rejected", "all"]) assert.ok(ADMIN_PAGE.includes('data-status="' + s + '"'));
   assert.match(ADMIN_PAGE, /<button type="button" id="statsTab" aria-pressed="false">통계<\/button>/, "통계 탭에는 data-status 가 없다");
   assert.ok(!/data-status="'\s*\+/.test(ADMIN_PAGE), "통계 목록 버튼이 data-status 를 쓰지 않는다");

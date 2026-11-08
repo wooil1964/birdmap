@@ -1,13 +1,14 @@
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,pendingPayload,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,splitSpecies,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {unverifiedPayload,unverifiedReadsEnabled,unverifiedStatement} from './autopublic.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
 import {reportSearchPlan} from './report-search.js';
 import {locationEvidenceColumns} from './location-evidence.js';
 import {siteHistoryStatement,boundedSiteHistoryPayload} from './site-history.js';
 export const PUBLICATION_CONTRACT='publication-v1';
-export const PUBLICATION_PROJECTION='nonbreeding-location-v2-pending-withheld-v1';
+export const PUBLICATION_PROJECTION='nonbreeding-location-v2-autopublic-v1';
 export const PUBLICATION_GUARDS=[...WRITER_FENCE_GUARDS,'publication_state_permanent','publication_state_transition',...['reports','field_updates'].flatMap(t=>['insert','update','delete'].map(a=>`publication_${t}_${a}${t==='field_updates'&&a==='insert'?'_scoped':''}`)),'field_deleted_terminal','field_revision_valid','field_revision_advance','field_event_live','field_confirmation_live','field_visibility_immutable',...['field_updates','field_update_events','field_update_confirmations'].flatMap(t=>['insert','update','delete'].map(a=>`field_freeze_${t}_${a}`))];
 const MAX_REV=9223372036854775807n;
 export function publicationRevision(value,minimum=0n) {
@@ -157,14 +158,14 @@ function contributorsAllPlan(db,url) {
 function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  const evidence=locationEvidenceColumns(env);
  const path=url.pathname;
- if(path==='/reports/search')return reportSearchPlan(db,url,evidence);
+ if(path==='/reports/search')return reportSearchPlan(db,url,evidence,env,now);
  const draft=/^\/field-updates\/([0-9a-f-]{36})\/report-draft$/.exec(path);
  if(draft)return fieldDraftPlan(db,draft[1],fieldInput.owner,now);
  if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url);
  if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url);
  if(path==='/contributors/all')return contributorsAllPlan(db,url);
  if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
-  if(path==='/reports/pending')return {statements:[],build:()=>({ok:true,generatedAt:now.toISOString(),spots:pendingPayload()})};
+  if(path==='/reports/pending')return {statements:unverifiedReadsEnabled(env)?[unverifiedStatement(db,evidence)]:[],build:s=>({ok:true,generatedAt:now.toISOString(),spots:unverifiedPayload(s[0]?.results||[],env,now)})};
  if(path==='/reports/recent-sites') {
   const days=Math.min(30,Math.max(1,Math.floor(Number(url.searchParams.get('days'))||14))),today=kstDateString(now),since=kstDateString(new Date(now.getTime()-days*86400000));
   return {statements:[db.prepare(`SELECT site_id,species,observed_on,note FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{

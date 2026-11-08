@@ -2,7 +2,7 @@ import { strictWriterDb } from './writer-fence.js';
 // 공개 제보 접수 Worker.
 // - POST /reports              로그인 없이 누구나 제보한다. 항상 status='pending' 으로만 들어간다.
 // - GET  /reports/approved     승인된 제보의 종과 공개 좌표만 내보낸다(붉은 점).
-// - GET  /reports/pending      승인 대기 제보는 공개하지 않는다(항상 빈 목록).
+// - GET  /reports/pending      자동 공개 판정을 통과한 일반종 대기 제보만 '미검증'으로 내보낸다. 그 밖의 대기 제보는 비공개.
 // - GET  /reports/site/<id>    그 탐조지에 연결된 승인 제보의 출현 이력만 내보낸다(좌표 없음).
 // - GET  /reports/<id>/status  제보자가 자기 접수 상태만 확인한다(종·좌표는 돌려주지 않는다).
 // 승인·수정·반려 기능은 이 Worker 에 없다. 관리자 API 는 별도 Worker(admin.js)에 있다.
@@ -14,7 +14,6 @@ import {
   LOCATION_HIDDEN_SQL,
   isSensitiveReport,
   kstDateString,
-  pendingPayload,
   receiptPayload,
   splitSpecies,
   RATE_DAY_MAX,
@@ -42,6 +41,7 @@ import { assertFieldServiceActive } from './field-retirement.js';
 import { handlePublicationRead } from "./publication.js";
 import { locationEvidenceColumns } from "./location-evidence.js";
 import { siteHistoryStatement, boundedSiteHistoryPayload } from "./site-history.js";
+import { AUTO_DECISION_SQL, autoPublicEnabled, classifySubmission, submissionReview, unverifiedPayload, unverifiedReadsEnabled, unverifiedStatement } from "./autopublic.js";
 
 // Emergency switch (deploy-time var): close every public read, including the
 // permission head, while submissions, receipts/status, capability and the admin
@@ -115,7 +115,7 @@ async function enforceRateLimit(db, hash, now) {
 async function handleCanonicalSubmit(request,env,ctx) {
   const binding=database(env),db=applicationDb(binding);
   const body=await readJsonBody(request),{report,input}=quickInput(body);
-  const saved=await replayQuick(db,body.request_id,input);
+  const saved=await replayQuick(db,body.request_id,input,env);
   if(saved)return reportReceipt(request,env,saved,201);
   const now=new Date(),ip=request.headers.get('CF-Connecting-IP')||'';
   const hash=await ipHash(ip,env.REPORT_IP_SALT);
@@ -124,18 +124,21 @@ async function handleCanonicalSubmit(request,env,ctx) {
     await verifyTurnstile(body.turnstileToken,ip,env.TURNSTILE_SECRET_KEY,(url,options)=>fetch(url,{...options,signal:AbortSignal.timeout(8000)}),body.request_id);
   } catch(error) {
     // A concurrent call may have committed while a single-use CAPTCHA was being verified.
-    const committed=await replayQuick(db,body.request_id,input);
+    const committed=await replayQuick(db,body.request_id,input,env);
     if(committed)return reportReceipt(request,env,committed,201);
     throw error;
   }
-  // 승인 전에는 위치를 공개하지 않는다. 가림점은 기존 승인 후 정책을 위해 보존한다.
+  // 승인 전 공개는 자동 판정(일반종 허용 목록 등)을 통과한 경우뿐이다. 스위치가 꺼져 있으면 현행과 같다(전부 비공개).
+  // 가림점은 접수 때 한 번 만들고, 자동 공개·승인 후 공개 모두 그 점만 쓴다.
   const id=body.request_id,hide=report.hideLocation,approx=hide?approximateCoordinate(report.lat,report.lon):{lat:report.lat,lon:report.lon};
-  const accepted={ok:true,id,status:'pending',publicVisibility:'withheld'};
+  const auto=autoPublicEnabled(env)?await classifySubmission(db,env,report,hash,now):null;
+  const open=!!auto?.eligible;
+  const accepted={ok:true,id,status:'pending',publicVisibility:open&&unverifiedReadsEnabled(env)?'public_unverified':'withheld',...(auto&&!open?{holdReasons:auto.reasons}:{})};
   const row={id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:hide?approx.lat:null,public_lon:hide?approx.lon:null,
-    approx_lat:approx.lat,approx_lon:approx.lon,pending_public:0,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
+    approx_lat:approx.lat,approx_lon:approx.lon,pending_public:open?1:0,observed_on:report.observedOn,received_at:now.toISOString(),decided_at:null,
     bird_count:report.birdCount,reporter:report.reporter,note:report.note,admin_note:null,site_id:null,name_public:report.namePublic,spot_key:null,ip_hash:hash,dedupe_hash:await dedupeHash(report)};
   // Only the hash of the verified token reaches the database (redemption guard, same batch as the write).
-  const result=await persistQuick(binding,row,input,accepted,await sha256Hex(body.turnstileToken));
+  const result=await persistQuick(binding,row,input,accepted,await sha256Hex(body.turnstileToken),{env,review:auto?submissionReview(id,row.received_at,auto):null});
   // persistQuick returns this same object only when this call committed the row; replays build a new object.
   // So the admin alert fires once per report id, after the save, and never delays or fails the receipt.
   if(result===accepted) {
@@ -209,11 +212,13 @@ async function handleSubmit(request, env, dual=false, ctx) {
   return reportReceipt(request, env, {ok:true,id,status:'pending',publicVisibility:'withheld'}, 201);
 }
 
-// 과거 공개 플래그가 있는 대기 제보도 공개하지 않는다.
+// 대기 제보는 자동 공개 판정을 통과하고 지금도 재판정을 통과하는 것만 미검증으로 내보낸다.
+// 과거 pending_public 값만 있는 행·스위치 꺼짐은 빈 목록이다.
 async function handlePending(request, env) {
-  database(env);
+  const db=database(env),now=new Date();
+  const rows=unverifiedReadsEnabled(env)?(await unverifiedStatement(db,locationEvidenceColumns(env)).all()).results:[];
   return jsonResponse(request,env,{
-    ok:true,generatedAt:new Date().toISOString(),spots:pendingPayload(),
+    ok:true,generatedAt:now.toISOString(),spots:unverifiedPayload(rows,env,now),
   },200,{'Cache-Control':'no-store'});
 }
 
@@ -239,7 +244,8 @@ async function handleStatus(request, env, id) {
   const db = database(env);
   const row = await db
     .prepare(
-      `SELECT id, species, note, lat, lon, observed_on, ${locationEvidenceColumns(env)}, status, pending_public, received_at, decided_at
+      `SELECT id, species, note, lat, lon, public_lat, public_lon, observed_on, bird_count, ${locationEvidenceColumns(env)}, status, pending_public, received_at, decided_at,
+              ${unverifiedReadsEnabled(env) ? AUTO_DECISION_SQL : 'NULL AS auto_decision'}
          FROM reports WHERE id = ?1`,
     )
     .bind(id)
@@ -248,7 +254,9 @@ async function handleStatus(request, env, id) {
     throw new WorkerError("NOT_FOUND", "접수 번호를 찾을 수 없습니다.", 404);
   }
   const visibility =
-    isLocationRestricted(row) && row.status !== "rejected"
+    row.status === "pending" && unverifiedPayload([row], env).length === 1
+      ? "public_unverified"
+      : isLocationRestricted(row) && row.status !== "rejected"
       ? "withheld"
       : row.status === "approved"
       ? "approved"
