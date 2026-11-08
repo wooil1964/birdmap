@@ -229,3 +229,26 @@ test('제보자 이름: 공개에 동의한 자동 공개 제보만 이름을 �
     assert.ok(!JSON.stringify((await get(s.pub, p, strict)).body).includes('비동의탐조'), p + ' 에 동의하지 않은 이름이 없다');
   }
 });
+
+test('자동 공개 유효기간: 14일 안에는 공개 목록·검색에 있고 넘으면 둘 다에서 내려가며, 공개 중지·반려는 즉시 내려간다(응답 순서와 무관)', async t => {
+  const s = await setup(t);
+  const a = await submit(s, { species: '까치', lat: 36.1, lon: 127.1 }), b = await submit(s, { species: '박새', lat: 36.3, lon: 127.3 }), c = await submit(s, { species: '딱새', lat: 36.5, lon: 127.5 });
+  const ids = [a, b, c].map(x => x.body.request_id), upd = s.db.sqlite.prepare('UPDATE reports SET received_at=? WHERE id=?');
+  const at = days => new Date(Date.now() - days * 86400000).toISOString();
+  const visible = async () => (await pending(s)).map(x => x.id).sort();
+  assert.deepEqual(await visible(), [...ids].sort());
+  upd.run(at(13.9), ids[0]); upd.run(at(14.1), ids[1]);
+  assert.deepEqual(await visible(), [ids[0], ids[2]].sort(), '14일을 넘긴 건만 내려간다');
+  s.pub.REPORTS_PUBLICATION_REQUIRED = 'true';
+  const found = async q => (await get(s.pub, '/reports/search?q=' + encodeURIComponent(q), true)).body.reports.map(x => x.id);
+  assert.deepEqual(await found('박새'), [], '만료된 건은 검색에서도 내려간다');
+  assert.deepEqual(await found('까치'), [ids[0]]);
+  // 응답 순서: 같은 자료를 여러 번 읽어도 같은 집합이고 중복이 없다.
+  for (let i = 0; i < 4; i++) { const got = (await pending(s)).map(x => x.id); assert.equal(new Set(got).size, got.length); assert.deepEqual([...got].sort(), [ids[0], ids[2]].sort()); }
+  // 공개 중지(관리자): 즉시 내려간다. 원본 기록은 그대로 남는다.
+  const [{ revision }] = s.db.sqlite.prepare('SELECT revision FROM checklists WHERE checklist_id=?').all(ids[2]);
+  const stop = await adminPost(s.admin, s.token, ids[2], { action: 'visibility', public: false, request_id: input(990).request_id, expected_revision: revision });
+  assert.equal(stop.status, 200, await stop.clone().text());
+  assert.deepEqual(await visible(), [ids[0]]);
+  assert.equal(s.db.sqlite.prepare('SELECT COUNT(*) n FROM reports WHERE id=?').get(ids[2]).n, 1);
+});

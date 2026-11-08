@@ -125,7 +125,7 @@ async function scenario(page, label, touch) {
   await openPopupOf(page, 'auto-0');
   let st = await popupState(page);
   check(st.open && st.pending === 'auto-0' && Math.abs(st.center[0] - 35.2) < 0.01 && Math.abs(st.center[1] - 127.2) < 0.01, label + ' 목록 클릭 → 해당 자동 공개 마커로 이동하고 팝업 열림', st);
-  check(/노랑부리저어새/.test(st.text) && /미검증|자동 공개/.test(st.text), label + ' 팝업 내용: 출현종과 기존 자동 공개 표시', st.text);
+  check(/노랑부리저어새/.test(st.text) && /관찰일/.test(st.text) && !/미검증|관리자 확인|자동 공개/.test(st.text), label + ' 팝업: 출현종·관찰일만, 미검증·관리자 확인 전 문구 없음', st.text);
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, label + '-pending-open.png') });
   // 위치 가림 건(2번째 줄): 공개된 대략점으로 이동한다.
   await press(page, '#recentReportsList .recentReportItem:nth-child(2) .recentReportMeta', touch);
@@ -136,13 +136,41 @@ async function scenario(page, label, touch) {
   await press(page, '#recentReportsList .recentReportItem:nth-child(3) .recentReportMeta', touch);
   await page.waitForFunction(() => { const c = map_7010a44f6ac2025090f0fe07508ed485.getCenter(); return Math.abs(c.lat - 34.7) < 0.5 && Math.abs(c.lng - 126.7) < 0.5; }, null, { timeout: 8000 });
   check(true, label + ' 승인 건 클릭은 기존처럼 동작(해당 위치로 이동)');
+  // 3-1) 툴팁에도 상태 문구(미검증·관리자 확인 전)가 없다.
+  const tip = await page.evaluate(() => { const l = reportPendingLayers['auto-0']; return String(l.getTooltip().getContent()); });
+  check(/노랑부리저어새/.test(tip) && !/미검증|관리자 확인|승인 대기/.test(tip), label + ' 툴팁: 출현종만, 상태 문구 없음', tip);
+  // 3-2) 새로고침·응답 순서: 승인/자동 공개 응답의 순서와 도착 순서를 바꿔 여러 번 새로고침해도 목록은 같고 중복·누락이 없다.
+  const snapshot = () => page.evaluate(() => ({
+    rows: [...document.querySelectorAll('#recentReportsList .recentReportItem')].map(n => n.querySelector('.recentReportSpecies').textContent + '|' + n.querySelector('.recentReportMeta').lastChild.textContent),
+    layers: Object.keys(reportPendingLayers).sort().join(), approvedLayers: Object.keys(reportSpotLayers).sort().join(), ids: recentReportEntries().map(e => e.kind + ':' + e.spotId) }));
+  const base = await snapshot();
+  for (let i = 0; i < 6; i++) {
+    await page.evaluate(async i => {
+      if (i % 2 === 0) { __mock.pendingSpots.reverse(); __mock.approved.reverse(); }
+      else { __mock.pendingSpots.sort((a, b) => (a.id.length - b.id.length) || (a.id < b.id ? 1 : -1)); __mock.approved.sort((a, b) => (a.id < b.id ? 1 : -1)); }
+      __mock.revision = String(BigInt(__mock.revision) + 1n);
+      if (i % 3 === 0) { await loadPendingReports(); await loadApprovedReports(); } else { await loadApprovedReports(); await loadPendingReports(); }
+      await publicationRecheck();
+    }, i);
+    const snap = await snapshot();
+    check(JSON.stringify(snap) === JSON.stringify(base) && new Set(snap.ids).size === snap.ids.length && snap.rows.length === 15, label + ' 새로고침 ' + (i + 1) + '회(응답 순서·도착 순서 변경): 목록·마커 동일, 누락·중복 없음', { rows: snap.rows.length, ids: snap.ids.length });
+  }
+  // 3-3) 주기적 새로고침(대기 시간 포함)에도 같다.
+  await page.waitForTimeout(1200);
+  check(JSON.stringify(await snapshot()) === JSON.stringify(base), label + ' 시간이 지난 뒤에도 같은 목록');
+  // 3-4) 14일 유효기간 만료(서버가 응답에서 뺌): 목록·마커에서 제거되고 열린 팝업도 닫힌다.
+  await press(page, '#recentReportsList .recentReportItem:nth-child(5) .recentReportMeta', touch);
+  await openPopupOf(page, 'auto-4');
+  await page.evaluate(async () => { __mock.pendingSpots = __mock.pendingSpots.filter(x => x.id !== 'auto-4'); __mock.revision = String(BigInt(__mock.revision) + 1n); await loadApprovedReports(); await loadPendingReports(); });
+  const expired = await page.evaluate(() => ({ layer: !!reportPendingLayers['auto-4'], entries: recentReportEntries().filter(e => e.spotId === 'auto-4').length, popup: !!(map_7010a44f6ac2025090f0fe07508ed485._popup && map_7010a44f6ac2025090f0fe07508ed485.hasLayer(map_7010a44f6ac2025090f0fe07508ed485._popup)), items: document.querySelectorAll('#recentReportsList .recentReportItem').length }));
+  check(!expired.layer && expired.entries === 0 && !expired.popup && expired.items === 15, label + ' 유효기간 만료 → 마커·팝업·목록에서 제거(다음 건이 채움)', expired);
   // 4) 관리자 공개 중지: 대기 목록에서 빠지면 마커·목록에서 사라지고 열린 팝업도 닫힌다.
   await press(page, '#recentReportsList .recentReportItem:nth-child(1) .recentReportMeta', touch);
   await openPopupOf(page, 'auto-0');
   await page.evaluate(async () => { __mock.pendingSpots = __mock.pendingSpots.filter(s => s.id !== 'auto-0'); __mock.revision = String(BigInt(__mock.revision) + 1n); await loadApprovedReports(); await loadPendingReports(); });
   const after = await page.evaluate(() => ({ layer: !!reportPendingLayers['auto-0'], popup: !!(map_7010a44f6ac2025090f0fe07508ed485._popup && map_7010a44f6ac2025090f0fe07508ed485.hasLayer(map_7010a44f6ac2025090f0fe07508ed485._popup)),
     count: document.querySelectorAll('#recentReportsList .recentReportItem').length, pendingLayers: Object.keys(reportPendingLayers).length, entries: recentReportEntries().filter(e => e.spotId === 'auto-0').length }));
-  check(!after.layer && !after.popup && after.count === 15 && after.pendingLayers === 15 && after.entries === 0, label + ' 공개 중지 → 마커·팝업·목록에서 제거(다음 건이 목록을 채움)', after);
+  check(!after.layer && !after.popup && after.count === 15 && after.pendingLayers === 14 && after.entries === 0, label + ' 공개 중지 → 마커·팝업·목록에서 제거(다음 건이 목록을 채움)', after);
   // 5) 승인으로 전환되면 같은 제보가 목록에 두 번 나오지 않는다(붉은 승인 점 하나만).
   await page.evaluate(async () => {
     __mock.approved = __mock.approved.concat([__mock.spot({ id: 'auto-3', lat: 35.35, lon: 127.35, species: ['노랑부리저어새'], history: [{ id: 'h-auto-3', species: ['노랑부리저어새'], date: __day(3), reporter: '' }] })]);

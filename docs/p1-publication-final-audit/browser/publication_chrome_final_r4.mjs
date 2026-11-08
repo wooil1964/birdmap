@@ -169,7 +169,7 @@ try{
    // 대기 DTO는 서버가 verified:false 로 표시한 자동 공개분만 그린다. 길찾기 없이 '미검증' 팝업만, 목록에서 빠지면 지운다.
    await scenario(page,width,'pending-unverified-only',async e=>{
     const ignored=await e("__mock.pendingSpots=[{id:'synthetic-pending',lat:37.01,lon:127.01,species:['직박구리']}];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
-    const drawn=await e("__mock.pendingSpots=[{id:'synthetic-unverified',verified:false,lat:37.02,lon:127.02,species:['직박구리'],date:'2026-11-08'}];loadPendingReports().then(ok=>{var l=reportPendingLayers['synthetic-unverified'];var html=l?String(l.getPopup().getContent()):'';return {ok,pending:Object.keys(reportPendingLayers),ll:l?[l.getLatLng().lat,l.getLatLng().lng]:null,unverified:html.includes('미검증 제보'),routes:/카카오맵|티맵|내 위치/.test(html)};})");
+    const drawn=await e("__mock.pendingSpots=[{id:'synthetic-unverified',verified:false,lat:37.02,lon:127.02,species:['직박구리'],date:'2026-11-08'}];loadPendingReports().then(ok=>{var l=reportPendingLayers['synthetic-unverified'];var html=l?String(l.getPopup().getContent()):'';return {ok,pending:Object.keys(reportPendingLayers),ll:l?[l.getLatLng().lat,l.getLatLng().lng]:null,unverified:html.includes('출현종')&&!/미검증|관리자 확인 전/.test(html),routes:/카카오맵|티맵|내 위치/.test(html)};})");
     const removed=await e("__mock.pendingSpots=[];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
     return {pass:ignored.ok===true&&ignored.pending.length===0&&drawn.ok===true&&drawn.pending.join()==='synthetic-unverified'&&drawn.ll&&drawn.ll[0]===37.02&&drawn.unverified&&!drawn.routes&&removed.ok===true&&removed.pending.length===0,evidence:{ignored,drawn,removed}};
    });
@@ -184,7 +184,7 @@ try{
     const s=await e("(async function(){var l=reportPendingLayers['synthetic-counts-pending'];l.openPopup();await new Promise(r=>setTimeout(r,900));var el=l.getPopup().getElement(),expand=el.querySelector('button[aria-label=\"상세정보 펼치기\"]');if(expand){expand.click();await new Promise(r=>setTimeout(r,200));}var r=el.getBoundingClientRect(),summary=el.querySelector('.spotCountSummary').getBoundingClientRect();return {text:el.textContent,routes:!!el.querySelector('.spotKakaoRoute,.spotTmapRoute,[data-location-report]'),visible:el.isConnected&&r.width>0,summaryVisible:summary.top>=0&&summary.bottom<=innerHeight,rect:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},fits:r.left>=0&&r.right<=innerWidth};})()");
     const shot=await browser.send('Page.captureScreenshot',{format:'png'},page.sessionId);writeFileSync(join(OUT,'public-counts-unverified-'+width+'.png'),Buffer.from(shot.data,'base64'));
     await e(normal+refresh);
-    return {pass:['미검증 제보','개체수 미입력','3종 · 입력된 개체수 합계 5개체','위치 보호'].every(t=>s.text.includes(t))&&!s.routes&&s.fits&&s.visible&&s.summaryVisible,evidence:s};
+    return {pass:['출현종','개체수 미입력','3종 · 입력된 개체수 합계 5개체','위치 보호'].every(t=>s.text.includes(t))&&!/미검증|관리자 확인 전/.test(s.text)&&!s.routes&&s.fits&&s.visible&&s.summaryVisible,evidence:s};
    });
    await scenario(page,width,'V03-protected-then-later-old-approved-cache',async e=>{
     await e(normal+"__mock.approved=[__mock.spot({locationHidden:true,lat:36.9,lon:126.9})];"+refresh);
