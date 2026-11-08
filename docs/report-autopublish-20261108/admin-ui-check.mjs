@@ -22,6 +22,8 @@ const ids={};
 const seed=async(k,n,patch)=>{const b=input(n,{observedOn:TODAY,lat:36.5+n/1e3,lon:126.5+n/1e3,...patch});ids[k]=b.request_id;const r=await post(envs.pub,b);if(r.status!==201)throw Error('seed '+k+' '+r.status);return r.json();};
 const u1=await seed('u1',701,{species:'참새'}),u2=await seed('u2',702,{species:'까치',hideLocation:true}),u3=await seed('u3',703,{species:'박새'});
 const held=await seed('held',704,{species:'매',note:'비행'}),unk=await seed('unknown',705,{species:'처음보는새'});
+const multi=await seed('multi',707,{species:'동박새3, 박새2, 쇠딱다구리'}),dupl=await seed('dupl',708,{species:'동박새3, 동박새5'});
+if(multi.publicVisibility!=='public_unverified'||dupl.publicVisibility!=='withheld')throw Error('seed multi receipts');
 if(u1.publicVisibility!=='public_unverified'||held.publicVisibility!=='withheld')throw Error('seed receipts');
 {const body=input(706,{species:'참새',observedOn:TODAY,lat:37.3,lon:127.3});const {report,input:orig}=quickInput(body);ids.legacy=body.request_id;
  const row={id:body.request_id,status:'pending',species:report.speciesText,lat:report.lat,lon:report.lon,public_lat:null,public_lon:null,approx_lat:report.lat,approx_lon:report.lon,pending_public:1,observed_on:report.observedOn,received_at:new Date().toISOString(),decided_at:null,bird_count:1,reporter:'합성',note:null,admin_note:null,site_id:null,name_public:1,spot_key:null,ip_hash:'s',dedupe_hash:await dedupeHash(report)};
@@ -39,7 +41,7 @@ const server=http.createServer(async(req,res)=>{
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
 const results=[];const ok=(name,cond,detail='')=>{results.push({name,pass:!!cond,detail:String(detail)});};
-ok('공개 API 초기: 미검증 3건만(과거 플래그·보류 제외)',JSON.stringify(await pendingIds())===JSON.stringify([ids.u1,ids.u2,ids.u3].sort()));
+ok('공개 API 초기: 미검증 4건만(과거 플래그·보류 제외)',JSON.stringify(await pendingIds())===JSON.stringify([ids.u1,ids.u2,ids.u3,ids.multi].sort()));
 const browser=await chromium.launch({executablePath:process.env.CHROME_PATH,headless:true});
 // 모바일은 화면만 확인하고, 상태를 바꾸는 조작은 마지막 PC 단계에서 한다.
 for(const [label,vp,mobile] of [['mobile',{width:390,height:844},true],['pc',{width:1280,height:900},false]]){
@@ -51,8 +53,9 @@ for(const [label,vp,mobile] of [['mobile',{width:390,height:844},true],['pc',{wi
   const tab=async s=>{await page.locator(`nav button[data-status="${s}"]`).click();await page.waitForTimeout(900);};
   const badge=async id=>(await page.locator(`.card[data-id="${id}"] h2 .badge`).first().innerText());
   await page.waitForTimeout(800);
-  ok(label+': 미검증 건수 배지 3',(await page.locator('#unverifiedCount').innerText())==='3');
-  ok(label+': 검토 대기 탭 = 보류 2 + 과거 플래그 1',(await page.locator('.card').count())===3);
+  ok(label+': 미검증 건수 배지 4',(await page.locator('#unverifiedCount').innerText())==='4');
+  ok(label+': 검토 대기 탭 = 보류 3 + 과거 플래그 1',(await page.locator('.card').count())===4);
+  {const m=await page.locator(`.card[data-id="${ids.dupl}"] .meta`).first().innerText();ok(label+': 같은 종 중복 카드 종별 표시(1종, 합산 안 함)·보류 사유',m.includes('종별: 동박새 (개체수 확인 필요) · 동박새 (개체수 확인 필요) — 1종')&&!m.includes('개체수 8')&&m.includes('종명·개체수 확인'),m);}
   ok(label+': 보호종 배지 검토 대기 · 비공개',(await badge(ids.held))==='검토 대기 · 비공개');
   ok(label+': 보류 사유 표시',/자동 공개 보류 사유: 보호종/.test(await page.locator(`.card[data-id="${ids.held}"] .meta`).first().innerText()));
   ok(label+': 과거 플래그는 검토 대기(공개 아님)',(await badge(ids.legacy))==='검토 대기 · 비공개');
@@ -60,9 +63,10 @@ for(const [label,vp,mobile] of [['mobile',{width:390,height:844},true],['pc',{wi
   ok(label+': 가로 스크롤 없음',await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1));
   await page.screenshot({path:`${OUT}/admin-${label}-review.png`});
   await tab('unverified');
-  ok(label+': 미검증 탭 3건, 배지 자동 공개 · 미검증',(await page.locator('.card').count())===3&&(await badge(ids.u1))==='자동 공개 · 미검증');
+  ok(label+': 미검증 탭 4건, 배지 자동 공개 · 미검증',(await page.locator('.card').count())===4&&(await badge(ids.u1))==='자동 공개 · 미검증');
   ok(label+': 미검증 카드에 확인 완료·공개 중지·반려 사유',await page.locator(`.card[data-id="${ids.u1}"] button[data-act="approve"]`).innerText()==='확인 완료(승인)'
     &&await page.locator(`.card[data-id="${ids.u1}"] button[data-act="visibility"][data-public="0"]`).count()===1&&await page.locator(`.card[data-id="${ids.u1}"] select.f-reason`).count()===1);
+  {const m=await page.locator(`.card[data-id="${ids.multi}"] .meta`).first().innerText();ok(label+': 복수 종 카드 종별 표시(3종, 입력분 5개체)',m.includes('종별: 동박새 3개체 · 박새 2개체 · 쇠딱다구리 (개체수 미입력) — 3종, 개체수 5(입력분)'),m);}
   await page.screenshot({path:`${OUT}/admin-${label}-unverified.png`});
   if(label==='pc'){
     const act=async(id,a)=>{await page.locator(`.card[data-id="${id}"] button[data-act="${a}"]`).first().click();await page.waitForTimeout(1200);};
@@ -85,7 +89,7 @@ for(const [label,vp,mobile] of [['mobile',{width:390,height:844},true],['pc',{wi
   await ctx.close();
 }
 await browser.close();server.close();
-ok('최종 공개 API: 미검증 0건',(await pendingIds()).length===0);
+ok('최종 공개 API: 처리하지 않은 복수 종 1건만 미검증',JSON.stringify(await pendingIds())===JSON.stringify([ids.multi]));
 auth.restore();
 const fail=results.filter(r=>!r.pass);
 for(const r of results)console.log((r.pass?'PASS ':'FAIL ')+r.name+(!r.pass&&r.detail?' :: '+r.detail:''));
