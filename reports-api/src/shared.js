@@ -1,3 +1,4 @@
+import { OFFICIAL_BIRD_NAMES } from './official-bird-names.js';
 // 공개 접수 Worker 와 관리자 Worker 가 함께 쓰는 검증·응답·인증 헬퍼.
 // 기존 weather-proxy Worker 의 응답 형식(ok/error 봉투, Origin 허용 목록)을 그대로 따른다.
 
@@ -406,18 +407,57 @@ export function sightingValues(parsed, birdCount) {
   });
 }
 
-// 통계·검색·지도에 쓰는 종명. 신규 구조화 제보는 식별 국명(숫자 없음), 그 밖(기존 자료)은 저장 원문을 그대로 나눈다.
-// 기존 자료를 다시 분류하지 않기 위해 identified_species 가 비어 있으면 예전 방식 그대로다.
+// 기존 자료는 공식 국명 전체가 맞는 경우만 읽기 단계에서 해석한다. 원문·정본 DB는 수정하지 않는다.
+const officialBirdNames = new Set(OFFICIAL_BIRD_NAMES);
+export function legacySpeciesItems(text) {
+  const tokens = String(text || '').split(/[·,;\n/]+/).map(s => s.trim()).filter(Boolean);
+  const items = tokens.map(token => {
+    const parsed = parseSpeciesItems([token]);
+    const item = parsed.items[0];
+    return parsed.clean && officialBirdNames.has(item.name)
+      ? { name: item.name, count: item.count, countStatus: item.count === null ? 'not_recorded' : 'reported' }
+      : { name: token, count: null, countStatus: 'uncertain' };
+  });
+  return groupPublicSightings(items);
+}
+function groupPublicSightings(items) {
+  const groups = new Map();
+  for (const item of items) {
+    if (groups.has(item.name)) groups.set(item.name, { name: item.name, count: null, countStatus: 'uncertain' });
+    else groups.set(item.name, item);
+  }
+  return [...groups.values()];
+}
+export function publicSightingsOf(row) {
+  let rows;
+  try { rows = JSON.parse(row?.public_sightings || 'null'); } catch {}
+  if (!Array.isArray(rows) || !rows.length) {
+    const legacy = legacySpeciesItems(row?.species);
+    return /[0-9]/.test(row?.species || '') && legacy.some(i => officialBirdNames.has(i.name)) ? legacy : [];
+  }
+  return groupPublicSightings(rows.filter(r => typeof r?.name === 'string' && r.name).map(r => {
+    const known = r.state === 'single' && Number.isSafeInteger(r.count) && r.count > 0 && r.count <= MAX_BIRD_COUNT;
+    return { name: r.name, count: known ? r.count : null,
+      countStatus: r.state !== 'single' ? 'uncertain' : known ? 'reported' : 'not_recorded' };
+  }));
+}
+// 통계·검색·지도에서 구조화된 식별 국명을 우선한다. 과거 원문은 공식 국명 정확 일치만 분리한다.
 export function speciesNamesOf(row) {
   let identified = [];
   try { identified = typeof row?.identified_species === 'string' ? JSON.parse(row.identified_species) : []; } catch {}
   const names = Array.isArray(identified) ? identified.filter(n => typeof n === 'string' && n) : [];
-  return names.length ? [...new Set(names)] : splitSpecies(row?.species);
+  return names.length ? [...new Set(names)] : legacySpeciesItems(row?.species).map(i => i.name);
 }
-export function identifiedSpeciesSql(env) {
-  return env?.REPORTS_WRITE_MODE === 'CANONICAL_DUAL_WRITE'
+export function identifiedSpeciesSql(env, withCounts = false) {
+  const canonical = env?.REPORTS_WRITE_MODE === 'CANONICAL_DUAL_WRITE';
+  const names = canonical
     ? "(SELECT json_group_array(species_identified) FROM (SELECT species_identified FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS identified_species"
     : 'NULL AS identified_species';
+  if (!withCounts) return names;
+  const counts = canonical
+    ? "(SELECT json_group_array(json_object('name',species_identified,'count',count_value,'state',interpretation)) FROM (SELECT species_identified,count_value,interpretation FROM sightings WHERE checklist_id=reports.id AND species_identified IS NOT NULL ORDER BY source_ordinal)) AS public_sightings"
+    : 'NULL AS public_sightings';
+  return names + ',' + counts;
 }
 
 // 대기 제보는 서버가 자동 공개(public_unverified)라고 계산한 경우만 그렇게 알리고, 나머지는 withheld 다.
@@ -659,6 +699,8 @@ export function historyEntry(row) {
     date: row.observed_on,
     species: speciesNamesOf(row),
   };
+  const sightings = publicSightingsOf(row);
+  if (sightings.length) entry.sightings = sightings;
   if (Number(row.name_public) === 1 && row.reporter) entry.reporter = row.reporter;
   return entry;
 }

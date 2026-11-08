@@ -25,7 +25,7 @@ const server=createServer((req,res)=>{
  const p=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
  const target=resolve(ASSET_ROOT,'.'+(p==='/'?'/index.html':p));
  if(req.method!=='GET'||!(target.startsWith(ASSET_ROOT+'\\')||target.startsWith(ASSET_ROOT+'/'))){res.writeHead(403);res.end('blocked');return;}
- try{const body=target===join(ASSET_ROOT,'index.html')?Buffer.from(HTML,'utf8'):readFileSync(target);res.writeHead(200,{'Content-Type':extname(target)==='.html'?'text/html;charset=utf-8':extname(target)==='.json'?'application/json':'application/octet-stream','Cache-Control':'no-store'});res.end(body);}
+ try{const body=target===join(ASSET_ROOT,'index.html')?Buffer.from(HTML,'utf8'):readFileSync(target);res.writeHead(200,{'Content-Type':({'.html':'text/html;charset=utf-8','.json':'application/json','.css':'text/css;charset=utf-8','.js':'text/javascript;charset=utf-8','.png':'image/png','.svg':'image/svg+xml'})[extname(target)]||'application/octet-stream','Cache-Control':'no-store'});res.end(body);}
  catch{res.writeHead(404);res.end('missing');}
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -172,6 +172,19 @@ try{
     const drawn=await e("__mock.pendingSpots=[{id:'synthetic-unverified',verified:false,lat:37.02,lon:127.02,species:['직박구리'],date:'2026-11-08'}];loadPendingReports().then(ok=>{var l=reportPendingLayers['synthetic-unverified'];var html=l?String(l.getPopup().getContent()):'';return {ok,pending:Object.keys(reportPendingLayers),ll:l?[l.getLatLng().lat,l.getLatLng().lng]:null,unverified:html.includes('미검증 제보'),routes:/카카오맵|티맵|내 위치/.test(html)};})");
     const removed=await e("__mock.pendingSpots=[];loadPendingReports().then(ok=>({ok,pending:Object.keys(reportPendingLayers)}))");
     return {pass:ignored.ok===true&&ignored.pending.length===0&&drawn.ok===true&&drawn.pending.join()==='synthetic-unverified'&&drawn.ll&&drawn.ll[0]===37.02&&drawn.unverified&&!drawn.routes&&removed.ok===true&&removed.pending.length===0,evidence:{ignored,drawn,removed}};
+   });
+   await scenario(page,width,'public-species-counts-approved',async e=>{
+    await e(normal+"__mock.approved=[__mock.spot({species:['동박새','박새','직박구리'],history:[{id:'synthetic-approved',date:'2026-11-08',species:['동박새','박새','직박구리'],sightings:[{name:'동박새',count:3,countStatus:'reported'},{name:'박새',count:2,countStatus:'reported'},{name:'직박구리',count:1,countStatus:'reported'}]}]})];"+refresh);
+    const s=await e("(async function(){var l=reportSpotLayers['synthetic-approved'];l.openPopup();await new Promise(r=>setTimeout(r,900));var el=l.getPopup().getElement(),expand=el.querySelector('button[aria-label=\"상세정보 펼치기\"]');if(expand){expand.click();await new Promise(r=>setTimeout(r,200));}var r=el.getBoundingClientRect(),summary=el.querySelector('.spotCountSummary').getBoundingClientRect();return {text:el.textContent,kakao:!!el.querySelector('.spotKakaoRoute'),tmap:!!el.querySelector('.spotTmapRoute'),visible:el.isConnected&&r.width>0,summaryVisible:summary.top>=0&&summary.bottom<=innerHeight,rect:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},fits:r.left>=0&&r.right<=innerWidth};})()");
+    const shot=await browser.send('Page.captureScreenshot',{format:'png'},page.sessionId);writeFileSync(join(OUT,'public-counts-approved-'+width+'.png'),Buffer.from(shot.data,'base64'));
+    return {pass:['동박새 3개체','박새 2개체','직박구리 1개체','3종 · 입력된 개체수 6개체'].every(t=>s.text.includes(t))&&s.kakao&&s.tmap&&s.fits&&s.visible&&s.summaryVisible,evidence:s};
+   });
+   await scenario(page,width,'public-species-counts-unverified-partial-hidden',async e=>{
+    await e("__mock.pendingSpots=[{id:'synthetic-counts-pending',verified:false,lat:36.9,lon:126.9,locationHidden:true,species:['동박새','박새','쇠딱다구리'],date:'2026-11-08',sightings:[{name:'동박새',count:3,countStatus:'reported'},{name:'박새',count:2,countStatus:'reported'},{name:'쇠딱다구리',count:null,countStatus:'not_recorded'}]}];"+refresh);
+    const s=await e("(async function(){var l=reportPendingLayers['synthetic-counts-pending'];l.openPopup();await new Promise(r=>setTimeout(r,900));var el=l.getPopup().getElement(),expand=el.querySelector('button[aria-label=\"상세정보 펼치기\"]');if(expand){expand.click();await new Promise(r=>setTimeout(r,200));}var r=el.getBoundingClientRect(),summary=el.querySelector('.spotCountSummary').getBoundingClientRect();return {text:el.textContent,routes:!!el.querySelector('.spotKakaoRoute,.spotTmapRoute,[data-location-report]'),visible:el.isConnected&&r.width>0,summaryVisible:summary.top>=0&&summary.bottom<=innerHeight,rect:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},fits:r.left>=0&&r.right<=innerWidth};})()");
+    const shot=await browser.send('Page.captureScreenshot',{format:'png'},page.sessionId);writeFileSync(join(OUT,'public-counts-unverified-'+width+'.png'),Buffer.from(shot.data,'base64'));
+    await e(normal+refresh);
+    return {pass:['미검증 제보','개체수 미입력','3종 · 입력된 개체수 합계 5개체','위치 보호'].every(t=>s.text.includes(t))&&!s.routes&&s.fits&&s.visible&&s.summaryVisible,evidence:s};
    });
    await scenario(page,width,'V03-protected-then-later-old-approved-cache',async e=>{
     await e(normal+"__mock.approved=[__mock.spot({locationHidden:true,lat:36.9,lon:126.9})];"+refresh);

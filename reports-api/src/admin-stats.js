@@ -7,11 +7,11 @@
 //   상태 필터를 고르면 그 상태만으로 다시 센다.
 // - 날짜: 출현 통계는 observed_on(관찰일, KST 문자열). 최근 30일만 received_at 을 KST 날짜로 센다.
 // - 종명: 신규 구조화 제보는 정본 sightings 의 식별 국명(수량 제외, 예: 동박새3·동박새5 → 동박새 1종)으로 센다.
-//   식별 국명이 없는 기존 자료는 예전처럼 reports.species 를 ' · ' 로 나눠 센다(자동 재분류 없음).
-// - 개체수: 구조화 자료의 종별 개체수(single, 입력값 있음)만 더한다. 미입력·같은 종 중복·불확실은 더하지 않는다.
+//   식별 국명이 없는 과거 승인 자료는 공식 2025 국명과 정확히 일치하는 수량 접미사만 읽기 단계에서 분리한다.
+// - 개체수: 구조화 자료(single)·공식 국명 확인된 과거 승인 자료의 입력 개체수만 더한다. 미입력·같은 종 중복·불확실은 더하지 않는다.
 // - 제보자: reporter 저장값이 정확히 같은 것끼리만 묶는다. 비었거나 공백뿐이면 '(이름 미입력)' 한 줄.
 // - 지역: 관리자가 연결한 site_id 만. 없으면 '미연결 지역'. 좌표로 추정하지 않는다.
-import { WorkerError } from "./shared.js";
+import { WorkerError, legacySpeciesItems } from "./shared.js";
 
 const VIEWS = ["summary", "species", "sites", "reporters", "monthly", "yearly", "list"];
 const STATUSES = ["approved", "rejected", "pending"];
@@ -65,44 +65,45 @@ export function recentCutoff(now = new Date(), days = 30) {
 // 공통 CTE.
 //   f: 필터에 맞는 제보(모든 상태)   x: f 를 종 단위로 펼친 행(id 당 종 수만큼)
 // 생태 조건 eco 는 상태 필터가 없으면 approved, 있으면 f 가 이미 그 상태만이라 1.
-function base(filters, structured = false) {
-  const where = [], params = [];
-  const add = (sql, value) => { params.push(value); where.push(sql.replaceAll("?", "?" + params.length)); };
-  if (filters.species) add(structured
-    ? `(instr('${SEP}' || species || '${SEP}', '${SEP}' || ? || '${SEP}') > 0 OR EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified = ?))`
-    : `instr('${SEP}' || species || '${SEP}', '${SEP}' || ? || '${SEP}') > 0`, filters.species);
+function base(filters, structured = false, legacy = []) {
+  const where = [], params = [JSON.stringify(legacy)];
+  const add = (sql, value) => { params.push(value); where.push(sql.replaceAll('?', '?' + params.length)); };
   if (filters.noReporter) where.push("TRIM(IFNULL(reporter, '')) = ''");
-  else if (filters.reporter !== null) add("reporter = ?", filters.reporter);
-  if (filters.noSite) where.push("site_id IS NULL");
-  else if (filters.siteId) add("site_id = ?", filters.siteId);
-  if (filters.status) add("status = ?", filters.status);
-  if (filters.from) add("observed_on >= ?", filters.from);
-  if (filters.to) add("observed_on <= ?", filters.to);
-  if (filters.year) add("substr(observed_on, 1, 4) = ?", filters.year);
-  if (filters.month) add("substr(observed_on, 6, 2) = ?", filters.month);
-  let speciesOnly = "";
-  if (filters.species) { params.push(filters.species); speciesOnly = ` AND TRIM(sp) = ?${params.length}`; }
+  else if (filters.reporter !== null) add('reporter = ?', filters.reporter);
+  if (filters.noSite) where.push('site_id IS NULL');
+  else if (filters.siteId) add('site_id = ?', filters.siteId);
+  if (filters.status) add('status = ?', filters.status);
+  if (filters.from) add('observed_on >= ?', filters.from);
+  if (filters.to) add('observed_on <= ?', filters.to);
+  if (filters.year) add('substr(observed_on, 1, 4) = ?', filters.year);
+  if (filters.month) add('substr(observed_on, 6, 2) = ?', filters.month);
+  let speciesParam = null;
+  if (filters.species) { params.push(filters.species); speciesParam = '?' + params.length; }
+  const noStructured = alias => structured ? ` AND ${alias}.id NOT IN (SELECT checklist_id FROM sightings WHERE species_identified IS NOT NULL)` : '';
   const cte = `WITH RECURSIVE
-  f AS (SELECT id, status, species, observed_on, received_at, site_id,
+  legacy AS (SELECT json_extract(value,'$.raw') AS raw, json_extract(value,'$.items') AS items FROM json_each(?1)),
+  f0 AS (SELECT id, status, species, observed_on, received_at, site_id,
                CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE reporter END AS who
-          FROM reports${where.length ? " WHERE " + where.join(" AND ") : ""}),
+          FROM reports${where.length ? ' WHERE ' + where.join(' AND ') : ''}),
   cut(id, rest, sp) AS (
-    SELECT id, species || '${SEP}', NULL FROM f
+    SELECT id, species || '${SEP}', NULL FROM f0
     UNION ALL
     SELECT id, substr(rest, instr(rest, '${SEP}') + ${SEP.length}), substr(rest, 1, instr(rest, '${SEP}') - 1)
       FROM cut WHERE rest <> ''),
-  ${structured
-    ? `s AS (SELECT DISTINCT id, sp FROM (
-        SELECT checklist_id AS id, species_identified AS sp FROM sightings WHERE species_identified IS NOT NULL AND checklist_id IN (SELECT id FROM f)
-        UNION ALL
-        SELECT id, TRIM(sp) FROM cut WHERE sp IS NOT NULL AND TRIM(sp) <> '' AND id NOT IN (SELECT checklist_id FROM sightings WHERE species_identified IS NOT NULL)
-      ) WHERE 1 = 1${speciesOnly}),
-  ind AS (SELECT checklist_id AS id, species_identified AS sp, SUM(count_value) AS n FROM sightings
-          WHERE interpretation = 'single' AND count_value IS NOT NULL AND species_identified IS NOT NULL GROUP BY checklist_id, species_identified),`
-    : `s AS (SELECT DISTINCT id, TRIM(sp) AS sp FROM cut WHERE sp IS NOT NULL AND TRIM(sp) <> ''${speciesOnly}),
-  ind AS (SELECT NULL AS id, NULL AS sp, NULL AS n WHERE 0),`}
+  old AS (SELECT f0.id, json_extract(j.value,'$.name') AS sp, json_extract(j.value,'$.count') AS n
+          FROM f0 JOIN legacy ON legacy.raw = f0.species, json_each(legacy.items) j
+          WHERE f0.status = 'approved'${noStructured('f0')}),
+  s0 AS (
+    ${structured ? "SELECT checklist_id AS id, species_identified AS sp, CASE WHEN interpretation = 'single' THEN count_value END AS n FROM sightings WHERE species_identified IS NOT NULL AND checklist_id IN (SELECT id FROM f0) UNION ALL" : ''}
+    SELECT id, sp, n FROM old
+    UNION ALL
+    SELECT id, TRIM(sp), NULL FROM cut WHERE sp IS NOT NULL AND TRIM(sp) <> ''
+      AND id NOT IN (SELECT id FROM old)${noStructured('cut')}),
+  f AS (SELECT * FROM f0${speciesParam ? ' WHERE id IN (SELECT id FROM s0 WHERE sp = ' + speciesParam + ')' : ''}),
+  s AS (SELECT DISTINCT id, sp FROM s0${speciesParam ? ' WHERE sp = ' + speciesParam : ''}),
+  ind AS (SELECT id, sp, SUM(n) AS n FROM s0 GROUP BY id, sp),
   x AS (SELECT f.*, s.sp, ind.n AS individuals FROM f LEFT JOIN s ON s.id = f.id LEFT JOIN ind ON ind.id = f.id AND ind.sp = s.sp)`;
-  return { cte, params, eco: filters.status ? "1" : "status = 'approved'" };
+  return { cte, params, eco: filters.status ? '1' : "status = 'approved'" };
 }
 
 const APPROVED = "COUNT(DISTINCT CASE WHEN status = 'approved' THEN id END)";
@@ -150,7 +151,10 @@ function viewSql(view, eco) {
 export async function adminStats(db, url, now = new Date()) {
   const { view, filters } = parseStatsQuery(url);
   const structured = !!(await db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' AND name = 'sightings'").first());
-  const { cte, params, eco } = base(filters, structured);
+  // 원본·정본 쓰기 없이 공식 국명과 정확히 일치하는 과거 승인 자료만 해석한다.
+  const legacyRows = (await db.prepare(`SELECT DISTINCT species FROM reports WHERE status = 'approved'${structured ? ' AND NOT EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified IS NOT NULL)' : ''}`).all()).results || [];
+  const legacy = legacyRows.map(r => ({ raw: r.species, items: legacySpeciesItems(r.species) }));
+  const { cte, params, eco } = base(filters, structured, legacy);
   const cutoff = "?" + (params.length + 1);
   const summarySql = `${cte}
     SELECT (SELECT COUNT(*) FROM f) AS total,

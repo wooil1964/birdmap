@@ -97,12 +97,12 @@ test('저장: 한 제보 ID 안에 종별 sightings, 원문 보존, 미입력·�
   assert.deepEqual(spots.find(x => x.id === a.body.request_id).species, ['동박새', '박새', '직박구리']);
 });
 
-test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집계(미입력·중복 제외), 기존 자료는 재분류하지 않음', async t => {
+test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집계(미입력·중복 제외), 기존 자료는 공식 국명으로 읽기 해석', async t => {
   const s = await setup(t);
   const a = await submit(s, { species: '동박새3, 박새2, 직박구리1', reporter: '통계테스터', namePublic: true });
   const b = await submit(s, { species: '동박새5, 쇠딱다구리', lat: 35.7, lon: 128.7, reporter: '통계테스터', namePublic: true });
   const dup = await submit(s, { species: '동박새3, 동박새5', lat: 35.8, lon: 128.8, reporter: '통계테스터', namePublic: true });
-  // 기존(구조화 이전) 자료: 원문 한 행, 식별 국명 없음 → 예전 방식 그대로 '고니3'
+  // 기존(구조화 이전) 자료: 원문·정본은 그대로, 공식 국명 확인 후 읽기 단계에서만 고니+3으로 분리
   const lb = input(6900, { species: '고니3', observedOn: TODAY, lat: 37.9, lon: 127.9, reporter: '통계테스터', namePublic: true });
   const { report, input: original } = quickInput(lb);
   const legacy = { id: lb.request_id, status: 'pending', species: report.speciesText, lat: report.lat, lon: report.lon, public_lat: null, public_lon: null, approx_lat: report.lat, approx_lon: report.lon, pending_public: 0, observed_on: report.observedOn, received_at: new Date().toISOString(), decided_at: null, bird_count: null, reporter: '통계테스터', note: null, admin_note: null, site_id: null, name_public: 1, spot_key: null, ip_hash: 's', dedupe_hash: await dedupeHash(report) };
@@ -112,24 +112,24 @@ test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집�
   // 관리자 통계
   const sum = (await stats(s, 'view=summary')).summary;
   assert.equal(sum.approved, 4, '제보 건수');
-  assert.equal(sum.species, 5, '동박새·박새·직박구리·쇠딱다구리 + 기존 고니3 = 5종');
-  assert.equal(sum.individuals, 11, '3+2+1 + 5 (+쇠딱다구리 미입력·중복 제보 제외)');
-  assert.equal(sum.counted_reports, 2);
+  assert.equal(sum.species, 5, '동박새·박새·직박구리·쇠딱다구리 + 기존 고니 = 5종');
+  assert.equal(sum.individuals, 14, '3+2+1 + 5 + 기존 고니3 (+미입력·중복 제보 제외)');
+  assert.equal(sum.counted_reports, 3);
   const sp = Object.fromEntries((await stats(s, 'view=species')).rows.map(r => [r.species, r]));
   assert.equal(sp['동박새'].total, 3, '동박새3·동박새5·중복 제보 모두 같은 종'); assert.equal(sp['동박새'].individuals, 8, '3+5, 중복 제보는 더하지 않음');
-  assert.equal(sp['쇠딱다구리'].individuals, null); assert.ok(sp['고니3'], '기존 자료는 원문 그대로'); assert.ok(!sp['동박새3']);
+  assert.equal(sp['쇠딱다구리'].individuals, null); assert.ok(sp['고니'], '기존 자료는 공식 국명으로 읽기 해석'); assert.ok(!sp['동박새3']);
   assert.equal((await stats(s, 'view=species&species=' + encodeURIComponent('동박새'))).rows[0].total, 3, '종 필터도 구조화 국명으로');
   // 회원별 공개 통계
   const rs = await get(s.pub, '/reports/reporter-stats?reporter=' + encodeURIComponent('통계테스터') + '&source=all');
   assert.equal(rs.speciesCount, 5, JSON.stringify(rs)); assert.equal(rs.reportCount, 4);
   const names = await get(s.pub, '/reports/reporter-species?reporter=' + encodeURIComponent('통계테스터') + '&source=all');
-  assert.deepEqual(names.species, ['고니3', '동박새', '박새', '쇠딱다구리', '직박구리'].sort((x, y) => x < y ? -1 : x > y ? 1 : 0));
+  assert.deepEqual(names.species, ['고니', '동박새', '박새', '쇠딱다구리', '직박구리'].sort((x, y) => x < y ? -1 : x > y ? 1 : 0));
   // 검색·지도: 수량 없는 국명, 동박새로 검색하면 3건
   const search = (await get(s.pub, '/reports/search?q=' + encodeURIComponent('동박새'))).reports;
   assert.equal(search.length, 3); assert.ok(search.every(r => r.species.includes('동박새') && !r.species.some(x => /\d/.test(x))));
   const approved = (await get(s.pub, '/reports/approved')).spots;
   assert.deepEqual(approved.find(x => x.id === a.body.request_id).species, ['동박새', '박새', '직박구리']);
-  assert.deepEqual(approved.find(x => x.id === legacy.id).species, ['고니3'], '기존 자료 표시는 그대로');
+  assert.deepEqual(approved.find(x => x.id === legacy.id).species, ['고니'], '기존 원문은 보존하고 공식 국명으로 표시');
 });
 
 test('관리자 정정: 종명·개체수 수정이 종별 행·이력·통계에 일관되게 반영', async t => {
@@ -148,4 +148,23 @@ test('관리자 정정: 종명·개체수 수정이 종별 행·이력·통계�
   sum = (await stats(s, 'view=summary')).summary;
   assert.equal(sum.species, 4); assert.equal(sum.individuals, 12);
   assert.deepEqual((await get(s.pub, '/reports/approved')).spots.find(x => x.id === id).species, ['동박새', '박새', '직박구리', '참새']);
+});
+
+test('공개 개체수 DTO: 미검증·승인 상세에서 종별 값, 미입력·위치 보호·관리자 정정 유지',async t=>{
+ const s=await setup(t);
+ const a=await submit(s,{species:'동박새3, 박새2, 직박구리1'});
+ const b=await submit(s,{species:'동박새3, 박새2, 쇠딱다구리',lat:35.01,lon:128.01,hideLocation:true});
+ const pending=(await get(s.pub,'/reports/pending')).spots;
+ const full=pending.find(x=>x.id===a.body.request_id);
+ assert.equal(full.verified,false);assert.deepEqual(full.sightings.map(x=>[x.name,x.count]),[['동박새',3],['박새',2],['직박구리',1]]);
+ const partial=pending.find(x=>x.id===b.body.request_id);
+ assert.equal(partial.locationHidden,true);assert.notEqual(partial.lat,b.body.lat);
+ assert.deepEqual(partial.sightings.at(-1),{name:'쇠딱다구리',count:null,countStatus:'not_recorded'});
+ assert.equal((await act(s,a.body.request_id,'approve',{species:'동박새4, 박새2'})).status,200);
+ const approved=(await get(s.pub,'/reports/approved')).spots.find(x=>x.id===a.body.request_id);
+ assert.deepEqual(approved.history[0].sightings.map(x=>[x.name,x.count]),[['동박새',4],['박새',2]]);
+ const search=(await get(s.pub,'/reports/search?q='+encodeURIComponent('동박새'))).reports.find(x=>x.id===a.body.request_id);
+ assert.deepEqual(search.sightings,approved.history[0].sightings);
+ const allowed=['name','count','countStatus'];
+ for(const item of approved.history[0].sightings)assert.deepEqual(Object.keys(item).filter(k=>!allowed.includes(k)),[]);
 });

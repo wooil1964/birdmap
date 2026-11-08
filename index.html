@@ -1898,11 +1898,25 @@ var SPOT_HISTORY_VISIBLE=5;
 
 /* 출현 이력 한 덩어리. 최근 관찰일부터 SPOT_HISTORY_VISIBLE 건을 보이고 나머지는 '더 보기'로 편다.
    종명과 제보자 이름은 모두 escapeHtml 을 거친다. 이름은 공개에 동의한 건만 서버가 내려준다. */
+/* 개체수는 각 관찰 기록마다 표시하며 날짜·제보가 다른 기록끼리 합산하지 않는다. */
+function reportSpeciesCountsHtml(entry){
+  var list=Array.isArray(entry.sightings)?entry.sightings:[];
+  var total=0,recorded=0,names=[];
+  var rows=list.filter(function(item){return item&&typeof item.name==='string';}).map(function(item){
+    if(names.indexOf(item.name)<0)names.push(item.name);
+    var known=Number.isSafeInteger(item.count)&&item.count>0&&item.count<=100000&&item.countStatus==='reported';
+    if(known){total+=item.count;recorded++;}
+    return '<span style="display:block">'+escapeHtml(item.name)+' '+(known?item.count+'개체':item.countStatus==='uncertain'?'(개체수 확인 필요)':'(개체수 미입력)')+'</span>';
+  }).join('');
+  var summary=names.length+'종 · '+(recorded?'입력된 개체수'+(recorded<list.length?' 합계':'')+' '+total+'개체':list.some(function(item){return item.countStatus==='uncertain';})?'개체수 확인 필요':'개체수 미입력');
+  return rows+'<span class="spotCountSummary" style="display:block">'+escapeHtml(summary)+'</span>';
+}
+
 function spotHistoryHtml(history){
   if(!history||!history.length)return '';
   var items=history.map(function(entry,index){
     var date=String(entry.date||'').replace(/-/g,'.');
-    var names=(entry.species||[]).map(escapeHtml).join(' · ');
+    var names=entry.sightings&&entry.sightings.length?reportSpeciesCountsHtml(entry):(entry.species||[]).map(escapeHtml).join(' · ');
     var who=reporterStatsHistoryHtml(entry);
     return '<li class="spotHistoryItem'+(index>=SPOT_HISTORY_VISIBLE?' spotHistoryHidden':'')+'">'
       +'<span class="spotHistoryDate">'+escapeHtml(date)+'</span>'
@@ -1998,9 +2012,9 @@ function birdmapSpotMarker(lat,lon,title,species,history,undatedNote,locationHid
 }
 
 /* 승인 대기 제보 팝업. 관리자가 확인하기 전이므로 기상·조석을 근거로 출현을 확인했다는
-   표현을 쓰지 않고, 제보자·개체수·설명도 넣지 않는다(서버도 내려보내지 않는다). */
+   표현을 쓰지 않는다. 종별 입력 개체수만 표시하고 미검증 상태를 명시한다. */
 function pendingPopupHtml(spot){
-  var names=(spot.species||[]).map(escapeHtml).join(' · ');
+  var names=spot.sightings&&spot.sightings.length?reportSpeciesCountsHtml(spot):(spot.species||[]).map(escapeHtml).join(' · ');
   var date=String(spot.date||'').replace(/-/g,'.');
   return '<div class="spotPopup pendingPopup" style="width:min(240px,calc(100vw - 72px))">'
     +'<b>미검증 제보 · 관리자 확인 전</b>'
@@ -3253,7 +3267,7 @@ function siteHistoryContainerHtml(site){
 }
 
 function siteHistoryEntryHtml(entry){
-  var names=(entry.species||[]).map(escapeHtml).join(' · ');
+  var names=entry.sightings&&entry.sightings.length?reportSpeciesCountsHtml(entry):(entry.species||[]).map(escapeHtml).join(' · ');
   var who=reporterStatsHistoryHtml(entry);
   return '<div class="siteHistoryEntry">'
     +'<div class="siteHistoryDate">'+escapeHtml(String(entry.date||'').replace(/-/g,'.'))+'</div>'

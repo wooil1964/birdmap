@@ -164,7 +164,7 @@ function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url,env);
  if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url,env);
  if(path==='/contributors/all')return contributorsAllPlan(db,url);
- if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence},${identifiedSpeciesSql(env)} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
+ if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence},${identifiedSpeciesSql(env, true)} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
   if(path==='/reports/pending')return {statements:unverifiedReadsEnabled(env)?[unverifiedStatement(db,evidence)]:[],build:s=>({ok:true,generatedAt:now.toISOString(),spots:unverifiedPayload(s[0]?.results||[],env,now)})};
  if(path==='/reports/recent-sites') {
   const days=Math.min(30,Math.max(1,Math.floor(Number(url.searchParams.get('days'))||14))),today=kstDateString(now),since=kstDateString(new Date(now.getTime()-days*86400000));

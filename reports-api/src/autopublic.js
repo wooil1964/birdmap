@@ -2,7 +2,7 @@
 // 원칙: 허용 목록에 정확히 있는 종만 자동 공개한다. 모르는 것은 전부 보류(fail-closed).
 // 상태값은 새로 만들지 않는다: pending + pending_public=1 + reviews(submitted, system:auto-public, auto_public:<정책>)
 // 세 가지를 모두 갖추고, 읽는 시점에 아래 판정을 다시 통과해야만 공개된다.
-import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, identifiedSpeciesSql } from './shared.js';
+import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, publicSightingsOf, identifiedSpeciesSql } from './shared.js';
 
 export const AUTO_PUBLIC_POLICY = 'auto-public-v1';
 export const AUTO_PUBLIC_ACTOR = 'system:auto-public';
@@ -130,7 +130,7 @@ export const AUTO_DECISION_SQL = `(SELECT reason_code FROM reviews WHERE checkli
 
 // 공개 읽기 후보: 자동 공개 표시가 남은 대기 행만. 최종 판정은 unverifiedPayload 가 한다.
 export function unverifiedStatement(db, evidence) {
-  return db.prepare(`SELECT id,status,species,note,lat,lon,public_lat,public_lon,observed_on,bird_count,received_at,pending_public,${evidence},${AUTO_DECISION_SQL},${identifiedSpeciesSql({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'})}
+  return db.prepare(`SELECT id,status,species,note,lat,lon,public_lat,public_lon,observed_on,bird_count,received_at,pending_public,${evidence},${AUTO_DECISION_SQL},${identifiedSpeciesSql({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'}, true)}
     FROM reports WHERE status='pending' AND pending_public=1 ORDER BY observed_on DESC,received_at DESC,id DESC`);
 }
 
@@ -150,6 +150,8 @@ export function unverifiedPayload(rows, env, now = new Date()) {
   return (rows || []).filter(row => unverifiedState(row, now) === 'public').map(row => {
     const spot = { id: row.id, status: 'pending', verified: false, lat: row.public_lat ?? row.lat, lon: row.public_lon ?? row.lon,
       species: speciesNamesOf(row), date: row.observed_on };
+    const sightings = publicSightingsOf(row);
+    if (sightings.length) spot.sightings = sightings;
     if (isLocationHidden(row)) { spot.locationHidden = true; spot.approximate = true; }
     return spot;
   });

@@ -94,8 +94,8 @@ test('흐름: 일반종은 즉시 미검증 공개, 재전송·상태·검색이
   const review = s.db.sqlite.prepare('SELECT * FROM reviews WHERE checklist_id=?').all(body.request_id);
   assert.equal(review.length, 1); assert.equal(review[0].decision, 'submitted'); assert.equal(review[0].actor_id, 'system:auto-public'); assert.equal(review[0].reason_code, AUTO_PUBLIC_REASON);
   const spots = await pending(s);
-  assert.deepEqual(spots, [{ id: body.request_id, status: 'pending', verified: false, lat: 36.111111, lon: 127.222222, species: ['참새'], date: TODAY }]);
-  assert.ok(!JSON.stringify(spots).includes('합성테스터'), '제보자·메모·개체수는 내보내지 않는다');
+  assert.deepEqual(spots, [{ id: body.request_id, status: 'pending', verified: false, lat: 36.111111, lon: 127.222222, species: ['참새'], date: TODAY, sightings: [{name:'참새',count:12,countStatus:'reported'}] }]);
+  assert.ok(!JSON.stringify(spots).includes('합성테스터'), '제보자·메모는 내보내지 않는다');
   assert.equal((await post(s.pub, body)).status, 201);
   assert.equal((await (await post(s.pub, body)).json()).publicVisibility, 'public_unverified', '재전송도 같은 결과');
   assert.equal((await get(s.pub, '/reports/' + body.request_id + '/status')).body.publicVisibility, 'public_unverified');
