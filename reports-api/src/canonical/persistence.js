@@ -45,7 +45,9 @@ export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},
     ...(review?[insert(db,'reviews',review)]:[]),
     // 자동 공개로 판정된 접수만: 방금 넣은 판정 기록까지 센 오늘 건수가 한도 이하일 때만 batch 전체가 확정된다.
     // D1 batch 는 한 트랜잭션이라, 동시에 먼저 확정된 접수가 있으면 여기서 실패하고 아무것도 남지 않는다.
-    ...(cap?[assertion(db,`autocap:${id}`,cap.condition,cap.values),clearAssertion(db,`autocap:${id}`)]:[])];
+    ...(cap?[assertion(db,`autocap:${id}`,cap.condition,cap.values),clearAssertion(db,`autocap:${id}`)]:[]),
+    // 같은 날·같은 종·200 m 이내에 먼저 확정된 다른 제보가 있으면 이 접수는 공개 대신 검토 대기로 다시 저장된다.
+    ...(cap?.dup?[assertion(db,`autodup:${id}`,cap.dup.condition,cap.dup.values),clearAssertion(db,`autodup:${id}`)]:[])];
   try {await db.batch(statements);} catch(error) {
     rethrowIfFrozen(error);
     const replay=await replayQuick(db,id,input,env);if(replay)return replay;
@@ -55,7 +57,8 @@ export async function persistQuick(binding,row,input,accepted,tokenHash,{env={},
     // 한도 경합: 호출한 쪽이 같은 요청을 검토 대기로 한 번 다시 저장한다(제보를 버리거나 거절하지 않는다).
     if(cap) {
       const reached=await first(db,cap.reachedSql,...cap.values),holdReasons=['rate_review','global_cap'].filter(k=>Number(reached?.[k])===1);
-      if(holdReasons.length){const race=new WorkerError('AUTO_PUBLIC_CAP_RACE','오늘 자동 공개 한도에 도달해 검토 대기로 접수합니다.',409);race.holdReasons=holdReasons;throw race;}
+      if(cap.dup&&Number((await first(db,cap.dup.reachedSql,...cap.dup.values))?.possible_duplicate)===1)holdReasons.push('possible_duplicate');
+      if(holdReasons.length){const race=new WorkerError('AUTO_PUBLIC_CAP_RACE','동시 접수로 자동 공개 조건(한도·중복 의심)이 바뀌어 검토 대기로 접수합니다.',409);race.holdReasons=holdReasons;throw race;}
     }
     fail('WRITE_FAILED','제보를 저장하지 못했습니다. 같은 요청으로 다시 시도해 주세요.',503);
   }

@@ -104,14 +104,35 @@ function dailyCap(env) {
   const cap = Number(env?.REPORTS_AUTO_PUBLIC_DAILY_MAX);
   return Number.isSafeInteger(cap) && cap >= 0 ? cap : GLOBAL_DAILY_MAX_DEFAULT;
 }
+// 중복 의심(같은 관찰일·같은 종·200 m 이내)을 저장 batch 안에서 다시 확인하는 조건.
+// 삼각함수를 쓰지 않는다(운영 D1 지원을 확인하지 못함). 사칙연산·GLOB 만 쓰고 cos(위도)는 서버가 계산해 넘긴다.
+// 거리: 위도 1도 = METERS_PER_DEGREE m, 경도 1도 = METERS_PER_DEGREE * cos(위도) m 의 평면 근사.
+// 200 m 규모에서 haversine 과의 차이는 mm 단위라 접수 판정(meters)과 같은 결과를 낸다.
+// 종: 저장된 종명 칸은 ' · ' 로 이은 "국명" 또는 "국명+수량" 토큰이다(speciesName 과 같은 규칙: 국명 뒤는 공백·숫자만 허용).
+// 판정할 수 없으면(한글 국명이 아닌 이름) 항상 실패하는 조건을 만들어 공개 쪽으로 열리지 않게 한다(fail-closed).
+const METERS_PER_DEGREE = 6371000 * Math.PI / 180;
+export function duplicateGuard(report, selfId) {
+  const names = [...new Set((report.species || []).map(speciesName))];
+  if (!names.length || names.some(n => !/^[가-힣]{1,30}$/.test(n)) || ![report.lat, report.lon].every(Number.isFinite)) {
+    return { condition: '0=1', values: [], reachedSql: 'SELECT 1 AS possible_duplicate' };
+  }
+  const cos = Math.cos(report.lat * Math.PI / 180);
+  const nameSql = names.map(() => `(' · '||d.species||' · ') GLOB '* · '||?||'[ 0-9]*'`).join(' OR ');
+  const near = `((d.lat-?)*${METERS_PER_DEGREE})*((d.lat-?)*${METERS_PER_DEGREE}) + ((d.lon-?)*${METERS_PER_DEGREE}*?)*((d.lon-?)*${METERS_PER_DEGREE}*?) <= ?`;
+  const exists = `EXISTS (SELECT 1 FROM reports AS d WHERE d.id<>? AND d.observed_on=? AND d.status<>'rejected' AND (${nameSql}) AND ${near})`;
+  const values = [selfId, report.observedOn, ...names, report.lat, report.lat, report.lon, cos, report.lon, cos, DUPLICATE_METERS * DUPLICATE_METERS];
+  return { condition: `NOT ${exists}`, values, reachedSql: `SELECT CASE WHEN ${exists} THEN 1 ELSE 0 END AS possible_duplicate` };
+}
+
 // 저장 batch 안에서 확인할 조건(방금 넣은 판정 기록 포함 건수 <= 한도)과, 실패 뒤 "한도 때문인지" 확인할 조건.
-// 두 SQL 의 자리표시자 순서는 같다(values 를 그대로 쓴다).
-export function capGuard(env, ipHash, now = new Date()) {
+// 두 SQL 의 자리표시자 순서는 같다(values 를 그대로 쓴다). report·selfId 가 있으면 중복 보호 조건(dup)도 함께 돌려준다.
+export function capGuard(env, ipHash, now = new Date(), report = null, selfId = null) {
   const dayStart = kstDayStartIso(now), cap = dailyCap(env);
   return {
     condition: `(${AUTO_COUNT}) <= ? AND (${AUTO_COUNT_IP}) <= ?`,
     values: [dayStart, cap, dayStart, ipHash, IP_DAILY_MAX],
     reachedSql: `SELECT CASE WHEN (${AUTO_COUNT}) >= ? THEN 1 ELSE 0 END AS global_cap, CASE WHEN (${AUTO_COUNT_IP}) >= ? THEN 1 ELSE 0 END AS rate_review`,
+    dup: report ? duplicateGuard(report, selfId) : null,
   };
 }
 
