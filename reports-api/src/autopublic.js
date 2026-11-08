@@ -154,7 +154,7 @@ export const AUTO_DECISION_SQL = `(SELECT reason_code FROM reviews WHERE checkli
 
 // 공개 읽기 후보: 자동 공개 표시가 남은 대기 행만. 최종 판정은 unverifiedPayload 가 한다.
 export function unverifiedStatement(db, evidence) {
-  return db.prepare(`SELECT id,status,species,note,lat,lon,public_lat,public_lon,observed_on,bird_count,received_at,pending_public,${evidence},${AUTO_DECISION_SQL},${identifiedSpeciesSql({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'}, true)}
+  return db.prepare(`SELECT id,status,species,note,lat,lon,public_lat,public_lon,observed_on,bird_count,received_at,pending_public,reporter,name_public,${evidence},${AUTO_DECISION_SQL},${identifiedSpeciesSql({REPORTS_WRITE_MODE:'CANONICAL_DUAL_WRITE'}, true)}
     FROM reports WHERE status='pending' AND pending_public=1 ORDER BY observed_on DESC,received_at DESC,id DESC`);
 }
 
@@ -174,6 +174,8 @@ export function unverifiedPayload(rows, env, now = new Date()) {
   return (rows || []).filter(row => unverifiedState(row, now) === 'public').map(row => {
     const spot = { id: row.id, status: 'pending', verified: false, lat: row.public_lat ?? row.lat, lon: row.public_lon ?? row.lon,
       species: speciesNamesOf(row), date: row.observed_on };
+    // 승인 제보와 같은 규칙: 이름 공개에 동의한 제보만 이름을 내보낸다(동의하지 않았거나 이름이 없으면 필드 자체가 없다).
+    if (Number(row.name_public) === 1 && typeof row.reporter === 'string' && row.reporter.trim()) spot.reporter = row.reporter.trim();
     const sightings = publicSightingsOf(row);
     if (sightings.length) spot.sightings = sightings;
     if (isLocationHidden(row)) { spot.locationHidden = true; spot.approximate = true; }

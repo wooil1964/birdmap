@@ -102,8 +102,8 @@ test('흐름: 일반종은 즉시 미검증 공개, 재전송·상태·검색이
   const review = s.db.sqlite.prepare('SELECT * FROM reviews WHERE checklist_id=?').all(body.request_id);
   assert.equal(review.length, 1); assert.equal(review[0].decision, 'submitted'); assert.equal(review[0].actor_id, 'system:auto-public'); assert.equal(review[0].reason_code, AUTO_PUBLIC_REASON);
   const spots = await pending(s);
-  assert.deepEqual(spots, [{ id: body.request_id, status: 'pending', verified: false, lat: 36.111111, lon: 127.222222, species: ['참새'], date: TODAY, sightings: [{name:'참새',count:12,countStatus:'reported'}] }]);
-  assert.ok(!JSON.stringify(spots).includes('합성테스터'), '제보자·메모는 내보내지 않는다');
+  assert.deepEqual(spots, [{ id: body.request_id, status: 'pending', verified: false, lat: 36.111111, lon: 127.222222, species: ['참새'], date: TODAY, reporter: '합성테스터', sightings: [{name:'참새',count:12,countStatus:'reported'}] }]);
+  assert.ok(!/메모|note/.test(JSON.stringify(spots)), '메모는 내보내지 않는다(이름은 공개에 동의한 제보만)');
   assert.equal((await post(s.pub, body)).status, 201);
   assert.equal((await (await post(s.pub, body)).json()).publicVisibility, 'public_unverified', '재전송도 같은 결과');
   assert.equal((await get(s.pub, '/reports/' + body.request_id + '/status')).body.publicVisibility, 'public_unverified');
@@ -214,4 +214,18 @@ test('과거 pending_public=1(자동 판정 기록 없음)과 스위치 끔은 �
   assert.equal(row(s, off.body.request_id).pending_public, 0);
   assert.equal(s.db.sqlite.prepare('SELECT COUNT(*) AS n FROM reviews WHERE checklist_id=?').get(off.body.request_id).n, 0);
   assert.equal(ADMIN.length > 0, true);
+});
+
+test('제보자 이름: 공개에 동의한 자동 공개 제보만 이름을 내보내고, 동의하지 않았거나 이름이 없으면 필드 자체가 없다', async t => {
+  const s = await setup(t);
+  const yes = await submit(s, { species: '까치', lat: 36.1, lon: 127.1, reporter: '동의탐조', namePublic: true });
+  const no = await submit(s, { species: '박새', lat: 36.3, lon: 127.3, reporter: '비동의탐조', namePublic: false });
+  const blank = await submit(s, { species: '딱새', lat: 36.5, lon: 127.5, reporter: '', namePublic: true });
+  const spots = await pending(s), by = id => spots.find(x => x.id === id);
+  assert.equal(by(yes.body.request_id).reporter, '동의탐조');
+  assert.ok(!('reporter' in by(no.body.request_id)) && !('reporter' in by(blank.body.request_id)));
+  for (const strict of [false, true]) for (const p of ['/reports/pending', '/reports/search?q=' + encodeURIComponent('박새'), '/reports/recent-sites?days=30', '/reports/approved']) {
+    s.pub.REPORTS_PUBLICATION_REQUIRED = String(strict);
+    assert.ok(!JSON.stringify((await get(s.pub, p, strict)).body).includes('비동의탐조'), p + ' 에 동의하지 않은 이름이 없다');
+  }
 });

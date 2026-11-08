@@ -35,8 +35,10 @@ function seed() {
   window.__day = day;
   const approvedDays = [2, 5, 9], pendingDays = [0, 1, 3, 4, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18];
   __mock.approved = approvedDays.map(n => __mock.spot({ id: 'approved-' + n, lat: 34.5 + n * 0.1, lon: 126.5 + n * 0.1, species: ['흰꼬리수리'], history: [{ id: 'h' + n, species: ['흰꼬리수리'], date: day(n), reporter: '공개이름' + n }] }));
-  __mock.pendingSpots = pendingDays.map(n => Object.assign({ id: 'auto-' + n, verified: false, lat: 35.2 + n * 0.05, lon: 127.2 + n * 0.05, species: ['노랑부리저어새'], date: day(n), reporter: '비공개이름' + n },
+  __mock.pendingSpots = pendingDays.map(n => Object.assign({ id: 'auto-' + n, verified: false, lat: 35.2 + n * 0.05, lon: 127.2 + n * 0.05, species: ['노랑부리저어새'], date: day(n) },
+    n === 0 || n === 4 ? { reporter: '동의이름' + n } : {},
     n === 1 ? { locationHidden: true, approximate: true } : {}));
+  // (동의한 이름은 서버가 reporter 로 실어 보낸다. 나머지는 필드 자체가 없다.)
   // 서버가 verified:false 로 표시하지 않은 대기 자료(과거 정책·잘못 온 응답)는 지도에도 목록에도 들어가면 안 된다.
   // 전체 제보 검색(보관함) 응답: 승인 제보 이력을 공개 계약에 맞게 돌려준다(승인 건 클릭 때 위치 카드가 이 응답으로 확인한다).
   const fixtureFetch = window.fetch;
@@ -115,7 +117,9 @@ async function scenario(page, label, touch) {
   check(speciesCounts['흰꼬리수리'] === 3 && speciesCounts['노랑부리저어새'] === 12 && !list.some(i => i.species.includes('직박구리')), label + ' 승인 3건·자동 공개 12건, 허용되지 않은 자료는 제외', speciesCounts);
   check((await page.evaluate(() => document.getElementById('recentReportsCount').textContent)) === '15건', label + ' 건수 표시 15건');
   const text = await page.evaluate(() => document.body.innerText + [...document.querySelectorAll('.leaflet-tooltip')].map(n => n.textContent).join());
-  check(!/비공개이름/.test(text), label + ' 자동 공개 제보의 제보자 이름은 표시하지 않는다(응답에 있어도)');
+  const names = list.filter(i => /동의이름/.test(i.meta)).map(i => i.meta.replace(/\d+\/\d+$/, ''));
+  check(list[0].meta.includes('동의이름0') && list.filter(i => /동의이름/.test(i.meta)).length === 2 && !/익명 제보.*동의이름|동의이름.*익명 제보/.test(list[0].meta), label + ' 공개에 동의한 이름만 표시(응답에 이름이 없는 자동 공개 줄은 이름 없음)', names);
+  check(await page.evaluate(() => [...document.querySelectorAll('#recentReportsList .recentReportItem')].filter(n => !/동의이름|공개이름/.test(n.textContent)).every(n => !/탐조|이름/.test(n.querySelector('.recentReportMeta').textContent))), label + ' 이름이 없는 줄에는 이름 문구가 없다');
   // 3) 클릭 이동(종명 글자를 누르면 기존처럼 종 검색이 열리므로 행의 날짜·이름 줄을 누른다): 가장 최근 자동 공개 건(첫 줄).
   await press(page, '#recentReportsList .recentReportItem:nth-child(1) .recentReportMeta', touch);
   await openPopupOf(page, 'auto-0');
