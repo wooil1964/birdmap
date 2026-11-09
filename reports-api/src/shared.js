@@ -378,8 +378,19 @@ export function reportBreedingStatus(row) {
   if (hasBreedingEvidence(row) || hasBreedingEvidence(input)) return 'breeding';
   if (row.non_breeding_confirmed !== 1 || input?.non_breeding_confirmed !== true) return 'unknown';
   try {
-    const original = validateReport({...input, birdCount:null});
-    if (original.speciesText === row.species && original.lat === row.lat && original.lon === row.lon &&
+    // Before whitespace splitting, the saved species text used delimiter-only normalization.
+    // Accept that exact old representation, never a taxonomic/approximate equivalence.
+    const oldTokens = String(input.species ?? '').split(/[,;·\r\n]+/).map(part=>stripControl(part)).filter(Boolean);
+    const oldText = oldTokens.length > 0 && oldTokens.length <= MAX_SPECIES && oldTokens.every(token=>token.length<=MAX_SPECIES_LENGTH && SPECIES_PATTERN.test(token))
+      ? [...new Set(oldTokens)].join(' · ') : null;
+    let original;
+    try { original = validateReport({...input, birdCount:null}); } catch {
+      if (oldText !== row.species) return 'unknown';
+      // The original species spelling was validated by the old rules above. Validate
+      // every remaining immutable field even when new token limits reject that old text.
+      original = validateReport({...input, species:'까치', birdCount:null});
+    }
+    if ((original.speciesText === row.species || (oldText !== null && oldText === row.species)) && original.lat === row.lat && original.lon === row.lon &&
         original.observedOn === row.observed_on && original.note === (row.note ?? null)) return 'non_breeding';
   } catch {}
   return 'unknown';

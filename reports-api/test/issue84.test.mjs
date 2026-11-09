@@ -7,7 +7,7 @@ import {handleRequest as publicHandler} from '../src/public.js';
 import {handleRequest as adminHandler} from '../src/admin.js';
 import {adminStats} from '../src/admin-stats.js';
 import {environments,installAuthStubs} from '../local-test/helpers.mjs';
-import {normalizeSpecies,parseSpeciesItems,legacySpeciesItems,sightingValues,isSensitiveReport,isLocationRestricted,publicPayload} from '../src/shared.js';
+import {normalizeSpecies,parseSpeciesItems,legacySpeciesItems,sightingValues,isSensitiveReport,isLocationRestricted,publicPayload,reportBreedingStatus} from '../src/shared.js';
 import {contentReasons} from '../src/autopublic.js';
 const MIGRATION=readFileSync(new URL('../migrations/0007_reporter_identity.sql',import.meta.url),'utf8');
 const ENV={REPORTS_CONFIRMED_IDENTITIES:'1',REPORTS_PUBLICATION_REQUIRED:'true'};
@@ -159,4 +159,19 @@ test('new whitespace submission persists one report, original raw payload, three
  assert.deepEqual(sightings.map(s=>[s.species_identified,s.count_value]),[['동박새',3],['찌르레기',2],['까치',5]]);
  const raw=db.sqlite.prepare('SELECT payload_json FROM raw_submissions').get();
  assert.equal(JSON.parse(raw.payload_json).input.species,original);
+});
+
+test('old whitespace spelling retains exact nonbreeding evidence; edits and invalid old spelling never confirm',()=>{
+ for(const species of ['저어새2 까치3','동박새3 동박새3',Array(11).fill('매').join(' ')]) {
+  const input={species,lat:37,lon:127,observedOn:'2026-10-02',note:null,non_breeding_confirmed:true};
+  const stored=species;
+  const row={species:stored,lat:37,lon:127,observed_on:'2026-10-02',note:null,non_breeding_confirmed:1,location_input:JSON.stringify(input)};
+  assert.equal(reportBreedingStatus(row),'non_breeding');
+  assert.equal(isLocationRestricted(row),false);
+  for(const patch of [{species:stored+' 까치1'},{lat:37.1},{observed_on:'2026-10-03'},{note:'changed'}])assert.equal(reportBreedingStatus({...row,...patch}),'unknown');
+ }
+ const row={species:'저어새2 까치3',lat:37,lon:127,observed_on:'2026-10-02',non_breeding_confirmed:1,location_input:JSON.stringify({species:'저어새2 까치3',lat:37,lon:127,observedOn:'2026-10-02'})};
+ assert.equal(reportBreedingStatus(row),'unknown');
+ assert.equal(reportBreedingStatus({...row,note:'육추'}),'breeding');
+ for(const species of ['저어새2/까치3','<저어새2 까치3>'])assert.equal(reportBreedingStatus({...row,species,location_input:JSON.stringify({species,lat:37,lon:127,observedOn:'2026-10-02',non_breeding_confirmed:true})}),'unknown');
 });
