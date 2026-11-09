@@ -1,3 +1,4 @@
+import {reporterNameSql,reporterKeySql,identityEnabled,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 // 관리자 전용 출현종 제보 통계. GET /admin/api/stats (Access 인증 뒤에서만 불린다).
 // 읽기 전용 SELECT 만 쓴다. 좌표·ip_hash·dedupe_hash·admin_note 는 어떤 응답에도 넣지 않는다.
 //
@@ -9,7 +10,7 @@
 // - 종명: 신규 구조화 제보는 정본 sightings 의 식별 국명(수량 제외, 예: 동박새3·동박새5 → 동박새 1종)으로 센다.
 //   식별 국명이 없는 과거 승인 자료는 공식 2025 국명과 정확히 일치하는 수량 접미사만 읽기 단계에서 분리한다.
 // - 개체수: 구조화 자료(single)·공식 국명 확인된 과거 승인 자료의 입력 개체수만 더한다. 미입력·같은 종 중복·불확실은 더하지 않는다.
-// - 제보자: reporter 저장값이 정확히 같은 것끼리만 묶는다. 비었거나 공백뿐이면 '(이름 미입력)' 한 줄.
+// - 제보자: 기본은 reporter 정확 일치. 확인 기능 ON일 때 명시한 제보 ID만 최초 닉네임으로 묶는다. 비었거나 공백뿐이면 '(이름 미입력)' 한 줄.
 // - 지역: 관리자가 연결한 site_id 만. 없으면 '미연결 지역'. 좌표로 추정하지 않는다.
 import { WorkerError, legacySpeciesItems } from "./shared.js";
 
@@ -65,11 +66,11 @@ export function recentCutoff(now = new Date(), days = 30) {
 // 공통 CTE.
 //   f: 필터에 맞는 제보(모든 상태)   x: f 를 종 단위로 펼친 행(id 당 종 수만큼)
 // 생태 조건 eco 는 상태 필터가 없으면 approved, 있으면 f 가 이미 그 상태만이라 1.
-function base(filters, structured = false, legacy = []) {
+function base(filters, structured = false, legacy = [], env={}) {
   const where = [], params = [JSON.stringify(legacy)];
   const add = (sql, value) => { params.push(value); where.push(sql.replaceAll('?', '?' + params.length)); };
   if (filters.noReporter) where.push("TRIM(IFNULL(reporter, '')) = ''");
-  else if (filters.reporter !== null) add('reporter = ?', filters.reporter);
+  else if (filters.reporter !== null) add(reporterNameSql(env,'reports',false)+' = ?', filters.reporter);
   if (filters.noSite) where.push('site_id IS NULL');
   else if (filters.siteId) add('site_id = ?', filters.siteId);
   if (filters.status) add('status = ?', filters.status);
@@ -83,7 +84,8 @@ function base(filters, structured = false, legacy = []) {
   const cte = `WITH RECURSIVE
   legacy AS (SELECT json_extract(value,'$.raw') AS raw, json_extract(value,'$.items') AS items FROM json_each(?1)),
   f0 AS (SELECT id, status, species, observed_on, received_at, site_id,
-               CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE reporter END AS who
+               CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE ${reporterNameSql(env,'reports',false)} END AS who,
+               CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE ${reporterKeySql(env,'reports',false)} END AS who_key
           FROM reports${where.length ? ' WHERE ' + where.join(' AND ') : ''}),
   cut(id, rest, sp) AS (
     SELECT id, species || '${SEP}', NULL FROM f0
@@ -113,12 +115,12 @@ function viewSql(view, eco) {
     case "species":
       return `SELECT sp AS species, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
                      MIN(observed_on) AS first_observed, MAX(observed_on) AS last_observed,
-                     COUNT(DISTINCT site_id) AS sites, COUNT(DISTINCT who) AS reporters, SUM(individuals) AS individuals
+                     COUNT(DISTINCT site_id) AS sites, COUNT(DISTINCT who_key) AS reporters, SUM(individuals) AS individuals
                 FROM x WHERE ${eco} AND sp IS NOT NULL
                GROUP BY sp ORDER BY total DESC, sp`;
     case "sites":
       return `SELECT x.site_id, st.site_name, COUNT(DISTINCT x.id) AS total, COUNT(DISTINCT x.sp) AS species,
-                     MAX(x.observed_on) AS last_observed, COUNT(DISTINCT x.who) AS reporters
+                     MAX(x.observed_on) AS last_observed, COUNT(DISTINCT x.who_key) AS reporters
                 FROM x LEFT JOIN sites st ON st.site_id = x.site_id
                WHERE ${eco}
                GROUP BY x.site_id ORDER BY x.site_id IS NULL, total DESC, st.site_name`;
@@ -130,14 +132,14 @@ function viewSql(view, eco) {
                      COUNT(DISTINCT CASE WHEN ${eco} THEN site_id END) AS sites,
                      SUM(CASE WHEN ${eco} THEN individuals END) AS individuals,
                      MAX(observed_on) AS last_observed
-                FROM x GROUP BY who ORDER BY who IS NULL, total DESC, who`;
+                FROM x GROUP BY who_key,who ORDER BY who IS NULL, total DESC, who`;
     case "monthly":
       return `SELECT substr(observed_on, 1, 7) AS month, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
-                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who) AS reporters
+                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who_key) AS reporters
                 FROM x WHERE ${eco} GROUP BY month ORDER BY month DESC`;
     case "yearly":
       return `SELECT substr(observed_on, 1, 4) AS year, COUNT(DISTINCT id) AS total,
-                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who) AS reporters, COUNT(DISTINCT site_id) AS sites
+                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who_key) AS reporters, COUNT(DISTINCT site_id) AS sites
                 FROM x WHERE ${eco} GROUP BY year ORDER BY year DESC`;
     case "list":
       // 관리자 카드와 잇기 위한 id 만 추가로 준다. 좌표·메모·해시는 고르지 않는다.
@@ -148,13 +150,14 @@ function viewSql(view, eco) {
   return null;
 }
 
-export async function adminStats(db, url, now = new Date()) {
+export async function adminStats(db, url, now = new Date(), env={}) {
+  if(identityEnabled(env)) checkIdentityGuards(await identityGuardStatement(db).all());
   const { view, filters } = parseStatsQuery(url);
   const structured = !!(await db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' AND name = 'sightings'").first());
   // 원본·정본 쓰기 없이 공식 국명과 정확히 일치하는 과거 승인 자료만 해석한다.
   const legacyRows = (await db.prepare(`SELECT DISTINCT species FROM reports WHERE status = 'approved'${structured ? ' AND NOT EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified IS NOT NULL)' : ''}`).all()).results || [];
   const legacy = legacyRows.map(r => ({ raw: r.species, items: legacySpeciesItems(r.species) }));
-  const { cte, params, eco } = base(filters, structured, legacy);
+  const { cte, params, eco } = base(filters, structured, legacy, env);
   const cutoff = "?" + (params.length + 1);
   const summarySql = `${cte}
     SELECT (SELECT COUNT(*) FROM f) AS total,
@@ -164,7 +167,7 @@ export async function adminStats(db, url, now = new Date()) {
            (SELECT COUNT(DISTINCT sp) FROM x WHERE ${eco} AND sp IS NOT NULL) AS species,
            (SELECT SUM(individuals) FROM x WHERE ${eco}) AS individuals,
            (SELECT COUNT(DISTINCT id) FROM x WHERE ${eco} AND individuals IS NOT NULL) AS counted_reports,
-           (SELECT COUNT(DISTINCT who) FROM f) AS reporters,
+           (SELECT COUNT(DISTINCT who_key) FROM f) AS reporters,
            (SELECT COUNT(*) FROM f WHERE who IS NULL) AS anonymous_reports,
            (SELECT COUNT(*) FROM f WHERE received_at >= ${cutoff}) AS recent30`;
   const run = (sql, values) => db.prepare(sql).bind(...values).all().then((r) => r.results || []);
