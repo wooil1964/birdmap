@@ -193,8 +193,10 @@
 <div id="reporterStatsModal" class="monthTideModal" role="dialog" aria-modal="true" aria-labelledby="reporterStatsTitle" aria-describedby="reporterStatsBasis" onclick="if(event.target===this)closeReporterStats(true)" onkeydown="reporterStatsKeydown(event)">
   <div class="monthTideDialog">
     <div class="monthTideHeader"><strong id="reporterStatsTitle">누적 출현 제보 통계</strong><button id="reporterStatsClose" type="button" onclick="closeReporterStats(true)">닫기</button></div>
+    <div class="reporterStatsBody">
     <div id="reporterStatsBasis" class="monthTideMeta">닉네임 기준 집계 · 같은 닉네임의 제보는 합산됩니다.<br>승인된 이름 공개 동의 제보만 집계합니다.</div>
     <div id="reporterStatsContent" class="monthTideContent" aria-live="polite"></div>
+    </div>
   </div>
 </div>
 
@@ -544,7 +546,9 @@ body.monthTideOpen{overflow:hidden}
 .reporterStatsLink{border:0;background:transparent;color:#174d6f;font:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px;padding:2px 3px;cursor:pointer;overflow-wrap:anywhere}
 .reporterStatsLink:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
 #reporterStatsModal{z-index:11020}
-#reporterStatsModal .monthTideDialog{width:min(380px,100%)}
+#reporterStatsModal .monthTideDialog{width:min(380px,100%);max-height:100%}
+/* 제목·닫기는 고정, 근거 문구부터 목록까지 한 덩어리로 스크롤. 높이는 100vh 가 아니라 실제 보이는 바깥 상자(100%) 기준. */
+.reporterStatsBody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 .reporterStatsNumbers{display:grid;grid-template-columns:1fr auto;gap:16px 12px;margin:8px 0;color:#174d6f}
 .reporterStatsNumbers dt{align-self:center}.reporterStatsNumbers dd{margin:0;font-size:22px;font-weight:bold}
 body.reporterStatsOpen{overflow:hidden}
