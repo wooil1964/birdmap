@@ -25,19 +25,23 @@ function invalid(message) {
   throw new WorkerError("STATS_FILTER_INVALID", message, 400);
 }
 
-function text(url, key) {
+function text(url, key, max = 100) {
   const value = url.searchParams.get(key);
   if (value === null || value === "") return null;
-  if (value.length > 100) invalid("검색어가 너무 깁니다.");
+  if (value.length > max) invalid("검색어가 너무 깁니다.");
   return value;
 }
 
 export function parseStatsQuery(url) {
+  for (const key of ['view', 'species', 'reporter', 'reporterKey', 'noReporter', 'siteId', 'noSite', 'status', 'from', 'to', 'year', 'month']) {
+    if (url.searchParams.getAll(key).length > 1) invalid("같은 필터를 중복 지정할 수 없습니다.");
+  }
   const view = url.searchParams.get("view") || "summary";
   if (!VIEWS.includes(view)) invalid("알 수 없는 통계 종류입니다.");
   const f = {
     species: text(url, "species")?.trim() || null,
     reporter: text(url, "reporter"), // 저장값과 정확히 비교하므로 다듬지 않는다.
+    reporterKey: text(url, "reporterKey", 105), // name: 접두사와 최대 100자 이름.
     noReporter: url.searchParams.get("noReporter") === "1",
     siteId: text(url, "siteId"),
     noSite: url.searchParams.get("noSite") === "1",
@@ -47,6 +51,8 @@ export function parseStatsQuery(url) {
     year: text(url, "year"),
     month: text(url, "month"),
   };
+  if (url.searchParams.has('reporterKey') && (!f.reporterKey || f.reporter === null)) invalid("제보자와 그룹 식별값이 함께 필요합니다.");
+  if (f.noReporter && (f.reporter !== null || f.reporterKey !== null)) invalid("제보자 필터가 충돌합니다.");
   if (f.siteId && !SITE_ID.test(f.siteId)) invalid("탐조지 ID 형식이 아닙니다.");
   if (f.status && !STATUSES.includes(f.status)) invalid("상태 값이 올바르지 않습니다.");
   if (f.from && !DATE.test(f.from)) invalid("시작일 형식은 YYYY-MM-DD 입니다.");
@@ -54,6 +60,25 @@ export function parseStatsQuery(url) {
   if (f.year && !/^\d{4}$/.test(f.year)) invalid("연도 형식은 YYYY 입니다.");
   if (f.month && !/^(0[1-9]|1[0-2])$/.test(f.month)) invalid("월 형식은 01~12 입니다.");
   return { view, filters: f };
+}
+
+// 다른 필터로 동명 충돌을 숨기지 않는다. 클라이언트의 키는 권한/멤버십 근거가
+// 아니며, 현재 서버가 계산한 이름·키 쌍과 일치해야 한다. 이름만 온 구형 요청도
+// 유일한 키로 고정해 이후 SELECT에서 동명 신규 제보가 다른 그룹에 섞이지 않게 한다.
+async function validateReporterFilter(db, filters, env) {
+  if (filters.reporter === null || (!identityEnabled(env) && filters.reporterKey === null)) return;
+  const rows = (await db.prepare(`SELECT DISTINCT ${reporterKeySql(env, 'reports', false)} AS reporter_key
+    FROM reports WHERE TRIM(IFNULL(reporter, '')) <> '' AND ${reporterNameSql(env, 'reports', false)} = ?1`)
+    .bind(filters.reporter).all()).results || [];
+  if (filters.reporterKey !== null) {
+    if (!rows.some(r => r.reporter_key === filters.reporterKey)) {
+      throw new WorkerError('STATS_REPORTER_NOT_FOUND', '제보자 그룹을 다시 선택해 주세요.', 404);
+    }
+  } else {
+    if (rows.length > 1) invalid("같은 이름의 그룹이 여럿입니다. 제보자 목록에서 선택해 주세요.");
+    if (rows.length === 0) throw new WorkerError('STATS_REPORTER_NOT_FOUND', '제보자 그룹을 다시 선택해 주세요.', 404);
+    filters.reporterKey = rows[0].reporter_key;
+  }
 }
 
 // KST 오늘을 포함한 days 일(오늘-(days-1)일 00:00 KST)의 시작 시각을 UTC ISO 로 돌려준다.
@@ -71,6 +96,7 @@ function base(filters, structured = false, legacy = [], env={}) {
   const add = (sql, value) => { params.push(value); where.push(sql.replaceAll('?', '?' + params.length)); };
   if (filters.noReporter) where.push("TRIM(IFNULL(reporter, '')) = ''");
   else if (filters.reporter !== null) add(reporterNameSql(env,'reports',false)+' = ?', filters.reporter);
+  if (filters.reporterKey !== null) add(reporterKeySql(env,'reports',false)+' = ?', filters.reporterKey);
   if (filters.noSite) where.push('site_id IS NULL');
   else if (filters.siteId) add('site_id = ?', filters.siteId);
   if (filters.status) add('status = ?', filters.status);
@@ -125,7 +151,7 @@ function viewSql(view, eco) {
                WHERE ${eco}
                GROUP BY x.site_id ORDER BY x.site_id IS NULL, total DESC, st.site_name`;
     case "reporters":
-      return `SELECT who AS reporter, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
+      return `SELECT who AS reporter, who_key AS reporter_key, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
                      COUNT(DISTINCT CASE WHEN status = 'rejected' THEN id END) AS rejected,
                      COUNT(DISTINCT CASE WHEN status = 'pending' THEN id END) AS pending,
                      COUNT(DISTINCT CASE WHEN ${eco} THEN sp END) AS species,
@@ -153,6 +179,7 @@ function viewSql(view, eco) {
 export async function adminStats(db, url, now = new Date(), env={}) {
   if(identityEnabled(env)) checkIdentityGuards(await identityGuardStatement(db).all());
   const { view, filters } = parseStatsQuery(url);
+  await validateReporterFilter(db, filters, env);
   const structured = !!(await db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' AND name = 'sightings'").first());
   // 원본·정본 쓰기 없이 공식 국명과 정확히 일치하는 과거 승인 자료만 해석한다.
   const legacyRows = (await db.prepare(`SELECT DISTINCT species FROM reports WHERE status = 'approved'${structured ? ' AND NOT EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified IS NOT NULL)' : ''}`).all()).results || [];

@@ -540,9 +540,11 @@ function statsQuery(view,drill){
   Object.keys(fields).forEach(function(k){var v=document.getElementById(fields[k]).value;if(k!=='reporter')v=v.trim();if(v)p.set(k,v);});
   var site=document.getElementById('sfSite').value;
   if(site==='__none__')p.set('noSite','1');else if(site)p.set('siteId',site);
+  if(drill&&(drill.noReporter||drill.reporter!=null)){
+    p.delete('noReporter');p.delete('reporter');p.delete('reporterKey');
+  }
   Object.keys(drill||{}).forEach(function(k){
     if(k==='noSite'||k==='siteId'){p.delete('noSite');p.delete('siteId');}
-    if(k==='noReporter'||k==='reporter'){p.delete('noReporter');p.delete('reporter');}
     p.set(k,drill[k]);
   });
   return '/admin/api/stats?'+p.toString();
@@ -560,7 +562,7 @@ function statsName(view,r){
 function drillFor(view,r){
   if(view==='species')return {species:r.species};
   if(view==='sites')return r.site_id==null?{noSite:'1'}:{siteId:r.site_id};
-  return r.reporter==null?{noReporter:'1'}:{reporter:r.reporter};
+  return r.reporter==null?{noReporter:'1'}:{reporter:r.reporter,reporterKey:r.reporter_key};
 }
 
 function renderCards(s,basis){
