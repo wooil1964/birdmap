@@ -75,6 +75,7 @@
     <script src="assets/birdmap-location.js"></script>
     <link rel="stylesheet" href="assets/birdmap-markers.css">
     <script src="assets/birdmap-markers.js"></script>
+<script src="assets/birdmap-bird-families.js"></script>
 </head>
 <body>
     
@@ -340,8 +341,7 @@ body.reportArchiveOpen{overflow:hidden}
 #reporterSpeciesSearch{width:100%;margin-top:6px}
 .reporterSpeciesOpen{border:0;background:none;padding:0;font:inherit;font-weight:bold;color:#174d6f;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .reporterSpeciesOpen:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
-.reporterSpeciesList{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:5px}
-.reporterSpeciesList li{background:#eef5fa;border-radius:12px;padding:3px 10px;font-size:13px;color:#22333c}
+.reporterSpeciesList{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:8px;font-size:13px} .reporterSpeciesList th,.reporterSpeciesList td{border-bottom:1px solid #dce5eb;padding:8px;text-align:left;vertical-align:top;overflow-wrap:anywhere}.reporterSpeciesList th:first-child{width:24%}.reporterSpeciesList th:last-child{width:42px}.reporterSpeciesList thead{background:#eef5fa}
 .reporterSpeciesNote{margin-top:6px;font-size:12px;color:#5a6b75}
 /* PC 전용 필터 패널 닫기. 모바일(700px 이하)은 기존 '필터 숨기기' 버튼만 쓴다. */
 #birdmapPanelClose{float:right;margin:-2px 0 4px 8px}
@@ -1497,12 +1497,22 @@ function reporterSpeciesPayload(body){
 function renderReporterSpecies(){
  var box=document.getElementById('reporterSpeciesBox');if(!box||!reporterSpeciesData)return;
  var input=document.getElementById('reporterSpeciesSearch'),list=document.getElementById('reporterSpeciesList');
- var q=(input&&input.value||'').trim(),rows=reporterSpeciesData.species.filter(function(name){return !q||name.indexOf(q)>=0;});
- list.textContent='';
- rows.forEach(function(name){var li=document.createElement('li');li.textContent=name;list.appendChild(li);});
+ var q=(input&&input.value||'').trim(),visible=new Set(reporterSpeciesData.species),known=new Set(),groups=[];
+ birdmapBirdFamilies.forEach(function(family){
+  family[1].forEach(function(name){known.add(name);});
+  var names=family[1].filter(function(name){return visible.has(name)&&(!q||family[0].indexOf(q)>=0||name.indexOf(q)>=0);});
+  if(names.length)groups.push([family[0],names]);
+ });
+ var unknown=reporterSpeciesData.species.filter(function(name){return !known.has(name)&&(!q||name.indexOf(q)>=0);});
+ if(unknown.length)groups.push(['분류 미확인',unknown]);
+ list.textContent='';var head=document.createElement('thead'),header=document.createElement('tr');
+ ['과명','출현종','종수'].forEach(function(label){var th=document.createElement('th');th.scope='col';th.textContent=label;header.appendChild(th);});head.appendChild(header);list.appendChild(head);
+ var body=document.createElement('tbody'),total=0;
+ groups.forEach(function(group){var tr=document.createElement('tr');[group[0],group[1].join(', '),group[1].length+'종'].forEach(function(value){var td=document.createElement('td');if(tr.children.length===1){group[1].forEach(function(name,i){if(i)td.appendChild(document.createTextNode(', '));var span=document.createElement('span');span.className='reporterSpeciesName';span.textContent=name;td.appendChild(span);});}else td.textContent=value;tr.appendChild(td);});total+=group[1].length;body.appendChild(tr);});list.appendChild(body);
  var count=document.getElementById('reporterSpeciesCount');
- count.textContent=reporterSpeciesData.species.length?(q?'검색 결과 '+rows.length+'종 / ':'')+'표시 '+reporterSpeciesData.species.length+'종':'표시할 수 있는 종 이름이 없습니다.';
- if(q&&!rows.length)count.textContent='검색 결과가 없습니다. (표시 '+reporterSpeciesData.species.length+'종)';
+ count.textContent=(q?'검색 결과 '+total+'종 / ':'')+'표시 '+reporterSpeciesData.species.length+'종';
+ if(q&&!total)count.textContent='검색 결과가 없습니다. (표시 '+reporterSpeciesData.species.length+'종)';
+ if(reporterStatsData&&reporterStatsData.speciesCount!==reporterSpeciesData.species.length)count.textContent+=' · 공개 정책에 따라 전체 누적종수와 표시 종수가 다를 수 있습니다.';
 }
 function openReporterSpecies(query,request,generation){
  if(!reporterStatsStillCurrent(request,generation))return Promise.resolve(false);
@@ -1515,9 +1525,9 @@ function openReporterSpecies(query,request,generation){
   reporterSpeciesData=data;box.textContent='';
   var title=document.createElement('div');title.className='reporterSpeciesNote';title.id='reporterSpeciesCount';box.appendChild(title);
   if(data.species.length){
-   var input=document.createElement('input');input.type='search';input.id='reporterSpeciesSearch';input.placeholder='종명 검색';input.setAttribute('aria-label','출현종 이름 검색');input.autocomplete='off';input.oninput=renderReporterSpecies;box.appendChild(input);
+   var input=document.createElement('input');input.type='search';input.id='reporterSpeciesSearch';input.placeholder='과명·종명 검색';input.setAttribute('aria-label','과명·출현종 이름 검색');input.autocomplete='off';input.oninput=renderReporterSpecies;box.appendChild(input);
   }
-  var list=document.createElement('ul');list.id='reporterSpeciesList';list.className='reporterSpeciesList';box.appendChild(list);
+  var list=document.createElement('table');list.id='reporterSpeciesList';list.className='reporterSpeciesList';box.appendChild(list);
   if(data.restricted){var note=document.createElement('div');note.className='reporterSpeciesNote';note.textContent='보호종·번식 관련 제보와 위치를 가린 제보의 종 이름은 표시하지 않습니다.';box.appendChild(note);}
   renderReporterSpecies();
   var search=document.getElementById('reporterSpeciesSearch');if(search)search.focus();
