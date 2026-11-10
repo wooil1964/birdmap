@@ -76,6 +76,16 @@ try {
       await page.locator('#sfReporter').fill('');
       listing=(await act('reporters',()=>page.locator('#statsBack').click())).body;
     }
+    await page.locator('summary').filter({hasText:'동일인 후보'}).click();
+    await page.locator('#identityLoad').click();
+    await page.waitForFunction(()=>document.querySelector('#identityReviewRows').textContent.includes('충돌:'));
+    check(label+': ambiguous candidate fill blocked',await page.locator('#identityReviewRows button:disabled').count()>0,true);
+    const auditBefore=db.count('SELECT COUNT(*) n FROM reporter_identity_events');
+    await page.locator('#identityConfirm').click();
+    check(label+': explicit confirmation required',await page.locator('#identityMessage').innerText(),'관리자 동일인 확인이 필요합니다.');
+    check(label+': review performs no writes',db.count('SELECT COUNT(*) n FROM reporter_identity_events'),auditBefore);
+    await page.screenshot({path:path.join(out,label+'-identity-candidates.png'),fullPage:true});
+    await page.locator('summary').filter({hasText:'동일인 후보'}).click();
     insert(db,'f','동명','고니');
     let index=listing.rows.findIndex(r=>r.reporter_key==='group:'+first.groupId);
     const after=(await act('list',()=>page.locator('[data-row="'+index+'"]').click())).body;
