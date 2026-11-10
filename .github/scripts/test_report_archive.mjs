@@ -10,7 +10,7 @@ function page(reports,total=reports.length,offset=0,publication=anchor){return {
 function fixture(){
   let c;
   class Node{
-    constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.style={};this.attributes={};this.isConnected=true;this.value='';this.scrollTop=0;this.classList={add(){}};}
+    constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.style={};this.attributes={};this.isConnected=true;this.value='';this.scrollTop=0;this.classList={add(){}};}
     set textContent(x){this.text=String(x);this.children.forEach(n=>n.isConnected=false);this.children=[];}
     get textContent(){return (this.text||'')+this.children.map(x=>x.textContent).join('');}
     appendChild(n){this.children.push(n);n.parent=this;return n;}
@@ -31,7 +31,7 @@ function fixture(){
     publicationFetch:path=>new Promise((resolve,reject)=>calls.push({path,resolve,reject})),
     clearTimeout:id=>timers.delete(id),setTimeout:fn=>{timers.set(++timer,fn);return timer;},
   };
-  vm.createContext(c);vm.runInContext(['reportArchiveCurrent','reportArchivePayload','clearReportArchive','loadReportArchive','searchReportArchive','resetReportArchiveSearch','renderReportArchive','openReportArchive','closeReportArchive','reportArchiveKeydown','openReportArchiveEntry'].map(source).join('\n'),c);
+  vm.createContext(c);vm.runInContext(['reporterStatsNameAllowed','reporterStatsContextAllowed','reporterStatsElement','reportArchiveCurrent','reportArchivePayload','clearReportArchive','loadReportArchive','searchReportArchive','resetReportArchiveSearch','renderReportArchive','openReportArchive','closeReportArchive','reportArchiveKeydown','openReportArchiveEntry'].map(source).join('\n'),c);
   const flush=()=>new Promise(r=>setImmediate(r));
   return {c,nodes,calls,classes,owner,routes,Node,flush,timers};
 }
@@ -126,3 +126,10 @@ test('closed modal has no retained incremental cache or rows',async()=>{
   const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page([row('private')]));await f.flush();f.c.closeReportArchive();
   assert.equal(f.nodes.reportArchiveContent._reportArchiveView,null);assert.equal(f.nodes.reportArchiveContent.children.length,0);assert.equal(f.c.document.activeElement,f.owner);
 });
+
+test('archive reporter uses verified history id without nesting map control',async()=>{const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page([row('public-id',{reporter:'공개회원'})]));await f.flush();const item=f.nodes.reportArchiveContent.children[0],link=item.children[1].children[1];assert.equal(link.tagName,'BUTTON');assert.equal(link.dataset.reporter,'공개회원');assert.equal(link.dataset.reporterSource,'history');assert.equal(link.dataset.reporterReport,'public-id');assert.notEqual(item.children[0],link);});
+test('anonymous archive name stays plain text',async()=>{const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page([row('anonymous')]));await f.flush();const link=f.nodes.reportArchiveContent.children[0].children[1].children[1];assert.equal(link.tagName,'SPAN');assert.equal(link.className,undefined);assert.equal(link.textContent,'익명 제보');});
+
+test('unverified archive reporter has no statistics link',async()=>{const f=fixture();f.c.openReportArchive();f.calls[0].resolve(page([row('unverified',{reporter:'미검증이름',verified:false})]));await f.flush();const link=f.nodes.reportArchiveContent.children[0].children[1].children[1];assert.equal(link.tagName,'SPAN');assert.equal(link.className,undefined);});
+
+test('three synthetic linked aliases retain their own verified history witnesses',async()=>{const f=fixture(),aliases=['행복합니다','행복합니다김○○','행복합니다 김○○'];f.c.openReportArchive();f.calls[0].resolve(page(aliases.map((reporter,i)=>row('synthetic-alias-'+i,{reporter}))));await f.flush();const links=f.nodes.reportArchiveContent.children.map(item=>item.children[1].children[1]);assert.deepEqual(links.map(link=>link.dataset.reporter),aliases);assert.deepEqual(links.map(link=>link.dataset.reporterReport),aliases.map((_,i)=>'synthetic-alias-'+i));assert.ok(links.every(link=>link.dataset.reporterSource==='history'&&link.tagName==='BUTTON'));});
