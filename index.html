@@ -1508,9 +1508,10 @@ function renderReporterSpecies(){
  list.textContent='';var head=document.createElement('thead'),header=document.createElement('tr');
  ['과명','출현종','종수'].forEach(function(label){var th=document.createElement('th');th.scope='col';th.textContent=label;header.appendChild(th);});head.appendChild(header);list.appendChild(head);
  var body=document.createElement('tbody'),total=0;
- groups.forEach(function(group){var tr=document.createElement('tr');[group[0],group[1].join(', '),group[1].length+'종'].forEach(function(value){var td=document.createElement('td');td.textContent=value;tr.appendChild(td);});total+=group[1].length;body.appendChild(tr);});list.appendChild(body);
+ groups.forEach(function(group){var tr=document.createElement('tr');[group[0],group[1].join(', '),group[1].length+'종'].forEach(function(value){var td=document.createElement('td');if(tr.children.length===1){group[1].forEach(function(name,i){if(i)td.appendChild(document.createTextNode(', '));var span=document.createElement('span');span.className='reporterSpeciesName';span.textContent=name;td.appendChild(span);});}else td.textContent=value;tr.appendChild(td);});total+=group[1].length;body.appendChild(tr);});list.appendChild(body);
  var count=document.getElementById('reporterSpeciesCount');
  count.textContent=(q?'검색 결과 '+total+'종 / ':'')+'표시 '+reporterSpeciesData.species.length+'종';
+ if(q&&!total)count.textContent='검색 결과가 없습니다. (표시 '+reporterSpeciesData.species.length+'종)';
  if(reporterStatsData&&reporterStatsData.speciesCount!==reporterSpeciesData.species.length)count.textContent+=' · 공개 정책에 따라 전체 누적종수와 표시 종수가 다를 수 있습니다.';
 }
 function openReporterSpecies(query,request,generation){

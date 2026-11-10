@@ -224,11 +224,11 @@ try{
    await e("closeReporterStats(false);__mock.speciesBody=null;__mock.actions.length=0;buildReportSearchIndex(__mock.approved);renderRecentReports();await openReporterStats(recentReportsList.querySelector('.reporterStatsLink'));");
    const button=await e("!!document.getElementById('reporterSpeciesOpen')&&document.getElementById('reporterSpeciesOpen').textContent==='3종'");
    await e("document.getElementById('reporterSpeciesOpen').click();");await e("new Promise(r=>setTimeout(r,300))");
-   const s=await e("({opened:{...recentReportsList.querySelector('.reporterStatsLink').dataset},names:[...document.querySelectorAll('#reporterSpeciesList li')].map(x=>x.textContent),restricted:!!document.querySelector('#reporterSpeciesBox .reporterSpeciesNote:last-child')&&reporterSpeciesBox.textContent.includes('보호종'),req:__mock.actions.filter(a=>a.path==='/reports/reporter-species').map(a=>{const q=new URLSearchParams(a.search);return [q.get('reporter'),q.get('source'),q.get('reportId'),q.get('contract')];}).pop(),focus:document.activeElement.id,dialogW:reporterStatsModal.querySelector('.monthTideDialog').getBoundingClientRect().width,overflow:document.documentElement.scrollWidth>innerWidth,coords:/37|127|lat|lon/.test(reporterSpeciesBox.textContent)})");
+   const s=await e("({opened:{...recentReportsList.querySelector('.reporterStatsLink').dataset},names:[...document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName')].map(x=>x.textContent),restricted:!!document.querySelector('#reporterSpeciesBox .reporterSpeciesNote:last-child')&&reporterSpeciesBox.textContent.includes('보호종'),req:__mock.actions.filter(a=>a.path==='/reports/reporter-species').map(a=>{const q=new URLSearchParams(a.search);return [q.get('reporter'),q.get('source'),q.get('reportId'),q.get('contract')];}).pop(),focus:document.activeElement.id,dialogW:reporterStatsModal.querySelector('.monthTideDialog').getBoundingClientRect().width,overflow:document.documentElement.scrollWidth>innerWidth,coords:/37|127|lat|lon/.test(reporterSpeciesBox.textContent)})");
    await e("reporterSpeciesSearch.value='까';renderReporterSpecies();");
-   const searched=await e("[...document.querySelectorAll('#reporterSpeciesList li')].map(x=>x.textContent)");
+   const searched=await e("[...document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName')].map(x=>x.textContent)");
    await e("reporterSpeciesSearch.value='없는종';renderReporterSpecies();");
-   const none=await e("({items:document.querySelectorAll('#reporterSpeciesList li').length,text:reporterSpeciesCount.textContent})");
+   const none=await e("({items:document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName').length,text:reporterSpeciesCount.textContent})");
    const tab=await e("reporterSpeciesSearch.focus();reporterStatsModal.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true}));reporterStatsModal.contains(document.activeElement)");
    const pass=button&&s.names.join(',')==='가마우지,까치,참새'&&s.restricted&&s.req&&s.req[0]===s.opened.reporter&&s.req[1]==='history'&&s.req[2]===s.opened.reporterReport&&s.req[3]==='publication-v1'&&s.focus==='reporterSpeciesSearch'&&s.dialogW<=width&&!s.overflow&&!s.coords&&searched.join(',')==='까치'&&none.items===0&&none.text.includes('검색 결과가 없습니다')&&tab;
    return {pass,evidence:{button,...s,searched,none,tab}};
@@ -236,22 +236,22 @@ try{
   for(const [label,body] of [['duplicate',"{species:['까치','까치'],restricted:false}"],['extra-field',"{species:['까치'],restricted:false,lat:37}"],['bad-flag',"{species:['까치'],restricted:'no'}"],['control-char',"{species:['까\\u0007치'],restricted:false}"]]){
    await scenario(page,width,'species-bad-body-fail-closed-'+label,async e=>{
     await e("closeReporterStats(false);__mock.speciesBody="+body+";await openReporterStats(recentReportsList.querySelector('.reporterStatsLink'));document.getElementById('reporterSpeciesOpen').click();");await e("new Promise(r=>setTimeout(r,300))");
-    const s=await e("({items:document.querySelectorAll('#reporterSpeciesList li').length,data:reporterSpeciesData,text:reporterSpeciesBox.textContent})");
+    const s=await e("({items:document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName').length,data:reporterSpeciesData,text:reporterSpeciesBox.textContent})");
     await e("__mock.speciesBody=null;");
     return {pass:s.items===0&&s.data===null&&s.text.includes('확인할 수 없습니다')&&!s.text.includes('까치'),evidence:s};
    });
   }
   await scenario(page,width,'species-unavailable-no-list',async e=>{
    await e("closeReporterStats(false);__mock.speciesFail=true;await openReporterStats(recentReportsList.querySelector('.reporterStatsLink'));document.getElementById('reporterSpeciesOpen').click();");await e("new Promise(r=>setTimeout(r,300))");
-   const s=await e("({items:document.querySelectorAll('#reporterSpeciesList li').length,data:reporterSpeciesData})");await e("__mock.speciesFail=false;");
+   const s=await e("({items:document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName').length,data:reporterSpeciesData})");await e("__mock.speciesFail=false;");
    return {pass:s.items===0&&s.data===null,evidence:s};
   });
   await e(refresh);
   await scenario(page,width,'species-list-cleared-on-expiry',async e=>{
    await e("buildReportSearchIndex(__mock.approved);renderRecentReports();await openReporterStats(recentReportsList.querySelector('.reporterStatsLink'));document.getElementById('reporterSpeciesOpen').click();");await e("new Promise(r=>setTimeout(r,300))");
-   const before=await e("document.querySelectorAll('#reporterSpeciesList li').length");
+   const before=await e("document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName').length");
    await e("publicationState.until=Date.now()-1;publicationState.checkedMono=performance.now()-5001;publicationAllowed();");
-   const s=await e("({items:document.querySelectorAll('#reporterSpeciesList li').length,data:reporterSpeciesData,modal:reporterStatsModal.style.display,text:reporterStatsContent.textContent})");
+   const s=await e("({items:document.querySelectorAll('#reporterSpeciesList .reporterSpeciesName').length,data:reporterSpeciesData,modal:reporterStatsModal.style.display,text:reporterStatsContent.textContent})");
    return {pass:before===3&&s.items===0&&s.data===null&&s.modal==='none'&&s.text==='',evidence:{before,...s}};
   });
   // ── 이번 달 / 전체 기여자 ─────────────────────────────────────
