@@ -176,6 +176,7 @@ jobs:
           node docs/report-autopublish-20261108/cap-native.mjs "$PWD/.ci-toolchain/node_modules" "$PWD/reports-api" 24 3
           # 같은 날·같은 종·200 m 이내 동시 접수: 자동 공개 최대 1건(실제 D1 11개 시나리오, 약 23초)
           node docs/report-autopublish-20261108/duplicate-native.mjs "$PWD/.ci-toolchain/node_modules" "$PWD/reports-api"
+          node docs/issue84/isolated-d1.mjs "$PWD/.ci-toolchain/node_modules" .ci-results/issue84-isolated-d1.json
       - name: Prepare protective Pages rollback artifact
         run: node .github/scripts/package_protected_pages.mjs .ci-results/protected-pages
       - name: Upload protective standby artifact (no deployment)
@@ -199,5 +200,6 @@ jobs:
             .ci-results/issue28-chrome
             .ci-results/issue28-native
             .ci-results/island-pilot
+            .ci-results/issue84-isolated-d1.json
           retention-days: 14
           if-no-files-found: ignore
