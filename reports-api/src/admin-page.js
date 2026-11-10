@@ -114,7 +114,7 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <input id="speciesQuery" placeholder="종명으로 이력 검색" style="max-width:190px;min-height:36px">
   <button type="button" id="speciesSearchBtn">종별 이력</button>
 </nav>
-<main>
+<details style="margin:12px 16px"><summary>동일인 후보·확인 관리 (관리자 검토)</summary><button type="button" id="identityLoad">후보와 확인 이력 조회</button><div id="identityReviewRows"></div><label for="identityIds">확인할 제보 ID (최대 200개, 원문은 수정하지 않음)</label><textarea id="identityIds"></textarea><label for="identityReason">확인·해제 근거</label><input id="identityReason" maxlength="500"><label><input type="checkbox" id="identityConfirmed" style="width:auto"> 선택한 모든 제보가 동일인임을 확인했습니다</label><button type="button" id="identityConfirm">선택 ID 집합 확인</button><p id="identityMessage" role="status"></p></details><main>
   <div id="list"><div class="empty">불러오는 중입니다.</div></div>
   <div id="map"></div>
 </main>
@@ -699,6 +699,17 @@ document.getElementById('usageTab').addEventListener('click',async function(){
     document.getElementById('usageBody').innerHTML='<div class="empty">'+esc(error.message)+'</div>';
   }
 });
+
+
+// Administrator-only identity review. No candidate performs a write automatically.
+async function identityRequest(path,body){var r=await fetch('/admin/api/reporter-identities'+path,{method:body?'POST':'GET',cache:'no-store',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});var d=await r.json();if(!r.ok||!d.ok)throw Error(d.error&&d.error.message||'동일인 정보를 확인할 수 없습니다.');return d;}
+async function loadIdentityReview(){var out=document.getElementById('identityReviewRows');out.textContent='불러오는 중입니다.';try{var groupData=await identityRequest(''),candidateData;try{candidateData=await identityRequest('/candidates');}catch(e){candidateData={candidates:[],error:e.message};}out.textContent='';var msg=document.createElement('p');msg.textContent='후보는 동일인 확정이 아닙니다. 원문·본인 확인 후 제보 ID만 선택하세요. 기존 그룹 확대·수정은 해제 후 수정된 전체 ID 집합으로 재확인합니다.';out.appendChild(msg);if(candidateData.error){var warn=document.createElement('p');warn.textContent=candidateData.error;out.appendChild(warn);}
+function entry(text,ids,groupId,conflict){var box=document.createElement('div');box.className='card';var label=document.createElement('p');label.textContent=text;box.appendChild(label);if(ids){var fill=document.createElement('button');fill.type='button';fill.textContent='검토할 ID 채우기';fill.disabled=!!conflict;fill.onclick=function(){document.getElementById('identityIds').value=ids.join('\\n');document.getElementById('identityConfirmed').checked=false;};box.appendChild(fill);}if(groupId){var revoke=document.createElement('button');revoke.type='button';revoke.textContent='이 그룹 확인 해제';revoke.onclick=async function(){try{var reason=document.getElementById('identityReason').value;if(!reason.trim())throw Error('해제 근거를 입력하세요.');if(!window.confirm('확인 그룹을 해제할까요? 기존 제보 원문은 보존됩니다.'))return;await identityRequest('',{action:'revoke',groupId:groupId,reason:reason});await loadIdentityReview();}catch(e){document.getElementById('identityMessage').textContent=e.message;}};box.appendChild(revoke);}out.appendChild(box);}
+(groupData.groups||[]).forEach(function(g){entry((g.active?'확인 그룹 ':'해제 이력 ')+g.id+' · '+g.evidence+' · '+g.created_at,JSON.parse(g.report_ids),g.active?g.id:null,false);});
+candidateData.candidates.forEach(function(c){entry((c.conflict?'충돌: 여러 그룹 — 연결 금지 · ':'검토 후보 · ')+c.reason+' · '+c.reports.map(function(r){return r.id+' / '+r.reporter+' / '+r.status+' / '+(r.namePublic?'이름 공개 동의':'이름 비공개');}).join(' | ')+(c.groupIds.length?' · 기존 그룹 '+c.groupIds.join(', '):''),c.reportIds,null,c.conflict);});var history=document.createElement('p');history.textContent='최근 확인·해제 이벤트 '+(groupData.events||[]).length+'건 (기존 이력 보존)';out.appendChild(history);
+}catch(e){out.textContent=e.message;}}
+document.getElementById('identityLoad').onclick=loadIdentityReview;
+document.getElementById('identityConfirm').onclick=async function(){var message=document.getElementById('identityMessage');try{if(!document.getElementById('identityConfirmed').checked)throw Error('관리자 동일인 확인이 필요합니다.');var ids=document.getElementById('identityIds').value.split(/[\\s,]+/).filter(Boolean);await identityRequest('',{action:'confirm',reportIds:ids,reason:document.getElementById('identityReason').value,confirmedSamePerson:true});document.getElementById('identityConfirmed').checked=false;message.textContent='확인 기록을 저장했습니다.';await loadIdentityReview();}catch(e){message.textContent=e.message;}};
 
 load();
 </script>

@@ -1,3 +1,4 @@
+import {readIdentityCandidates} from './reporter-candidates.js';
 import {identityEnabled,confirmedIdentityAction,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 import { strictWriterDb } from './writer-fence.js';
 // 관리자 승인 Worker. 이 Worker 의 workers.dev 주소에는 Cloudflare Access 를 건다.
@@ -182,6 +183,10 @@ export async function handleRequest(request, env) {
     }
     if (request.method === "GET" && url.pathname === "/admin/api/usage") {
       return jsonResponse(request, env, await adminUsage({ EVENTS_DB: env.EVENTS_DB, REPORTS_DB: database(env) }), 200, { "Cache-Control": "no-store" });
+    }
+    if(request.method==='GET' && url.pathname==='/admin/api/reporter-identities/candidates' && identityEnabled(env)) {
+      const db=database(env);checkIdentityGuards(await identityGuardStatement(db).all());
+      return jsonResponse(request,env,await readIdentityCandidates(db),200,{'Cache-Control':'no-store'});
     }
     if(request.method==='GET' && url.pathname==='/admin/api/reporter-identities' && identityEnabled(env)) {
       const db=database(env);
