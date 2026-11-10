@@ -1,3 +1,4 @@
+import {reporterNameSql,reporterKeySql,identityEnabled,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 // 관리자 전용 출현종 제보 통계. GET /admin/api/stats (Access 인증 뒤에서만 불린다).
 // 읽기 전용 SELECT 만 쓴다. 좌표·ip_hash·dedupe_hash·admin_note 는 어떤 응답에도 넣지 않는다.
 //
@@ -9,7 +10,7 @@
 // - 종명: 신규 구조화 제보는 정본 sightings 의 식별 국명(수량 제외, 예: 동박새3·동박새5 → 동박새 1종)으로 센다.
 //   식별 국명이 없는 과거 승인 자료는 공식 2025 국명과 정확히 일치하는 수량 접미사만 읽기 단계에서 분리한다.
 // - 개체수: 구조화 자료(single)·공식 국명 확인된 과거 승인 자료의 입력 개체수만 더한다. 미입력·같은 종 중복·불확실은 더하지 않는다.
-// - 제보자: reporter 저장값이 정확히 같은 것끼리만 묶는다. 비었거나 공백뿐이면 '(이름 미입력)' 한 줄.
+// - 제보자: 기본은 reporter 정확 일치. 확인 기능 ON일 때 명시한 제보 ID만 최초 닉네임으로 묶는다. 비었거나 공백뿐이면 '(이름 미입력)' 한 줄.
 // - 지역: 관리자가 연결한 site_id 만. 없으면 '미연결 지역'. 좌표로 추정하지 않는다.
 import { WorkerError, legacySpeciesItems } from "./shared.js";
 
@@ -24,19 +25,23 @@ function invalid(message) {
   throw new WorkerError("STATS_FILTER_INVALID", message, 400);
 }
 
-function text(url, key) {
+function text(url, key, max = 100) {
   const value = url.searchParams.get(key);
   if (value === null || value === "") return null;
-  if (value.length > 100) invalid("검색어가 너무 깁니다.");
+  if (value.length > max) invalid("검색어가 너무 깁니다.");
   return value;
 }
 
 export function parseStatsQuery(url) {
+  for (const key of ['view', 'species', 'reporter', 'reporterKey', 'noReporter', 'siteId', 'noSite', 'status', 'from', 'to', 'year', 'month']) {
+    if (url.searchParams.getAll(key).length > 1) invalid("같은 필터를 중복 지정할 수 없습니다.");
+  }
   const view = url.searchParams.get("view") || "summary";
   if (!VIEWS.includes(view)) invalid("알 수 없는 통계 종류입니다.");
   const f = {
     species: text(url, "species")?.trim() || null,
     reporter: text(url, "reporter"), // 저장값과 정확히 비교하므로 다듬지 않는다.
+    reporterKey: text(url, "reporterKey", 105), // name: 접두사와 최대 100자 이름.
     noReporter: url.searchParams.get("noReporter") === "1",
     siteId: text(url, "siteId"),
     noSite: url.searchParams.get("noSite") === "1",
@@ -46,6 +51,8 @@ export function parseStatsQuery(url) {
     year: text(url, "year"),
     month: text(url, "month"),
   };
+  if (url.searchParams.has('reporterKey') && (!f.reporterKey || f.reporter === null)) invalid("제보자와 그룹 식별값이 함께 필요합니다.");
+  if (f.noReporter && (f.reporter !== null || f.reporterKey !== null)) invalid("제보자 필터가 충돌합니다.");
   if (f.siteId && !SITE_ID.test(f.siteId)) invalid("탐조지 ID 형식이 아닙니다.");
   if (f.status && !STATUSES.includes(f.status)) invalid("상태 값이 올바르지 않습니다.");
   if (f.from && !DATE.test(f.from)) invalid("시작일 형식은 YYYY-MM-DD 입니다.");
@@ -53,6 +60,25 @@ export function parseStatsQuery(url) {
   if (f.year && !/^\d{4}$/.test(f.year)) invalid("연도 형식은 YYYY 입니다.");
   if (f.month && !/^(0[1-9]|1[0-2])$/.test(f.month)) invalid("월 형식은 01~12 입니다.");
   return { view, filters: f };
+}
+
+// 다른 필터로 동명 충돌을 숨기지 않는다. 클라이언트의 키는 권한/멤버십 근거가
+// 아니며, 현재 서버가 계산한 이름·키 쌍과 일치해야 한다. 이름만 온 구형 요청도
+// 유일한 키로 고정해 이후 SELECT에서 동명 신규 제보가 다른 그룹에 섞이지 않게 한다.
+async function validateReporterFilter(db, filters, env) {
+  if (filters.reporter === null || (!identityEnabled(env) && filters.reporterKey === null)) return;
+  const rows = (await db.prepare(`SELECT DISTINCT ${reporterKeySql(env, 'reports', false)} AS reporter_key
+    FROM reports WHERE TRIM(IFNULL(reporter, '')) <> '' AND ${reporterNameSql(env, 'reports', false)} = ?1`)
+    .bind(filters.reporter).all()).results || [];
+  if (filters.reporterKey !== null) {
+    if (!rows.some(r => r.reporter_key === filters.reporterKey)) {
+      throw new WorkerError('STATS_REPORTER_NOT_FOUND', '제보자 그룹을 다시 선택해 주세요.', 404);
+    }
+  } else {
+    if (rows.length > 1) invalid("같은 이름의 그룹이 여럿입니다. 제보자 목록에서 선택해 주세요.");
+    if (rows.length === 0) throw new WorkerError('STATS_REPORTER_NOT_FOUND', '제보자 그룹을 다시 선택해 주세요.', 404);
+    filters.reporterKey = rows[0].reporter_key;
+  }
 }
 
 // KST 오늘을 포함한 days 일(오늘-(days-1)일 00:00 KST)의 시작 시각을 UTC ISO 로 돌려준다.
@@ -65,11 +91,12 @@ export function recentCutoff(now = new Date(), days = 30) {
 // 공통 CTE.
 //   f: 필터에 맞는 제보(모든 상태)   x: f 를 종 단위로 펼친 행(id 당 종 수만큼)
 // 생태 조건 eco 는 상태 필터가 없으면 approved, 있으면 f 가 이미 그 상태만이라 1.
-function base(filters, structured = false, legacy = []) {
+function base(filters, structured = false, legacy = [], env={}) {
   const where = [], params = [JSON.stringify(legacy)];
   const add = (sql, value) => { params.push(value); where.push(sql.replaceAll('?', '?' + params.length)); };
   if (filters.noReporter) where.push("TRIM(IFNULL(reporter, '')) = ''");
-  else if (filters.reporter !== null) add('reporter = ?', filters.reporter);
+  else if (filters.reporter !== null) add(reporterNameSql(env,'reports',false)+' = ?', filters.reporter);
+  if (filters.reporterKey !== null) add(reporterKeySql(env,'reports',false)+' = ?', filters.reporterKey);
   if (filters.noSite) where.push('site_id IS NULL');
   else if (filters.siteId) add('site_id = ?', filters.siteId);
   if (filters.status) add('status = ?', filters.status);
@@ -83,7 +110,8 @@ function base(filters, structured = false, legacy = []) {
   const cte = `WITH RECURSIVE
   legacy AS (SELECT json_extract(value,'$.raw') AS raw, json_extract(value,'$.items') AS items FROM json_each(?1)),
   f0 AS (SELECT id, status, species, observed_on, received_at, site_id,
-               CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE reporter END AS who
+               CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE ${reporterNameSql(env,'reports',false)} END AS who,
+               CASE WHEN TRIM(IFNULL(reporter, '')) = '' THEN NULL ELSE ${reporterKeySql(env,'reports',false)} END AS who_key
           FROM reports${where.length ? ' WHERE ' + where.join(' AND ') : ''}),
   cut(id, rest, sp) AS (
     SELECT id, species || '${SEP}', NULL FROM f0
@@ -113,31 +141,31 @@ function viewSql(view, eco) {
     case "species":
       return `SELECT sp AS species, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
                      MIN(observed_on) AS first_observed, MAX(observed_on) AS last_observed,
-                     COUNT(DISTINCT site_id) AS sites, COUNT(DISTINCT who) AS reporters, SUM(individuals) AS individuals
+                     COUNT(DISTINCT site_id) AS sites, COUNT(DISTINCT who_key) AS reporters, SUM(individuals) AS individuals
                 FROM x WHERE ${eco} AND sp IS NOT NULL
                GROUP BY sp ORDER BY total DESC, sp`;
     case "sites":
       return `SELECT x.site_id, st.site_name, COUNT(DISTINCT x.id) AS total, COUNT(DISTINCT x.sp) AS species,
-                     MAX(x.observed_on) AS last_observed, COUNT(DISTINCT x.who) AS reporters
+                     MAX(x.observed_on) AS last_observed, COUNT(DISTINCT x.who_key) AS reporters
                 FROM x LEFT JOIN sites st ON st.site_id = x.site_id
                WHERE ${eco}
                GROUP BY x.site_id ORDER BY x.site_id IS NULL, total DESC, st.site_name`;
     case "reporters":
-      return `SELECT who AS reporter, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
+      return `SELECT who AS reporter, who_key AS reporter_key, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
                      COUNT(DISTINCT CASE WHEN status = 'rejected' THEN id END) AS rejected,
                      COUNT(DISTINCT CASE WHEN status = 'pending' THEN id END) AS pending,
                      COUNT(DISTINCT CASE WHEN ${eco} THEN sp END) AS species,
                      COUNT(DISTINCT CASE WHEN ${eco} THEN site_id END) AS sites,
                      SUM(CASE WHEN ${eco} THEN individuals END) AS individuals,
                      MAX(observed_on) AS last_observed
-                FROM x GROUP BY who ORDER BY who IS NULL, total DESC, who`;
+                FROM x GROUP BY who_key,who ORDER BY who IS NULL, total DESC, who`;
     case "monthly":
       return `SELECT substr(observed_on, 1, 7) AS month, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
-                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who) AS reporters
+                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who_key) AS reporters
                 FROM x WHERE ${eco} GROUP BY month ORDER BY month DESC`;
     case "yearly":
       return `SELECT substr(observed_on, 1, 4) AS year, COUNT(DISTINCT id) AS total,
-                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who) AS reporters, COUNT(DISTINCT site_id) AS sites
+                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who_key) AS reporters, COUNT(DISTINCT site_id) AS sites
                 FROM x WHERE ${eco} GROUP BY year ORDER BY year DESC`;
     case "list":
       // 관리자 카드와 잇기 위한 id 만 추가로 준다. 좌표·메모·해시는 고르지 않는다.
@@ -148,13 +176,15 @@ function viewSql(view, eco) {
   return null;
 }
 
-export async function adminStats(db, url, now = new Date()) {
+export async function adminStats(db, url, now = new Date(), env={}) {
+  if(identityEnabled(env)) checkIdentityGuards(await identityGuardStatement(db).all());
   const { view, filters } = parseStatsQuery(url);
+  await validateReporterFilter(db, filters, env);
   const structured = !!(await db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' AND name = 'sightings'").first());
   // 원본·정본 쓰기 없이 공식 국명과 정확히 일치하는 과거 승인 자료만 해석한다.
   const legacyRows = (await db.prepare(`SELECT DISTINCT species FROM reports WHERE status = 'approved'${structured ? ' AND NOT EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified IS NOT NULL)' : ''}`).all()).results || [];
   const legacy = legacyRows.map(r => ({ raw: r.species, items: legacySpeciesItems(r.species) }));
-  const { cte, params, eco } = base(filters, structured, legacy);
+  const { cte, params, eco } = base(filters, structured, legacy, env);
   const cutoff = "?" + (params.length + 1);
   const summarySql = `${cte}
     SELECT (SELECT COUNT(*) FROM f) AS total,
@@ -164,7 +194,7 @@ export async function adminStats(db, url, now = new Date()) {
            (SELECT COUNT(DISTINCT sp) FROM x WHERE ${eco} AND sp IS NOT NULL) AS species,
            (SELECT SUM(individuals) FROM x WHERE ${eco}) AS individuals,
            (SELECT COUNT(DISTINCT id) FROM x WHERE ${eco} AND individuals IS NOT NULL) AS counted_reports,
-           (SELECT COUNT(DISTINCT who) FROM f) AS reporters,
+           (SELECT COUNT(DISTINCT who_key) FROM f) AS reporters,
            (SELECT COUNT(*) FROM f WHERE who IS NULL) AS anonymous_reports,
            (SELECT COUNT(*) FROM f WHERE received_at >= ${cutoff}) AS recent30`;
   const run = (sql, values) => db.prepare(sql).bind(...values).all().then((r) => r.results || []);

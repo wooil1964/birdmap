@@ -5,7 +5,7 @@
 // 상태값은 새로 만들지 않는다: pending + pending_public=1 + reviews(submitted, system:auto-public, auto_public:<정책>)
 // 세 가지를 모두 갖추고, 읽는 시점에 아래 판정을 다시 통과해야만 공개된다.
 import { identifyBird } from './bird-names.js';
-import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, publicSightingsOf, identifiedSpeciesSql } from './shared.js';
+import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, publicSightingsOf, identifiedSpeciesSql, splitOfficialSpecies } from './shared.js';
 
 export const AUTO_PUBLIC_POLICY = 'auto-public-v1';
 export const AUTO_PUBLIC_ACTOR = 'system:auto-public';
@@ -44,7 +44,7 @@ export function speciesKey(token) { const name = speciesName(token); return iden
 // 저장·접수와 무관하게 내용만으로 판정한다(읽을 때 다시 쓰는 부분).
 export function contentReasons(report) {
   const reasons = new Set();
-  const tokens = (report.species || []).map(t => String(t || '').normalize('NFC').trim()).filter(Boolean);
+  const tokens = (report.species || []).flatMap(token=>splitOfficialSpecies(token)||[token]).map(t => String(t || '').normalize('NFC').trim()).filter(Boolean);
   if (hasBreedingEvidence({ note: report.note, speciesText: report.speciesText || tokens.join(' · ') })) reasons.add('breeding');
   if (!tokens.length || tokens.length > MAX_SPECIES) reasons.add('name_unconfirmed');
   // 종명·개체수를 확실히 나눌 수 없거나(꼴 불일치), 같은 종이 두 번이거나, 양식 개체수와 다르면 보류.

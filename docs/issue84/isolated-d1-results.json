@@ -1,0 +1,112 @@
+{
+  "scope": "Node Worker handlers + local Miniflare/workerd D1; synthetic fixtures only; no production access",
+  "head": "7aef53e82ec6b460bfd7858f8ba4871d74d2b167",
+  "node": "v24.18.0",
+  "miniflare": "5.20261006.1-alpha",
+  "startedAt": "2026-11-10T02:16:17.978Z",
+  "checks": [
+    {
+      "name": "canonical submit/approval seeds raw and canonical data without production dependencies",
+      "result": "PASS"
+    },
+    {
+      "name": "preconditions: publication state, empty claim, all existing writer guards present",
+      "result": "PASS"
+    },
+    {
+      "name": "default OFF works before migration; identity route disabled and ON fails closed",
+      "result": "PASS"
+    },
+    {
+      "name": "0007 creates exactly two tables/eight triggers and preserves every old definition/row/revision",
+      "result": "PASS"
+    },
+    {
+      "name": "repeat application is rejected atomically; schema and data unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "migration interrupted inside batch rolls back all new DDL; clean retry works",
+      "result": "PASS"
+    },
+    {
+      "name": "historical schema plus actual 0004b/0005/0006/0007 migration chain stays frozen until explicit local thaw",
+      "result": "PASS"
+    },
+    {
+      "name": "missing prerequisite schema cannot enable feature; migration itself is not a preflight validator",
+      "result": "PASS"
+    },
+    {
+      "name": "raw old-writer mutations and direct identity event insertion require a claim",
+      "result": "PASS"
+    },
+    {
+      "name": "ON requires publication contract; missing writer guard and orphan claim fail closed without automatic repair",
+      "result": "PASS"
+    },
+    {
+      "name": "authenticated ON confirmation links only selected IDs; original/canonical data unchanged; revision advances once",
+      "result": "PASS"
+    },
+    {
+      "name": "admin same-name groups drill down independently; forged/ambiguous keys rejected; authenticated only",
+      "result": "PASS"
+    },
+    {
+      "name": "new same-name submission never auto-joins confirmed IDs; ambiguous public name fails closed",
+      "result": "PASS"
+    },
+    {
+      "name": "actual new canonical same-name POST and approval remain outside confirmed group",
+      "result": "PASS"
+    },
+    {
+      "name": "invalid/missing/duplicate/anonymous/overlapping IDs fail with no partial group/event/revision/claim",
+      "result": "PASS"
+    },
+    {
+      "name": "protected species, exact location, private nickname and audit evidence absent from public DTOs",
+      "result": "PASS"
+    },
+    {
+      "name": "nonrepresentative consent withdrawal excludes only that row and invalidates old revision",
+      "result": "PASS"
+    },
+    {
+      "name": "consent withdrawal, approval cancellation, deletion advance revision and reject old responses",
+      "result": "PASS"
+    },
+    {
+      "name": "freeze rejects confirm/revoke; thaw restores service; no claim left behind",
+      "result": "PASS"
+    },
+    {
+      "name": "late transaction fault rolls back group/event/revision and claim; retry succeeds",
+      "result": "PASS"
+    },
+    {
+      "name": "OFF restores exact original-name aggregation; revoke invalidates old revision and keeps audit history",
+      "result": "PASS"
+    },
+    {
+      "name": "each missing identity trigger fails closed on primary read; restore recovers; existing guards unchanged",
+      "result": "PASS"
+    },
+    {
+      "name": "recovery preserves every unrelated canonical/raw row and all surviving report values exactly",
+      "result": "PASS"
+    }
+  ],
+  "observations": [
+    "0007 DDL can create deferred-reference triggers on an empty database. Required preflight must separately verify reports/publication state/writer guards; applying DDL alone does not prove readiness."
+  ],
+  "beforeMigrationHash": "deb5cdd891f7fb79999dce83c359ba77760e3fb440f0444b336e59e7536d1bd3",
+  "afterMigrationHash": "deb5cdd891f7fb79999dce83c359ba77760e3fb440f0444b336e59e7536d1bd3",
+  "identityConfirmationOriginalDataHash": "585721a5459dc138449f5c6eede2b6624ce01b093f66b18d9664b6076dfde97a",
+  "beforeRecoveryCanonicalHash": "a26fb75ef249df5bb0fca97eff281622bc2857915da3a286b5e5c28432a2c803",
+  "afterRecoveryCanonicalHash": "a26fb75ef249df5bb0fca97eff281622bc2857915da3a286b5e5c28432a2c803",
+  "survivingReportsHash": "d22093c7f0fa6e0c74aba9123358915796d9d4df8555acc7a26ccd1d007938b9",
+  "status": "PASS",
+  "finishedAt": "2026-11-10T02:16:30.233Z"
+}

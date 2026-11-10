@@ -1,3 +1,4 @@
+import {identityEnabled,confirmedIdentityAction,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 import { strictWriterDb } from './writer-fence.js';
 // 관리자 승인 Worker. 이 Worker 의 workers.dev 주소에는 Cloudflare Access 를 건다.
 // Access 가 앞에서 로그인을 강제하고, 여기서 Access JWT 를 한 번 더 검증한다.
@@ -6,6 +7,7 @@ import { strictWriterDb } from './writer-fence.js';
 import {
   WorkerError,
   unconfirmedSpeciesOf,
+  speciesNamesOf,
   errorResponse,
   jsonResponse,
   parseAdminEmails,
@@ -76,15 +78,12 @@ async function listReports(request, env, url) {
 
   // 종별 이력: 이어 붙인 문자열에서 구분자를 포함해 정확히 한 종만 고른다.
   if (species) {
-    const { results } = await db
-      .prepare(
-        `SELECT ${selection} FROM reports
-          WHERE (' · ' || species || ' · ') LIKE ('% · ' || ?1 || ' · %')
-          ORDER BY observed_on DESC, received_at DESC`,
-      )
-      .bind(species)
-      .all();
-    return jsonResponse(request, env, { ok: true, reports: withDisplay(results) });
+    const {results}=await db.prepare(`SELECT ${selection} FROM reports ORDER BY observed_on DESC,received_at DESC`).all();
+    const rows=withDisplay(results).filter(row=>{
+      let sightings=[];try{sightings=JSON.parse(row.sightings_json||'[]');}catch{}
+      return speciesNamesOf({...row,identified_species:JSON.stringify(sightings.map(s=>s.name).filter(Boolean))}).includes(species);
+    });
+    return jsonResponse(request,env,{ok:true,reports:rows});
   }
 
   // 지점별 이력: 그 지점에 붙은 제보와 지점 자신을 함께 본다.
@@ -179,10 +178,24 @@ export async function handleRequest(request, env) {
       return await listReports(request, env, url);
     }
     if (request.method === "GET" && url.pathname === "/admin/api/stats") {
-      return jsonResponse(request, env, await adminStats(database(env), url), 200, { "Cache-Control": "no-store" });
+      return jsonResponse(request, env, await adminStats(database(env), url, new Date(), env), 200, { "Cache-Control": "no-store" });
     }
     if (request.method === "GET" && url.pathname === "/admin/api/usage") {
       return jsonResponse(request, env, await adminUsage({ EVENTS_DB: env.EVENTS_DB, REPORTS_DB: database(env) }), 200, { "Cache-Control": "no-store" });
+    }
+    if(request.method==='GET' && url.pathname==='/admin/api/reporter-identities' && identityEnabled(env)) {
+      const db=database(env);
+      const sets=await db.batch([identityGuardStatement(db),
+        db.prepare('SELECT * FROM reporter_identity_groups ORDER BY created_at DESC LIMIT 200'),
+        db.prepare('SELECT * FROM reporter_identity_events ORDER BY event_id DESC LIMIT 400')]);
+      checkIdentityGuards(sets[0]);
+      return jsonResponse(request,env,{ok:true,groups:sets[1].results,events:sets[2].results,limit:200});
+    }
+    if(request.method==='POST' && url.pathname==='/admin/api/reporter-identities' && identityEnabled(env)) {
+      await assertWriteGate(env,'admin');
+      const db=database(env);
+      checkIdentityGuards(await identityGuardStatement(db).all());
+      return jsonResponse(request,env,await confirmedIdentityAction(db,await readJson(request),admin.email));
     }
     // Cutover-window operator steps. Off unless the deploy explicitly sets REPORTS_OPS_ENABLED.
     const ops = /^\/admin\/api\/ops\/(seed|backfill)$/.exec(url.pathname);

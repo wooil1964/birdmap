@@ -137,10 +137,41 @@ const SPECIES_PATTERN = /^[가-힣ㄱ-ㅎㅏ-ㅣA-Za-z0-9()'. -]+$/;
 // 꺾쇠는 출력 단계에서 이스케이프하지만, 입력 단계에서도 함께 막는다(다중 방어).
 const MARKUP_PATTERN = /[<>]/;
 
+
+// A complete, unique parse of official Korean names only. Never split English/scientific
+// names or salvage a prefix of an unknown token. Whitespace is required between birds.
+export function splitOfficialSpecies(raw) {
+  const text = String(raw ?? '').normalize('NFC').trim();
+  if (!text || text.length > 1000) return null;
+  const memo = new Map();
+  function paths(at) {
+    if (at === text.length) return [[]];
+    if (memo.has(at)) return memo.get(at);
+    const found = [];
+    for (const name of OFFICIAL_BIRD_NAMES) {
+      if (!text.startsWith(name, at)) continue;
+      const tail = text.slice(at + name.length);
+      const quantity = /^(?:\s*([1-9][0-9]{0,5})(?:\s*(?:마리|개체))?)?/.exec(tail)[0];
+      if (quantity && Number(/\d+/.exec(quantity)?.[0]) > MAX_BIRD_COUNT) continue;
+      const end = at + name.length + quantity.length;
+      if (end < text.length && !/\s/.test(text[end])) continue;
+      const next = end + (/^\s*/.exec(text.slice(end))[0].length);
+      for (const rest of paths(next)) {
+        found.push([text.slice(at, end).trim(), ...rest]);
+        if (found.length > 1) { memo.set(at, found); return found; }
+      }
+    }
+    memo.set(at, found); return found;
+  }
+  const result = paths(0);
+  return result.length === 1 ? result[0] : null;
+}
+
 export function normalizeSpecies(raw) {
   // 줄바꿈은 제어문자로 지워지기 전에 구분자로 먼저 쓴다(그러지 않으면 앞뒤 종명이 붙어 버린다).
   const tokens = String(raw ?? "")
     .split(/[,;·\r\n]+/)
+    .flatMap((part) => splitOfficialSpecies(part) || [part])
     .map((part) => stripControl(part))
     .filter(Boolean);
   if (!tokens.length) {
@@ -162,7 +193,8 @@ export function normalizeSpecies(raw) {
         400,
       );
     }
-    if (!seen.includes(token)) seen.push(token);
+    // Repeated quantities must reach the ambiguity guard instead of being silently lost.
+    if (!seen.includes(token) || /[0-9]/.test(token)) seen.push(token);
   }
   return seen;
 }
@@ -346,8 +378,19 @@ export function reportBreedingStatus(row) {
   if (hasBreedingEvidence(row) || hasBreedingEvidence(input)) return 'breeding';
   if (row.non_breeding_confirmed !== 1 || input?.non_breeding_confirmed !== true) return 'unknown';
   try {
-    const original = validateReport({...input, birdCount:null});
-    if (original.speciesText === row.species && original.lat === row.lat && original.lon === row.lon &&
+    // Before whitespace splitting, the saved species text used delimiter-only normalization.
+    // Accept that exact old representation, never a taxonomic/approximate equivalence.
+    const oldTokens = String(input.species ?? '').split(/[,;·\r\n]+/).map(part=>stripControl(part)).filter(Boolean);
+    const oldText = oldTokens.length > 0 && oldTokens.length <= MAX_SPECIES && oldTokens.every(token=>token.length<=MAX_SPECIES_LENGTH && SPECIES_PATTERN.test(token))
+      ? [...new Set(oldTokens)].join(' · ') : null;
+    let original;
+    try { original = validateReport({...input, birdCount:null}); } catch {
+      if (oldText !== row.species) return 'unknown';
+      // The original species spelling was validated by the old rules above. Validate
+      // every remaining immutable field even when new token limits reject that old text.
+      original = validateReport({...input, species:'까치', birdCount:null});
+    }
+    if ((original.speciesText === row.species || (oldText !== null && oldText === row.species)) && original.lat === row.lat && original.lon === row.lon &&
         original.observedOn === row.observed_on && original.note === (row.note ?? null)) return 'non_breeding';
   } catch {}
   return 'unknown';
@@ -369,7 +412,7 @@ export function isSensitiveReport(report) {
   if (hasBreedingEvidence(report)) return true;
   // 과거 저장 자료에는 구분자(슬래시·줄바꿈 등)가 남아 있을 수 있어 읽기 판정에서도 다시 나눈다.
   const names = report?.species || [];
-  return names.some((name) => String(name).split(PROTECTION_SPLIT).some(isProtectedSpeciesToken));
+  return names.some((name) => String(name).split(PROTECTION_SPLIT).flatMap(token => splitOfficialSpecies(token) || [token]).some(isProtectedSpeciesToken));
 }
 
 // 승인 전 제보는 공개하지 않는다. 과거 pending_public/approx_* 값도 공개 허가가 아니다.
@@ -387,7 +430,7 @@ const SPECIES_ITEM = /^([가-힣]{1,30}|[A-Za-z][A-Za-z'.-]*(?: [A-Za-z'.-]+){0,
 export function parseSpeciesItems(tokens) {
   const items = [];
   let clean = (tokens || []).length > 0;
-  for (const raw of tokens || []) {
+  for (const raw of (tokens || []).flatMap(token => splitOfficialSpecies(token) || [token])) {
     const original = String(raw || '').normalize('NFC').trim();
     const m = SPECIES_ITEM.exec(original.replace(/\s+/g, ' ')); // 원문(original)은 그대로 두고 비교만 공백을 정리한다
     const count = m && m[2] !== undefined ? Number(m[2]) : null;
@@ -416,7 +459,7 @@ export function sightingValues(parsed, birdCount) {
 // 기존 자료는 공식 국명 전체가 맞는 경우만 읽기 단계에서 해석한다. 원문·정본 DB는 수정하지 않는다.
 const officialBirdNames = new Set(OFFICIAL_BIRD_NAMES);
 export function legacySpeciesItems(text) {
-  const tokens = String(text || '').split(/[·,;\n/]+/).map(s => s.trim()).filter(Boolean);
+  const tokens = String(text || '').split(/[·,;\r\n/]+/).flatMap(token => splitOfficialSpecies(token) || [token]).map(s => s.trim()).filter(Boolean);
   const items = tokens.map(token => {
     const parsed = parseSpeciesItems([token]);
     const item = parsed.items[0];

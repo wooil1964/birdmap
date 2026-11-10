@@ -1,3 +1,4 @@
+import {identityEnabled,reporterNameSql,reporterKeySql,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
 import {WorkerError,jsonResponse,publicPayload,splitSpecies,speciesNamesOf,identifiedSpeciesSql,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
@@ -102,13 +103,22 @@ export function reporterLifetimeCounts(rows) {
 }
 const REPORTER_ELIGIBLE="status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND reporter=?1 COLLATE BINARY";
 // Same witness for both nickname statistics: a public projection that already shows this name.
-function reporterWitness(input) {
+function reporterWitness(input,env={}) {
+ if(identityEnabled(env)) {
+  const eligible="status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>''";
+  const key=reporterKeySql(env),name=reporterNameSql(env);
+  const match=input.source==='history'?`id=?2 AND (reporter=?1 COLLATE BINARY OR ${name}=?1 COLLATE BINARY)`:input.source==='monthly'?`${name}=?1 COLLATE BINARY AND observed_on>=?2 AND observed_on<?3`:`${name}=?1 COLLATE BINARY`;
+  const params=input.source==='history'?[input.reporter,input.reportId]:input.source==='monthly'?[input.reporter,input.start,input.end]:[input.reporter];
+  // Ambiguous public labels (two distinct identities) never guess a person.
+  return {where:`${eligible} AND ${key}=(SELECT MIN(${key}) FROM reports WHERE ${eligible} AND ${match} HAVING COUNT(DISTINCT ${key})=1)`,params};
+ }
+
  const witness=input.source==='history'?`id=?2 AND ${REPORTER_ELIGIBLE}`:input.source==='monthly'?`${REPORTER_ELIGIBLE} AND observed_on>=?2 AND observed_on<?3`:REPORTER_ELIGIBLE;
  const params=input.source==='history'?[input.reporter,input.reportId]:input.source==='monthly'?[input.reporter,input.start,input.end]:[input.reporter];
  return {where:`${REPORTER_ELIGIBLE} AND EXISTS(SELECT 1 FROM reports WHERE ${witness})`,params};
 }
 function reporterStatsPlan(db,url,env={}) {
- const {where,params}=reporterWitness(reporterStatsRequest(url));
+ const {where,params}=reporterWitness(reporterStatsRequest(url),env);
  // No coordinates, names, IDs or notes are selected or returned by the statistic.
  const statement=db.prepare(`SELECT species,${identifiedSpeciesSql(env)} FROM reports WHERE ${where}`);
  return {statements:[statement.bind(...params)],build:sets=>{
@@ -131,7 +141,7 @@ export function reporterSpeciesNames(rows) {
  return {species:[...names].sort((a,b)=>a<b?-1:a>b?1:0),restricted};
 }
 function reporterSpeciesPlan(db,url,env={}) {
- const {where,params}=reporterWitness(reporterStatsRequest(url));
+ const {where,params}=reporterWitness(reporterStatsRequest(url),env);
  const statement=db.prepare(`SELECT species,note,${LOCATION_HIDDEN_SQL} AS location_hidden,${identifiedSpeciesSql(env)} FROM reports WHERE ${where}`);
  return {statements:[statement.bind(...params)],build:sets=>{
   const rows=sets[0].results||[];
@@ -141,7 +151,7 @@ function reporterSpeciesPlan(db,url,env={}) {
 }
 // All-time public contributors: the monthly query without the date range, paged.
 const CONTRIBUTORS_PAGE_MAX=200;
-function contributorsAllPlan(db,url) {
+function contributorsAllPlan(db,url,env={}) {
  const one=name=>{const v=url.searchParams.getAll(name);if(v.length>1)fail('CONTRIBUTORS_REQUEST_INVALID','기여자 요청 형식이 유효하지 않습니다.',400);return v.length?v[0]:null;};
  const rawLimit=one('limit'),rawOffset=one('offset');
  const limit=rawLimit===null?CONTRIBUTORS_PAGE_MAX:Number(rawLimit),offset=rawOffset===null?0:Number(rawOffset);
@@ -149,8 +159,8 @@ function contributorsAllPlan(db,url) {
  const named="status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>''";
  return {statements:[
   db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved'"),
-  db.prepare(`SELECT COUNT(DISTINCT reporter) AS n FROM reports WHERE ${named}`),
-  db.prepare(`SELECT reporter,COUNT(*) AS n FROM reports WHERE ${named} GROUP BY reporter ORDER BY n DESC,reporter ASC LIMIT ?1 OFFSET ?2`).bind(limit,offset),
+  db.prepare(`SELECT COUNT(DISTINCT ${reporterKeySql(env)}) AS n FROM reports WHERE ${named}`),
+  db.prepare(`SELECT ${reporterNameSql(env)} AS reporter,COUNT(*) AS n FROM reports WHERE ${named} GROUP BY ${reporterKeySql(env)},${reporterNameSql(env)} ORDER BY n DESC,reporter ASC LIMIT ?1 OFFSET ?2`).bind(limit,offset),
  ],build:s=>({scope:'all',approvedReports:Number(s[0].results?.[0]?.n||0),publicContributors:Number(s[1].results?.[0]?.n||0),offset,limit,
   contributors:(s[2].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}))})};
 }
@@ -163,7 +173,7 @@ function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  if(draft)return fieldDraftPlan(db,draft[1],fieldInput.owner,now);
  if(path==='/reports/reporter-stats')return reporterStatsPlan(db,url,env);
  if(path==='/reports/reporter-species')return reporterSpeciesPlan(db,url,env);
- if(path==='/contributors/all')return contributorsAllPlan(db,url);
+ if(path==='/contributors/all')return contributorsAllPlan(db,url,env);
  if(path==='/reports/approved')return {statements:[db.prepare(`SELECT id,species,note,lat,lon,public_lat,public_lon,observed_on,reporter,name_public,spot_key,${evidence},${identifiedSpeciesSql(env, true)} FROM reports WHERE status='approved' ORDER BY observed_on DESC,received_at DESC`)],build:s=>({ok:true,generatedAt:now.toISOString(),...publicPayload(s[0].results||[])})};
   if(path==='/reports/pending')return {statements:unverifiedReadsEnabled(env)?[unverifiedStatement(db,evidence)]:[],build:s=>({ok:true,generatedAt:now.toISOString(),spots:unverifiedPayload(s[0]?.results||[],env,now)})};
  if(path==='/reports/recent-sites') {
@@ -182,7 +192,7 @@ function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  const raw=url.searchParams.get('month'),month=raw===null?kstDateString(now).slice(0,7):raw;
  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))fail('INVALID_MONTH','월 형식이 유효하지 않습니다.',400);
  const [year,mon]=month.split('-').map(Number),start=month+'-01',end=mon===12?(year+1)+'-01-01':year+'-'+String(mon+1).padStart(2,'0')+'-01';
- return {statements:[db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved' AND observed_on>=?1 AND observed_on<?2").bind(start,end),db.prepare("SELECT reporter,COUNT(*) AS n FROM reports WHERE status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND observed_on>=?1 AND observed_on<?2 GROUP BY reporter ORDER BY n DESC,reporter ASC").bind(start,end)],build:s=>{const contributors=(s[1].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}));return {month,approvedReports:Number(s[0].results?.[0]?.n||0),publicContributors:contributors.length,contributors};}};
+ return {statements:[db.prepare("SELECT COUNT(*) AS n FROM reports WHERE status='approved' AND observed_on>=?1 AND observed_on<?2").bind(start,end),db.prepare(`SELECT ${reporterNameSql(env)} AS reporter,COUNT(*) AS n FROM reports WHERE status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND observed_on>=?1 AND observed_on<?2 GROUP BY ${reporterKeySql(env)},${reporterNameSql(env)} ORDER BY n DESC,reporter ASC`).bind(start,end)],build:s=>{const contributors=(s[1].results||[]).map(r=>({name:r.reporter,count:Number(r.n)}));return {month,approvedReports:Number(s[0].results?.[0]?.n||0),publicContributors:contributors.length,contributors};}};
 }
 export async function handlePublicationRead(request,env,url) {
  assertFieldServiceActive(env,url.pathname);
@@ -190,6 +200,7 @@ export async function handlePublicationRead(request,env,url) {
  if(request.method!=='GET'&&!fieldPost)return null;
  const head=url.pathname==='/reports/public-state';
  if(!head&&!fieldPost&&!isPublicationPath(url.pathname))return null;
+ if(identityEnabled(env) && env.REPORTS_PUBLICATION_REQUIRED!=='true')fail('IDENTITY_UNAVAILABLE','공개 상태 검증 설정이 필요합니다.');
  if(!head&&url.pathname!=='/reports/search'&&!url.pathname.endsWith('/report-draft')&&!url.searchParams.has('contract')&&env.REPORTS_PUBLICATION_REQUIRED!=='true')return null;
  const input=publicationRequest(url,head),binding=env.REPORTS_DB;
  if(!binding)fail('PUBLICATION_UNAVAILABLE','공개 위치의 최신 상태를 확인할 수 없습니다.');
@@ -198,7 +209,12 @@ export async function handlePublicationRead(request,env,url) {
  const fieldInput=(url.pathname==='/field-updates'||fieldPost)?await fieldReadInput(request,env):{viewer:null};
  try {
   const db=primary(binding),slots=guardLookupHints.get(binding)||null;
-  let plan=readPlan(db,url,now,fieldInput,env);
+  const guardedPlan=connection=>{
+   const plan=readPlan(connection,url,now,fieldInput,env);
+   if(!identityEnabled(env))return plan;
+   return {statements:[...plan.statements,identityGuardStatement(connection)],build:sets=>{checkIdentityGuards(sets.at(-1));return plan.build(sets.slice(0,-1));}};
+  };
+  let plan=guardedPlan(db);
   let sets=await db.batch([publicationStateStatement(db,slots),...plan.statements]);
   if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
   let row=sets[0].results?.[0],usedSlots=slots;
@@ -206,7 +222,7 @@ export async function handlePublicationRead(request,env,url) {
    // Never bless the first payload using a later schema-only check. Reread
    // state and every payload statement together from the primary instead.
    guardLookupHints.delete(binding);usedSlots=null;
-   const recoveryDb=primary(binding);plan=readPlan(recoveryDb,url,now,fieldInput,env);
+   const recoveryDb=primary(binding);plan=guardedPlan(recoveryDb);
    sets=await recoveryDb.batch([publicationStateStatement(recoveryDb),...plan.statements]);
    if(!Array.isArray(sets)||sets.length!==plan.statements.length+1)fail('PUBLICATION_UNAVAILABLE','공개 위치 자료를 확인할 수 없습니다.');
    row=sets[0].results?.[0];
