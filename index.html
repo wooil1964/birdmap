@@ -1266,6 +1266,7 @@ function reportArchivePayload(body,offset){
     if(!r||typeof r.id!=='string'||!/^[0-9A-Za-z_-]{1,64}$/.test(r.id)||!/^\d{4}-\d{2}-\d{2}$/.test(r.date)||!Array.isArray(r.species)||!r.species.every(function(s){return typeof s==='string';})||typeof r.locationHidden!=='boolean')return null;
     if(r.reporter!==undefined&&typeof r.reporter!=='string')return null;
     var row={id:r.id,date:r.date,species:r.species.slice(),reporter:r.reporter||'',locationHidden:r.locationHidden};
+    if(r.verified===false)row.verified=false;
     if(!row.locationHidden){
       if(typeof r.siteName==='string')row.siteName=r.siteName;
       if(typeof r.region==='string')row.region=r.region;
@@ -1333,7 +1334,9 @@ function renderReportArchive(){
       if(name.tagName==='BUTTON'){name.type='button';name.classList.add('reporterMapOpen');name.onclick=function(){openReportArchiveEntry(row.id);};name.setAttribute('aria-label',name.textContent+' 지도에서 보기');}
       item.appendChild(name);
       var detail=document.createElement('div');detail.className='recentReportMeta';
-      detail.textContent=[row.verified===false?'미검증':'',row.date,row.reporter||'익명 제보',row.siteName,row.region,row.locationHidden?'위치 비공개':''].filter(Boolean).join(' · ');
+      var before=document.createElement('span');before.textContent=[row.verified===false?'미검증':'',row.date].filter(Boolean).join(' · ')+' · ';detail.appendChild(before);
+      detail.appendChild(reporterStatsElement(row.reporter,{source:'history',reportId:row.verified===false?'':row.id},false));
+      var after=document.createElement('span'),place=[row.siteName,row.region,row.locationHidden?'위치 비공개':''].filter(Boolean).join(' · ');after.textContent=place?' · '+place:'';detail.appendChild(after);
       item.appendChild(detail);content.insertBefore(item,view.more);
     });
     if(!keep&&!data.reports.length)note(reportArchiveQuery?'검색 결과가 없습니다.':'승인된 제보가 없습니다.');
@@ -1454,7 +1457,7 @@ function closeReporterStats(restoreFocus){
  var modal=document.getElementById('reporterStatsModal'),content=document.getElementById('reporterStatsContent');
  if(modal)modal.style.display='none';if(content)content.textContent='';
  document.body.classList.remove('reporterStatsOpen');
- if(restoreFocus&&owner&&owner.isConnected&&owner.getClientRects().length)owner.focus();
+ if(restoreFocus&&owner&&owner.isConnected&&owner.getClientRects().length)owner.focus({preventScroll:true});
 }
 function reporterStatsStillCurrent(request,generation){
  return request===reporterStatsRequest&&generation===publicationState.generation&&publicationAllowed()&&!!reporterStatsOwner&&reporterStatsOwner.isConnected&&document.getElementById('reporterStatsModal').style.display==='flex';
