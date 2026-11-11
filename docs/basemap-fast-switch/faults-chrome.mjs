@@ -332,3 +332,6 @@ mkdirSync(dirname(resultPath), { recursive: true });
 writeFileSync(resultPath, JSON.stringify({ schema: 'basemap-faults/v1', label: runLabel, page: PAGE, passed: results.length - failed, failed, results }, null, 2) + '\n');
 console.log(JSON.stringify({ label: runLabel, passed: results.length - failed, failed }));
 if (failed) process.exitCode = 1;
+
+// The CI entry point also exercises bounded repairs against the actual controller.
+await import('./partial-repair.mjs');
