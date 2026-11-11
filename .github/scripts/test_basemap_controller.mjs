@@ -37,8 +37,8 @@ class Element {
   removeEventListener(name, fn) { if (this.listeners.get(name) === fn) this.listeners.delete(name); }
   click() { if (!this.disabled) this.listeners.get('click')?.(); }
 }
-function environment({ stored = null, blockedStorage = false, key = '', tileCreationThrows = false, config = null } = {}) {
-  let nextTimer = 1;
+function environment({ stored = null, blockedStorage = false, key = '', tileCreationThrows = false, config = null, partial = false, random = 0 } = {}) {
+  let nextTimer = 1, clock = 0, subclass;
   // The per-type recovery timers (60 s and longer) are kept apart from the tile deadlines and the switch settle.
   const timers = new Map(), recoveries = new Map(), values = new Map(), storageWrites = [], created = [], controls = [];
   if (stored !== null) values.set('birdmap.basemap.preference', stored);
@@ -54,16 +54,17 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
   });
   const osm = { addTo(target) { target.layers.add(this); return this; } };
   const window = {
+    performance: partial ? { now: () => clock } : undefined,
     localStorage: {
       getItem(name) { if (blockedStorage) throw new Error('storage unavailable'); return values.get(name) || null; },
       setItem(name, value) { if (blockedStorage) throw new Error('storage unavailable'); storageWrites.push([name, value]); values.set(name, value); }
     },
-    setTimeout(fn, ms) { const id = nextTimer++; if (ms === 0) nextTurn.push(fn); else (ms >= 60000 ? recoveries : timers).set(id, { fn, ms }); return id; },
+    setTimeout(fn, ms) { const id = nextTimer++; if (ms === 0) nextTurn.push(fn); else (ms >= 60000 ? recoveries : timers).set(id, { fn, ms, at: clock + ms }); return id; },
     clearTimeout(id) { timers.delete(id); recoveries.delete(id); },
     L: {
       latLngBounds() { return { contains(v) { return v.s !== undefined ? v.s >= 32.9 && v.n <= 38.75 && v.w >= 124.5 && v.e <= 132 : v.lat >= 32.9 && v.lat <= 38.75 && v.lng >= 124.5 && v.lng <= 132; }, intersects(v) { return v.s <= 38.75 && v.n >= 32.9 && v.w <= 132 && v.e >= 124.5; } }; },
       // The controller's zoom-settling TileLayer subclass: in memory it is the plain layer below.
-      TileLayer: { prototype: {}, extend() { return function (url, options) { return window.L.tileLayer(url, options); }; } },
+      TileLayer: { prototype: { createTile(coords, done) { const el = new Element('img'); el.className = ''; el.src = 'mock-tile'; el._done = done; return el; } }, extend(proto) { subclass = proto; return function (url, options) { const l = window.L.tileLayer(url, options); if (partial) l.createTile = proto.createTile; return l; }; } },
       control(options) {
         const control = { options, addTo(target) { this.container = this.onAdd(target); controls.push(this); return this; }, remove() { this.removed = true; } };
         return control;
@@ -75,12 +76,28 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
         // error (set by a test; by default nothing is still loading and the view is whole).
         Object.assign(layer, { options, _url: url, unanswered: 0, view: { total: 1, loaded: 1 }, _unanswered() { return this.unanswered; }, _viewTiles() { return this.view; },
           addTo(target) { target.layers.add(this); this.fire('loading'); return this; } });
+        if (partial) Object.assign(layer, {
+          _tiles: {}, _tileCoordsToKey: c => [c.x,c.y,c.z].join(':'),
+          _removeTile(k) { delete this._tiles[k]; },
+          _viewTiles() { const tiles=Object.entries(this._tiles); return { total:tiles.length,loaded:tiles.filter(([,t])=>t.el.className.includes('leaflet-tile-loaded')).length,failed:tiles.filter(([,t])=>(t.loaded||t.el._done)&&!t.el.className.includes('leaflet-tile-loaded')).map(([k])=>k) }; },
+          _update() { for (const key of this.keys) if (!this._tiles[key]) {
+            const [x,y,z]=key.split(':').map(Number), coords={x,y,z};
+            const el=this.createTile(coords,(err,tile)=>this._tileReady(coords,err,tile));
+            this._tiles[key]={coords,el};this.fire('tileloadstart',{tile:el,coords});
+          } },
+          // TileLayer 1.9.3 skips emptyImageUrl; GridLayer then settles directly, bypassing the img callback.
+          _tileReady(coords,err,tile) { if(tile.src==='empty')return;const key=this._tileCoordsToKey(coords);const t=this._tiles[key];if(!t||t.el!==tile)return;this.fire(err?'tileerror':'tileload',{tile,coords});t.loaded=1;if(!err)tile.className='leaflet-tile-loaded';if(!Object.values(this._tiles).some(t=>!t.loaded))this.fire('load'); }
+        });
         created.push(layer); return layer;
       },
-      DomEvent: { disableClickPropagation(el) { el.clickPropagationDisabled = true; }, disableScrollPropagation(el) { el.scrollPropagationDisabled = true; } }
+      Util: { emptyImageUrl: 'empty' },
+      DomEvent: { off() {}, disableClickPropagation(el) { el.clickPropagationDisabled = true; }, disableScrollPropagation(el) { el.scrollPropagationDisabled = true; } }
     }
   };
-  vm.runInNewContext(source, { window, document: { createElement: name => new Element(name) }, WeakMap, Set });
+  const doc={createElement:name=>new Element(name),hidden:false,addEventListener(n,fn){this[n]=fn},removeEventListener(n){delete this[n]}};
+  window.document=doc;
+  const math=Object.create(Math);math.random=()=>random;
+  vm.runInNewContext(source, { window, document: doc, WeakMap, Set, Math:math });
   const args = { map, osm, domesticBounds: [[32.9, 124.5], [38.75, 132]], config: config || { vworldMode: 'direct', vworldKey: key } };
   const api = window.BirdmapBasemap.mount(args);
   return { api, window, args, map, osm, created, controls, timers, recoveries, values, storageWrites, last: () => created.at(-1),
@@ -92,7 +109,13 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
     // Runs `fn` as one turn: what its events defer waits until it returns (other events can come first meanwhile).
     hold(fn) { firing++; try { fn(); } finally { firing--; } while (!firing && nextTurn.length) nextTurn.shift()(); },
     timerMs: () => [...timers.values()].map(t => t.ms).sort((a, b) => a - b),
-    state: () => JSON.parse(JSON.stringify(api.getState())) };
+    state: () => JSON.parse(JSON.stringify(api.getState())),
+    now: () => clock,
+    advance(ms) { const end=clock+ms;let runs=0;for(;;){let list=[...timers.entries(),...recoveries.entries()].filter(([,t])=>t.at<=end).sort((a,b)=>a[1].at-b[1].at);if(!list.length)break;if(++runs>10000)throw Error('timer spin');const [id,t]=list[0];timers.delete(id);recoveries.delete(id);clock=t.at;t.fn();while(nextTurn.length)nextTurn.shift()();}clock=end; },
+    faultView(count=4) { const l=created.at(-1);l.keys=Array.from({length:24},(_,i)=>i+':0:11');l.fire('loading');firing++;try{l.keys.forEach((k,i)=>{const coords={x:i,y:0,z:11},el=new Element('img');el.className=i<count?'':'leaflet-tile-loaded';l._tiles[k]={coords,el,loaded:1};l.unanswered=23-i;l.fire(i<count?'tileerror':'tileload',{tile:el,coords});});l.unanswered=0;l.fire('load');}finally{firing--;}while(nextTurn.length)nextTurn.shift()();return l; },
+    answer(k,ok=true) { firing++;try{const el=created.at(-1)._tiles[k].el;el._done(ok?null:Error('fault'),el);}finally{firing--;}while(nextTurn.length)nextTurn.shift()(); },
+    hide(value) { doc.hidden=value;doc.visibilitychange?.(); }
+  };
 }
 
 // Run sequentially: these checks exercise one controller's lifecycle in order.
@@ -525,4 +548,78 @@ test('the VWorld layers sit above the OSM layer (primary 2, overlay 3)', () => {
   const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created;
   assert.deepEqual([sat.options.zIndex, ov.options.zIndex, ov.options.minNativeZoom], [2, 3, 6]);
   h.api.destroy();
+});
+
+test('partial repair: canary and rolling budget, successful tiles are not redrawn',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(10);
+ e.advance(59999);assert.equal(e.state().partialRetryActive,0);
+ e.advance(1);assert.equal(e.state().partialRetryActive,1);
+ const first=Object.keys(l._tiles).find(k=>!l._tiles[k].loaded);e.answer(first);e.advance(1);
+ while(e.state().partialRetryActive){const keys=Object.keys(l._tiles).filter(k=>!l._tiles[k].loaded);for(const k of keys)e.answer(k);e.advance(1);}
+ assert.equal(l._viewTiles().loaded,22,'exactly eight additional requests in the first window');
+ e.advance(119999-e.now());assert.equal(e.state().partialRetryActive,0);
+ e.advance(2);assert.equal(e.state().partialRetryActive,1,'next canary only after full 60s');
+ assert.equal(e.state().active,'vworld');assert.equal(e.state().locked,false);
+});
+test('partial repair: four failures use 60/120/240/480 pauses and never lock',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(1);
+ for(const pause of [60000,120000,240000,480000]){e.advance(pause-1);assert.equal(e.state().partialRetryActive,0);e.advance(1);assert.equal(e.state().partialRetryActive,1);e.answer('0:0:11',false);assert.equal(e.state().locked,false);assert.equal(e.state().active,'vworld');}
+ e.advance(10000000);assert.equal(e.state().partialRetryActive,0);assert.equal(e.state().partialRetryPending,false);
+ assert.equal(l._viewTiles().failed.length,1);
+});
+test('partial repair: canary failure suppresses followers, success does not erase other holes',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(4);e.advance(60000);
+ e.answer(Object.keys(l._tiles).find(k=>!l._tiles[k].loaded),false);
+ assert.equal(e.state().partialRetryActive,0);assert.equal(l._viewTiles().loaded,20);
+ e.advance(59999);assert.equal(e.state().partialRetryActive,0);e.advance(1);assert.equal(e.state().partialRetryActive,1);
+ const a=environment({key:'LOCAL_TEST_KEY',partial:true}),b=a.faultView(2);b._tiles['0:0:11'].loaded=0;b._tiles['0:0:11'].el._done=()=>{};
+ a.advance(60000);assert.equal(a.state().partialRetryActive,1);assert.equal(b._tiles['1:0:11'].loaded,undefined,'unanswered X cannot block an eligible Y');a.answer('1:0:11');a.api.destroy();
+});
+test('partial repair: movement waits 750ms, hidden cancels and does not refund permits',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(2);e.advance(59900);
+ e.map.fire('movestart');e.map.fire('moveend');e.advance(749);assert.equal(e.state().partialRetryActive,0);
+ e.advance(1);assert.equal(e.state().partialRetryActive,1);
+ const key=Object.keys(l._tiles).find(k=>!l._tiles[k].loaded),old=l._tiles[key].el;let settled=0,readySrc;
+ l.on('tileerror',ev=>{if(ev.tile===old){settled++;readySrc=old.src}});e.hide(true);assert.equal(e.state().partialRetryActive,0);
+ assert.equal(l._tiles[key].loaded,1,'cancelled tile is answered by native _tileReady');assert.notEqual(readySrc,'empty');assert.equal(old.src,'empty');assert.equal(settled,1);old._done(null,old);assert.equal(settled,1,'late img callback cannot settle twice');
+ e.advance(500000);assert.equal(e.state().partialRetryActive,0);e.hide(false);e.advance(1);assert.equal(e.state().partialRetryActive,1);
+ e.answer(Object.keys(l._tiles).find(k=>!l._tiles[k].loaded));e.advance(1);assert.equal(l._tiles[key].loaded,undefined,'cancelled key is retried after visibility resumes');e.answer(key);
+ e.api.destroy();assert.equal(e.timers.size+e.recoveries.size,0);assert.equal(e.map.events.get('moveend').length,0);
+});
+test('partial repair: maximum jitter is positive delay, never an earlier attempt',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true,random:1});e.faultView(1);
+ e.advance(74999);assert.equal(e.state().partialRetryActive,0);e.advance(1);assert.equal(e.state().partialRetryActive,1);
+});
+
+test('partial repair: generation change cancels old completion and preserves budgets',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(2);e.advance(60000);
+ const old=l._tiles[Object.keys(l._tiles).find(k=>!l._tiles[k].loaded)].el;
+ e.api.setPreference('osm');const before=e.state();old._done(null,old);
+ assert.deepEqual(e.state(),before);assert.equal(e.state().partialRetryActive,0);
+ e.api.setPreference('vworld');e.faultView(2);e.advance(59999);assert.equal(e.state().partialRetryActive,0);
+ e.advance(1);assert.equal(e.state().partialRetryActive,1);
+});
+
+test('partial repair: unresolved history is bounded and is not evicted to restart attempts',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(1);
+ for(let i=0;i<2050;i++){l.fire('loading');l.unanswered=1;l.fire('tileerror',{coords:{x:10000+i,y:0,z:11},tile:new Element('img')});l.unanswered=0;l.fire('tileload').fire('load');}
+ assert.equal(e.state().partialRetryTracked,2048);assert.equal(e.state().locked,false);
+ e.api.destroy();assert.equal(e.state().partialRetryTracked,0);assert.equal(e.timers.size+e.recoveries.size,0);
+});
+
+test('partial repair: replacement exception preserves the hole and releases the permit',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(1);
+ l._update=()=>{throw Error('synthetic allocation failure');};e.advance(60000);
+ assert.equal(e.state().partialRetryActive,0);assert.equal(e.state().active,'vworld');assert.equal(e.state().locked,false);
+ assert.equal(l._viewTiles().failed.length,1);e.api.destroy();assert.equal(e.timers.size+e.recoveries.size,0);
+ const a=environment({key:'LOCAL_TEST_KEY',partial:true}),b=a.faultView(1),update=b._update;
+ b._update=function(){update.call(this);throw Error('after img allocation');};a.advance(60000);
+ assert.equal(a.state().partialRetryActive,0);a.api.destroy();assert.equal(a.timers.size+a.recoveries.size,0,'no orphan timeout after an already completed allocation failure');
+});
+
+test('partial repair: its progress cannot postpone a new normal batch timeout',()=>{
+ const e=environment({key:'LOCAL_TEST_KEY',partial:true}),l=e.faultView(1);e.advance(60000);
+ l.unanswered=1;l.fire('loading');e.advance(11000);e.answer('0:0:11',true);
+ e.advance(999);assert.equal(e.state().active,'vworld');e.advance(1);
+ assert.equal(e.state().active,'osm');assert.equal(e.state().reason,'tile_timeout');assert.equal(e.state().locked,true);
 });

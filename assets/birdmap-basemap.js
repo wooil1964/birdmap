@@ -177,6 +177,9 @@
         canRetry: !destroyed && preference !== 'osm' && (locked() || overlayLocked()) && eligible(),
         backdrop: active !== 'osm' && map.hasLayer(osm),
         deadlinePending: deadline !== null,
+        partialRetryPending: repairTimer !== null,
+        partialRetryActive: repairTasks.size,
+        partialRetryTracked: repairHistory.size,
         recoveryAttempts: preference === 'osm' ? 0 : recoveryAttempts.get(lockId(PRIMARY[preference])) || 0,
         batchTimeoutMs: TILE_BATCH_TIMEOUT_MS,
         zoom: map.getZoom(),
@@ -253,8 +256,143 @@
       }
     }
 
+    // Partial repairs share one budget across primary map types. They never enter the outage counters.
+    var repairHistory = new Map(), repairOrigins = new WeakMap(), repairTasks = new Set();
+    var repairStarts = [], canaryStarts = [], repairTimer = null, repairRound = null, repairEpoch = 0;
+    var repairMoving = false, repairMovedAt = -Infinity;
+    var repairDocument = global.document || document;
+    function repairNow() { return global.performance ? global.performance.now() : Date.now(); }
+    function repairPause(n) { return RECOVERY_DELAYS_MS[n] + Math.random() * 15000; }
+    function repairId(layer, key) { return lockId(layer._birdmapKind) + '|' + key; }
+    function viewFailures(layer) { return layer._viewTiles().failed || []; }
+    function repairCurrent(task) { return current(task.token, task.layer) && task.epoch === repairEpoch; }
+    function repairRecord(layer, key) {
+      var id = repairId(layer, key), record = repairHistory.get(id);
+      if (!record && repairHistory.size < 2048) {
+        record = { id: id, key: key, n: 0, next: repairNow() + repairPause(0) };
+        repairHistory.set(id, record);
+      }
+      return record;
+    }
+    function clearRepairTimer() {
+      if (repairTimer !== null) global.clearTimeout(repairTimer);
+      repairTimer = null;
+    }
+    function repairNotice(layer) {
+      if (!current(generation, layer) || !map.hasLayer(layer) || loading) return;
+      reason = viewFailures(layer).length ? 'partial_error' : drawn ? 'ready' : 'loading';
+      render();
+    }
+    function completeRepair(task, ok) {
+      if (task.done) return;
+      task.done = true;
+      global.clearTimeout(task.timer);
+      repairTasks.delete(task);
+      if (ok) repairHistory.delete(task.record.id);
+      else task.record.next = task.record.n < 4 ? repairNow() + repairPause(task.record.n) : Infinity;
+      if (repairCurrent(task) && task.canary && repairRound === task.round) {
+        if (ok) task.round.ready = true;
+        else repairRound = null;
+      }
+      later(function () {
+        if (!current(task.token, task.layer)) return;
+        repairNotice(task.layer);
+        scheduleRepair(task.token, task.layer);
+      });
+    }
+    function abortRepair(task, discard) {
+      if (task.done) return;
+      // Prevent the old img completion callback from calling Leaflet a second time.
+      task.cancelled = true;
+      if (task.el) L.DomEvent.off(task.el);
+      if (!discard && current(task.token, task.layer) && task.layer._tiles[task.key] && task.layer._tiles[task.key].el === task.el) {
+        task.layer._tileReady(task.layer._tiles[task.key].coords, new Error('tile repair stopped'), task.el);
+      }
+      // Leaflet 1.9.3 ignores _tileReady once src is empty: settle the live tile before cancelling transport.
+      if (task.el) task.el.src = L.Util.emptyImageUrl;
+      completeRepair(task, false);
+    }
+    function stopRepairs(discard) {
+      repairEpoch++;
+      clearRepairTimer();
+      repairRound = null;
+      Array.from(repairTasks).forEach(function (task) { abortRepair(task, discard); });
+    }
+    function scheduleRepair(token, layer, delay) {
+      if (delay !== undefined && !isFinite(delay)) return;
+      if (!current(token, layer) || !map.hasLayer(layer) || repairDocument.hidden || repairTimer !== null) return;
+      if (!viewFailures(layer).length && !repairRound) return;
+      repairTimer = global.setTimeout(function () { repairTimer = null; pumpRepairs(token, layer); }, Math.max(1, delay || 1));
+    }
+    function pumpRepairs(token, layer) {
+      if (!current(token, layer) || !map.hasLayer(layer) || repairDocument.hidden) return;
+      var now = repairNow();
+      if (repairMoving || layer._zoomRest || map._animatingZoom || (map.scrollWheelZoom && map.scrollWheelZoom._startTime)) return;
+      if (now < repairMovedAt + 750) return scheduleRepair(token, layer, repairMovedAt + 750 - now);
+      // Normal activity owns the old inactivity deadline. A repair must not prolong it.
+      if (layer._unanswered() || loading || repairTasks.size >= 2) return;
+      repairStarts = repairStarts.filter(function (t) { return now - t < 60000; });
+      canaryStarts = canaryStarts.filter(function (t) { return now - t < 60000; });
+      if (repairStarts.length >= 8) return scheduleRepair(token, layer, repairStarts[0] + 60000 - now);
+      var failed = new Set(viewFailures(layer)), candidates = [], earliest = Infinity;
+      // Map insertion order is rotated only on an actual start: older due keys cannot starve.
+      repairHistory.forEach(function (record) {
+        if (record.id !== repairId(layer, record.key) || !failed.has(record.key) || !layer._tiles[record.key].loaded || record.n >= 4) return;
+        if (record.next <= now) candidates.push(record);
+        else earliest = Math.min(earliest, record.next);
+      });
+      if (!repairRound) {
+        if (!candidates.length) return scheduleRepair(token, layer, earliest - now);
+        if (canaryStarts.length) return scheduleRepair(token, layer, canaryStarts[0] + 60000 - now);
+        repairRound = { ready: false, queue: candidates.slice(1, 8).map(function (r) { return { record: r, el: layer._tiles[r.key].el }; }) };
+        startRepair(token, layer, candidates[0], true);
+        return;
+      }
+      if (!repairRound.ready) return;
+      while (repairRound.queue.length && repairTasks.size < 2 && repairStarts.length < 8) {
+        var item = repairRound.queue.shift(), tile = layer._tiles[item.record.key];
+        if (tile && tile.el === item.el && failed.has(item.record.key) && item.record.next <= now && item.record.n < 4) startRepair(token, layer, item.record, false);
+      }
+      if (!repairTasks.size) {
+        repairRound = null;
+        scheduleRepair(token, layer);
+      }
+    }
+    function startRepair(token, layer, record, canary) {
+      var key = record.key, previous = layer._tiles[key];
+      if (!previous || !previous.loaded || previous.el.className.indexOf('leaflet-tile-loaded') >= 0) return;
+      var task = { token: token, layer: layer, epoch: repairEpoch, key: key, record: record, canary: canary, round: repairRound, done: false };
+      // createTile consumes the permit before assigning img.src. Normal tiles created by _update stay normal.
+      layer._birdmapRepair = task;
+      var parent = previous.el.parentNode;
+      try { layer._removeTile(key); layer._update(); }
+      catch (_) {
+        // Keep the failed tile retryable if Leaflet cannot construct its replacement.
+        if (!layer._tiles[key]) {
+          layer._tiles[key] = previous;
+          if (parent) parent.appendChild(previous.el);
+        }
+        if (task.el) abortRepair(task, false);
+        else completeRepair(task, false);
+        repairRound = null;
+      }
+      finally { layer._birdmapRepair = null; }
+      if (task.done || !task.el) { repairRound = null; return; }
+      task.timer = global.setTimeout(function () { if (repairCurrent(task)) abortRepair(task, false); }, TILE_BATCH_TIMEOUT_MS);
+    }
+    function repairMoveStart() { repairMoving = true; stopRepairs(false); }
+    function repairMoveEnd() {
+      repairMoving = false; repairMovedAt = repairNow();
+      if (vworld) { repairNotice(vworld); scheduleRepair(generation, vworld, 750); }
+    }
+    function repairVisibility() {
+      if (repairDocument.hidden) stopRepairs(false);
+      else if (vworld) scheduleRepair(generation, vworld);
+    }
+
     function detachVworld() {
       generation++;
+      stopRepairs(true);
       clearDeadline();
       detachOverlay();
       var previous = vworld;
@@ -370,6 +508,20 @@
     // the GridLayer zoom handlers only; pans, jumps (setView without animation), pinches and lone zooms load as before.
     var tileProto = L.TileLayer.prototype;
     var SettlingTileLayer = L.TileLayer.extend({
+      createTile: function (coords, done) {
+        var task = this._birdmapRepair;
+        if (!task || this._tileCoordsToKey(coords) !== task.key) return tileProto.createTile.call(this, coords, done);
+        var now = repairNow();
+        repairStarts.push(now); if (task.canary) canaryStarts.push(now);
+        task.record.n++;
+        repairHistory.delete(task.record.id); repairHistory.set(task.record.id, task.record);
+        repairTasks.add(task);
+        var tile = tileProto.createTile.call(this, coords, function (error, el) {
+          if (!task.cancelled && !task.done) done(error, el);
+        });
+        task.el = tile; repairOrigins.set(tile, task);
+        return tile;
+      },
       _animateZoom: function (e) {
         // Only an animated zoom ending starts the clock for the next one (not a jump to a search result).
         this._zoomStarted = true;
@@ -416,20 +568,21 @@
       },
       // The tiles of the current view at the current level: how many there are and how many loaded without an error.
       _viewTiles: function () {
-        var range = this._pxBoundsToTileRange(this._getTiledPixelBounds(this._map.getCenter())), total = 0, loaded = 0;
+        var range = this._pxBoundsToTileRange(this._getTiledPixelBounds(this._map.getCenter())), total = 0, loaded = 0, failed = [];
         for (var key in this._tiles) {
           var tile = this._tiles[key];
           if (tile.coords.z !== this._tileZoom || !range.contains(tile.coords)) continue;
           total++;
           if (tile.loaded && tile.el.className.indexOf('leaflet-tile-loaded') >= 0) loaded++;
+          else if (tile.loaded || repairOrigins.has(tile.el)) failed.push(key);
         }
-        return { total: total, loaded: loaded };
+        return { total: total, loaded: loaded, failed: failed };
       },
       // Tiles of this layer still loading, apart from `except` (the tile whose error is being fired: Leaflet marks it
       // answered only after its tileerror event).
       _unanswered: function (except) {
         var count = 0;
-        for (var key in this._tiles) if (!this._tiles[key].loaded && this._tiles[key].el !== except) count++;
+        for (var key in this._tiles) if (!this._tiles[key].loaded && this._tiles[key].el !== except && !repairOrigins.has(this._tiles[key].el)) count++;
         return count;
       },
       // Leaflet fires 'load' only when a tile finishes. When the last tiles still loading are cancelled by a zoom
@@ -456,6 +609,7 @@
         }, 0);
       },
       onRemove: function (target) {
+        if (this === vworld) stopRepairs(true);
         global.clearTimeout(this._zoomRest);
         this._zoomRest = null;
         var result = tileProto.onRemove.call(this, target);
@@ -568,51 +722,68 @@
         layer = new SettlingTileLayer(template(kind), tileOptions());
         vworld = layer;
         vworldKind = kind;
+        layer._birdmapKind = kind;
         active = preference === 'hybrid' ? (wantOverlay ? 'hybrid' : 'satellite') : preference;
-        var batch = 0;
+        var batch = 0, normalLoading = true;
         var failLater = function () { var mine = batch; later(function () { if (mine === batch) fail('tile_error', token, layer); }); };
+        function beginNormal() {
+          batch++; errors = 0; batchSuccesses = 0; batchErrors = 0;
+          normalLoading = true; loading = true; reason = 'loading';
+          armDeadline(token, layer); render();
+        }
+        function finishNormal(e) {
+          if (!current(token, layer)) return;
+          if (!normalLoading) { repairNotice(layer); scheduleRepair(token, layer); return; }
+          if (layer._unanswered()) return;
+          if (outage(batchErrors, batchSuccesses, 0, drawn)) return failLater();
+          normalLoading = false;
+          clearDeadline();
+          if (batchSuccesses > 0) drawn = true;
+          if (recovered(layer, e)) recoveryAttempts.delete(lockId(kind));
+          loading = !drawn;
+          reason = batchErrors > 0 || viewFailures(layer).length ? 'partial_error' : drawn ? 'ready' : 'loading';
+          syncBackdrop(); render(); scheduleRepair(token, layer);
+        }
+        function normalAnswered(e) {
+          // Leaflet marks tile.loaded only after its event. Finish outside that event, for this batch only.
+          if (!e || !e.tile) return;
+          var mine = batch;
+          if (!layer._unanswered(e && e.tile)) later(function () { if (mine === batch) finishNormal(e); });
+        }
         tileHandlers = {
+          tileloadstart: function (e) {
+            if (!current(token, layer) || repairOrigins.has(e.tile)) return;
+            if (!normalLoading) beginNormal();
+          },
           tileerror: function (e) {
             if (!current(token, layer)) return;
-            errors++;
-            batchErrors++;
+            var task = e && repairOrigins.get(e.tile);
+            if (task) { completeRepair(task, false); return; }
+            if (e && e.coords) repairRecord(layer, layer._tileCoordsToKey(e.coords));
+            errors++; batchErrors++;
             if (outage(batchErrors, batchSuccesses, layer._unanswered(e && e.tile), drawn)) failLater();
+            normalAnswered(e);
           },
-          tileload: function () {
+          tileload: function (e) {
             if (!current(token, layer)) return;
+            var task = e && repairOrigins.get(e.tile);
+            if (task) { completeRepair(task, true); return; }
+            if (e && e.coords) repairHistory.delete(repairId(layer, layer._tileCoordsToKey(e.coords)));
             batchSuccesses++;
             if (deadline !== null) armDeadline(token, layer);
+            normalAnswered(e);
           },
-          // Tiles cancelled by the user's own zoom are not an upstream failure: wait from the latest activity.
-          tileabort: function () {
-            if (current(token, layer) && deadline !== null) armDeadline(token, layer);
+          tileabort: function (e) {
+            if (!current(token, layer) || (e && repairOrigins.has(e.tile))) return;
+            if (deadline !== null) armDeadline(token, layer);
+            normalAnswered(e && { tile: e.tile, cancelled: true });
           },
           loading: function () {
-            if (!current(token, layer)) return;
-            batch++;
-            errors = 0;
-            batchSuccesses = 0;
-            batchErrors = 0;
-            loading = true;
-            reason = 'loading';
-            armDeadline(token, layer);
-            render();
+            if (current(token, layer) && !layer._birdmapRepair) beginNormal();
           },
-          load: function (e) {
-            if (!current(token, layer)) return;
-            // Leaflet's load means that a batch finished (or was cancelled), even if every tile failed: see outage().
-            if (outage(batchErrors, batchSuccesses, 0, drawn)) return failLater();
-            clearDeadline();
-            // Tiles that really loaded make the layer shown (OSM may go); only a finished batch that left the current view
-            // (nearly) whole ends a run of recovery attempts.
-            if (batchSuccesses > 0) drawn = true;
-            if (recovered(layer, e)) recoveryAttempts.delete(lockId(kind));
-            loading = !drawn;
-            reason = batchErrors > 0 ? 'partial_error' : drawn ? 'ready' : 'loading';
-            syncBackdrop();
-            render();
-          }
+          load: finishNormal
         };
+
         layer.on(tileHandlers);
         armDeadline(token, layer);
         render();
@@ -731,6 +902,10 @@
       recoveries.forEach(function (timer) { global.clearTimeout(timer); });
       recoveries.clear();
       map.off('zoomend moveend', reconcile);
+      map.off('movestart zoomstart', repairMoveStart);
+      map.off('moveend zoomend', repairMoveEnd);
+      if (repairDocument.removeEventListener) repairDocument.removeEventListener('visibilitychange', repairVisibility);
+      stopRepairs(true); repairHistory.clear();
       detachVworld();
       if (!map.hasLayer(osm)) osm.addTo(map);
       reason = 'destroyed';
@@ -754,6 +929,9 @@
     map.setMinZoom(4);
     control.addTo(map);
     map.on('zoomend moveend', reconcile);
+    map.on('movestart zoomstart', repairMoveStart);
+    map.on('moveend zoomend', repairMoveEnd);
+    if (repairDocument.addEventListener) repairDocument.addEventListener('visibilitychange', repairVisibility);
     reconcile();
     return api;
   }
