@@ -548,6 +548,7 @@ body.monthTideOpen{overflow:hidden}
 .reporterStatsLink:focus-visible{outline:2px solid #1565c0;outline-offset:2px;border-radius:3px}
 #reporterStatsModal{z-index:11020}
 #reporterStatsModal .monthTideDialog{width:min(380px,100%);max-height:100%}
+@media (min-width:701px) and (hover:hover) and (pointer:fine){#reporterStatsModal .monthTideDialog{max-height:min(78vh,760px)}}
 /* 제목·닫기는 고정, 근거 문구부터 목록까지 한 덩어리로 스크롤. 높이는 100vh 가 아니라 실제 보이는 바깥 상자(100%) 기준. */
 .reporterStatsBody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
 .reporterStatsNumbers{display:grid;grid-template-columns:1fr auto;gap:16px 12px;margin:8px 0;color:#174d6f}
