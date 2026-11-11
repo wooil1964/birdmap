@@ -1,0 +1,21 @@
+--- prototype.js
++++ fallback.js
+@@ -17,7 +17,7 @@
+   // A failed type (or the Hybrid overlay) is tried again by itself after the Worker's 60 s rate-limit window, then after
+   // longer pauses while it keeps failing (one screen of tiles per attempt); after the last one OSM stays until the
+   // explicit retry. A batch of that type loading again starts the sequence over.
+-  var RECOVERY_DELAYS_MS = [60000, 120000, 240000, 480000];
++  var RECOVERY_DELAYS_MS = global.__recoveryDelays || [60000, 120000, 240000, 480000];
+   // A recovery (which resets those pauses) needs a batch that ran to its end and left the current view loaded: at least
+   // this share of its tiles without an error. A screen is 24 (1366x768) to 48 (1920x1080) tiles, so two to four stray
+   // failures still count as recovered; a screen with more than one tile in ten missing, a cancelled batch or a single
+@@ -664,6 +664,9 @@
+             if (canaryEl) {
+               var ok = canaryEl.className.indexOf('leaflet-tile-loaded') >= 0, rest = pendingRest;
+               canaryEl = null; pendingRest = [];
++              // FALLBACK variant (approximates Codex M1 4.4 only): a retry that failed while the gap is still in view
++              // hands the primary layer to the existing fail() path (OSM, lock, 60/120/240/480 s recovery).
++              if (!ok) later(function () { if (current(token, layer) && layer._viewTiles().failed.length) fail('tile_error', token, layer); });
+               if (ok && rest.length) {
+                 rest.forEach(function (k) { retried.add(k); });
+                 later(function () {

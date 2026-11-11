@@ -1,0 +1,32 @@
+--- prototype.js
++++ naive.js
+@@ -360,9 +360,9 @@
+         if (!keys.length) return;
+         retried.add(keys[0]);
+         pendingRest = keys.slice(1, PARTIAL_RETRY_MAX);
+-        var els = layer._retryTiles([keys[0]]);
+-        canaryEl = els[0] || null;
+-        if (canaryEl) retryEls.add(canaryEl); else pendingRest = [];
++        // NAIVE variant: every failed key at once, counted like fresh tiles.
++        keys = keys.slice(0, PARTIAL_RETRY_MAX); keys.forEach(function (k) { retried.add(k); }); pendingRest = [];
++        layer._retryTiles(keys);
+       }, PARTIAL_RETRY_MS);
+     }
+ 
+@@ -621,14 +621,14 @@
+           tileerror: function (e) {
+             if (!current(token, layer)) return;
+             // PROTOTYPE: a retried tile failing again is not new evidence of an outage.
+-            if (e && retryEls.has(e.tile)) { retryEls.delete(e.tile); if (deadline !== null) armDeadline(token, layer); return; }
++            if (false) { retryEls.delete(e.tile); if (deadline !== null) armDeadline(token, layer); return; }
+             errors++;
+             batchErrors++;
+             if (outage(batchErrors, batchSuccesses, layer._unanswered(e && e.tile), drawn)) failLater();
+           },
+           tileload: function (e) {
+             if (!current(token, layer)) return;
+-            if (e && retryEls.has(e.tile)) { retryEls.delete(e.tile); if (deadline !== null) armDeadline(token, layer); return; }
++            if (false) { retryEls.delete(e.tile); if (deadline !== null) armDeadline(token, layer); return; }
+             batchSuccesses++;
+             if (deadline !== null) armDeadline(token, layer);
+           },

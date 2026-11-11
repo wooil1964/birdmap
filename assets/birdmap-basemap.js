@@ -38,6 +38,20 @@
   // 5-17 s; at 1920x1080 one such screen already exceeds 180 requests a minute).
   var ZOOM_SETTLE_MS = 400;
   var ZOOM_RUN_MS = 900;
+  // A few failed tiles on a shown map (a partial batch) used to stay grey: Leaflet keeps a failed tile and never asks
+  // for it again (11/11 RCA). The current view's failed tiles are now asked for again after the Worker's 60 s
+  // rate-limit window plus up to 15 s jitter: one tile first (a canary: an <img> cannot tell 429 from 502 or 503), then
+  // the rest two at a time while they load, at most PARTIAL_RETRY_MAX per round and one round per pause. A tile is tried
+  // again after 1, 2, 4 and 8 pauses (60/120/240/480 s, counted in rounds, not clock time), then stays grey with the
+  // partial notice. Retried tiles never count toward an outage: a tile that keeps failing does not switch the map to
+  // OSM (11/11 decision).
+  var PARTIAL_RETRY_MS = 60000;
+  var PARTIAL_RETRY_JITTER_MS = 15000;
+  var PARTIAL_RETRY_MAX = 8;
+  var PARTIAL_RETRY_GROUP = 2;
+  var PARTIAL_RETRY_PAUSES = [1, 2, 4, 8];
+  // A round waits until the map has been still this long (no retry in the middle of the user's own requests).
+  var MOVE_QUIET_MS = 750;
   var instances = new WeakMap();
   // 'vworld' is the Base map (the original value, kept for saved preferences).
   var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
@@ -126,6 +140,14 @@
     var overlayBatchSuccesses = 0;
     var overlayBatchErrors = 0;
     var overlayDrawn = false;
+    // Partial retries of the primary layer (see PARTIAL_RETRY_MS); reset with the layer.
+    var partialRetry = null;
+    var retryTicks = 0;
+    var retryKeys = new Map();
+    var retryQueue = [];
+    var retryGroup = [];
+    var retryEls = new Set();
+    var movedSinceRound = false;
     var ui = null;
     var control = L.control({ position: 'topright' });
 
@@ -178,6 +200,7 @@
         backdrop: active !== 'osm' && map.hasLayer(osm),
         deadlinePending: deadline !== null,
         recoveryAttempts: preference === 'osm' ? 0 : recoveryAttempts.get(lockId(PRIMARY[preference])) || 0,
+        partialRetryPending: partialRetry !== null,
         batchTimeoutMs: TILE_BATCH_TIMEOUT_MS,
         zoom: map.getZoom(),
         destroyed: destroyed
@@ -253,9 +276,22 @@
       }
     }
 
+    function clearPartialRetry() {
+      if (partialRetry !== null) {
+        global.clearTimeout(partialRetry);
+        partialRetry = null;
+      }
+      retryTicks = 0;
+      retryKeys = new Map();
+      retryQueue = [];
+      retryGroup = [];
+      retryEls = new Set();
+    }
+
     function detachVworld() {
       generation++;
       clearDeadline();
+      clearPartialRetry();
       detachOverlay();
       var previous = vworld;
       var handlers = tileHandlers;
@@ -329,6 +365,73 @@
       showOsm(nextReason);
     }
 
+    // One round timer per layer (see PARTIAL_RETRY_MS); it runs only for the layer and generation that set it.
+    function schedulePartialRetry(token, layer, ms) {
+      if (partialRetry !== null || !current(token, layer)) return;
+      partialRetry = global.setTimeout(function () {
+        partialRetry = null;
+        partialRound(token, layer);
+      }, ms === undefined ? PARTIAL_RETRY_MS + Math.floor(Math.random() * PARTIAL_RETRY_JITTER_MS) : ms);
+    }
+
+    // Notes the current view's failed tiles and keeps the round timer while any of them has attempts left. A tile seen
+    // failing for the first time waits a whole pause: one more round when a timer is already running.
+    function armPartialRetry(token, layer) {
+      var pending = partialRetry !== null, live = false;
+      layer._viewTiles().failed.forEach(function (key) {
+        if (!retryKeys.has(key)) retryKeys.set(key, { n: 0, due: retryTicks + PARTIAL_RETRY_PAUSES[0] + (pending ? 1 : 0) });
+        if (retryKeys.get(key).n < PARTIAL_RETRY_PAUSES.length) live = true;
+      });
+      if (live) schedulePartialRetry(token, layer);
+    }
+
+    // Asks for the next `count` tiles of the round; Leaflet requests them as a batch of their own. When none of them is
+    // there any more, the round ends and the next one is armed.
+    function retryNext(token, layer, count) {
+      var keys = retryQueue.splice(0, count);
+      keys.forEach(function (key) {
+        var tried = retryKeys.get(key);
+        tried.n++;
+        tried.due = retryTicks + (PARTIAL_RETRY_PAUSES[tried.n] || 0);
+      });
+      retryGroup = layer._retryTiles(keys);
+      retryGroup.forEach(function (el) { retryEls.add(el); });
+      if (!retryGroup.length) {
+        retryQueue = [];
+        armPartialRetry(token, layer);
+      }
+    }
+
+    function retryBusy(layer) {
+      return layer._loading || layer._zoomRest || map._animatingZoom;
+    }
+
+    // A round: the due failed tiles of the current view, a canary first. Not during a batch, a zoom rest or a zoom
+    // animation (the batch's end arms the next round), not in a hidden tab, and not until the map has been still.
+    function partialRound(token, layer) {
+      if (!current(token, layer) || retryQueue.length || retryGroup.length) return;
+      if (global.document && global.document.hidden) return schedulePartialRetry(token, layer);
+      if (retryBusy(layer)) return;
+      if (movedSinceRound) {
+        movedSinceRound = false;
+        return schedulePartialRetry(token, layer, MOVE_QUIET_MS);
+      }
+      retryTicks++;
+      var keys = layer._viewTiles().failed.filter(function (key) {
+        var tried = retryKeys.get(key);
+        return tried && tried.n < PARTIAL_RETRY_PAUSES.length && tried.due <= retryTicks;
+      });
+      if (!keys.length) return armPartialRetry(token, layer);
+      retryQueue = keys.slice(0, PARTIAL_RETRY_MAX);
+      retryNext(token, layer, 1);
+    }
+
+    // Whether every tile of the layer still loading is a retried one.
+    function onlyRetriesPending(layer) {
+      for (var key in layer._tiles) if (!layer._tiles[key].loaded && !retryEls.has(layer._tiles[key].el)) return false;
+      return true;
+    }
+
     function failOverlay(token, layer) {
       if (!overlayCurrent(token, layer)) return;
       failedKeys.set(lockId('overlay'), 'overlay_error');
@@ -344,6 +447,13 @@
       var timer = global.setTimeout(function () {
         if (!current(token, layer) || deadline !== timer) return;
         deadline = null;
+        // Only retried tiles still out: the shown map stays (they are judged when they answer).
+        if (retryEls.size && onlyRetriesPending(layer)) {
+          loading = !drawn;
+          reason = 'partial_error';
+          render();
+          return;
+        }
         fail('tile_timeout', token, layer);
       }, TILE_BATCH_TIMEOUT_MS);
       deadline = timer;
@@ -414,16 +524,27 @@
           });
         }, layer._restMs || ZOOM_SETTLE_MS);
       },
-      // The tiles of the current view at the current level: how many there are and how many loaded without an error.
+      // The tiles of the current view at the current level: how many there are, how many loaded without an error and
+      // the keys of those that answered with an error (shown grey).
       _viewTiles: function () {
-        var range = this._pxBoundsToTileRange(this._getTiledPixelBounds(this._map.getCenter())), total = 0, loaded = 0;
+        var range = this._pxBoundsToTileRange(this._getTiledPixelBounds(this._map.getCenter())), total = 0, loaded = 0, failed = [];
         for (var key in this._tiles) {
           var tile = this._tiles[key];
           if (tile.coords.z !== this._tileZoom || !range.contains(tile.coords)) continue;
           total++;
           if (tile.loaded && tile.el.className.indexOf('leaflet-tile-loaded') >= 0) loaded++;
+          else if (tile.loaded) failed.push(key);
         }
-        return { total: total, loaded: loaded };
+        return { total: total, loaded: loaded, failed: failed };
+      },
+      // Drops the given failed tiles and lets Leaflet's own update create and request them again: the same URL (the
+      // Worker rejects any query string), as a batch with the usual events. Returns the new tile elements.
+      _retryTiles: function (keys) {
+        var els = [], i;
+        for (i = 0; i < keys.length; i++) if (this._tiles[keys[i]]) this._removeTile(keys[i]);
+        this._update();
+        for (i = 0; i < keys.length; i++) if (this._tiles[keys[i]]) els.push(this._tiles[keys[i]].el);
+        return els;
       },
       // Tiles of this layer still loading, apart from `except` (the tile whose error is being fired: Leaflet marks it
       // answered only after its tileerror event).
@@ -574,13 +695,18 @@
         tileHandlers = {
           tileerror: function (e) {
             if (!current(token, layer)) return;
+            // A retried tile failing again is no new sign of an outage (see PARTIAL_RETRY_MS).
+            if (e && retryEls.delete(e.tile)) {
+              if (deadline !== null) armDeadline(token, layer);
+              return;
+            }
             errors++;
             batchErrors++;
             if (outage(batchErrors, batchSuccesses, layer._unanswered(e && e.tile), drawn)) failLater();
           },
-          tileload: function () {
+          tileload: function (e) {
             if (!current(token, layer)) return;
-            batchSuccesses++;
+            if (!(e && retryEls.delete(e.tile))) batchSuccesses++;
             if (deadline !== null) armDeadline(token, layer);
           },
           // Tiles cancelled by the user's own zoom are not an upstream failure: wait from the latest activity.
@@ -608,7 +734,24 @@
             if (batchSuccesses > 0) drawn = true;
             if (recovered(layer, e)) recoveryAttempts.delete(lockId(kind));
             loading = !drawn;
-            reason = batchErrors > 0 ? 'partial_error' : drawn ? 'ready' : 'loading';
+            // The notice follows the tiles missing from the current view, not only this batch (a later batch loading
+            // fine used to clear it while grey tiles stayed).
+            var view = layer._viewTiles();
+            reason = batchErrors > 0 || view.failed.length ? 'partial_error' : drawn ? 'ready' : 'loading';
+            // A retried group answered: all loaded -> the next two of the round (next turn, outside Leaflet's event);
+            // any failed or cancelled -> the round ends.
+            if (retryGroup.length) {
+              var groupLoaded = retryGroup.every(function (el) { return el.className.indexOf('leaflet-tile-loaded') >= 0; });
+              retryGroup = [];
+              if (!groupLoaded) retryQueue = [];
+              // A batch or zoom begun meanwhile ends the round; that batch's end arms the next one.
+              if (retryQueue.length) later(function () {
+                if (!current(token, layer)) return;
+                if (retryBusy(layer)) retryQueue = [];
+                else if (retryQueue.length && !retryGroup.length) retryNext(token, layer, PARTIAL_RETRY_GROUP);
+              });
+            }
+            if (drawn && !retryQueue.length) armPartialRetry(token, layer);
             syncBackdrop();
             render();
           }
@@ -679,6 +822,7 @@
     }
 
     function stopKeyPropagation(event) { event.stopPropagation(); }
+    function noteMove() { movedSinceRound = true; }
     var choose = {};
     CHOICES.forEach(function (choice) { choose[choice] = function () { setPreference(choice); }; });
     function retryVworld() { setPreference(preference === 'osm' ? 'vworld' : preference, { retry: true }); }
@@ -731,6 +875,7 @@
       recoveries.forEach(function (timer) { global.clearTimeout(timer); });
       recoveries.clear();
       map.off('zoomend moveend', reconcile);
+      map.off('movestart', noteMove);
       detachVworld();
       if (!map.hasLayer(osm)) osm.addTo(map);
       reason = 'destroyed';
@@ -754,6 +899,7 @@
     map.setMinZoom(4);
     control.addTo(map);
     map.on('zoomend moveend', reconcile);
+    map.on('movestart', noteMove);
     reconcile();
     return api;
   }

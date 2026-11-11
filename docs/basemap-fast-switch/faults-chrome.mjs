@@ -41,7 +41,7 @@ class Browser {
     socket.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && this.pending.has(m.id)) { const p = this.pending.get(m.id); this.pending.delete(m.id); m.error ? p.reject(Error(JSON.stringify(m.error))) : p.resolve(m.result); } else if (m.method) for (const l of this.listeners) l(m); });
   }
   send(method, params = {}, sessionId) { const id = ++this.seq; return new Promise((resolve, reject) => { this.pending.set(id, { resolve, reject }); this.socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) })); }); }
-  async open({ width, height, mobile, answer, touch = false }) {
+  async open({ width, height, mobile, answer, touch = false, fast = false }) {
     const { targetId } = await this.send('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await this.send('Target.attachToTarget', { targetId, flatten: true });
     // Uncaught page exceptions fail the scenario; console errors are reported.
@@ -69,6 +69,9 @@ class Browser {
     if (touch) await this.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 }, sessionId);
     if (GUARDED) await this.send('Page.addScriptToEvaluateOnNewDocument', { source: guard.INIT_SCRIPT }, sessionId);
     await this.send('Page.addScriptToEvaluateOnNewDocument', { source: CONFIG + "try{localStorage.removeItem('birdmap.basemap.preference')}catch(e){}" }, sessionId);
+    // Test clock only (this page): timers of 60 s and more (the partial retry rounds, the type recovery pauses) run 20x
+    // faster. Shorter timers (Leaflet, the 12 s deadline, the 750 ms stillness) are untouched.
+    if (fast) await this.send('Page.addScriptToEvaluateOnNewDocument', { source: '(function(){var st=window.setTimeout;window.setTimeout=function(f,ms){var a=[].slice.call(arguments,2);return st.apply(window,[f,ms>=60000?ms/20:ms].concat(a));};})();' }, sessionId);
     const evaluate = async expression => { const { result, exceptionDetails } = await this.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }, sessionId); if (exceptionDetails) throw Error(exceptionDetails.text); return result.value; };
     await this.send('Page.navigate', { url: PAGE }, sessionId);
     for (let i = 0; i < 100 && !(await evaluate("typeof birdmapBasemap!=='undefined'&&!!birdmapBasemap").catch(() => false)); i++) await sleep(200);
@@ -102,6 +105,19 @@ const notch = (b, p, deltaY) => b.send('Input.dispatchMouseEvent', { type: 'mous
 // Real two-finger pinches on a touch phone (CDP synthesizes the touch events), in 3 then out 3, `gap` ms apart.
 const pinches = async (b, p, n, gap) => { for (let i = 0; i < n; i++) { const t = Date.now(); await b.send('Input.synthesizePinchGesture', { x: 195 + ((i % 3) - 1) * 60, y: 460 + (i % 2 ? 60 : -60), scaleFactor: i % 6 < 3 ? 2 : 0.5, relativeSpeed: 1200, gestureSourceType: 'touch' }, p.sessionId); await sleep(Math.max(0, gap - (Date.now() - t))); } };
 const setView = (p, lat, lng, z) => p.evaluate(`(function(){var m=${MAP};m.setView([${lat},${lng}],${z},{animate:false});return 1;})()`);
+// The primary VWorld layer's current view: tiles, loaded ones and failed (grey) ones.
+const VIEW = "(function(){var m=" + MAP + ",v=null;m.eachLayer(function(l){if(l._viewTiles&&l._url&&/workers\\.dev/.test(l._url)&&!/\\/hybrid\\//.test(l._url))v=l._viewTiles();});return v&&{total:v.total,loaded:v.loaded,failed:v.failed?v.failed.length:v.total-v.loaded};})()";
+// From partialT0 on, the n-th distinct tile URL that `only` accepts (in request order) answers `fail(n, attempt)` (or 200).
+let partialT0 = 0;
+const partialAnswer = ({ only, fail }) => (u, i, log) => {
+  if (!partialT0 || !only(u)) return { status: 200, delay: 60 };
+  const since = log.filter(x => x.t >= partialT0 && only(x.url)), urls = [...new Set(since.map(x => x.url))];
+  return { status: fail(urls.indexOf(u), since.filter(x => x.url === u).length - 1) || 200, delay: 60 };
+};
+// Requests since partialT0 for a URL already asked for then, and the gaps between them.
+const repeats = log => { const since = log.filter(x => x.t >= partialT0), seen = new Set(), again = [];
+  for (const x of since) { if (seen.has(x.url)) again.push(x); seen.add(x.url); }
+  return { count: again.length, urls: again.map(x => x.url), gaps: again.slice(1).map((x, i) => x.t - again[i].t) }; };
 // Zoom levels of the tile requests in a log slice.
 const levels = log => [...new Set(log.map(x => +(/\/tiles\/(?:satellite\/|hybrid\/)?(\d+)\//.exec(x.url) || [])[1]))].sort((a, b) => a - b);
 const rapid = async (p, taps, gap) => { const seq = [L_SAT, L_HYB, L_BASE, L_SAT, L_BASE, L_HYB]; for (let i = 0; i < taps; i++) { await click(p, seq[i % seq.length]); if (i % 4 === 1) await zoomBy(p, i % 8 === 1 ? 1 : -1); if (i % 4 === 3) await panBy(p, 120, -80); await sleep(gap); } };
@@ -260,7 +276,30 @@ const SCENARIOS = [
     answer: u => { const m = /\/(\d+)\/(\d+)\/(\d+)\.(png|jpeg)$/.exec(u); const bad = Date.now() - overlapT0 < 3000 && !!m && (+m[2] + +m[3]) % 2 === 0; return { status: bad ? 502 : 200, delay: bad ? 40 : 250 }; },
     run: async p => { overlapT0 = Date.now(); for (let i = 0; i < 24; i++) { if (i % 3 === 2) await panBy(p, i % 2 ? -140 : 150, 40); else await zoomBy(p, i % 6 < 3 ? 1 : -1); await sleep(250); }
       await sleep(1500); const s = await waitState(p, s => s.reason === 'ready' || s.reason === 'partial_error' || s.active === 'osm', 15000); s.deadline = await p.evaluate('birdmapBasemap.getState().deadlinePending'); return s; },
-    expect: s => s.active === 'osm' ? s.reason === 'tile_error' && s.locked : s.active === 'vworld' && (s.reason === 'ready' || s.reason === 'partial_error') && !s.deadline }
+    expect: s => s.active === 'osm' ? s.reason === 'tile_error' && s.locked : s.active === 'vworld' && (s.reason === 'ready' || s.reason === 'partial_error') && !s.deadline },
+  // A few failed tiles on a shown map stayed grey: Leaflet never asks for a failed tile again (11/11 RCA). They are asked
+  // for again after the 60 s limiter window, a canary first, never as an outage. Timers of 60 s+ run 20x faster here.
+  { name: 'partial_failures_retried', fast: true, note: 'a new area where 2 tiles fail once (429): VWorld with the partial notice, then (60-75 s, 3-3.75 s at 20x) only those 2 tiles are asked for again and the view is whole',
+    answer: partialAnswer({ only: u => !u.includes('/hybrid/'), fail: (n, a) => (n === 1 || n === 4) && a === 0 ? 429 : 0 }),
+    run: async p => { partialT0 = Date.now(); await setView(p, 35.2, 128.9, 11); await sleep(300);
+      const first = await waitState(p, s => s.reason === 'partial_error' || s.reason === 'ready' || s.active === 'osm', 15000); first.view = await p.evaluate(VIEW);
+      const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); s.view = await p.evaluate(VIEW); s.repeated = repeats(p.log).count;
+      s.firstSeen = first.active + '/' + first.reason + '/failed=' + (first.view && first.view.failed); partialT0 = 0; return s; },
+    expect: s => s.firstSeen === 'vworld/partial_error/failed=2' && s.active === 'vworld' && s.reason === 'ready' && s.view.failed === 0 && s.repeated === 2 },
+  { name: 'partial_failures_persistent', only: 'pc', fast: true, note: 'a new area where 3 tiles always fail (502): VWorld stays (no OSM, no lock); one request per round (60-75 s, 3-3.75 s at 20x), each tile at most once so far',
+    answer: partialAnswer({ only: u => !u.includes('/hybrid/'), fail: n => n === 1 || n === 4 || n === 7 ? 502 : 0 }),
+    run: async p => { partialT0 = Date.now(); await setView(p, 35.2, 128.9, 11); await sleep(300);
+      await waitState(p, s => s.reason === 'partial_error' || s.active === 'osm', 15000); await sleep(13000);
+      const s = await p.evaluate(ST); const r = repeats(p.log); s.repeated = r.count; s.gaps = r.gaps; s.distinct = new Set(r.urls).size; partialT0 = 0; return s; },
+    expect: s => s.active === 'vworld' && s.reason === 'partial_error' && !s.locked && s.repeated >= 2 && s.repeated <= 4 && s.distinct === s.repeated && s.gaps.every(g => g >= 2900) },
+  { name: 'partial_failures_hybrid', only: 'pc', fast: true, note: 'Hybrid: 2 satellite tiles fail once (429), labels fine: only those 2 satellite tiles are asked for again, the overlay is not',
+    answer: partialAnswer({ only: u => u.includes('/satellite/'), fail: (n, a) => (n === 1 || n === 4) && a === 0 ? 429 : 0 }),
+    run: async p => { await click(p, L_HYB); await waitState(p, s => s.active === 'hybrid' && s.reason === 'ready', 15000);
+      partialT0 = Date.now(); await setView(p, 35.2, 128.9, 11); await sleep(300);
+      const first = await waitState(p, s => s.reason === 'partial_error' || s.active === 'osm', 15000);
+      const s = await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000); const r = repeats(p.log);
+      s.repeated = r.count; s.repeatedSatellite = r.urls.filter(u => u.includes('/satellite/')).length; s.firstSeen = first.active + '/' + first.reason; partialT0 = 0; return s; },
+    expect: s => s.firstSeen === 'hybrid/partial_error' && s.active === 'hybrid' && s.overlay === 'ready' && s.reason === 'ready' && s.repeated === 2 && s.repeatedSatellite === 2 }
 ];
 let mixedOn = false, overlapT0 = 0;
 
@@ -310,7 +349,7 @@ try {
     for (const sc of SCENARIOS) {
       if (label === 'wide' ? ![].concat(sc.only).includes('wide') : sc.only && ![].concat(sc.only).includes(label)) continue;
       if (process.env.FAULTS_ONLY && !process.env.FAULTS_ONLY.split(',').includes(sc.name)) continue;
-      const p = await browser.open({ ...size, touch: !!sc.touch, answer: sc.answer });
+      const p = await browser.open({ ...size, touch: !!sc.touch, fast: !!sc.fast, answer: sc.answer });
       await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
       await start(p); await waitState(p, s => s.reason === 'ready' || s.active === 'osm', 15000);
       const before = p.log.length;

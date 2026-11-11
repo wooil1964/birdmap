@@ -71,9 +71,12 @@ function environment({ stored = null, blockedStorage = false, key = '', tileCrea
       tileLayer(url, options) {
         if (tileCreationThrows) throw new Error('Tile construction failed');
         const layer = new Events();
-        // `unanswered`: tiles of the batch still loading; `view`: the current view's tiles and how many loaded without an
-        // error (set by a test; by default nothing is still loading and the view is whole).
-        Object.assign(layer, { options, _url: url, unanswered: 0, view: { total: 1, loaded: 1 }, _unanswered() { return this.unanswered; }, _viewTiles() { return this.view; },
+        // `unanswered`: tiles of the batch still loading; `view`: the current view's tiles, how many loaded without an
+        // error and the keys of the failed ones (set by a test; by default nothing is still loading and the view is
+        // whole). `_retryTiles` stands for Leaflet asking for the given tiles again: it starts a batch at once ('loading')
+        // and returns one element per tile; `retried` lists every key asked for again.
+        Object.assign(layer, { options, _url: url, unanswered: 0, view: { total: 1, loaded: 1 }, retried: [], _unanswered() { return this.unanswered; }, _viewTiles() { return Object.assign({ failed: [] }, this.view); },
+          _retryTiles(keys) { this.retried.push(...keys); const els = keys.map(key => ({ key, className: 'leaflet-tile' })); if (els.length) this.fire('loading'); return els; },
           addTo(target) { target.layers.add(this); this.fire('loading'); return this; } });
         created.push(layer); return layer;
       },
@@ -521,6 +524,110 @@ test('an outage at zoom 5 (OSM already underneath): OSM takes over and stays whi
   e.recover(); assert.deepEqual([e.state().active, e.created.length, e.map.hasLayer(e.osm)], ['vworld', n + 1, true], 'one attempt; OSM stays around Korea');
   e.api.destroy();
 });
+// A few failed tiles on a shown map stayed grey: Leaflet never asks for a failed tile again (11/11). They are now asked
+// for again after the 60 s limiter window (+ jitter): a canary, then two at a time, never judged as an outage.
+const RETRY = t => t.ms >= 60000 && t.ms < 75000;
+function partialSetup(failed, options = { config: WORKER }) {
+  const e = environment(options), l = e.last();
+  l.view = { total: 24, loaded: 24 - failed.length, failed };
+  for (let i = 0; i < 24 - failed.length; i++) l.fire('tileload');
+  for (let i = 0; i < failed.length; i++) l.fire('tileerror');
+  l.fire('load');
+  const retryTimers = () => [...e.recoveries.values()].filter(RETRY);
+  // Runs the pending round timer (the only >= 60 s timer in these checks); returns how many ran.
+  const round = () => { const due = [...e.recoveries.entries()].filter(([, t]) => RETRY(t)); for (const [id] of due) e.recoveries.delete(id); due.forEach(([, t]) => t.fn()); return due.length; };
+  // The elements handed to Leaflet by each _retryTiles call, and their answers (each ends its batch).
+  const groups = []; const ask = l._retryTiles; l._retryTiles = function (keys) { const els = ask.call(this, keys); groups.push(els); return els; };
+  const answer = (els, ok) => { for (const el of els) { if (ok) { el.className += ' leaflet-tile-loaded'; l.fire('tileload', { tile: el }); } else l.fire('tileerror', { tile: el }); } l.fire('load'); };
+  return { e, l, retryTimers, round, groups, answer };
+}
+
+test('a few failed tiles are asked for again once the limiter window has passed: a canary, then the rest two at a time', () => {
+  const { e, l, retryTimers, round, groups, answer } = partialSetup(['11:1:1', '11:2:1', '11:3:1', '11:4:1']);
+  assert.deepEqual([e.state().active, e.state().reason, e.state().locked, e.state().partialRetryPending], ['vworld', 'partial_error', false, true]);
+  assert.equal(retryTimers().length, 1); assert.ok(retryTimers()[0].ms >= 60000 && retryTimers()[0].ms < 75000, 'never before the 60 s window, at most 15 s of jitter');
+  assert.deepEqual(l.retried, [], 'nothing is asked for before the pause');
+  assert.equal(round(), 1);
+  assert.deepEqual(l.retried, ['11:1:1'], 'one canary first');
+  answer(groups.at(-1), true); assert.deepEqual(l.retried, ['11:1:1', '11:2:1', '11:3:1'], 'the canary loaded: the next two');
+  answer(groups.at(-1), true); assert.deepEqual(l.retried, ['11:1:1', '11:2:1', '11:3:1', '11:4:1'], 'then the last one');
+  l.view = { total: 24, loaded: 24, failed: [] }; answer(groups.at(-1), true);
+  assert.deepEqual([e.state().active, e.state().reason, e.state().partialRetryPending, e.created.length], ['vworld', 'ready', false, 1], 'whole again; same layer, no new screen');
+  e.api.destroy();
+});
+
+test('retried tiles failing again never switch the map to OSM; each is tried at most four times at growing pauses, one per round', () => {
+  const keys = ['11:1:1', '11:2:1', '11:3:1'];
+  const { e, l, round, groups, answer } = partialSetup(keys);
+  const at = Object.fromEntries(keys.map(k => [k, []])); let rounds = 0;
+  while (round()) {
+    rounds++; const asked = groups.splice(0);
+    assert.ok(asked.length <= 1 && asked.every(g => g.length === 1), 'round ' + rounds + ': a failing canary ends its round, one request at most');
+    for (const g of asked) { at[g[0].key].push(rounds); answer(g, false); }
+    assert.deepEqual([e.state().active, e.state().locked, e.state().reason], ['vworld', false, 'partial_error'], 'round ' + rounds); assert.ok(rounds < 60);
+  }
+  // 60/120/240/480 s per tile, counted in rounds (about 67 s each with the jitter), then it stays grey.
+  assert.deepEqual(at, { '11:1:1': [1, 3, 7, 15], '11:2:1': [2, 4, 8, 16], '11:3:1': [5, 9, 13, 21] });
+  assert.deepEqual([e.state().partialRetryPending, e.recoveries.size, e.created.length], [false, 0, 1], 'then no timer and no new layer');
+  e.api.destroy();
+});
+
+test('a retried tile is not judged with its batch: two failing again after a loaded canary is no outage', () => {
+  const { e, l, round, groups, answer } = partialSetup(['11:1:1', '11:2:1', '11:3:1']);
+  round(); answer(groups.at(-1), true);
+  const pair = groups.at(-1); assert.equal(pair.length, 2);
+  answer(pair, false);
+  assert.deepEqual([e.state().active, e.state().locked, e.state().errors, e.state().reason], ['vworld', false, 0, 'partial_error']);
+  // Fresh tiles of the same batch still count: three new failures outnumbering the loaded ones are an outage.
+  l.fire('loading'); l.fire('tileerror'); l.fire('tileerror'); l.fire('tileerror'); assert.equal(e.state().active, 'osm');
+  e.api.destroy();
+});
+
+test('a pending retry sends nothing after OSM, another type, a new config, destroy, or for a replaced layer', () => {
+  const o = partialSetup(['11:1:1', '11:2:1']); const stale = o.retryTimers()[0].fn; const old = o.l;
+  o.e.api.setPreference('osm'); assert.equal(o.retryTimers().length, 0, 'OSM clears the timer');
+  stale(); assert.deepEqual([old.retried, o.e.state().active], [[], 'osm'], 'a stale timer callback does nothing');
+  o.e.api.setPreference('vworld'); assert.deepEqual([o.e.created.length, o.e.last().retried, o.retryTimers().length], [2, [], 0], 'the new layer starts clean');
+  o.e.api.destroy();
+  const t = partialSetup(['11:1:1', '11:2:1']); t.e.api.setPreference('satellite'); t.e.settle();
+  assert.deepEqual([t.e.state().active, t.retryTimers().length, t.l.retried], ['satellite', 0, []], 'another type replaces the layer and its timer'); t.e.api.destroy();
+  const c = partialSetup(['11:1:1', '11:2:1'], { config: WORKER }); c.e.api.updateConfig({ vworldMode: 'direct', vworldKey: 'LOCAL_SIMULATION_CREDENTIAL_R' });
+  assert.deepEqual([c.retryTimers().length, c.l.retried], [0, []], 'a new config replaces it too'); c.e.api.destroy();
+  const d = partialSetup(['11:1:1', '11:2:1']); d.e.api.destroy(); assert.deepEqual([d.retryTimers().length, d.l.retried], [0, []], 'destroy clears it');
+});
+
+test('a round waits for a batch in progress, a zoom rest, a hidden tab and a still map; Satellite <-> Hybrid keeps it', () => {
+  const s = partialSetup(['11:1:1', '11:2:1']);
+  s.l._loading = true; s.round(); assert.deepEqual([s.l.retried, s.retryTimers().length], [[], 0], 'during a batch: nothing, the batch end re-arms');
+  s.l._loading = false; s.l.fire('loading'); s.l.fire('tileload'); s.l.fire('load'); assert.equal(s.retryTimers().length, 1);
+  s.l._zoomRest = 7; s.round(); assert.deepEqual(s.l.retried, [], 'during a zoom rest: nothing'); s.l._zoomRest = null;
+  s.l.fire('loading'); s.l.fire('tileload'); s.l.fire('load');
+  s.e.window.document = { hidden: true }; s.round(); assert.deepEqual([s.l.retried, s.retryTimers().length], [[], 1], 'hidden tab: put off by a whole pause');
+  s.e.window.document = { hidden: false };
+  s.e.map.fire('movestart'); s.round(); assert.deepEqual([s.l.retried, s.e.timerMs().includes(750)], [[], true], 'moved since: 750 ms of stillness first');
+  s.e.expireLast(); assert.deepEqual(s.l.retried, ['11:1:1'], 'then the canary');
+  s.e.api.destroy();
+  const h = partialSetup(['11:1:1', '11:2:1'], { stored: 'satellite', config: WORKER }); const sat = h.l;
+  h.e.api.setPreference('hybrid'); h.e.settle(); assert.equal(h.e.created.length, 2, 'only the overlay is added');
+  h.round(); assert.deepEqual(sat.retried, ['11:1:1'], 'the satellite layer kept its pending retry');
+  h.e.api.destroy();
+});
+
+test('the partial notice follows the grey tiles of the view, not only the latest batch', () => {
+  const p = partialSetup(['11:1:1']);
+  p.l.fire('loading'); p.l.fire('tileload'); p.l.fire('load');
+  assert.equal(p.e.state().reason, 'partial_error', 'a later batch loading fine does not hide a grey tile still in view');
+  p.l.view = { total: 24, loaded: 24, failed: [] }; p.l.fire('loading'); p.l.fire('tileload'); p.l.fire('load');
+  assert.equal(p.e.state().reason, 'ready'); p.e.api.destroy();
+});
+
+test('a retried tile still loading at the 12 s deadline keeps the shown map; fresh tiles keep the deadline as before', () => {
+  const p = partialSetup(['11:1:1', '11:2:1']); p.round(); assert.deepEqual(p.l.retried, ['11:1:1']);
+  assert.ok(p.e.timerMs().includes(12000)); p.e.expire();
+  assert.deepEqual([p.e.state().active, p.e.state().locked, p.e.state().reason], ['vworld', false, 'partial_error']);
+  p.e.api.destroy();
+});
+
 test('the VWorld layers sit above the OSM layer (primary 2, overlay 3)', () => {
   const h = environment({ stored: 'hybrid', config: WORKER }); const [sat, ov] = h.created;
   assert.deepEqual([sat.options.zIndex, ov.options.zIndex, ov.options.minNativeZoom], [2, 3, 6]);

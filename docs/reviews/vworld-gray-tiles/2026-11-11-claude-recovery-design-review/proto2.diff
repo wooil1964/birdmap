@@ -1,0 +1,163 @@
+--- main/assets/birdmap-basemap.js
++++ merged/assets/birdmap-basemap.js
+@@ -38,6 +38,13 @@
+   // 5-17 s; at 1920x1080 one such screen already exceeds 180 requests a minute).
+   var ZOOM_SETTLE_MS = 400;
+   var ZOOM_RUN_MS = 900;
++  // PROTOTYPE: a few failed tiles of a shown layer are asked for again once, after the limiter window, one tile first
++  // (a canary). Only if it loads are the rest (at most PARTIAL_RETRY_MAX) asked for. A tile key is retried
++  // automatically at most once per layer. Retried tiles never count toward a batch's outage verdict.
++  var PARTIAL_RETRY_MS = global.__birdmapPartialRetryMs || 60000;
++  // PROTO2: per tile, like the per-type recovery: 1x, 2x, 4x, 8x the first pause (60/120/240/480 s), then it stays.
++  var PARTIAL_RETRY_STEPS = [1, 2, 4, 8];
++  var PARTIAL_RETRY_MAX = 8;
+   var instances = new WeakMap();
+   // 'vworld' is the Base map (the original value, kept for saved preferences).
+   var CHOICES = ['vworld', 'satellite', 'hybrid', 'osm'];
+@@ -126,6 +133,12 @@
+     var overlayBatchSuccesses = 0;
+     var overlayBatchErrors = 0;
+     var overlayDrawn = false;
++    var partialRetry = null;
++    var retried = new Map();
++    var lastRound = -Infinity;
++    var retryEls = new Set();
++    var canaryEl = null;
++    var pendingRest = [];
+     var ui = null;
+     var control = L.control({ position: 'topright' });
+ 
+@@ -178,6 +191,8 @@
+         backdrop: active !== 'osm' && map.hasLayer(osm),
+         deadlinePending: deadline !== null,
+         recoveryAttempts: preference === 'osm' ? 0 : recoveryAttempts.get(lockId(PRIMARY[preference])) || 0,
++        partialRetryPending: partialRetry !== null,
++        retriedKeys: retried.size,
+         batchTimeoutMs: TILE_BATCH_TIMEOUT_MS,
+         zoom: map.getZoom(),
+         destroyed: destroyed
+@@ -253,9 +268,20 @@
+       }
+     }
+ 
++    function clearPartialRetry() {
++      if (partialRetry !== null) { global.clearTimeout(partialRetry); partialRetry = null; }
++      retried = new Map(); retryEls = new Set(); canaryEl = null; pendingRest = []; lastRound = -Infinity;
++    }
++
++    // PROTO2: a key may be retried while it has attempts left and its pause since the last attempt has passed.
++    function retryDue(k, now) { var r = retried.get(k); return !r || (r.n < PARTIAL_RETRY_STEPS.length && now >= r.next); }
++    function retryWait(k, now) { var r = retried.get(k); return !r ? PARTIAL_RETRY_MS : r.n < PARTIAL_RETRY_STEPS.length ? Math.max(0, r.next - now) : Infinity; }
++    function markRetried(k, now) { var r = retried.get(k) || { n: 0, next: 0 }; r.n++; r.next = now + PARTIAL_RETRY_MS * (PARTIAL_RETRY_STEPS[r.n] || Infinity); retried.set(k, r); }
++
+     function detachVworld() {
+       generation++;
+       clearDeadline();
++      clearPartialRetry();
+       detachOverlay();
+       var previous = vworld;
+       var handlers = tileHandlers;
+@@ -329,6 +355,28 @@
+       showOsm(nextReason);
+     }
+ 
++    // PROTOTYPE: one delayed round per failure episode; skipped (and re-armed by the next load) while a batch, a zoom
++    // rest or a zoom animation is in progress, or while the page is hidden.
++    function schedulePartialRetry(token, layer, wait) {
++      if (partialRetry !== null || !current(token, layer) || !(wait < Infinity)) return;
++      // At most one round (one canary) per pause per layer, however many tiles are due.
++      wait = Math.max(wait, lastRound + PARTIAL_RETRY_MS - Date.now());
++      partialRetry = global.setTimeout(function () {
++        partialRetry = null;
++        if (!current(token, layer) || canaryEl || pendingRest.length) return;
++        if (global.document && global.document.hidden) return schedulePartialRetry(token, layer, PARTIAL_RETRY_MS);
++        if (layer._loading || layer._zoomRest || map._animatingZoom) return;
++        var now = Date.now(), keys = layer._viewTiles().failed.filter(function (k) { return retryDue(k, now); });
++        if (!keys.length) return;
++        markRetried(keys[0], now);
++        lastRound = now;
++        pendingRest = keys.slice(1, PARTIAL_RETRY_MAX);
++        var els = layer._retryTiles([keys[0]]);
++        canaryEl = els[0] || null;
++        if (canaryEl) retryEls.add(canaryEl); else pendingRest = [];
++      }, wait);
++    }
++
+     function failOverlay(token, layer) {
+       if (!overlayCurrent(token, layer)) return;
+       failedKeys.set(lockId('overlay'), 'overlay_error');
+@@ -416,14 +464,23 @@
+       },
+       // The tiles of the current view at the current level: how many there are and how many loaded without an error.
+       _viewTiles: function () {
+-        var range = this._pxBoundsToTileRange(this._getTiledPixelBounds(this._map.getCenter())), total = 0, loaded = 0;
++        var range = this._pxBoundsToTileRange(this._getTiledPixelBounds(this._map.getCenter())), total = 0, loaded = 0, failed = [];
+         for (var key in this._tiles) {
+           var tile = this._tiles[key];
+           if (tile.coords.z !== this._tileZoom || !range.contains(tile.coords)) continue;
+           total++;
+           if (tile.loaded && tile.el.className.indexOf('leaflet-tile-loaded') >= 0) loaded++;
++          else if (tile.loaded) failed.push(key);
+         }
+-        return { total: total, loaded: loaded };
++        return { total: total, loaded: loaded, failed: failed };
++      },
++      // PROTOTYPE: drop the given failed tiles and let Leaflet's own _update request them again (a normal batch).
++      _retryTiles: function (keys) {
++        var els = [];
++        for (var i = 0; i < keys.length; i++) if (this._tiles[keys[i]]) this._removeTile(keys[i]);
++        this._update();
++        for (var j = 0; j < keys.length; j++) if (this._tiles[keys[j]]) els.push(this._tiles[keys[j]].el);
++        return els;
+       },
+       // Tiles of this layer still loading, apart from `except` (the tile whose error is being fired: Leaflet marks it
+       // answered only after its tileerror event).
+@@ -574,12 +631,15 @@
+         tileHandlers = {
+           tileerror: function (e) {
+             if (!current(token, layer)) return;
++            // PROTOTYPE: a retried tile failing again is not new evidence of an outage.
++            if (e && retryEls.has(e.tile)) { retryEls.delete(e.tile); if (deadline !== null) armDeadline(token, layer); return; }
+             errors++;
+             batchErrors++;
+             if (outage(batchErrors, batchSuccesses, layer._unanswered(e && e.tile), drawn)) failLater();
+           },
+-          tileload: function () {
++          tileload: function (e) {
+             if (!current(token, layer)) return;
++            if (e && retryEls.has(e.tile)) { retryEls.delete(e.tile); if (deadline !== null) armDeadline(token, layer); return; }
+             batchSuccesses++;
+             if (deadline !== null) armDeadline(token, layer);
+           },
+@@ -608,7 +668,22 @@
+             if (batchSuccesses > 0) drawn = true;
+             if (recovered(layer, e)) recoveryAttempts.delete(lockId(kind));
+             loading = !drawn;
+-            reason = batchErrors > 0 ? 'partial_error' : drawn ? 'ready' : 'loading';
++            // PROTOTYPE: the notice follows the tiles missing from the current view, not only this batch's counts.
++            var view = layer._viewTiles();
++            reason = batchErrors > 0 || view.failed.length ? 'partial_error' : drawn ? 'ready' : 'loading';
++            // Canary answered: loaded -> ask for the rest once (next turn, outside Leaflet's event); failed -> stop.
++            if (canaryEl) {
++              var ok = canaryEl.className.indexOf('leaflet-tile-loaded') >= 0, rest = pendingRest;
++              canaryEl = null; pendingRest = [];
++              if (ok && rest.length) {
++                rest.forEach(function (k) { markRetried(k, Date.now()); });
++                later(function () {
++                  if (!current(token, layer) || layer._loading) return;
++                  layer._retryTiles(rest).forEach(function (el) { retryEls.add(el); });
++                });
++              }
++            }
++            if (drawn && view.failed.length) { var t = Date.now(); schedulePartialRetry(token, layer, Math.min.apply(null, view.failed.map(function (k) { return retryWait(k, t); }))); }
+             syncBackdrop();
+             render();
+           }
+@@ -728,6 +803,7 @@
+       if (destroyed) return;
+       destroyed = true;
+       clearSettle();
++      clearPartialRetry();
+       recoveries.forEach(function (timer) { global.clearTimeout(timer); });
+       recoveries.clear();
+       map.off('zoomend moveend', reconcile);

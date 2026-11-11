@@ -1,0 +1,2219 @@
+{
+ "chain-permanent-502-proto": {
+  "ctrl": "proto",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 28,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 4,
+   "s429": 0,
+   "s502": 8,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3163,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6182,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 9199,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 12204,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   }
+  ],
+  "probes": [
+   {
+    "at": "2.5s",
+    "t": 2679,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "10s",
+    "t": 10185,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "25s",
+    "t": 25196,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "50s",
+    "t": 50200,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "70s",
+    "t": 70217,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "chain-permanent-502-fallback": {
+  "ctrl": "fallback",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 125,
+   "hybrid": 0,
+   "osm": 48,
+   "blocked": 0,
+   "retried": 101,
+   "s429": 0,
+   "s502": 25,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3091,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6096,
+    "key": "11/1749/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6096,
+    "key": "11/1750/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6096,
+    "key": "11/1749/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6096,
+    "key": "11/1750/802",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 6096,
+    "key": "11/1749/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6097,
+    "key": "11/1750/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6097,
+    "key": "11/1748/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6097,
+    "key": "11/1751/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6097,
+    "key": "11/1748/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6097,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6098,
+    "key": "11/1749/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1750/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6098,
+    "key": "11/1751/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1748/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6099,
+    "key": "11/1747/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1752/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1747/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1752/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1747/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1752/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1747/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1752/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 9112,
+    "key": "11/1750/802",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 15118,
+    "key": "11/1749/801",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15119,
+    "key": "11/1750/801",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15119,
+    "key": "11/1749/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15119,
+    "key": "11/1750/802",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 15119,
+    "key": "11/1749/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15119,
+    "key": "11/1750/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15120,
+    "key": "11/1748/801",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15120,
+    "key": "11/1751/801",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15120,
+    "key": "11/1748/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15120,
+    "key": "11/1751/802",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 15120,
+    "key": "11/1749/803",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15121,
+    "key": "11/1750/803",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15121,
+    "key": "11/1748/800",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 15121,
+    "key": "11/1751/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15121,
+    "key": "11/1748/803",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15121,
+    "key": "11/1751/803",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 15122,
+    "key": "11/1747/801",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15122,
+    "key": "11/1752/801",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15122,
+    "key": "11/1747/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15122,
+    "key": "11/1752/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15123,
+    "key": "11/1747/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15123,
+    "key": "11/1752/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15123,
+    "key": "11/1747/803",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15123,
+    "key": "11/1752/803",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 18136,
+    "key": "11/1750/802",
+    "attempt": 5,
+    "status": 502
+   },
+   {
+    "t": 30148,
+    "key": "11/1749/801",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30148,
+    "key": "11/1750/801",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30148,
+    "key": "11/1749/802",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30148,
+    "key": "11/1750/802",
+    "attempt": 6,
+    "status": 502
+   },
+   {
+    "t": 30149,
+    "key": "11/1749/800",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30149,
+    "key": "11/1750/800",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30149,
+    "key": "11/1748/801",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30150,
+    "key": "11/1751/801",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30150,
+    "key": "11/1748/802",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30150,
+    "key": "11/1751/802",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 30150,
+    "key": "11/1749/803",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30150,
+    "key": "11/1750/803",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30150,
+    "key": "11/1748/800",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 30150,
+    "key": "11/1751/800",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30151,
+    "key": "11/1748/803",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30151,
+    "key": "11/1751/803",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 30151,
+    "key": "11/1747/801",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30151,
+    "key": "11/1752/801",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30151,
+    "key": "11/1747/802",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30152,
+    "key": "11/1752/802",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30152,
+    "key": "11/1747/800",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30152,
+    "key": "11/1752/800",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30152,
+    "key": "11/1747/803",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 30152,
+    "key": "11/1752/803",
+    "attempt": 3,
+    "status": 200
+   },
+   {
+    "t": 33166,
+    "key": "11/1750/802",
+    "attempt": 7,
+    "status": 502
+   },
+   {
+    "t": 57170,
+    "key": "11/1749/801",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57170,
+    "key": "11/1750/801",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57170,
+    "key": "11/1749/802",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57170,
+    "key": "11/1750/802",
+    "attempt": 8,
+    "status": 502
+   },
+   {
+    "t": 57170,
+    "key": "11/1749/800",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57171,
+    "key": "11/1750/800",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57171,
+    "key": "11/1748/801",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57171,
+    "key": "11/1751/801",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57171,
+    "key": "11/1748/802",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57171,
+    "key": "11/1751/802",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 57172,
+    "key": "11/1749/803",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57172,
+    "key": "11/1750/803",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57172,
+    "key": "11/1748/800",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 57172,
+    "key": "11/1751/800",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57172,
+    "key": "11/1748/803",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57173,
+    "key": "11/1751/803",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 57173,
+    "key": "11/1747/801",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57173,
+    "key": "11/1752/801",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57173,
+    "key": "11/1747/802",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57173,
+    "key": "11/1752/802",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57174,
+    "key": "11/1747/800",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57174,
+    "key": "11/1752/800",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57174,
+    "key": "11/1747/803",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 57174,
+    "key": "11/1752/803",
+    "attempt": 4,
+    "status": 200
+   },
+   {
+    "t": 60183,
+    "key": "11/1750/802",
+    "attempt": 9,
+    "status": 502
+   }
+  ],
+  "probes": [
+   {
+    "at": "2.5s",
+    "t": 2622,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "10s",
+    "t": 10128,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 2
+   },
+   {
+    "at": "25s",
+    "t": 25141,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 3
+   },
+   {
+    "at": "50s",
+    "t": 50143,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 4
+   },
+   {
+    "at": "70s",
+    "t": 70143,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 4
+   }
+  ]
+ },
+ "chain-heals-502-proto": {
+  "ctrl": "proto",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 28,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 4,
+   "s429": 0,
+   "s502": 8,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3091,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6094,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 9098,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 12100,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   }
+  ],
+  "probes": [
+   {
+    "at": "2.5s",
+    "t": 2624,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "10s",
+    "t": 10129,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "25s",
+    "t": 25142,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "chain-heals-502-fallback": {
+  "ctrl": "fallback",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 52,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 28,
+   "s429": 0,
+   "s502": 8,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3077,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6097,
+    "key": "11/1749/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6097,
+    "key": "11/1750/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1749/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1750/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1749/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1750/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6098,
+    "key": "11/1748/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1751/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1748/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6099,
+    "key": "11/1749/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1750/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6099,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6100,
+    "key": "11/1751/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1748/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6100,
+    "key": "11/1747/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1752/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6100,
+    "key": "11/1747/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6101,
+    "key": "11/1752/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6101,
+    "key": "11/1747/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6101,
+    "key": "11/1752/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6101,
+    "key": "11/1747/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 6101,
+    "key": "11/1752/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 9114,
+    "key": "11/1751/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 9116,
+    "key": "11/1748/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 9116,
+    "key": "11/1751/803",
+    "attempt": 2,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "2.5s",
+    "t": 2624,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "10s",
+    "t": 10130,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "25s",
+    "t": 25141,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "chain-permanent-502-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 40,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 16,
+   "s429": 0,
+   "s502": 20,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3128,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6147,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 9150,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 12152,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 15154,
+    "key": "11/1750/802",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 18157,
+    "key": "11/1751/802",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 21159,
+    "key": "11/1748/800",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 24162,
+    "key": "11/1751/803",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 27164,
+    "key": "11/1750/802",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 30166,
+    "key": "11/1751/802",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 33169,
+    "key": "11/1748/800",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 36171,
+    "key": "11/1751/803",
+    "attempt": 3,
+    "status": 502
+   },
+   {
+    "t": 51167,
+    "key": "11/1750/802",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 54169,
+    "key": "11/1751/802",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 57172,
+    "key": "11/1748/800",
+    "attempt": 4,
+    "status": 502
+   },
+   {
+    "t": 60174,
+    "key": "11/1751/803",
+    "attempt": 4,
+    "status": 502
+   }
+  ],
+  "probes": [
+   {
+    "at": "2.5s",
+    "t": 2659,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "10s",
+    "t": 10165,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "25s",
+    "t": 25178,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "50s",
+    "t": 50182,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "70s",
+    "t": 70198,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "chain-heals-502-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 32,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 8,
+   "s429": 0,
+   "s502": 8,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3094,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6100,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 9105,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 12107,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 15110,
+    "key": "11/1750/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15111,
+    "key": "11/1751/802",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 15112,
+    "key": "11/1748/800",
+    "attempt": 2,
+    "status": 200
+   },
+   {
+    "t": 18112,
+    "key": "11/1751/803",
+    "attempt": 2,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "2.5s",
+    "t": 2630,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "10s",
+    "t": 10138,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "25s",
+    "t": 25150,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "transient-429-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 26,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 2,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3105,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 3107,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2636,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry-window",
+    "t": 6641,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "later",
+    "t": 10642,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "transient-502-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 26,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 2,
+   "s429": 0,
+   "s502": 2,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3100,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 3102,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2632,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry-window",
+    "t": 6633,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "later",
+    "t": 10634,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "transient-503-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 26,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 2,
+   "s429": 0,
+   "s502": 0,
+   "s503": 2
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3108,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 3110,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2639,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry-window",
+    "t": 6643,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "later",
+    "t": 10645,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "persistent-429-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 28,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 4,
+   "s429": 8,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3114,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 429
+   },
+   {
+    "t": 6125,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 429
+   },
+   {
+    "t": 9127,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 429
+   },
+   {
+    "t": 12130,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 429
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2637,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry",
+    "t": 7141,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "later",
+    "t": 13146,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "permanent-502-pan-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 34,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 6,
+   "s429": 0,
+   "s502": 10,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3094,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 6097,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 9099,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 12101,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 502
+   },
+   {
+    "t": 15103,
+    "key": "11/1750/802",
+    "attempt": 2,
+    "status": 502
+   },
+   {
+    "t": 18106,
+    "key": "11/1751/802",
+    "attempt": 2,
+    "status": 502
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2642,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry",
+    "t": 7144,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-pan-and-retry",
+    "t": 13651,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "later",
+    "t": 18655,
+    "gray": 4,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "cancel-osm-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 48,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 24,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 7651,
+    "key": "11/1749/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7651,
+    "key": "11/1750/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7651,
+    "key": "11/1749/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7652,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7652,
+    "key": "11/1749/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7652,
+    "key": "11/1750/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7653,
+    "key": "11/1748/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7653,
+    "key": "11/1751/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7654,
+    "key": "11/1748/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7654,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7654,
+    "key": "11/1749/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7654,
+    "key": "11/1750/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7654,
+    "key": "11/1748/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7654,
+    "key": "11/1751/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7655,
+    "key": "11/1748/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7655,
+    "key": "11/1751/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7655,
+    "key": "11/1747/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7655,
+    "key": "11/1752/801",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7655,
+    "key": "11/1747/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7655,
+    "key": "11/1752/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7656,
+    "key": "11/1747/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7656,
+    "key": "11/1752/800",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7656,
+    "key": "11/1747/803",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 7656,
+    "key": "11/1752/803",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "partial",
+    "t": 2642,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "osm-before-and-after-timer",
+    "t": 7647,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "user_selected",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "back-to-satellite",
+    "t": 10664,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "cancel-zoom-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 48,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 0,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [],
+  "probes": [
+   {
+    "at": "partial",
+    "t": 2639,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "zoomed",
+    "t": 8645,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "cancel-destroy-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 24,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 0,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [],
+  "probes": [
+   {
+    "at": "partial",
+    "t": 2638,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "hybrid-transient-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 26,
+   "hybrid": 24,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 2,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3107,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 3108,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2638,
+    "gray": 2,
+    "expected": 24,
+    "active": "hybrid",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry",
+    "t": 7642,
+    "gray": 0,
+    "expected": 24,
+    "active": "hybrid",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "mobile-transient-proto2": {
+  "ctrl": "proto2",
+  "view": "390x844 mobile",
+  "counts": {
+   "satellite": 10,
+   "hybrid": 0,
+   "osm": 8,
+   "blocked": 0,
+   "retried": 2,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3095,
+    "key": "11/1749/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 3096,
+    "key": "11/1750/800",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2626,
+    "gray": 2,
+    "expected": 8,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-retry",
+    "t": 7630,
+    "gray": 0,
+    "expected": 8,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "all-429-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 24,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 0,
+   "s429": 24,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [],
+  "probes": [
+   {
+    "at": "after-batch",
+    "t": 2641,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 1
+   },
+   {
+    "at": "later",
+    "t": 7645,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 1
+   }
+  ]
+ },
+ "hang-one-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 24,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 0,
+   "s429": 0,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [],
+  "probes": [
+   {
+    "at": "waiting",
+    "t": 3142,
+    "gray": 1,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "loading",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "after-12s",
+    "t": 14146,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_timeout",
+    "locked": true,
+    "recoveryAttempts": 1
+   }
+  ]
+ },
+ "fast-pan-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 44,
+   "hybrid": 0,
+   "osm": 24,
+   "blocked": 0,
+   "retried": 2,
+   "s429": 2,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [
+   {
+    "t": 3090,
+    "key": "11/1750/802",
+    "attempt": 1,
+    "status": 200
+   },
+   {
+    "t": 3091,
+    "key": "11/1751/802",
+    "attempt": 1,
+    "status": 200
+   }
+  ],
+  "probes": [
+   {
+    "at": "partial",
+    "t": 2638,
+    "gray": 2,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "partial_error",
+    "locked": false,
+    "recoveryAttempts": 0
+   },
+   {
+    "at": "settled",
+    "t": 13981,
+    "gray": 0,
+    "expected": 24,
+    "active": "satellite",
+    "reason": "ready",
+    "locked": false,
+    "recoveryAttempts": 0
+   }
+  ]
+ },
+ "limiter-pans-proto2": {
+  "ctrl": "proto2",
+  "view": "1366x768",
+  "counts": {
+   "satellite": 48,
+   "hybrid": 0,
+   "osm": 112,
+   "blocked": 0,
+   "retried": 0,
+   "s429": 18,
+   "s502": 0,
+   "s503": 0
+  },
+  "dupWithin200ms": 0,
+  "pageErrors": 0,
+  "retries": [],
+  "probes": [
+   {
+    "at": "after-pans",
+    "t": 9328,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 1
+   },
+   {
+    "at": "idle-10s",
+    "t": 19336,
+    "gray": 24,
+    "expected": 24,
+    "active": "osm",
+    "reason": "tile_error",
+    "locked": true,
+    "recoveryAttempts": 1
+   }
+  ]
+ }
+}
