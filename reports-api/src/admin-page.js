@@ -114,7 +114,7 @@ select.f-site optgroup{font-size:12px;color:#5a666e}
   <input id="speciesQuery" placeholder="종명으로 이력 검색" style="max-width:190px;min-height:36px">
   <button type="button" id="speciesSearchBtn">종별 이력</button>
 </nav>
-<details style="margin:12px 16px"><summary>동일인 후보·확인 관리 (관리자 검토)</summary><button type="button" id="identityLoad">후보와 확인 이력 조회</button><div id="identityReviewRows"></div><label for="identityIds">확인할 제보 ID (최대 200개, 원문은 수정하지 않음)</label><textarea id="identityIds"></textarea><label for="identityReason">확인·해제 근거</label><input id="identityReason" maxlength="500"><label><input type="checkbox" id="identityConfirmed" style="width:auto"> 선택한 모든 제보가 동일인임을 확인했습니다</label><button type="button" id="identityConfirm">선택 ID 집합 확인</button><p id="identityMessage" role="status"></p></details><main>
+<details style="margin:12px 16px"><summary>동일인 후보·확인 관리 (관리자 검토)</summary><button type="button" id="identityLoad">후보와 확인 이력 조회</button><div id="identityReviewRows"></div><label for="identityIds">확인할 제보 ID (최대 200개, 원문은 수정하지 않음)</label><textarea id="identityIds"></textarea><label for="identityReason">확인·해제 근거</label><input id="identityReason" maxlength="500"><label><input type="checkbox" id="identityConfirmed" style="width:auto"> 선택한 모든 제보가 동일인임을 확인했습니다</label><button type="button" id="identityConfirm">선택 ID 집합 확인</button><p id="identityMessage" role="status"></p><section style="margin-top:14px;padding-top:12px;border-top:1px solid #ddd"><h3>기존 동일인 그룹에 새 제보 추가</h3><p>기존 그룹 ID는 유지합니다. 본인이 확인된 신규 제보만 연결하세요.</p><label for="identityAppendGroup">기존 확인 그룹</label><select id="identityAppendGroup"></select><label for="identityAppendIds">새로 추가할 제보 ID (기존 그룹 ID 제외)</label><textarea id="identityAppendIds"></textarea><label for="identityAppendReason">동일인 추가 확인 근거</label><input id="identityAppendReason" maxlength="500"><label><input id="identityAppendConfirmed" type="checkbox" style="width:auto"> 신규 제보가 선택한 기존 그룹의 동일인임을 확인했습니다</label><button type="button" id="identityAppendAction">기존 그룹에 신규 제보 추가</button><p id="identityAppendMessage" role="status"></p></section></details><main>
   <div id="list"><div class="empty">불러오는 중입니다.</div></div>
   <div id="map"></div>
 </main>
@@ -703,13 +703,46 @@ document.getElementById('usageTab').addEventListener('click',async function(){
 
 // Administrator-only identity review. No candidate performs a write automatically.
 async function identityRequest(path,body){var r=await fetch('/admin/api/reporter-identities'+path,{method:body?'POST':'GET',cache:'no-store',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});var d=await r.json();if(!r.ok||!d.ok)throw Error(d.error&&d.error.message||'동일인 정보를 확인할 수 없습니다.');return d;}
-async function loadIdentityReview(){var out=document.getElementById('identityReviewRows');out.textContent='불러오는 중입니다.';try{var groupData=await identityRequest(''),candidateData;try{candidateData=await identityRequest('/candidates');}catch(e){candidateData={candidates:[],error:e.message};}out.textContent='';var msg=document.createElement('p');msg.textContent='후보는 동일인 확정이 아닙니다. 원문·본인 확인 후 제보 ID만 선택하세요. 기존 그룹 확대·수정은 해제 후 수정된 전체 ID 집합으로 재확인합니다.';out.appendChild(msg);if(candidateData.error){var warn=document.createElement('p');warn.textContent=candidateData.error;out.appendChild(warn);}
+async function loadIdentityReview(){var out=document.getElementById('identityReviewRows');out.textContent='불러오는 중입니다.';try{var groupData=await identityRequest(''),candidateData;try{candidateData=await identityRequest('/candidates');}catch(e){candidateData={candidates:[],error:e.message};}out.textContent='';var msg=document.createElement('p');msg.textContent='후보는 동일인 확정이 아닙니다. 원문·본인 확인 후 제보 ID만 선택하세요. 기존 그룹 확대·수정은 해제 후 수정된 전체 ID 집합으로 재확인합니다.';out.appendChild(msg);var select=document.getElementById('identityAppendGroup');select.textContent='';(groupData.groups||[]).filter(function(g){return g.active;}).forEach(function(g){var o=document.createElement('option');o.value=g.id;o.textContent='그룹 '+g.id.slice(0,8)+'… · 대표 제보 '+g.representative_id;select.appendChild(o);});if(candidateData.error){var warn=document.createElement('p');warn.textContent=candidateData.error;out.appendChild(warn);}
 function entry(text,ids,groupId,conflict){var box=document.createElement('div');box.className='card';var label=document.createElement('p');label.textContent=text;box.appendChild(label);if(ids){var fill=document.createElement('button');fill.type='button';fill.textContent='검토할 ID 채우기';fill.disabled=!!conflict;fill.onclick=function(){document.getElementById('identityIds').value=ids.join('\\n');document.getElementById('identityConfirmed').checked=false;};box.appendChild(fill);}if(groupId){var revoke=document.createElement('button');revoke.type='button';revoke.textContent='이 그룹 확인 해제';revoke.onclick=async function(){try{var reason=document.getElementById('identityReason').value;if(!reason.trim())throw Error('해제 근거를 입력하세요.');if(!window.confirm('확인 그룹을 해제할까요? 기존 제보 원문은 보존됩니다.'))return;await identityRequest('',{action:'revoke',groupId:groupId,reason:reason});await loadIdentityReview();}catch(e){document.getElementById('identityMessage').textContent=e.message;}};box.appendChild(revoke);}out.appendChild(box);}
 (groupData.groups||[]).forEach(function(g){entry((g.active?'확인 그룹 ':'해제 이력 ')+g.id+' · '+g.evidence+' · '+g.created_at,JSON.parse(g.report_ids),g.active?g.id:null,false);});
-candidateData.candidates.forEach(function(c){entry((c.conflict?'충돌: 여러 그룹 — 연결 금지 · ':'검토 후보 · ')+c.reason+' · '+c.reports.map(function(r){return r.id+' / '+r.reporter+' / '+r.status+' / '+(r.namePublic?'이름 공개 동의':'이름 비공개');}).join(' | ')+(c.groupIds.length?' · 기존 그룹 '+c.groupIds.join(', '):''),c.reportIds,null,c.conflict);});var history=document.createElement('p');history.textContent='최근 확인·해제 이벤트 '+(groupData.events||[]).length+'건 (기존 이력 보존)';out.appendChild(history);
+candidateData.candidates.forEach(function(c){
+entry((c.conflict?'충돌: 여러 그룹 — 연결 금지 · ':'검토 후보 · ')+c.reason+' · '+c.reports.map(function(r){return r.id+' / '+r.reporter+' / '+r.status+' / '+(r.namePublic?'이름 공개 동의':'이름 비공개');}).join(' | ')+(c.groupIds.length?' · 기존 그룹 '+c.groupIds.join(', '):''),c.reportIds,null,c.conflict);
+if(!c.conflict&&c.groupIds.length===1){
+ var group=(groupData.groups||[]).find(function(g){return g.active&&g.id===c.groupIds[0];});
+ if(group){var old=JSON.parse(group.report_ids),fresh=c.reportIds.filter(function(id){return old.indexOf(id)<0;});
+  if(fresh.length){var button=document.createElement('button');button.type='button';button.textContent='이 그룹에 신규 ID 추가 준비';
+   button.onclick=function(){document.getElementById('identityAppendGroup').value=group.id;
+    var field=document.getElementById('identityAppendIds');field.value=fresh.join('\\n');
+    document.getElementById('identityAppendConfirmed').checked=false;
+    document.getElementById('identityAppendMessage').textContent='추가할 제보 '+fresh.length+'건을 입력했습니다. 동일인인지 확인하세요.';
+    field.scrollIntoView({block:'center',behavior:'smooth'});field.focus({preventScroll:true});};
+   out.lastElementChild.appendChild(button);
+  }
+ }
+}
+});var history=document.createElement('p');history.textContent='최근 확인·해제 이벤트 '+(groupData.events||[]).length+'건 (기존 이력 보존)';out.appendChild(history);
 }catch(e){out.textContent=e.message;}}
 document.getElementById('identityLoad').onclick=loadIdentityReview;
 document.getElementById('identityConfirm').onclick=async function(){var message=document.getElementById('identityMessage');try{if(!document.getElementById('identityConfirmed').checked)throw Error('관리자 동일인 확인이 필요합니다.');var ids=document.getElementById('identityIds').value.split(/[\\s,]+/).filter(Boolean);await identityRequest('',{action:'confirm',reportIds:ids,reason:document.getElementById('identityReason').value,confirmedSamePerson:true});document.getElementById('identityConfirmed').checked=false;message.textContent='확인 기록을 저장했습니다.';await loadIdentityReview();}catch(e){message.textContent=e.message;}};
+
+document.getElementById('identityAppendAction').onclick=async function(){
+ var message=document.getElementById('identityAppendMessage');
+ try{
+  if(!document.getElementById('identityAppendConfirmed').checked)throw Error('추가할 신규 제보의 동일인 확인이 필요합니다.');
+  var groupId=document.getElementById('identityAppendGroup').value;
+  var ids=document.getElementById('identityAppendIds').value.split(/[\\s,]+/).filter(Boolean);
+  var reason=document.getElementById('identityAppendReason').value.trim();
+  if(!groupId||!ids.length)throw Error('기존 그룹과 추가할 제보 ID를 입력하세요.');
+  if(!reason)throw Error('동일인 확인 근거를 입력하세요.');
+  if(!window.confirm('기존 그룹 '+groupId.slice(0,8)+'…에 신규 제보 '+ids.length+'건을 연결할까요?'))return;
+  var result=await identityRequest('',{action:'append',groupId:groupId,reportIds:ids,reason:reason,confirmedSamePerson:true});
+  document.getElementById('identityAppendConfirmed').checked=false;
+  document.getElementById('identityAppendIds').value='';
+  message.textContent='추가 완료: '+result.added+'건. 기존 동일인 그룹 '+result.total+'건, ID는 유지됩니다.';
+  await loadIdentityReview();
+ }catch(e){message.textContent=e.message;}
+};
 
 load();
 </script>

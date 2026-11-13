@@ -18,7 +18,7 @@ export function checkIdentityGuards(result) {
 }
 export async function confirmedIdentityAction(db, body, actor) {
  const reason=typeof body?.reason==='string'?body.reason.trim():'';
- if(!reason || reason.length>500 || (body?.action==='confirm' && body?.confirmedSamePerson!==true)) throw new WorkerError('IDENTITY_CONFIRMATION_REQUIRED','동일인 확인과 근거가 필요합니다.',400);
+ if(!reason || reason.length>500 || (['confirm','append'].includes(body?.action) && body?.confirmedSamePerson!==true)) throw new WorkerError('IDENTITY_CONFIRMATION_REQUIRED','동일인 확인과 근거가 필요합니다.',400);
  const now=new Date().toISOString();
  try {
   if(body.action==='confirm') {
@@ -28,6 +28,30 @@ export async function confirmedIdentityAction(db, body, actor) {
    await db.prepare(`INSERT INTO reporter_identity_groups(id,report_ids,representative_id,confirmed_by,evidence,created_at)
     VALUES(?1,?2,(SELECT r.id FROM reports r JOIN json_each(?2) j ON r.id=j.value ORDER BY r.received_at,r.id LIMIT 1),?3,?4,?5)`).bind(id,json,actor,reason,now).run();
    return {ok:true,groupId:id};
+  }
+  if(body.action==='append') {
+   const groupId=body.groupId,ids=body.reportIds;
+   if(typeof groupId!=='string'||! /^[0-9a-f-]{36}$/.test(groupId)
+      ||!Array.isArray(ids)||ids.length<1||ids.length>200||new Set(ids).size!==ids.length
+      ||ids.some(id=>typeof id!=='string'||! /^[0-9A-Za-z_-]{1,64}$/.test(id)))
+    throw new WorkerError('IDENTITY_REQUEST_INVALID','기존 그룹과 추가할 제보 ID를 확인해 주세요.',400);
+   const guard=await db.prepare("SELECT COUNT(*) AS n FROM sqlite_schema WHERE type='trigger' AND name='identity_groups_appended'").first();
+   if(Number(guard?.n)!==1)throw new WorkerError('IDENTITY_UNAVAILABLE','신규 제보 추가 보호 규칙이 준비되지 않았습니다.',503);
+   const group=await db.prepare('SELECT report_ids FROM reporter_identity_groups WHERE id=?1 AND active=1').bind(groupId).first();
+   if(!group)throw new WorkerError('IDENTITY_NOT_FOUND','활성 동일인 그룹이 없습니다.',404);
+   let old;
+   try{old=JSON.parse(group.report_ids);}catch{throw new WorkerError('IDENTITY_UNAVAILABLE','기존 동일인 기록을 읽을 수 없습니다.',503);}
+   if(!Array.isArray(old))throw new WorkerError('IDENTITY_UNAVAILABLE','기존 동일인 기록이 올바르지 않습니다.',503);
+   if(old.length+ids.length>200||ids.some(id=>old.includes(id)))
+    throw new WorkerError('IDENTITY_CONFLICT','이미 연결된 제보이거나 그룹의 200건 한도를 초과했습니다.',409);
+   const next=JSON.stringify(old.concat(ids));
+   // Version-checked append. The DB trigger validates all members, creates an
+   // immutable append event, and bumps the public revision in one transaction.
+   const result=await db.batch([db.prepare('UPDATE reporter_identity_groups SET report_ids=?1,append_actor=?2,append_reason=?3,append_at=?4 WHERE id=?5 AND active=1 AND report_ids=?6')
+    .bind(next,actor,reason,now,groupId,group.report_ids)]);
+   if(Number(result?.[0]?.meta?.changes)!==1)
+    throw new WorkerError('IDENTITY_CONFLICT','그룹이 변경되었습니다. 새로 조회한 뒤 다시 확인해 주세요.',409);
+   return {ok:true,groupId,added:ids.length,total:old.length+ids.length};
   }
   if(body.action==='revoke' && typeof body.groupId==='string' && /^[0-9a-f-]{36}$/.test(body.groupId)) {
    const sets=await db.batch([
