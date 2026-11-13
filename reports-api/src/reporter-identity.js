@@ -1,12 +1,41 @@
 import { WorkerError } from './shared.js';
 export const identityEnabled = env => env?.REPORTS_CONFIRMED_IDENTITIES === '1';
+// Opt-in only. This is attribution by previously confirmed public aliases,
+// NOT proof that the new submitter owns a nickname. Disable on impersonation.
+export const identityAutoAliasEnabled = env =>
+ identityEnabled(env) && env?.REPORTS_IDENTITY_AUTO_ALIASES === '1';
 export const IDENTITY_GUARDS = ['identity_groups_insert','identity_groups_update','identity_groups_delete','identity_groups_created','identity_groups_revoked','identity_events_insert','identity_events_update','identity_events_delete'];
 // Membership is an explicit set of report IDs, never a name/space/IP heuristic.
 export function identityGroupSql(alias='reports') {
  return `(SELECT g.id FROM reporter_identity_groups g,json_each(g.report_ids) j WHERE g.active=1 AND j.value=${alias}.id)`;
 }
+// Automatic grouping is a *read-time* projection: no new report IDs are
+// written into immutable report_ids and no report data is edited. Only aliases
+// already visible in a previously confirmed, approved public group can match.
+// A future row must be newer than the group's confirmation. If the exact alias
+// occurs in two active confirmed groups, fail closed and leave it ungrouped.
+export function identityAutoAliasGroupSql(alias='reports') {
+ return `(SELECT MIN(g.id) FROM reporter_identity_groups g
+ JOIN json_each(g.report_ids) member ON 1=1
+ JOIN reports known ON known.id=member.value
+ WHERE g.active=1 AND known.status='approved' AND known.name_public=1
+  AND known.reporter=${alias}.reporter COLLATE BINARY
+  AND ${alias}.received_at>g.created_at
+ HAVING COUNT(DISTINCT g.id)=1)`;
+}
+function effectiveIdentityGroupSql(env,alias) {
+ const explicit=identityGroupSql(alias);
+ return identityAutoAliasEnabled(env)
+  ? `COALESCE(${explicit},${identityAutoAliasGroupSql(alias)})`
+  : explicit;
+}
 export function reporterNameSql(env, alias='reports', publicOnly=true) {
  if (!identityEnabled(env)) return alias+'.reporter';
+ if(identityAutoAliasEnabled(env)){
+  const resolved=effectiveIdentityGroupSql(env,alias);
+  return `COALESCE((SELECT first.reporter FROM reporter_identity_groups g JOIN reports first
+   ON first.id=g.representative_id WHERE g.active=1 AND g.id=${resolved}${publicOnly?" AND first.status='approved' AND first.name_public=1":''}),${alias}.reporter)`;
+ }
  return `COALESCE((SELECT first.reporter FROM reporter_identity_groups g JOIN reports first ON first.id=g.representative_id,json_each(g.report_ids) j
  WHERE g.active=1 AND j.value=${alias}.id${publicOnly?" AND first.status='approved' AND first.name_public=1":''}),${alias}.reporter)`;
 }
@@ -48,5 +77,10 @@ export async function confirmedIdentityAction(db, body, actor) {
 export function reporterKeySql(env, alias='reports', publicOnly=true) {
  if(!identityEnabled(env)) return alias+'.reporter';
  const visible=publicOnly?` AND EXISTS(SELECT 1 FROM reports first WHERE first.id=g.representative_id AND first.status='approved' AND first.name_public=1)`:'';
+ if(identityAutoAliasEnabled(env)){
+  const resolved=effectiveIdentityGroupSql(env,alias);
+  return `COALESCE((SELECT 'group:'||g.id FROM reporter_identity_groups g
+   WHERE g.active=1 AND g.id=${resolved}${visible}),'name:'||${alias}.reporter)`;
+ }
  return `COALESCE((SELECT 'group:'||g.id FROM reporter_identity_groups g,json_each(g.report_ids) j WHERE g.active=1 AND j.value=${alias}.id${visible}),'name:'||${alias}.reporter)`;
 }

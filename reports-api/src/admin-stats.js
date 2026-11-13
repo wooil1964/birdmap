@@ -10,7 +10,9 @@ import {reporterNameSql,reporterKeySql,identityEnabled,identityGuardStatement,ch
 // - 종명: 신규 구조화 제보는 정본 sightings 의 식별 국명(수량 제외, 예: 동박새3·동박새5 → 동박새 1종)으로 센다.
 //   식별 국명이 없는 과거 승인 자료는 공식 2025 국명과 정확히 일치하는 수량 접미사만 읽기 단계에서 분리한다.
 // - 개체수: 구조화 자료(single)·공식 국명 확인된 과거 승인 자료의 입력 개체수만 더한다. 미입력·같은 종 중복·불확실은 더하지 않는다.
-// - 제보자: 기본은 reporter 정확 일치. 확인 기능 ON일 때 명시한 제보 ID만 최초 닉네임으로 묶는다. 비었거나 공백뿐이면 '(이름 미입력)' 한 줄.
+// - 제보자: 기본 reporter 정확 일치. 수동 확인 그룹은 지정 ID만 묶는다.
+//   REPORTS_IDENTITY_AUTO_ALIASES=1인 경우 확인된 공개 별칭의 신규 제보를 읽기 통계에만 자동 합산한다.
+//   가입/인증 없는 동일 닉네임은 본인 증명이 아니므로 오귀속 위험이 있으며 운영에서 즉시 끌 수 있다.
 // - 지역: 관리자가 연결한 site_id 만. 없으면 '미연결 지역'. 좌표로 추정하지 않는다.
 import { WorkerError, legacySpeciesItems } from "./shared.js";
 
