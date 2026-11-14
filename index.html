@@ -1492,7 +1492,7 @@ function openReporterStats(trigger){
 var reporterSpeciesData=null;
 function reporterSpeciesPayload(body){
  if(!body||typeof body!=='object'||Array.isArray(body)||!Array.isArray(body.species)||typeof body.restricted!=='boolean')return null;
- if(Object.keys(body).some(function(key){return ['species','restricted','publication','serverTime','publicationCheckedAt'].indexOf(key)<0;}))return null;
+ if(Object.keys(body).some(function(key){return ['species','unclassified','restricted','publication','serverTime','publicationCheckedAt'].indexOf(key)<0;}))return null;
  // unclassified: 서버가 분류 미확인으로 판정한 원문 이름(종수 제외). 없으면 키가 오지 않는다.
  if(Object.prototype.hasOwnProperty.call(body,'unclassified')&&!Array.isArray(body.unclassified))return null;
  var seen={},lists=[[],[]],sources=[body.species,body.unclassified||[]];
