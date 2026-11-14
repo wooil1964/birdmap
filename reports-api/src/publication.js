@@ -1,7 +1,7 @@
 import {identityEnabled,reporterNameSql,reporterKeySql,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,splitSpecies,speciesNamesOf,identifiedSpeciesSql,isSensitiveReport,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,splitSpecies,speciesNamesOf,identifiedSpeciesSql,isSensitiveReport,isLocationRestricted,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
 import {unverifiedPayload,unverifiedReadsEnabled,unverifiedStatement} from './autopublic.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
@@ -127,14 +127,13 @@ function reporterStatsPlan(db,url,env={}) {
   return reporterLifetimeCounts(rows);
  }};
 }
-// Species names behind the count. Rows with a hidden location, a protected species or a nesting/
-// breeding keyword are left out whole (same rule as recent-sites); restricted says some were.
+// Species names behind the count. Only breeding or unknown/ambiguous names are excluded; species names alone have no locations.
 // Only names are returned: no dates, coordinates, notes or report IDs.
 export function reporterSpeciesNames(rows) {
  const names=new Set();let restricted=false;
  for(const row of rows){
   const species=speciesNamesOf(row);
-  if(Number(row.location_hidden)===1||isSensitiveReport({note:row.note,speciesText:row.species,species})){restricted=true;continue;}
+  if(isSensitiveReport({note:row.note,speciesText:row.species,species})){restricted=true;continue;}
   for(const name of species)names.add(name);
  }
  // Code-point order is 가나다 order for Hangul syllables and needs no locale data.
@@ -178,8 +177,8 @@ function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
   if(path==='/reports/pending')return {statements:unverifiedReadsEnabled(env)?[unverifiedStatement(db,evidence)]:[],build:s=>({ok:true,generatedAt:now.toISOString(),spots:unverifiedPayload(s[0]?.results||[],env,now)})};
  if(path==='/reports/recent-sites') {
   const days=Math.min(30,Math.max(1,Math.floor(Number(url.searchParams.get('days'))||14))),today=kstDateString(now),since=kstDateString(new Date(now.getTime()-days*86400000));
-  return {statements:[db.prepare(`SELECT site_id,species,observed_on,note,${identifiedSpeciesSql(env)} FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{
-   const bySite=new Map();for(const row of s[0].results||[]){const species=speciesNamesOf(row);if(isSensitiveReport({note:row.note,speciesText:row.species,species}))continue;const siteId=String(row.site_id);if(!bySite.has(siteId))bySite.set(siteId,{siteId,latestDate:row.observed_on,species:[]});for(const name of species)if(!bySite.get(siteId).species.includes(name))bySite.get(siteId).species.push(name);}
+  return {statements:[db.prepare(`SELECT site_id,species,observed_on,note,lat,lon,${evidence},${identifiedSpeciesSql(env)} FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{
+   const bySite=new Map();for(const row of s[0].results||[]){const species=speciesNamesOf(row);if(isLocationRestricted(row))continue;const siteId=String(row.site_id);if(!bySite.has(siteId))bySite.set(siteId,{siteId,latestDate:row.observed_on,species:[]});for(const name of species)if(!bySite.get(siteId).species.includes(name))bySite.get(siteId).species.push(name);}
    return {ok:true,days,since,today,sites:[...bySite.values()]};
   }};
  }
