@@ -34,7 +34,8 @@ test('과거 승인 통계 모든 뷰·종 필터는 고니3=고니; 읽기가 �
   const stats=q=>adminStats(db,new URL('https://synthetic.invalid/admin/api/stats?'+q));
   for(const view of ['summary','species','sites','reporters','monthly','yearly','list']) {
     const body=await stats('view='+view);
-    assert.equal(body.summary.species,3,view);assert.equal(body.summary.individuals,8,view);
+    // 2026-11-14 정책: 가짜새3 은 분류 미확인이라 종수(고니·박새)에서 빠지고, 명확한 수량 3은 개체수에 더한다.
+    assert.equal(body.summary.species,2,view);assert.equal(body.summary.individuals,11,view);
   }
   const filtered=await stats('view=species&species='+encodeURIComponent('고니'));
   assert.equal(filtered.summary.approved,3);assert.equal(filtered.summary.species,1);assert.equal(filtered.rows[0].total,3);assert.equal(filtered.rows[0].individuals,8);

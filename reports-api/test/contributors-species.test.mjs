@@ -18,11 +18,12 @@ test('species: union of approved consenting rows, deduped and 가나다 sorted, 
  assert.deepEqual(b.species,['가마우지','까치','동박새','참새']);assert.equal(b.restricted,false);
  assert.deepEqual(Object.keys(b).sort(),['publication','restricted','serverTime','species']);
 });
-test('species: breeding and unresolved names withheld; names-only projection includes protected and location-hidden reports',async()=>{
+test('species: breeding rows withheld; unclassified names listed apart (not counted); protected and location-hidden names included',async()=>{
  const e=env([row({id:A,species:'까치'}),row({species:'저어새 · 백로'}),row({species:'직박구리',note:'둥지 근처 합성 메모'}),row({species:'흰뺨검둥오리',public_lat:36.5,public_lon:126.5}),row({species:'수리부엉이 2마리'})]);
  const {b}=await species(e);
- assert.deepEqual(b.species,['까치','수리부엉이','흰뺨검둥오리']);assert.equal(b.restricted,true);
- const text=JSON.stringify(b);for(const secret of ['저어새','백로','직박구리','둥지','메모','36.5','lat',A])assert.ok(!text.includes(secret),secret);
+ // 2026-11-14 정책: 백로(공식 종명 아님)는 분류 미확인으로 따로 보이고 같은 제보의 저어새는 종명 목록에 남는다.
+ assert.deepEqual(b.species,['까치','수리부엉이','저어새','흰뺨검둥오리']);assert.deepEqual(b.unclassified,['백로']);assert.equal(b.restricted,true);
+ const text=JSON.stringify(b);for(const secret of ['직박구리','둥지','메모','36.5','lat',A])assert.ok(!text.includes(secret),secret);
 });
 test('species: unapproved, unconsented, other names and withdrawn rows never counted',async()=>{
  const e=env([row({id:A,species:'까치'}),row({species:'대기종',status:'pending'}),row({species:'반려종',status:'rejected'}),row({species:'비공개종',name_public:0}),row({species:'남의종',reporter:'다른사람'}),row({species:'공백종',reporter:'합성검증 '})]);

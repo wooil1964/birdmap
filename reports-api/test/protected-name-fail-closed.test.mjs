@@ -29,12 +29,19 @@ async function read(env,path,strict=true) {
  return res.json();
 }
 
-test('PR95 punctuation incident: unknown or malformed names stay undisclosed without rewriting input',()=>{
+// 2026-11-14 정책 변경: 분류 미확인은 승인 전 자동 공개 보류(isSensitiveReport)와 위치 보호(비번식 확인 없음)만 유지한다.
+// 승인된 기록의 종명은 원문 그대로 분류 미확인으로 보이고 종수에서 빠진다. 자동 교정은 하지 않는다.
+test('PR95 punctuation incident: unclassified names keep coordinates private and are listed apart without rewriting input',()=>{
  for(const species of variants){
   const r=row('secret',species), before=JSON.stringify(r);
   assert.equal(isSensitiveReport({species:[species],speciesText:species}),true,species);
   assert.equal(isLocationRestricted(r),true,species);
-  assert.deepEqual(reporterSpeciesNames([r]),{species:[],restricted:true},species);
+  const names=reporterSpeciesNames([r]);
+  assert.equal(names.restricted,false,species);
+  assert.ok(!JSON.stringify(names).includes('Mergus'),species);
+  // 끝 쉼표는 기존 구분자 규칙으로 나뉘어 공식 국명만 남는다(교정이 아니라 구분자). 위치는 위에서처럼 계속 가린다.
+  if(species==='호사비오리,'){assert.deepEqual(names.species,['호사비오리']);assert.equal(names.unclassified,undefined);}
+  else {assert.deepEqual(names.species,[],species);if(species)assert.deepEqual(names.unclassified,[species],species);}
   assert.equal(JSON.stringify(r),before);
  }
  for(const species of ['참새','참새3마리','까치 박새','갈매기','괭이갈매기','알락오리','Passer montanus',"Ross's Gull"])
@@ -59,7 +66,9 @@ test('official protected classifications are retained but no blanket suppression
   assert.equal(isSensitiveReport({species:['참새'],note:keyword}),true,keyword);
 });
 
-test('all species-bearing public API projections: legacy + publication, flags on/off; no names or coordinates',async()=>{
+// 위치가 필요한 투영(지도·탐조지 이력·최근 탐조지)에서는 통째로 빠지고, 위치 없는 투영(검색·종명 목록)에는
+// 기록·원문 종명이 남되 좌표·탐조지·지역·이동 대상은 없다. 학명·영명으로 바꿔 쓰지 않는다.
+test('all species-bearing public API projections: legacy + publication, flags on/off; coordinates never, names only where location-free',async()=>{
  for(const strict of [false,true])for(const aliases of ['0','1']){
   const secret=variants.filter(Boolean).map((s,i)=>row('private-'+i,s));
   secret.push(row('breeding','까치',{note:'육추 둥지'}));
@@ -69,12 +78,18 @@ test('all species-bearing public API projections: legacy + publication, flags on
   for(const path of ['/reports/approved','/reports/pending','/reports/site/19','/reports/recent-sites',
     '/reports/search?q='+encodeURIComponent('호사비오리'),'/reports/reporter-species?reporter='+encodeURIComponent('합성 공개 관찰자')+'&source=all']){
    const body=await read(env,path,strict || path.includes('search') || path.includes('reporter-species'));
-   const text=JSON.stringify(body);
-   for(const needle of ['호사비오리','36.987654','126.876543','Mergus squamatus','Scaly-sided Merganser','가짜새'])assert.ok(!text.includes(needle),path+' '+needle);
+   const text=JSON.stringify(body), locationFree=path.includes('search')||path.includes('reporter-species');
+   for(const needle of ['36.987654','126.876543','Mergus squamatus','Scaly-sided Merganser',...(locationFree?[]:['호사비오리','가짜새'])])assert.ok(!text.includes(needle),path+' '+needle);
    if(path==='/reports/approved') assert.deepEqual(body.spots.map(s=>s.id),['ordinary']);
    if(path==='/reports/site/19') assert.equal(body.total,1);
-   if(path.includes('search')) assert.equal(body.total,0);
-   if(path.includes('reporter-species')) assert.deepEqual(body.species,['참새']);
+   if(path.includes('search')){
+    assert.ok(body.total>0);
+    for(const r of body.reports){assert.equal(r.locationHidden,true,r.id);for(const k of ['target','siteName','region'])assert.equal(r[k],undefined,r.id+' '+k);}
+   }
+   if(path.includes('reporter-species')){
+    assert.deepEqual(body.species,['참새','호사비오리'],'호사비오리, 는 구분자 분리');assert.equal(body.restricted,true,'breeding row stays out');
+    assert.ok(body.unclassified.includes("호사비오리'")&&!body.unclassified.includes('까치'));
+   }
   }
   assert.equal(JSON.stringify(env.REPORTS_DB.rows),before,'public reads never change approval/raw/group data');
  }

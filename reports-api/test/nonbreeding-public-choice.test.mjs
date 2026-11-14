@@ -32,11 +32,19 @@ test('historic protected coordinates lacking verified nonbreeding origin remain 
   assert.equal(isLocationRestricted({...row,lat:row.lat+0.1}),true,name);
  }
 });
-test('unknown or punctuation-corrupted names still fail closed without guessing',()=>{
- for(const [i,name] of ["호사비오리'",'호사비오리.','(호사비오리)','가짜새','참새 가짜새','호사비오리|참새'].entries()){
+// 2026-11-14 정책: 분류 미확인은 승인 전 자동 공개만 보류한다. 위치는 분류와 따로, 보호종과 같은 규칙으로 정한다.
+test('unclassified names: no auto-public, but location follows the same nonbreeding rule as protected birds',()=>{
+ // 입력 규칙을 통과하지 못하는 원문('|')은 비번식 확인 원본이 성립하지 않으므로 위치를 계속 가린다.
+ const invalid=attested(5499,'호사비오리|참새');
+ assert.equal(reportBreedingStatus(invalid),'unknown');assert.equal(isLocationRestricted(invalid),true);
+ for(const [i,name] of ["호사비오리'",'호사비오리.','(호사비오리)','가짜새','참새 가짜새'].entries()){
   const row=attested(i+5400,name);
+  assert.equal(reportBreedingStatus(row),'non_breeding',name);
   assert.equal(isSensitiveReport({species:[name],speciesText:name}),true,name);
-  assert.equal(isLocationRestricted(row),true,name);
+  assert.equal(isLocationRestricted(row),false,name+' attested nonbreeding follows reporter choice');
+  assert.equal(isLocationRestricted({...row,note:'둥지 근처'}),true,name+' breeding');
+  assert.equal(isLocationRestricted({...row,non_breeding_confirmed:null,location_input:null}),true,name+' no attestation');
+  assert.equal(isLocationRestricted({...row,lat:row.lat+0.1}),true,name+' tampered attestation');
  }
 });
 test('statutory and map protected names stay classified; unlisted legal spellings require review',()=>{

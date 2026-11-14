@@ -360,6 +360,9 @@ function isRestrictedSpeciesToken(token) {
   if (!parsed.clean || !parsed.items.length || parsed.items.length > MAX_SPECIES || parsed.duplicates.length > 0) return true;
   return parsed.items.some(item => !identifyBird(item.name));
 }
+// 분류 미확인: 공식 국명·학명·영명(identifyBird)으로 완전히 식별되지 않는 이름. 원문은 바꾸지 않고 판정에만 쓴다.
+// 종수에서는 빼고, 공개 여부(승인)와 위치 판정은 이 값과 따로 정한다.
+export const isUnclassifiedSpecies = name => typeof name !== 'string' || !name.trim() || isRestrictedSpeciesToken(name.trim());
 // Classify protected birds separately from the general publication veto.
 // Only OLD protected rows lacking original non-breeding evidence remain
 // location-restricted so a policy change never retroactively leaks coordinates.
@@ -410,20 +413,19 @@ export function reportBreedingStatus(row) {
   return 'unknown';
 }
 
+// 위치 판정만 한다. 기록·종명 공개 여부는 여기서 정하지 않는다.
+// 번식이면 항상 가린다. 원본 비번식 확인이 있으면 제보자의 위치 가리기 선택(isLocationHidden)을 따른다.
+// 비번식 확인이 없으면 보호종과 분류 미확인(보호종일 수 있음) 종명의 정확 좌표를 소급 공개하지 않는다.
 export function isLocationRestricted(row) {
   const breeding = reportBreedingStatus(row);
   if (breeding === 'breeding') return true;
-  // Historical protected reports without attested non-breeding stay closed;
-  // newer, confirmed non-breeding submissions follow the reporter's hideLocation choice.
-  if (breeding !== 'non_breeding' && (
-    isProtectedSpeciesReport({ speciesText: row.species, species: splitSpecies(row.species) }) ||
-    isProtectedSpeciesReport({ species: speciesNamesOf(row) }) ||
-    publicSightingsOf(row).some(item => isProtectedSpeciesReport({ species: [item.name] }))
-  )) return true;
-  return isSensitiveReport({
-    note: row.note, speciesText: row.species, species: splitSpecies(row.species),
-  }) || isSensitiveReport({ species: speciesNamesOf(row) }) ||
-    publicSightingsOf(row).some(item => isSensitiveReport({ species: [item.name] }));
+  if (breeding === 'non_breeding') return false;
+  const sources = [
+    { speciesText: row.species, species: splitSpecies(row.species) },
+    { species: speciesNamesOf(row) },
+    ...publicSightingsOf(row).map(item => ({ species: [item.name] })),
+  ];
+  return sources.some(report => isProtectedSpeciesReport(report) || hasUnclassifiedSpecies(report));
 }
 
 export function siteHistoryPayload(rows, limit, offset) {
@@ -431,11 +433,13 @@ export function siteHistoryPayload(rows, limit, offset) {
   return { total: visible.length, limit, offset, history: visible.slice(offset, offset + limit).map(historyEntry) };
 }
 
-// Public release veto is only for breeding evidence or unresolved/ambiguous names.
+// 승인 전(자동 공개) 보류 판정: 번식 증거 또는 분류 미확인 종명. 승인된 기록의 공개 차단에는 쓰지 않는다.
 export function isSensitiveReport(report) {
-  if (hasBreedingEvidence(report)) return true;
+  return hasBreedingEvidence(report) || hasUnclassifiedSpecies(report);
+}
+export function hasUnclassifiedSpecies(report) {
   // 원문과 구조화된 식별 결과 모두 검사한다. 한쪽의 일반종 값으로 다른 쪽의
-  // 미확인·혼합 입력을 덮어쓰지 않는다. 누락·빈 값도 공개 근거가 아니다.
+  // 미확인·혼합 입력을 덮어쓰지 않는다. 누락·빈 값도 확인된 종명이 아니다.
   const raw = report?.speciesText;
   const names = Array.isArray(report?.species) ? report.species : [];
   const sources = [...names, ...(typeof raw === 'string' && raw ? [raw] : [])];
@@ -487,9 +491,9 @@ export function sightingValues(parsed, birdCount) {
 
 // 기존 자료는 공식 국명 전체가 맞는 경우만 읽기 단계에서 해석한다. 원문·정본 DB는 수정하지 않는다.
 const officialBirdNames = new Set(OFFICIAL_BIRD_NAMES);
+const legacyTokens = text => String(text || '').split(/[·,;\r\n/]+/).flatMap(token => splitOfficialSpecies(token) || [token]).map(s => s.trim()).filter(Boolean);
 export function legacySpeciesItems(text) {
-  const tokens = String(text || '').split(/[·,;\r\n/]+/).flatMap(token => splitOfficialSpecies(token) || [token]).map(s => s.trim()).filter(Boolean);
-  const items = tokens.map(token => {
+  const items = legacyTokens(text).map(token => {
     const parsed = parseSpeciesItems([token]);
     const item = parsed.items[0];
     return parsed.clean && officialBirdNames.has(item.name)
@@ -497,6 +501,19 @@ export function legacySpeciesItems(text) {
       : { name: token, count: null, countStatus: 'uncertain' };
   });
   return groupPublicSightings(items);
+}
+// 관리자 통계·공개 개체수 표시용 읽기 해석(원문·정본 불변). 공식 국명은 legacySpeciesItems 와 같고, 그 밖의 이름도
+// "이름+숫자(마리|개체)" 꼴이면 숫자를 개체수로 센다. 범위·물결표·뒤따르는 말 등 수량이 불확실하면 세지 않는다.
+// solo: 행의 유일한 이름(접수 양식 개체수와 대조할 수 있음).
+const LOOSE_COUNT = /^(\D+?)\s*([1-9][0-9]{0,5})\s*(?:마리|개체)?$/;
+export function statsSpeciesItems(text) {
+  const items = legacySpeciesItems(text).map(item => {
+    if (item.countStatus !== 'uncertain' || officialBirdNames.has(item.name)) return item;
+    const m = LOOSE_COUNT.exec(item.name.normalize('NFC').trim());
+    return m && Number(m[2]) <= MAX_BIRD_COUNT ? { name: m[1].trim(), count: Number(m[2]), countStatus: 'reported' } : item;
+  });
+  const grouped = groupPublicSightings(items), solo = legacyTokens(text).length === 1;
+  return grouped.map(item => ({ ...item, unclassified: isUnclassifiedSpecies(item.name), solo }));
 }
 function groupPublicSightings(items) {
   const groups = new Map();
@@ -510,7 +527,8 @@ export function publicSightingsOf(row) {
   let rows;
   try { rows = JSON.parse(row?.public_sightings || 'null'); } catch {}
   if (!Array.isArray(rows) || !rows.length) {
-    const legacy = legacySpeciesItems(row?.species);
+    // 분류 미확인 이름의 명확한 수량도 통계와 같은 규칙으로 읽는다(원문 불변).
+    const legacy = statsSpeciesItems(row?.species).map(({ name, count, countStatus }) => ({ name, count, countStatus }));
     return /[0-9]/.test(row?.species || '') && legacy.some(i => officialBirdNames.has(i.name)) ? legacy : [];
   }
   return groupPublicSightings(rows.filter(r => typeof r?.name === 'string' && r.name).map(r => {
@@ -782,8 +800,11 @@ export function historyEntry(row) {
     date: row.observed_on,
     species: speciesNamesOf(row),
   };
-  const sightings = publicSightingsOf(row);
+  const sightings = publicSightingsOf(row).map(item => isUnclassifiedSpecies(item.name) ? { ...item, unclassified: true } : item);
   if (sightings.length) entry.sightings = sightings;
+  // 분류 미확인 이름은 원문 그대로 보이고 표시만 붙인다(종수 제외).
+  const unclassified = entry.species.filter(isUnclassifiedSpecies);
+  if (unclassified.length) entry.unclassified = unclassified;
   if (Number(row.name_public) === 1 && row.reporter) entry.reporter = row.reporter;
   return entry;
 }
@@ -822,6 +843,8 @@ export function publicPayload(rows) {
         species,
         history: [row, ...attached].map(historyEntry).sort(newestFirst),
       };
+      const unclassified = species.filter(isUnclassifiedSpecies);
+      if (unclassified.length) spot.unclassified = unclassified;
       if (isLocationHidden(row)) spot.locationHidden = true;
       return spot;
     });

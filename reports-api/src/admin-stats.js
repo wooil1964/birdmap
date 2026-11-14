@@ -14,7 +14,10 @@ import {reporterNameSql,reporterKeySql,identityEnabled,identityGuardStatement,ch
 //   REPORTS_IDENTITY_AUTO_ALIASES=1인 경우 확인된 공개 별칭의 신규 제보를 읽기 통계에만 자동 합산한다.
 //   가입/인증 없는 동일 닉네임은 본인 증명이 아니므로 오귀속 위험이 있으며 운영에서 즉시 끌 수 있다.
 // - 지역: 관리자가 연결한 site_id 만. 없으면 '미연결 지역'. 좌표로 추정하지 않는다.
-import { WorkerError, legacySpeciesItems } from "./shared.js";
+// - 분류 미확인(공식 국명·학명·영명으로 식별되지 않는 이름): 종수(COUNT DISTINCT)에서 빼고, 명확한 개체수는 더한다.
+//   이름+숫자(마리|개체) 꼴의 숫자, 또는 이름 하나뿐인 신규 접수의 양식 개체수(둘이 다르면 불확실)만 센다.
+//   관리자가 종명을 정정하면 같은 행이 구조화 경로로 옮겨 가므로 개체수가 두 번 더해지지 않는다.
+import { WorkerError, statsSpeciesItems, isUnclassifiedSpecies } from "./shared.js";
 
 const VIEWS = ["summary", "species", "sites", "reporters", "monthly", "yearly", "list"];
 const STATUSES = ["approved", "rejected", "pending"];
@@ -93,8 +96,8 @@ export function recentCutoff(now = new Date(), days = 30) {
 // 공통 CTE.
 //   f: 필터에 맞는 제보(모든 상태)   x: f 를 종 단위로 펼친 행(id 당 종 수만큼)
 // 생태 조건 eco 는 상태 필터가 없으면 approved, 있으면 f 가 이미 그 상태만이라 1.
-function base(filters, structured = false, legacy = [], env={}) {
-  const where = [], params = [JSON.stringify(legacy)];
+function base(filters, structured = false, legacy = [], env={}, unclassified = []) {
+  const where = [], params = [JSON.stringify(legacy), JSON.stringify(unclassified)];
   const add = (sql, value) => { params.push(value); where.push(sql.replaceAll('?', '?' + params.length)); };
   if (filters.noReporter) where.push("TRIM(IFNULL(reporter, '')) = ''");
   else if (filters.reporter !== null) add(reporterNameSql(env,'reports',false)+' = ?', filters.reporter);
@@ -120,8 +123,14 @@ function base(filters, structured = false, legacy = [], env={}) {
     UNION ALL
     SELECT id, substr(rest, instr(rest, '${SEP}') + ${SEP.length}), substr(rest, 1, instr(rest, '${SEP}') - 1)
       FROM cut WHERE rest <> ''),
-  old AS (SELECT f0.id, json_extract(j.value,'$.name') AS sp, json_extract(j.value,'$.count') AS n
+  unc AS (SELECT value FROM json_each(?2)),
+  old AS (SELECT f0.id, json_extract(j.value,'$.name') AS sp, ${structured ? `CASE WHEN json_extract(j.value,'$.solo') AND nc.n IS NOT NULL
+               THEN CASE WHEN json_extract(j.value,'$.count') IS NULL OR json_extract(j.value,'$.count') = nc.n THEN nc.n END
+               ELSE json_extract(j.value,'$.count') END` : "json_extract(j.value,'$.count')"} AS n
           FROM f0 JOIN legacy ON legacy.raw = f0.species, json_each(legacy.items) j
+          ${structured ? `LEFT JOIN (SELECT checklist_id, MAX(count_value) AS n FROM sightings
+                       WHERE species_identified IS NULL AND interpretation = 'single' AND count_source = 'reported'
+                       GROUP BY checklist_id HAVING COUNT(*) = 1) nc ON nc.checklist_id = f0.id` : ''}
           WHERE f0.status = 'approved'${noStructured('f0')}),
   s0 AS (
     ${structured ? "SELECT checklist_id AS id, species_identified AS sp, CASE WHEN interpretation = 'single' THEN count_value END AS n FROM sightings WHERE species_identified IS NOT NULL AND checklist_id IN (SELECT id FROM f0) UNION ALL" : ''}
@@ -136,6 +145,8 @@ function base(filters, structured = false, legacy = [], env={}) {
   return { cte, params, eco: filters.status ? '1' : "status = 'approved'" };
 }
 
+// 분류 미확인 이름은 종수에 넣지 않는다(개체수·제보 수에는 그대로 남는다).
+const KNOWN = col => `CASE WHEN ${col} NOT IN (SELECT value FROM unc) THEN ${col} END`;
 const APPROVED = "COUNT(DISTINCT CASE WHEN status = 'approved' THEN id END)";
 
 function viewSql(view, eco) {
@@ -143,11 +154,11 @@ function viewSql(view, eco) {
     case "species":
       return `SELECT sp AS species, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
                      MIN(observed_on) AS first_observed, MAX(observed_on) AS last_observed,
-                     COUNT(DISTINCT site_id) AS sites, COUNT(DISTINCT who_key) AS reporters, SUM(individuals) AS individuals
+                     COUNT(DISTINCT site_id) AS sites, COUNT(DISTINCT who_key) AS reporters, SUM(individuals) AS individuals, sp IN (SELECT value FROM unc) AS unclassified
                 FROM x WHERE ${eco} AND sp IS NOT NULL
                GROUP BY sp ORDER BY total DESC, sp`;
     case "sites":
-      return `SELECT x.site_id, st.site_name, COUNT(DISTINCT x.id) AS total, COUNT(DISTINCT x.sp) AS species,
+      return `SELECT x.site_id, st.site_name, COUNT(DISTINCT x.id) AS total, COUNT(DISTINCT ${KNOWN("x.sp")}) AS species,
                      MAX(x.observed_on) AS last_observed, COUNT(DISTINCT x.who_key) AS reporters
                 FROM x LEFT JOIN sites st ON st.site_id = x.site_id
                WHERE ${eco}
@@ -156,18 +167,18 @@ function viewSql(view, eco) {
       return `SELECT who AS reporter, who_key AS reporter_key, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
                      COUNT(DISTINCT CASE WHEN status = 'rejected' THEN id END) AS rejected,
                      COUNT(DISTINCT CASE WHEN status = 'pending' THEN id END) AS pending,
-                     COUNT(DISTINCT CASE WHEN ${eco} THEN sp END) AS species,
+                     COUNT(DISTINCT CASE WHEN ${eco} AND sp NOT IN (SELECT value FROM unc) THEN sp END) AS species,
                      COUNT(DISTINCT CASE WHEN ${eco} THEN site_id END) AS sites,
                      SUM(CASE WHEN ${eco} THEN individuals END) AS individuals,
                      MAX(observed_on) AS last_observed
                 FROM x GROUP BY who_key,who ORDER BY who IS NULL, total DESC, who`;
     case "monthly":
       return `SELECT substr(observed_on, 1, 7) AS month, COUNT(DISTINCT id) AS total, ${APPROVED} AS approved,
-                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who_key) AS reporters
+                     COUNT(DISTINCT ${KNOWN("sp")}) AS species, COUNT(DISTINCT who_key) AS reporters
                 FROM x WHERE ${eco} GROUP BY month ORDER BY month DESC`;
     case "yearly":
       return `SELECT substr(observed_on, 1, 4) AS year, COUNT(DISTINCT id) AS total,
-                     COUNT(DISTINCT sp) AS species, COUNT(DISTINCT who_key) AS reporters, COUNT(DISTINCT site_id) AS sites
+                     COUNT(DISTINCT ${KNOWN("sp")}) AS species, COUNT(DISTINCT who_key) AS reporters, COUNT(DISTINCT site_id) AS sites
                 FROM x WHERE ${eco} GROUP BY year ORDER BY year DESC`;
     case "list":
       // 관리자 카드와 잇기 위한 id 만 추가로 준다. 좌표·메모·해시는 고르지 않는다.
@@ -184,16 +195,20 @@ export async function adminStats(db, url, now = new Date(), env={}) {
   await validateReporterFilter(db, filters, env);
   const structured = !!(await db.prepare("SELECT name FROM sqlite_schema WHERE type = 'table' AND name = 'sightings'").first());
   // 원본·정본 쓰기 없이 공식 국명과 정확히 일치하는 과거 승인 자료만 해석한다.
-  const legacyRows = (await db.prepare(`SELECT DISTINCT species FROM reports WHERE status = 'approved'${structured ? ' AND NOT EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified IS NOT NULL)' : ''}`).all()).results || [];
-  const legacy = legacyRows.map(r => ({ raw: r.species, items: legacySpeciesItems(r.species) }));
-  const { cte, params, eco } = base(filters, structured, legacy, env);
+  // 승인 외 상태도 읽어 분류 미확인 이름 목록을 만든다(old CTE 는 계속 승인 자료만 쓴다).
+  const legacyRows = (await db.prepare(`SELECT DISTINCT species FROM reports${structured ? ' WHERE NOT EXISTS (SELECT 1 FROM sightings WHERE checklist_id = reports.id AND species_identified IS NOT NULL)' : ''}`).all()).results || [];
+  const legacy = legacyRows.map(r => ({ raw: r.species, items: statsSpeciesItems(r.species) }));
+  const identified = structured ? (await db.prepare('SELECT DISTINCT species_identified AS name FROM sightings WHERE species_identified IS NOT NULL').all()).results || [] : [];
+  const names = new Set([...identified.map(r => r.name), ...legacy.flatMap(r => [...r.items.map(i => i.name), ...String(r.raw || '').split(SEP).map(t => t.trim())])]);
+  const unclassified = [...names].filter(name => name && isUnclassifiedSpecies(name));
+  const { cte, params, eco } = base(filters, structured, legacy, env, unclassified);
   const cutoff = "?" + (params.length + 1);
   const summarySql = `${cte}
     SELECT (SELECT COUNT(*) FROM f) AS total,
            (SELECT COUNT(*) FROM f WHERE status = 'approved') AS approved,
            (SELECT COUNT(*) FROM f WHERE status = 'rejected') AS rejected,
            (SELECT COUNT(*) FROM f WHERE status = 'pending') AS pending,
-           (SELECT COUNT(DISTINCT sp) FROM x WHERE ${eco} AND sp IS NOT NULL) AS species,
+           (SELECT COUNT(DISTINCT sp) FROM x WHERE ${eco} AND sp IS NOT NULL AND sp NOT IN (SELECT value FROM unc)) AS species,
            (SELECT SUM(individuals) FROM x WHERE ${eco}) AS individuals,
            (SELECT COUNT(DISTINCT id) FROM x WHERE ${eco} AND individuals IS NOT NULL) AS counted_reports,
            (SELECT COUNT(DISTINCT who_key) FROM f) AS reporters,

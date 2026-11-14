@@ -167,7 +167,8 @@ test('old whitespace spelling retains exact nonbreeding evidence; edits and inva
   const stored=species;
   const row={species:stored,lat:37,lon:127,observed_on:'2026-10-02',note:null,non_breeding_confirmed:1,location_input:JSON.stringify(input)};
   assert.equal(reportBreedingStatus(row),'non_breeding');
-  assert.equal(isLocationRestricted(row),species !== '저어새2 까치3','duplicate or over-limit names stay restricted despite matching historical nonbreeding evidence');
+  // 2026-11-14 정책: 중복·한도 초과 표기는 종수·개체수 판단(불확실)일 뿐, 비번식 확인 원본의 위치 선택을 바꾸지 않는다.
+  assert.equal(isLocationRestricted(row),false,'matching historical nonbreeding evidence follows the reporter choice regardless of name ambiguity');
   for(const patch of [{species:stored+' 까치1'},{lat:37.1},{observed_on:'2026-10-03'},{note:'changed'}])assert.equal(reportBreedingStatus({...row,...patch}),'unknown');
  }
  const row={species:'저어새2 까치3',lat:37,lon:127,observed_on:'2026-10-02',non_breeding_confirmed:1,location_input:JSON.stringify({species:'저어새2 까치3',lat:37,lon:127,observedOn:'2026-10-02'})};

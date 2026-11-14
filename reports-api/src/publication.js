@@ -1,7 +1,7 @@
 import {identityEnabled,reporterNameSql,reporterKeySql,identityGuardStatement,checkIdentityGuards} from './reporter-identity.js';
 import { WRITER_FENCE_GUARDS } from './writer-fence.js';
 // Public permission contract. No user identity or private coordinates in anchors.
-import {WorkerError,jsonResponse,publicPayload,splitSpecies,speciesNamesOf,identifiedSpeciesSql,isSensitiveReport,isLocationRestricted,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
+import {WorkerError,jsonResponse,publicPayload,splitSpecies,speciesNamesOf,identifiedSpeciesSql,hasBreedingEvidence,isUnclassifiedSpecies,isLocationRestricted,LOCATION_HIDDEN_SQL,kstDateString,MAX_REPORTER_LENGTH} from './shared.js';
 import {unverifiedPayload,unverifiedReadsEnabled,unverifiedStatement} from './autopublic.js';
 import {fieldSnapshotStatements,fieldSnapshotPayload,fieldReadInput,fieldDraftPlan} from './field-updates.js';
 import {assertFieldServiceActive} from './field-retirement.js';
@@ -98,7 +98,8 @@ function reporterStatsRequest(url) {
 }
 export function reporterLifetimeCounts(rows) {
  const species=new Set();
- for(const row of rows)for(const name of speciesNamesOf(row))species.add(name);
+ // 분류 미확인 이름은 종수에 넣지 않는다. 제보 건수에는 그대로 남는다.
+ for(const row of rows)for(const name of speciesNamesOf(row))if(!isUnclassifiedSpecies(name))species.add(name);
  return {speciesCount:species.size,reportCount:rows.length};
 }
 const REPORTER_ELIGIBLE="status='approved' AND name_public=1 AND reporter IS NOT NULL AND TRIM(reporter)<>'' AND reporter=?1 COLLATE BINARY";
@@ -127,17 +128,18 @@ function reporterStatsPlan(db,url,env={}) {
   return reporterLifetimeCounts(rows);
  }};
 }
-// Species names behind the count. Only breeding or unknown/ambiguous names are excluded; species names alone have no locations.
+// Species names behind the count. Only breeding rows are left out (restricted); species names alone have no locations.
+// 분류 미확인 이름은 원문 그대로 unclassified 에 따로 준다(종수 제외). 없으면 키를 만들지 않는다.
 // Only names are returned: no dates, coordinates, notes or report IDs.
 export function reporterSpeciesNames(rows) {
- const names=new Set();let restricted=false;
+ const names=new Set(),unknown=new Set();let restricted=false;
  for(const row of rows){
-  const species=speciesNamesOf(row);
-  if(isSensitiveReport({note:row.note,speciesText:row.species,species})){restricted=true;continue;}
-  for(const name of species)names.add(name);
+  if(hasBreedingEvidence({note:row.note,speciesText:row.species})){restricted=true;continue;}
+  for(const name of speciesNamesOf(row))(isUnclassifiedSpecies(name)?unknown:names).add(name);
  }
  // Code-point order is 가나다 order for Hangul syllables and needs no locale data.
- return {species:[...names].sort((a,b)=>a<b?-1:a>b?1:0),restricted};
+ const order=(a,b)=>a<b?-1:a>b?1:0;
+ return {species:[...names].sort(order),...(unknown.size?{unclassified:[...unknown].sort(order)}:{}),restricted};
 }
 function reporterSpeciesPlan(db,url,env={}) {
  const {where,params}=reporterWitness(reporterStatsRequest(url),env);
@@ -178,7 +180,7 @@ function readPlan(db,url,now,fieldInput={viewer:null},env={}) {
  if(path==='/reports/recent-sites') {
   const days=Math.min(30,Math.max(1,Math.floor(Number(url.searchParams.get('days'))||14))),today=kstDateString(now),since=kstDateString(new Date(now.getTime()-days*86400000));
   return {statements:[db.prepare(`SELECT site_id,species,observed_on,note,lat,lon,${evidence},${identifiedSpeciesSql(env)} FROM reports WHERE status='approved' AND site_id IS NOT NULL AND site_id<>'' AND observed_on>=?1 AND observed_on<=?2 AND NOT ${LOCATION_HIDDEN_SQL} ORDER BY observed_on DESC,received_at DESC,id DESC`).bind(since,today)],build:s=>{
-   const bySite=new Map();for(const row of s[0].results||[]){const species=speciesNamesOf(row);if(isLocationRestricted(row))continue;const siteId=String(row.site_id);if(!bySite.has(siteId))bySite.set(siteId,{siteId,latestDate:row.observed_on,species:[]});for(const name of species)if(!bySite.get(siteId).species.includes(name))bySite.get(siteId).species.push(name);}
+   const bySite=new Map();for(const row of s[0].results||[]){const species=speciesNamesOf(row);if(isLocationRestricted(row))continue;const siteId=String(row.site_id);if(!bySite.has(siteId))bySite.set(siteId,{siteId,latestDate:row.observed_on,species:[]});for(const name of species)if(!isUnclassifiedSpecies(name)&&!bySite.get(siteId).species.includes(name))bySite.get(siteId).species.push(name);}
    return {ok:true,days,since,today,sites:[...bySite.values()]};
   }};
  }

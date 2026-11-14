@@ -13,6 +13,7 @@ import {
   isLocationRestricted,
   LOCATION_HIDDEN_SQL,
   isSensitiveReport,
+  isUnclassifiedSpecies,
   kstDateString,
   receiptPayload,
   splitSpecies,
@@ -349,8 +350,8 @@ async function handleRecentSites(request, env, url) {
     const siteId = String(row.site_id);
     if (!bySite.has(siteId)) bySite.set(siteId, { siteId, latestDate: row.observed_on, species: [] });
     const site = bySite.get(siteId);
-    // 최신순이라 첫 행이 가장 최근 관찰일이다. 같은 종 반복 제보는 한 번만 센다.
-    for (const name of species) if (!site.species.includes(name)) site.species.push(name);
+    // 최신순이라 첫 행이 가장 최근 관찰일이다. 같은 종 반복 제보는 한 번만 센다. 분류 미확인 이름은 종수에서 뺀다.
+    for (const name of species) if (!isUnclassifiedSpecies(name) && !site.species.includes(name)) site.species.push(name);
   }
   return jsonResponse(
     request,

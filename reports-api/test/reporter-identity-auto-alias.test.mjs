@@ -115,7 +115,8 @@ test('new approved row follows public consent and status gates even with matchin
 });
 
 // Actual PR95 trigger: a new matching alias must not expose punctuation-tainted protected names.
-test('auto-linked protected punctuation is private and the original 27-report group is immutable',async()=>{
+// 2026-11-14 정책: 승인된 분류 미확인 이름은 숨기지 않고 unclassified 로 따로 보이며 종수·좌표에는 들어가지 않는다.
+test('auto-linked punctuation name is listed as unclassified (no coordinates) and the original 27-report group is immutable',async()=>{
  const db=canonicalDb();db.sqlite.exec(migration);
  const ids=Array.from({length:27},(_,i)=>'baseline-'+String(i).padStart(2,'0'));
  for(const id of ids)add(db,id,'행복합니다','참새');
@@ -129,7 +130,9 @@ test('auto-linked protected punctuation is private and the original 27-report gr
   const q=new URLSearchParams({contract:'publication-v1',nonce:N,expectedEpoch:h.epoch,expectedRevision:h.revision,reporter:'행복합니다',source:'history',reportId:ids[0]});
   const names=await(await call('/reports/reporter-species?'+q)).json();
   assert.deepEqual(names.species,['참새']);
-  assert.equal(names.restricted,env===AUTO);
+  assert.deepEqual(names.unclassified,env===AUTO?["호사비오리'"]:undefined);
+  assert.equal(names.restricted,false);
+  for(const key of ['lat','lon','36.','37.','127.'])assert.ok(!JSON.stringify(names).includes(key),key);
   assert.equal(identity(db,D,env).k,env===AUTO?'group:'+group.groupId:'name:행복합니다');
  }
  assert.equal(select(db,'SELECT report_ids FROM reporter_identity_groups WHERE id=?',group.groupId).report_ids,original);
