@@ -33,7 +33,7 @@ test('three states: only matching immutable explicit evidence confirms nonbreedi
   const row = {species:'매', lat:original.lat, lon:original.lon, observed_on:original.observedOn, note:original.note,
     non_breeding_confirmed:1, location_input:JSON.stringify(original)};
   assert.equal(reportBreedingStatus(row), 'non_breeding');
-  assert.equal(isLocationRestricted(row), true);
+  assert.equal(isLocationRestricted(row), false, 'attested non-breeding protected location eligible');
   const nonbreeding = {...original,note:'비번식 확인, non-breeding bird'};
   assert.equal(reportBreedingStatus({...row,note:nonbreeding.note,location_input:JSON.stringify(nonbreeding)}),'non_breeding');
   assert.equal(isLocationRestricted({...row,note:nonbreeding.note,non_breeding_confirmed:null}),true);
@@ -51,7 +51,7 @@ test('three states: only matching immutable explicit evidence confirms nonbreedi
   for (const value of [undefined, null, false, 1, 'true']) assert.throws(() => quickInput({...original,non_breeding_confirmed:value}), {code:'NON_BREEDING_CONFIRMATION_REQUIRED'});
 });
 
-test('confirmed 매 / Falco peregrinus: protected names and coordinates withheld even after approval', async t => {
+test('confirmed nonbreeding 매 / Falco peregrinus: reporter-selected locations visible after approval', async t => {
   const s = await setup(t);
   for (const [i,species] of ['매', 'Falco peregrinus', '매, 청둥오리'].entries()) {
     const body = input(410+i, {species, lat:Number((37.512345+i/100).toFixed(6)), lon:127.054321, note:'먹이활동', namePublic:false});
@@ -63,17 +63,18 @@ test('confirmed 매 / Falco peregrinus: protected names and coordinates withheld
     for (const strict of [false,true]) {
       const response = await get(s.pub,'/reports/approved',strict);
       const red = response.body.spots.find(x=>x.id===body.request_id);
-      assert.equal(red,undefined);
+      assert.ok(red,'approved nonbreeding is public');
+      assert.equal(Number(red.lat),Number(body.lat));assert.equal(Number(red.lon),Number(body.lon));
       const raw = JSON.stringify(response.body);
       for (const secret of ['location_input','non_breeding_confirmed','합성테스터','먹이활동','ip_hash']) assert.equal(raw.includes(secret),false,secret);
     }
     const search = (await get(s.pub,'/reports/search?q='+encodeURIComponent(species.split(',')[0]),true)).body;
-    assert.equal(search.total,0);
+    assert.equal(search.total,1);
   }
   assert.equal(await schemaReady(s.db),true,'canonical schema hash unchanged');
 });
 
-test('confirmed protected hideLocation: stored point preserved, public projection withheld', async t => {
+test('confirmed protected hideLocation: masked point with no exact coordinates', async t => {
   const s = await setup(t), body = input(430, {species:'매', hideLocation:true, note:'이동 관찰', lat:37.512345,lon:127.054321});
   const receipt = await (await post(s.pub,body)).json();
   assert.equal(receipt.spot,undefined);
@@ -84,11 +85,12 @@ test('confirmed protected hideLocation: stored point preserved, public projectio
   await approve(s,body,431);
   for (const strict of [false,true]) {
     const red = (await get(s.pub,'/reports/approved',strict)).body.spots[0];
-    assert.equal(red,undefined);
+    assert.ok(red && red.locationHidden===true);
+    assert.notEqual(Number(red.lat),Number(body.lat));
     assert.ok(!JSON.stringify((await get(s.pub,'/reports/approved',strict)).body).includes(String(body.lat)));
   }
   const result = (await get(s.pub,'/reports/search?q='+encodeURIComponent('매'),true)).body.reports[0];
-  assert.equal(result,undefined);
+  assert.ok(result && result.locationHidden===true && result.target===undefined);
 });
 
 test('unknown protected and breeding rows: approval, pending_public and fixed/root/site links cannot expose location', async () => {
