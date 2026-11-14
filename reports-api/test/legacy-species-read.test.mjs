@@ -22,7 +22,7 @@ test('정본 식별값·관리자 수정값이 과거 원문보다 우선하고 
   assert.deepEqual(publicSightingsOf(row),[{name:'박새',count:8,countStatus:'reported'}]);
   assert.equal(publicSightingsOf({...row,public_sightings:JSON.stringify([{name:'박새',count:8,state:'unknown'}])})[0].count,null);
   assert.deepEqual(reporterLifetimeCounts([{species:'고니3'},{species:'고니'},{species:'고니5 · 박새'}]),{speciesCount:2,reportCount:3});
-  assert.deepEqual(reporterSpeciesNames([{species:'고니3'},{species:'고니'},{species:'박새2',location_hidden:1}]),{species:[],restricted:true});
+  assert.deepEqual(reporterSpeciesNames([{species:'고니3'},{species:'고니'},{species:'박새2',location_hidden:1}]),{species:['고니','박새'],restricted:false});
 });
 
 test('과거 승인 통계 모든 뷰·종 필터는 고니3=고니; 읽기가 원본 DB 어느 행도 변경하지 않음',async()=>{

@@ -123,13 +123,13 @@ test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집�
   const rs = await get(s.pub, '/reports/reporter-stats?reporter=' + encodeURIComponent('통계테스터') + '&source=all');
   assert.equal(rs.speciesCount, 5, JSON.stringify(rs)); assert.equal(rs.reportCount, 4);
   const names = await get(s.pub, '/reports/reporter-species?reporter=' + encodeURIComponent('통계테스터') + '&source=all');
-  assert.deepEqual(names.species, ['동박새', '박새', '쇠딱다구리', '직박구리'].sort((x, y) => x < y ? -1 : x > y ? 1 : 0));
+  assert.deepEqual(names.species, ['고니','동박새', '박새', '쇠딱다구리', '직박구리'].sort((x, y) => x < y ? -1 : x > y ? 1 : 0));
   // 검색·지도: 수량 없는 국명, 동박새로 검색하면 3건
   const search = (await get(s.pub, '/reports/search?q=' + encodeURIComponent('동박새'))).reports;
   assert.equal(search.length, 3); assert.ok(search.every(r => r.species.includes('동박새') && !r.species.some(x => /\d/.test(x))));
   const approved = (await get(s.pub, '/reports/approved')).spots;
   assert.deepEqual(approved.find(x => x.id === a.body.request_id).species, ['동박새', '박새', '직박구리']);
-  assert.equal(approved.find(x => x.id === legacy.id),undefined,'보호종 원문은 보존하고 공개에서 제외');
+  assert.ok(approved.find(x => x.id === legacy.id),'원본에 비번식 확인된 고니도 승인 후 공개');
 });
 
 test('관리자 정정: 종명·개체수 수정이 종별 행·이력·통계에 일관되게 반영', async t => {

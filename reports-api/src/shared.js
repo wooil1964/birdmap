@@ -369,7 +369,7 @@ export function isProtectedSpeciesReport(report) {
       const parsed = parseSpeciesItems([token.trim()]);
       return parsed.clean && parsed.items.some(item => {
         const id = identifyBird(item.name);
-        return !!id && (protectedNames.has(id.key) || protectedNames.has(item.name));
+        return protectedNames.has(item.name) || (!!id && protectedNames.has(id.key));
       });
     }));
 }

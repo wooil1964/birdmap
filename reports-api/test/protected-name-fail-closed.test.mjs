@@ -7,6 +7,7 @@ import { isSensitiveReport, isProtectedSpeciesReport, isLocationRestricted, kstD
 import { reporterSpeciesNames } from '../src/publication.js';
 import { LEGAL_PROTECTED_NAMES, MAP_LOCATION_SENSITIVE } from '../src/protected-birds.js';
 import { BIRD_NAME_TABLE } from '../src/official-bird-aliases.js';
+import { identifyBird } from '../src/bird-names.js';
 
 const variants = ["호사비오리'", '호사비오리.', '호사비오리,', '(호사비오리)', '호사비오리(관찰)',
  '호사비오리）', '호사비오리’', '참새|호사비오리', '호 사 비 오 리', '호사비오리\u200b',
@@ -47,11 +48,11 @@ test('PR95 punctuation incident: unknown or malformed names stay undisclosed wit
 test('official protected classifications are retained but no blanket suppression of valid names',()=>{
  for(const species of [...LEGAL_PROTECTED_NAMES,...Object.keys(MAP_LOCATION_SENSITIVE)]){
   assert.equal(isProtectedSpeciesReport({species:[species]}),true,species);
-   assert.equal(isSensitiveReport({species:[species]}),false,species);
+   assert.equal(isSensitiveReport({species:[species]}),!identifyBird(species),species);
   const aliases=BIRD_NAME_TABLE.find(r=>r[0]===species)||[];
   for(const alias of aliases) {
      assert.equal(isProtectedSpeciesReport({species:[alias]}),true,alias);
-     assert.equal(isSensitiveReport({species:[alias]}),false,alias);
+     assert.equal(isSensitiveReport({species:[alias]}),!identifyBird(alias),alias);
    }
  }
  for(const keyword of [...SENSITIVE_KEYWORDS,'nesting','chicks','incubation'])

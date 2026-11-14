@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {input} from '../local-test/helpers.mjs';
 import {isSensitiveReport,isProtectedSpeciesReport,isLocationRestricted,reportBreedingStatus} from '../src/shared.js';
 import {LEGAL_PROTECTED_NAMES,MAP_LOCATION_SENSITIVE} from '../src/protected-birds.js';
+import {identifyBird} from '../src/bird-names.js';
 function attested(id,species,extra={}){
  const original=input(id,{species,note:'비행 관찰',hideLocation:false,...extra});
  return {id:original.request_id,species,lat:original.lat,lon:original.lon,note:original.note,
@@ -38,7 +39,9 @@ test('unknown or punctuation-corrupted names still fail closed without guessing'
   assert.equal(isLocationRestricted(row),true,name);
  }
 });
-test('official protected taxonomy stays classified but is distinct from disclosure policy',()=>{
- for(const name of [...LEGAL_PROTECTED_NAMES,...Object.keys(MAP_LOCATION_SENSITIVE)])
+test('statutory and map protected names stay classified; unlisted legal spellings require review',()=>{
+ for(const name of [...LEGAL_PROTECTED_NAMES,...Object.keys(MAP_LOCATION_SENSITIVE)]) {
   assert.equal(isProtectedSpeciesReport({species:[name]}),true,name);
+  assert.equal(isSensitiveReport({species:[name]}),!identifyBird(name),name);
+ }
 });

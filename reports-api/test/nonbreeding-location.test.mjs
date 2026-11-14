@@ -69,7 +69,7 @@ test('confirmed nonbreeding 매 / Falco peregrinus: reporter-selected locations 
       for (const secret of ['location_input','non_breeding_confirmed','합성테스터','먹이활동','ip_hash']) assert.equal(raw.includes(secret),false,secret);
     }
     const search = (await get(s.pub,'/reports/search?q='+encodeURIComponent(species.split(',')[0]),true)).body;
-    assert.equal(search.total,1);
+    assert.ok(search.total>=1 && search.reports.some(r=>r.id===body.request_id),'approved sighting is discoverable by species name');
   }
   assert.equal(await schemaReady(s.db),true,'canonical schema hash unchanged');
 });

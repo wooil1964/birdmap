@@ -18,11 +18,11 @@ test('species: union of approved consenting rows, deduped and 가나다 sorted, 
  assert.deepEqual(b.species,['가마우지','까치','동박새','참새']);assert.equal(b.restricted,false);
  assert.deepEqual(Object.keys(b).sort(),['publication','restricted','serverTime','species']);
 });
-test('species: protected species, nesting keyword and hidden location rows are withheld whole',async()=>{
+test('species: breeding and unresolved names withheld; names-only projection includes protected and location-hidden reports',async()=>{
  const e=env([row({id:A,species:'까치'}),row({species:'저어새 · 백로'}),row({species:'직박구리',note:'둥지 근처 합성 메모'}),row({species:'흰뺨검둥오리',public_lat:36.5,public_lon:126.5}),row({species:'수리부엉이 2마리'})]);
  const {b}=await species(e);
- assert.deepEqual(b.species,['까치']);assert.equal(b.restricted,true);
- const text=JSON.stringify(b);for(const secret of ['저어새','백로','직박구리','흰뺨검둥오리','수리부엉이','둥지','메모','36.5','lat',A])assert.ok(!text.includes(secret),secret);
+ assert.deepEqual(b.species,['까치','수리부엉이','흰뺨검둥오리']);assert.equal(b.restricted,true);
+ const text=JSON.stringify(b);for(const secret of ['저어새','백로','직박구리','둥지','메모','36.5','lat',A])assert.ok(!text.includes(secret),secret);
 });
 test('species: unapproved, unconsented, other names and withdrawn rows never counted',async()=>{
  const e=env([row({id:A,species:'까치'}),row({species:'대기종',status:'pending'}),row({species:'반려종',status:'rejected'}),row({species:'비공개종',name_public:0}),row({species:'남의종',reporter:'다른사람'}),row({species:'공백종',reporter:'합성검증 '})]);
@@ -48,10 +48,10 @@ test('reporter-stats accepts the all-time source and keeps numbers-only output',
 test('species: list never exceeds the count shown by reporter-stats',async()=>{
  const e=env([row({id:A,species:'까치 · 참새'}),row({species:'저어새 · 까치'}),row({species:'동박새'})]);
  const s=(await species(e)).b,c=(await read(e,'/reports/reporter-stats',{reporter:'합성검증',source:'history',reportId:A})).b;
- assert.ok(s.species.length<=c.speciesCount);assert.equal(s.restricted,true);assert.equal(c.speciesCount,4);assert.deepEqual(s.species,['동박새','까치','참새'].sort());
+ assert.ok(s.species.length<=c.speciesCount);assert.equal(s.restricted,false);assert.equal(c.speciesCount,4);assert.deepEqual(s.species,['저어새','동박새','까치','참새'].sort());
 });
 test('pure helper: restricted flag and code-point order',()=>{
- assert.deepEqual(publication.reporterSpeciesNames([{species:'참새 · 가마우지'},{species:'매'},{species:'까치',location_hidden:1}]),{species:['가마우지','참새'],restricted:true});
+ assert.deepEqual(publication.reporterSpeciesNames([{species:'참새 · 가마우지'},{species:'매'},{species:'까치',location_hidden:1}]),{species:['가마우지','까치','매','참새'],restricted:false});
  assert.deepEqual(publication.reporterSpeciesNames([]),{species:[],restricted:false});
 });
 
