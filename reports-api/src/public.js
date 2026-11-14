@@ -13,6 +13,7 @@ import {
   isLocationRestricted,
   LOCATION_HIDDEN_SQL,
   isSensitiveReport,
+  isUnclassifiedSpecies,
   kstDateString,
   receiptPayload,
   splitSpecies,
@@ -317,7 +318,7 @@ async function handleApproved(request, env) {
 
 // '이번주 어디 갈까' 추천 가점용. 관리자가 site_id 를 지정한 최근 승인 제보를
 // 탐조지별로 묶어 가장 최근 관찰일과 고유 종 목록만 내보낸다.
-// 위치를 가린 제보와 둥지·번식·보호종 제보(isSensitiveReport)는 넣지 않는다.
+// 위치를 가린 제보, 번식/미확인 종명, 비번식 확인 없는 오래된 보호종 제보를 제외한다.
 // 좌표·제보자·설명은 내보내지 않는다. 메모(note)는 번식 판정에만 쓰고 응답에 넣지 않는다.
 const RECENT_SITES_DEFAULT_DAYS = 14;
 const RECENT_SITES_MAX_DAYS = 30;
@@ -333,7 +334,7 @@ async function handleRecentSites(request, env, url) {
   const since = kstDateString(new Date(now.getTime() - days * 86400000));
   const { results } = await db
     .prepare(
-      `SELECT site_id, species, observed_on, note
+      `SELECT site_id, species, observed_on, note, lat, lon, ${locationEvidenceColumns(env)}
          FROM reports
         WHERE status = 'approved' AND site_id IS NOT NULL AND site_id <> ''
           AND observed_on >= ?1 AND observed_on <= ?2
@@ -345,12 +346,12 @@ async function handleRecentSites(request, env, url) {
   const bySite = new Map();
   for (const row of results || []) {
     const species = splitSpecies(row.species);
-    if (isSensitiveReport({ note: row.note, speciesText: row.species, species })) continue;
+    if (isLocationRestricted(row)) continue;
     const siteId = String(row.site_id);
     if (!bySite.has(siteId)) bySite.set(siteId, { siteId, latestDate: row.observed_on, species: [] });
     const site = bySite.get(siteId);
-    // 최신순이라 첫 행이 가장 최근 관찰일이다. 같은 종 반복 제보는 한 번만 센다.
-    for (const name of species) if (!site.species.includes(name)) site.species.push(name);
+    // 최신순이라 첫 행이 가장 최근 관찰일이다. 같은 종 반복 제보는 한 번만 센다. 분류 미확인 이름은 종수에서 뺀다.
+    for (const name of species) if (!isUnclassifiedSpecies(name) && !site.species.includes(name)) site.species.push(name);
   }
   return jsonResponse(
     request,

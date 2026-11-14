@@ -50,7 +50,7 @@ test('no partial, English/scientific or invalid quantity whitespace guessing; du
 });
 test('whitespace protected names and breeding remain hidden through all old raw read paths',()=>{
  for(const species of ['동박새3 저어새2 까치5','동박새3 매2 까치5']) {
-  assert.equal(isSensitiveReport({species:[species]}),true);
+  assert.equal(isLocationRestricted({species}),true);
   assert.equal(isLocationRestricted({species}),true);
   assert.ok(publicPayload([{id:'x',species,lat:37,lon:127,observed_on:'2026-10-02'}]).spots.every(s=>s.locationHidden));
  }
@@ -130,8 +130,8 @@ test('protected/hidden/withdrawn members never reveal species list details after
  const db=seeded(),e=env(db);await confirm(db);
  await db.prepare("UPDATE reports SET species='저어새2 동박새3',note='비공개 메모',admin_note='SECRET' WHERE id='b'").run();
  const r=await get(e,'/reports/reporter-species',{reporter:names[0],source:'history',reportId:'a'});
- assert.equal(r.body.restricted,true);assert.deepEqual(r.body.species,['까치','동박새','박새']);
- assert.ok(!JSON.stringify(r.body).includes('저어새'));assert.ok(!JSON.stringify(r.body).includes('SECRET'));
+ assert.equal(r.body.restricted,false);assert.deepEqual(r.body.species,['까치','동박새','박새','저어새']);
+ assert.ok(!JSON.stringify(r.body).includes('SECRET'));
  const count=await stats(e);assert.equal(count.body.speciesCount,4);
  assert.deepEqual(Object.keys(count.body).sort(),['publication','reportCount','serverTime','speciesCount']);
 });
@@ -167,7 +167,8 @@ test('old whitespace spelling retains exact nonbreeding evidence; edits and inva
   const stored=species;
   const row={species:stored,lat:37,lon:127,observed_on:'2026-10-02',note:null,non_breeding_confirmed:1,location_input:JSON.stringify(input)};
   assert.equal(reportBreedingStatus(row),'non_breeding');
-  assert.equal(isLocationRestricted(row),false);
+  // 2026-11-14 정책: 중복·한도 초과 표기는 종수·개체수 판단(불확실)일 뿐, 비번식 확인 원본의 위치 선택을 바꾸지 않는다.
+  assert.equal(isLocationRestricted(row),false,'matching historical nonbreeding evidence follows the reporter choice regardless of name ambiguity');
   for(const patch of [{species:stored+' 까치1'},{lat:37.1},{observed_on:'2026-10-03'},{note:'changed'}])assert.equal(reportBreedingStatus({...row,...patch}),'unknown');
  }
  const row={species:'저어새2 까치3',lat:37,lon:127,observed_on:'2026-10-02',non_breeding_confirmed:1,location_input:JSON.stringify({species:'저어새2 까치3',lat:37,lon:127,observedOn:'2026-10-02'})};

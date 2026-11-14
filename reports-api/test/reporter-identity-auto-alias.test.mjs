@@ -113,3 +113,30 @@ test('new approved row follows public consent and status gates even with matchin
  assert.equal(got.body.reportCount,3);
  assert.equal(got.body.speciesCount,3);
 });
+
+// Actual PR95 trigger: a new matching alias must not expose punctuation-tainted protected names.
+// 2026-11-14 최종 정책: 단순 문장부호 오기(호사비오리')는 공식 국명으로 정규화해 종명 목록에 넣는다(좌표 없음, 원문 보존).
+test('auto-linked punctuation typo is normalized to the official name (no coordinates) and the original 27-report group is immutable',async()=>{
+ const db=canonicalDb();db.sqlite.exec(migration);
+ const ids=Array.from({length:27},(_,i)=>'baseline-'+String(i).padStart(2,'0'));
+ for(const id of ids)add(db,id,'행복합니다','참새');
+ const group=await confirm(db,ids);
+ const original=select(db,'SELECT report_ids FROM reporter_identity_groups WHERE id=?',group.groupId).report_ids;
+ const after=new Date(Date.parse(select(db,'SELECT created_at FROM reporter_identity_groups WHERE id=?',group.groupId).created_at)+60000).toISOString();
+ add(db,D,'행복합니다',"호사비오리'",{received:after});
+ for(const env of [OFF,AUTO]){
+  const e=publicEnv(db,env),call=p=>publicHandle(new Request('https://reports.example'+p,{headers:ORIGIN}),e);
+  const h=(await(await call('/reports/public-state?nonce='+N)).json()).publication;
+  const q=new URLSearchParams({contract:'publication-v1',nonce:N,expectedEpoch:h.epoch,expectedRevision:h.revision,reporter:'행복합니다',source:'history',reportId:ids[0]});
+  const names=await(await call('/reports/reporter-species?'+q)).json();
+  assert.deepEqual(names.species,env===AUTO?['참새','호사비오리']:['참새']);
+  assert.equal(names.unclassified,undefined);
+  assert.equal(names.restricted,false);
+  for(const key of ['lat','lon','36.','37.','127.'])assert.ok(!JSON.stringify(names).includes(key),key);
+  assert.equal(identity(db,D,env).k,env===AUTO?'group:'+group.groupId:'name:행복합니다');
+ }
+ assert.equal(select(db,'SELECT report_ids FROM reporter_identity_groups WHERE id=?',group.groupId).report_ids,original);
+ assert.equal(JSON.parse(original).length,27);
+ assert.equal(select(db,'SELECT species FROM reports WHERE id=?',D).species,"호사비오리'");
+ assert.equal(select(db,'SELECT COUNT(*) n FROM reporter_identity_events').n,1);
+});

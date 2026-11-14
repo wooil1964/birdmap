@@ -28,7 +28,7 @@ function rows() {
     { id: "nest", status: "approved", site_id: "19", species: "쇠제비갈매기", lat: 36.0, lon: 126.6, note: "둥지 확인", observed_on: ago(1) },
     { id: "prot", status: "approved", site_id: "19", species: "저어새", lat: 36.0, lon: 126.6, observed_on: ago(1) },
     // 기간 밖(20일 전)은 기본 14일에서 빠진다.
-    { id: "old", status: "approved", site_id: "21", species: "고대갈매기", lat: 35.8, lon: 126.6, observed_on: ago(20) },
+    { id: "old", status: "approved", site_id: "21", species: "괭이갈매기", lat: 35.8, lon: 126.6, observed_on: ago(20) },
   ];
 }
 

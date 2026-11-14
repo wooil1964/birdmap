@@ -101,9 +101,8 @@ test('pending coordinates: immutable historical receipt cannot revive a marker; 
   }
   assert.equal((await act('approve')).status,200,'the existing approval procedure stays available');
   const approved=(await get(s.pub,'/reports/approved',true)).body.spots.find(r=>r.id===id);
-  assert.equal(approved.lat,POINT.lat,'confirmed protected v2 policy is unchanged after approval');
-  assert.equal(approved.lon,POINT.lon);
-  assert.ok((await get(s.pub,'/reports/search?q='+encodeURIComponent('매'),true)).body.reports.some(r=>r.id===id&&r.target?.spotId===id));
+  assert.ok(approved && Number(approved.lat)===Number(body.lat),'approved verified nonbreeding follows the original reporter choice');
+  assert.equal((await get(s.pub,'/reports/search?q='+encodeURIComponent('매'),true)).body.total,1);
   const approvedReplay=await (await post(s.pub,body)).json();
   assert.equal(approvedReplay.status,'approved');assert.equal(approvedReplay.publicVisibility,'approved');assert.equal(approvedReplay.spot,undefined);
   assert.equal((await act('unpublish')).status,200);

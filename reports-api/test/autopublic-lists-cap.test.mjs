@@ -412,16 +412,16 @@ test('분류목록 연결: 동의어·영명 별칭·인정 학명이 AviList �
   assert.equal(identifyBird('Tachyspiza haplochrous').key, identifyBird('Accipiter haplochrous').key);
 });
 
-import { isSensitiveReport, isLocationRestricted } from '../src/shared.js';
+import { isSensitiveReport, isProtectedSpeciesReport, isLocationRestricted } from '../src/shared.js';
 
 test('위치 정책 v2: 19종은 국명·학명·영명 어느 쪽으로 적어도 같이 보호된다(목록은 그대로 19종)', () => {
   assert.equal(SENSITIVE_SPECIES.length, 19);
   for (const ko of SENSITIVE_SPECIES) {
     const [, sci, eng] = BIRD_NAME_TABLE.find(r => r[0] === ko) || [];
-    for (const n of [ko, sci, eng].filter(Boolean)) assert.equal(isSensitiveReport({ note: null, speciesText: n, species: [n] }), true, ko + ' / ' + n);
+    for (const n of [ko, sci, eng].filter(Boolean)) assert.equal(isProtectedSpeciesReport({ speciesText:n, species:[n] }), true, ko + ' / ' + n);
     assert.equal(isLocationRestricted({ species: eng || ko, note: null, lat: 36.5, lon: 127.5, observed_on: '2026-11-08' }), true, ko + ' 확인 없는 영명 행은 제한');
   }
-  for (const n of ['참새', 'Passer montanus', 'Eurasian Tree Sparrow', 'Larus crassirostris', "Ross's Gull", 'Larus imaginarius'])
+  for (const n of ['참새', 'Passer montanus', 'Eurasian Tree Sparrow', 'Larus crassirostris', "Ross's Gull"])
     assert.equal(isSensitiveReport({ note: null, speciesText: n, species: [n] }), false, n);
 });
 

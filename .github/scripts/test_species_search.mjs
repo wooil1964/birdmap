@@ -6,7 +6,7 @@ import {reportSearchPayload} from '../../reports-api/src/report-search.js';
 const source=readFileSync(new URL('../../assets/birdmap-species-search.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../../index.html',import.meta.url),'utf8').replace(/\r\n/g,'\n');
 const pick=name=>{const start=html.indexOf('function '+name+'(');assert.ok(start>=0,name);let depth=0;for(let i=html.indexOf('{',start);i<html.length;i++){if(html[i]==='{')depth++;else if(html[i]==='}'&&--depth===0)return html.slice(start,i+1);}throw Error(name);};
-const real=['escapeHtml','siteHistoryEntryHtml','publicationSame','publicationAllowed','publicationDataAllowed','publicationRenew','publicationRouteCheck','reportArchivePayload','spotKakaoRouteUrl','tmapNavigationUrl','openTmapNavigation'].map(pick).join('\n');
+const real=['escapeHtml','reportSpeciesNamesHtml','siteHistoryEntryHtml','publicationSame','publicationAllowed','publicationDataAllowed','publicationRenew','publicationRouteCheck','reportArchivePayload','spotKakaoRouteUrl','tmapNavigationUrl','openTmapNavigation'].map(pick).join('\n');
 class Element{
   constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.attributes={};this.hidden=false;this.value='';this.parentNode=null;this._text='';this.classes=new Set();this.classList={add:x=>this.classes.add(x),remove:x=>this.classes.delete(x),contains:x=>this.classes.has(x)};this.style={setProperty(){},removeProperty(){}};}
   appendChild(n){if(n.parentNode)n.parentNode.children=n.parentNode.children.filter(x=>x!==n);this.children.push(n);n.parentNode=this;return n;}

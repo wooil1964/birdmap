@@ -1,11 +1,11 @@
 // 전체 조류 자동 공개(미검증) 판정. 설계: docs/reviews/report-autopublish-design/2026-11-08-claude-design.md
-// 원칙: 제보자를 신뢰하고 빠르게 공개하며 오류는 관리자가 사후에 정정한다. 일반종·희귀종·미조·보호종을 종 이름만으로 거르지 않는다.
+// 이름·수량 해석과 공개 보호 정책은 별도 관문이다. 보호종·미확인 표기는 자동 공개하지 않는다.
 // 보류하는 것은 "식별할 수 없는 이름·불확실 표기·종명/개체수를 나눌 수 없는 입력·개체수 이상·오래된 관찰·중복 의심·한도·연락처"뿐이다.
-// 위치 보호는 그대로다: 제보자의 위치 가리기, 번식 관련 입력 차단(접수 거절), 위치 정책 v2(unverifiedState 의 isLocationRestricted).
+// 읽기에서도 공통 보호 정책을 재검사한다(위치 가리기·번식·보호종·미확인 종명).
 // 상태값은 새로 만들지 않는다: pending + pending_public=1 + reviews(submitted, system:auto-public, auto_public:<정책>)
 // 세 가지를 모두 갖추고, 읽는 시점에 아래 판정을 다시 통과해야만 공개된다.
 import { identifyBird } from './bird-names.js';
-import { hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, publicSightingsOf, identifiedSpeciesSql, splitOfficialSpecies } from './shared.js';
+import { isSensitiveReport, hasBreedingEvidence, isLocationRestricted, isLocationHidden, splitSpecies, kstDateString, parseSpeciesItems, speciesNamesOf, publicSightingsOf, identifiedSpeciesSql, splitOfficialSpecies } from './shared.js';
 
 export const AUTO_PUBLIC_POLICY = 'auto-public-v1';
 export const AUTO_PUBLIC_ACTOR = 'system:auto-public';
@@ -23,7 +23,7 @@ export const FLOCK_LIMITS = Object.freeze({ '청둥오리': 3000, '흰뺨검둥�
 
 export const SYNONYMS = Object.freeze({}); // 관습명 → 국명. 지정한 것만 인정한다(부분·유사 일치 없음).
 
-// protected·location_sensitive·rare_review 는 예전(허용 목록 시범)에 남긴 판정 기록을 읽기 위해 이름만 남긴 사유다. 지금은 새로 만들지 않는다.
+// protected는 공통 공개 보호 정책의 보류 사유다. location_sensitive·rare_review는 과거 기록 호환용이다.
 export const HOLD_REASONS = ['auto_public_disabled', 'breeding', 'protected', 'location_sensitive', 'rare_review', 'name_unconfirmed', 'species_parse', 'count_anomaly',
   'stale_observation', 'possible_duplicate', 'rate_review', 'global_cap', 'note_review'];
 
@@ -127,6 +127,8 @@ export function capGuard(env, ipHash, now = new Date(), report = null, selfId = 
 export async function classifySubmission(db, env, report, ipHash, now = new Date()) {
   if (!autoPublicEnabled(env)) return { eligible: false, reasons: ['auto_public_disabled'] };
   const reasons = contentReasons(report);
+  // 이름 식별·수량 검사가 통과해도 공개 보호 정책은 별도로 적용한다.
+  if (!reasons.size && isSensitiveReport(report)) reasons.add('protected');
   if (daysBetween(report.observedOn, kstDateString(now)) > STALE_DAYS) reasons.add('stale_observation');
   const keys = new Set((report.species || []).map(speciesKey));
   const sameDay = (await db.prepare("SELECT species,lat,lon FROM reports WHERE observed_on=?1 AND status<>'rejected'").bind(report.observedOn).all()).results || [];

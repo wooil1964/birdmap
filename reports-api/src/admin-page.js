@@ -556,7 +556,7 @@ function statsName(view,r){
   if(view==='sites')return r.site_id==null?'미연결 지역':(r.site_name||('ID '+r.site_id));
   // 앞뒤 공백만 다른 이름은 합치지 않으므로, 화면에서도 구분되게 따옴표로 보여 준다.
   if(view==='reporters')return r.reporter==null?'(이름 미입력)':r.reporter!==r.reporter.trim()?'"'+r.reporter+'" (앞뒤 공백 포함)':r.reporter;
-  return r.species;
+  return r.species+(r.unclassified?' (분류 미확인 · 종수 제외)':'');
 }
 
 function drillFor(view,r){
