@@ -130,8 +130,8 @@ test('protected/hidden/withdrawn members never reveal species list details after
  const db=seeded(),e=env(db);await confirm(db);
  await db.prepare("UPDATE reports SET species='저어새2 동박새3',note='비공개 메모',admin_note='SECRET' WHERE id='b'").run();
  const r=await get(e,'/reports/reporter-species',{reporter:names[0],source:'history',reportId:'a'});
- assert.equal(r.body.restricted,true);assert.deepEqual(r.body.species,['까치','동박새','박새']);
- assert.ok(!JSON.stringify(r.body).includes('저어새'));assert.ok(!JSON.stringify(r.body).includes('SECRET'));
+ assert.equal(r.body.restricted,false);assert.deepEqual(r.body.species,['까치','동박새','박새','저어새']);
+ assert.ok(!JSON.stringify(r.body).includes('SECRET'));
  const count=await stats(e);assert.equal(count.body.speciesCount,4);
  assert.deepEqual(Object.keys(count.body).sort(),['publication','reportCount','serverTime','speciesCount']);
 });

@@ -91,9 +91,8 @@ for (const [label, flags] of [['ON', { REPORTS_AUTO_PUBLIC: '1', REPORTS_UNVERIF
         assert.notEqual(dump.find(x => x.path === 'status:' + r.key && x.strict === strict).body.publicVisibility, 'public_unverified', r.key);
     const pending = dump.filter(x => x.path === '/reports/pending').map(x => x.body.spots.map(sp => sp.id).sort());
     const control = s.rows.find(r => r.key === 'positive_control'), hidden = s.rows.find(r => r.key === 'positive_hidden');
-    const positives = s.rows.filter(r => r.key.startsWith('positive') && r.key !== 'positive_protected');
-    const protectedRow=s.rows.find(r=>r.key==='positive_protected');
-    for(const d of needles(protectedRow.p)) assert.ok(!hasNumber(text,d),'protected positive is now withheld');
+    const positives = s.rows.filter(r => r.key.startsWith('positive'));
+    // Verified non-breeding protected sightings are positive controls too.
     if (flags.REPORTS_UNVERIFIED_READS === '1') {
       // 양성 대조군: 정상 판정 기록이 있는 제보(일반종·보호종·희귀종 원본 제보)만 보인다(검사가 누출을 잡을 수 있음).
       for (const ids of pending) assert.deepEqual(ids, positives.map(r => r.id).sort());

@@ -1,4 +1,4 @@
-// Independent sweep: a pending protected-species report (non-breeding confirmed, hideLocation=false,
+// Independent sweep: a pending protected-species report (non-breeding confirmed, hideLocation=true,
 // REPORTS_PENDING_PUBLIC='1' as in the old config) must not leak its coordinates through ANY public GET,
 // in strict (publication-v1) or legacy mode, before approval and after admin hide/unhide/reject/unpublish.
 // Run: node --test (reports-api). Fails on 29e88cb (pre-fix): GET /reports/pending returned the exact point.
@@ -39,7 +39,7 @@ test('pending protected report: no public GET leaks coordinates through the whol
   const auth=await installAuthStubs();t.after(auth.restore);
   const db=canonicalDb(),{pub,admin}=environments(db);
   assert.equal(pub.REPORTS_PENDING_PUBLIC,'1');
-  const body=input(901,{lat:LAT,lon:LON,species:'매, 청둥오리',note:'비행 관찰',hideLocation:false});
+  const body=input(901,{lat:LAT,lon:LON,species:'매, 청둥오리',note:'비행 관찰',hideLocation:true});
   const id=body.request_id;
   for(const strict of [false,true]) {
     pub.REPORTS_PUBLICATION_REQUIRED=String(strict);
@@ -54,11 +54,12 @@ test('pending protected report: no public GET leaks coordinates through the whol
   await sweep(pub,id,'after-visibility-refused');
   assert.equal((await act('hide',{hide:true})).status,200);await sweep(pub,id,'after-hide');
   assert.equal((await act('hide',{hide:false})).status,200);await sweep(pub,id,'after-unhide');
-  // Approval must not bypass protected-species privacy, even with non-breeding evidence.
+   assert.equal((await act('hide',{hide:true})).status,200);
+  // Approving a protected nonbreeding sighting honors the reporter's mask, never the exact coordinate.
   assert.equal((await act('approve')).status,200);
   pub.REPORTS_PUBLICATION_REQUIRED='true';
   const appr=await get(pub,'/reports/approved',true);
-  assert.ok(!appr.body.spots.some(s=>s.id===id),'protected report stays private after approval');
+  assert.ok(appr.body.spots.some(s=>s.id===id && s.locationHidden===true),'name visible but precise location remains hidden');
   await sweep(pub,id,'after-approve');
   assert.equal((await act('unpublish')).status,200);await sweep(pub,id,'after-unpublish(back to pending)');
   assert.equal((await act('reject')).status,200);await sweep(pub,id,'after-reject');

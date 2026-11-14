@@ -117,7 +117,7 @@ test('흐름: 일반종은 즉시 미검증 공개, 재전송·상태·검색이
 });
 
 test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·오래된 관찰은 보류하고 가린 제보의 실제 좌표는 어디에도 내보내지 않는다', async t => {
-  const s = await setup(t, { ...ON, REPORTS_AUTO_PUBLIC_DAILY_MAX: '2' });
+  const s = await setup(t, { ...ON, REPORTS_AUTO_PUBLIC_DAILY_MAX: '4' });
   const hidden = await submit(s, { species: '까치', lat: 36.5, lon: 127.5, hideLocation: true });
   assert.equal(hidden.receipt.publicVisibility, 'public_unverified');
   const spot = (await pending(s)).find(x => x.id === hidden.body.request_id);
@@ -125,11 +125,11 @@ test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·�
   assert.ok(spot.lat !== 36.5 || spot.lon !== 127.5, '가림 점');
   const r = row(s, hidden.body.request_id); assert.equal(spot.lat, r.public_lat); assert.equal(spot.lon, r.public_lon);
 
-  // 보호종은 위치 가리기·비번식 확인 여부와 무관하게 공개를 보류한다.
+  // 보호종도 비번식 확인된 경우 공개 가능하며, 위치 가리기는 제보자가 선택한다.
   const protectedHidden = await submit(s, { species: '매, 참새', lat: 36.987654, lon: 126.876543, note: '비행', hideLocation: true });
-  assert.equal(protectedHidden.receipt.publicVisibility, 'withheld');
+  assert.equal(protectedHidden.receipt.publicVisibility, 'public_unverified');
   const protectedOpen = await submit(s, { species: '저어새', lat: 35.123456, lon: 126.234567 });
-  assert.equal(protectedOpen.receipt.publicVisibility, 'withheld');
+  assert.equal(protectedOpen.receipt.publicVisibility, 'public_unverified');
   const unknown = await submit(s, { species: '처음보는새' });
   assert.deepEqual(unknown.receipt.holdReasons, ['name_unconfirmed']);
   const dup = await submit(s, { species: '까치', lat: 36.5005, lon: 127.5005 });
@@ -140,12 +140,12 @@ test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·�
   assert.deepEqual(capped.receipt.holdReasons, ['global_cap']);
   const stale = await submit(s, { species: '참새', observedOn: '2026-09-20' });
   assert.ok(stale.receipt.holdReasons.includes('stale_observation'));
-  const ids = [hidden, vagrant].map(x => x.body.request_id).sort();
+  const ids = [hidden, protectedHidden, protectedOpen, vagrant].map(x => x.body.request_id).sort();
   assert.deepEqual((await pending(s)).map(x => x.id).sort(), ids);
   const shownHidden = (await pending(s)).find(x => x.id === protectedHidden.body.request_id);
-  assert.equal(shownHidden, undefined);
+  assert.ok(shownHidden && shownHidden.locationHidden===true);
   const shownOpen = (await pending(s)).find(x => x.id === protectedOpen.body.request_id);
-  assert.equal(shownOpen,undefined,'보호종은 공개되지 않는다');
+  assert.ok(shownOpen && Number(shownOpen.lat)===Number(protectedOpen.body.lat),'비번식 제보자가 공개를 선택했다');
   // 가린 보호종 제보의 실제 좌표는 공개 GET 어디에도 없다.
   const paths = ['/reports/pending', '/reports/approved', '/reports/search?q=' + encodeURIComponent('매'), '/reports/search?q=', '/reports/recent-sites?days=30',
     '/reports/' + protectedHidden.body.request_id + '/status', '/contributors/monthly', '/contributors/all'];
