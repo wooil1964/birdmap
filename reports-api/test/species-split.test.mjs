@@ -102,10 +102,11 @@ test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집�
   const a = await submit(s, { species: '동박새3, 박새2, 직박구리1', reporter: '통계테스터', namePublic: true });
   const b = await submit(s, { species: '동박새5, 쇠딱다구리', lat: 35.7, lon: 128.7, reporter: '통계테스터', namePublic: true });
   const dup = await submit(s, { species: '동박새3, 동박새5', lat: 35.8, lon: 128.8, reporter: '통계테스터', namePublic: true });
-  // 기존(구조화 이전) 자료: 원문·정본은 그대로, 공식 국명 확인 후 읽기 단계에서만 고니+3으로 분리
+  // 기존(구조화 이전) 자료: 원문·정본은 그대로, 공식 국명 확인 후 읽기 단계에서만 고니+3으로 분리.
+  // 공개 좌표 비번식 증거는 종명·좌표·관찰일뿐 아니라 접수 원문 메모도 정확히 일치해야 한다.
   const lb = input(6900, { species: '고니3', observedOn: TODAY, lat: 37.9, lon: 127.9, reporter: '통계테스터', namePublic: true });
   const { report, input: original } = quickInput(lb);
-  const legacy = { id: lb.request_id, status: 'pending', species: report.speciesText, lat: report.lat, lon: report.lon, public_lat: null, public_lon: null, approx_lat: report.lat, approx_lon: report.lon, pending_public: 0, observed_on: report.observedOn, received_at: new Date().toISOString(), decided_at: null, bird_count: null, reporter: '통계테스터', note: null, admin_note: null, site_id: null, name_public: 1, spot_key: null, ip_hash: 's', dedupe_hash: await dedupeHash(report) };
+  const legacy = { id: lb.request_id, status: 'pending', species: report.speciesText, lat: report.lat, lon: report.lon, public_lat: null, public_lon: null, approx_lat: report.lat, approx_lon: report.lon, pending_public: 0, observed_on: report.observedOn, received_at: new Date().toISOString(), decided_at: null, bird_count: null, reporter: '통계테스터', note: report.note, admin_note: null, site_id: null, name_public: 1, spot_key: null, ip_hash: 's', dedupe_hash: await dedupeHash(report) };
   await persistQuick(s.db, legacy, original, { ok: true, id: legacy.id, status: 'pending', publicVisibility: 'withheld' }, await sha256Hex('legacy-6900'));
   s.db.sqlite.prepare('UPDATE sightings SET species_identified=NULL,interpretation=?,count_value=NULL,count_source=? WHERE checklist_id=?').run('single', 'not_recorded', legacy.id);
   for (const x of [a.body.request_id, b.body.request_id, dup.body.request_id, legacy.id]) assert.equal((await act(s, x, 'approve')).status, 200);

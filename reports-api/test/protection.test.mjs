@@ -44,3 +44,10 @@ test("S1-R 최근 출현 집계에서 수량 붙은 보호종·줄바꿈 혼합 
   const body = await (await handleRequest(request, publicEnv(fakeDb(rows)))).json();
   assert.deepEqual(body.sites.map((s) => s.siteId), ["15"]);
 });
+
+test("unknown or duplicate/over-limit species are restricted while identifiable species remain eligible",()=>{
+  for(const raw of ['동박새3 동박새5', Array(11).fill('매').join(' '), "호사비오리'"])
+    assert.equal(isSensitiveReport({species:[raw],speciesText:raw}),true,raw);
+  for(const raw of ['매', '매1', '저어새2 까치3'])
+    assert.equal(isSensitiveReport({species:[raw],speciesText:raw}),false,raw);
+});

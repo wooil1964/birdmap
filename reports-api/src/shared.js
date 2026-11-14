@@ -354,7 +354,10 @@ const PROTECTION_SPLIT = /[,;·/\r\n]+/;
 const protectedNames = new Set([...SENSITIVE_SPECIES, ...LEGAL_PROTECTED_NAMES, ...Object.keys(MAP_LOCATION_SENSITIVE)]);
 function isRestrictedSpeciesToken(token) {
   const parsed = parseSpeciesItems([token]);
-  if (!parsed.clean || !parsed.items.length) return true;
+  // Preserve the 10-species cap and duplicate-name ambiguity even on legacy reads.
+  // Earlier parsers can split an old whitespace string into too many items
+  // without marking parsed.clean=false; that is not a public disclosure grant.
+  if (!parsed.clean || !parsed.items.length || parsed.items.length > MAX_SPECIES || parsed.duplicates.length > 0) return true;
   return parsed.items.some(item => !identifyBird(item.name));
 }
 // Classify protected birds separately from the general publication veto.
