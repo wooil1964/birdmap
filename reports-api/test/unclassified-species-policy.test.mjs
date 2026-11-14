@@ -119,6 +119,19 @@ test('승인 후 공개·종수·개체수, 관리자 동정 후 종수 반영�
   assert.equal((await get(s.pub, '/reports/reporter-stats?reporter=' + encodeURIComponent(WHO) + '&source=all')).speciesCount, 3);
 });
 
+// 2026-11-14 사용자 결정: 양식 개체수 보충은 분류 미확인 이름에만. 종 분리 이전에 접수된 확정 종의 양식 개체수는 기존처럼 세지 않는다.
+test('양식 개체수 보충은 분류 미확인에만: 종 분리 이전 확정 종 접수는 기존 기준 유지', async t => {
+  const s = await setup(t);
+  const old = await submit(s, { species: '참새', birdCount: 7 });
+  const unknown = await submit(s, { species: '가짜새', birdCount: 4 });
+  // 종 분리 기능 이전 신규 접수와 같은 정본 모양(식별 국명 없음, 단일 해석, 양식 개체수)으로 맞춘다.
+  s.db.sqlite.prepare("UPDATE sightings SET species_identified=NULL,interpretation='single',count_value=7,count_source='reported' WHERE checklist_id=?").run(old);
+  for (const id of [old, unknown]) assert.equal((await act(s, id)).status, 200, id);
+  const sum = (await stats(s, 'view=summary')).summary;
+  assert.equal(sum.species, 1, '참새는 확정 종');
+  assert.equal(sum.individuals, 4, '가짜새 양식 개체수 4만, 참새의 이전 양식 개체수 7은 기존처럼 제외');
+});
+
 test('위치는 분류와 따로: 번식은 항상, 비번식 확인 없으면 정규화된 보호종·분류 미확인 모두 좌표 비공개', () => {
   const base = { id: 'legacy', species: "호사비오리'", lat: 36.987654, lon: 126.876543, observed_on: TODAY };
   assert.equal(isLocationRestricted(base), true, '문장부호 오기 보호종(과거 자료)은 보호종 규칙으로 가린다');

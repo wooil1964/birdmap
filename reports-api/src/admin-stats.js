@@ -15,7 +15,8 @@ import {reporterNameSql,reporterKeySql,identityEnabled,identityGuardStatement,ch
 //   가입/인증 없는 동일 닉네임은 본인 증명이 아니므로 오귀속 위험이 있으며 운영에서 즉시 끌 수 있다.
 // - 지역: 관리자가 연결한 site_id 만. 없으면 '미연결 지역'. 좌표로 추정하지 않는다.
 // - 분류 미확인(공식 국명·학명·영명으로 식별되지 않는 이름): 종수(COUNT DISTINCT)에서 빼고, 명확한 개체수는 더한다.
-//   이름+숫자(마리|개체) 꼴의 숫자, 또는 이름 하나뿐인 신규 접수의 양식 개체수(둘이 다르면 불확실)만 센다.
+//   이름+숫자(마리|개체) 꼴의 숫자, 또는 분류 미확인 이름 하나뿐인 신규 접수의 양식 개체수(둘이 다르면 불확실)만 센다.
+//   확정 종의 종 분리 이전 접수 양식 개체수는 기존처럼 세지 않는다(2026-11-14 사용자 결정).
 //   관리자가 종명을 정정하면 같은 행이 구조화 경로로 옮겨 가므로 개체수가 두 번 더해지지 않는다.
 import { WorkerError, statsSpeciesItems, isUnclassifiedSpecies } from "./shared.js";
 
@@ -124,7 +125,7 @@ function base(filters, structured = false, legacy = [], env={}, unclassified = [
     SELECT id, substr(rest, instr(rest, '${SEP}') + ${SEP.length}), substr(rest, 1, instr(rest, '${SEP}') - 1)
       FROM cut WHERE rest <> ''),
   unc AS (SELECT value FROM json_each(?2)),
-  old AS (SELECT f0.id, json_extract(j.value,'$.name') AS sp, ${structured ? `CASE WHEN json_extract(j.value,'$.solo') AND nc.n IS NOT NULL
+  old AS (SELECT f0.id, json_extract(j.value,'$.name') AS sp, ${structured ? `CASE WHEN json_extract(j.value,'$.solo') AND json_extract(j.value,'$.unclassified') AND nc.n IS NOT NULL
                THEN CASE WHEN json_extract(j.value,'$.count') IS NULL OR json_extract(j.value,'$.count') = nc.n THEN nc.n END
                ELSE json_extract(j.value,'$.count') END` : "json_extract(j.value,'$.count')"} AS n
           FROM f0 JOIN legacy ON legacy.raw = f0.species, json_each(legacy.items) j
