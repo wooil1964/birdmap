@@ -88,7 +88,9 @@ test('real public projection blocks protected species and breeding or hidden att
   for(const spot_key of ['root','fixed:1:0'])for(const restricted of [{species:'저어새'},{note:'둥지 관찰'},{note:'번식 기록'},{public_lat:37.5,public_lon:127.5}]){
     const e=environment(),hidden={...root,id:'r1',spot_key,...restricted};
     const result=reportSearchPayload([root,hidden],[],{q:'',offset:0});
-    const proofRow=result.reports.find(x=>x.id==='r1');assert.equal(proofRow.locationHidden,true);assert.equal(proofRow.target,undefined);
+    const proofRow=result.reports.find(x=>x.id==='r1');
+    if(restricted.public_lat){assert.equal(proofRow.locationHidden,true);assert.equal(proofRow.target,undefined);}
+    else {assert.equal(proofRow,undefined,'protected and breeding species rows are wholly private');assert.equal(result.total,1);}
     e.fetch=()=>Promise.resolve({...result,publication:anchor('1')});
     assert.equal(await e.w.openPublicReportLocation('r1',''),false);assert.equal(e.moves().length,0);assert.equal(e.m._popup,null);
   }
