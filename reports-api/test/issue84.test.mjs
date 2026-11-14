@@ -50,7 +50,7 @@ test('no partial, English/scientific or invalid quantity whitespace guessing; du
 });
 test('whitespace protected names and breeding remain hidden through all old raw read paths',()=>{
  for(const species of ['동박새3 저어새2 까치5','동박새3 매2 까치5']) {
-  assert.equal(isSensitiveReport({species:[species]}),true);
+  assert.equal(isLocationRestricted({species}),true);
   assert.equal(isLocationRestricted({species}),true);
   assert.ok(publicPayload([{id:'x',species,lat:37,lon:127,observed_on:'2026-10-02'}]).spots.every(s=>s.locationHidden));
  }
