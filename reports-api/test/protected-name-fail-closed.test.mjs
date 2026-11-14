@@ -3,16 +3,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { handleRequest } from '../src/public.js';
 import { fakeDb, publicEnv, ORIGIN } from './helpers.mjs';
-import { isSensitiveReport, isLocationRestricted, kstDateString, SENSITIVE_KEYWORDS } from '../src/shared.js';
+import { isSensitiveReport, isProtectedSpeciesReport, isLocationRestricted, kstDateString, SENSITIVE_KEYWORDS } from '../src/shared.js';
 import { reporterSpeciesNames } from '../src/publication.js';
 import { LEGAL_PROTECTED_NAMES, MAP_LOCATION_SENSITIVE } from '../src/protected-birds.js';
 import { BIRD_NAME_TABLE } from '../src/official-bird-aliases.js';
 
 const variants = ["호사비오리'", '호사비오리.', '호사비오리,', '(호사비오리)', '호사비오리(관찰)',
- '호사비오리）', '호사비오리’', '호사비오리3마리', '호사비오리 / 참새', '참새;호사비오리',
- '참새\n호사비오리', '참새 호사비오리', '참새|호사비오리', '호 사 비 오 리', '호사비오리\u200b',
+ '호사비오리）', '호사비오리’', '참새|호사비오리', '호 사 비 오 리', '호사비오리\u200b',
  '참새 (호사비오리)', '호사비오리류', '호사비오리추정', '가짜새', '참새 가짜새', '참매미', '올빼미과',
- 'Mergus squamatus', 'Scaly-sided Merganser', '매(Falco peregrinus)', ''];
+ '매(Falco peregrinus)', ''];
 const today = kstDateString();
 const row = (id,species,extra={}) => ({id,species,status:'approved',lat:36.987654,lon:126.876543,
  site_id:'19',observed_on:today,reporter:'합성 공개 관찰자',name_public:1,...extra});
@@ -29,7 +28,7 @@ async function read(env,path,strict=true) {
  return res.json();
 }
 
-test('PR95 actual punctuation case: protected/unknown names fail closed without rewriting input',()=>{
+test('PR95 punctuation incident: unknown or malformed names stay undisclosed without rewriting input',()=>{
  for(const species of variants){
   const r=row('secret',species), before=JSON.stringify(r);
   assert.equal(isSensitiveReport({species:[species],speciesText:species}),true,species);
@@ -45,11 +44,15 @@ test('PR95 actual punctuation case: protected/unknown names fail closed without 
  assert.equal(isLocationRestricted(row('counts','참새',{public_sightings:JSON.stringify([{name:"호사비오리'",state:'single',count:1}])})),true);
 });
 
-test('all existing legal/map protection names and listed aliases share the public policy',()=>{
+test('official protected classifications are retained but no blanket suppression of valid names',()=>{
  for(const species of [...LEGAL_PROTECTED_NAMES,...Object.keys(MAP_LOCATION_SENSITIVE)]){
-  assert.equal(isSensitiveReport({species:[species]}),true,species);
+  assert.equal(isProtectedSpeciesReport({species:[species]}),true,species);
+   assert.equal(isSensitiveReport({species:[species]}),false,species);
   const aliases=BIRD_NAME_TABLE.find(r=>r[0]===species)||[];
-  for(const alias of aliases) assert.equal(isSensitiveReport({species:[alias]}),true,alias);
+  for(const alias of aliases) {
+     assert.equal(isProtectedSpeciesReport({species:[alias]}),true,alias);
+     assert.equal(isSensitiveReport({species:[alias]}),false,alias);
+   }
  }
  for(const keyword of [...SENSITIVE_KEYWORDS,'nesting','chicks','incubation'])
   assert.equal(isSensitiveReport({species:['참새'],note:keyword}),true,keyword);
