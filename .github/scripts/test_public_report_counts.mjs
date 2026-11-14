@@ -35,3 +35,10 @@ test('서로 다른 관찰 이력 수량을 합치지 않고, HTML 이스케이�
   const visible=c.spotPopupHtml('출현 지점',entry.species,[entry],false,false,{lat:37,lon:127});
   assert.ok(visible.includes('https://map.kakao.com/link/to/'));assert.ok(visible.includes('tmap://route?goalname='));assert.ok(visible.includes('goalx=127&amp;goaly=37'));
 });
+test('분류 미확인: 원문 그대로 표시만 붙이고 종수에서 빼며 명확한 개체수는 합산',()=>{
+  const mixed=c.reportSpeciesCountsHtml({sightings:[one('동박새',3),{...one('미확인종',2),unclassified:true}]});
+  assert.ok(mixed.includes('미확인종 (분류 미확인) 2개체'));assert.ok(mixed.includes('1종(분류 미확인 1건 제외) · 입력된 개체수 5개체'));
+  assert.ok(c.reportSpeciesCountsHtml({sightings:[one('동박새',3)]}).includes('1종 · 입력된 개체수 3개체'),'분류 확인된 기록은 기존 문구 그대로');
+  const plain=c.siteHistoryEntryHtml({date:'2026-11-14',species:["호사비오리'",'참새'],unclassified:["호사비오리'"]});
+  assert.ok(plain.includes("호사비오리' (분류 미확인) · 참새"));assert.ok(!plain.includes('참새 (분류 미확인)'));
+});

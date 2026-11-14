@@ -46,8 +46,9 @@ test("S1-R 최근 출현 집계에서 수량 붙은 보호종·줄바꿈 혼합 
 });
 
 test("unknown or duplicate/over-limit species are restricted while identifiable species remain eligible",()=>{
-  for(const raw of ['동박새3 동박새5', Array(11).fill('매').join(' '), "호사비오리'"])
+  // 2026-11-14 최종 정책: 단순 문장부호 오기(호사비오리')는 공식 국명으로 정규화, ?·추정·류는 분류 미확인 유지.
+  for(const raw of ['동박새3 동박새5', Array(11).fill('매').join(' '), '호사비오리?', '호사비오리추정', '호사비오리류'])
     assert.equal(isSensitiveReport({species:[raw],speciesText:raw}),true,raw);
-  for(const raw of ['매', '매1', '저어새2 까치3'])
+  for(const raw of ['매', '매1', '저어새2 까치3', "호사비오리'"])
     assert.equal(isSensitiveReport({species:[raw],speciesText:raw}),false,raw);
 });

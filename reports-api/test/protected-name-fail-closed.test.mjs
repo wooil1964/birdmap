@@ -29,19 +29,24 @@ async function read(env,path,strict=true) {
  return res.json();
 }
 
-// 2026-11-14 정책 변경: 분류 미확인은 승인 전 자동 공개 보류(isSensitiveReport)와 위치 보호(비번식 확인 없음)만 유지한다.
-// 승인된 기록의 종명은 원문 그대로 분류 미확인으로 보이고 종수에서 빠진다. 자동 교정은 하지 않는다.
-test('PR95 punctuation incident: unclassified names keep coordinates private and are listed apart without rewriting input',()=>{
+// 2026-11-14 최종 정책: 단순 문장부호 오기(따옴표·마침표·쉼표)는 공식 국명으로 정규화해 확정 종명으로 보고, 보호종 위치 정책을
+// 그대로 적용한다(비번식 확인 없으면 좌표 비공개). 괄호·추정·류·공백 분리·임의 이름 등은 분류 미확인으로 따로 보인다.
+// 어느 경우에도 원문은 바꾸지 않고 학명·영명으로 바꿔 쓰지 않는다.
+const NORMALIZED = new Set(["호사비오리'", '호사비오리.', '호사비오리,', '호사비오리’']);
+test('PR95 punctuation incident: typos normalize to the protected name, uncertain names stay unclassified; coordinates private; input unchanged',()=>{
  for(const species of variants){
   const r=row('secret',species), before=JSON.stringify(r);
-  assert.equal(isSensitiveReport({species:[species],speciesText:species}),true,species);
   assert.equal(isLocationRestricted(r),true,species);
   const names=reporterSpeciesNames([r]);
   assert.equal(names.restricted,false,species);
   assert.ok(!JSON.stringify(names).includes('Mergus'),species);
-  // 끝 쉼표는 기존 구분자 규칙으로 나뉘어 공식 국명만 남는다(교정이 아니라 구분자). 위치는 위에서처럼 계속 가린다.
-  if(species==='호사비오리,'){assert.deepEqual(names.species,['호사비오리']);assert.equal(names.unclassified,undefined);}
-  else {assert.deepEqual(names.species,[],species);if(species)assert.deepEqual(names.unclassified,[species],species);}
+  if(NORMALIZED.has(species)){
+   assert.equal(isProtectedSpeciesReport({species:[species],speciesText:species}),true,species);
+   assert.deepEqual(names.species,['호사비오리'],species);assert.equal(names.unclassified,undefined,species);
+  } else {
+   assert.equal(isSensitiveReport({species:[species],speciesText:species}),true,species);
+   assert.deepEqual(names.species,[],species);if(species)assert.deepEqual(names.unclassified,[species],species);
+  }
   assert.equal(JSON.stringify(r),before);
  }
  for(const species of ['참새','참새3마리','까치 박새','갈매기','괭이갈매기','알락오리','Passer montanus',"Ross's Gull"])
@@ -87,8 +92,9 @@ test('all species-bearing public API projections: legacy + publication, flags on
     for(const r of body.reports){assert.equal(r.locationHidden,true,r.id);for(const k of ['target','siteName','region'])assert.equal(r[k],undefined,r.id+' '+k);}
    }
    if(path.includes('reporter-species')){
-    assert.deepEqual(body.species,['참새','호사비오리'],'호사비오리, 는 구분자 분리');assert.equal(body.restricted,true,'breeding row stays out');
-    assert.ok(body.unclassified.includes("호사비오리'")&&!body.unclassified.includes('까치'));
+    assert.deepEqual(body.species,['참새','호사비오리'],'문장부호 오기는 정규화된 국명 하나');assert.equal(body.restricted,true,'breeding row stays out');
+    assert.ok(body.unclassified.includes('호사비오리추정')&&body.unclassified.includes('가짜새'));
+    for(const name of ["호사비오리'",'호사비오리.','까치'])assert.ok(!body.unclassified.includes(name),name);
    }
   }
   assert.equal(JSON.stringify(env.REPORTS_DB.rows),before,'public reads never change approval/raw/group data');

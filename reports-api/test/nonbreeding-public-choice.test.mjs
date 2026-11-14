@@ -37,10 +37,12 @@ test('unclassified names: no auto-public, but location follows the same nonbreed
  // 입력 규칙을 통과하지 못하는 원문('|')은 비번식 확인 원본이 성립하지 않으므로 위치를 계속 가린다.
  const invalid=attested(5499,'호사비오리|참새');
  assert.equal(reportBreedingStatus(invalid),'unknown');assert.equal(isLocationRestricted(invalid),true);
- for(const [i,name] of ["호사비오리'",'호사비오리.','(호사비오리)','가짜새','참새 가짜새'].entries()){
+ // 단순 문장부호 오기는 공식 국명(보호종)으로 정규화되고, 추정·괄호·임의 이름은 분류 미확인이다. 위치 결과는 둘 다 같다.
+ for(const [i,[name,normalizedProtected]] of [["호사비오리'",true],['호사비오리.',true],['호사비오리추정',false],['(호사비오리)',false],['가짜새',false],['참새 가짜새',false]].entries()){
   const row=attested(i+5400,name);
   assert.equal(reportBreedingStatus(row),'non_breeding',name);
-  assert.equal(isSensitiveReport({species:[name],speciesText:name}),true,name);
+  assert.equal(isProtectedSpeciesReport({species:[name]}),normalizedProtected,name);
+  assert.equal(isSensitiveReport({species:[name],speciesText:name}),!normalizedProtected,name);
   assert.equal(isLocationRestricted(row),false,name+' attested nonbreeding follows reporter choice');
   assert.equal(isLocationRestricted({...row,note:'둥지 근처'}),true,name+' breeding');
   assert.equal(isLocationRestricted({...row,non_breeding_confirmed:null,location_input:null}),true,name+' no attestation');

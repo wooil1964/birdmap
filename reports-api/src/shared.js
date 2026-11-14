@@ -352,8 +352,20 @@ export const SENSITIVE_SPECIES = [
 // A legal designation is NOT itself a reason to hide confirmed non-breeding.
 const PROTECTION_SPLIT = /[,;·/\r\n]+/;
 const protectedNames = new Set([...SENSITIVE_SPECIES, ...LEGAL_PROTECTED_NAMES, ...Object.keys(MAP_LOCATION_SENSITIVE)]);
+// 단순 문장부호 오기(따옴표·작은따옴표·백틱·마침표·쉼표)만 지운 한글 종명. 원문은 바꾸지 않고 판정·집계에만 쓴다.
+// 지운 결과가 공식 국명(수량 포함)과 정확히 맞을 때만 쓰고, 아니면 입력 그대로 둔다.
+// ?·추정·류 등 동정 불확실 표현은 지우지 않으므로 분류 미확인으로 남는다. 영문(학명·영명)이 섞이면 건드리지 않는다.
+// 숫자 사이의 문장부호(3.5 등)는 수량 자체가 불확실하므로 지우지 않는다.
+const STRAY_PUNCTUATION = /(?<!\d)['’‘`"“”.,]|['’‘`"“”.,](?!\d)/g;
+export function normalizeSpeciesToken(token) {
+  const text = String(token ?? '').normalize('NFC').trim();
+  if (/[A-Za-z]/.test(text) || !/[가-힣]/.test(text) || !/['’‘`"“”.,]/.test(text)) return text;
+  const cleaned = text.replace(STRAY_PUNCTUATION, '').replace(/\s+/g, ' ').trim();
+  const parsed = parseSpeciesItems([cleaned]);
+  return parsed.clean && parsed.items.length && parsed.items.every(item => officialBirdNames.has(item.name)) ? cleaned : text;
+}
 function isRestrictedSpeciesToken(token) {
-  const parsed = parseSpeciesItems([token]);
+  const parsed = parseSpeciesItems([normalizeSpeciesToken(token)]);
   // Preserve the 10-species cap and duplicate-name ambiguity even on legacy reads.
   // Earlier parsers can split an old whitespace string into too many items
   // without marking parsed.clean=false; that is not a public disclosure grant.
@@ -372,7 +384,8 @@ export function isProtectedSpeciesReport(report) {
   const sources = [...names, ...(typeof raw === 'string' && raw ? [raw] : [])];
   return sources.some(name => typeof name === 'string' &&
     name.split(PROTECTION_SPLIT).some(token => {
-      const parsed = parseSpeciesItems([token.trim()]);
+      // 문장부호 오기로 보호종 판정을 피하지 못하게 정규화한 이름으로 검사한다.
+      const parsed = parseSpeciesItems([normalizeSpeciesToken(token)]);
       return parsed.clean && parsed.items.some(item => {
         const id = identifyBird(item.name);
         return protectedNames.has(item.name) || (!!id && protectedNames.has(id.key));
@@ -491,7 +504,7 @@ export function sightingValues(parsed, birdCount) {
 
 // 기존 자료는 공식 국명 전체가 맞는 경우만 읽기 단계에서 해석한다. 원문·정본 DB는 수정하지 않는다.
 const officialBirdNames = new Set(OFFICIAL_BIRD_NAMES);
-const legacyTokens = text => String(text || '').split(/[·,;\r\n/]+/).flatMap(token => splitOfficialSpecies(token) || [token]).map(s => s.trim()).filter(Boolean);
+const legacyTokens = text => String(text || '').split(/[·,;\r\n/]+/).map(normalizeSpeciesToken).flatMap(token => splitOfficialSpecies(token) || [token]).map(s => s.trim()).filter(Boolean);
 export function legacySpeciesItems(text) {
   const items = legacyTokens(text).map(token => {
     const parsed = parseSpeciesItems([token]);
