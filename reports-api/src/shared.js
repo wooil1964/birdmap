@@ -348,17 +348,30 @@ export const SENSITIVE_SPECIES = [
   '매', '참매', '수리부엉이', '올빼미', '팔색조', '뿔쇠오리', '넓적부리도요',
 ];
 
-// 공개 읽기는 완전히 식별된 이름만 허용한다. 문장부호를 지우거나 접두사를
-// 구제하지 않는다. 불확실 표기는 원문을 보존한 채 비공개로 닫는다.
+// Treat unresolved names as non-public without guessing a corrected spelling.
+// A legal designation is NOT itself a reason to hide confirmed non-breeding.
 const PROTECTION_SPLIT = /[,;·/\r\n]+/;
 const protectedNames = new Set([...SENSITIVE_SPECIES, ...LEGAL_PROTECTED_NAMES, ...Object.keys(MAP_LOCATION_SENSITIVE)]);
 function isRestrictedSpeciesToken(token) {
   const parsed = parseSpeciesItems([token]);
   if (!parsed.clean || !parsed.items.length) return true;
-  return parsed.items.some(item => {
-    const id = identifyBird(item.name);
-    return !id || protectedNames.has(id.key) || protectedNames.has(item.name);
-  });
+  return parsed.items.some(item => !identifyBird(item.name));
+}
+// Classify protected birds separately from the general publication veto.
+// Only OLD protected rows lacking original non-breeding evidence remain
+// location-restricted so a policy change never retroactively leaks coordinates.
+export function isProtectedSpeciesReport(report) {
+  const raw = report?.speciesText;
+  const names = Array.isArray(report?.species) ? report.species : [];
+  const sources = [...names, ...(typeof raw === 'string' && raw ? [raw] : [])];
+  return sources.some(name => typeof name === 'string' &&
+    name.split(PROTECTION_SPLIT).some(token => {
+      const parsed = parseSpeciesItems([token.trim()]);
+      return parsed.clean && parsed.items.some(item => {
+        const id = identifyBird(item.name);
+        return !!id && (protectedNames.has(id.key) || protectedNames.has(item.name));
+      });
+    }));
 }
 
 export function hasBreedingEvidence(report) {
@@ -395,8 +408,16 @@ export function reportBreedingStatus(row) {
 }
 
 export function isLocationRestricted(row) {
-  // 비번식 확인은 종 식별 실패·보호종 정책을 우회하는 공개 허가가 아니다.
-  return reportBreedingStatus(row) === 'breeding' || isSensitiveReport({
+  const breeding = reportBreedingStatus(row);
+  if (breeding === 'breeding') return true;
+  // Historical protected reports without attested non-breeding stay closed;
+  // newer, confirmed non-breeding submissions follow the reporter's hideLocation choice.
+  if (breeding !== 'non_breeding' && (
+    isProtectedSpeciesReport({ speciesText: row.species, species: splitSpecies(row.species) }) ||
+    isProtectedSpeciesReport({ species: speciesNamesOf(row) }) ||
+    publicSightingsOf(row).some(item => isProtectedSpeciesReport({ species: [item.name] }))
+  )) return true;
+  return isSensitiveReport({
     note: row.note, speciesText: row.species, species: splitSpecies(row.species),
   }) || isSensitiveReport({ species: speciesNamesOf(row) }) ||
     publicSightingsOf(row).some(item => isSensitiveReport({ species: [item.name] }));
@@ -407,6 +428,7 @@ export function siteHistoryPayload(rows, limit, offset) {
   return { total: visible.length, limit, offset, history: visible.slice(offset, offset + limit).map(historyEntry) };
 }
 
+// Public release veto is only for breeding evidence or unresolved/ambiguous names.
 export function isSensitiveReport(report) {
   if (hasBreedingEvidence(report)) return true;
   // 원문과 구조화된 식별 결과 모두 검사한다. 한쪽의 일반종 값으로 다른 쪽의
