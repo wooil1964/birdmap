@@ -16,6 +16,7 @@ import {
   approximateCoordinate,
   ipHash,
   isSensitiveReport,
+  isProtectedSpeciesReport,
   hasBreedingEvidence,
   jsonResponse,
   normalizeCoordinate,
@@ -153,7 +154,10 @@ function validateCount(raw) {
 // 보호종은 등록은 되지만 공개 좌표가 대략 좌표로 바뀐다.
 function protection(species, note) {
   const breeding = hasBreedingEvidence({ note: note || "", speciesText: species });
-  const sensitiveSpecies = isSensitiveReport({ note: "", speciesText: "", species: [species] });
+  // This feature has no verified non-breeding consent field. Retain its
+  // existing protected-species masking until explicit reporter choice exists.
+  const sensitiveSpecies = isProtectedSpeciesReport({species:[species]}) ||
+    isSensitiveReport({ note: "", speciesText: "", species: [species] });
   return { breeding, sensitiveSpecies };
 }
 
