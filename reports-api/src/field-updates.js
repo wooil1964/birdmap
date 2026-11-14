@@ -78,15 +78,12 @@ export function fieldViewer(raw, now = new Date()) {
 }
 
 export function fieldVisible(row, viewer, now = new Date()) {
-  const policy = protection(row.species, row.note);
-  if (policy.breeding) return false;
+  if (protection(row.species, row.note).breeding) return false;
   if (row.visibility_radius === "all") return true;
   if (!FIELD_VISIBILITY_RADII.includes(row.visibility_radius) || !fieldViewer(viewer, now)) return false;
   // Never measure a private/masked point: repeated boundary probes must not
   // triangulate a protected location. Restricted protected rows stay withheld.
-  // A hidden or protected row must never be a distance-membership oracle.
-  // This includes legacy rows whose stored location_hidden flag was false.
-  if (Number(row.location_hidden) === 1 || policy.sensitiveSpecies) return false;
+  if (Number(row.location_hidden) === 1 || isSensitiveReport({ note: row.note || "", speciesText: row.species, species: [row.species] })) return false;
   if (!Number.isFinite(row.public_lat) || !Number.isFinite(row.public_lon)) return false;
   const rad = Math.PI / 180, dy = (row.public_lat - viewer.lat) * rad, dx = (row.public_lon - viewer.lon) * rad;
   const a = Math.sin(dy / 2) ** 2 + Math.cos(viewer.lat * rad) * Math.cos(row.public_lat * rad) * Math.sin(dx / 2) ** 2;
@@ -515,7 +512,7 @@ export function fieldDraftPlan(db,id,owner,now) {
  return {statements:[db.prepare(`SELECT ${COLUMNS} FROM field_updates WHERE id=?1`).bind(id)],build:sets=>{
   const row=sets[0].results?.[0];
   if(!row||row.user_hash!==owner||row.status===DELETED||row.last_activity_at<cutoffIso(now))notFound();
-  const entry=publicEntry(row,[],0),protectedLocation=Number(row.location_hidden)===1||protection(row.species,row.note).sensitiveSpecies;
+  const entry=publicEntry(row,[],0),protectedLocation=Number(row.location_hidden)===1||isSensitiveReport({note:row.note||"",speciesText:row.species,species:[row.species]});
   return {ok:true,draft:{id:row.id,species:row.species,firstSeenAt:row.created_at,lat:protectedLocation?null:entry.lat,lon:protectedLocation?null:entry.lon,locationHidden:protectedLocation}};
  }};
 }
