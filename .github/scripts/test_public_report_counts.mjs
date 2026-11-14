@@ -42,3 +42,12 @@ test('분류 미확인: 원문 그대로 표시만 붙이고 종수에서 빼며
   const plain=c.siteHistoryEntryHtml({date:'2026-11-14',species:["호사비오리'",'참새'],unclassified:["호사비오리'"]});
   assert.ok(plain.includes("호사비오리' (분류 미확인) · 참새"));assert.ok(!plain.includes('참새 (분류 미확인)'));
 });
+test('회원 출현종 목록: 서버의 unclassified 키를 받아들이고 형식이 틀리면 계속 거부',()=>{
+  vm.runInContext(source('reporterSpeciesPayload','renderReporterSpecies'),c);
+  const meta={publication:{},serverTime:'2026-11-14T00:00:00Z',publicationCheckedAt:'2026-11-14T00:00:00Z'};
+  const ok=c.reporterSpeciesPayload({species:['참새','동박새'],unclassified:['힝등새1','검은이마직바구리'],restricted:false,...meta});
+  assert.deepEqual(JSON.parse(JSON.stringify(ok)),{species:['동박새','참새'],unclassified:['검은이마직바구리','힝등새1'],restricted:false});
+  assert.deepEqual(JSON.parse(JSON.stringify(c.reporterSpeciesPayload({species:['참새'],restricted:true,...meta}))),{species:['참새'],unclassified:[],restricted:true},'키가 없는 응답도 그대로');
+  for(const bad of [{species:['참새'],unclassified:'힝등새',restricted:false},{species:['참새'],unclassified:['참새'],restricted:false},{species:['참새'],restricted:false,lat:37}])
+    assert.equal(c.reporterSpeciesPayload(bad),null,JSON.stringify(bad));
+});
