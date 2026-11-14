@@ -22,7 +22,7 @@ const restricted = row => !row || isLocationHidden(row) || isLocationRestricted(
 export function reportSearchPayload(rows, sites, { q, offset }, unverified = []) {
   const byId = new Map(rows.map(row => [row.id, row]));
   const registry = new Map(sites.map(site => [String(site.site_id), site]));
-  const reports = rows.map(row => {
+  const reports = rows.filter(row => !isLocationRestricted(row)).map(row => {
     const entry = historyEntry(row);
     const fixed = /^fixed:([0-9A-Za-z_-]{1,16}):[0-9]+$/.exec(row.spot_key || '');
     const root = row.spot_key && !fixed ? byId.get(row.spot_key) : row;

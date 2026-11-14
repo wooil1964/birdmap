@@ -16,6 +16,7 @@ import {
   approximateCoordinate,
   ipHash,
   isSensitiveReport,
+  hasBreedingEvidence,
   jsonResponse,
   normalizeCoordinate,
   normalizeSpecies,
@@ -151,7 +152,7 @@ function validateCount(raw) {
 // 둥지·번식 관련 낱말이 있으면 등록하지 않는다(기존 출현종 제보의 번식 보호 정책과 같은 낱말 목록).
 // 보호종은 등록은 되지만 공개 좌표가 대략 좌표로 바뀐다.
 function protection(species, note) {
-  const breeding = isSensitiveReport({ note: note || "", speciesText: species, species: [] });
+  const breeding = hasBreedingEvidence({ note: note || "", speciesText: species });
   const sensitiveSpecies = isSensitiveReport({ note: "", speciesText: "", species: [species] });
   return { breeding, sensitiveSpecies };
 }

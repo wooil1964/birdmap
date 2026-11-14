@@ -167,7 +167,7 @@ test('old whitespace spelling retains exact nonbreeding evidence; edits and inva
   const stored=species;
   const row={species:stored,lat:37,lon:127,observed_on:'2026-10-02',note:null,non_breeding_confirmed:1,location_input:JSON.stringify(input)};
   assert.equal(reportBreedingStatus(row),'non_breeding');
-  assert.equal(isLocationRestricted(row),false);
+  assert.equal(isLocationRestricted(row),species !== '동박새3 동박새3');
   for(const patch of [{species:stored+' 까치1'},{lat:37.1},{observed_on:'2026-10-03'},{note:'changed'}])assert.equal(reportBreedingStatus({...row,...patch}),'unknown');
  }
  const row={species:'저어새2 까치3',lat:37,lon:127,observed_on:'2026-10-02',non_breeding_confirmed:1,location_input:JSON.stringify({species:'저어새2 까치3',lat:37,lon:127,observedOn:'2026-10-02'})};

@@ -1,4 +1,5 @@
 import { identifyBird, isListedBirdName } from './bird-names.js';
+import { LEGAL_PROTECTED_NAMES, MAP_LOCATION_SENSITIVE } from './protected-birds.js';
 import { OFFICIAL_BIRD_NAMES } from './official-bird-names.js';
 // 공개 접수 Worker 와 관리자 Worker 가 함께 쓰는 검증·응답·인증 헬퍼.
 // 기존 weather-proxy Worker 의 응답 형식(ok/error 봉투, Origin 허용 목록)을 그대로 따른다.
@@ -347,20 +348,17 @@ export const SENSITIVE_SPECIES = [
   '매', '참매', '수리부엉이', '올빼미', '팔색조', '뿔쇠오리', '넓적부리도요',
 ];
 
-// 보호종 판정용 토큰 하나. 종명 전체 일치를 먼저 보고, 아니면 "보호종명 + 수량(마리·개체)" 꼴만 인정한다.
-// 숫자를 일괄 삭제하거나 부분 문자열로 비교하지 않으므로 갈매기·알락오리 등은 걸리지 않는다.
-// 원문은 바꾸지 않고 판정에만 쓴다.
-const PROTECTED_QUANTITY = /^(.+?)\s*\d+\s*(?:마리|개체)?$/;
+// 공개 읽기는 완전히 식별된 이름만 허용한다. 문장부호를 지우거나 접두사를
+// 구제하지 않는다. 불확실 표기는 원문을 보존한 채 비공개로 닫는다.
 const PROTECTION_SPLIT = /[,;·/\r\n]+/;
-const PEREGRINE_ALIAS = /^(?:falco\s+peregrinus|peregrine\s+falcon|매\s*\(\s*falco\s+peregrinus\s*\)|falco\s+peregrinus\s*\(\s*매\s*\))$/i;
-function isProtectedSpeciesToken(token) {
-  const text = token.normalize('NFC').trim();
-  if (SENSITIVE_SPECIES.includes(text) || PEREGRINE_ALIAS.test(text)) return true;
-  const match = PROTECTED_QUANTITY.exec(text);
-  if (match && (SENSITIVE_SPECIES.includes(match[1].trim()) || PEREGRINE_ALIAS.test(match[1].trim()))) return true;
-  // 학명·영명으로 적어도 같은 종이다(정책의 19종 목록은 그대로, 이름 해석만 넓힌다).
-  const id = identifyBird((match ? match[1] : text).trim());
-  return !!id && SENSITIVE_SPECIES.includes(id.key);
+const protectedNames = new Set([...SENSITIVE_SPECIES, ...LEGAL_PROTECTED_NAMES, ...Object.keys(MAP_LOCATION_SENSITIVE)]);
+function isRestrictedSpeciesToken(token) {
+  const parsed = parseSpeciesItems([token]);
+  if (!parsed.clean || !parsed.items.length) return true;
+  return parsed.items.some(item => {
+    const id = identifyBird(item.name);
+    return !id || protectedNames.has(id.key) || protectedNames.has(item.name);
+  });
 }
 
 export function hasBreedingEvidence(report) {
@@ -397,10 +395,11 @@ export function reportBreedingStatus(row) {
 }
 
 export function isLocationRestricted(row) {
-  const status = reportBreedingStatus(row);
-  return status === 'breeding' || (status !== 'non_breeding' && isSensitiveReport({
+  // 비번식 확인은 종 식별 실패·보호종 정책을 우회하는 공개 허가가 아니다.
+  return reportBreedingStatus(row) === 'breeding' || isSensitiveReport({
     note: row.note, speciesText: row.species, species: splitSpecies(row.species),
-  }));
+  }) || isSensitiveReport({ species: speciesNamesOf(row) }) ||
+    publicSightingsOf(row).some(item => isSensitiveReport({ species: [item.name] }));
 }
 
 export function siteHistoryPayload(rows, limit, offset) {
@@ -410,9 +409,14 @@ export function siteHistoryPayload(rows, limit, offset) {
 
 export function isSensitiveReport(report) {
   if (hasBreedingEvidence(report)) return true;
-  // 과거 저장 자료에는 구분자(슬래시·줄바꿈 등)가 남아 있을 수 있어 읽기 판정에서도 다시 나눈다.
-  const names = report?.species || [];
-  return names.some((name) => String(name).split(PROTECTION_SPLIT).flatMap(token => splitOfficialSpecies(token) || [token]).some(isProtectedSpeciesToken));
+  // 원문과 구조화된 식별 결과 모두 검사한다. 한쪽의 일반종 값으로 다른 쪽의
+  // 미확인·혼합 입력을 덮어쓰지 않는다. 누락·빈 값도 공개 근거가 아니다.
+  const raw = report?.speciesText;
+  const names = Array.isArray(report?.species) ? report.species : [];
+  const sources = [...names, ...(typeof raw === 'string' && raw ? [raw] : [])];
+  if (!sources.length) return true;
+  return sources.some(name => typeof name !== 'string' || !name.trim() ||
+    name.split(PROTECTION_SPLIT).some(token => isRestrictedSpeciesToken(token.trim())));
 }
 
 // 승인 전 제보는 공개하지 않는다. 과거 pending_public/approx_* 값도 공개 허가가 아니다.

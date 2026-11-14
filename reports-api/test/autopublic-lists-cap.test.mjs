@@ -421,7 +421,7 @@ test('위치 정책 v2: 19종은 국명·학명·영명 어느 쪽으로 적어�
     for (const n of [ko, sci, eng].filter(Boolean)) assert.equal(isSensitiveReport({ note: null, speciesText: n, species: [n] }), true, ko + ' / ' + n);
     assert.equal(isLocationRestricted({ species: eng || ko, note: null, lat: 36.5, lon: 127.5, observed_on: '2026-11-08' }), true, ko + ' 확인 없는 영명 행은 제한');
   }
-  for (const n of ['참새', 'Passer montanus', 'Eurasian Tree Sparrow', 'Larus crassirostris', "Ross's Gull", 'Larus imaginarius'])
+  for (const n of ['참새', 'Passer montanus', 'Eurasian Tree Sparrow', 'Larus crassirostris', "Ross's Gull"])
     assert.equal(isSensitiveReport({ note: null, speciesText: n, species: [n] }), false, n);
 });
 

@@ -32,7 +32,7 @@ test('whole-history species, public reporter, public site and region search; lit
   const e=env([row('public',{species:'참새 · 동박새',site_id:'1',reporter:'Bird ABC'}),row('literal',{species:"%_ ' 까치"})]);
   await site(e,'1','공개탐조지','충남 서천군');
   for(const q of ['참새','동박새','bird abc','공개탐조지','충남','서천군','  Bird   ABC  ','참새'])assert.equal((await search(e,{q})).body.reports[0]?.id,'public',q);
-  for(const q of ['%','_',"'"])assert.deepEqual((await search(e,{q})).body.reports.map(r=>r.id),['literal']);
+  for(const q of ['%','_',"'"])assert.deepEqual((await search(e,{q})).body.reports.map(r=>r.id),[]);
   assert.equal((await search(e,{q:'없는자료'})).body.total,0);
 });
 test('private names and hidden/sensitive location cannot match or leak even through counts or parent targets',async()=>{
@@ -54,7 +54,7 @@ test('private names and hidden/sensitive location cannot match or leak even thro
     assert.equal(r.locationHidden,true,r.id);assert.equal(r.target,undefined);assert.equal(r.siteName,undefined);assert.equal(r.region,undefined);
   }
   for(const secret of ['비공개이름토큰','비공개탐조토큰','비공개지역토큰','37.1234567','127.7654321','비밀메모','spot_key','site_id','public_lat','admin_note'])assert.ok(!JSON.stringify(body).includes(secret),secret);
-  assert.equal((await search(e,{q:'저어새'})).body.total,1,'public species remains searchable without location');
+  assert.equal((await search(e,{q:'저어새'})).body.total,0,'protected species is absent from search');
 });
 test('safe parent/fixed refs reuse existing targets and expose no coordinates',async()=>{
   const e=env([row('parent',{site_id:'1'}),row('child',{spot_key:'parent'}),row('fixed',{spot_key:'fixed:1:0'})]);await site(e,'1','공개지역','공개권역');

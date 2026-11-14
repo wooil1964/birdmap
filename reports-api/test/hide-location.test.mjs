@@ -40,7 +40,7 @@ async function adminList(s) {
 
 test("A. 위치 공개(기본): 클릭 = DB 실제 = 승인 후 붉은 마커, 승인 전 비공개", async (t) => {
   const s = await setup(); t.after(s.restore);
-  const body = input(101, CLICK);
+  const body = input(101, {...CLICK,species:"참새"});
   const res = await post(s.pub, body), accepted = await res.json();
   assert.equal(res.status, 201);
   const r = row(s.db, body.request_id);
@@ -56,7 +56,7 @@ test("A. 위치 공개(기본): 클릭 = DB 실제 = 승인 후 붉은 마커, �
 
 test("B·C·D. 위치 가리기: 실제 좌표 보존, 승인 전 비공개, 승인 후 저장한 대략 좌표만 공개, 공개 API 에 실제 좌표 없음", async (t) => {
   const s = await setup(); t.after(s.restore);
-  const body = input(111, { ...CLICK, hideLocation: true });
+  const body = input(111, { ...CLICK, species:"참새", hideLocation: true });
   const res = await post(s.pub, body), receiptText = await res.clone().text(), accepted = await res.json();
   assert.equal(res.status, 201);
   assertNoActual(receiptText);
@@ -98,7 +98,7 @@ test("B·C·D. 위치 가리기: 실제 좌표 보존, 승인 전 비공개, 승
 
 test("E. 관리자 API: 실제 좌표·공개 좌표·제보자 가림 요청 여부를 모두 본다", async (t) => {
   const s = await setup(); t.after(s.restore);
-  const hidden = input(121, { ...CLICK, hideLocation: true }), open = input(122, { lat: 37.3, lon: 127.3 });
+  const hidden = input(121, { ...CLICK, species:"참새", hideLocation: true }), open = input(122, { species:'참새', lat: 37.3, lon: 127.3 });
   await post(s.pub, hidden); await post(s.pub, open);
   const list = await adminList(s);
   const h = list.find((x) => x.id === hidden.request_id), o = list.find((x) => x.id === open.request_id);
@@ -109,7 +109,7 @@ test("E. 관리자 API: 실제 좌표·공개 좌표·제보자 가림 요청 �
 
 test("관리자 강제 위치 보호: 가리기·해제는 실제 좌표와 승인 상태를 바꾸지 않고, 다시 가려도 같은 점을 쓴다", async (t) => {
   const s = await setup(); t.after(s.restore);
-  const body = input(131, CLICK);
+  const body = input(131, {...CLICK,species:"참새"});
   await post(s.pub, body);
   await approve(s, body.request_id, 132);
 
@@ -135,7 +135,7 @@ test("관리자 강제 위치 보호: 가리기·해제는 실제 좌표와 승�
   assert.deepEqual([red.lat, red.lon, "locationHidden" in red], [CLICK.lat, CLICK.lon, false]);
 
   // 제보자가 가린 제보를 관리자가 한 번 더 가려도 공개 좌표는 그대로다(새 점을 만들지 않는다).
-  const other = input(135, { lat: 37.4, lon: 127.4, hideLocation: true });
+  const other = input(135, { species:'참새', lat: 37.4, lon: 127.4, hideLocation: true });
   await post(s.pub, other);
   const before = row(s.db, other.request_id);
   const again = await adminPost(s.admin, s.token, other.request_id, { action: "hide", hide: true, request_id: input(136).request_id, expected_revision: revisionOf(s.db, other.request_id) });

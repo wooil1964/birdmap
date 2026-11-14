@@ -54,11 +54,12 @@ test('pending protected report: no public GET leaks coordinates through the whol
   await sweep(pub,id,'after-visibility-refused');
   assert.equal((await act('hide',{hide:true})).status,200);await sweep(pub,id,'after-hide');
   assert.equal((await act('hide',{hide:false})).status,200);await sweep(pub,id,'after-unhide');
-  // Approval is the only door; after approval v2 applies (exact point for confirmed non-breeding) — expected, not a leak.
+  // Approval must not bypass protected-species privacy, even with non-breeding evidence.
   assert.equal((await act('approve')).status,200);
   pub.REPORTS_PUBLICATION_REQUIRED='true';
   const appr=await get(pub,'/reports/approved',true);
-  assert.ok(appr.body.spots.some(s=>s.id===id),'approved report becomes public via existing v2');
+  assert.ok(!appr.body.spots.some(s=>s.id===id),'protected report stays private after approval');
+  await sweep(pub,id,'after-approve');
   assert.equal((await act('unpublish')).status,200);await sweep(pub,id,'after-unpublish(back to pending)');
   assert.equal((await act('reject')).status,200);await sweep(pub,id,'after-reject');
   assert.equal((await act('visibility',{public:1})).status,400);await sweep(pub,id,'after-reject-visibility-refused');
