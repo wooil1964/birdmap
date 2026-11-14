@@ -119,6 +119,32 @@ test('Issue28: 민감종 제한 공개는 GPS 위조·경계 탐색으로도 노
  assert.equal(draft.status,200);assert.equal(draft.body.draft.lat,null);assert.equal(draft.body.draft.lon,null);assert.equal(draft.body.draft.locationHidden,true);
 });
 
+
+test('protected legacy field updates never reveal a near/far membership oracle, even if old coordinates were stored as exact',async()=>{
+  const env=setup(true);
+  const examples=['저어새1','매','왜가리','양비둘기'];
+  for(const [i,species] of examples.entries()){
+    const row={species,note:null,visibility_radius:'5',location_hidden:0,public_lat:37.5,public_lon:127};
+    assert.equal(fieldVisible(row,viewer()),false,species+' direct proximity');
+    const saved=await create(env,{species,lat:37.5+0.001*i,lon:127,visibilityRadius:'5'});
+    // Synthetic historical writer stored exact public and private points.
+    await env.REPORTS_DB.prepare('UPDATE field_updates SET location_hidden=0,public_lat=lat,public_lon=lon WHERE id=?1').bind(saved.id).run();
+    for(const gps of [viewer(),viewer({lat:37.501}),viewer({lat:37.55}),viewer({lat:38})]){
+      const result=await published(env,'/field-updates/read',{viewer:gps});
+      assert.equal(result.status,200,JSON.stringify(result.body));
+      hidden(result.body,saved.id);
+    }
+    const draft=await published(env,'/field-updates/'+saved.id+'/report-draft',{deviceId:OWNER});
+    assert.equal(draft.status,200);
+    assert.equal(draft.body.draft.lat,null);
+    assert.equal(draft.body.draft.lon,null);
+    assert.equal(draft.body.draft.locationHidden,true);
+  }
+  const ordinary=await create(env,{species:'참새',visibilityRadius:'5'});
+  assert.ok((await published(env,'/field-updates/read',{viewer:viewer()})).body.updates.some(r=>r.id===ordinary.id),
+    'ordinary nonbreeding field update still works');
+});
+
 test('Issue28: 본인 초안은 기존 허용 종명·시각·공개 좌표만 재사용하고 자동 제보·쓰기 없음',async()=>{
  const env=setup(true),made=await create(env),before=await env.REPORTS_DB.prepare('SELECT * FROM field_updates WHERE id=?1').bind(made.id).first();
  const draft=await published(env,`/field-updates/${made.id}/report-draft`,{deviceId:OWNER});
