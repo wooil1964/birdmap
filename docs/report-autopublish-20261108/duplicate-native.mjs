@@ -153,12 +153,23 @@ await scenario('9. 자동 공개 OFF: 기존 사전 승인제 유지', { REPORTS
   check('reports 공개 플래그 0, 판정 기록 0', (await q('SELECT COUNT(*) n FROM reports WHERE pending_public=1'))[0].n === 0 && (await q('SELECT COUNT(*) n FROM reviews'))[0].n === 0);
 });
 
-await scenario('10. 보호종·희귀종·일반종은 모두 자동 공개, 식별 불가 이름만 검토 유지', {}, async ({ q, burst }, check) => {
+await scenario('10. 법정 보호종·위치 민감종은 비공개, 일반종만 자동 공개, 식별 불가 종명은 검토', {}, async ({ q, burst }, check) => {
   const rs = await burst([{ species: '참새', ...at(...A, 0, 0) }, { species: '매', ...at(...B, 0, 0) }, { species: '말똥가리', ...at(...C, 0, 0) }, { species: '처음보는새', ...at(...D, 0, 0) }, { species: '왜가리', ...at(...A, 5000, 0) }]);
-  check('일반·보호·희귀·왜가리 4건 자동 공개', open(rs).length === 4 && !open(rs).some(r => r.body.species === '처음보는새'));
-  const by = Object.fromEntries(rs.map(r => [r.body.species, r.receipt.holdReasons || []]));
-  check('식별 불가 이름만 name_unconfirmed', by['처음보는새'].includes('name_unconfirmed') && ['매', '말똥가리', '왜가리', '참새'].every(k => by[k].length === 0));
-  check('일치', await consistent(q, rs));
+  const byName = Object.fromEntries(rs.map(r => [r.body.species, r]));
+  const holds = species => byName[species].receipt.holdReasons || [];
+  const visible = species => byName[species].status === 201 && byName[species].receipt.publicVisibility === 'public_unverified';
+  const withheld = species => byName[species].status === 201 && byName[species].receipt.publicVisibility === 'withheld';
+  check('일반종 참새·말똥가리 2건만 자동 공개',
+    open(rs).length === 2 && ['참새', '말똥가리'].every(visible) && ['참새', '말똥가리'].every(k => holds(k).length === 0));
+  check('법정 보호종 매·지도 위치 민감종 왜가리는 protected 사유로 공개 보류',
+    ['매', '왜가리'].every(k => withheld(k) && holds(k).includes('protected')));
+  check('식별 불가 이름은 name_unconfirmed 사유로 공개 보류',
+    withheld('처음보는새') && holds('처음보는새').includes('name_unconfirmed'));
+  const rows = await q('SELECT id,pending_public FROM reports');
+  const state = new Map(rows.map(r => [r.id, Number(r.pending_public)]));
+  check('보호종·위치 민감종·미확인 종명의 공개 플래그는 모두 0',
+    ['매', '왜가리', '처음보는새'].every(k => state.get(byName[k].body.request_id) === 0));
+  check('접수증·DB·판정 기록·원자료 일치', await consistent(q, rs));
 });
 
 await scenario('11. 정확히 같은 내용(종·좌표 4자리·날짜)의 서로 다른 요청이 동시에 들어옴: 기존 409 정책 유지', {}, async ({ q, burst }, check) => {
