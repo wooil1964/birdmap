@@ -102,10 +102,11 @@ test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집�
   const a = await submit(s, { species: '동박새3, 박새2, 직박구리1', reporter: '통계테스터', namePublic: true });
   const b = await submit(s, { species: '동박새5, 쇠딱다구리', lat: 35.7, lon: 128.7, reporter: '통계테스터', namePublic: true });
   const dup = await submit(s, { species: '동박새3, 동박새5', lat: 35.8, lon: 128.8, reporter: '통계테스터', namePublic: true });
-  // 기존(구조화 이전) 자료: 원문·정본은 그대로, 공식 국명 확인 후 읽기 단계에서만 고니+3으로 분리
+  // 기존(구조화 이전) 자료: 원문·정본은 그대로, 공식 국명 확인 후 읽기 단계에서만 고니+3으로 분리.
+  // 공개 좌표 비번식 증거는 종명·좌표·관찰일뿐 아니라 접수 원문 메모도 정확히 일치해야 한다.
   const lb = input(6900, { species: '고니3', observedOn: TODAY, lat: 37.9, lon: 127.9, reporter: '통계테스터', namePublic: true });
   const { report, input: original } = quickInput(lb);
-  const legacy = { id: lb.request_id, status: 'pending', species: report.speciesText, lat: report.lat, lon: report.lon, public_lat: null, public_lon: null, approx_lat: report.lat, approx_lon: report.lon, pending_public: 0, observed_on: report.observedOn, received_at: new Date().toISOString(), decided_at: null, bird_count: null, reporter: '통계테스터', note: null, admin_note: null, site_id: null, name_public: 1, spot_key: null, ip_hash: 's', dedupe_hash: await dedupeHash(report) };
+  const legacy = { id: lb.request_id, status: 'pending', species: report.speciesText, lat: report.lat, lon: report.lon, public_lat: null, public_lon: null, approx_lat: report.lat, approx_lon: report.lon, pending_public: 0, observed_on: report.observedOn, received_at: new Date().toISOString(), decided_at: null, bird_count: null, reporter: '통계테스터', note: report.note, admin_note: null, site_id: null, name_public: 1, spot_key: null, ip_hash: 's', dedupe_hash: await dedupeHash(report) };
   await persistQuick(s.db, legacy, original, { ok: true, id: legacy.id, status: 'pending', publicVisibility: 'withheld' }, await sha256Hex('legacy-6900'));
   s.db.sqlite.prepare('UPDATE sightings SET species_identified=NULL,interpretation=?,count_value=NULL,count_source=? WHERE checklist_id=?').run('single', 'not_recorded', legacy.id);
   for (const x of [a.body.request_id, b.body.request_id, dup.body.request_id, legacy.id]) assert.equal((await act(s, x, 'approve')).status, 200);
@@ -123,13 +124,13 @@ test('통계·검색: 동박새3과 동박새5는 1종, 개체수는 독립 집�
   const rs = await get(s.pub, '/reports/reporter-stats?reporter=' + encodeURIComponent('통계테스터') + '&source=all');
   assert.equal(rs.speciesCount, 5, JSON.stringify(rs)); assert.equal(rs.reportCount, 4);
   const names = await get(s.pub, '/reports/reporter-species?reporter=' + encodeURIComponent('통계테스터') + '&source=all');
-  assert.deepEqual(names.species, ['고니', '동박새', '박새', '쇠딱다구리', '직박구리'].sort((x, y) => x < y ? -1 : x > y ? 1 : 0));
+  assert.deepEqual(names.species, ['고니','동박새', '박새', '쇠딱다구리', '직박구리'].sort((x, y) => x < y ? -1 : x > y ? 1 : 0));
   // 검색·지도: 수량 없는 국명, 동박새로 검색하면 3건
   const search = (await get(s.pub, '/reports/search?q=' + encodeURIComponent('동박새'))).reports;
   assert.equal(search.length, 3); assert.ok(search.every(r => r.species.includes('동박새') && !r.species.some(x => /\d/.test(x))));
   const approved = (await get(s.pub, '/reports/approved')).spots;
   assert.deepEqual(approved.find(x => x.id === a.body.request_id).species, ['동박새', '박새', '직박구리']);
-  assert.deepEqual(approved.find(x => x.id === legacy.id).species, ['고니'], '기존 원문은 보존하고 공식 국명으로 표시');
+  assert.ok(approved.find(x => x.id === legacy.id),'원본에 비번식 확인된 고니도 승인 후 공개');
 });
 
 test('관리자 정정: 종명·개체수 수정이 종별 행·이력·통계에 일관되게 반영', async t => {

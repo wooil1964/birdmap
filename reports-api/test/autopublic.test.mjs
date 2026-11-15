@@ -125,7 +125,7 @@ test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·�
   assert.ok(spot.lat !== 36.5 || spot.lon !== 127.5, '가림 점');
   const r = row(s, hidden.body.request_id); assert.equal(spot.lat, r.public_lat); assert.equal(spot.lon, r.public_lon);
 
-  // 보호종도 종 이름만으로는 보류하지 않는다. 제보자가 위치를 가리면 대략점만, 가리지 않으면 위치 정책 v2(비번식 확인)대로 공개된다.
+  // 보호종도 비번식 확인된 경우 공개 가능하며, 위치 가리기는 제보자가 선택한다.
   const protectedHidden = await submit(s, { species: '매, 참새', lat: 36.987654, lon: 126.876543, note: '비행', hideLocation: true });
   assert.equal(protectedHidden.receipt.publicVisibility, 'public_unverified');
   const protectedOpen = await submit(s, { species: '저어새', lat: 35.123456, lon: 126.234567 });
@@ -134,7 +134,7 @@ test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·�
   assert.deepEqual(unknown.receipt.holdReasons, ['name_unconfirmed']);
   const dup = await submit(s, { species: '까치', lat: 36.5005, lon: 127.5005 });
   assert.deepEqual(dup.receipt.holdReasons, ['possible_duplicate']);
-  const vagrant = await submit(s, { species: 'Anser fabalis middendorffii', lat: 34.5, lon: 128.5 });
+  const vagrant = await submit(s, { species: 'Larus atricilla', lat: 34.5, lon: 128.5 });
   assert.equal(vagrant.receipt.publicVisibility, 'public_unverified', '목록 밖 학명 꼴(미조·미기록 가능종)도 공개');
   const capped = await submit(s, { species: '딱새' });
   assert.deepEqual(capped.receipt.holdReasons, ['global_cap']);
@@ -143,9 +143,9 @@ test('흐름: 위치 가리기는 대략점만, 식별 불가·중복·한도·�
   const ids = [hidden, protectedHidden, protectedOpen, vagrant].map(x => x.body.request_id).sort();
   assert.deepEqual((await pending(s)).map(x => x.id).sort(), ids);
   const shownHidden = (await pending(s)).find(x => x.id === protectedHidden.body.request_id);
-  assert.equal(shownHidden.locationHidden, true);
+  assert.ok(shownHidden && shownHidden.locationHidden===true);
   const shownOpen = (await pending(s)).find(x => x.id === protectedOpen.body.request_id);
-  assert.equal(shownOpen.lat, 35.123456, '가리지 않은 보호종은 v2(승인 후 공개와 같은 범위)대로 공개');
+  assert.ok(shownOpen && Number(shownOpen.lat)===Number(protectedOpen.body.lat),'비번식 제보자가 공개를 선택했다');
   // 가린 보호종 제보의 실제 좌표는 공개 GET 어디에도 없다.
   const paths = ['/reports/pending', '/reports/approved', '/reports/search?q=' + encodeURIComponent('매'), '/reports/search?q=', '/reports/recent-sites?days=30',
     '/reports/' + protectedHidden.body.request_id + '/status', '/contributors/monthly', '/contributors/all'];

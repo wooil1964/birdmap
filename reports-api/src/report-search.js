@@ -22,6 +22,7 @@ const restricted = row => !row || isLocationHidden(row) || isLocationRestricted(
 export function reportSearchPayload(rows, sites, { q, offset }, unverified = []) {
   const byId = new Map(rows.map(row => [row.id, row]));
   const registry = new Map(sites.map(site => [String(site.site_id), site]));
+  // 위치 보호 대상도 기록·종명은 남기고 위치(지역·이동 대상)만 가린다.
   const reports = rows.map(row => {
     const entry = historyEntry(row);
     const fixed = /^fixed:([0-9A-Za-z_-]{1,16}):[0-9]+$/.exec(row.spot_key || '');

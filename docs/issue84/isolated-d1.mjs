@@ -165,8 +165,15 @@ try {
   for(const ids of [['a','missing'],['a','a'],['e','g'],['b','e']])await unchanged(db,()=>assert.rejects(()=>confirmation(db,ids)));
   await unchanged(db,()=>assert.rejects(()=>confirmedIdentityAction(db,{action:'confirm',reportIds:['e','f'],reason:'no confirmation'},'local-admin')));
  });
- await check('protected species, exact location, private nickname and audit evidence absent from public DTOs',async()=>{
-  const species=await get(pub(db),'/reports/reporter-species',{reporter:'동명',source:'history',reportId:'a'});assert.equal(species.status,200);assert.equal(species.body.restricted,true);assert.ok(!JSON.stringify(species.body).includes('저어새'));
+ await check('protected names in species-only DTO, historical exact location and private metadata remain hidden',async()=>{
+  // The legacy protected sighting b has no attested non-breeding evidence.
+  // A species-only tally can name it; the map must not expose its exact point.
+  const species=await get(pub(db),'/reports/reporter-species',{reporter:'동명',source:'history',reportId:'a'});
+  assert.equal(species.status,200);
+  assert.deepEqual(species.body.species,['까치','동박새','저어새']);
+  assert.equal(species.body.restricted,false);
+  assert.deepEqual(Object.keys(species.body).sort(),['publication','restricted','serverTime','species']);
+  for(const secret of ['35.123456','126.654321','SECRET','ip_hash','report_ids'])assert.ok(!JSON.stringify(species.body).includes(secret),secret);
   const statsResult=await stats(pub(db));assert.deepEqual(Object.keys(statsResult.body).sort(),['publication','reportCount','serverTime','speciesCount']);
   for(const result of [species,statsResult,await get(pub(db),'/contributors/all'),await get(pub(db),'/contributors/monthly',{month:'2026-10'})])for(const secret of ['비공개합성','35.123456','126.654321','SECRET','Synthetic verification','local-admin','report_ids',group])assert.ok(!JSON.stringify(result.body).includes(secret),secret);
   const map=await get(pub(db),'/reports/approved');assert.ok(!map.body.spots.some(x=>x.id==='b'));assert.ok(!JSON.stringify(map.body).includes('저어새'));

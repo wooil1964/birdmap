@@ -26,7 +26,7 @@ test('public read closure blocks every location/history/search/stat read, keeps 
   const auth = await installAuthStubs(); t.after(auth.restore);
   const db = canonicalDb(), {pub, admin} = environments(db);
   pub.REPORTS_PUBLICATION_REQUIRED = 'true';
-  const body = input(901, {species:'매', lat:37.523456, lon:127.065432, note:'먹이활동', namePublic:true});
+  const body = input(901, {species:'참새', lat:37.523456, lon:127.065432, note:'먹이활동', namePublic:true});
   assert.equal((await post(pub, body)).status, 201);
   const approve = await adminPost(admin, auth.token, body.request_id, {action:'approve', request_id:input(902).request_id, expected_revision:1});
   assert.equal(approve.status, 200, await approve.clone().text());

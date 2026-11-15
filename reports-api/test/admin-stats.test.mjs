@@ -12,8 +12,8 @@ import { canonicalDb } from "./helpers.mjs";
 const NOW = new Date("2026-09-27T12:00:00.000Z");
 const R = [
   // id, status, species, observed_on, received_at, site_id, reporter
-  ["r1", "approved", "큰노랑발도요", "2026-09-20", "2026-09-21T00:00:00.000Z", "1", "홍길동"],
-  ["r2", "approved", "큰노랑발도요 · 민물도요", "2026-08-15", "2026-08-28T15:00:00.000Z", "2", "홍길동"],
+  ["r1", "approved", "노랑발도요", "2026-09-20", "2026-09-21T00:00:00.000Z", "1", "홍길동"],
+  ["r2", "approved", "노랑발도요 · 민물도요", "2026-08-15", "2026-08-28T15:00:00.000Z", "2", "홍길동"],
   ["r3", "rejected", "흰죽지", "2026-09-01", "2026-08-28T14:59:59.999Z", null, "홍길동"],
   ["r4", "pending", "검은목논병아리", "2025-12-31", "2026-09-27T14:59:00.000Z", null, "홍길동 "],
   ["r5", "approved", "민물도요", "2025-01-10", "2026-09-20T00:00:00.000Z", null, null],
@@ -51,17 +51,17 @@ test("운영 현황: 총=승인+반려+대기, 최근 30일은 received_at(KST),
   // '홍길동', '홍길동 '(뒤 공백), '김철수' = 3명. 이름 미입력 2건은 사람 수로 세지 않는다.
   assert.equal(s.reporters, 3);
   assert.equal(s.anonymous_reports, 2);
-  // 등록 종수는 승인만: 큰노랑발도요·민물도요·흰죽지. 대기(검은목논병아리)는 빠진다.
+  // 등록 종수는 승인만: 노랑발도요·민물도요·흰죽지. 대기(검은목논병아리)는 빠진다.
   assert.equal(s.species, 3);
 });
 
 test("종별: 승인만, ' · ' 로 나눠 종마다 세고 날짜는 observed_on", async () => {
   const { rows } = await stats(seeded(), "view=species");
   const m = byKey(rows, "species");
-  assert.deepEqual(Object.keys(m).sort(), ["민물도요", "큰노랑발도요", "흰죽지"]);
-  assert.deepEqual(m["큰노랑발도요"], { species: "큰노랑발도요", total: 2, approved: 2, first_observed: "2026-08-15", last_observed: "2026-09-20", sites: 2, reporters: 1, individuals: null });
-  assert.deepEqual(m["민물도요"], { species: "민물도요", total: 2, approved: 2, first_observed: "2025-01-10", last_observed: "2026-08-15", sites: 1, reporters: 1, individuals: null });
-  assert.deepEqual(m["흰죽지"], { species: "흰죽지", total: 1, approved: 1, first_observed: "2025-01-11", last_observed: "2025-01-11", sites: 1, reporters: 0, individuals: null });
+  assert.deepEqual(Object.keys(m).sort(), ["노랑발도요", "민물도요", "흰죽지"]);
+  assert.deepEqual(m["노랑발도요"], { species: "노랑발도요", total: 2, approved: 2, first_observed: "2026-08-15", last_observed: "2026-09-20", sites: 2, reporters: 1, individuals: null, unclassified: 0 });
+  assert.deepEqual(m["민물도요"], { species: "민물도요", total: 2, approved: 2, first_observed: "2025-01-10", last_observed: "2026-08-15", sites: 1, reporters: 1, individuals: null, unclassified: 0 });
+  assert.deepEqual(m["흰죽지"], { species: "흰죽지", total: 1, approved: 1, first_observed: "2025-01-11", last_observed: "2025-01-11", sites: 1, reporters: 0, individuals: null, unclassified: 0 });
 });
 
 test("상태 필터를 고르면 그 상태만으로 다시 센다", async () => {
