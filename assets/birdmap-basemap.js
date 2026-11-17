@@ -18,6 +18,7 @@
   // longer pauses while it keeps failing (one screen of tiles per attempt); after the last one OSM stays until the
   // explicit retry. A batch of that type loading again starts the sequence over.
   var RECOVERY_DELAYS_MS = [60000, 120000, 240000, 480000];
+  var SLOW_REPAIR_DELAY_MS = 900000;
   // A recovery (which resets those pauses) needs a batch that ran to its end and left the current view loaded: at least
   // this share of its tiles without an error. A screen is 24 (1366x768) to 48 (1920x1080) tiles, so two to four stray
   // failures still count as recovered; a screen with more than one tile in ten missing, a cancelled batch or a single
@@ -262,7 +263,8 @@
     var repairMoving = false, repairMovedAt = -Infinity;
     var repairDocument = global.document || document;
     function repairNow() { return global.performance ? global.performance.now() : Date.now(); }
-    function repairPause(n) { return RECOVERY_DELAYS_MS[n] + Math.random() * 15000; }
+    // Four fast attempts, then one probe per 15 minutes; never restart the fast sequence on a view change.
+    function repairPause(n) { return (n < 4 ? RECOVERY_DELAYS_MS[n] : SLOW_REPAIR_DELAY_MS) + Math.random() * 15000; }
     function repairId(layer, key) { return lockId(layer._birdmapKind) + '|' + key; }
     function viewFailures(layer) { return layer._viewTiles().failed || []; }
     function repairCurrent(task) { return current(task.token, task.layer) && task.epoch === repairEpoch; }
@@ -289,7 +291,7 @@
       global.clearTimeout(task.timer);
       repairTasks.delete(task);
       if (ok) repairHistory.delete(task.record.id);
-      else task.record.next = task.record.n < 4 ? repairNow() + repairPause(task.record.n) : Infinity;
+      else task.record.next = repairNow() + repairPause(task.record.n);
       if (repairCurrent(task) && task.canary && repairRound === task.round) {
         if (ok) task.round.ready = true;
         else repairRound = null;
@@ -320,38 +322,41 @@
     }
     function scheduleRepair(token, layer, delay) {
       if (delay !== undefined && !isFinite(delay)) return;
-      if (!current(token, layer) || !map.hasLayer(layer) || repairDocument.hidden || repairTimer !== null) return;
+      if (!current(token, layer) || !map.hasLayer(layer) || repairDocument.hidden || offline() || repairTimer !== null) return;
       if (!viewFailures(layer).length && !repairRound) return;
       repairTimer = global.setTimeout(function () { repairTimer = null; pumpRepairs(token, layer); }, Math.max(1, delay || 1));
     }
     function pumpRepairs(token, layer) {
-      if (!current(token, layer) || !map.hasLayer(layer) || repairDocument.hidden) return;
+      if (!current(token, layer) || !map.hasLayer(layer) || repairDocument.hidden || offline()) return;
       var now = repairNow();
-      if (repairMoving || layer._zoomRest || map._animatingZoom || (map.scrollWheelZoom && map.scrollWheelZoom._startTime)) return;
+      if (repairMoving) return; // moveend/zoomend wakes this queue.
+      if (layer._zoomRest || map._animatingZoom || (map.scrollWheelZoom && map.scrollWheelZoom._startTime)) return scheduleRepair(token, layer, 300);
       if (now < repairMovedAt + 750) return scheduleRepair(token, layer, repairMovedAt + 750 - now);
       // Normal activity owns the old inactivity deadline. A repair must not prolong it.
       if (layer._unanswered() || loading || repairTasks.size >= 2) return;
       repairStarts = repairStarts.filter(function (t) { return now - t < 60000; });
       canaryStarts = canaryStarts.filter(function (t) { return now - t < 60000; });
       if (repairStarts.length >= 8) return scheduleRepair(token, layer, repairStarts[0] + 60000 - now);
-      var failed = new Set(viewFailures(layer)), candidates = [], earliest = Infinity;
+      var failed = new Set(viewFailures(layer)), candidates = [], followers = [], earliest = Infinity;
       // Map insertion order is rotated only on an actual start: older due keys cannot starve.
       repairHistory.forEach(function (record) {
-        if (record.id !== repairId(layer, record.key) || !failed.has(record.key) || !layer._tiles[record.key].loaded || record.n >= 4) return;
+        if (record.id !== repairId(layer, record.key) || !failed.has(record.key) || !layer._tiles[record.key].loaded) return;
         if (record.next <= now) candidates.push(record);
         else earliest = Math.min(earliest, record.next);
+        // A successful canary covers the initial jitter of the whole view, but never skips a failed retry's backoff.
+        if (record.next <= now || record.n === 0) followers.push(record);
       });
       if (!repairRound) {
         if (!candidates.length) return scheduleRepair(token, layer, earliest - now);
         if (canaryStarts.length) return scheduleRepair(token, layer, canaryStarts[0] + 60000 - now);
-        repairRound = { ready: false, queue: candidates.slice(1, 8).map(function (r) { return { record: r, el: layer._tiles[r.key].el }; }) };
+        repairRound = { ready: false, queue: followers.filter(function (r) { return r !== candidates[0]; }).slice(0, 7).map(function (r) { return { record: r, el: layer._tiles[r.key].el }; }) };
         startRepair(token, layer, candidates[0], true);
         return;
       }
       if (!repairRound.ready) return;
       while (repairRound.queue.length && repairTasks.size < 2 && repairStarts.length < 8) {
         var item = repairRound.queue.shift(), tile = layer._tiles[item.record.key];
-        if (tile && tile.el === item.el && failed.has(item.record.key) && item.record.next <= now && item.record.n < 4) startRepair(token, layer, item.record, false);
+        if (tile && tile.el === item.el && failed.has(item.record.key) && (item.record.next <= now || item.record.n === 0)) startRepair(token, layer, item.record, false);
       }
       if (!repairTasks.size) {
         repairRound = null;
@@ -380,15 +385,118 @@
       if (task.done || !task.el) { repairRound = null; return; }
       task.timer = global.setTimeout(function () { if (repairCurrent(task)) abortRepair(task, false); }, TILE_BATCH_TIMEOUT_MS);
     }
-    function repairMoveStart() { repairMoving = true; stopRepairs(false); }
+    function repairMoveStart() { repairMoving = true; stopRepairs(false); stopOsmRepairs(); }
     function repairMoveEnd() {
       repairMoving = false; repairMovedAt = repairNow();
       if (vworld) { repairNotice(vworld); scheduleRepair(generation, vworld, 750); }
+      scheduleOsmRepair(750);
     }
     function repairVisibility() {
-      if (repairDocument.hidden) stopRepairs(false);
-      else if (vworld) scheduleRepair(generation, vworld);
+      if (repairDocument.hidden) { stopRepairs(false); stopOsmRepairs(); }
+      else { if (vworld) scheduleRepair(generation, vworld); scheduleOsmRepair(); }
     }
+
+    function offline() { return global.navigator && global.navigator.onLine === false; }
+    function repairNetwork() {
+      if (offline()) { stopRepairs(false); stopOsmRepairs(); return; }
+      if (vworld) scheduleRepair(generation, vworld);
+      // Wake failed OSM tiles promptly without redrawing successful tiles or refunding request permits.
+      osmFailures.forEach(function (r) { if (r.n < 4) r.next = Math.min(r.next, repairNow() + 750); });
+      clearOsmTimer(); scheduleOsmRepair(750);
+    }
+
+    // The supplied OSM layer stays a normal Leaflet TileLayer. Repair only its failed visible tiles, with its own
+    // conservative budget (two in flight, eight starts per 10 s, four fast attempts then 15-minute probes).
+    var osmFailures = new Map(), osmTasks = new Map(), osmStarts = [], osmTimer = null;
+    var osmPauses = [5000, 15000, 30000, 60000];
+    function clearOsmTimer() { if (osmTimer !== null) global.clearTimeout(osmTimer); osmTimer = null; }
+    function osmVisible(key) {
+      var tile = osm._tiles && osm._tiles[key];
+      if (!tile || !map.hasLayer(osm)) return false;
+      var range = osm._pxBoundsToTileRange(osm._getTiledPixelBounds(map.getCenter()));
+      return tile.coords.z === osm._tileZoom && range.contains(tile.coords);
+    }
+    function finishOsmRepair(key, ok) {
+      var task = osmTasks.get(key), record = osmFailures.get(key);
+      if (task) { global.clearTimeout(task.timer); osmTasks.delete(key); }
+      if (ok) osmFailures.delete(key);
+      else if (record) record.next = repairNow() + (record.n < 4 ? osmPauses[record.n] : SLOW_REPAIR_DELAY_MS);
+      scheduleOsmRepair();
+    }
+    function stopOsmRepairs() {
+      clearOsmTimer();
+      osmTasks.forEach(function (task, key) {
+        L.DomEvent.off(task.el);
+        if (osm._tiles[key] && osm._tiles[key].el === task.el) osm._tileReady(osm._tiles[key].coords, new Error('tile repair stopped'), task.el);
+        task.el.src = L.Util.emptyImageUrl;
+        finishOsmRepair(key, false);
+      });
+      clearOsmTimer();
+    }
+    function scheduleOsmRepair(delay) {
+      if (destroyed || !osmFailures.size || !map.hasLayer(osm) || repairDocument.hidden || offline() || osmTimer !== null) return;
+      osmTimer = global.setTimeout(function () { osmTimer = null; pumpOsmRepairs(); }, Math.max(1, delay || 1));
+    }
+    function pumpOsmRepairs() {
+      if (destroyed || !map.hasLayer(osm) || repairDocument.hidden || offline()) return;
+      if (repairMoving) return;
+      if (map._animatingZoom || (map.scrollWheelZoom && map.scrollWheelZoom._startTime)) return scheduleOsmRepair(300);
+      var now = repairNow(), earliest = Infinity;
+      if (now < repairMovedAt + 750) return scheduleOsmRepair(repairMovedAt + 750 - now);
+      osmStarts = osmStarts.filter(function (t) { return now - t < 10000; });
+      if (osmTasks.size >= 2) return;
+      if (osmStarts.length >= 8) return scheduleOsmRepair(osmStarts[0] + 10000 - now);
+      osmFailures.forEach(function (record, key) {
+        if (osmTasks.size >= 2 || osmStarts.length >= 8 || osmTasks.has(key) || !osmVisible(key)) return;
+        if (record.next > now) { earliest = Math.min(earliest, record.next); return; }
+        var previous = osm._tiles[key], parent = previous.el.parentNode;
+        if (!previous.loaded) return;
+        var task = { el: null, timer: null };
+        // Reserve before _update can assign img.src. A replacement is a normal Leaflet tile with fresh handlers.
+        osmTasks.set(key, task); record.n++; osmStarts.push(now);
+        try {
+          osm._removeTile(key); osm._update();
+          var tile = osm._tiles[key];
+          if (!tile) throw new Error('tile replacement missing');
+          task.el = tile.el;
+          task.timer = global.setTimeout(function () {
+            if (osmTasks.get(key) !== task) return;
+            L.DomEvent.off(task.el);
+            if (osm._tiles[key] && osm._tiles[key].el === task.el) osm._tileReady(osm._tiles[key].coords, new Error('tile repair timeout'), task.el);
+            task.el.src = L.Util.emptyImageUrl;
+            finishOsmRepair(key, false);
+          }, TILE_BATCH_TIMEOUT_MS);
+        } catch (_) {
+          if (!osm._tiles[key]) { osm._tiles[key] = previous; if (parent) parent.appendChild(previous.el); }
+          var replacement = osm._tiles[key];
+          if (replacement.el !== previous.el) {
+            L.DomEvent.off(replacement.el);
+            osm._tileReady(replacement.coords, new Error('tile repair stopped'), replacement.el);
+            replacement.el.src = L.Util.emptyImageUrl;
+          }
+          finishOsmRepair(key, false);
+        }
+      });
+      if (!osmTasks.size && isFinite(earliest)) scheduleOsmRepair(earliest - now);
+      else if (osmStarts.length >= 8) scheduleOsmRepair(osmStarts[0] + 10000 - now);
+    }
+    var osmHandlers = {
+      tileerror: function (e) {
+        if (destroyed || !e || !e.coords) return;
+        var key = osm._tileCoordsToKey(e.coords), tile = osm._tiles[key];
+        if (!tile || tile.el !== e.tile) return;
+        if (!osmFailures.has(key) && osmFailures.size < 2048) osmFailures.set(key, { n: 0, next: repairNow() + osmPauses[0] });
+        if (osmTasks.has(key)) finishOsmRepair(key, false);
+        else scheduleOsmRepair(osmPauses[0]);
+      },
+      tileload: function (e) {
+        if (!e || !e.coords) return;
+        var key = osm._tileCoordsToKey(e.coords), tile = osm._tiles[key];
+        if (tile && tile.el === e.tile) finishOsmRepair(key, true);
+      },
+      add: function () { scheduleOsmRepair(); },
+      remove: stopOsmRepairs
+    };
 
     function detachVworld() {
       generation++;
@@ -905,6 +1013,9 @@
       map.off('movestart zoomstart', repairMoveStart);
       map.off('moveend zoomend', repairMoveEnd);
       if (repairDocument.removeEventListener) repairDocument.removeEventListener('visibilitychange', repairVisibility);
+      if (global.removeEventListener) { global.removeEventListener('online', repairNetwork); global.removeEventListener('offline', repairNetwork); }
+      if (osm.off) osm.off(osmHandlers);
+      stopOsmRepairs(); osmFailures.clear();
       stopRepairs(true); repairHistory.clear();
       detachVworld();
       if (!map.hasLayer(osm)) osm.addTo(map);
@@ -932,6 +1043,8 @@
     map.on('movestart zoomstart', repairMoveStart);
     map.on('moveend zoomend', repairMoveEnd);
     if (repairDocument.addEventListener) repairDocument.addEventListener('visibilitychange', repairVisibility);
+    if (global.addEventListener) { global.addEventListener('online', repairNetwork); global.addEventListener('offline', repairNetwork); }
+    if (osm.on) osm.on(osmHandlers);
     reconcile();
     return api;
   }
