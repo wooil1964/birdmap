@@ -1,0 +1,56 @@
+.birdmap-ga4-settings {
+  position: fixed;
+  left: 48px;
+  bottom: calc(var(--birdmap-recent-offset, 0px) + max(12px, env(safe-area-inset-bottom)));
+  z-index: 8010;
+  color: #253831;
+  font: 13px/1.5 Arial, 'Malgun Gothic', sans-serif;
+}
+
+.birdmap-ga4-settings summary {
+  width: max-content;
+  padding: 4px 8px;
+  border: 1px solid #64776d;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.birdmap-ga4-panel {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  box-sizing: border-box;
+  width: min(350px, calc(100vw - 60px));
+  max-height: min(60vh, calc(100dvh - var(--birdmap-recent-offset, 0px) - 54px));
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid #64776d;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 8px #0004;
+}
+
+.birdmap-ga4-panel p {
+  margin: 0 0 8px;
+}
+
+.birdmap-ga4-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.birdmap-ga4-actions button {
+  min-height: 36px;
+  padding: 3px 8px;
+  font: inherit;
+}
+
+.birdmap-ga4-exclude {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  min-height: 32px;
+}

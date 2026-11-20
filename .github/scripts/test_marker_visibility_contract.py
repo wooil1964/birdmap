@@ -2,7 +2,7 @@
 import subprocess
 import unittest
 from pathlib import Path
-from marker_visibility_contract import MARKER_VISIBILITY_ISLANDS, without_marker_visibility
+from marker_visibility_contract import GA4_HEAD, GA4_PANEL_START, MARKER_VISIBILITY_ISLANDS, without_marker_visibility
 
 ROOT = Path(__file__).resolve().parents[2]
 # These reverse-patch contracts were written for the retired whole-page freeze. They now run against the
@@ -14,6 +14,17 @@ CURRENT = subprocess.check_output(['git', 'show', FROZEN + ':index.html'], cwd=R
 
 
 class MarkerVisibilityScopeTests(unittest.TestCase):
+    def test_ga4_exception_rejects_partial_duplicate_or_changed_markup(self):
+        for changed in (
+            CURRENT.replace(GA4_HEAD, '', 1),
+            CURRENT + GA4_HEAD,
+            CURRENT.replace(GA4_PANEL_START, GA4_PANEL_START.replace('hidden', 'open'), 1),
+            CURRENT.replace('거부·동의 철회', '다시 동의', 1),
+        ):
+            self.assertNotEqual(changed, CURRENT)
+            with self.assertRaises(ValueError):
+                without_marker_visibility(changed)
+
     def test_exact_four_reviewed_changes_restore_pr_base(self):
         base = subprocess.check_output(['git', 'show', 'df900110bb21be678e096fa3ded905359105b7ea:index.html'], cwd=ROOT).decode('utf-8').replace('\r\n', '\n')
         self.assertEqual(without_marker_visibility(CURRENT), base)

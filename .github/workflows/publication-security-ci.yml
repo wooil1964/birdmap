@@ -41,6 +41,8 @@ jobs:
         run: |
           npm install --prefix .ci-toolchain --no-save --package-lock=false --no-audit --no-fund playwright-core@1.62.1
           node .github/scripts/cache_gps_dependencies.mjs
+      - name: GA4 consent and privacy (intercepted browser requests)
+        run: node .github/scripts/ga4-privacy-browser.mjs
       - name: GPS popup regression (synthetic API, GPS and tiles; offline browser)
         run: node docs/current-location/popup-regression.cjs
       - name: Report-location panel and place search (synthetic API, GPS, Kakao SDK and keyboard)
